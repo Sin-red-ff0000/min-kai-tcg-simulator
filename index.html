@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v2.0</title>
+<title>みん会TCG Simulator v2.1</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -343,11 +343,16 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
   .board-setting-preview.portrait{width:76px;height:108px}
 }
 
+
+/* v2.1 テキスト登録初期表示 / カード詳細テキスト出力 */
+.manager-text-export{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.manager-text-export-title{font-size:12px;margin-bottom:3px}
+
 </style>
 </head>
 <body>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v2.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v2.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -382,13 +387,13 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
     <div class="section-head"><h2>カード登録</h2><span id="card-register-count" class="pill"></span></div>
     <div class="panel data-tools">
       <div class="tool-tabs registration-tabs">
-        <button class="btn small primary" type="button" data-tool-tab="manual">1枚ずつ登録</button>
-        <button class="btn small" type="button" data-tool-tab="text">テキスト一括登録</button>
+        <button class="btn small primary" type="button" data-tool-tab="text">テキスト一括登録</button>
+        <button class="btn small" type="button" data-tool-tab="manual">1枚ずつ登録</button>
         <button class="btn small" type="button" data-tool-tab="json">JSONから登録</button>
         <button class="btn small" type="button" data-tool-tab="export">エクスポート</button>
       </div>
 
-      <div id="tool-pane-manual" class="tool-pane active">
+      <div id="tool-pane-manual" class="tool-pane">
         <form id="card-form" class="form-grid">
           <label class="wide">カード名<input id="card-name" required /></label>
           <label>種類<select id="card-type"><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option></select></label>
@@ -404,15 +409,24 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
         </div>
       </div>
 
-      <div id="tool-pane-text" class="tool-pane">
-        <p class="muted">カード文章をそのまま貼り付けて変換できます。従来の【】形式に加えて、カード名 → 「レベル4 パワー5000」→ 種族 → 効果、の簡易形式にも対応しています。複数枚はカードごとに空行を1つ入れてください。変換後は登録前に内容を編集できます。</p>
+      <div id="tool-pane-text" class="tool-pane active">
+        <p class="muted">カード文章をそのまま貼り付けて変換できます。【カード名】から始まる化けさん式と、カード名 → 「レベル4 パワー5000」→ 種族 → 効果のゼリー君式に対応しています。複数枚はカードごとに空行を1つ入れてください。変換後は登録前に内容を編集できます。</p>
         <details class="import-format-help">
-          <summary>簡易コピペ形式の例</summary>
+          <summary>ゼリー君式の例</summary>
           <pre>毒殿の大僧正
 レベル4 パワー5000
 毒
 ・ヴェノム/リンク：……
 ・自分のターン終了時に発動する。……</pre>
+        </details>
+        <details class="import-format-help">
+          <summary>化けさん式の例</summary>
+          <pre>【廻る時間の越境者 ミデン】
+レベル:12
+パワー:12000
+種族:時間/災厄/境界
+・ブロッカー
+・……</pre>
         </details>
         <textarea id="text-import-source" class="json-area" placeholder="毒殿の大僧正
 レベル4 パワー5000
@@ -700,7 +714,7 @@ function parseOneCardText(block){
     const pw=t.match(/(?:^|\s)パワー\s*[:：]?\s*([0-9０-９,，]+)(?=\s|$|[\/／｜|])/i);
     if(lv&&!level){level=normalizeCardNumber(lv[1]);ignoredLineIndexes.add(index)}
     if(pw&&!power){power=normalizeCardNumber(pw[1]);ignoredLineIndexes.add(index)}
-    if(lv&&pw)compactStatLineIndex=index;
+    if(lv||pw)compactStatLineIndex=index;
   });
 
   // 従来形式で数値以外の記述がある場合のフォールバック。
@@ -721,7 +735,7 @@ function parseOneCardText(block){
     if(idx>=0){raceLineIndex=idx;ignoredLineIndexes.add(idx)}
   }
 
-  // 簡易形式では「レベル4 パワー5000」の次の実データ行を種族として扱う。
+  // ゼリー君式ではステータス行（「レベル4 パワー5000」「レベル4」「パワー5000」）の次の実データ行を種族として扱う。
   // 箇条書き・カード種類・別の項目ラベルは種族と誤認しない。
   if(!race&&compactStatLineIndex>=0){
     for(let i=compactStatLineIndex+1;i<trimmed.length;i++){
@@ -1075,6 +1089,52 @@ function renderCards(){
  $$('[data-manage-card]').forEach(row=>row.onclick=()=>openCardManagerDetail(row.dataset.manageCard));
  $$('[data-manage-detail]').forEach(b=>b.onclick=e=>{e.stopPropagation();openCardManagerDetail(b.dataset.manageDetail)});
 }
+
+function formatCardBakeStyle(c){
+ const lines=[`【${String(c.name||'').trim()}】`];
+ const type=['キャラクター','ルーム','ロール','ルールプラス'].includes(c.type)?c.type:'キャラクター';
+ if(type==='キャラクター'){
+   if(c.level!==''&&c.level!=null)lines.push(`レベル:${c.level}`);
+   if(c.power!==''&&c.power!=null)lines.push(`パワー:${c.power}`);
+   if(String(c.race||'').trim())lines.push(`種族:${String(c.race).trim().replace(/\s*\/\s*/g,'/')}`);
+ }else{
+   lines.push(type);
+   if(c.level!==''&&c.level!=null)lines.push(`レベル:${c.level}`);
+   if(c.power!==''&&c.power!=null)lines.push(`パワー:${c.power}`);
+   if(String(c.race||'').trim())lines.push(`種族:${String(c.race).trim().replace(/\s*\/\s*/g,'/')}`);
+ }
+ if(String(c.effect||'').length)lines.push(String(c.effect));
+ return lines.join('\n');
+}
+function formatCardJellyStyle(c){
+ const lines=[String(c.name||'').trim()];
+ const type=['キャラクター','ルーム','ロール','ルールプラス'].includes(c.type)?c.type:'キャラクター';
+ if(type==='キャラクター'){
+   const stats=[];
+   if(c.level!==''&&c.level!=null)stats.push(`レベル${c.level}`);
+   if(c.power!==''&&c.power!=null)stats.push(`パワー${c.power}`);
+   if(stats.length)lines.push(stats.join(' '));
+   const race=String(c.race||'').trim();
+   if(race){
+     // ステータス行がある場合はゼリー君式の素の種族行。
+     // ステータスが全て空欄の場合は再読込の確実性を優先してラベル付きにする。
+     lines.push(stats.length?race.replace(/\s*\/\s*/g,'/'):`種族:${race.replace(/\s*\/\s*/g,'/')}`);
+   }
+ }else{
+   lines.push(type);
+   if(c.level!==''&&c.level!=null)lines.push(`レベル:${c.level}`);
+   if(c.power!==''&&c.power!=null)lines.push(`パワー:${c.power}`);
+   if(String(c.race||'').trim())lines.push(`種族:${String(c.race).trim().replace(/\s*\/\s*/g,'/')}`);
+ }
+ if(String(c.effect||'').length)lines.push(String(c.effect));
+ return lines.join('\n');
+}
+async function copyManagerCardText(c,style){
+ const text=style==='bake'?formatCardBakeStyle(c):formatCardJellyStyle(c);
+ const ok=await copyText(text);
+ toast(ok?`${style==='bake'?'化けさん式':'ゼリー君式'}をコピーしました`:'コピーできませんでした');
+}
+
 function managerCardSummary(c){
  const stats=[c.type||'',c.level!==''&&c.level!=null?`Lv${c.level}`:'',c.power!==''&&c.power!=null?`POWER ${c.power}`:''].filter(Boolean).map(esc).join(' / ');
  return `<div class="card-full"><h3>${esc(c.name)}</h3><div class="muted">${stats}</div><div class="muted" style="margin-top:4px">種族：${esc(c.race||'－')}</div><div class="muted" style="margin-top:4px">採用デッキ：${deckUsageCount(c.id)}</div><div class="manager-detail-effect" style="margin-top:10px">${esc(c.effect||'効果なし')}</div></div>`;
@@ -1083,9 +1143,15 @@ function openCardManagerDetail(id){
  const c=cards.find(x=>x.id===id);if(!c)return;
  openModal(`<div class="modal-head"><h3>カード詳細</h3><button class="btn" id="manager-detail-close">閉じる</button></div>
  ${managerCardSummary(c)}
+ <div class="manager-text-export">
+   <div class="muted manager-text-export-title">テキスト出力</div>
+   <div class="actions"><button class="btn" id="manager-copy-jelly">ゼリー君式をコピー</button><button class="btn" id="manager-copy-bake">化けさん式をコピー</button></div>
+ </div>
  <div class="actions"><button class="btn primary" id="manager-edit-card">編集</button><button class="btn" id="manager-clone-card">複製</button></div>
  <div class="manager-danger-zone"><button class="btn danger" id="manager-delete-card">削除</button></div>`);
  $('#manager-detail-close').onclick=closeModal;
+ $('#manager-copy-jelly').onclick=()=>copyManagerCardText(c,'jelly');
+ $('#manager-copy-bake').onclick=()=>copyManagerCardText(c,'bake');
  $('#manager-edit-card').onclick=()=>openCardManagerEdit(id);
  $('#manager-clone-card').onclick=()=>cloneCard(id);
  $('#manager-delete-card').onclick=()=>deleteCard(id);
