@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v8.7</title>
+<title>みん会TCG Simulator v8.8</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -15417,6 +15417,114 @@ body.album-direct-dragging *{cursor:grabbing!important}
  --fx-sheen-scale:1;
 }
 
+
+/* ==========================================================
+   v8.8 Card frame / oversleeve
+   image -> FX -> frame -> UI labels
+   ========================================================== */
+.card-frame-overlay{
+ position:absolute;
+ inset:0;
+ z-index:4;
+ display:block;
+ pointer-events:none;
+ border-radius:inherit;
+ background-repeat:no-repeat;
+ background-position:center;
+ background-size:100% 100%;
+ opacity:0;
+ transition:opacity .12s ease;
+ transform:translateZ(0);
+ backface-visibility:hidden;
+}
+.card-frame-overlay.frame-loaded{opacity:1}
+.pile>.card-frame-overlay{z-index:3}
+.pile>.card-fx-stack{z-index:2}
+.pile .name,.pile .stats,.pile .counter-line,.pile .flags{z-index:4}
+.collection-card-art>.card-frame-overlay,
+.collection-list-art>.card-frame-overlay,
+.collection-detail-art>.card-frame-overlay,
+.collection-viewer-art>.card-frame-overlay,
+.board-detail-image>.card-frame-overlay{z-index:4}
+.collection-favorite{z-index:7}
+.collection-placeholder-name,.collection-viewer-art>span{position:relative;z-index:6}
+.board-detail-image>.card-fx-stack{z-index:3}
+.board-detail-image>.card-frame-overlay{z-index:4}
+
+/* Frame editor */
+.frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
+.frame-editor-preview-section,.frame-library-section{min-width:0}
+.frame-editor-preview{
+ position:relative;
+ width:min(100%,300px);
+ aspect-ratio:5/7;
+ margin:0 auto 10px;
+ border:1px solid #596274;
+ border-radius:12px;
+ overflow:hidden;
+ isolation:isolate;
+ background-image:linear-gradient(rgba(7,11,17,.32),rgba(7,11,17,.32)),var(--card-bg-image);
+ background-size:cover;
+ background-position:center;
+ box-shadow:0 12px 30px rgba(0,0,0,.34)
+}
+.frame-editor-preview.has-image{background-color:#090c11}
+.frame-editor-fallback{
+ position:absolute;left:8%;right:8%;bottom:8%;z-index:6;
+ text-align:center;font-weight:800;text-shadow:0 2px 5px #000
+}
+.frame-editor-help{margin:8px 0 10px;line-height:1.55}
+.frame-library-grid{
+ display:grid;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:9px;
+ margin-top:10px
+}
+.frame-library-item{
+ appearance:none;
+ border:1px solid var(--line);
+ border-radius:10px;
+ padding:7px;
+ background:#0d1219;
+ color:var(--text);
+ cursor:pointer;
+ min-width:0;
+ text-align:left
+}
+.frame-library-item:hover{border-color:#78859a}
+.frame-library-item.selected{border-color:#9ab8dd;box-shadow:0 0 0 1px rgba(154,184,221,.35)}
+.frame-library-thumb{
+ display:block;
+ position:relative;
+ width:100%;
+ aspect-ratio:5/7;
+ border-radius:7px;
+ border:1px solid #465163;
+ background:
+   linear-gradient(45deg,#1b2028 25%,transparent 25% 75%,#1b2028 75%),
+   linear-gradient(45deg,#1b2028 25%,#10151c 25% 75%,#1b2028 75%);
+ background-position:0 0,7px 7px;
+ background-size:14px 14px;
+ background-repeat:repeat;
+ overflow:hidden
+}
+.frame-library-thumb.frame-loaded{
+ background-repeat:no-repeat;
+ background-size:100% 100%;
+ background-position:center
+}
+.frame-library-name{display:block;margin-top:6px;font-size:11px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frame-library-size{display:block;margin-top:2px;font-size:9px;color:var(--muted)}
+.frame-library-empty{grid-column:1/-1;padding:24px 12px;border:1px dashed var(--line);border-radius:10px;text-align:center;color:var(--muted)}
+@media(max-width:800px){
+ .frame-editor-layout{grid-template-columns:1fr}
+ .frame-library-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:520px){
+ .frame-library-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .frame-editor-preview{width:min(100%,260px)}
+}
+
 </style>
 </head>
 <body>
@@ -15425,7 +15533,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v8.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v8.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -15463,7 +15571,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
       </div>
       <div class="backup-kind-box full-backup-box">
         <h3>完全バックアップ（ZIP）</h3>
-        <p class="muted">通常バックアップの全内容に加えて、カード画像、画像位置設定、盤面表示設定、手札追従設定、保存済みの外観テーマ、画面・ナビ設定、背景ライブラリまでまとめて保存します。復元すると現在の対象データをバックアップ内容へ置き換えます。</p>
+        <p class="muted">通常バックアップの全内容に加えて、カード画像、カスタムフレーム、画像位置設定、盤面表示設定、手札追従設定、保存済みの外観テーマ、画面・ナビ設定、背景ライブラリまでまとめて保存します。復元すると現在の対象データをバックアップ内容へ置き換えます。</p>
         <p class="muted">※ 設定画面でまだ「変更を保存」していない外観変更は完全バックアップには含まれません。</p>
         <div class="io-actions">
           <button class="btn primary" type="button" id="full-backup-create">完全バックアップZIPを作成</button>
@@ -15475,7 +15583,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
         <div class="section-head"><h3 style="font-size:15px;margin:0">画像ストレージ</h3><button class="btn small" type="button" id="image-storage-refresh">更新</button></div>
         <div id="image-storage-summary" class="muted">画像ストレージを確認中…</div>
         <div class="actions"><button class="btn small" type="button" id="image-storage-cleanup">不要画像を整理</button></div>
-        <div class="muted image-storage-note">カード画像と背景ライブラリは端末内のIndexedDBに保存されています。通常JSONには含まれませんが、完全バックアップZIPには両方とも含まれます。</div>
+        <div class="muted image-storage-note">カード画像・カスタムフレーム・背景ライブラリは端末内のIndexedDBに保存されています。通常JSONには含まれませんが、完全バックアップZIPには両方とも含まれます。</div>
       </div>
         </div>
       </details>
@@ -16680,9 +16788,10 @@ function load(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{retur
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
 
 // v2.2 Card image system
-const IMAGE_DB_NAME='minkai_tcg_images_v22',IMAGE_DB_VERSION=2;
-let imageDbPromise=null,imageReadyPromise=Promise.resolve(),backgroundReadyPromise=Promise.resolve(),imageSystemAvailable='indexedDB' in window;
+const IMAGE_DB_NAME='minkai_tcg_images_v22',IMAGE_DB_VERSION=3;
+let imageDbPromise=null,imageReadyPromise=Promise.resolve(),backgroundReadyPromise=Promise.resolve(),frameReadyPromise=Promise.resolve(),imageSystemAvailable='indexedDB' in window;
 const imageLinkCache=new Map(),imageUrlCache=new Map(),backgroundAssetCache=new Map(),backgroundUrlCache=new Map();
+const frameAssetCache=new Map(),frameLinkCache=new Map(),frameUrlCache=new Map();
 
 function normalizeImageView(v={}){
  const pointMap={
@@ -16719,6 +16828,8 @@ function openImageDb(){
      if(!db.objectStoreNames.contains('images'))db.createObjectStore('images',{keyPath:'id'});
      if(!db.objectStoreNames.contains('links'))db.createObjectStore('links',{keyPath:'cardId'});
      if(!db.objectStoreNames.contains('backgrounds'))db.createObjectStore('backgrounds',{keyPath:'id'});
+     if(!db.objectStoreNames.contains('frames'))db.createObjectStore('frames',{keyPath:'id'});
+     if(!db.objectStoreNames.contains('frameLinks'))db.createObjectStore('frameLinks',{keyPath:'cardId'});
    };
    req.onsuccess=()=>resolve(req.result);
    req.onerror=()=>reject(req.error||new Error('画像データベースを開けませんでした'));
@@ -16869,6 +16980,201 @@ async function reconcileImageLinksWithCards(){
  for(const imageId of maybeOrphan)await cleanupImageIfUnused(imageId);
 }
 
+/* v8.8 Card frame / oversleeve system */
+function normalizeFrameLink(raw,cardId=raw?.cardId||''){
+ return {cardId:String(cardId||''),frameId:String(raw?.frameId||'')};
+}
+function cardFrameSourceId(c){
+ return String(c?.frameSourceCardId||c?.imageSourceCardId||c?.id||'');
+}
+function clearFrameUrls(frameId=''){
+ for(const key of [...frameUrlCache.keys()]){
+   if(!frameId||key===String(frameId)){
+     try{URL.revokeObjectURL(frameUrlCache.get(key))}catch{}
+     frameUrlCache.delete(key);
+   }
+ }
+}
+function resetFrameRuntimeCache(){
+ clearFrameUrls();
+ frameAssetCache.clear();
+ frameLinkCache.clear();
+}
+async function initFrameSystem(){
+ if(!imageSystemAvailable)return false;
+ const [frames,links]=await Promise.all([imageDbGetAll('frames'),imageDbGetAll('frameLinks')]);
+ frameAssetCache.clear();
+ frameLinkCache.clear();
+ frames.forEach(rec=>{if(rec?.id&&rec?.blob)frameAssetCache.set(String(rec.id),rec)});
+ links.forEach(raw=>{
+   const link=normalizeFrameLink(raw,raw?.cardId);
+   if(link.cardId&&link.frameId)frameLinkCache.set(link.cardId,link);
+ });
+ return true;
+}
+function getCachedFrameLink(cardId){return frameLinkCache.get(String(cardId||''))||null}
+async function getCardFrameLink(cardId){
+ await frameReadyPromise;
+ const key=String(cardId||'');if(!key)return null;
+ if(frameLinkCache.has(key))return frameLinkCache.get(key);
+ const raw=await imageDbGet('frameLinks',key);if(!raw)return null;
+ const link=normalizeFrameLink(raw,key);
+ if(link.frameId)frameLinkCache.set(key,link);
+ return link.frameId?link:null;
+}
+async function putCardFrameLink(cardId,frameId){
+ const link=normalizeFrameLink({cardId,frameId},cardId);
+ if(!link.cardId||!link.frameId)throw new Error('フレームリンクが不正です');
+ await imageDbPut('frameLinks',link);
+ frameLinkCache.set(link.cardId,link);
+ return link;
+}
+async function deleteCardFrameLink(cardId){
+ await frameReadyPromise;
+ const key=String(cardId||'');if(!key)return;
+ await imageDbDelete('frameLinks',key);
+ frameLinkCache.delete(key);
+}
+async function cloneCardFrameLink(sourceCardId,targetCardId){
+ await frameReadyPromise;
+ const old=await getCardFrameLink(sourceCardId);if(!old)return null;
+ return putCardFrameLink(targetCardId,old.frameId);
+}
+async function reconcileFrameLinksWithCards(){
+ await frameReadyPromise;
+ const valid=new Set(cards.map(c=>c.id)),links=await imageDbGetAll('frameLinks');
+ for(const raw of links){
+   if(valid.has(String(raw.cardId||'')))continue;
+   await imageDbDelete('frameLinks',raw.cardId);
+   frameLinkCache.delete(String(raw.cardId||''));
+ }
+}
+async function getFrameAsset(frameId){
+ await frameReadyPromise;
+ const id=String(frameId||'');if(!id)return null;
+ if(frameAssetCache.has(id))return frameAssetCache.get(id);
+ const rec=await imageDbGet('frames',id);
+ if(rec?.blob)frameAssetCache.set(id,rec);
+ return rec||null;
+}
+async function getFrameObjectUrl(frameId){
+ const id=String(frameId||'');if(!id)return '';
+ if(frameUrlCache.has(id))return frameUrlCache.get(id);
+ const rec=await getFrameAsset(id);if(!rec?.blob)return '';
+ const url=URL.createObjectURL(rec.blob);
+ frameUrlCache.set(id,url);
+ return url;
+}
+async function imageDimensionsFromBlob(blob){
+ if(typeof createImageBitmap==='function'){
+   const bitmap=await createImageBitmap(blob);
+   const out={width:bitmap.width||0,height:bitmap.height||0};
+   bitmap.close?.();return out;
+ }
+ return new Promise((resolve,reject)=>{
+   const url=URL.createObjectURL(blob),img=new Image();
+   img.onload=()=>{const out={width:img.naturalWidth||0,height:img.naturalHeight||0};URL.revokeObjectURL(url);resolve(out)};
+   img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('PNGを読み込めませんでした'))};
+   img.src=url;
+ });
+}
+async function createFrameAssetRecord(file){
+ if(!file)throw new Error('フレーム画像を選択してください');
+ if(String(file.type||'').toLowerCase()!=='image/png')throw new Error('フレームは透明PNG（.png）を使用してください');
+ if(Number(file.size)>15*1024*1024)throw new Error('フレームPNGは15MB以下にしてください');
+ const dim=await imageDimensionsFromBlob(file);
+ if(!dim.width||!dim.height)throw new Error('フレームPNGのサイズを確認できません');
+ return {
+   id:uid('frame'),
+   name:String(file.name||'カスタムフレーム').replace(/\.png$/i,'')||'カスタムフレーム',
+   originalName:String(file.name||''),
+   width:dim.width,height:dim.height,
+   createdAt:new Date().toISOString(),
+   blob:file
+ };
+}
+async function saveFrameAsset(rec){
+ if(!rec?.id||!rec?.blob)throw new Error('フレームデータが不正です');
+ await imageDbPut('frames',rec);
+ frameAssetCache.set(String(rec.id),rec);
+ clearFrameUrls(rec.id);
+ return rec;
+}
+async function deleteFrameAsset(frameId){
+ const id=String(frameId||'');if(!id)return;
+ const links=await imageDbGetAll('frameLinks');
+ for(const raw of links){
+   if(String(raw.frameId||'')!==id)continue;
+   await imageDbDelete('frameLinks',raw.cardId);
+   frameLinkCache.delete(String(raw.cardId||''));
+ }
+ await imageDbDelete('frames',id);
+ frameAssetCache.delete(id);
+ clearFrameUrls(id);
+}
+async function replaceFrameDatabase(frames=[],links=[]){
+ const db=await openImageDb();
+ return new Promise((resolve,reject)=>{
+   const tx=db.transaction(['frames','frameLinks'],'readwrite'),
+         fs=tx.objectStore('frames'),ls=tx.objectStore('frameLinks');
+   fs.clear();ls.clear();
+   for(const rec of frames)fs.put(rec);
+   for(const raw of links){
+     const link=normalizeFrameLink(raw,raw?.cardId);
+     if(link.cardId&&link.frameId)ls.put(link);
+   }
+   tx.oncomplete=()=>resolve();
+   tx.onerror=()=>reject(tx.error||new Error('フレームデータベースの復元に失敗しました'));
+   tx.onabort=()=>reject(tx.error||new Error('フレームデータベースの復元が中断されました'));
+ });
+}
+function cardFrameHtml(card){
+ const sourceId=typeof card==='string'?String(card):cardFrameSourceId(card);
+ if(!sourceId)return '';
+ return `<span class="card-frame-overlay" data-card-frame="${esc(sourceId)}" aria-hidden="true"></span>`;
+}
+async function hydrateCardFrame(el){
+ if(!el?.isConnected||el.dataset.frameReady==='1')return;
+ const cardId=String(el.dataset.cardFrame||'');if(!cardId)return;
+ el.dataset.frameReady='loading';
+ try{
+   await frameReadyPromise;
+   if(!el.isConnected)return;
+   const link=getCachedFrameLink(cardId)||await getCardFrameLink(cardId);
+   if(!link){el.dataset.frameReady='1';return}
+   const url=await getFrameObjectUrl(link.frameId);
+   if(!el.isConnected)return;
+   if(!url){el.dataset.frameReady='1';return}
+   el.style.backgroundImage=`url("${url}")`;
+   el.classList.add('frame-loaded');
+   el.dataset.frameId=link.frameId;
+   el.dataset.frameReady='1';
+ }catch(err){
+   console.warn('カードフレーム読込失敗',err);
+   if(el.isConnected)el.dataset.frameReady='1';
+ }
+}
+function hydrateAllCardFrames(root=document){
+ root.querySelectorAll?.('[data-card-frame]').forEach(el=>{
+   if(el.dataset.frameReady!=='1'&&el.dataset.frameReady!=='loading')hydrateCardFrame(el);
+ });
+}
+let frameHydrationObserver=null;
+function initFrameHydrationObserver(){
+ if(frameHydrationObserver)return;
+ frameHydrationObserver=new MutationObserver(records=>{
+   for(const rec of records){
+     for(const node of rec.addedNodes){
+       if(node?.nodeType!==1)continue;
+       if(node.matches?.('[data-card-frame]'))hydrateCardFrame(node);
+       node.querySelectorAll?.('[data-card-frame]').forEach(hydrateCardFrame);
+     }
+   }
+ });
+ frameHydrationObserver.observe(document.body,{childList:true,subtree:true});
+ hydrateAllCardFrames();
+}
+
 function formatBytes(bytes){
  const n=Number(bytes)||0;
  if(n<1024)return `${n} B`;
@@ -16879,16 +17185,18 @@ function formatBytes(bytes){
 async function getImageStorageStats(){
  if(!imageSystemAvailable)return {available:false};
  await imageReadyPromise;
- const [images,links,backgrounds]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links'),imageDbGetAll('backgrounds')]);
+ const [images,links,backgrounds,frames,frameLinks]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links'),imageDbGetAll('backgrounds'),imageDbGetAll('frames'),imageDbGetAll('frameLinks')]);
  const validLinks=links.filter(x=>cards.some(c=>c.id===x.cardId)&&x.imageId);
  const usedImageIds=new Set(validLinks.map(x=>x.imageId));
- let imageBytes=0,backgroundBytes=0;
+ let imageBytes=0,backgroundBytes=0,frameBytes=0;
  images.forEach(rec=>{
    imageBytes+=(Number(rec.fullBlob?.size)||0)+(Number(rec.thumbBlob?.size)||0);
  });
  backgrounds.forEach(rec=>{
    backgroundBytes+=(Number(rec.fullBlob?.size)||0)+(Number(rec.thumbBlob?.size)||0);
  });
+ frames.forEach(rec=>{frameBytes+=Number(rec.blob?.size)||0});
+ const validFrameLinks=frameLinks.filter(x=>cards.some(c=>c.id===x.cardId)&&x.frameId);
  let estimate=null;
  try{if(navigator.storage?.estimate)estimate=await navigator.storage.estimate()}catch{}
  return {
@@ -16899,6 +17207,9 @@ async function getImageStorageStats(){
    imageBytes,
    backgroundCount:backgrounds.length,
    backgroundBytes,
+   frameCount:frames.length,
+   frameLinkedCards:validFrameLinks.length,
+   frameBytes,
    originUsage:Number(estimate?.usage)||0,
    originQuota:Number(estimate?.quota)||0
  };
@@ -16937,6 +17248,8 @@ async function updateImageStorageStatus(){
        <div class="image-storage-stat"><b>${formatBytes(s.imageBytes)}</b><span>カード画像データの概算容量</span></div>
        <div class="image-storage-stat"><b>${s.backgroundCount}画像</b><span>背景ライブラリ</span></div>
        <div class="image-storage-stat"><b>${formatBytes(s.backgroundBytes)}</b><span>背景画像データの概算容量</span></div>
+       <div class="image-storage-stat"><b>${s.frameCount}個</b><span>カスタムフレーム / ${s.frameLinkedCards}枚に設定</span></div>
+       <div class="image-storage-stat"><b>${formatBytes(s.frameBytes)}</b><span>フレームPNGの概算容量</span></div>
        <div class="image-storage-stat"><b>${quota}</b><span>このサイト全体の保存領域 使用量 / 上限</span></div>
      </div>`;
    }
@@ -17769,7 +18082,7 @@ function exportCardsObject(){return {format:'min-kai-tcg-cards',version:3,cards:
 function exportAllObject(){return {format:SIM_FORMAT,version:5,cardFxPrefs:normalizeCardFxPrefs(cardFxPrefs),cards:cards.map(cardToPortable),decks:decks.map(d=>({id:d.id,name:d.name,...deckSettingsFrom(d),cards:Object.entries(d.entries).filter(([,n])=>n>0).map(([cardId,count])=>({cardId,cardName:cards.find(c=>c.id===cardId)?.name||'',count}))}))}}
 
 // v2.4 Full backup ZIP (store method: images are already compressed)
-const FULL_BACKUP_FORMAT='min-kai-tcg-full-backup',FULL_BACKUP_VERSION=3;
+const FULL_BACKUP_FORMAT='min-kai-tcg-full-backup',FULL_BACKUP_VERSION=4;
 const zipEncoder=new TextEncoder(),zipDecoder=new TextDecoder();
 let crc32Table=null;
 function getCrc32Table(){
@@ -17865,9 +18178,9 @@ function downloadBlob(blob,filename){
 }
 async function buildFullBackupZip(onProgress=()=>{}){
  if(!imageSystemAvailable)throw new Error('このブラウザでは画像ストレージを利用できません。');
- await Promise.all([imageReadyPromise,backgroundReadyPromise]);
+ await Promise.all([imageReadyPromise,backgroundReadyPromise,frameReadyPromise]);
  onProgress('バックアップ対象を確認中…');
- const [allImages,allLinks,allBackgrounds]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links'),imageDbGetAll('backgrounds')]);
+ const [allImages,allLinks,allBackgrounds,allFrames,allFrameLinks]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links'),imageDbGetAll('backgrounds'),imageDbGetAll('frames'),imageDbGetAll('frameLinks')]);
  const validCardIds=new Set(cards.map(c=>c.id));
  const validLinks=allLinks.map(x=>normalizeImageLink(x,x.cardId)).filter(x=>validCardIds.has(x.cardId)&&x.imageId);
  const usedImageIds=new Set(validLinks.map(x=>x.imageId)),images=allImages.filter(x=>usedImageIds.has(x.id));
@@ -17900,14 +18213,31 @@ async function buildFullBackupZip(onProgress=()=>{}){
      thumb:{path:thumbPath,mime:rec.thumbBlob.type||'application/octet-stream',size:thumbBytes.length}
    });
  }
+ const frameIds=new Set(allFrames.filter(x=>x?.id&&x?.blob).map(x=>String(x.id)));
+ const frameLinks=allFrameLinks.map(x=>normalizeFrameLink(x,x?.cardId)).filter(x=>validCardIds.has(x.cardId)&&frameIds.has(x.frameId));
+ const frameMeta=[];
+ for(let i=0;i<allFrames.length;i++){
+   const rec=allFrames[i];if(!rec?.id||!rec.blob)continue;
+   onProgress(`カードフレームを準備中 ${i+1}/${allFrames.length}…`);
+   const bytes=new Uint8Array(await rec.blob.arrayBuffer());
+   const path=`frames/${rec.id}/frame.png`;
+   entries.push({name:path,data:bytes});
+   frameMeta.push({
+     id:String(rec.id),name:String(rec.name||'カスタムフレーム'),
+     originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,
+     createdAt:String(rec.createdAt||''),
+     file:{path,mime:rec.blob.type||'image/png',size:bytes.length}
+   });
+ }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'8.7',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'8.8',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:6,
      collectionVersion:Number(collectionData?.version||0),
      themeVersion:Number(themePrefs?.version||0),
-     cardEffectSettings:true
+     cardEffectSettings:true,
+     cardFrames:true
    },
    settings:{
      boardDisplay:{...boardDisplayPrefs},
@@ -17916,7 +18246,9 @@ async function buildFullBackupZip(onProgress=()=>{}){
    theme:normalizeThemePrefs(themePrefs),
    imageLinks:finalLinks,
    images:imageMeta,
-   backgrounds:backgroundMeta
+   backgrounds:backgroundMeta,
+   frameLinks,
+   frames:frameMeta
  };
  entries.unshift({name:'manifest.json',data:zipEncoder.encode(JSON.stringify(manifest,null,2))});
  onProgress('ZIPを組み立て中…');
@@ -17942,7 +18274,7 @@ function parseFullBackupZip(bytes){
  if(!manifestBytes)throw new Error('manifest.json が見つかりません。');
  let manifest;try{manifest=JSON.parse(zipDecoder.decode(manifestBytes))}catch{throw new Error('manifest.json を読み取れません。')}
  const backupVersion=Number(manifest?.version);
- if(!manifest||manifest.format!==FULL_BACKUP_FORMAT||![1,2,3].includes(backupVersion))throw new Error('対応している完全バックアップZIPではありません。');
+ if(!manifest||manifest.format!==FULL_BACKUP_FORMAT||![1,2,3,4].includes(backupVersion))throw new Error('対応している完全バックアップZIPではありません。');
  if(!manifest.data||manifest.data.format!=='min-kai-tcg-backup'||!Array.isArray(manifest.data.cards)||!Array.isArray(manifest.data.decks))throw new Error('完全バックアップ内のカード・デッキ情報が不正です。');
  const innerVersion=Number(manifest.data.version);if(![1,2,3,4,5,6].includes(innerVersion))throw new Error('完全バックアップ内の通常バックアップ形式に対応していません。');
  const cardIds=new Set(manifest.data.cards.map(c=>String(c.id||'')).filter(Boolean)),imageRecords=[],imageIds=new Set();
@@ -17982,29 +18314,50 @@ function parseFullBackupZip(bytes){
      if(cfg?.assetId&&!backgroundIds.has(String(cfg.assetId)))throw new Error(`テーマで使用している背景画像がZIP内にありません：${label}`);
    }
  }
- return {manifest,backupVersion,imageRecords,links,backgroundRecords,theme,settings:normalizeFullBackupSettings(manifest.settings||{})};
+ const frameRecords=[],frameIds=new Set();
+ if(backupVersion>=4){
+   for(const meta of Array.isArray(manifest.frames)?manifest.frames:[]){
+     if(!meta||!meta.id||!meta.file?.path)throw new Error('完全バックアップ内のフレーム情報が不正です。');
+     const raw=files.get(meta.file.path);
+     if(!raw)throw new Error(`フレームファイルが不足しています：${meta.id}`);
+     const id=String(meta.id);frameIds.add(id);
+     frameRecords.push({
+       id,name:String(meta.name||'カスタムフレーム'),originalName:String(meta.originalName||''),
+       width:Number(meta.width)||0,height:Number(meta.height)||0,createdAt:String(meta.createdAt||''),
+       blob:new Blob([raw],{type:String(meta.file.mime||'image/png')})
+     });
+   }
+ }
+ const frameLinks=backupVersion>=4?(Array.isArray(manifest.frameLinks)?manifest.frameLinks:[])
+   .map(x=>normalizeFrameLink(x,x?.cardId))
+   .filter(x=>cardIds.has(x.cardId)&&frameIds.has(x.frameId)):[];
+ return {manifest,backupVersion,imageRecords,links,backgroundRecords,frameRecords,frameLinks,theme,settings:normalizeFullBackupSettings(manifest.settings||{})};
 }
 async function restoreFullBackupZip(parsed){
  if(!imageSystemAvailable)throw new Error('このブラウザでは画像ストレージを利用できません。');
- await Promise.all([imageReadyPromise,backgroundReadyPromise]);
+ await Promise.all([imageReadyPromise,backgroundReadyPromise,frameReadyPromise]);
  const restoresTheme=parsed.backupVersion>=2&&!!parsed.theme;
  await replaceImageDatabase(parsed.imageRecords,parsed.links,restoresTheme?parsed.backgroundRecords:null);
+ await replaceFrameDatabase(parsed.frameRecords||[],parsed.frameLinks||[]);
  resetImageRuntimeCache();
+ resetFrameRuntimeCache();
  if(restoresTheme)resetBackgroundRuntimeCache();
  const r=restoreBackupObject(parsed.manifest.data,{skipImageReconcile:true});
  boardDisplayPrefs=parsed.settings.boardDisplay;handFollowPrefs=parsed.settings.handFollow;
  save(LS_BOARD_DISPLAY,boardDisplayPrefs);save(LS_HAND_FOLLOW,handFollowPrefs);
  imageLinkCache.clear();for(const raw of parsed.links){const link=normalizeImageLink(raw,raw.cardId);imageLinkCache.set(link.cardId,link)}
+ frameAssetCache.clear();for(const rec of parsed.frameRecords||[]){if(rec?.id)frameAssetCache.set(String(rec.id),rec)}
+ frameLinkCache.clear();for(const raw of parsed.frameLinks||[]){const link=normalizeFrameLink(raw,raw.cardId);if(link.cardId&&link.frameId)frameLinkCache.set(link.cardId,link)}
  if(restoresTheme){
    parsed.backgroundRecords.forEach(rec=>backgroundAssetCache.set(rec.id,rec));
    themePrefs=normalizeThemePrefs(parsed.theme);
    themeDraft=cloneTheme(themePrefs);themeDraftDirty=false;
    save(LS_THEME,themePrefs);
  }
- renderCards();renderDecks();renderSetup(true);updateImageStorageStatus();applyBoardDisplaySettings();
+ renderCards();renderDecks();renderSetup(true);renderCollection();updateImageStorageStatus();applyBoardDisplaySettings();hydrateAllCardFrames();
  await applyThemePrefs(themePrefs);
  if($('#screen-settings')?.classList.contains('active'))renderThemeSettings();
- return {cards:r.cards,decks:r.decks,favorites:r.favorites,albums:collectionData.albums.length,images:parsed.imageRecords.length,linkedCards:parsed.links.length,backgrounds:restoresTheme?parsed.backgroundRecords.length:null,themeRestored:restoresTheme};
+ return {cards:r.cards,decks:r.decks,favorites:r.favorites,albums:collectionData.albums.length,images:parsed.imageRecords.length,linkedCards:parsed.links.length,frames:(parsed.frameRecords||[]).length,framedCards:(parsed.frameLinks||[]).length,backgrounds:restoresTheme?parsed.backgroundRecords.length:null,themeRestored:restoresTheme};
 }
 function exportBackupObject(){
  return {
@@ -18139,7 +18492,7 @@ $('#full-backup-create').onclick=async()=>{
    const result=await buildFullBackupZip(msg=>{status.textContent=msg});
    const stamp=new Date().toISOString().slice(0,10).replaceAll('-','');
    downloadBlob(result.blob,`minkai_tcg_full_backup_${stamp}.zip`);
-   status.textContent=`完全バックアップを作成しました。カード ${cards.length}枚 / デッキ ${decks.length}個 / アルバム ${collectionData.albums.length}冊 / カード画像 ${result.manifest.images.length}件 / 背景 ${result.manifest.backgrounds.length}件 / ${formatBytes(result.blob.size)}`;
+   status.textContent=`完全バックアップを作成しました。カード ${cards.length}枚 / デッキ ${decks.length}個 / アルバム ${collectionData.albums.length}冊 / カード画像 ${result.manifest.images.length}件 / フレーム ${result.manifest.frames.length}件 / 背景 ${result.manifest.backgrounds.length}件 / ${formatBytes(result.blob.size)}`;
    toast('完全バックアップZIPを作成しました');
  }catch(err){
    console.error(err);status.textContent='完全バックアップ作成エラー: '+(err?.message||err);
@@ -18150,12 +18503,12 @@ $('#full-backup-file-input').onchange=async e=>{
  const status=$('#full-backup-status');status.textContent='ZIPを確認しています…';
  try{
    const parsed=parseFullBackupZip(new Uint8Array(await f.arrayBuffer()));
-   const cardCount=parsed.manifest.data.cards.length,deckCount=parsed.manifest.data.decks.length,imageCount=parsed.imageRecords.length,bgCount=parsed.backgroundRecords.length;
+   const cardCount=parsed.manifest.data.cards.length,deckCount=parsed.manifest.data.decks.length,imageCount=parsed.imageRecords.length,frameCount=(parsed.frameRecords||[]).length,bgCount=parsed.backgroundRecords.length;
    const themeText=parsed.theme?` / 背景 ${bgCount}件 / 外観設定あり`:' / 旧形式（現在の外観・背景は維持）';
-   if(!confirm(`現在の登録カード・保存デッキ・カード画像・対象設定を、この完全バックアップ内容に置き換えます。\n\nカード ${cardCount}枚 / デッキ ${deckCount}個 / カード画像 ${imageCount}件${themeText}\n\n復元しますか？`)){e.target.value='';status.textContent='復元をキャンセルしました。';return}
+   if(!confirm(`現在の登録カード・保存デッキ・カード画像・対象設定を、この完全バックアップ内容に置き換えます。\n\nカード ${cardCount}枚 / デッキ ${deckCount}個 / カード画像 ${imageCount}件 / フレーム ${frameCount}件${themeText}\n\n復元しますか？`)){e.target.value='';status.textContent='復元をキャンセルしました。';return}
    status.textContent='完全バックアップを復元しています…';
    const r=await restoreFullBackupZip(parsed);
-   status.textContent=`完全復元しました。カード ${r.cards}枚 / デッキ ${r.decks}個 / お気に入り ${r.favorites}枚 / アルバム ${r.albums}冊 / カード画像 ${r.images}件 / 画像設定カード ${r.linkedCards}枚${r.themeRestored?` / 背景 ${r.backgrounds}件 / 外観設定を復元`:''}`;
+   status.textContent=`完全復元しました。カード ${r.cards}枚 / デッキ ${r.decks}個 / お気に入り ${r.favorites}枚 / アルバム ${r.albums}冊 / カード画像 ${r.images}件 / フレーム ${r.frames}件 / フレーム設定カード ${r.framedCards}枚${r.themeRestored?` / 背景 ${r.backgrounds}件 / 外観設定を復元`:''}`;
    toast('完全バックアップから復元しました');
  }catch(err){
    console.error(err);status.textContent='完全復元エラー: '+(err?.message||err);
@@ -18762,6 +19115,96 @@ async function openCardImageEditor(cardId){
 }
 
 
+
+async function openCardFrameEditor(cardId){
+ const card=cards.find(c=>c.id===cardId);if(!card)return;
+ if(!imageSystemAvailable){toast('このブラウザではフレーム保存を利用できません');return}
+ await frameReadyPromise;
+ let frames=await imageDbGetAll('frames');
+ const current=await getCardFrameLink(cardId);
+ openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-back">カード詳細へ戻る</button></div>
+   <div class="frame-editor-layout">
+     <section class="frame-editor-preview-section">
+       <div id="frame-editor-preview" class="frame-editor-preview">
+         <span class="frame-editor-fallback">${esc(card.name)}</span>
+         ${cardFxHtml(card,'collection')}
+         <span id="frame-editor-overlay" class="card-frame-overlay" data-card-frame="${esc(cardId)}" aria-hidden="true"></span>
+       </div>
+       <div class="muted frame-editor-help">透明PNGをカード表面へ重ねます。表示順は カード画像 → エフェクト → フレーム です。元画像は変更しません。</div>
+       <div class="actions">
+         <button class="btn primary" id="frame-upload">新しいPNGを登録して設定</button>
+         <input id="frame-file-input" type="file" accept="image/png,.png" hidden>
+         <button class="btn" id="frame-remove-card" ${current?'':'disabled'}>このカードから外す</button>
+         <button class="btn danger" id="frame-delete-current" ${current?'':'disabled'}>現在のフレームをライブラリから削除</button>
+       </div>
+     </section>
+     <section class="frame-library-section">
+       <div class="section-head"><h3>カスタムフレームライブラリ</h3><span class="pill">${frames.length}個</span></div>
+       <div class="muted">登録済みPNGは複数のカードで共用できます。中央が透明なオーバースリーブ・装飾枠向けです。</div>
+       <div id="frame-library-grid" class="frame-library-grid">
+         ${frames.length?frames.map(f=>`<button class="frame-library-item ${current?.frameId===f.id?'selected':''}" type="button" data-frame-pick="${esc(f.id)}">
+           <span class="frame-library-thumb" data-frame-thumb="${esc(f.id)}"></span>
+           <span class="frame-library-name">${esc(f.name||f.originalName||'カスタムフレーム')}</span>
+           <span class="frame-library-size">${Number(f.width)||'?'} × ${Number(f.height)||'?'}</span>
+         </button>`).join(''):'<div class="frame-library-empty">まだフレームがありません。透明PNGを登録してください。</div>'}
+       </div>
+     </section>
+   </div>`);
+ $('#frame-editor-back').onclick=()=>openCardManagerDetail(cardId);
+ const preview=$('#frame-editor-preview');
+ await hydrateCardArtBackground(preview,cardId,'full',true);
+ if(preview.classList.contains('has-image'))preview.querySelector('.frame-editor-fallback')?.setAttribute('hidden','');
+ const overlay=$('#frame-editor-overlay');
+ if(overlay){overlay.dataset.frameReady='';hydrateCardFrame(overlay)}
+ const thumbs=$$('[data-frame-thumb]');
+ for(const el of thumbs){
+   const url=await getFrameObjectUrl(el.dataset.frameThumb);
+   if(url&&el.isConnected){el.style.backgroundImage=`url("${url}")`;el.classList.add('frame-loaded')}
+ }
+ $$('[data-frame-pick]').forEach(b=>b.onclick=async()=>{
+   try{
+     await putCardFrameLink(cardId,b.dataset.framePick);
+     renderCollection();if(board)renderBoard();hydrateAllCardFrames();
+     toast('フレームを設定しました');
+     openCardFrameEditor(cardId);
+   }catch(err){console.error(err);toast(err?.message||'フレームを設定できませんでした')}
+ });
+ const input=$('#frame-file-input');
+ $('#frame-upload').onclick=()=>input.click();
+ input.onchange=async()=>{
+   const file=input.files?.[0];if(!file)return;
+   const btn=$('#frame-upload');btn.disabled=true;btn.textContent='登録中…';
+   try{
+     const rec=await createFrameAssetRecord(file);
+     await saveFrameAsset(rec);
+     await putCardFrameLink(cardId,rec.id);
+     renderCollection();if(board)renderBoard();updateImageStorageStatus();
+     toast('フレームPNGを登録してカードへ設定しました');
+     openCardFrameEditor(cardId);
+   }catch(err){
+     console.error(err);toast(err?.message||'フレームを登録できませんでした');
+     if(btn?.isConnected){btn.disabled=false;btn.textContent='新しいPNGを登録して設定'}
+   }
+ };
+ $('#frame-remove-card').onclick=async()=>{
+   if(!current)return;
+   await deleteCardFrameLink(cardId);
+   renderCollection();if(board)renderBoard();hydrateAllCardFrames();
+   toast('このカードからフレームを外しました');
+   openCardFrameEditor(cardId);
+ };
+ $('#frame-delete-current').onclick=async()=>{
+   if(!current)return;
+   const asset=await getFrameAsset(current.frameId),name=asset?.name||'このフレーム';
+   const links=await imageDbGetAll('frameLinks'),used=links.filter(x=>String(x.frameId||'')===String(current.frameId)).length;
+   if(!confirm(`${name} をフレームライブラリから削除しますか？\nこのフレームを使用中のカード ${used}枚からも解除されます。`))return;
+   await deleteFrameAsset(current.frameId);
+   renderCollection();if(board)renderBoard();updateImageStorageStatus();hydrateAllCardFrames();
+   toast('フレームをライブラリから削除しました');
+   openCardFrameEditor(cardId);
+ };
+}
+
 function readFxEditorLayers(card){
  const old=normalizeCardVisualEffects(card.visualEffects),result=[];
  for(let slot=1;slot<=4;slot++){
@@ -18941,7 +19384,7 @@ function openCardManagerDetail(id,opt={}){
    <div class="muted manager-text-export-title">テキスト出力</div>
    <div class="actions"><button class="btn" id="manager-copy-jelly">ゼリー君式でコピー</button><button class="btn" id="manager-copy-bake">化けさん式でコピー</button></div>
  </div>
- <div class="actions"><button class="btn primary" id="manager-edit-card">編集</button><button class="btn" id="manager-card-fx">エフェクト設定</button><button class="btn" id="manager-clone-card">複製</button></div>
+ <div class="actions"><button class="btn primary" id="manager-edit-card">編集</button><button class="btn" id="manager-card-fx">エフェクト設定</button><button class="btn" id="manager-card-frame">フレーム設定</button><button class="btn" id="manager-clone-card">複製</button></div>
  <div class="manager-danger-zone"><button class="btn danger" id="manager-delete-card">削除</button></div>`);
  $('#manager-detail-close').onclick=closeModal;
  $('#manager-image-toggle').onclick=()=>openCardManagerDetail(id,{imageExpanded:!imageExpanded});
@@ -18953,6 +19396,7 @@ function openCardManagerDetail(id,opt={}){
  $('#manager-copy-jelly').onclick=()=>copyManagerCardText(c,'jelly');
  $('#manager-copy-bake').onclick=()=>copyManagerCardText(c,'bake');
  $('#manager-edit-card').onclick=()=>openCardManagerEdit(id);$('#manager-card-fx').onclick=()=>openCardEffectEditor(id,'manager');
+ $('#manager-card-frame').onclick=()=>openCardFrameEditor(id);
  $('#manager-clone-card').onclick=()=>cloneCard(id);
  $('#manager-delete-card').onclick=()=>deleteCard(id);
 }
@@ -18992,6 +19436,7 @@ async function cloneCard(id){
  cards.push(clone);
  save(LS_CARDS,cards);
  try{await cloneCardImageLink(id,clone.id)}catch(err){console.warn('画像リンクの複製に失敗',err)}
+ try{await cloneCardFrameLink(id,clone.id)}catch(err){console.warn('フレームリンクの複製に失敗',err)}
  touchRecentCards(clone.id);
  touchRegisteredCards(clone.id);
  renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();updateImageStorageStatus();
@@ -19011,6 +19456,7 @@ async function deleteCard(id){
  removeCardFromCollectionData(id);
  save(LS_CARDS,cards);save(LS_DECKS,decks);save(LS_CARD_RECENT,recentCardIds);save(LS_CARD_REGISTER_RECENT,registeredRecentCardIds);
  try{await deleteCardImageLink(id)}catch(err){console.warn('画像リンクの削除に失敗',err)}
+ try{await deleteCardFrameLink(id)}catch(err){console.warn('フレームリンクの削除に失敗',err)}
  closeModal();
  renderRegisterHistory();renderCards();renderDecks();renderSetup();updateImageStorageStatus();
  toast('カードを削除しました');
@@ -20360,7 +20806,7 @@ function bindCollectionImages(){
 function collectionCardGalleryHtml(c,showNames){
  const fav=isCollectionFavorite(c.id);
  return `<div class="collection-card ${showNames?'':'image-only'}" data-collection-card="${c.id}">
-   <div class="collection-card-art" data-collection-art="${c.id}"><span class="collection-placeholder-name">${esc(c.name)}</span>${cardFxHtml(c,'collection')}<button class="collection-favorite ${fav?'active':''}" type="button" data-collection-favorite="${c.id}" aria-label="お気に入り">${fav?'★':'☆'}</button></div>
+   <div class="collection-card-art" data-collection-art="${c.id}"><span class="collection-placeholder-name">${esc(c.name)}</span>${cardFxHtml(c,'collection')}${cardFrameHtml(c)}<button class="collection-favorite ${fav?'active':''}" type="button" data-collection-favorite="${c.id}" aria-label="お気に入り">${fav?'★':'☆'}</button></div>
    ${showNames?`<div class="collection-card-name">${esc(c.name)}</div>`:''}
  </div>`;
 }
@@ -20370,7 +20816,7 @@ function collectionEmptyGalleryHtml(slotIndex){
 function collectionCardListHtml(c){
  const fav=isCollectionFavorite(c.id);
  return `<div class="collection-list-row" data-collection-card="${c.id}">
-   <div class="collection-list-art" data-collection-art="${c.id}"><span class="collection-placeholder-name">${esc(c.name)}</span>${cardFxHtml(c,'collection')}</div>
+   <div class="collection-list-art" data-collection-art="${c.id}"><span class="collection-placeholder-name">${esc(c.name)}</span>${cardFxHtml(c,'collection')}${cardFrameHtml(c)}</div>
    <div class="grow"><b>${esc(c.name)}</b><div class="muted">${esc(c.type||'')}${c.race?` / ${esc(c.race)}`:''}</div></div>
    <button class="collection-favorite list-favorite ${fav?'active':''}" type="button" data-collection-favorite="${c.id}">${fav?'★':'☆'}</button>
  </div>`;
@@ -21044,7 +21490,7 @@ function openCollectionViewer(id){
    </div>
    <div class="collection-viewer-center">
      <button class="collection-viewer-arrow viewer-controls" id="collection-viewer-prev" ${idx<=0?'disabled':''} aria-label="前のカード">‹</button>
-     <div id="collection-viewer-art" class="collection-viewer-art"><span>${esc(card.name)}</span>${cardFxHtml(card,'collection')}</div>
+     <div id="collection-viewer-art" class="collection-viewer-art"><span>${esc(card.name)}</span>${cardFxHtml(card,'collection')}${cardFrameHtml(card)}</div>
      <button class="collection-viewer-arrow viewer-controls" id="collection-viewer-next" ${idx>=ids.length-1?'disabled':''} aria-label="次のカード">›</button>
    </div>
    <div class="collection-viewer-bottom viewer-controls">
@@ -21690,7 +22136,7 @@ function renderDeckBox(p,pi,z,label){const count=physicalCount(p[z]),empty=count
 function renderUtility(p,pi){return `<div class="utility-grid"><div class="deck-pair">${renderDeckBox(p,pi,'deck','デッキ')}${renderDeckBox(p,pi,'otherDeck','その他デッキ')}</div><div class="grave-banish-pair">${compactZoneBox(p,pi,'grave')}${compactZoneBox(p,pi,'banish')}</div></div>`}
 function physicalCount(arr){return arr.reduce((a,p)=>a+p.cards.length,0)}
 function topCard(pile){return pile.cards[0]}
-function renderPile(pile,pi,z,index){const c=topCard(pile), counters=c.counters?.length?c.counters.map(x=>`${esc(x.name)} ${x.value}`).join(' / '):'カウンターなし';const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;const title=`${c.name}${c.memo?'\nメモ: '+c.memo:''}${pile.cards.length>1?'\n重なり: '+pile.cards.map(x=>x.name).join(' → '):''}`;if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}"><div class="back-title">裏向きカード</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';return `<div class="pile ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}${cardFxHtml(c,'board')}<div class="name">${esc(c.name)}</div><div class="stats"><span>Lv ${esc(c.level||'-')}</span><span>PW ${pow===null?'-':pow}</span></div><div class="counter-line">${counters}</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`}
+function renderPile(pile,pi,z,index){const c=topCard(pile), counters=c.counters?.length?c.counters.map(x=>`${esc(x.name)} ${x.value}`).join(' / '):'カウンターなし';const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;const title=`${c.name}${c.memo?'\nメモ: '+c.memo:''}${pile.cards.length>1?'\n重なり: '+pile.cards.map(x=>x.name).join(' → '):''}`;if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}"><div class="back-title">裏向きカード</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';return `<div class="pile ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}${cardFxHtml(c,'board')}${cardFrameHtml(c)}<div class="name">${esc(c.name)}</div><div class="stats"><span>Lv ${esc(c.level||'-')}</span><span>PW ${pow===null?'-':pow}</span></div><div class="counter-line">${counters}</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`}
 
 async function hydrateBoardImages(){
  const root=$('#board-main');
@@ -22036,7 +22482,7 @@ function openDetail(pi,z,index,cardIndex=0,navIds){const pile=getPile(pi,z,index
  const navPos=detailNav.ids.indexOf(c.instanceId),navTotal=detailNav.ids.length;
  const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;
  const powerBreakdown=powerInfo.has?`<div class="muted power-breakdown">元値 ${powerInfo.base} / 個別 ${signedNumber(powerInfo.individual)}${z==='character'?` / ホーム ${signedNumber(powerInfo.home)}`:''}</div>`:'';
- openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}</div><h3>${esc(c.name)}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(c.level||'-')}</span><span class="pill">POWER ${pow===null?'-':pow}</span></div>${powerBreakdown}<div class="muted">${esc(c.race||'種族なし')}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${esc(c.effect||'効果テキストなし')}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><label style="margin-top:10px">POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h3>重なり</h3><div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span>${i+1}</span><div><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}</div></div><div><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div><h3>カウンター</h3><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button></div></div>`);
+ openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div><h3>${esc(c.name)}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(c.level||'-')}</span><span class="pill">POWER ${pow===null?'-':pow}</span></div>${powerBreakdown}<div class="muted">${esc(c.race||'種族なし')}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${esc(c.effect||'効果テキストなし')}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><label style="margin-top:10px">POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h3>重なり</h3><div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span>${i+1}</span><div><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}</div></div><div><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div><h3>カウンター</h3><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button></div></div>`);
  hydrateBoardDetailImage(cardImageSourceId(c));
  $('#detail-close').onclick=closeModal;
  const moveDetailNav=step=>{if(!detailNav)return;const pos=detailNav.ids.indexOf(c.instanceId),id=detailNav.ids[pos+step];if(!id)return;const loc=findCardInstance(detailNav.pi,detailNav.z,id);if(loc)openDetail(detailNav.pi,detailNav.z,loc.index,loc.cardIndex,detailNav.ids)};
@@ -22402,6 +22848,7 @@ $('#image-storage-cleanup').onclick=async()=>{
 // initialize
 renderRegisterHistory();renderCards();renderDecks();renderSetup();
 imageReadyPromise=initImageSystem().then(ok=>{renderCards();renderCollection();updateImageStorageStatus();if(board)renderBoard();return ok}).catch(err=>{imageSystemAvailable=false;renderCards();updateImageStorageStatus();console.warn('カード画像機能を初期化できませんでした',err);return false});
+frameReadyPromise=initFrameSystem().then(async ok=>{await reconcileFrameLinksWithCards();initFrameHydrationObserver();renderCollection();if(board)renderBoard();hydrateAllCardFrames();updateImageStorageStatus();return ok}).catch(err=>{console.warn('カードフレーム機能を初期化できませんでした',err);return false});
 backgroundReadyPromise=initBackgroundSystem().then(async ok=>{await applyThemePrefs(themePrefs);return ok}).catch(err=>{console.warn('背景ライブラリを初期化できませんでした',err);applyThemePrefs(themePrefs);return false});
 })();
 </script>
