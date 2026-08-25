@@ -1,11 +1,16 @@
-const CACHE_NAME = 'minkai-tcg-simulator-v8-8';
+const CACHE_NAME = 'minkai-tcg-simulator-v8-9';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
-  './icons/apple-touch-icon.png'
+  './icons/apple-touch-icon.png',
+  './frames/sample-royal-gold.png',
+  './frames/sample-silver-prism.png',
+  './frames/sample-sakura-lacquer.png',
+  './frames/sample-arcane-halo.png',
+  './frames/sample-cyber-circuit.png'
 ];
 
 self.addEventListener('install', event => {

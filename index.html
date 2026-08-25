@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v8.8</title>
+<title>みん会TCG Simulator v8.9</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -15525,6 +15525,23 @@ body.album-direct-dragging *{cursor:grabbing!important}
  .frame-editor-preview{width:min(100%,260px)}
 }
 
+
+/* ==========================================================
+   v8.9 Frame editor reliability + built-in sample oversleeves
+   ========================================================== */
+.frame-editor-loading{
+ min-height:180px;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:10px;
+ text-align:center
+}
+.frame-library-meta{display:flex;align-items:center;justify-content:space-between;gap:5px;margin-top:3px}
+.frame-library-badge{font-size:8px;padding:1px 4px}
+.frame-library-item.selected .frame-library-thumb{box-shadow:inset 0 0 0 2px rgba(180,215,255,.48)}
+
 </style>
 </head>
 <body>
@@ -15533,7 +15550,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v8.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v8.9 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -16981,6 +16998,18 @@ async function reconcileImageLinksWithCards(){
 }
 
 /* v8.8 Card frame / oversleeve system */
+/* v8.9 Built-in sample oversleeves
+   Original generic designs inspired by common TCG outer-sleeve decoration styles. */
+const BUILTIN_CARD_FRAMES=[
+ {id:'builtin_royal_gold',name:'サンプル：ロイヤルゴールド',originalName:'sample-royal-gold.png',width:1000,height:1400,builtin:true,path:'./frames/sample-royal-gold.png'},
+ {id:'builtin_silver_prism',name:'サンプル：シルバープリズム',originalName:'sample-silver-prism.png',width:1000,height:1400,builtin:true,path:'./frames/sample-silver-prism.png'},
+ {id:'builtin_sakura_lacquer',name:'サンプル：桜ラッカー',originalName:'sample-sakura-lacquer.png',width:1000,height:1400,builtin:true,path:'./frames/sample-sakura-lacquer.png'},
+ {id:'builtin_arcane_halo',name:'サンプル：アーケイン・ハロ',originalName:'sample-arcane-halo.png',width:1000,height:1400,builtin:true,path:'./frames/sample-arcane-halo.png'},
+ {id:'builtin_cyber_circuit',name:'サンプル：サイバー・サーキット',originalName:'sample-cyber-circuit.png',width:1000,height:1400,builtin:true,path:'./frames/sample-cyber-circuit.png'}
+];
+function builtinFrameById(frameId){return BUILTIN_CARD_FRAMES.find(x=>x.id===String(frameId||''))||null}
+function isBuiltinFrameId(frameId){return !!builtinFrameById(frameId)}
+
 function normalizeFrameLink(raw,cardId=raw?.cardId||''){
  return {cardId:String(cardId||''),frameId:String(raw?.frameId||'')};
 }
@@ -17041,7 +17070,6 @@ async function cloneCardFrameLink(sourceCardId,targetCardId){
  return putCardFrameLink(targetCardId,old.frameId);
 }
 async function reconcileFrameLinksWithCards(){
- await frameReadyPromise;
  const valid=new Set(cards.map(c=>c.id)),links=await imageDbGetAll('frameLinks');
  for(const raw of links){
    if(valid.has(String(raw.cardId||'')))continue;
@@ -17050,8 +17078,9 @@ async function reconcileFrameLinksWithCards(){
  }
 }
 async function getFrameAsset(frameId){
- await frameReadyPromise;
  const id=String(frameId||'');if(!id)return null;
+ const builtin=builtinFrameById(id);if(builtin)return builtin;
+ await frameReadyPromise;
  if(frameAssetCache.has(id))return frameAssetCache.get(id);
  const rec=await imageDbGet('frames',id);
  if(rec?.blob)frameAssetCache.set(id,rec);
@@ -17059,6 +17088,7 @@ async function getFrameAsset(frameId){
 }
 async function getFrameObjectUrl(frameId){
  const id=String(frameId||'');if(!id)return '';
+ const builtin=builtinFrameById(id);if(builtin)return builtin.path;
  if(frameUrlCache.has(id))return frameUrlCache.get(id);
  const rec=await getFrameAsset(id);if(!rec?.blob)return '';
  const url=URL.createObjectURL(rec.blob);
@@ -17102,6 +17132,7 @@ async function saveFrameAsset(rec){
 }
 async function deleteFrameAsset(frameId){
  const id=String(frameId||'');if(!id)return;
+ if(isBuiltinFrameId(id))throw new Error('サンプルフレームはライブラリから削除できません');
  const links=await imageDbGetAll('frameLinks');
  for(const raw of links){
    if(String(raw.frameId||'')!==id)continue;
@@ -17248,7 +17279,7 @@ async function updateImageStorageStatus(){
        <div class="image-storage-stat"><b>${formatBytes(s.imageBytes)}</b><span>カード画像データの概算容量</span></div>
        <div class="image-storage-stat"><b>${s.backgroundCount}画像</b><span>背景ライブラリ</span></div>
        <div class="image-storage-stat"><b>${formatBytes(s.backgroundBytes)}</b><span>背景画像データの概算容量</span></div>
-       <div class="image-storage-stat"><b>${s.frameCount}個</b><span>カスタムフレーム / ${s.frameLinkedCards}枚に設定</span></div>
+       <div class="image-storage-stat"><b>5種 + ${s.frameCount}個</b><span>標準サンプル + カスタムフレーム / ${s.frameLinkedCards}枚に設定</span></div>
        <div class="image-storage-stat"><b>${formatBytes(s.frameBytes)}</b><span>フレームPNGの概算容量</span></div>
        <div class="image-storage-stat"><b>${quota}</b><span>このサイト全体の保存領域 使用量 / 上限</span></div>
      </div>`;
@@ -18213,7 +18244,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
      thumb:{path:thumbPath,mime:rec.thumbBlob.type||'application/octet-stream',size:thumbBytes.length}
    });
  }
- const frameIds=new Set(allFrames.filter(x=>x?.id&&x?.blob).map(x=>String(x.id)));
+ const frameIds=new Set([...BUILTIN_CARD_FRAMES.map(x=>x.id),...allFrames.filter(x=>x?.id&&x?.blob).map(x=>String(x.id))]);
  const frameLinks=allFrameLinks.map(x=>normalizeFrameLink(x,x?.cardId)).filter(x=>validCardIds.has(x.cardId)&&frameIds.has(x.frameId));
  const frameMeta=[];
  for(let i=0;i<allFrames.length;i++){
@@ -18230,7 +18261,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    });
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'8.8',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'8.9',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:6,
@@ -18314,7 +18345,7 @@ function parseFullBackupZip(bytes){
      if(cfg?.assetId&&!backgroundIds.has(String(cfg.assetId)))throw new Error(`テーマで使用している背景画像がZIP内にありません：${label}`);
    }
  }
- const frameRecords=[],frameIds=new Set();
+ const frameRecords=[],frameIds=new Set(BUILTIN_CARD_FRAMES.map(x=>x.id));
  if(backupVersion>=4){
    for(const meta of Array.isArray(manifest.frames)?manifest.frames:[]){
      if(!meta||!meta.id||!meta.file?.path)throw new Error('完全バックアップ内のフレーム情報が不正です。');
@@ -19119,90 +19150,116 @@ async function openCardImageEditor(cardId){
 async function openCardFrameEditor(cardId){
  const card=cards.find(c=>c.id===cardId);if(!card)return;
  if(!imageSystemAvailable){toast('このブラウザではフレーム保存を利用できません');return}
- await frameReadyPromise;
- let frames=await imageDbGetAll('frames');
- const current=await getCardFrameLink(cardId);
- openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-back">カード詳細へ戻る</button></div>
-   <div class="frame-editor-layout">
-     <section class="frame-editor-preview-section">
-       <div id="frame-editor-preview" class="frame-editor-preview">
-         <span class="frame-editor-fallback">${esc(card.name)}</span>
-         ${cardFxHtml(card,'collection')}
-         <span id="frame-editor-overlay" class="card-frame-overlay" data-card-frame="${esc(cardId)}" aria-hidden="true"></span>
-       </div>
-       <div class="muted frame-editor-help">透明PNGをカード表面へ重ねます。表示順は カード画像 → エフェクト → フレーム です。元画像は変更しません。</div>
-       <div class="actions">
-         <button class="btn primary" id="frame-upload">新しいPNGを登録して設定</button>
-         <input id="frame-file-input" type="file" accept="image/png,.png" hidden>
-         <button class="btn" id="frame-remove-card" ${current?'':'disabled'}>このカードから外す</button>
-         <button class="btn danger" id="frame-delete-current" ${current?'':'disabled'}>現在のフレームをライブラリから削除</button>
-       </div>
-     </section>
-     <section class="frame-library-section">
-       <div class="section-head"><h3>カスタムフレームライブラリ</h3><span class="pill">${frames.length}個</span></div>
-       <div class="muted">登録済みPNGは複数のカードで共用できます。中央が透明なオーバースリーブ・装飾枠向けです。</div>
-       <div id="frame-library-grid" class="frame-library-grid">
-         ${frames.length?frames.map(f=>`<button class="frame-library-item ${current?.frameId===f.id?'selected':''}" type="button" data-frame-pick="${esc(f.id)}">
-           <span class="frame-library-thumb" data-frame-thumb="${esc(f.id)}"></span>
-           <span class="frame-library-name">${esc(f.name||f.originalName||'カスタムフレーム')}</span>
-           <span class="frame-library-size">${Number(f.width)||'?'} × ${Number(f.height)||'?'}</span>
-         </button>`).join(''):'<div class="frame-library-empty">まだフレームがありません。透明PNGを登録してください。</div>'}
-       </div>
-     </section>
-   </div>`);
- $('#frame-editor-back').onclick=()=>openCardManagerDetail(cardId);
- const preview=$('#frame-editor-preview');
- await hydrateCardArtBackground(preview,cardId,'full',true);
- if(preview.classList.contains('has-image'))preview.querySelector('.frame-editor-fallback')?.setAttribute('hidden','');
- const overlay=$('#frame-editor-overlay');
- if(overlay){overlay.dataset.frameReady='';hydrateCardFrame(overlay)}
- const thumbs=$$('[data-frame-thumb]');
- for(const el of thumbs){
-   const url=await getFrameObjectUrl(el.dataset.frameThumb);
-   if(url&&el.isConnected){el.style.backgroundImage=`url("${url}")`;el.classList.add('frame-loaded')}
- }
- $$('[data-frame-pick]').forEach(b=>b.onclick=async()=>{
-   try{
-     await putCardFrameLink(cardId,b.dataset.framePick);
-     renderCollection();if(board)renderBoard();hydrateAllCardFrames();
-     toast('フレームを設定しました');
-     openCardFrameEditor(cardId);
-   }catch(err){console.error(err);toast(err?.message||'フレームを設定できませんでした')}
- });
- const input=$('#frame-file-input');
- $('#frame-upload').onclick=()=>input.click();
- input.onchange=async()=>{
-   const file=input.files?.[0];if(!file)return;
-   const btn=$('#frame-upload');btn.disabled=true;btn.textContent='登録中…';
-   try{
-     const rec=await createFrameAssetRecord(file);
-     await saveFrameAsset(rec);
-     await putCardFrameLink(cardId,rec.id);
-     renderCollection();if(board)renderBoard();updateImageStorageStatus();
-     toast('フレームPNGを登録してカードへ設定しました');
-     openCardFrameEditor(cardId);
-   }catch(err){
-     console.error(err);toast(err?.message||'フレームを登録できませんでした');
-     if(btn?.isConnected){btn.disabled=false;btn.textContent='新しいPNGを登録して設定'}
+
+ /* Show feedback immediately; v8.8 could appear completely unresponsive while
+    waiting for the frame initialization promise. */
+ openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-loading-back">カード詳細へ戻る</button></div>
+   <div class="frame-editor-loading"><span class="pill">読み込み中…</span><div class="muted">フレームライブラリを準備しています。</div></div>`);
+ $('#frame-editor-loading-back').onclick=()=>openCardManagerDetail(cardId);
+
+ try{
+   const ready=await frameReadyPromise;
+   if(ready===false)throw new Error('フレーム保存機能を初期化できませんでした');
+   const customFrames=await imageDbGetAll('frames');
+   const frames=[...BUILTIN_CARD_FRAMES,...customFrames];
+   const current=await getCardFrameLink(cardId);
+   const currentIsBuiltin=!!current&&isBuiltinFrameId(current.frameId);
+
+   openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-back">カード詳細へ戻る</button></div>
+     <div class="frame-editor-layout">
+       <section class="frame-editor-preview-section">
+         <div id="frame-editor-preview" class="frame-editor-preview">
+           <span class="frame-editor-fallback">${esc(card.name)}</span>
+           ${cardFxHtml(card,'collection')}
+           <span id="frame-editor-overlay" class="card-frame-overlay" data-card-frame="${esc(cardId)}" aria-hidden="true"></span>
+         </div>
+         <div class="muted frame-editor-help">カード画像 → エフェクト → フレームの順で重ねます。サンプル5種はすぐ使え、透明PNGの追加登録もできます。元画像は変更しません。</div>
+         <div class="actions">
+           <button class="btn primary" id="frame-upload">新しいPNGを登録して設定</button>
+           <input id="frame-file-input" type="file" accept="image/png,.png" hidden>
+           <button class="btn" id="frame-remove-card" ${current?'':'disabled'}>このカードから外す</button>
+           <button class="btn danger" id="frame-delete-current" ${(!current||currentIsBuiltin)?'disabled':''}>${currentIsBuiltin?'サンプルは削除不可':'現在のフレームをライブラリから削除'}</button>
+         </div>
+       </section>
+       <section class="frame-library-section">
+         <div class="section-head"><h3>フレームライブラリ</h3><span class="pill">サンプル5種 + カスタム${customFrames.length}個</span></div>
+         <div class="muted">実物TCGのオーバースリーブでよくある「外周・角を飾って中央イラストを見せる」方向を参考にしたオリジナルサンプルです。</div>
+         <div id="frame-library-grid" class="frame-library-grid">
+           ${frames.map(f=>`<button class="frame-library-item ${current?.frameId===f.id?'selected':''}" type="button" data-frame-pick="${esc(f.id)}">
+             <span class="frame-library-thumb" data-frame-thumb="${esc(f.id)}"></span>
+             <span class="frame-library-name">${esc(f.name||f.originalName||'カスタムフレーム')}</span>
+             <span class="frame-library-meta">${f.builtin?'<span class="pill frame-library-badge">サンプル</span>':''}<span class="frame-library-size">${Number(f.width)||'?'} × ${Number(f.height)||'?'}</span></span>
+           </button>`).join('')}
+         </div>
+       </section>
+     </div>`);
+
+   $('#frame-editor-back').onclick=()=>openCardManagerDetail(cardId);
+   const preview=$('#frame-editor-preview');
+   await hydrateCardArtBackground(preview,cardId,'full',true);
+   if(preview.classList.contains('has-image'))preview.querySelector('.frame-editor-fallback')?.setAttribute('hidden','');
+   const overlay=$('#frame-editor-overlay');
+   if(overlay){overlay.dataset.frameReady='';hydrateCardFrame(overlay)}
+
+   const thumbs=$$('[data-frame-thumb]');
+   for(const el of thumbs){
+     const url=await getFrameObjectUrl(el.dataset.frameThumb);
+     if(url&&el.isConnected){el.style.backgroundImage=`url("${url}")`;el.classList.add('frame-loaded')}
    }
- };
- $('#frame-remove-card').onclick=async()=>{
-   if(!current)return;
-   await deleteCardFrameLink(cardId);
-   renderCollection();if(board)renderBoard();hydrateAllCardFrames();
-   toast('このカードからフレームを外しました');
-   openCardFrameEditor(cardId);
- };
- $('#frame-delete-current').onclick=async()=>{
-   if(!current)return;
-   const asset=await getFrameAsset(current.frameId),name=asset?.name||'このフレーム';
-   const links=await imageDbGetAll('frameLinks'),used=links.filter(x=>String(x.frameId||'')===String(current.frameId)).length;
-   if(!confirm(`${name} をフレームライブラリから削除しますか？\nこのフレームを使用中のカード ${used}枚からも解除されます。`))return;
-   await deleteFrameAsset(current.frameId);
-   renderCollection();if(board)renderBoard();updateImageStorageStatus();hydrateAllCardFrames();
-   toast('フレームをライブラリから削除しました');
-   openCardFrameEditor(cardId);
- };
+
+   $$('[data-frame-pick]').forEach(b=>b.onclick=async()=>{
+     try{
+       await putCardFrameLink(cardId,b.dataset.framePick);
+       renderCollection();if(board)renderBoard();hydrateAllCardFrames();
+       toast('フレームを設定しました');
+       openCardFrameEditor(cardId);
+     }catch(err){console.error(err);toast(err?.message||'フレームを設定できませんでした')}
+   });
+
+   const input=$('#frame-file-input');
+   $('#frame-upload').onclick=()=>input.click();
+   input.onchange=async()=>{
+     const file=input.files?.[0];if(!file)return;
+     const btn=$('#frame-upload');btn.disabled=true;btn.textContent='登録中…';
+     try{
+       const rec=await createFrameAssetRecord(file);
+       await saveFrameAsset(rec);
+       await putCardFrameLink(cardId,rec.id);
+       renderCollection();if(board)renderBoard();updateImageStorageStatus();
+       toast('フレームPNGを登録してカードへ設定しました');
+       openCardFrameEditor(cardId);
+     }catch(err){
+       console.error(err);toast(err?.message||'フレームを登録できませんでした');
+       if(btn?.isConnected){btn.disabled=false;btn.textContent='新しいPNGを登録して設定'}
+     }
+   };
+
+   $('#frame-remove-card').onclick=async()=>{
+     if(!current)return;
+     await deleteCardFrameLink(cardId);
+     renderCollection();if(board)renderBoard();hydrateAllCardFrames();
+     toast('このカードからフレームを外しました');
+     openCardFrameEditor(cardId);
+   };
+
+   $('#frame-delete-current').onclick=async()=>{
+     if(!current)return;
+     if(isBuiltinFrameId(current.frameId)){toast('サンプルフレームは削除できません');return}
+     const asset=await getFrameAsset(current.frameId),name=asset?.name||'このフレーム';
+     const links=await imageDbGetAll('frameLinks'),used=links.filter(x=>String(x.frameId||'')===String(current.frameId)).length;
+     if(!confirm(`${name} をフレームライブラリから削除しますか？\nこのフレームを使用中のカード ${used}枚からも解除されます。`))return;
+     await deleteFrameAsset(current.frameId);
+     renderCollection();if(board)renderBoard();updateImageStorageStatus();hydrateAllCardFrames();
+     toast('フレームをライブラリから削除しました');
+     openCardFrameEditor(cardId);
+   };
+ }catch(err){
+   console.error('フレーム設定画面を開けませんでした',err);
+   openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-error-back">カード詳細へ戻る</button></div>
+     <div class="panel"><b>フレーム設定を開けませんでした。</b><div class="muted" style="margin-top:8px">${esc(err?.message||String(err))}</div></div>`);
+   $('#frame-editor-error-back').onclick=()=>openCardManagerDetail(cardId);
+   toast('フレーム設定を開けませんでした');
+ }
 }
 
 function readFxEditorLayers(card){
