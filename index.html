@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v2.6</title>
+<title>みん会TCG Simulator v3.1</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -467,32 +467,178 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
 .manager-image-section.collapsed{padding-bottom:1px}
 .manager-image-section.expanded .manager-image-collapsed-head{margin-bottom:2px}
 
+
+/* v2.7 テーマ基盤 / 共通背景 / 背景ライブラリ */
+:root{
+  --theme-ui-opacity:.94;
+  --theme-bg-color:#0f1115;
+}
+html{background:var(--theme-bg-color)}
+body{background:transparent;position:relative}
+#app-background-layer{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:var(--theme-bg-color)}
+#app-background-image{position:absolute;inset:-22px;background-repeat:no-repeat;background-position:50% 50%;background-size:cover;transform:scale(1.015);transform-origin:center}
+#app-background-overlay{position:absolute;inset:0;background:rgba(0,0,0,.25)}
+main{position:relative;z-index:1}
+.appbar{background:rgba(15,17,21,var(--theme-ui-opacity))}
+.hero,.panel{background:rgba(23,26,33,var(--theme-ui-opacity))}
+.list-row{background:rgba(32,36,45,var(--theme-ui-opacity))}
+.player-board{background:rgba(18,22,29,var(--theme-ui-opacity))}
+body.theme-readability .hero,
+body.theme-readability .panel,
+body.theme-readability .list-row,
+body.theme-readability .player-board{backdrop-filter:blur(7px)}
+.btn.primary,.appbar button.primary{background:color-mix(in srgb,var(--accent) 58%,#11213a);border-color:var(--accent)}
+.settings-nav-button{white-space:nowrap}
+.settings-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.settings-pane{display:none}.settings-pane.active{display:block}
+.settings-grid{align-items:start}
+.theme-color-row{display:flex;align-items:center;gap:9px}
+.theme-color-row input[type="color"]{width:58px;height:38px;padding:3px;flex:0 0 auto}
+.theme-future-note{margin-top:12px;padding:9px;border:1px solid var(--line);border-radius:9px;background:rgba(15,19,26,.65);font-size:12px;color:var(--muted);line-height:1.55}
+.theme-future-note b{display:block;color:var(--text);margin-bottom:3px}
+.theme-background-layout{display:grid;grid-template-columns:minmax(280px,1.1fr) minmax(300px,.9fr);gap:15px;align-items:start}
+.theme-background-preview{position:relative;aspect-ratio:16/9;border:1px solid #4a5362;border-radius:13px;overflow:hidden;background:#0f1115;touch-action:none;user-select:none}
+.theme-background-preview-image{position:absolute;inset:-10px;background-repeat:no-repeat;background-position:50% 50%;background-size:cover;transform:scale(1.02)}
+.theme-background-preview-overlay{position:absolute;inset:0;background:rgba(0,0,0,.25)}
+.theme-background-preview-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px}
+.theme-background-preview-caption{position:absolute;right:7px;bottom:7px;background:rgba(5,8,12,.75);color:#e8ecf3;padding:3px 6px;border-radius:6px;font-size:11px}
+.theme-background-controls{display:grid;gap:10px}
+.theme-control-group{background:rgba(16,20,27,.72);border:1px solid var(--line);border-radius:10px;padding:10px}
+.theme-control-group h4{margin:0 0 8px}
+.theme-control-group input[type="range"]{padding:0}
+.theme-position-grid{margin-top:8px}
+.theme-position-grid .btn.active{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 25%,#20242d)}
+.background-library-drop{border:1px dashed #596477;border-radius:11px;background:#0e1218;padding:14px;text-align:center;cursor:pointer;outline:none}
+.background-library-drop.drag-over,.background-library-drop:focus{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 26%,transparent)}
+.background-library-list{display:grid;gap:8px;margin-top:12px;max-height:50vh;overflow:auto}
+.background-library-row{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:9px;align-items:center;border:1px solid var(--line);background:#10141b;border-radius:10px;padding:8px}
+.background-library-thumb{width:96px;height:60px;border-radius:7px;background:#090c11 center/cover no-repeat;border:1px solid #39414f}
+.background-library-meta{min-width:0}
+.background-library-meta b{display:block;overflow-wrap:anywhere}
+.background-library-actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.background-library-selected{border-color:var(--accent)}
+.background-library-viewer{max-width:min(92vw,1000px);max-height:72vh;display:block;margin:0 auto;border-radius:10px;object-fit:contain;background:#090c11}
+.theme-unsaved{border-color:#7b6f3a;color:#eadb9c}
+@media(max-width:800px){
+  .theme-background-layout,.settings-grid{grid-template-columns:1fr}
+}
+@media(max-width:650px){
+  .background-library-row{grid-template-columns:72px minmax(0,1fr)}
+  .background-library-thumb{width:72px;height:54px}
+  .background-library-actions{grid-column:1/-1;justify-content:flex-start}
+}
+
+
+/* v2.8 画面別背景 / 対戦盤面・P1/P2背景 */
+.theme-override-panel{margin-top:12px}
+.theme-override-list{display:grid;gap:7px}
+.theme-override-row{display:grid;grid-template-columns:minmax(150px,1fr) minmax(160px,1fr) auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:8px;background:rgba(15,19,26,.55)}
+.theme-override-title b{display:block}
+.theme-override-summary{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.theme-override-status{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.theme-override-status .pill.custom{border-color:var(--accent);color:#dfeaff}
+.theme-background-editor-layout{display:grid;grid-template-columns:minmax(260px,1.05fr) minmax(290px,.95fr);gap:14px;align-items:start}
+.theme-background-editor-preview{position:relative;aspect-ratio:16/9;border:1px solid #4a5362;border-radius:12px;overflow:hidden;background:#0f1115;touch-action:none;user-select:none}
+.theme-background-editor-image{position:absolute;inset:-10px;background-repeat:no-repeat;background-position:50% 50%;background-size:cover;transform:scale(1.02)}
+.theme-background-editor-overlay{position:absolute;inset:0;background:rgba(0,0,0,.25)}
+.theme-background-editor-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;padding:16px;text-align:center}
+.theme-background-editor-caption{position:absolute;right:7px;bottom:7px;background:rgba(5,8,12,.78);padding:3px 6px;border-radius:6px;font-size:11px;color:#e8ecf3}
+.theme-background-editor-controls{display:grid;gap:9px}
+.theme-background-editor-inherit{border:1px solid var(--line);border-radius:9px;padding:9px;background:#10141b}
+.theme-background-editor-fields.inherited{opacity:.48}
+.theme-background-editor-fields.inherited input,
+.theme-background-editor-fields.inherited button{pointer-events:none}
+.theme-bg-parent-note{font-size:12px;color:var(--muted);margin-top:5px}
+.player-board{position:relative;overflow:hidden}
+.player-board.custom-player-background{background:var(--player-bg-color,#12161d)}
+.player-board.custom-player-background::before{content:"";position:absolute;inset:-14px;z-index:0;background-image:var(--player-bg-image,none);background-repeat:no-repeat;background-size:var(--player-bg-size,cover);background-position:var(--player-bg-position,50% 50%);filter:brightness(var(--player-bg-brightness,100%)) blur(var(--player-bg-blur,0px));transform:scale(1.02);pointer-events:none}
+.player-board.custom-player-background::after{content:"";position:absolute;inset:0;z-index:0;background:rgba(0,0,0,var(--player-bg-overlay,.25));pointer-events:none}
+.player-board.custom-player-background > *{position:relative;z-index:1}
+@media(max-width:760px){
+  .theme-override-row{grid-template-columns:1fr auto}
+  .theme-override-summary{grid-column:1/-1}
+  .theme-background-editor-layout{grid-template-columns:1fr}
+}
+
+
+/* v2.9 画面・ナビ / 表示密度 / 折りたたみ */
+.home-data-details,.theme-collapsible-panel{margin:0}
+.home-data-details>summary,.theme-collapsible-panel>summary{list-style:none;cursor:pointer;user-select:none}
+.home-data-details>summary::-webkit-details-marker,.theme-collapsible-panel>summary::-webkit-details-marker{display:none}
+.collapsible-panel-summary{margin:0;min-height:32px}
+.collapsible-panel-summary h2,.collapsible-panel-summary h3{margin-right:auto}
+.collapse-hint{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 7px}
+details[open]>.collapsible-panel-summary .collapse-hint{font-size:0}
+details[open]>.collapsible-panel-summary .collapse-hint::after{content:"閉じる";font-size:11px}
+.collapsible-panel-body{padding-top:9px}
+.home-data-tools{padding-top:10px}
+.theme-collapsible-panel{padding-top:9px}
+.theme-collapsible-panel>.collapsible-panel-body{padding-bottom:1px}
+.theme-nav-settings-list{display:grid;gap:6px}
+.theme-nav-setting-row{display:flex;align-items:center;gap:8px;justify-content:space-between;border:1px solid var(--line);border-radius:9px;padding:7px 8px;background:rgba(15,19,26,.55)}
+.theme-nav-setting-row .board-follow-row{flex:1}
+.theme-direct-open{margin-top:11px;padding-top:10px;border-top:1px solid var(--line)}
+.theme-toggle-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.appbar button[hidden],#home-shortcuts button[hidden],#home-intro[hidden],#home-shortcuts[hidden]{display:none!important}
+body.ui-density-compact .panel{padding:8px}
+body.ui-density-compact .hero{padding:16px}
+body.ui-density-compact .list{gap:5px}
+body.ui-density-compact .list-row{padding:6px 7px}
+body.ui-density-compact .form-grid{gap:7px}
+body.ui-density-compact .actions{gap:5px}
+body.ui-density-compact .theme-control-group{padding:7px}
+body.ui-density-compact .manager-pagination{margin-top:7px}
+body.ui-text-small{font-size:13px}
+body.ui-text-small label{font-size:12px}
+body.ui-text-small .muted{font-size:11px}
+body.ui-text-small .appbar button{font-size:12px}
+body.ui-text-large{font-size:17px}
+body.ui-text-large label{font-size:14px}
+body.ui-text-large .muted{font-size:13px}
+body.ui-text-large .pill{font-size:12px}
+body.ui-text-large .appbar button{font-size:14px}
+@media(max-width:650px){
+  .theme-toggle-list{grid-template-columns:1fr}
+}
+
+
+/* v3.1 設定上部の保存導線 */
+.settings-save-head{display:flex;align-items:center;gap:7px;margin-left:auto}
+.settings-save-head .btn:disabled{opacity:.45}
+
 </style>
 </head>
 <body>
+<div id="app-background-layer" aria-hidden="true">
+  <div id="app-background-image"></div>
+  <div id="app-background-overlay"></div>
+</div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v2.6 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v3.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
   <button data-nav="decks">デッキ</button>
   <button data-nav="setup">盤面開始</button>
+  <button data-nav="settings" class="settings-nav-button" aria-label="設定">⚙ 設定</button>
 </header>
 <main>
   <section id="screen-home" class="screen active">
     <div class="hero">
       <h1>みん会TCG Simulator</h1>
-      <p>カード効果やルール判定を行わない、完全手動型のオフライン用プロトタイプです。登録カードとデッキはこの端末に保存されますが、対戦盤面は保存されません。</p>
-      <div class="hero-actions">
-        <button class="btn primary" data-nav="cards">カードを登録</button>
-        <button class="btn" data-nav="card-manager">カードを管理</button>
-        <button class="btn" data-nav="decks">デッキを作成</button>
-        <button class="btn" data-nav="setup">一人用で始める</button>
-        <button class="btn" id="home-two-player">二人用で始める</button>
+      <p id="home-intro">カード効果やルール判定を行わない、完全手動型のオフライン用プロトタイプです。登録カードとデッキはこの端末に保存されますが、対戦盤面は保存されません。</p>
+      <div class="hero-actions" id="home-shortcuts">
+        <button class="btn primary" data-nav="cards" data-home-shortcut="cards">カードを登録</button>
+        <button class="btn" data-nav="card-manager" data-home-shortcut="card-manager">カードを管理</button>
+        <button class="btn" data-nav="decks" data-home-shortcut="decks">デッキを作成</button>
+        <button class="btn" data-nav="setup" data-home-shortcut="setup-one">一人用で始める</button>
+        <button class="btn" id="home-two-player" data-home-shortcut="setup-two">二人用で始める</button>
       </div>
     </div>
     <div class="panel data-tools home-data-tools">
-      <div class="section-head"><h2 style="font-size:18px">データ管理</h2><span class="muted">通常JSON / 画像込みZIP</span></div>
+      <details class="home-data-details">
+        <summary class="section-head collapsible-panel-summary"><h2 style="font-size:18px">データ管理</h2><span class="muted">通常JSON / 画像込みZIP</span><span class="collapse-hint">展開</span></summary>
+        <div class="collapsible-panel-body">
       <div class="backup-kind-box">
         <h3>通常バックアップ（JSON）</h3>
         <p class="muted">登録カード、保存デッキ、最近のカード履歴を軽いJSONとして保存します。カード画像と表示設定は含みません。</p>
@@ -504,7 +650,8 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
       </div>
       <div class="backup-kind-box full-backup-box">
         <h3>完全バックアップ（ZIP）</h3>
-        <p class="muted">カード・デッキ・履歴に加えて、カード画像、横長/縦長の画像位置設定、盤面表示設定、手札追従設定までまとめて保存します。復元すると現在の対象データをバックアップ内容へ置き換えます。</p>
+        <p class="muted">カード・デッキ・履歴、カード画像、画像位置設定、盤面表示設定、手札追従設定に加えて、保存済みの外観テーマ、画面・ナビ設定、背景ライブラリまでまとめて保存します。復元すると現在の対象データをバックアップ内容へ置き換えます。</p>
+        <p class="muted">※ 設定画面でまだ「変更を保存」していない外観変更は完全バックアップには含まれません。</p>
         <div class="io-actions">
           <button class="btn primary" type="button" id="full-backup-create">完全バックアップZIPを作成</button>
           <label class="btn" style="display:inline-flex;align-items:center">完全バックアップZIPから復元<input id="full-backup-file-input" type="file" accept=".zip,application/zip,application/x-zip-compressed" style="display:none"></label>
@@ -512,11 +659,13 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
         <div id="full-backup-status" class="muted" style="margin-top:8px"></div>
       </div>
       <div class="image-storage-panel">
-        <div class="section-head"><h3 style="font-size:15px;margin:0">カード画像ストレージ</h3><button class="btn small" type="button" id="image-storage-refresh">更新</button></div>
+        <div class="section-head"><h3 style="font-size:15px;margin:0">画像ストレージ</h3><button class="btn small" type="button" id="image-storage-refresh">更新</button></div>
         <div id="image-storage-summary" class="muted">画像ストレージを確認中…</div>
         <div class="actions"><button class="btn small" type="button" id="image-storage-cleanup">不要画像を整理</button></div>
-        <div class="muted image-storage-note">画像データは端末内のIndexedDBに保存されています。通常JSONには含まれませんが、完全バックアップZIPには含まれます。</div>
+        <div class="muted image-storage-note">カード画像と背景ライブラリは端末内のIndexedDBに保存されています。通常JSONには含まれませんが、完全バックアップZIPには両方とも含まれます。</div>
       </div>
+        </div>
+      </details>
     </div>
   </section>
 
@@ -694,6 +843,242 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
     </div>
   </section>
 
+
+  <section id="screen-settings" class="screen">
+    <div class="section-head">
+      <h2>設定</h2>
+      <div class="settings-save-head">
+        <span id="theme-save-state" class="pill">保存済み</span>
+        <button class="btn small primary" type="button" id="theme-save-top">保存</button>
+      </div>
+    </div>
+
+    <div class="settings-tabs">
+      <button class="btn small primary" type="button" data-settings-tab="appearance">外観</button>
+      <button class="btn small" type="button" data-settings-tab="background">背景</button>
+      <button class="btn small" type="button" data-settings-tab="future">画面・ナビ</button>
+    </div>
+
+    <div id="settings-pane-appearance" class="settings-pane active">
+      <div class="grid2 settings-grid">
+        <div class="panel">
+          <h3 style="margin-top:0">UI基本設定</h3>
+          <p class="muted">共通背景の上に載るUIの見え方を調整します。変更はその場でプレビューされ、保存するまで端末には確定されません。</p>
+
+          <label>アクセントカラー
+            <div class="theme-color-row">
+              <input id="theme-accent" type="color" value="#78a7ff">
+              <span id="theme-accent-value" class="pill">#78A7FF</span>
+            </div>
+          </label>
+
+          <label style="margin-top:12px">UI背景の濃さ
+            <input id="theme-ui-opacity" type="range" min="45" max="100" step="1" value="94">
+            <span id="theme-ui-opacity-value" class="muted"></span>
+          </label>
+
+          <label class="board-follow-row" style="margin-top:12px">
+            <input id="theme-readability" type="checkbox" checked>
+            可読性補助
+          </label>
+          <div class="muted">ONでは半透明UIに軽いぼかしを加え、背景画像上でも文字や操作欄を読みやすくします。</div>
+        </div>
+
+        <div class="panel">
+          <h3 style="margin-top:0">テーマ操作</h3>
+          <p class="muted">設定画面を開いている間は変更内容をアプリ全体へリアルタイム反映します。別画面を見ても未保存変更は残り、設定へ戻って保存できます。</p>
+          <div class="actions">
+            <button class="btn primary" id="theme-save">変更を保存</button>
+            <button class="btn" id="theme-cancel">変更を取り消す</button>
+            <button class="btn danger" id="theme-reset">初期状態へ戻す</button>
+          </div>
+          <div id="theme-operation-status" class="muted" style="margin-top:9px"></div>
+          <div class="theme-future-note">
+            <b>今後の拡張</b>
+            <div>画面別背景とP1/P2背景はVer2.8で追加済みです。次の更新では画面・ナビの表示整理、UI密度、文字サイズなどを追加します。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="settings-pane-background" class="settings-pane">
+      <div class="panel theme-background-panel">
+        <div class="section-head">
+          <h3 style="font-size:17px;margin:0">共通背景</h3>
+          <button class="btn" id="open-background-library">背景ライブラリ</button>
+        </div>
+        <p class="muted">初期状態では、この共通背景がすべての画面に使われます。次回追加する画面別背景は、この設定を基準に必要な画面だけ上書きする方式になります。</p>
+
+        <div class="theme-background-layout">
+          <div>
+            <div id="theme-background-preview" class="theme-background-preview">
+              <div id="theme-background-preview-image" class="theme-background-preview-image"></div>
+              <div id="theme-background-preview-overlay" class="theme-background-preview-overlay"></div>
+              <div id="theme-background-preview-empty" class="theme-background-preview-empty">背景画像未選択</div>
+              <div class="theme-background-preview-caption">共通背景プレビュー</div>
+            </div>
+            <div id="theme-background-selected" class="muted" style="margin-top:7px"></div>
+          </div>
+
+          <div class="theme-background-controls">
+            <div class="theme-control-group">
+              <h4>背景画像</h4>
+              <label class="board-follow-row">
+                <input id="theme-bg-image-enabled" type="checkbox" checked>
+                背景画像を表示
+              </label>
+              <div class="actions" style="margin-top:7px">
+                <button class="btn" id="theme-bg-select-library">登録済み背景から選ぶ</button>
+                <button class="btn" id="theme-bg-clear-selection">画像選択を解除</button>
+              </div>
+            </div>
+
+            <div class="theme-control-group">
+              <h4>背景色</h4>
+              <div class="theme-color-row">
+                <input id="theme-bg-color" type="color" value="#0f1115">
+                <span id="theme-bg-color-value" class="pill">#0F1115</span>
+              </div>
+            </div>
+
+            <div class="theme-control-group">
+              <h4>画像の見せ方</h4>
+              <div class="board-radio-row">
+                <label><input type="radio" name="theme-bg-fit" value="cover" checked>全面表示</label>
+                <label><input type="radio" name="theme-bg-fit" value="contain">全体表示</label>
+              </div>
+            </div>
+
+            <div class="theme-control-group">
+              <h4>表示位置</h4>
+              <div class="board-radio-row">
+                <label><input type="radio" name="theme-bg-position-mode" value="grid" checked>9点形式</label>
+                <label><input type="radio" name="theme-bg-position-mode" value="free">自由ドラッグ</label>
+              </div>
+              <div id="theme-bg-position-grid" class="image-position-grid theme-position-grid">
+                <button class="btn small" data-theme-bg-point="top-left">↖</button>
+                <button class="btn small" data-theme-bg-point="top">↑</button>
+                <button class="btn small" data-theme-bg-point="top-right">↗</button>
+                <button class="btn small" data-theme-bg-point="left">←</button>
+                <button class="btn small" data-theme-bg-point="center">●</button>
+                <button class="btn small" data-theme-bg-point="right">→</button>
+                <button class="btn small" data-theme-bg-point="bottom-left">↙</button>
+                <button class="btn small" data-theme-bg-point="bottom">↓</button>
+                <button class="btn small" data-theme-bg-point="bottom-right">↘</button>
+              </div>
+              <div id="theme-bg-position-readout" class="muted" style="margin-top:6px"></div>
+            </div>
+
+            <div class="theme-control-group">
+              <h4>背景の見え方</h4>
+              <label>画像の明るさ
+                <input id="theme-bg-brightness" type="range" min="20" max="130" step="1" value="100">
+                <span id="theme-bg-brightness-value" class="muted"></span>
+              </label>
+              <label style="margin-top:8px">暗幕
+                <input id="theme-bg-overlay" type="range" min="0" max="90" step="1" value="25">
+                <span id="theme-bg-overlay-value" class="muted"></span>
+              </label>
+              <label style="margin-top:8px">ぼかし
+                <input id="theme-bg-blur" type="range" min="0" max="16" step="1" value="0">
+                <span id="theme-bg-blur-value" class="muted"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <details class="panel theme-override-panel theme-collapsible-panel">
+        <summary class="section-head collapsible-panel-summary">
+          <h3 style="font-size:17px;margin:0">画面別背景</h3>
+          <span class="muted">必要な画面だけ共通背景を上書き</span>
+          <span class="collapse-hint">展開</span>
+        </summary>
+        <div class="collapsible-panel-body">
+          <p class="muted">初期状態はすべて「共通背景を使用」です。個別背景を有効にした画面だけ、背景画像・色・位置・明るさなどを別々に設定できます。</p>
+          <div id="theme-screen-background-list" class="theme-override-list"></div>
+        </div>
+      </details>
+
+      <details class="panel theme-override-panel theme-collapsible-panel">
+        <summary class="section-head collapsible-panel-summary">
+          <h3 style="font-size:17px;margin:0">対戦盤面の背景</h3>
+          <span class="muted">盤面全体 + P1 / P2</span>
+          <span class="collapse-hint">展開</span>
+        </summary>
+        <div class="collapsible-panel-body">
+          <p class="muted">対戦盤面は共通背景から独立させられます。P1 / P2はさらに盤面背景を継承し、必要なプレイヤー側だけ専用背景へ変更できます。</p>
+          <div id="theme-board-background-list" class="theme-override-list"></div>
+        </div>
+      </details>
+    </div>
+
+    <div id="settings-pane-future" class="settings-pane">
+      <div class="grid2 settings-grid">
+        <div class="panel">
+          <h3 style="margin-top:0">ヘッダーナビ</h3>
+          <p class="muted">ホームと設定は常に表示されます。それ以外は表示ON/OFFと並び順を変更できます。非表示にしても機能自体は無効になりません。</p>
+          <div id="theme-nav-settings-list" class="theme-nav-settings-list"></div>
+          <div class="theme-direct-open">
+            <div class="muted">非表示にした画面もここから直接開けます。</div>
+            <div class="actions">
+              <button class="btn small" data-settings-open-screen="cards">カード登録</button>
+              <button class="btn small" data-settings-open-screen="card-manager">カード管理</button>
+              <button class="btn small" data-settings-open-screen="decks">デッキ</button>
+              <button class="btn small" data-settings-open-screen="setup">盤面開始</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3 style="margin-top:0">ホーム画面</h3>
+          <label class="board-follow-row"><input id="theme-home-intro-visible" type="checkbox">説明文を表示</label>
+          <div class="muted" style="margin:10px 0 5px">ショートカット</div>
+          <div class="theme-toggle-list">
+            <label class="board-follow-row"><input data-theme-home-shortcut="cards" type="checkbox">カード登録</label>
+            <label class="board-follow-row"><input data-theme-home-shortcut="card-manager" type="checkbox">カード管理</label>
+            <label class="board-follow-row"><input data-theme-home-shortcut="decks" type="checkbox">デッキ作成</label>
+            <label class="board-follow-row"><input data-theme-home-shortcut="setup-one" type="checkbox">一人用で始める</label>
+            <label class="board-follow-row"><input data-theme-home-shortcut="setup-two" type="checkbox">二人用で始める</label>
+          </div>
+          <p class="muted" style="margin-bottom:0">データ管理はホームに残し、初期状態では折りたたんで表示します。</p>
+        </div>
+
+        <div class="panel">
+          <h3 style="margin-top:0">表示密度</h3>
+          <label>UI密度
+            <select id="theme-ui-density">
+              <option value="standard">標準</option>
+              <option value="compact">コンパクト</option>
+            </select>
+          </label>
+          <label style="margin-top:10px">文字サイズ
+            <select id="theme-text-size">
+              <option value="small">小</option>
+              <option value="standard">標準</option>
+              <option value="large">大</option>
+            </select>
+          </label>
+          <label style="margin-top:10px">カード一覧の1ページ表示数
+            <select id="theme-list-page-size">
+              <option value="15">15件</option>
+              <option value="30">30件</option>
+              <option value="50">50件</option>
+              <option value="100">100件</option>
+            </select>
+          </label>
+          <p class="muted">表示数はカード管理とデッキ作成のカード追加一覧に共通で使います。</p>
+        </div>
+
+        <div class="panel">
+          <h3 style="margin-top:0">画面整理について</h3>
+          <p class="muted">ここでの非表示は入口だけを隠す機能です。カードやデッキのデータ、各画面の機能そのものは削除されません。</p>
+          <p class="muted">外観・画面・ナビの変更は他のテーマ設定と同じくリアルタイムで反映されます。確定は外観タブの「変更を保存」から行います。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="screen-board" class="screen">
     <div class="section-head">
       <h2>対戦盤面</h2>
@@ -733,7 +1118,7 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
 <script>
 (() => {
 'use strict';
-const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01', LS_CARD_REGISTER_RECENT='minkai_tcg_card_register_recent_v16', LS_HAND_FOLLOW='minkai_tcg_hand_follow_v11', LS_BOARD_DISPLAY='minkai_tcg_board_display_v20';
+const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01', LS_CARD_REGISTER_RECENT='minkai_tcg_card_register_recent_v16', LS_HAND_FOLLOW='minkai_tcg_hand_follow_v11', LS_BOARD_DISPLAY='minkai_tcg_board_display_v20', LS_THEME='minkai_tcg_theme_v27';
 const ZONE_LABELS={character:'キャラクター',pain:'ペインカウント',room:'ルーム',rulePlus:'ルールプラス',hand:'手札',deck:'デッキ',otherDeck:'その他デッキ',grave:'墓地',banish:'消失領域'};
 const FIXED=['character','pain','room','rulePlus'];
 const COLLAPSIBLE=['pain','room','rulePlus'];
@@ -751,6 +1136,177 @@ boardDisplayPrefs={
   painRevealOnMove:boardDisplayPrefs.painRevealOnMove!==false
 };
 save(LS_BOARD_DISPLAY,boardDisplayPrefs);
+
+const THEME_SCREEN_KEYS=['home','cards','card-manager','decks','setup','settings'];
+const THEME_SCREEN_LABELS={home:'ホーム',cards:'カード登録','card-manager':'カード管理',decks:'デッキ',setup:'盤面開始',settings:'設定'};
+const THEME_NAV_KEYS=['cards','card-manager','decks','setup'];
+const THEME_HOME_SHORTCUT_KEYS=['cards','card-manager','decks','setup-one','setup-two'];
+const THEME_DEFAULTS={
+  version:3,
+  ui:{accent:'#78a7ff',opacity:94,readability:true},
+  layout:{
+    nav:{order:['cards','card-manager','decks','setup'],visible:{cards:true,'card-manager':true,decks:true,setup:true}},
+    home:{introVisible:true,shortcuts:{cards:true,'card-manager':true,decks:true,'setup-one':true,'setup-two':true}},
+    density:'standard',
+    textSize:'standard',
+    listPageSize:30
+  },
+  backgrounds:{
+    common:{
+      inherit:false,
+      imageEnabled:true,
+      assetId:'',
+      color:'#0f1115',
+      fit:'cover',
+      mode:'grid',
+      point:'center',
+      x:50,y:50,
+      brightness:100,
+      overlay:25,
+      blur:0
+    },
+    screens:{
+      home:{inherit:true},cards:{inherit:true},'card-manager':{inherit:true},
+      decks:{inherit:true},setup:{inherit:true},settings:{inherit:true}
+    },
+    board:{inherit:true,p1:{inherit:true},p2:{inherit:true}}
+  }
+};
+const THEME_POINT_MAP={
+  'top-left':[0,0],top:[50,0],'top-right':[100,0],
+  left:[0,50],center:[50,50],right:[100,50],
+  'bottom-left':[0,100],bottom:[50,100],'bottom-right':[100,100]
+};
+function clampNumber(v,min,max,fallback){
+ const n=Number(v);return Number.isFinite(n)?Math.max(min,Math.min(max,n)):fallback;
+}
+function normalizeHexColor(v,fallback){
+ const s=String(v||'').trim();
+ return /^#[0-9a-f]{6}$/i.test(s)?s.toLowerCase():fallback;
+}
+function normalizeThemeBackground(raw={}){
+ const point=THEME_POINT_MAP[raw.point]?raw.point:'center',coords=THEME_POINT_MAP[point];
+ const mode=raw.mode==='free'?'free':'grid';
+ return {
+   inherit:raw.inherit===true,
+   imageEnabled:raw.imageEnabled!==false,
+   assetId:String(raw.assetId||''),
+   color:normalizeHexColor(raw.color,'#0f1115'),
+   fit:raw.fit==='contain'?'contain':'cover',
+   mode,
+   point,
+   x:mode==='free'?clampNumber(raw.x,0,100,50):coords[0],
+   y:mode==='free'?clampNumber(raw.y,0,100,50):coords[1],
+   brightness:clampNumber(raw.brightness,20,130,100),
+   overlay:clampNumber(raw.overlay,0,90,25),
+   blur:clampNumber(raw.blur,0,16,0)
+ };
+}
+function normalizeInheritedThemeBackground(raw,defaultInherit=true){
+ const source=raw&&typeof raw==='object'?raw:{};
+ const bg=normalizeThemeBackground(source);
+ bg.inherit=source.inherit===undefined?defaultInherit:source.inherit!==false;
+ return bg;
+}
+function normalizeThemePrefs(raw={}){
+ const ui=raw.ui&&typeof raw.ui==='object'?raw.ui:{},backgrounds=raw.backgrounds&&typeof raw.backgrounds==='object'?raw.backgrounds:{};
+ const screenRaw=backgrounds.screens&&typeof backgrounds.screens==='object'?backgrounds.screens:{},screens={};
+ THEME_SCREEN_KEYS.forEach(k=>screens[k]=normalizeInheritedThemeBackground(screenRaw[k],true));
+ const boardRaw=backgrounds.board&&typeof backgrounds.board==='object'?backgrounds.board:{};
+ const board=normalizeInheritedThemeBackground(boardRaw,true);
+ board.p1=normalizeInheritedThemeBackground(boardRaw.p1,true);
+ board.p2=normalizeInheritedThemeBackground(boardRaw.p2,true);
+ const layoutRaw=raw.layout&&typeof raw.layout==='object'?raw.layout:{};
+ const navRaw=layoutRaw.nav&&typeof layoutRaw.nav==='object'?layoutRaw.nav:{},homeRaw=layoutRaw.home&&typeof layoutRaw.home==='object'?layoutRaw.home:{};
+ const rawOrder=Array.isArray(navRaw.order)?navRaw.order.filter(k=>THEME_NAV_KEYS.includes(k)):[];
+ const navOrder=[...new Set([...rawOrder,...THEME_NAV_KEYS])].filter(k=>THEME_NAV_KEYS.includes(k));
+ const navVisible={};THEME_NAV_KEYS.forEach(k=>navVisible[k]=navRaw.visible?.[k]!==false);
+ const homeShortcuts={};THEME_HOME_SHORTCUT_KEYS.forEach(k=>homeShortcuts[k]=homeRaw.shortcuts?.[k]!==false);
+ const listSize=[15,30,50,100].includes(Number(layoutRaw.listPageSize))?Number(layoutRaw.listPageSize):30;
+ return {
+   version:3,
+   ui:{
+     accent:normalizeHexColor(ui.accent,'#78a7ff'),
+     opacity:clampNumber(ui.opacity,45,100,94),
+     readability:ui.readability!==false
+   },
+   layout:{
+     nav:{order:navOrder,visible:navVisible},
+     home:{introVisible:homeRaw.introVisible!==false,shortcuts:homeShortcuts},
+     density:layoutRaw.density==='compact'?'compact':'standard',
+     textSize:['small','large'].includes(layoutRaw.textSize)?layoutRaw.textSize:'standard',
+     listPageSize:listSize
+   },
+   backgrounds:{
+     common:normalizeThemeBackground(backgrounds.common||{}),
+     screens,
+     board
+   }
+ };
+}
+
+function themeBackgroundTargetLabel(target){
+ if(target==='common')return '共通背景';
+ if(target==='board')return '対戦盤面';
+ if(target==='player:0')return 'プレイヤー1側';
+ if(target==='player:1')return 'プレイヤー2側';
+ if(target.startsWith('screen:'))return THEME_SCREEN_LABELS[target.slice(7)]||target.slice(7);
+ return target;
+}
+function getThemeBackgroundConfig(theme,target){
+ if(target==='common')return theme.backgrounds.common;
+ if(target==='board')return theme.backgrounds.board;
+ if(target==='player:0')return theme.backgrounds.board.p1;
+ if(target==='player:1')return theme.backgrounds.board.p2;
+ if(target.startsWith('screen:'))return theme.backgrounds.screens[target.slice(7)];
+ return theme.backgrounds.common;
+}
+function getThemeBackgroundParentTarget(target){
+ if(target==='board')return 'common';
+ if(target==='player:0'||target==='player:1')return 'board';
+ if(target.startsWith('screen:'))return 'common';
+ return null;
+}
+function resolveThemeBackground(theme,target){
+ const cfg=getThemeBackgroundConfig(theme,target);
+ const parent=getThemeBackgroundParentTarget(target);
+ if(parent&&cfg?.inherit!==false)return resolveThemeBackground(theme,parent);
+ return normalizeThemeBackground(cfg||theme.backgrounds.common);
+}
+function replaceThemeBackgroundConfig(theme,target,next){
+ const bg=normalizeThemeBackground(next||{});
+ bg.inherit=target==='common'?false:next?.inherit!==false;
+ if(target==='common'){theme.backgrounds.common=bg;return}
+ if(target==='board'){
+   const p1=theme.backgrounds.board.p1,p2=theme.backgrounds.board.p2;
+   theme.backgrounds.board={...bg,p1,p2};return;
+ }
+ if(target==='player:0'){theme.backgrounds.board.p1=bg;return}
+ if(target==='player:1'){theme.backgrounds.board.p2=bg;return}
+ if(target.startsWith('screen:'))theme.backgrounds.screens[target.slice(7)]=bg;
+}
+function activeScreenBackgroundTarget(){
+ return currentScreenName==='board'?'board':THEME_SCREEN_KEYS.includes(currentScreenName)?`screen:${currentScreenName}`:'common';
+}
+function listThemeBackgroundRefs(theme){
+ const refs=[['common','共通背景',theme.backgrounds.common],['board','対戦盤面',theme.backgrounds.board],['player:0','P1背景',theme.backgrounds.board.p1],['player:1','P2背景',theme.backgrounds.board.p2]];
+ THEME_SCREEN_KEYS.forEach(k=>refs.push([`screen:${k}`,THEME_SCREEN_LABELS[k],theme.backgrounds.screens[k]]));
+ return refs;
+}
+
+function cloneTheme(v){return JSON.parse(JSON.stringify(v))}
+let themePrefs=normalizeThemePrefs(load(LS_THEME,THEME_DEFAULTS));
+let themeDraft=null,themeDraftDirty=false,themeApplyToken=0,currentScreenName='home';
+function ensureThemeDraft(){
+ if(!themeDraft)themeDraft=cloneTheme(themePrefs);
+ return themeDraft;
+}
+function markThemeDraftDirty(){
+ themeDraftDirty=true;
+ updateThemeSaveState();
+}
+function currentThemeForDisplay(){return themeDraft||themePrefs}
+
 let handScrollPositions=[0,0], zoneScrollPositions={}, pendingHandFollow=new Set();
 let board=null, detailCtx=null, detailNav=null, inspectSession=null, browseSession=null, boardZoom=1;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -759,9 +1315,9 @@ function load(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{retur
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
 
 // v2.2 Card image system
-const IMAGE_DB_NAME='minkai_tcg_images_v22',IMAGE_DB_VERSION=1;
-let imageDbPromise=null,imageReadyPromise=Promise.resolve(),imageSystemAvailable='indexedDB' in window;
-const imageLinkCache=new Map(),imageUrlCache=new Map();
+const IMAGE_DB_NAME='minkai_tcg_images_v22',IMAGE_DB_VERSION=2;
+let imageDbPromise=null,imageReadyPromise=Promise.resolve(),backgroundReadyPromise=Promise.resolve(),imageSystemAvailable='indexedDB' in window;
+const imageLinkCache=new Map(),imageUrlCache=new Map(),backgroundAssetCache=new Map(),backgroundUrlCache=new Map();
 
 function normalizeImageView(v={}){
  const pointMap={
@@ -797,6 +1353,7 @@ function openImageDb(){
      const db=req.result;
      if(!db.objectStoreNames.contains('images'))db.createObjectStore('images',{keyPath:'id'});
      if(!db.objectStoreNames.contains('links'))db.createObjectStore('links',{keyPath:'cardId'});
+     if(!db.objectStoreNames.contains('backgrounds'))db.createObjectStore('backgrounds',{keyPath:'id'});
    };
    req.onsuccess=()=>resolve(req.result);
    req.onerror=()=>reject(req.error||new Error('画像データベースを開けませんでした'));
@@ -840,14 +1397,18 @@ async function imageDbDelete(store,key){
  });
 }
 
-async function replaceImageDatabase(records,links){
- const db=await openImageDb();
+async function replaceImageDatabase(records,links,backgrounds=null){
+ const db=await openImageDb(),replaceBackgrounds=Array.isArray(backgrounds),stores=replaceBackgrounds?['images','links','backgrounds']:['images','links'];
  return new Promise((resolve,reject)=>{
-   const tx=db.transaction(['images','links'],'readwrite');
+   const tx=db.transaction(stores,'readwrite');
    const imageStore=tx.objectStore('images'),linkStore=tx.objectStore('links');
    imageStore.clear();linkStore.clear();
    for(const rec of records)imageStore.put(rec);
    for(const link of links)linkStore.put(link);
+   if(replaceBackgrounds){
+     const bgStore=tx.objectStore('backgrounds');bgStore.clear();
+     for(const rec of backgrounds)bgStore.put(rec);
+   }
    tx.oncomplete=()=>resolve();
    tx.onerror=()=>reject(tx.error||new Error('画像データベースの復元に失敗しました'));
    tx.onabort=()=>reject(tx.error||new Error('画像データベースの復元が中断されました'));
@@ -953,12 +1514,15 @@ function formatBytes(bytes){
 async function getImageStorageStats(){
  if(!imageSystemAvailable)return {available:false};
  await imageReadyPromise;
- const [images,links]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links')]);
+ const [images,links,backgrounds]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links'),imageDbGetAll('backgrounds')]);
  const validLinks=links.filter(x=>cards.some(c=>c.id===x.cardId)&&x.imageId);
  const usedImageIds=new Set(validLinks.map(x=>x.imageId));
- let imageBytes=0;
+ let imageBytes=0,backgroundBytes=0;
  images.forEach(rec=>{
    imageBytes+=(Number(rec.fullBlob?.size)||0)+(Number(rec.thumbBlob?.size)||0);
+ });
+ backgrounds.forEach(rec=>{
+   backgroundBytes+=(Number(rec.fullBlob?.size)||0)+(Number(rec.thumbBlob?.size)||0);
  });
  let estimate=null;
  try{if(navigator.storage?.estimate)estimate=await navigator.storage.estimate()}catch{}
@@ -968,6 +1532,8 @@ async function getImageStorageStats(){
    uniqueImages:images.length,
    usedUniqueImages:usedImageIds.size,
    imageBytes,
+   backgroundCount:backgrounds.length,
+   backgroundBytes,
    originUsage:Number(estimate?.usage)||0,
    originQuota:Number(estimate?.quota)||0
  };
@@ -1004,6 +1570,8 @@ async function updateImageStorageStatus(){
        <div class="image-storage-stat"><b>${s.linkedCards}枚</b><span>画像設定済みカード / ${cards.length}枚</span></div>
        <div class="image-storage-stat"><b>${s.uniqueImages}画像</b><span>保存されている画像データ</span></div>
        <div class="image-storage-stat"><b>${formatBytes(s.imageBytes)}</b><span>カード画像データの概算容量</span></div>
+       <div class="image-storage-stat"><b>${s.backgroundCount}画像</b><span>背景ライブラリ</span></div>
+       <div class="image-storage-stat"><b>${formatBytes(s.backgroundBytes)}</b><span>背景画像データの概算容量</span></div>
        <div class="image-storage-stat"><b>${quota}</b><span>このサイト全体の保存領域 使用量 / 上限</span></div>
      </div>`;
    }
@@ -1012,6 +1580,108 @@ async function updateImageStorageStatus(){
    if(root)root.textContent='画像ストレージ情報を取得できませんでした。';
  }
 }
+
+
+function resetBackgroundRuntimeCache(){
+ clearBackgroundUrls();
+ backgroundAssetCache.clear();
+}
+function clearBackgroundUrls(assetId=''){
+ for(const key of [...backgroundUrlCache.keys()]){
+   if(!assetId||key.startsWith(String(assetId)+'|')){
+     try{URL.revokeObjectURL(backgroundUrlCache.get(key))}catch{}
+     backgroundUrlCache.delete(key);
+   }
+ }
+}
+async function initBackgroundSystem(){
+ if(!imageSystemAvailable)return false;
+ const all=await imageDbGetAll('backgrounds');
+ backgroundAssetCache.clear();
+ all.forEach(rec=>{if(rec?.id)backgroundAssetCache.set(rec.id,rec)});
+ return true;
+}
+async function getBackgroundAsset(id){
+ const key=String(id||'');if(!key)return null;
+ if(backgroundAssetCache.has(key))return backgroundAssetCache.get(key);
+ await backgroundReadyPromise;
+ if(backgroundAssetCache.has(key))return backgroundAssetCache.get(key);
+ const rec=await imageDbGet('backgrounds',key);
+ if(rec)backgroundAssetCache.set(key,rec);
+ return rec;
+}
+async function getBackgroundAssetUrl(id,kind='thumb'){
+ const keyId=String(id||''),key=keyId+'|'+kind;
+ if(!keyId)return '';
+ if(backgroundUrlCache.has(key))return backgroundUrlCache.get(key);
+ const rec=await getBackgroundAsset(keyId);if(!rec)return '';
+ const blob=(kind==='full'?rec.fullBlob:rec.thumbBlob)||rec.fullBlob||rec.thumbBlob;if(!blob)return '';
+ const url=URL.createObjectURL(blob);backgroundUrlCache.set(key,url);return url;
+}
+async function createBackgroundAssetRecord(file){
+ if(!file||!String(file.type||'').startsWith('image/'))throw new Error('画像ファイルを選択してください');
+ const drawable=await loadImageDrawable(file);
+ try{
+   if(!drawable.width||!drawable.height)throw new Error('画像サイズを取得できませんでした');
+   const full=await resizeImageBlob(drawable.source,drawable.width,drawable.height,1920,.90);
+   const thumb=await resizeImageBlob(drawable.source,drawable.width,drawable.height,480,.82);
+   const filename=String(file.name||'背景画像').replace(/\.[^.]+$/,'').trim()||'背景画像';
+   return {
+     id:uid('bg'),
+     name:filename,
+     fullBlob:full.blob,thumbBlob:thumb.blob,
+     width:full.width,height:full.height,
+     originalWidth:drawable.width,originalHeight:drawable.height,
+     originalName:String(file.name||''),
+     createdAt:new Date().toISOString()
+   };
+ }finally{drawable.close()}
+}
+async function saveBackgroundAsset(rec){
+ await imageDbPut('backgrounds',rec);
+ backgroundAssetCache.set(rec.id,rec);
+ return rec;
+}
+function themeBackgroundAssetUsage(id){
+ const used=[];
+ const collect=(theme,prefix)=>{
+   if(!theme)return;
+   listThemeBackgroundRefs(theme).forEach(([,label,cfg])=>{
+     if(cfg?.assetId===id)used.push(`${prefix}${label}`);
+   });
+ };
+ collect(themePrefs,'保存済み：');
+ collect(themeDraft,'編集中：');
+ return [...new Set(used)];
+}
+function clearBackgroundAssetFromTheme(theme,id){
+ if(!theme)return;
+ listThemeBackgroundRefs(theme).forEach(([target,,cfg])=>{
+   if(cfg?.assetId!==id)return;
+   const next={...cfg,assetId:''};
+   replaceThemeBackgroundConfig(theme,target,next);
+ });
+}
+async function deleteBackgroundAsset(id){
+ const rec=await getBackgroundAsset(id);if(!rec)return;
+ const usage=themeBackgroundAssetUsage(id);
+ if(usage.length&&!confirm(`${usage.join(' / ')}で使用中です。\n削除すると、その背景画像の選択を解除します。\n\n削除しますか？`))return false;
+ clearBackgroundAssetFromTheme(themePrefs,id);
+ clearBackgroundAssetFromTheme(themeDraft,id);
+ save(LS_THEME,themePrefs);
+ await imageDbDelete('backgrounds',id);
+ backgroundAssetCache.delete(id);clearBackgroundUrls(id);
+ await applyThemePrefs(currentThemeForDisplay());
+ renderThemeSettings();
+ return true;
+}
+async function renameBackgroundAsset(id){
+ const rec=await getBackgroundAsset(id);if(!rec)return;
+ const next=prompt('背景画像の名前',rec.name||'背景画像');if(next==null)return;
+ const name=String(next).trim();if(!name)return;
+ rec.name=name;await saveBackgroundAsset(rec);renderThemeSettings();
+}
+window.addEventListener('beforeunload',()=>clearBackgroundUrls());
 
 function cardImageSourceId(c){return String(c?.imageSourceCardId||c?.id||'')}
 function imageViewForOrientation(link,orientation=boardDisplayPrefs.orientation){
@@ -1069,6 +1739,414 @@ async function createOptimizedImageRecord(file){
 }
 window.addEventListener('beforeunload',()=>{for(const url of imageUrlCache.values()){try{URL.revokeObjectURL(url)}catch{}}});
 
+
+async function applyThemePrefs(prefs){
+ const t=normalizeThemePrefs(prefs),target=activeScreenBackgroundTarget(),bg=resolveThemeBackground(t,target),token=++themeApplyToken,root=document.documentElement;
+ root.style.setProperty('--theme-ui-opacity',String(t.ui.opacity/100));
+ root.style.setProperty('--theme-bg-color',bg.color);
+ root.style.setProperty('--bg',bg.color);
+ root.style.setProperty('--accent',t.ui.accent);
+ document.body.classList.toggle('theme-readability',t.ui.readability!==false);
+ applyNavigationPrefs(t);applyHomeLayoutPrefs(t);applyDisplayLayoutPrefs(t);
+
+ const layer=$('#app-background-layer'),image=$('#app-background-image'),overlay=$('#app-background-overlay');
+ if(layer)layer.style.background=bg.color;
+ if(overlay)overlay.style.background=`rgba(0,0,0,${bg.overlay/100})`;
+ if(image){
+   image.style.backgroundSize=bg.fit;
+   image.style.backgroundPosition=`${bg.x}% ${bg.y}%`;
+   image.style.filter=`brightness(${bg.brightness}%) blur(${bg.blur}px)`;
+   if(bg.imageEnabled&&bg.assetId){
+     const url=await getBackgroundAssetUrl(bg.assetId,'full');
+     if(token!==themeApplyToken)return;
+     image.style.backgroundImage=url?`url("${url}")`:'none';
+   }else image.style.backgroundImage='none';
+ }
+ updateThemePreview(t);
+ if(currentScreenName==='board')hydratePlayerBoardBackgrounds(t);
+}
+async function updateThemePreview(prefs=currentThemeForDisplay()){
+ const preview=$('#theme-background-preview'),img=$('#theme-background-preview-image'),overlay=$('#theme-background-preview-overlay'),empty=$('#theme-background-preview-empty');
+ if(!preview||!img||!overlay||!empty)return;
+ const t=normalizeThemePrefs(prefs),bg=t.backgrounds.common;
+ preview.style.background=bg.color;
+ overlay.style.background=`rgba(0,0,0,${bg.overlay/100})`;
+ img.style.backgroundSize=bg.fit;
+ img.style.backgroundPosition=`${bg.x}% ${bg.y}%`;
+ img.style.filter=`brightness(${bg.brightness}%) blur(${bg.blur}px)`;
+ let url='';
+ if(bg.imageEnabled&&bg.assetId)url=await getBackgroundAssetUrl(bg.assetId,'thumb');
+ if(!img.isConnected)return;
+ img.style.backgroundImage=url?`url("${url}")`:'none';
+ empty.style.display=url?'none':'flex';
+}
+
+
+function currentListPageSize(){
+ const n=Number(currentThemeForDisplay()?.layout?.listPageSize);
+ return [15,30,50,100].includes(n)?n:30;
+}
+function applyNavigationPrefs(theme){
+ const t=normalizeThemePrefs(theme),header=document.querySelector('.appbar'),settingsBtn=header?.querySelector('[data-nav="settings"]');
+ if(!header||!settingsBtn)return;
+ for(const key of t.layout.nav.order){
+   const btn=header.querySelector(`[data-nav="${key}"]`);
+   if(btn)header.insertBefore(btn,settingsBtn);
+ }
+ THEME_NAV_KEYS.forEach(key=>{
+   const btn=header.querySelector(`[data-nav="${key}"]`);
+   if(btn)btn.hidden=t.layout.nav.visible[key]===false;
+ });
+ const homeBtn=header.querySelector('[data-nav="home"]');
+ if(homeBtn)homeBtn.hidden=false;
+ settingsBtn.hidden=false;
+}
+function applyHomeLayoutPrefs(theme){
+ const t=normalizeThemePrefs(theme),home=t.layout.home,intro=$('#home-intro'),shortcuts=$('#home-shortcuts');
+ if(intro)intro.hidden=home.introVisible===false;
+ let any=false;
+ $$('[data-home-shortcut]').forEach(btn=>{
+   const visible=home.shortcuts[btn.dataset.homeShortcut]!==false;
+   btn.hidden=!visible;if(visible)any=true;
+ });
+ if(shortcuts)shortcuts.hidden=!any;
+}
+function applyDisplayLayoutPrefs(theme){
+ const t=normalizeThemePrefs(theme);
+ document.body.classList.toggle('ui-density-compact',t.layout.density==='compact');
+ document.body.classList.toggle('ui-text-small',t.layout.textSize==='small');
+ document.body.classList.toggle('ui-text-large',t.layout.textSize==='large');
+}
+function renderScreenNavSettings(){
+ const d=ensureThemeDraft(),layout=d.layout,host=$('#theme-nav-settings-list');
+ if(host){
+   host.innerHTML=layout.nav.order.map((key,i)=>`<div class="theme-nav-setting-row">
+     <label class="board-follow-row"><input type="checkbox" data-theme-nav-visible="${key}" ${layout.nav.visible[key]===false?'':'checked'}><span>${esc(THEME_SCREEN_LABELS[key])}</span></label>
+     <div class="actions"><button class="btn small" data-theme-nav-up="${key}" ${i===0?'disabled':''}>↑</button><button class="btn small" data-theme-nav-down="${key}" ${i===layout.nav.order.length-1?'disabled':''}>↓</button></div>
+   </div>`).join('');
+   $$('[data-theme-nav-visible]').forEach(x=>x.onchange=()=>applyThemeDraftChange(t=>{t.layout.nav.visible[x.dataset.themeNavVisible]=x.checked}));
+   $$('[data-theme-nav-up]').forEach(b=>b.onclick=()=>{
+     const key=b.dataset.themeNavUp;
+     applyThemeDraftChange(t=>{const a=t.layout.nav.order,i=a.indexOf(key);if(i>0)[a[i-1],a[i]]=[a[i],a[i-1]]});
+   });
+   $$('[data-theme-nav-down]').forEach(b=>b.onclick=()=>{
+     const key=b.dataset.themeNavDown;
+     applyThemeDraftChange(t=>{const a=t.layout.nav.order,i=a.indexOf(key);if(i>=0&&i<a.length-1)[a[i+1],a[i]]=[a[i],a[i+1]]});
+   });
+ }
+ const intro=$('#theme-home-intro-visible');
+ if(intro)intro.checked=layout.home.introVisible!==false;
+ $$('[data-theme-home-shortcut]').forEach(x=>x.checked=layout.home.shortcuts[x.dataset.themeHomeShortcut]!==false);
+ if($('#theme-ui-density'))$('#theme-ui-density').value=layout.density;
+ if($('#theme-text-size'))$('#theme-text-size').value=layout.textSize;
+ if($('#theme-list-page-size'))$('#theme-list-page-size').value=String(layout.listPageSize);
+}
+
+function backgroundConfigSummary(theme,target){
+ const cfg=getThemeBackgroundConfig(theme,target),resolved=resolveThemeBackground(theme,target);
+ if(target!=='common'&&cfg.inherit!==false)return `継承：${themeBackgroundTargetLabel(getThemeBackgroundParentTarget(target))}`;
+ const asset=resolved.assetId?backgroundAssetCache.get(resolved.assetId):null;
+ return asset?`専用：${asset.name}`:`専用：背景色 ${resolved.color.toUpperCase()}`;
+}
+function renderThemeBackgroundOverrideLists(){
+ const d=ensureThemeDraft(),screenHost=$('#theme-screen-background-list'),boardHost=$('#theme-board-background-list');
+ const row=(target,label,parentLabel)=>{
+   const cfg=getThemeBackgroundConfig(d,target),inherit=cfg.inherit!==false;
+   return `<div class="theme-override-row">
+     <div class="theme-override-title"><b>${esc(label)}</b><div class="muted">${esc(parentLabel)}</div></div>
+     <div class="theme-override-summary">${esc(backgroundConfigSummary(d,target))}</div>
+     <div class="theme-override-status"><span class="pill ${inherit?'':'custom'}">${inherit?'上位背景':'個別背景'}</span><button class="btn small" data-theme-override-edit="${target}">設定</button></div>
+   </div>`;
+ };
+ if(screenHost)screenHost.innerHTML=THEME_SCREEN_KEYS.map(k=>row(`screen:${k}`,THEME_SCREEN_LABELS[k],'共通背景を使用')).join('');
+ if(boardHost)boardHost.innerHTML=[
+   row('board','対戦盤面','共通背景を使用'),
+   row('player:0','プレイヤー1側','盤面背景を使用'),
+   row('player:1','プレイヤー2側','盤面背景を使用')
+ ].join('');
+ $$('[data-theme-override-edit]').forEach(b=>b.onclick=()=>openThemeBackgroundEditor(b.dataset.themeOverrideEdit));
+}
+let backgroundLibraryContextTarget='common';
+function setDraftBackgroundAsset(target,id){
+ const d=ensureThemeDraft(),cfg={...getThemeBackgroundConfig(d,target)};
+ if(target!=='common'&&cfg.inherit!==false){
+   const parent=getThemeBackgroundParentTarget(target),base={...resolveThemeBackground(d,parent),inherit:false};
+   replaceThemeBackgroundConfig(d,target,base);
+ }
+ const next={...getThemeBackgroundConfig(d,target),assetId:id,imageEnabled:true};
+ replaceThemeBackgroundConfig(d,target,next);
+ themeDraft=normalizeThemePrefs(d);markThemeDraftDirty();applyThemePrefs(themeDraft);
+}
+async function updateOverrideEditorPreview(target){
+ const box=$('#override-bg-preview'),img=$('#override-bg-preview-image'),overlay=$('#override-bg-preview-overlay'),empty=$('#override-bg-preview-empty');
+ if(!box||!img||!overlay||!empty)return;
+ const d=ensureThemeDraft(),bg=resolveThemeBackground(d,target);
+ box.style.background=bg.color;overlay.style.background=`rgba(0,0,0,${bg.overlay/100})`;
+ img.style.backgroundSize=bg.fit;img.style.backgroundPosition=`${bg.x}% ${bg.y}%`;img.style.filter=`brightness(${bg.brightness}%) blur(${bg.blur}px)`;
+ let url='';if(bg.imageEnabled&&bg.assetId)url=await getBackgroundAssetUrl(bg.assetId,'thumb');
+ if(!box.isConnected)return;
+ img.style.backgroundImage=url?`url("${url}")`:'none';empty.style.display=url?'none':'flex';
+}
+function syncOverrideEditorControls(target){
+ const d=ensureThemeDraft(),cfg=getThemeBackgroundConfig(d,target),resolved=resolveThemeBackground(d,target),parent=getThemeBackgroundParentTarget(target),inherit=target!=='common'&&cfg.inherit!==false;
+ const inheritInput=$('#override-bg-inherit');
+ if(inheritInput)inheritInput.checked=inherit;
+ if($('#override-bg-parent-note'))$('#override-bg-parent-note').textContent=parent?`ONでは ${themeBackgroundTargetLabel(parent)} の設定をそのまま使用します。`:'';
+ const fields=$('#override-bg-fields');if(fields)fields.classList.toggle('inherited',inherit);
+ if($('#override-bg-image-enabled'))$('#override-bg-image-enabled').checked=resolved.imageEnabled!==false;
+ if($('#override-bg-color'))$('#override-bg-color').value=resolved.color;
+ if($('#override-bg-color-value'))$('#override-bg-color-value').textContent=resolved.color.toUpperCase();
+ $$('input[name="override-bg-fit"]').forEach(r=>r.checked=r.value===resolved.fit);
+ $$('input[name="override-bg-mode"]').forEach(r=>r.checked=r.value===resolved.mode);
+ $$('[data-override-bg-point]').forEach(b=>b.classList.toggle('active',resolved.mode==='grid'&&b.dataset.overrideBgPoint===resolved.point));
+ if($('#override-bg-position-grid'))$('#override-bg-position-grid').style.opacity=resolved.mode==='grid'?'1':'.45';
+ if($('#override-bg-position-readout'))$('#override-bg-position-readout').textContent=resolved.mode==='free'?`自由位置 X ${Math.round(resolved.x)}% / Y ${Math.round(resolved.y)}%`:`9点位置：${resolved.point}`;
+ if($('#override-bg-brightness'))$('#override-bg-brightness').value=String(resolved.brightness);
+ if($('#override-bg-brightness-value'))$('#override-bg-brightness-value').textContent=`${resolved.brightness}%`;
+ if($('#override-bg-overlay'))$('#override-bg-overlay').value=String(resolved.overlay);
+ if($('#override-bg-overlay-value'))$('#override-bg-overlay-value').textContent=`${resolved.overlay}%`;
+ if($('#override-bg-blur'))$('#override-bg-blur').value=String(resolved.blur);
+ if($('#override-bg-blur-value'))$('#override-bg-blur-value').textContent=`${resolved.blur}px`;
+ const asset=resolved.assetId?backgroundAssetCache.get(resolved.assetId):null;
+ if($('#override-bg-selected'))$('#override-bg-selected').textContent=asset?`選択中：${asset.name}`:'背景画像なし';
+ updateOverrideEditorPreview(target);
+}
+function mutateOverrideBackground(target,fn){
+ const d=ensureThemeDraft(),cfg=getThemeBackgroundConfig(d,target);
+ if(target!=='common'&&cfg.inherit!==false)return;
+ const next={...cfg};fn(next);replaceThemeBackgroundConfig(d,target,next);
+ themeDraft=normalizeThemePrefs(d);markThemeDraftDirty();applyThemePrefs(themeDraft);syncOverrideEditorControls(target);renderThemeBackgroundOverrideLists();
+}
+function bindOverridePreviewDrag(target){
+ const preview=$('#override-bg-preview');if(!preview)return;
+ let drag=null;
+ preview.onpointerdown=e=>{
+   const d=ensureThemeDraft(),cfg=getThemeBackgroundConfig(d,target),bg=resolveThemeBackground(d,target);
+   if((target!=='common'&&cfg.inherit!==false)||bg.mode!=='free'||!bg.assetId||bg.imageEnabled===false)return;
+   if(e.button!==undefined&&e.button!==0)return;
+   e.preventDefault();preview.setPointerCapture?.(e.pointerId);
+   drag={id:e.pointerId,x:e.clientX,y:e.clientY,startX:bg.x,startY:bg.y,w:Math.max(1,preview.clientWidth),h:Math.max(1,preview.clientHeight)};
+ };
+ preview.onpointermove=e=>{
+   if(!drag||drag.id!==e.pointerId)return;
+   const nx=Math.max(0,Math.min(100,drag.startX-(e.clientX-drag.x)/drag.w*100)),ny=Math.max(0,Math.min(100,drag.startY-(e.clientY-drag.y)/drag.h*100));
+   mutateOverrideBackground(target,b=>{b.mode='free';b.x=nx;b.y=ny});
+ };
+ const end=e=>{if(drag&&drag.id===e.pointerId)drag=null};
+ preview.onpointerup=end;preview.onpointercancel=end;
+}
+function openThemeBackgroundEditor(target){
+ if(target==='common'){setSettingsTab('background');closeModal();return}
+ const d=ensureThemeDraft(),cfg=getThemeBackgroundConfig(d,target),parent=getThemeBackgroundParentTarget(target),inherit=cfg.inherit!==false;
+ openModal(`<div class="modal-head"><h3>${esc(themeBackgroundTargetLabel(target))} / 背景設定</h3><button class="btn" id="override-bg-close">閉じる</button></div>
+ <div class="theme-background-editor-layout">
+   <div>
+     <div id="override-bg-preview" class="theme-background-editor-preview">
+       <div id="override-bg-preview-image" class="theme-background-editor-image"></div>
+       <div id="override-bg-preview-overlay" class="theme-background-editor-overlay"></div>
+       <div id="override-bg-preview-empty" class="theme-background-editor-empty">背景画像なし</div>
+       <div class="theme-background-editor-caption">${esc(themeBackgroundTargetLabel(target))}</div>
+     </div>
+     <div id="override-bg-selected" class="muted" style="margin-top:7px"></div>
+   </div>
+   <div class="theme-background-editor-controls">
+     <div class="theme-background-editor-inherit">
+       <label class="board-follow-row"><input id="override-bg-inherit" type="checkbox" ${inherit?'checked':''}>${esc(themeBackgroundTargetLabel(parent))}を使用</label>
+       <div id="override-bg-parent-note" class="theme-bg-parent-note"></div>
+     </div>
+     <div id="override-bg-fields" class="theme-background-editor-fields">
+       <div class="theme-control-group">
+         <h4>背景画像</h4>
+         <label class="board-follow-row"><input id="override-bg-image-enabled" type="checkbox">背景画像を表示</label>
+         <div class="actions" style="margin-top:7px"><button class="btn" id="override-bg-library">背景ライブラリから選ぶ</button><button class="btn" id="override-bg-clear">画像選択を解除</button></div>
+       </div>
+       <div class="theme-control-group"><h4>背景色</h4><div class="theme-color-row"><input id="override-bg-color" type="color"><span id="override-bg-color-value" class="pill"></span></div></div>
+       <div class="theme-control-group"><h4>画像の見せ方</h4><div class="board-radio-row"><label><input type="radio" name="override-bg-fit" value="cover">全面表示</label><label><input type="radio" name="override-bg-fit" value="contain">全体表示</label></div></div>
+       <div class="theme-control-group">
+         <h4>表示位置</h4>
+         <div class="board-radio-row"><label><input type="radio" name="override-bg-mode" value="grid">9点形式</label><label><input type="radio" name="override-bg-mode" value="free">自由ドラッグ</label></div>
+         <div id="override-bg-position-grid" class="image-position-grid theme-position-grid">
+           ${['top-left','top','top-right','left','center','right','bottom-left','bottom','bottom-right'].map((p,i)=>`<button class="btn small" data-override-bg-point="${p}">${['↖','↑','↗','←','●','→','↙','↓','↘'][i]}</button>`).join('')}
+         </div>
+         <div id="override-bg-position-readout" class="muted" style="margin-top:6px"></div>
+       </div>
+       <div class="theme-control-group">
+         <h4>背景の見え方</h4>
+         <label>画像の明るさ<input id="override-bg-brightness" type="range" min="20" max="130"><span id="override-bg-brightness-value" class="muted"></span></label>
+         <label style="margin-top:8px">暗幕<input id="override-bg-overlay" type="range" min="0" max="90"><span id="override-bg-overlay-value" class="muted"></span></label>
+         <label style="margin-top:8px">ぼかし<input id="override-bg-blur" type="range" min="0" max="16"><span id="override-bg-blur-value" class="muted"></span></label>
+       </div>
+     </div>
+   </div>
+ </div>`);
+ $('#override-bg-close').onclick=()=>{closeModal();renderThemeSettings()};
+ $('#override-bg-inherit').onchange=e=>{
+   const theme=ensureThemeDraft();
+   if(e.target.checked){
+     const next={...getThemeBackgroundConfig(theme,target),inherit:true};replaceThemeBackgroundConfig(theme,target,next);
+   }else{
+     const base={...resolveThemeBackground(theme,parent),inherit:false};replaceThemeBackgroundConfig(theme,target,base);
+   }
+   themeDraft=normalizeThemePrefs(theme);markThemeDraftDirty();applyThemePrefs(themeDraft);syncOverrideEditorControls(target);renderThemeBackgroundOverrideLists();
+ };
+ $('#override-bg-image-enabled').onchange=e=>mutateOverrideBackground(target,b=>b.imageEnabled=e.target.checked);
+ $('#override-bg-library').onclick=()=>openBackgroundLibrary(target);
+ $('#override-bg-clear').onclick=()=>mutateOverrideBackground(target,b=>b.assetId='');
+ $('#override-bg-color').oninput=e=>mutateOverrideBackground(target,b=>b.color=normalizeHexColor(e.target.value,b.color));
+ $$('input[name="override-bg-fit"]').forEach(r=>r.onchange=()=>{if(r.checked)mutateOverrideBackground(target,b=>b.fit=r.value==='contain'?'contain':'cover')});
+ $$('input[name="override-bg-mode"]').forEach(r=>r.onchange=()=>{if(r.checked)mutateOverrideBackground(target,b=>b.mode=r.value==='free'?'free':'grid')});
+ $$('[data-override-bg-point]').forEach(b=>b.onclick=()=>mutateOverrideBackground(target,c=>{const p=b.dataset.overrideBgPoint,xy=THEME_POINT_MAP[p]||[50,50];c.mode='grid';c.point=p;c.x=xy[0];c.y=xy[1]}));
+ $('#override-bg-brightness').oninput=e=>mutateOverrideBackground(target,b=>b.brightness=Number(e.target.value));
+ $('#override-bg-overlay').oninput=e=>mutateOverrideBackground(target,b=>b.overlay=Number(e.target.value));
+ $('#override-bg-blur').oninput=e=>mutateOverrideBackground(target,b=>b.blur=Number(e.target.value));
+ syncOverrideEditorControls(target);bindOverridePreviewDrag(target);
+}
+
+function updateThemeSaveState(){
+ const badge=$('#theme-save-state'),status=$('#theme-operation-status'),topSave=$('#theme-save-top');
+ if(badge){
+   badge.textContent=themeDraftDirty?'未保存の変更あり':'保存済み';
+   badge.classList.toggle('theme-unsaved',themeDraftDirty);
+ }
+ if(topSave)topSave.disabled=!themeDraftDirty;
+ if(status)status.textContent=themeDraftDirty?'変更はリアルタイム反映中です。保存すると次回起動時にも引き継がれます。':'現在の設定は保存されています。';
+}
+async function updateThemeSelectedBackgroundLabel(){
+ const el=$('#theme-background-selected');if(!el)return;
+ const bg=ensureThemeDraft().backgrounds.common;
+ if(!bg.assetId){el.textContent='選択中：背景画像なし';return}
+ const rec=await getBackgroundAsset(bg.assetId);
+ if(!el.isConnected)return;
+ el.textContent=rec?`選択中：${rec.name}`:'選択中の背景画像が見つかりません';
+}
+function applyThemeDraftChange(mutator){
+ const draft=ensureThemeDraft();mutator(draft);themeDraft=normalizeThemePrefs(draft);markThemeDraftDirty();applyThemePrefs(themeDraft);syncThemeSettingsControls();renderThemeBackgroundOverrideLists();
+}
+function syncThemeSettingsControls(){
+ const d=ensureThemeDraft(),ui=d.ui,bg=d.backgrounds.common;
+ const accent=$('#theme-accent'),opacity=$('#theme-ui-opacity'),readability=$('#theme-readability');
+ if(accent)accent.value=ui.accent;
+ if($('#theme-accent-value'))$('#theme-accent-value').textContent=ui.accent.toUpperCase();
+ if(opacity)opacity.value=String(ui.opacity);
+ if($('#theme-ui-opacity-value'))$('#theme-ui-opacity-value').textContent=`${ui.opacity}%`;
+ if(readability)readability.checked=ui.readability!==false;
+
+ if($('#theme-bg-image-enabled'))$('#theme-bg-image-enabled').checked=bg.imageEnabled!==false;
+ if($('#theme-bg-color'))$('#theme-bg-color').value=bg.color;
+ if($('#theme-bg-color-value'))$('#theme-bg-color-value').textContent=bg.color.toUpperCase();
+ $$('input[name="theme-bg-fit"]').forEach(r=>r.checked=r.value===bg.fit);
+ $$('input[name="theme-bg-position-mode"]').forEach(r=>r.checked=r.value===bg.mode);
+ $$('[data-theme-bg-point]').forEach(b=>b.classList.toggle('active',bg.mode==='grid'&&b.dataset.themeBgPoint===bg.point));
+ if($('#theme-bg-position-grid'))$('#theme-bg-position-grid').style.opacity=bg.mode==='grid'?'1':'.45';
+ if($('#theme-bg-position-readout'))$('#theme-bg-position-readout').textContent=bg.mode==='free'?`自由位置 X ${Math.round(bg.x)}% / Y ${Math.round(bg.y)}%`:`9点位置：${bg.point}`;
+ if($('#theme-bg-brightness'))$('#theme-bg-brightness').value=String(bg.brightness);
+ if($('#theme-bg-brightness-value'))$('#theme-bg-brightness-value').textContent=`${bg.brightness}%`;
+ if($('#theme-bg-overlay'))$('#theme-bg-overlay').value=String(bg.overlay);
+ if($('#theme-bg-overlay-value'))$('#theme-bg-overlay-value').textContent=`${bg.overlay}%`;
+ if($('#theme-bg-blur'))$('#theme-bg-blur').value=String(bg.blur);
+ if($('#theme-bg-blur-value'))$('#theme-bg-blur-value').textContent=`${bg.blur}px`;
+ updateThemeSelectedBackgroundLabel();updateThemeSaveState();updateThemePreview(d);
+}
+function bindThemePreviewDrag(){
+ const preview=$('#theme-background-preview');if(!preview)return;
+ let drag=null;
+ preview.onpointerdown=e=>{
+   const bg=ensureThemeDraft().backgrounds.common;
+   if(bg.mode!=='free'||!bg.assetId||bg.imageEnabled===false)return;
+   if(e.button!==undefined&&e.button!==0)return;
+   e.preventDefault();preview.setPointerCapture?.(e.pointerId);
+   drag={id:e.pointerId,x:e.clientX,y:e.clientY,startX:bg.x,startY:bg.y,w:Math.max(1,preview.clientWidth),h:Math.max(1,preview.clientHeight)};
+ };
+ preview.onpointermove=e=>{
+   if(!drag||drag.id!==e.pointerId)return;
+   const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+   const nx=Math.max(0,Math.min(100,drag.startX-dx/drag.w*100)),ny=Math.max(0,Math.min(100,drag.startY-dy/drag.h*100));
+   const d=ensureThemeDraft();d.backgrounds.common.mode='free';d.backgrounds.common.x=nx;d.backgrounds.common.y=ny;
+   themeDraft=normalizeThemePrefs(d);markThemeDraftDirty();applyThemePrefs(themeDraft);syncThemeSettingsControls();
+ };
+ const end=e=>{if(drag&&drag.id===e.pointerId)drag=null};
+ preview.onpointerup=end;preview.onpointercancel=end;
+}
+function renderThemeSettings(){
+ ensureThemeDraft();syncThemeSettingsControls();bindThemePreviewDrag();renderThemeBackgroundOverrideLists();renderScreenNavSettings();
+}
+function setSettingsTab(name){
+ const tab=['appearance','background','future'].includes(name)?name:'appearance';
+ $$('[data-settings-tab]').forEach(b=>b.classList.toggle('primary',b.dataset.settingsTab===tab));
+ $$('.settings-pane').forEach(p=>p.classList.toggle('active',p.id===`settings-pane-${tab}`));
+ if(tab==='background'||tab==='future')renderThemeSettings();
+}
+async function openBackgroundAssetViewer(id){
+ const rec=await getBackgroundAsset(id);if(!rec)return;
+ const url=await getBackgroundAssetUrl(id,'full');if(!url)return;
+ openModal(`<div class="modal-head"><h3>${esc(rec.name||'背景画像')}</h3><button class="btn" id="background-view-back">背景ライブラリへ戻る</button></div><img class="background-library-viewer" src="${url}" alt="${esc(rec.name||'背景画像')}">`);
+ $('#background-view-back').onclick=()=>openBackgroundLibrary(backgroundLibraryContextTarget);
+}
+async function renderBackgroundLibraryRows(){
+ const list=$('#background-library-list');if(!list)return;
+ await backgroundReadyPromise;
+ const all=[...backgroundAssetCache.values()].sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+ const selected=getThemeBackgroundConfig(ensureThemeDraft(),backgroundLibraryContextTarget||'common')?.assetId||'';
+ if(!all.length){list.innerHTML='<div class="muted">背景画像はまだ登録されていません。</div>';return}
+ const rows=[];
+ for(const rec of all){
+   const thumb=await getBackgroundAssetUrl(rec.id,'thumb');
+   const size=(Number(rec.fullBlob?.size)||0)+(Number(rec.thumbBlob?.size)||0),usage=themeBackgroundAssetUsage(rec.id);
+   rows.push(`<div class="background-library-row ${selected===rec.id?'background-library-selected':''}">
+     <div class="background-library-thumb" style="${thumb?`background-image:url('${thumb}')`:''}"></div>
+     <div class="background-library-meta"><b>${esc(rec.name||'背景画像')}</b><div class="muted">${rec.width||'-'}×${rec.height||'-'} / ${formatBytes(size)}${usage.length?` / 使用中`:''}</div></div>
+     <div class="background-library-actions">
+       <button class="btn small primary" data-bg-use="${rec.id}">使用</button>
+       <button class="btn small" data-bg-view="${rec.id}">拡大</button>
+       <button class="btn small" data-bg-rename="${rec.id}">名前変更</button>
+       <button class="btn small danger" data-bg-delete="${rec.id}">削除</button>
+     </div>
+   </div>`);
+ }
+ list.innerHTML=rows.join('');
+ $$('[data-bg-use]').forEach(b=>b.onclick=()=>{
+   const target=backgroundLibraryContextTarget||'common';
+   setDraftBackgroundAsset(target,b.dataset.bgUse);
+   if(target==='common'){closeModal();renderThemeSettings()}else openThemeBackgroundEditor(target);
+   toast(`${themeBackgroundTargetLabel(target)}に背景を選択しました`);
+ });
+ $$('[data-bg-view]').forEach(b=>b.onclick=()=>openBackgroundAssetViewer(b.dataset.bgView));
+ $$('[data-bg-rename]').forEach(b=>b.onclick=async()=>{await renameBackgroundAsset(b.dataset.bgRename);renderBackgroundLibraryRows()});
+ $$('[data-bg-delete]').forEach(b=>b.onclick=async()=>{if(await deleteBackgroundAsset(b.dataset.bgDelete))renderBackgroundLibraryRows()});
+}
+async function addBackgroundFiles(files){
+ const images=[...files].filter(f=>String(f.type||'').startsWith('image/'));if(!images.length){toast('画像ファイルを選択してください');return}
+ const status=$('#background-library-status');let added=0,failed=0;
+ for(let i=0;i<images.length;i++){
+   if(status)status.textContent=`登録中 ${i+1}/${images.length}：${images[i].name}`;
+   try{const rec=await createBackgroundAssetRecord(images[i]);await saveBackgroundAsset(rec);added++}catch(err){console.warn(err);failed++}
+ }
+ if(status)status.textContent=`登録 ${added}件${failed?` / 失敗 ${failed}件`:''}`;
+ renderBackgroundLibraryRows();toast(`背景画像を${added}件登録しました`);
+}
+function openBackgroundLibrary(target='common'){
+ if(!imageSystemAvailable){toast('このブラウザでは背景画像を保存できません');return}
+ backgroundLibraryContextTarget=target||'common';
+ openModal(`<div class="modal-head"><h3>背景ライブラリ</h3><button class="btn" id="background-library-close">閉じる</button></div>
+ <p class="muted">一度登録した背景は複数の画面で共有できるように保存されます。次回の画面別背景追加でも、このライブラリから同じ画像を選べます。</p>
+ <div id="background-library-drop" class="background-library-drop" tabindex="0">
+   <div>背景画像をここへドロップ、またはクリックして追加</div>
+   <div class="muted" style="margin-top:4px">複数選択対応 / PCではこの枠を選択してCtrl+Vでも追加できます</div>
+   <input id="background-library-input" type="file" accept="image/*" multiple style="display:none">
+ </div>
+ <div id="background-library-status" class="muted" style="margin-top:7px"></div>
+ <div id="background-library-list" class="background-library-list"></div>`);
+ $('#background-library-close').onclick=()=>{const target=backgroundLibraryContextTarget;if(target&&target!=='common')openThemeBackgroundEditor(target);else{closeModal();renderThemeSettings()}};
+ const input=$('#background-library-input'),drop=$('#background-library-drop');
+ input.onchange=()=>{addBackgroundFiles(input.files||[]);input.value=''};
+ drop.onclick=e=>{if(e.target!==input)input.click()};
+ drop.ondragover=e=>{e.preventDefault();drop.classList.add('drag-over')};
+ drop.ondragleave=()=>drop.classList.remove('drag-over');
+ drop.ondrop=e=>{e.preventDefault();drop.classList.remove('drag-over');addBackgroundFiles(e.dataTransfer?.files||[])};
+ drop.onpaste=e=>{const fs=[...(e.clipboardData?.files||[])].filter(f=>String(f.type||'').startsWith('image/'));if(fs.length){e.preventDefault();addBackgroundFiles(fs)}};
+ renderBackgroundLibraryRows();
+}
+
 function deckSettingsFrom(raw={}){
  return {
    mainEnabled:raw.mainEnabled!==false,
@@ -1108,7 +2186,7 @@ function deckStatusParts(d){
 function deckStatusText(d){const parts=deckStatusParts(d);return parts.length?parts.join(' / '):'非表示'}
 function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),1800)}
-function nav(name){$$('.screen').forEach(x=>x.classList.remove('active'));const screen=$('#screen-'+name);if(!screen)return;screen.classList.add('active');if(name==='home')updateImageStorageStatus();if(name==='cards')renderRegisterHistory();if(name==='card-manager')renderCards();if(name==='decks')renderDecks();if(name==='setup')renderSetup();window.scrollTo(0,0)}
+function nav(name){$$('.screen').forEach(x=>x.classList.remove('active'));const screen=$('#screen-'+name);if(!screen)return;currentScreenName=name;screen.classList.add('active');applyThemePrefs(currentThemeForDisplay());if(name==='home')updateImageStorageStatus();if(name==='cards')renderRegisterHistory();if(name==='card-manager')renderCards();if(name==='decks')renderDecks();if(name==='setup')renderSetup();if(name==='settings'){ensureThemeDraft();renderThemeSettings()}window.scrollTo(0,0)}
 $$('[data-nav]').forEach(b=>b.onclick=()=>nav(b.dataset.nav));
 $('#home-two-player').onclick=()=>{nav('setup');$('#mode-select').value='2';syncSetupMode()};
 
@@ -1246,7 +2324,7 @@ function exportCardsObject(){return {format:'min-kai-tcg-cards',version:1,cards:
 function exportAllObject(){return {format:SIM_FORMAT,version:3,cards:cards.map(cardToPortable),decks:decks.map(d=>({id:d.id,name:d.name,...deckSettingsFrom(d),cards:Object.entries(d.entries).filter(([,n])=>n>0).map(([cardId,count])=>({cardId,cardName:cards.find(c=>c.id===cardId)?.name||'',count}))}))}}
 
 // v2.4 Full backup ZIP (store method: images are already compressed)
-const FULL_BACKUP_FORMAT='min-kai-tcg-full-backup',FULL_BACKUP_VERSION=1;
+const FULL_BACKUP_FORMAT='min-kai-tcg-full-backup',FULL_BACKUP_VERSION=2;
 const zipEncoder=new TextEncoder(),zipDecoder=new TextDecoder();
 let crc32Table=null;
 function getCrc32Table(){
@@ -1342,9 +2420,9 @@ function downloadBlob(blob,filename){
 }
 async function buildFullBackupZip(onProgress=()=>{}){
  if(!imageSystemAvailable)throw new Error('このブラウザでは画像ストレージを利用できません。');
- await imageReadyPromise;
+ await Promise.all([imageReadyPromise,backgroundReadyPromise]);
  onProgress('バックアップ対象を確認中…');
- const [allImages,allLinks]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links')]);
+ const [allImages,allLinks,allBackgrounds]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links'),imageDbGetAll('backgrounds')]);
  const validCardIds=new Set(cards.map(c=>c.id));
  const validLinks=allLinks.map(x=>normalizeImageLink(x,x.cardId)).filter(x=>validCardIds.has(x.cardId)&&x.imageId);
  const usedImageIds=new Set(validLinks.map(x=>x.imageId)),images=allImages.filter(x=>usedImageIds.has(x.id));
@@ -1352,7 +2430,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
  const finalLinks=validLinks.filter(x=>imageMap.has(x.imageId));
  const entries=[],imageMeta=[];
  for(let i=0;i<images.length;i++){
-   const rec=images[i];onProgress(`画像を準備中 ${i+1}/${images.length}…`);
+   const rec=images[i];onProgress(`カード画像を準備中 ${i+1}/${images.length}…`);
    const fullBytes=new Uint8Array(await rec.fullBlob.arrayBuffer()),thumbBytes=new Uint8Array(await rec.thumbBlob.arrayBuffer());
    const fullPath=`images/${rec.id}/full.${mimeExtension(rec.fullBlob.type)}`,thumbPath=`images/${rec.id}/thumb.${mimeExtension(rec.thumbBlob.type)}`;
    entries.push({name:fullPath,data:fullBytes},{name:thumbPath,data:thumbBytes});
@@ -1363,15 +2441,31 @@ async function buildFullBackupZip(onProgress=()=>{}){
      thumb:{path:thumbPath,mime:rec.thumbBlob.type||'application/octet-stream',size:thumbBytes.length}
    });
  }
+ const backgroundMeta=[];
+ for(let i=0;i<allBackgrounds.length;i++){
+   const rec=allBackgrounds[i];onProgress(`背景画像を準備中 ${i+1}/${allBackgrounds.length}…`);
+   if(!rec?.id||!rec.fullBlob||!rec.thumbBlob)continue;
+   const fullBytes=new Uint8Array(await rec.fullBlob.arrayBuffer()),thumbBytes=new Uint8Array(await rec.thumbBlob.arrayBuffer());
+   const fullPath=`backgrounds/${rec.id}/full.${mimeExtension(rec.fullBlob.type)}`,thumbPath=`backgrounds/${rec.id}/thumb.${mimeExtension(rec.thumbBlob.type)}`;
+   entries.push({name:fullPath,data:fullBytes},{name:thumbPath,data:thumbBytes});
+   backgroundMeta.push({
+     id:rec.id,name:rec.name||'背景画像',width:rec.width,height:rec.height,originalWidth:rec.originalWidth,originalHeight:rec.originalHeight,
+     originalName:rec.originalName||'',createdAt:rec.createdAt||'',
+     full:{path:fullPath,mime:rec.fullBlob.type||'application/octet-stream',size:fullBytes.length},
+     thumb:{path:thumbPath,mime:rec.thumbBlob.type||'application/octet-stream',size:thumbBytes.length}
+   });
+ }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'2.6',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'3.1',
    data:exportBackupObject(),
    settings:{
      boardDisplay:{...boardDisplayPrefs},
      handFollow:[...handFollowPrefs]
    },
+   theme:normalizeThemePrefs(themePrefs),
    imageLinks:finalLinks,
-   images:imageMeta
+   images:imageMeta,
+   backgrounds:backgroundMeta
  };
  entries.unshift({name:'manifest.json',data:zipEncoder.encode(JSON.stringify(manifest,null,2))});
  onProgress('ZIPを組み立て中…');
@@ -1396,14 +2490,15 @@ function parseFullBackupZip(bytes){
  const files=readZipStored(bytes),manifestBytes=files.get('manifest.json');
  if(!manifestBytes)throw new Error('manifest.json が見つかりません。');
  let manifest;try{manifest=JSON.parse(zipDecoder.decode(manifestBytes))}catch{throw new Error('manifest.json を読み取れません。')}
- if(!manifest||manifest.format!==FULL_BACKUP_FORMAT||Number(manifest.version)!==FULL_BACKUP_VERSION)throw new Error('対応している完全バックアップZIPではありません。');
+ const backupVersion=Number(manifest?.version);
+ if(!manifest||manifest.format!==FULL_BACKUP_FORMAT||![1,2].includes(backupVersion))throw new Error('対応している完全バックアップZIPではありません。');
  if(!manifest.data||manifest.data.format!=='min-kai-tcg-backup'||!Array.isArray(manifest.data.cards)||!Array.isArray(manifest.data.decks))throw new Error('完全バックアップ内のカード・デッキ情報が不正です。');
  const cardIds=new Set(manifest.data.cards.map(c=>String(c.id||'')).filter(Boolean)),imageRecords=[],imageIds=new Set();
  for(const meta of Array.isArray(manifest.images)?manifest.images:[]){
    if(!meta||!meta.id||!meta.full?.path||!meta.thumb?.path)throw new Error('完全バックアップ内の画像情報が不正です。');
    const full=files.get(meta.full.path),thumb=files.get(meta.thumb.path);
    if(!full||!thumb)throw new Error(`画像ファイルが不足しています：${meta.id}`);
-   imageIds.add(meta.id);
+   imageIds.add(String(meta.id));
    imageRecords.push({
      id:String(meta.id),
      fullBlob:new Blob([full],{type:String(meta.full.mime||'application/octet-stream')}),
@@ -1413,21 +2508,52 @@ function parseFullBackupZip(bytes){
    });
  }
  const links=(Array.isArray(manifest.imageLinks)?manifest.imageLinks:[]).map(x=>normalizeImageLink(x,x?.cardId)).filter(x=>cardIds.has(x.cardId)&&imageIds.has(x.imageId));
- return {manifest,imageRecords,links,settings:normalizeFullBackupSettings(manifest.settings||{})};
+ const backgroundRecords=[],backgroundIds=new Set();
+ if(backupVersion>=2){
+   for(const meta of Array.isArray(manifest.backgrounds)?manifest.backgrounds:[]){
+     if(!meta||!meta.id||!meta.full?.path||!meta.thumb?.path)throw new Error('完全バックアップ内の背景画像情報が不正です。');
+     const full=files.get(meta.full.path),thumb=files.get(meta.thumb.path);
+     if(!full||!thumb)throw new Error(`背景画像ファイルが不足しています：${meta.id}`);
+     backgroundIds.add(String(meta.id));
+     backgroundRecords.push({
+       id:String(meta.id),name:String(meta.name||'背景画像'),
+       fullBlob:new Blob([full],{type:String(meta.full.mime||'application/octet-stream')}),
+       thumbBlob:new Blob([thumb],{type:String(meta.thumb.mime||'application/octet-stream')}),
+       width:Number(meta.width)||0,height:Number(meta.height)||0,originalWidth:Number(meta.originalWidth)||0,originalHeight:Number(meta.originalHeight)||0,
+       originalName:String(meta.originalName||''),createdAt:String(meta.createdAt||'')
+     });
+   }
+ }
+ const theme=backupVersion>=2?normalizeThemePrefs(manifest.theme||THEME_DEFAULTS):null;
+ if(theme){
+   for(const [,label,cfg] of listThemeBackgroundRefs(theme)){
+     if(cfg?.assetId&&!backgroundIds.has(String(cfg.assetId)))throw new Error(`テーマで使用している背景画像がZIP内にありません：${label}`);
+   }
+ }
+ return {manifest,backupVersion,imageRecords,links,backgroundRecords,theme,settings:normalizeFullBackupSettings(manifest.settings||{})};
 }
 async function restoreFullBackupZip(parsed){
  if(!imageSystemAvailable)throw new Error('このブラウザでは画像ストレージを利用できません。');
- await imageReadyPromise;
- await replaceImageDatabase(parsed.imageRecords,parsed.links);
+ await Promise.all([imageReadyPromise,backgroundReadyPromise]);
+ const restoresTheme=parsed.backupVersion>=2&&!!parsed.theme;
+ await replaceImageDatabase(parsed.imageRecords,parsed.links,restoresTheme?parsed.backgroundRecords:null);
  resetImageRuntimeCache();
+ if(restoresTheme)resetBackgroundRuntimeCache();
  const r=restoreBackupObject(parsed.manifest.data,{skipImageReconcile:true});
  boardDisplayPrefs=parsed.settings.boardDisplay;handFollowPrefs=parsed.settings.handFollow;
  save(LS_BOARD_DISPLAY,boardDisplayPrefs);save(LS_HAND_FOLLOW,handFollowPrefs);
  imageLinkCache.clear();for(const raw of parsed.links){const link=normalizeImageLink(raw,raw.cardId);imageLinkCache.set(link.cardId,link)}
+ if(restoresTheme){
+   parsed.backgroundRecords.forEach(rec=>backgroundAssetCache.set(rec.id,rec));
+   themePrefs=normalizeThemePrefs(parsed.theme);
+   themeDraft=cloneTheme(themePrefs);themeDraftDirty=false;
+   save(LS_THEME,themePrefs);
+ }
  renderCards();renderDecks();renderSetup(true);updateImageStorageStatus();applyBoardDisplaySettings();
- return {cards:r.cards,decks:r.decks,images:parsed.imageRecords.length,linkedCards:parsed.links.length};
+ await applyThemePrefs(themePrefs);
+ if($('#screen-settings')?.classList.contains('active'))renderThemeSettings();
+ return {cards:r.cards,decks:r.decks,images:parsed.imageRecords.length,linkedCards:parsed.links.length,backgrounds:restoresTheme?parsed.backgroundRecords.length:null,themeRestored:restoresTheme};
 }
-
 function exportBackupObject(){
  return {
    format:'min-kai-tcg-backup',
@@ -1555,7 +2681,7 @@ $('#full-backup-create').onclick=async()=>{
    const result=await buildFullBackupZip(msg=>{status.textContent=msg});
    const stamp=new Date().toISOString().slice(0,10).replaceAll('-','');
    downloadBlob(result.blob,`minkai_tcg_full_backup_${stamp}.zip`);
-   status.textContent=`完全バックアップを作成しました。カード ${cards.length}枚 / デッキ ${decks.length}個 / 画像 ${result.manifest.images.length}件 / ${formatBytes(result.blob.size)}`;
+   status.textContent=`完全バックアップを作成しました。カード ${cards.length}枚 / デッキ ${decks.length}個 / カード画像 ${result.manifest.images.length}件 / 背景 ${result.manifest.backgrounds.length}件 / ${formatBytes(result.blob.size)}`;
    toast('完全バックアップZIPを作成しました');
  }catch(err){
    console.error(err);status.textContent='完全バックアップ作成エラー: '+(err?.message||err);
@@ -1566,11 +2692,12 @@ $('#full-backup-file-input').onchange=async e=>{
  const status=$('#full-backup-status');status.textContent='ZIPを確認しています…';
  try{
    const parsed=parseFullBackupZip(new Uint8Array(await f.arrayBuffer()));
-   const cardCount=parsed.manifest.data.cards.length,deckCount=parsed.manifest.data.decks.length,imageCount=parsed.imageRecords.length;
-   if(!confirm(`現在の登録カード・保存デッキ・カード画像・表示設定を、この完全バックアップ内容に置き換えます。\n\nカード ${cardCount}枚 / デッキ ${deckCount}個 / 画像 ${imageCount}件\n\n復元しますか？`)){e.target.value='';status.textContent='復元をキャンセルしました。';return}
+   const cardCount=parsed.manifest.data.cards.length,deckCount=parsed.manifest.data.decks.length,imageCount=parsed.imageRecords.length,bgCount=parsed.backgroundRecords.length;
+   const themeText=parsed.theme?` / 背景 ${bgCount}件 / 外観設定あり`:' / 旧形式（現在の外観・背景は維持）';
+   if(!confirm(`現在の登録カード・保存デッキ・カード画像・対象設定を、この完全バックアップ内容に置き換えます。\n\nカード ${cardCount}枚 / デッキ ${deckCount}個 / カード画像 ${imageCount}件${themeText}\n\n復元しますか？`)){e.target.value='';status.textContent='復元をキャンセルしました。';return}
    status.textContent='完全バックアップを復元しています…';
    const r=await restoreFullBackupZip(parsed);
-   status.textContent=`完全復元しました。カード ${r.cards}枚 / デッキ ${r.decks}個 / 画像 ${r.images}件 / 画像設定カード ${r.linkedCards}枚`;
+   status.textContent=`完全復元しました。カード ${r.cards}枚 / デッキ ${r.decks}個 / カード画像 ${r.images}件 / 画像設定カード ${r.linkedCards}枚${r.themeRestored?` / 背景 ${r.backgrounds}件 / 外観設定を復元`:''}`;
    toast('完全バックアップから復元しました');
  }catch(err){
    console.error(err);status.textContent='完全復元エラー: '+(err?.message||err);
@@ -1591,7 +2718,7 @@ function importDeckObject(data){
 }
 
 // Card registry / manager
-const CARD_MANAGER_PAGE_SIZE=30;
+
 
 function touchRecentCards(ids){
  const valid=[...new Set((Array.isArray(ids)?ids:[ids]).filter(Boolean))];
@@ -1730,10 +2857,11 @@ function renderCards(){
  }
  if(count)count.textContent=`${rows.length}件`;
 
- const pageMax=Math.max(0,Math.ceil(rows.length/CARD_MANAGER_PAGE_SIZE)-1);
+ const pageSize=currentListPageSize();
+ const pageMax=Math.max(0,Math.ceil(rows.length/pageSize)-1);
  if(cardManagerPage>pageMax)cardManagerPage=pageMax;
- const start=cardManagerPage*CARD_MANAGER_PAGE_SIZE;
- const pageRows=rows.slice(start,start+CARD_MANAGER_PAGE_SIZE);
+ const start=cardManagerPage*pageSize;
+ const pageRows=rows.slice(start,start+pageSize);
 
  list.innerHTML=pageRows.length?pageRows.map(({c})=>{
    const dupCount=dupCounts.get(normalizedDuplicateName(c.name))||0;
@@ -1751,13 +2879,14 @@ function renderCards(){
 
  const pageInfo=$('#card-manager-page-info'),prev=$('#card-manager-prev'),next=$('#card-manager-next');
  if(rows.length){
-   const end=Math.min(start+CARD_MANAGER_PAGE_SIZE,rows.length);
+   const end=Math.min(start+pageSize,rows.length);
    pageInfo.textContent=`表示 ${start+1}〜${end} / ${rows.length}件`;
  }else pageInfo.textContent='表示 0 / 0件';
  prev.disabled=cardManagerPage<=0;
- next.disabled=start+CARD_MANAGER_PAGE_SIZE>=rows.length;
+ next.disabled=start+pageSize>=rows.length;
  prev.onclick=()=>{if(cardManagerPage<=0)return;cardManagerPage--;renderCards();$('#card-manager-list-top')?.scrollIntoView({behavior:'smooth',block:'start'})};
- next.onclick=()=>{if(start+CARD_MANAGER_PAGE_SIZE>=rows.length)return;cardManagerPage++;renderCards();$('#card-manager-list-top')?.scrollIntoView({behavior:'smooth',block:'start'})};
+ prev.textContent=`前の${pageSize}件`;next.textContent=`次の${pageSize}件`;
+ next.onclick=()=>{if(start+pageSize>=rows.length)return;cardManagerPage++;renderCards();$('#card-manager-list-top')?.scrollIntoView({behavior:'smooth',block:'start'})};
 
  const dupBtn=$('#card-manager-duplicates');
  if(dupBtn){
@@ -2104,16 +3233,19 @@ async function openCardImageEditor(cardId){
  $('#image-change').onclick=()=>fileInput.click();
  $('#image-editor-back').onclick=()=>{cleanupImageEditorTemp();openCardManagerDetail(cardId,{imageExpanded:true})};
  $('#image-save').onclick=async()=>{
+   if(!pendingFile&&!working.imageId){toast('先に画像を選択してください');return}
    const btn=$('#image-save');btn.disabled=true;btn.textContent='保存中…';
+   let createdImageId='';
    try{
      const oldImageId=original?.imageId||'';
      if(pendingFile){
        const rec=await createOptimizedImageRecord(pendingFile);
+       createdImageId=rec.id;
        await imageDbPut('images',rec);
        working.imageId=rec.id;
      }
-     if(!working.imageId){toast('先に画像を選択してください');return}
      await putCardImageLink(working);
+     createdImageId='';
      if(oldImageId&&oldImageId!==working.imageId)await cleanupImageIfUnused(oldImageId);
      cleanupImageEditorTemp();
      if(board)renderBoard();
@@ -2121,6 +3253,9 @@ async function openCardImageEditor(cardId){
      openCardManagerDetail(cardId,{imageExpanded:true});
      toast('カード画像を保存しました');
    }catch(err){
+     if(createdImageId){
+       try{await imageDbDelete('images',createdImageId);revokeImageUrls(createdImageId)}catch{}
+     }
      console.error(err);toast(err?.message||'画像を保存できませんでした');
      if(btn){btn.disabled=false;btn.textContent='画像と設定を保存'}
    }
@@ -2151,7 +3286,7 @@ function openCardManagerDetail(id,opt={}){
  </div>
  <div class="manager-text-export">
    <div class="muted manager-text-export-title">テキスト出力</div>
-   <div class="actions"><button class="btn" id="manager-copy-jelly">ゼリー君式をコピー</button><button class="btn" id="manager-copy-bake">化けさん式をコピー</button></div>
+   <div class="actions"><button class="btn" id="manager-copy-jelly">ゼリー君式でコピー</button><button class="btn" id="manager-copy-bake">化けさん式でコピー</button></div>
  </div>
  <div class="actions"><button class="btn primary" id="manager-edit-card">編集</button><button class="btn" id="manager-clone-card">複製</button></div>
  <div class="manager-danger-zone"><button class="btn danger" id="manager-delete-card">削除</button></div>`);
@@ -2248,7 +3383,7 @@ $('#card-manager-clear').onclick=()=>{
 };
 
 // Deck editor
-const DECK_POOL_PAGE_SIZE=30;
+
 function renderDecks(){
  $('#deck-select').innerHTML='<option value="">新規デッキ</option>'+decks.map(d=>`<option value="${d.id}">${esc(d.name)} 〔${esc(deckStatusText(d))}〕</option>`).join('');
  $('#deck-select').value=editingDeckId||'';$('#deck-name').value=workingDeck.name||'';
@@ -2274,20 +3409,22 @@ function filteredDeckPoolCards(){
 }
 function renderDeckPool(){
  const arr=filteredDeckPoolCards();
- const pageMax=Math.max(0,Math.ceil(arr.length/DECK_POOL_PAGE_SIZE)-1);
+ const pageSize=currentListPageSize();
+ const pageMax=Math.max(0,Math.ceil(arr.length/pageSize)-1);
  if(deckPoolPage>pageMax)deckPoolPage=pageMax;
- const start=deckPoolPage*DECK_POOL_PAGE_SIZE;
- const pageRows=arr.slice(start,start+DECK_POOL_PAGE_SIZE);
+ const start=deckPoolPage*pageSize;
+ const pageRows=arr.slice(start,start+pageSize);
  $('#deck-card-pool').innerHTML=pageRows.length?pageRows.map(c=>`<div class="deck-card-row list-row"><div class="grow"><b>${esc(c.name)}</b><div class="muted">${esc(c.type)}${c.level?' / Lv'+esc(c.level):''}${c.race?' / '+esc(c.race):''}</div></div><div class="qty"><button class="btn small" data-pool-minus="${c.id}">−</button><b>${workingDeck.entries[c.id]||0}</b><button class="btn small" data-pool-plus="${c.id}">＋</button></div></div>`).join(''):'<div class="muted">該当カードなし</div>';
  const info=$('#deck-pool-page-info'),prev=$('#deck-pool-prev'),next=$('#deck-pool-next');
  if(arr.length){
-   const end=Math.min(start+DECK_POOL_PAGE_SIZE,arr.length);
+   const end=Math.min(start+pageSize,arr.length);
    info.textContent=`表示 ${start+1}〜${end} / ${arr.length}件`;
  }else info.textContent='表示 0 / 0件';
  prev.disabled=deckPoolPage<=0;
- next.disabled=start+DECK_POOL_PAGE_SIZE>=arr.length;
+ next.disabled=start+pageSize>=arr.length;
  prev.onclick=()=>{if(deckPoolPage<=0)return;deckPoolPage--;renderDeckPool();$('#deck-card-pool-top')?.scrollIntoView({behavior:'smooth',block:'start'})};
- next.onclick=()=>{if(start+DECK_POOL_PAGE_SIZE>=arr.length)return;deckPoolPage++;renderDeckPool();$('#deck-card-pool-top')?.scrollIntoView({behavior:'smooth',block:'start'})};
+ prev.textContent=`前の${pageSize}件`;next.textContent=`次の${pageSize}件`;
+ next.onclick=()=>{if(start+pageSize>=arr.length)return;deckPoolPage++;renderDeckPool();$('#deck-card-pool-top')?.scrollIntoView({behavior:'smooth',block:'start'})};
  bindDeckQty();
 }
 function resetDeckPoolPageAndRender(){deckPoolPage=0;renderDeckPool()}
@@ -2401,7 +3538,7 @@ function cloneInstance(c){return {...c,instanceId:uid('inst'),faceDown:false,res
 function makeDeckPiles(deckId){const d=decks.find(x=>x.id===deckId),phys=[];if(d)Object.entries(d.entries).forEach(([id,n])=>{const c=cards.find(x=>x.id===id);if(c)for(let i=0;i<n;i++)phys.push({id:uid('pile'),cards:[cloneInstance(c)]})});return phys}
 function shufflePileArray(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}}
 function makePlayer(deckId,index,favoriteCardId='',otherDeckId=''){const phys=makeDeckPiles(deckId),other=makeDeckPiles(otherDeckId);const player={name:'プレイヤー'+(index+1),homePowerMod:0,character:Array(5).fill(null),pain:Array(5).fill(null),room:Array(5).fill(null),rulePlus:Array(1).fill(null),hand:[],handMode:'scroll',deck:phys,otherDeck:other,grave:[],banish:[],collapsed:{pain:false,room:false,rulePlus:false}};if(favoriteCardId){const i=player.deck.findIndex(p=>p.cards[0]?.id===favoriteCardId);if(i>=0){const [pile]=player.deck.splice(i,1);player.hand.push(pile)}}shufflePileArray(player.deck);return player}
-$('#start-board').onclick=()=>{const mode=Number($('#mode-select').value);if(!$('#setup-deck-1').value){alert(decks.length?'メインデッキとして盤面開始に表示されているデッキがありません。デッキ設定を確認してください。':'デッキを1つ以上作成してください。');return}const setup={mode,deck1:$('#setup-deck-1').value,otherDeck1:$('#setup-other-deck-1').value,favorite1:$('#setup-favorite-1').value,deck2:$('#setup-deck-2').value||$('#setup-deck-1').value,otherDeck2:$('#setup-other-deck-2').value,favorite2:$('#setup-favorite-2').value};board={mode,setup,players:[makePlayer(setup.deck1,0,setup.favorite1,setup.otherDeck1)],note:'',turn:1};if(mode===2)board.players.push(makePlayer(setup.deck2,1,setup.favorite2,setup.otherDeck2));boardZoom=1;renderBoard();nav('board')};
+$('#start-board').onclick=()=>{const mode=Number($('#mode-select').value);if(!$('#setup-deck-1').value){alert(decks.length?'メインデッキとして盤面開始に表示されているデッキがありません。デッキ設定を確認してください。':'デッキを1つ以上作成してください。');return}const setup={mode,deck1:$('#setup-deck-1').value,otherDeck1:$('#setup-other-deck-1').value,favorite1:$('#setup-favorite-1').value,deck2:$('#setup-deck-2').value||$('#setup-deck-1').value,otherDeck2:$('#setup-other-deck-2').value,favorite2:$('#setup-favorite-2').value};handScrollPositions=[0,0];zoneScrollPositions={};pendingHandFollow.clear();board={mode,setup,players:[makePlayer(setup.deck1,0,setup.favorite1,setup.otherDeck1)],note:'',turn:1};if(mode===2)board.players.push(makePlayer(setup.deck2,1,setup.favorite2,setup.otherDeck2));boardZoom=1;renderBoard();nav('board')};
 
 // Board rendering
 function currentNamePosition(){
@@ -2466,7 +3603,7 @@ function restoreBoardScroll(){
    document.querySelectorAll('[data-zone-scroll]').forEach(el=>{el.scrollLeft=zoneScrollPositions[el.dataset.zoneScroll]||0});
  });
 }
-function renderBoard(){if(!board)return;captureHandScroll();captureFixedZoneScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardDisplaySettings();applyBoardZoom();renderHomePowerControls();restoreBoardScroll()}
+function renderBoard(){if(!board)return;captureHandScroll();captureFixedZoneScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardDisplaySettings();applyBoardZoom();renderHomePowerControls();hydratePlayerBoardBackgrounds();restoreBoardScroll()}
 function zoneHeader(pi,z){const p=board.players[pi], n=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button>`;else if(z==='grave'||z==='banish')controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll';controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button></span>`}return `<div class="zone-head"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
 
 function signedNumber(n){
@@ -2511,7 +3648,35 @@ function renderHomePowerControls(){
  });
 }
 
-function renderPlayer(p,pi,reverse){const rows=reverse?['utility','hand','rulePlus','room','pain','character']:['character','pain','room','rulePlus','hand','utility'],homeMod=Number(p.homePowerMod)||0;return `<div class="player-board"><div class="player-title"><b>${esc(p.name)}</b><span class="pill">デッキ ${physicalCount(p.deck)}枚</span><span class="pill">その他 ${physicalCount(p.otherDeck)}枚</span>${homeMod?`<span class="pill home-power-badge">ホームPW ${signedNumber(homeMod)}</span>`:''}</div>${rows.map(z=>z==='utility'?renderUtility(p,pi):renderZone(p,pi,z)).join('')}</div>`}
+function renderPlayer(p,pi,reverse){const rows=reverse?['utility','hand','rulePlus','room','pain','character']:['character','pain','room','rulePlus','hand','utility'],homeMod=Number(p.homePowerMod)||0;return `<div class="player-board" data-player-background="${pi}"><div class="player-title"><b>${esc(p.name)}</b><span class="pill">デッキ ${physicalCount(p.deck)}枚</span><span class="pill">その他 ${physicalCount(p.otherDeck)}枚</span>${homeMod?`<span class="pill home-power-badge">ホームPW ${signedNumber(homeMod)}</span>`:''}</div>${rows.map(z=>z==='utility'?renderUtility(p,pi):renderZone(p,pi,z)).join('')}</div>`}
+
+async function hydratePlayerBoardBackgrounds(theme=currentThemeForDisplay()){
+ if(!board||currentScreenName!=='board')return;
+ const t=normalizeThemePrefs(theme);
+ const nodes=$$('[data-player-background]');
+ for(const el of nodes){
+   const pi=Number(el.dataset.playerBackground),target=pi===1?'player:1':'player:0',cfg=getThemeBackgroundConfig(t,target);
+   if(cfg.inherit!==false){
+     el.classList.remove('custom-player-background');
+     el.style.removeProperty('--player-bg-color');el.style.removeProperty('--player-bg-image');el.style.removeProperty('--player-bg-size');el.style.removeProperty('--player-bg-position');el.style.removeProperty('--player-bg-brightness');el.style.removeProperty('--player-bg-blur');el.style.removeProperty('--player-bg-overlay');
+     continue;
+   }
+   const bg=resolveThemeBackground(t,target);
+   el.classList.add('custom-player-background');
+   el.style.setProperty('--player-bg-color',bg.color);
+   el.style.setProperty('--player-bg-size',bg.fit);
+   el.style.setProperty('--player-bg-position',`${bg.x}% ${bg.y}%`);
+   el.style.setProperty('--player-bg-brightness',`${bg.brightness}%`);
+   el.style.setProperty('--player-bg-blur',`${bg.blur}px`);
+   el.style.setProperty('--player-bg-overlay',String(bg.overlay/100));
+   if(bg.imageEnabled&&bg.assetId){
+     const url=await getBackgroundAssetUrl(bg.assetId,'full');
+     if(!el.isConnected)continue;
+     el.style.setProperty('--player-bg-image',url?`url("${url}")`:'none');
+   }else el.style.setProperty('--player-bg-image','none');
+ }
+}
+
 function renderCompressedPiles(piles,pi,z){return piles.map((pile,i)=>{const depth=Math.min(i,10),html=renderPile(pile,pi,z,i);return html.replace('draggable="true"',`draggable="true" style="left:${6+depth*4}px;top:${5+depth*2}px;z-index:${i+1}"`)}).join('')}
 function renderZone(p,pi,z){const collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];if(FIXED.includes(z)){return `<div class="zone ${collapsed?'collapsed':''}">${zoneHeader(pi,z)}${collapsed?'':`<div class="zone-body fixed" data-zone="${pi}|${z}" data-zone-scroll="${pi}|${z}">${p[z].map((pile,i)=>pile?renderPile(pile,pi,z,i):`<div class="slot" data-slot="${pi}|${z}|${i}">${i+1}</div>`).join('')}</div>`}</div>`}const handClass=z==='hand'?` hand-${p.handMode==='operation'?'operation':'scroll'}-mode`:'';const handAttr=z==='hand'?` data-hand-scroll="${pi}"`:'';return `<div class="zone">${zoneHeader(pi,z)}<div class="dropzone ${p[z].length?'':'empty'}${handClass}" data-zone="${pi}|${z}"${handAttr}>${p[z].map((pile,i)=>renderPile(pile,pi,z,i)).join('')}</div></div>`}
 function compactZoneBox(p,pi,z){return `<div class="deck-box">${zoneHeader(pi,z)}<div class="dropzone pile-zone ${p[z].length?'':'empty'}" data-zone="${pi}|${z}">${renderCompressedPiles(p[z],pi,z)}</div></div>`}
@@ -2856,7 +4021,7 @@ function findCardInstance(pi,z,instanceId){
  return null;
 }
 function openModal(html,closable=true){$('#modal').innerHTML=html;$('#modal-layer').classList.add('open');$('#modal-layer').dataset.closable=closable?'1':'0'}
-function closeModal(){if($('#modal-layer').dataset.closable==='0')return;$('#modal-layer').classList.remove('open');detailCtx=null;detailNav=null;browseSession=null}
+function closeModal(){if($('#modal-layer').dataset.closable==='0')return;cleanupImageEditorTemp();$('#modal-layer').classList.remove('open');detailCtx=null;detailNav=null;browseSession=null}
 $('#modal-layer').onclick=e=>{if(e.target===$('#modal-layer'))closeModal()};
 function openDetail(pi,z,index,cardIndex=0,navIds){const pile=getPile(pi,z,index);if(!pile)return;cardIndex=Math.min(cardIndex,pile.cards.length-1);detailCtx={pi,z,index,cardIndex};const c=pile.cards[cardIndex];
  if(Array.isArray(navIds))detailNav={pi,z,ids:navIds.filter(id=>findCardInstance(pi,z,id))};
@@ -3171,7 +4336,47 @@ $('#board-zoom-out').onclick=()=>setBoardZoom(boardZoom-.1);
 $('#board-zoom-in').onclick=()=>setBoardZoom(boardZoom+.1);
 $('#board-zoom-value').onclick=()=>setBoardZoom(1);
 
-$('#reset-board').onclick=()=>{if(!board)return;const s=board.setup;if(!s){board=null;detailCtx=null;inspectSession=null;nav('setup');return}board={mode:s.mode,setup:{...s},players:[makePlayer(s.deck1,0,s.favorite1,s.otherDeck1)],note:'',turn:1};if(s.mode===2)board.players.push(makePlayer(s.deck2,1,s.favorite2,s.otherDeck2));detailCtx=null;inspectSession=null;$('#modal-layer').classList.remove('open');renderBoard();toast('盤面を初期状態に戻しました')};
+$('#reset-board').onclick=()=>{if(!board)return;const s=board.setup;if(!s){board=null;detailCtx=null;inspectSession=null;nav('setup');return}const collapsedState=board.players.map(p=>({pain:!!p.collapsed?.pain,room:!!p.collapsed?.room,rulePlus:!!p.collapsed?.rulePlus}));handScrollPositions=[0,0];zoneScrollPositions={};pendingHandFollow.clear();board={mode:s.mode,setup:{...s},players:[makePlayer(s.deck1,0,s.favorite1,s.otherDeck1)],note:'',turn:1};if(s.mode===2)board.players.push(makePlayer(s.deck2,1,s.favorite2,s.otherDeck2));board.players.forEach((p,i)=>{if(collapsedState[i])p.collapsed={...collapsedState[i]}});detailCtx=null;inspectSession=null;$('#modal-layer').classList.remove('open');renderBoard();toast('盤面を初期状態に戻しました')};
+
+
+$$('[data-settings-tab]').forEach(b=>b.onclick=()=>setSettingsTab(b.dataset.settingsTab));
+
+$('#theme-home-intro-visible').onchange=e=>applyThemeDraftChange(t=>{t.layout.home.introVisible=e.target.checked});
+$$('[data-theme-home-shortcut]').forEach(x=>x.onchange=()=>applyThemeDraftChange(t=>{t.layout.home.shortcuts[x.dataset.themeHomeShortcut]=x.checked}));
+$('#theme-ui-density').onchange=e=>applyThemeDraftChange(t=>{t.layout.density=e.target.value==='compact'?'compact':'standard'});
+$('#theme-text-size').onchange=e=>applyThemeDraftChange(t=>{t.layout.textSize=['small','large'].includes(e.target.value)?e.target.value:'standard'});
+$('#theme-list-page-size').onchange=e=>{
+ applyThemeDraftChange(t=>{const n=Number(e.target.value);t.layout.listPageSize=[15,30,50,100].includes(n)?n:30});
+ cardManagerPage=0;deckPoolPage=0;renderCards();renderDeckPool();
+};
+$$('[data-settings-open-screen]').forEach(b=>b.onclick=()=>nav(b.dataset.settingsOpenScreen));
+
+$('#theme-accent').oninput=e=>applyThemeDraftChange(d=>{d.ui.accent=normalizeHexColor(e.target.value,d.ui.accent)});
+$('#theme-ui-opacity').oninput=e=>applyThemeDraftChange(d=>{d.ui.opacity=Number(e.target.value)});
+$('#theme-readability').onchange=e=>applyThemeDraftChange(d=>{d.ui.readability=e.target.checked});
+$('#open-background-library').onclick=()=>openBackgroundLibrary('common');
+$('#theme-bg-select-library').onclick=()=>openBackgroundLibrary('common');
+$('#theme-bg-image-enabled').onchange=e=>applyThemeDraftChange(d=>{d.backgrounds.common.imageEnabled=e.target.checked});
+$('#theme-bg-clear-selection').onclick=()=>applyThemeDraftChange(d=>{d.backgrounds.common.assetId=''});
+$('#theme-bg-color').oninput=e=>applyThemeDraftChange(d=>{d.backgrounds.common.color=normalizeHexColor(e.target.value,d.backgrounds.common.color)});
+$$('input[name="theme-bg-fit"]').forEach(r=>r.onchange=()=>{if(r.checked)applyThemeDraftChange(d=>{d.backgrounds.common.fit=r.value==='contain'?'contain':'cover'})});
+$$('input[name="theme-bg-position-mode"]').forEach(r=>r.onchange=()=>{if(r.checked)applyThemeDraftChange(d=>{d.backgrounds.common.mode=r.value==='free'?'free':'grid'})});
+$$('[data-theme-bg-point]').forEach(b=>b.onclick=()=>applyThemeDraftChange(d=>{const p=b.dataset.themeBgPoint,xy=THEME_POINT_MAP[p]||[50,50];d.backgrounds.common.mode='grid';d.backgrounds.common.point=p;d.backgrounds.common.x=xy[0];d.backgrounds.common.y=xy[1]}));
+$('#theme-bg-brightness').oninput=e=>applyThemeDraftChange(d=>{d.backgrounds.common.brightness=Number(e.target.value)});
+$('#theme-bg-overlay').oninput=e=>applyThemeDraftChange(d=>{d.backgrounds.common.overlay=Number(e.target.value)});
+$('#theme-bg-blur').oninput=e=>applyThemeDraftChange(d=>{d.backgrounds.common.blur=Number(e.target.value)});
+async function saveThemeSettings(){
+ themePrefs=normalizeThemePrefs(ensureThemeDraft());save(LS_THEME,themePrefs);themeDraft=cloneTheme(themePrefs);themeDraftDirty=false;await applyThemePrefs(themePrefs);renderThemeSettings();toast('設定を保存しました');
+}
+$('#theme-save').onclick=saveThemeSettings;
+$('#theme-save-top').onclick=saveThemeSettings;
+$('#theme-cancel').onclick=async()=>{
+ themeDraft=cloneTheme(themePrefs);themeDraftDirty=false;await applyThemePrefs(themePrefs);renderThemeSettings();toast('未保存の変更を取り消しました');
+};
+$('#theme-reset').onclick=async()=>{
+ if(!confirm('外観設定を初期状態へ戻しますか？\n背景ライブラリに登録した画像自体は削除されません。'))return;
+ themeDraft=normalizeThemePrefs(THEME_DEFAULTS);themeDraftDirty=true;await applyThemePrefs(themeDraft);renderThemeSettings();toast('初期状態をプレビューしています');
+};
 
 $('#image-storage-refresh').onclick=()=>updateImageStorageStatus();
 $('#image-storage-cleanup').onclick=async()=>{
@@ -3187,6 +4392,7 @@ $('#image-storage-cleanup').onclick=async()=>{
 // initialize
 renderRegisterHistory();renderCards();renderDecks();renderSetup();
 imageReadyPromise=initImageSystem().then(ok=>{renderCards();updateImageStorageStatus();if(board)renderBoard();return ok}).catch(err=>{imageSystemAvailable=false;renderCards();updateImageStorageStatus();console.warn('カード画像機能を初期化できませんでした',err);return false});
+backgroundReadyPromise=initBackgroundSystem().then(async ok=>{await applyThemePrefs(themePrefs);return ok}).catch(err=>{console.warn('背景ライブラリを初期化できませんでした',err);applyThemePrefs(themePrefs);return false});
 })();
 </script>
 
