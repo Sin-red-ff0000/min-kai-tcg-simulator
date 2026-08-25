@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v1.2</title>
+<title>みん会TCG Simulator v1.3</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -138,11 +138,55 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
   .browse-search .btn{padding-left:7px;padding-right:7px}
 }
 
+
+/* v1.3: 盤面カード名をズームより優先して読みやすくする */
+.pile:not(.face-down) .name{
+  position:relative;
+  z-index:8;
+  width:100%;
+  padding:2px 4px;
+  margin:-2px -4px 1px;
+  border-radius:5px;
+  background:rgba(6,9,14,.78);
+  font-size:12px;
+  font-weight:800;
+  line-height:1.12;
+  white-space:normal;
+  overflow:hidden;
+  text-overflow:clip;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  max-height:2.3em;
+  overflow-wrap:anywhere;
+  transform:scale(var(--board-name-comp,1));
+  transform-origin:top center;
+}
+.pile.rested:not(.face-down) .name{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:100%;
+  margin:0;
+  transform:translate(-50%,-50%) rotate(-90deg) scale(var(--board-name-comp,1));
+  transform-origin:center;
+  z-index:12;
+}
+.board-main.zoom-name-priority .pile .stats{opacity:.72}
+.board-main.zoom-low .pile .stats{display:none}
+.board-main.zoom-tiny .pile .flags{display:none}
+.board-main.zoom-low .pile .counter-line{font-weight:700}
+
+/* スクロールモード: 横スワイプは手札スクロール、縦方向はカード移動 */
+@media (pointer:coarse){
+  .hand-scroll-mode .pile{touch-action:pan-x}
+}
+
 </style>
 </head>
 <body>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v1.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v1.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード</button>
   <button data-nav="decks">デッキ</button>
@@ -609,6 +653,11 @@ function applyBoardZoom(){
   const root=$('#board-main');
   if(!root)return;
   root.style.setProperty('--board-zoom',String(boardZoom));
+  const nameComp=boardZoom<1?Math.min(2.6,1/boardZoom):1;
+  root.style.setProperty('--board-name-comp',String(nameComp));
+  root.classList.toggle('zoom-name-priority',boardZoom<1);
+  root.classList.toggle('zoom-low',boardZoom<=.7);
+  root.classList.toggle('zoom-tiny',boardZoom<=.55);
   const label=$('#board-zoom-value');
   if(label)label.textContent=Math.round(boardZoom*100)+'%';
 }
@@ -653,38 +702,21 @@ function touchDropTarget(x,y){
   const at=document.elementFromPoint(x,y);
   return at?at.closest('[data-slot],[data-zone]'):null;
 }
-function beginTouchCardDrag(e,el){
-  if(!e.touches||e.touches.length!==1)return;
-  e.preventDefault();
-  const t=e.touches[0];
-  touchDragState={
-    src:el.dataset.pile,
-    startX:t.clientX,startY:t.clientY,
-    x:t.clientX,y:t.clientY,
-    moved:false,ghost:null,target:null
-  };
+function makeTouchDragGhost(s){
+  if(s.ghost)return;
+  const srcEl=document.querySelector(`[data-pile="${CSS.escape(s.src)}"]`);
+  if(!srcEl)return;
+  s.ghost=srcEl.cloneNode(true);
+  s.ghost.removeAttribute('data-pile');
+  s.ghost.removeAttribute('draggable');
+  s.ghost.classList.add('touch-drag-ghost');
+  const r=srcEl.getBoundingClientRect();
+  s.ghost.style.width=r.width+'px';
+  s.ghost.style.height=r.height+'px';
+  document.body.appendChild(s.ghost);
+  document.body.classList.add('touch-card-dragging');
 }
-function moveTouchCardDrag(e){
-  if(!touchDragState||!e.touches||e.touches.length!==1)return;
-  e.preventDefault();
-  const t=e.touches[0],s=touchDragState;
-  s.x=t.clientX;s.y=t.clientY;
-  if(!s.moved&&Math.hypot(s.x-s.startX,s.y-s.startY)>=5){
-    s.moved=true;
-    const srcEl=document.querySelector(`[data-pile="${CSS.escape(s.src)}"]`);
-    if(srcEl){
-      s.ghost=srcEl.cloneNode(true);
-      s.ghost.removeAttribute('data-pile');
-      s.ghost.removeAttribute('draggable');
-      s.ghost.classList.add('touch-drag-ghost');
-      const r=srcEl.getBoundingClientRect();
-      s.ghost.style.width=r.width+'px';
-      s.ghost.style.height=r.height+'px';
-      document.body.appendChild(s.ghost);
-      document.body.classList.add('touch-card-dragging');
-    }
-  }
-  if(!s.moved)return;
+function updateTouchDragVisual(s){
   if(s.ghost){s.ghost.style.left=s.x+'px';s.ghost.style.top=s.y+'px'}
   const target=touchDropTarget(s.x,s.y);
   if(target!==s.target){
@@ -693,20 +725,10 @@ function moveTouchCardDrag(e){
     if(target)target.classList.add('drag-over');
   }
 }
-function endTouchCardDrag(e){
-  if(!touchDragState)return;
-  e.preventDefault();
-  const s=touchDragState;
-  touchDragState=null;
-  touchClickBlockUntil=Date.now()+350;
+function finishTouchCardMove(s){
   if(s.ghost)s.ghost.remove();
   document.body.classList.remove('touch-card-dragging');
   clearTouchDropHighlight();
-  if(!s.moved){
-    const [pi,z,i]=s.src.split('|');
-    openDetail(Number(pi),z,Number(i),0);
-    return;
-  }
   const target=s.target||touchDropTarget(s.x,s.y);
   if(!target)return;
   const a=s.src.split('|');
@@ -717,6 +739,97 @@ function endTouchCardDrag(e){
     const d=target.dataset.zone.split('|');
     moveTopByDrag(Number(a[0]),a[1],Number(a[2]),Number(d[0]),d[1],null);
   }
+}
+function beginTouchCardDrag(e,el){
+  if(!e.touches||e.touches.length!==1)return;
+  e.preventDefault();
+  const t=e.touches[0];
+  touchDragState={
+    src:el.dataset.pile,
+    startX:t.clientX,startY:t.clientY,
+    x:t.clientX,y:t.clientY,
+    moved:false,ghost:null,target:null,
+    mode:'drag'
+  };
+}
+function beginHandScrollCardTouch(e,el){
+  if(!e.touches||e.touches.length!==1)return;
+  const t=e.touches[0];
+  touchDragState={
+    src:el.dataset.pile,
+    startX:t.clientX,startY:t.clientY,
+    x:t.clientX,y:t.clientY,
+    moved:false,ghost:null,target:null,
+    mode:'hand-scroll',gesture:'pending'
+  };
+}
+function moveHandScrollCardTouch(e){
+  const s=touchDragState;
+  if(!s||s.mode!=='hand-scroll'||!e.touches||e.touches.length!==1)return;
+  const t=e.touches[0];
+  s.x=t.clientX;s.y=t.clientY;
+  const dx=s.x-s.startX,dy=s.y-s.startY;
+  if(s.gesture==='pending'){
+    if(Math.hypot(dx,dy)<8)return;
+    if(Math.abs(dx)>=Math.abs(dy)*1.15){
+      s.gesture='scroll';
+      touchClickBlockUntil=Date.now()+250;
+      return;
+    }
+    s.gesture='drag';
+    s.moved=true;
+    e.preventDefault();
+    makeTouchDragGhost(s);
+  }
+  if(s.gesture==='scroll')return;
+  e.preventDefault();
+  if(!s.ghost)makeTouchDragGhost(s);
+  updateTouchDragVisual(s);
+}
+function endHandScrollCardTouch(e){
+  const s=touchDragState;
+  if(!s||s.mode!=='hand-scroll')return;
+  touchDragState=null;
+  if(s.gesture==='scroll'){
+    touchClickBlockUntil=Date.now()+250;
+    return;
+  }
+  e.preventDefault();
+  touchClickBlockUntil=Date.now()+350;
+  if(s.gesture==='drag'||s.moved){
+    finishTouchCardMove(s);
+    return;
+  }
+  const [pi,z,i]=s.src.split('|');
+  openDetail(Number(pi),z,Number(i),0);
+}
+function moveTouchCardDrag(e){
+  if(!touchDragState||touchDragState.mode==='hand-scroll'||!e.touches||e.touches.length!==1)return;
+  e.preventDefault();
+  const t=e.touches[0],s=touchDragState;
+  s.x=t.clientX;s.y=t.clientY;
+  if(!s.moved&&Math.hypot(s.x-s.startX,s.y-s.startY)>=5){
+    s.moved=true;
+    makeTouchDragGhost(s);
+  }
+  if(!s.moved)return;
+  updateTouchDragVisual(s);
+}
+function endTouchCardDrag(e){
+  if(!touchDragState||touchDragState.mode==='hand-scroll')return;
+  e.preventDefault();
+  const s=touchDragState;
+  touchDragState=null;
+  touchClickBlockUntil=Date.now()+350;
+  if(!s.moved){
+    if(s.ghost)s.ghost.remove();
+    document.body.classList.remove('touch-card-dragging');
+    clearTouchDropHighlight();
+    const [pi,z,i]=s.src.split('|');
+    openDetail(Number(pi),z,Number(i),0);
+    return;
+  }
+  finishTouchCardMove(s);
 }
 function bindBoard(){
  $$('[data-slot-plus]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,z]=b.dataset.slotPlus.split('|');board.players[pi][z].push(null);renderBoard()});
@@ -730,8 +843,13 @@ function bindBoard(){
      el.ondragstart=null;
      el.oncontextmenu=e=>e.preventDefault();
      const [epi,ez]=el.dataset.pile.split('|');
-     const allowTouchDrag=ez!=='hand'||board.players[Number(epi)].handMode==='operation';
-     if(allowTouchDrag){
+     const handScroll=ez==='hand'&&board.players[Number(epi)].handMode!=='operation';
+     if(handScroll){
+       el.addEventListener('touchstart',e=>beginHandScrollCardTouch(e,el),{passive:true});
+       el.addEventListener('touchmove',moveHandScrollCardTouch,{passive:false});
+       el.addEventListener('touchend',endHandScrollCardTouch,{passive:false});
+       el.addEventListener('touchcancel',endHandScrollCardTouch,{passive:false});
+     }else{
        el.addEventListener('touchstart',e=>beginTouchCardDrag(e,el),{passive:false});
        el.addEventListener('touchmove',moveTouchCardDrag,{passive:false});
        el.addEventListener('touchend',endTouchCardDrag,{passive:false});
@@ -757,11 +875,28 @@ function moveTopByDrag(spi,sz,si,dpi,dz,dslot){if(spi===dpi&&sz===dz&&FIXED.incl
 function openZoneViewer(pi,z,initialQuery=''){
  const area=board.players[pi][z],items=[];
  area.forEach((pile,pileIndex)=>pile&&pile.cards.forEach((c,cardIndex)=>items.push({c,pileIndex,cardIndex,instanceId:c.instanceId})));
- openModal(`<div class="modal-head"><h3>${esc(board.players[pi].name)} / ${ZONE_LABELS[z]}</h3><span class="pill" id="zone-view-count">${items.length}枚</span><button class="btn" id="zone-view-close">閉じる</button></div><p class="muted">盤面では重ねて表示しています。カード名で絞り込み、詳細確認、または直接手札へ移動できます。</p><label>カード名検索<input id="zone-card-search" type="search" placeholder="カード名の一部を入力" value="${esc(initialQuery)}" autocomplete="off"></label><div class="inspect-grid" id="zone-view-grid" style="margin-top:10px"></div>`);
+ const opposite=z==='grave'?'banish':'grave';
+ const oppositeLabel=z==='grave'?'消失へ':'墓地へ';
+ openModal(`<div class="modal-head"><h3>${esc(board.players[pi].name)} / ${ZONE_LABELS[z]}</h3><span class="pill" id="zone-view-count">${items.length}枚</span><button class="btn" id="zone-view-close">閉じる</button></div><p class="muted">カード名で絞り込み、詳細確認や各ゾーンへのショートカット移動ができます。</p><label>カード名検索<input id="zone-card-search" type="search" placeholder="カード名の一部を入力" value="${esc(initialQuery)}" autocomplete="off"></label><div class="inspect-grid" id="zone-view-grid" style="margin-top:10px"></div>`);
  const search=$('#zone-card-search'),grid=$('#zone-view-grid'),count=$('#zone-view-count');
  function currentItems(){
    const q=(search.value||'').trim().toLocaleLowerCase();
    return items.map((x,idx)=>({...x,idx})).filter(x=>!q||(x.c.name||'').toLocaleLowerCase().includes(q)).reverse();
+ }
+ function moveViewerCard(itemIndex,dest){
+   const q=search.value||'',x=items[Number(itemIndex)],cur=board.players[pi][z];
+   if(!x)return;
+   let card=null;
+   for(let i=0;i<cur.length;i++){
+     const ci=cur[i].cards.findIndex(c=>c.instanceId===x.instanceId);
+     if(ci>=0){card=removeCardAt(pi,z,i,ci);break}
+   }
+   if(card){
+     if(dest==='deck')addAsPile(pi,'deck',card,{position:'bottom'});
+     else addAsPile(pi,dest,card);
+   }
+   renderBoard();
+   openZoneViewer(pi,z,q);
  }
  function bindViewerButtons(){
    $$('[data-zone-detail]').forEach(b=>b.onclick=()=>{
@@ -773,23 +908,18 @@ function openZoneViewer(pi,z,initialQuery=''){
        if(ci>=0){openDetail(pi,z,i,ci,navIds);return}
      }
    });
-   $$('[data-zone-hand]').forEach(b=>b.onclick=()=>{
-     const q=search.value||'',x=items[Number(b.dataset.zoneHand)],cur=board.players[pi][z];
-     if(!x)return;
-     let card=null;
-     for(let i=0;i<cur.length;i++){
-       const ci=cur[i].cards.findIndex(c=>c.instanceId===x.instanceId);
-       if(ci>=0){card=removeCardAt(pi,z,i,ci);break}
-     }
-     if(card)addAsPile(pi,'hand',card);
-     renderBoard();
-     openZoneViewer(pi,z,q);
+   $$('[data-zone-move]').forEach(b=>b.onclick=()=>{
+     const [idx,dest]=b.dataset.zoneMove.split('|');
+     moveViewerCard(Number(idx),dest);
    });
  }
  function renderZoneViewer(){
    const shown=currentItems();
    count.textContent=(search.value||'').trim()?`${shown.length}/${items.length}枚`:`${items.length}枚`;
-   grid.innerHTML=shown.map(x=>`<div class="inspect-card"><h4>${esc(x.c.name)}</h4><div class="muted">${esc(x.c.type||'')} / Lv ${esc(x.c.level||'-')} / PW ${esc(x.c.power||'-')}</div><div class="actions"><button class="btn small primary" data-zone-detail="${x.idx}">詳細</button><button class="btn small" data-zone-hand="${x.idx}">手札へ</button></div></div>`).join('')||(items.length?'<div class="muted">一致するカードがありません</div>':'<div class="muted">カードなし</div>');
+   grid.innerHTML=shown.map(x=>{
+     const c=x.c,info=[c.type||'',c.level?`Lv ${c.level}`:'',c.race?`種族：${c.race}`:''].filter(Boolean).map(esc).join(' / ');
+     return `<div class="inspect-card"><h4>${esc(c.name)}</h4><div class="muted">${info||'情報なし'}</div><div class="actions"><button class="btn small primary" data-zone-detail="${x.idx}">詳細</button><button class="btn small" data-zone-move="${x.idx}|hand">手札へ</button><button class="btn small" data-zone-move="${x.idx}|${opposite}">${oppositeLabel}</button><button class="btn small" data-zone-move="${x.idx}|deck">デッキ下へ</button></div></div>`;
+   }).join('')||(items.length?'<div class="muted">一致するカードがありません</div>':'<div class="muted">カードなし</div>');
    bindViewerButtons();
  }
  $('#zone-view-close').onclick=closeModal;
@@ -862,7 +992,7 @@ function deckAction(a,pi,z='deck'){if(a==='shuffle'){shuffleDeck(pi,z);renderBoa
 function browseDeck(pi,z='deck'){
  browseSession={pi,z,field:'name',query:'',typeValue:''};
  openModal(`<div class="modal-head"><h3>${ZONE_LABELS[z]}の中を見る</h3><button class="btn" id="browse-close">閉じる</button></div>
- <p class="muted">現在のデッキ順を変えずに検索します。選んだカードは手札へ移動します。</p>
+ <p class="muted">現在のデッキ順を変えずに検索します。各カードは手札・墓地・消失へ直接移動できます。</p>
  <div class="browse-search">
    <select id="browse-search-field" aria-label="検索対象">
      <option value="name">名前</option>
@@ -956,11 +1086,12 @@ function renderBrowseResults(){
      <div class="browse-meta"><span class="pill">${esc(type)}</span>${stats?`<span class="muted">${stats}</span>`:''}</div>
      ${race?`<div class="browse-race">種族：${esc(race)}</div>`:''}
      ${excerpt?`<div class="browse-effect-hit">${excerpt}</div>`:''}
-     <button class="btn small primary" data-browse-take="${k}" style="margin-top:7px">手札へ</button>
+     <div class="actions" style="margin-top:7px"><button class="btn small primary" data-browse-move="${k}|hand">手札へ</button><button class="btn small" data-browse-move="${k}|grave">墓地へ</button><button class="btn small" data-browse-move="${k}|banish">消失へ</button></div>
    </div>`;
  }).join('');
- $$('[data-browse-take]').forEach(b=>b.onclick=()=>{
-   const item=filtered[Number(b.dataset.browseTake)];
+ $$('[data-browse-move]').forEach(b=>b.onclick=()=>{
+   const [idx,dest]=b.dataset.browseMove.split('|');
+   const item=filtered[Number(idx)];
    if(!item||!browseSession)return;
    const cur=board.players[s.pi][s.z];
    let found=null;
@@ -968,7 +1099,7 @@ function renderBrowseResults(){
      const ci=cur[i]?.cards?.findIndex(x=>x.instanceId===item.c.instanceId)??-1;
      if(ci>=0){found=removeCardAt(s.pi,s.z,i,ci);break}
    }
-   if(found)addAsPile(s.pi,'hand',found);
+   if(found)addAsPile(s.pi,dest,found);
    renderBoard();
    renderBrowseResults();
  });
