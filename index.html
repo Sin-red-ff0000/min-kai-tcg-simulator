@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v1.0</title>
+<title>みん会TCG Simulator v1.1</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -112,11 +112,23 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
   .modal{max-height:94dvh;padding:9px}
 }
 
+
+.hand-mode-controls{display:none;align-items:center;gap:4px;margin-left:4px}
+.hand-mode-controls .btn{padding:3px 7px;font-size:10px}
+.hand-mode-controls .btn.active{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.hand-mode-controls .hand-follow.active{border-color:#7fc98b;box-shadow:inset 0 0 0 1px #7fc98b}
+.hand-scroll-zone{scroll-behavior:auto}
+@media (pointer:coarse){
+  .hand-mode-controls{display:flex}
+  .hand-scroll-mode .pile{touch-action:pan-x pan-y}
+  .hand-operation-mode .pile{touch-action:none}
+}
+
 </style>
 </head>
 <body>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v1.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v1.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード</button>
   <button data-nav="decks">デッキ</button>
@@ -287,11 +299,15 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
 <script>
 (() => {
 'use strict';
-const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01';
+const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01', LS_HAND_FOLLOW='minkai_tcg_hand_follow_v11';
 const ZONE_LABELS={character:'キャラクター',pain:'ペインカウント',room:'ルーム',rulePlus:'ルールプラス',hand:'手札',deck:'デッキ',otherDeck:'その他デッキ',grave:'墓地',banish:'消失領域'};
 const FIXED=['character','pain','room','rulePlus'];
 const COLLAPSIBLE=['pain','room','rulePlus'];
 let cards=load(LS_CARDS,[]), decks=load(LS_DECKS,[]), recentCardIds=load(LS_CARD_RECENT,[]), cardManagerShowAll=false, editingDeckId=null, workingDeck={name:'',entries:{}};
+let handFollowPrefs=load(LS_HAND_FOLLOW,[true,true]);
+if(!Array.isArray(handFollowPrefs))handFollowPrefs=[true,true];
+handFollowPrefs=[handFollowPrefs[0]!==false,handFollowPrefs[1]!==false];
+let handScrollPositions=[0,0], pendingHandFollow=new Set();
 let board=null, detailCtx=null, detailNav=null, inspectSession=null, boardZoom=1;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 function uid(p='id'){return p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
@@ -571,7 +587,7 @@ $('#mode-select').onchange=syncSetupMode;$('#setup-deck-1').onchange=()=>syncFav
 function cloneInstance(c){return {...c,instanceId:uid('inst'),faceDown:false,rested:false,counters:[],memo:'',powerMod:0,token:false}}
 function makeDeckPiles(deckId){const d=decks.find(x=>x.id===deckId),phys=[];if(d)Object.entries(d.entries).forEach(([id,n])=>{const c=cards.find(x=>x.id===id);if(c)for(let i=0;i<n;i++)phys.push({id:uid('pile'),cards:[cloneInstance(c)]})});return phys}
 function shufflePileArray(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}}
-function makePlayer(deckId,index,favoriteCardId='',otherDeckId=''){const phys=makeDeckPiles(deckId),other=makeDeckPiles(otherDeckId);const player={name:'プレイヤー'+(index+1),character:Array(5).fill(null),pain:Array(5).fill(null),room:Array(5).fill(null),rulePlus:Array(1).fill(null),hand:[],deck:phys,otherDeck:other,grave:[],banish:[],collapsed:{pain:false,room:false,rulePlus:false}};if(favoriteCardId){const i=player.deck.findIndex(p=>p.cards[0]?.id===favoriteCardId);if(i>=0){const [pile]=player.deck.splice(i,1);player.hand.push(pile)}}shufflePileArray(player.deck);return player}
+function makePlayer(deckId,index,favoriteCardId='',otherDeckId=''){const phys=makeDeckPiles(deckId),other=makeDeckPiles(otherDeckId);const player={name:'プレイヤー'+(index+1),character:Array(5).fill(null),pain:Array(5).fill(null),room:Array(5).fill(null),rulePlus:Array(1).fill(null),hand:[],handMode:'scroll',deck:phys,otherDeck:other,grave:[],banish:[],collapsed:{pain:false,room:false,rulePlus:false}};if(favoriteCardId){const i=player.deck.findIndex(p=>p.cards[0]?.id===favoriteCardId);if(i>=0){const [pile]=player.deck.splice(i,1);player.hand.push(pile)}}shufflePileArray(player.deck);return player}
 $('#start-board').onclick=()=>{const mode=Number($('#mode-select').value);if(!$('#setup-deck-1').value){alert('デッキを1つ以上作成してください。');return}const setup={mode,deck1:$('#setup-deck-1').value,otherDeck1:$('#setup-other-deck-1').value,favorite1:$('#setup-favorite-1').value,deck2:$('#setup-deck-2').value||$('#setup-deck-1').value,otherDeck2:$('#setup-other-deck-2').value,favorite2:$('#setup-favorite-2').value};board={mode,setup,players:[makePlayer(setup.deck1,0,setup.favorite1,setup.otherDeck1)],note:'',turn:1};if(mode===2)board.players.push(makePlayer(setup.deck2,1,setup.favorite2,setup.otherDeck2));boardZoom=1;renderBoard();nav('board')};
 
 // Board rendering
@@ -586,11 +602,24 @@ function setBoardZoom(next){
   boardZoom=Math.max(.5,Math.min(1.5,Math.round(next*10)/10));
   applyBoardZoom();
 }
-function renderBoard(){if(!board)return;board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardZoom()}
-function zoneHeader(pi,z){const p=board.players[pi], n=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button>`;else if(z==='grave'||z==='banish')controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;return `<div class="zone-head"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
+function captureHandScroll(){
+ if(!board)return;
+ board.players.forEach((_,pi)=>{const el=document.querySelector(`[data-hand-scroll="${pi}"]`);if(el)handScrollPositions[pi]=el.scrollLeft});
+}
+function restoreHandScroll(){
+ if(!board)return;
+ requestAnimationFrame(()=>board.players.forEach((_,pi)=>{
+   const el=document.querySelector(`[data-hand-scroll="${pi}"]`);if(!el)return;
+   if(pendingHandFollow.has(pi))el.scrollLeft=el.scrollWidth;
+   else el.scrollLeft=handScrollPositions[pi]||0;
+ }));
+ pendingHandFollow.clear();
+}
+function renderBoard(){if(!board)return;captureHandScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardZoom();restoreHandScroll()}
+function zoneHeader(pi,z){const p=board.players[pi], n=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button>`;else if(z==='grave'||z==='banish')controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll',follow=handFollowPrefs[pi]!==false;controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button><button class="btn small hand-follow ${follow?'active':''}" data-hand-follow="${pi}">追従${follow?'ON':'OFF'}</button></span>`}return `<div class="zone-head"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
 function renderPlayer(p,pi,reverse){const rows=reverse?['utility','hand','rulePlus','room','pain','character']:['character','pain','room','rulePlus','hand','utility'];return `<div class="player-board"><div class="player-title"><b>${esc(p.name)}</b><span class="pill">デッキ ${physicalCount(p.deck)}枚</span><span class="pill">その他 ${physicalCount(p.otherDeck)}枚</span></div>${rows.map(z=>z==='utility'?renderUtility(p,pi):renderZone(p,pi,z)).join('')}</div>`}
 function renderCompressedPiles(piles,pi,z){return piles.map((pile,i)=>{const depth=Math.min(i,10),html=renderPile(pile,pi,z,i);return html.replace('draggable="true"',`draggable="true" style="left:${6+depth*4}px;top:${5+depth*2}px;z-index:${i+1}"`)}).join('')}
-function renderZone(p,pi,z){const collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];if(FIXED.includes(z)){return `<div class="zone ${collapsed?'collapsed':''}">${zoneHeader(pi,z)}${collapsed?'':`<div class="zone-body fixed" data-zone="${pi}|${z}">${p[z].map((pile,i)=>pile?renderPile(pile,pi,z,i):`<div class="slot" data-slot="${pi}|${z}|${i}">${i+1}</div>`).join('')}</div>`}</div>`}return `<div class="zone">${zoneHeader(pi,z)}<div class="dropzone ${p[z].length?'':'empty'}" data-zone="${pi}|${z}">${p[z].map((pile,i)=>renderPile(pile,pi,z,i)).join('')}</div></div>`}
+function renderZone(p,pi,z){const collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];if(FIXED.includes(z)){return `<div class="zone ${collapsed?'collapsed':''}">${zoneHeader(pi,z)}${collapsed?'':`<div class="zone-body fixed" data-zone="${pi}|${z}">${p[z].map((pile,i)=>pile?renderPile(pile,pi,z,i):`<div class="slot" data-slot="${pi}|${z}|${i}">${i+1}</div>`).join('')}</div>`}</div>`}const handClass=z==='hand'?` hand-${p.handMode==='operation'?'operation':'scroll'}-mode`:'';const handAttr=z==='hand'?` data-hand-scroll="${pi}"`:'';return `<div class="zone">${zoneHeader(pi,z)}<div class="dropzone ${p[z].length?'':'empty'}${handClass}" data-zone="${pi}|${z}"${handAttr}>${p[z].map((pile,i)=>renderPile(pile,pi,z,i)).join('')}</div></div>`}
 function compactZoneBox(p,pi,z){return `<div class="deck-box">${zoneHeader(pi,z)}<div class="dropzone pile-zone ${p[z].length?'':'empty'}" data-zone="${pi}|${z}">${renderCompressedPiles(p[z],pi,z)}</div></div>`}
 function renderDeckBox(p,pi,z,label){const common=`<button class="btn small" data-deck-action="shuffle|${pi}|${z}">シャッフル</button><button class="btn small" data-deck-action="draw|${pi}|${z}">1枚引く</button><button class="btn small" data-deck-action="painFace|${pi}|${z}">PCへ(表)</button><button class="btn small" data-deck-action="painBack|${pi}|${z}">PCへ(裏)</button><button class="btn small" data-deck-action="browse|${pi}|${z}">中を見る</button><button class="btn small" data-deck-action="look|${pi}|${z}">上からX枚</button>`;const extra=z==='otherDeck'?`<button class="btn small" data-deck-action="rulePlus|${pi}|${z}">RPに追加</button>`:`<button class="btn small" data-deck-action="picktop|${pi}|${z}">一番上へ</button><button class="btn small" data-deck-action="pickbottom|${pi}|${z}">一番下へ</button>`;return `<div class="deck-box ${z==='deck'?'deck-box-main':''}" data-zone="${pi}|${z}"><h4>${label} <span>${physicalCount(p[z])}枚</span></h4><div class="deck-controls">${common}${extra}</div><div class="deck-drop-note">ドラッグで戻すと一番下</div></div>`}
 function renderUtility(p,pi){return `<div class="utility-grid"><div class="deck-pair">${renderDeckBox(p,pi,'deck','デッキ')}${renderDeckBox(p,pi,'otherDeck','その他デッキ')}</div><div class="grave-banish-pair">${compactZoneBox(p,pi,'grave')}${compactZoneBox(p,pi,'banish')}</div></div>`}
@@ -681,10 +710,14 @@ function bindBoard(){
      el.removeAttribute('draggable');
      el.ondragstart=null;
      el.oncontextmenu=e=>e.preventDefault();
-     el.addEventListener('touchstart',e=>beginTouchCardDrag(e,el),{passive:false});
-     el.addEventListener('touchmove',moveTouchCardDrag,{passive:false});
-     el.addEventListener('touchend',endTouchCardDrag,{passive:false});
-     el.addEventListener('touchcancel',endTouchCardDrag,{passive:false});
+     const [epi,ez]=el.dataset.pile.split('|');
+     const allowTouchDrag=ez!=='hand'||board.players[Number(epi)].handMode==='operation';
+     if(allowTouchDrag){
+       el.addEventListener('touchstart',e=>beginTouchCardDrag(e,el),{passive:false});
+       el.addEventListener('touchmove',moveTouchCardDrag,{passive:false});
+       el.addEventListener('touchend',endTouchCardDrag,{passive:false});
+       el.addEventListener('touchcancel',endTouchCardDrag,{passive:false});
+     }
    }else{
      el.draggable=true;
      el.ondragstart=e=>{e.stopPropagation();e.dataTransfer.setData('text/plain',el.dataset.pile);e.dataTransfer.effectAllowed='move'};
@@ -694,10 +727,12 @@ function bindBoard(){
  $$('[data-zone-toggle]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,z]=b.dataset.zoneToggle.split('|');const p=board.players[Number(pi)];p.collapsed=p.collapsed||{};p.collapsed[z]=!p.collapsed[z];renderBoard()});
  $$('[data-deck-action]').forEach(b=>b.onclick=()=>{const[a,pi,z='deck']=b.dataset.deckAction.split('|');deckAction(a,Number(pi),z)});
  $$('[data-zone-view]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,z]=b.dataset.zoneView.split('|');openZoneViewer(Number(pi),z)});
+ $$('[data-hand-mode]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,mode]=b.dataset.handMode.split('|');board.players[Number(pi)].handMode=mode==='operation'?'operation':'scroll';renderBoard()});
+ $$('[data-hand-follow]').forEach(b=>b.onclick=e=>{e.stopPropagation();const pi=Number(b.dataset.handFollow);handFollowPrefs[pi]=!(handFollowPrefs[pi]!==false);save(LS_HAND_FOLLOW,handFollowPrefs);renderBoard()});
 }
 function getPile(pi,z,index){return board.players[pi][z][index]}
 function removeCardAt(pi,z,index,cardIndex){const area=board.players[pi][z],pile=area[index];const [card]=pile.cards.splice(cardIndex,1);if(!pile.cards.length){if(FIXED.includes(z))area[index]=null;else area.splice(index,1)}return card}
-function addAsPile(pi,z,card,opt={}){const a=board.players[pi][z],pile={id:uid('pile'),cards:[card]};if(FIXED.includes(z)){let slot=opt.slot;if(slot==null)slot=a.findIndex(x=>!x);if(slot<0){a.push(pile)}else if(!a[slot])a[slot]=pile;else{a[slot].cards[opt.stack==='bottom'?'push':'unshift'](card)}}else if(z==='deck'||z==='otherDeck'){if(opt.position==='bottom')a.push(pile);else a.unshift(pile)}else{if(opt.position==='start')a.unshift(pile);else a.push(pile)}}
+function addAsPile(pi,z,card,opt={}){const a=board.players[pi][z],pile={id:uid('pile'),cards:[card]};if(FIXED.includes(z)){let slot=opt.slot;if(slot==null)slot=a.findIndex(x=>!x);if(slot<0){a.push(pile)}else if(!a[slot])a[slot]=pile;else{a[slot].cards[opt.stack==='bottom'?'push':'unshift'](card)}}else if(z==='deck'||z==='otherDeck'){if(opt.position==='bottom')a.push(pile);else a.unshift(pile)}else{if(opt.position==='start')a.unshift(pile);else a.push(pile)}if(z==='hand'&&handFollowPrefs[pi]!==false)pendingHandFollow.add(pi)}
 function moveTopByDrag(spi,sz,si,dpi,dz,dslot){if(spi===dpi&&sz===dz&&FIXED.includes(sz)&&dslot!=null){const a=board.players[spi][sz];[a[si],a[dslot]]=[a[dslot],a[si]];renderBoard();return}if(spi===dpi&&sz===dz&&!FIXED.includes(sz)&&dslot==null){if(dz==='deck'||dz==='otherDeck')return;const a=board.players[spi][sz];const [p]=a.splice(si,1);a.push(p);renderBoard();return}const c=removeCardAt(spi,sz,si,0);addAsPile(dpi,dz,c,{slot:dslot,position:(dz==='deck'||dz==='otherDeck')?'bottom':undefined});renderBoard()}
 
 function openZoneViewer(pi,z,initialQuery=''){
