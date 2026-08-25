@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v5.8</title>
+<title>みん会TCG Simulator v6.0</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -3998,6 +3998,1406 @@ main{zoom:1}
  }
 }
 
+
+/* ==========================================================
+   v5.9 Album theme — GRIMOIRE
+   Dedicated ancient magic-book design
+   ========================================================== */
+
+/* Shell around the opened book */
+.collection-book-shell.theme-grimoire{
+ --grim-leather:#24120d;
+ --grim-leather-hi:#4a2a1d;
+ --grim-leather-low:#0d0806;
+ --grim-gold:#b58b3e;
+ --grim-gold-hi:#e0c26e;
+ --grim-paper:#bcae87;
+ --grim-paper-hi:#d7c99f;
+ --grim-ink:#39291d;
+ padding:19px 19px 25px;
+ border:1px solid #59402a;
+ border-radius:12px;
+ background:
+   radial-gradient(ellipse at 50% -12%,rgba(210,170,78,.07),transparent 43%),
+   repeating-linear-gradient(90deg,rgba(255,255,255,.008) 0 1px,transparent 1px 5px),
+   linear-gradient(150deg,#251811,#120d09 58%,#090806);
+ box-shadow:
+   inset 0 0 0 4px rgba(0,0,0,.2),
+   inset 0 -28px 45px rgba(0,0,0,.28),
+   0 23px 55px rgba(0,0,0,.38);
+ color:#e3d3aa;
+}
+.collection-book-shell.theme-grimoire .collection-book-top{
+ margin:0 7px 14px;
+ border-bottom:1px solid rgba(190,147,67,.18);
+}
+.collection-book-shell.theme-grimoire .collection-source-title{
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ color:#e2cf9c;
+ letter-spacing:.045em;
+ text-shadow:0 2px 7px rgba(0,0,0,.7);
+}
+.collection-book-shell.theme-grimoire .muted{color:#a99267}
+
+/* The open tome */
+.grimoire-spread-host{
+ width:100%;
+ min-width:0;
+ padding:8px 3px 14px;
+}
+.grimoire-spread{
+ position:relative;
+ isolation:isolate;
+ display:grid;
+ grid-template-columns:minmax(0,1fr) 66px minmax(0,1fr);
+ align-items:stretch;
+ width:min(100%,1500px);
+ margin:0 auto;
+ padding:30px 44px 36px;
+ border:1px solid #5e3e27;
+ border-radius:28px 28px 35px 35px;
+ background:
+   radial-gradient(ellipse at 50% 12%,rgba(208,166,77,.06),transparent 38%),
+   linear-gradient(90deg,rgba(0,0,0,.28),transparent 8% 92%,rgba(0,0,0,.3)),
+   repeating-linear-gradient(90deg,rgba(255,255,255,.01) 0 1px,transparent 1px 6px),
+   linear-gradient(155deg,#3a2117,#21120e 48%,#100a08 100%);
+ box-shadow:
+   inset 0 0 0 7px rgba(9,4,2,.32),
+   inset 0 0 0 8px rgba(194,143,55,.035),
+   inset 13px 0 28px rgba(0,0,0,.21),
+   inset -13px 0 28px rgba(0,0,0,.21),
+   0 24px 46px rgba(0,0,0,.4);
+ perspective:1800px;
+}
+.grimoire-leather-back{
+ position:absolute;
+ z-index:0;
+ inset:11px;
+ border:1px solid rgba(183,132,55,.13);
+ border-radius:21px 21px 28px 28px;
+ background:
+   repeating-linear-gradient(112deg,rgba(255,255,255,.008) 0 1px,transparent 1px 10px),
+   radial-gradient(ellipse at 35% 16%,rgba(255,255,255,.015),transparent 36%);
+ box-shadow:inset 0 0 35px rgba(0,0,0,.25);
+ pointer-events:none;
+}
+
+/* Metal clasps on the old leather cover edges */
+.grimoire-clasp{
+ position:absolute;
+ z-index:7;
+ left:50%;
+ width:76px;
+ height:22px;
+ transform:translateX(-50%);
+ border:1px solid #674d22;
+ border-radius:5px;
+ background:
+   linear-gradient(90deg,#453515,#c19a45 23%,#76591f 48%,#d1ad57 72%,#493817);
+ box-shadow:
+   inset 0 1px rgba(255,245,187,.24),
+   inset 0 -2px rgba(0,0,0,.35),
+   0 3px 7px rgba(0,0,0,.45);
+ pointer-events:none;
+}
+.grimoire-clasp-top{top:10px}.grimoire-clasp-bottom{bottom:12px}
+.grimoire-clasp i{
+ position:absolute;
+ left:50%;
+ top:50%;
+ width:13px;height:13px;
+ transform:translate(-50%,-50%) rotate(45deg);
+ border:1px solid #e0bd64;
+ background:#4c3215;
+ box-shadow:inset 0 0 4px #160d07;
+}
+
+/* Parchment pages */
+.grimoire-page{
+ position:relative;
+ z-index:2;
+ min-width:0;
+ display:flex;
+ padding:6px 5px 10px;
+}
+.grimoire-page-underlay{
+ position:absolute;
+ z-index:0;
+ top:11px;
+ bottom:5px;
+ left:9px;
+ right:9px;
+ border-radius:9px;
+ background:
+   repeating-linear-gradient(0deg,#807452 0 1px,#a2936c 1px 2px,#716648 2px 3px);
+ box-shadow:0 7px 13px rgba(0,0,0,.28);
+ opacity:.65;
+}
+.grimoire-parchment{
+ position:relative;
+ z-index:2;
+ flex:1;
+ min-width:0;
+ padding:31px 24px 35px;
+ border:1px solid #7a6846;
+ background:
+   radial-gradient(circle at 15% 12%,rgba(91,56,26,.07) 0 2px,transparent 3px),
+   radial-gradient(circle at 82% 18%,rgba(72,45,23,.055) 0 1px,transparent 2px),
+   radial-gradient(ellipse at 70% 84%,rgba(63,40,22,.08),transparent 33%),
+   repeating-linear-gradient(0deg,rgba(80,60,36,.018) 0 1px,transparent 1px 7px),
+   linear-gradient(104deg,#cfc19a 0%,#b9aa82 54%,#a99a73 100%);
+ color:var(--grim-ink);
+ overflow:hidden;
+}
+.grimoire-page-left .grimoire-parchment{
+ border-radius:17px 5px 5px 20px;
+ transform:perspective(1600px) rotateY(.5deg);
+ transform-origin:right center;
+ box-shadow:
+   inset -29px 0 35px rgba(62,38,18,.2),
+   inset 2px 0 rgba(255,244,194,.13),
+   inset 0 1px rgba(255,255,255,.12),
+   0 8px 18px rgba(0,0,0,.27);
+}
+.grimoire-page-right .grimoire-parchment{
+ border-radius:5px 17px 20px 5px;
+ transform:perspective(1600px) rotateY(-.5deg);
+ transform-origin:left center;
+ box-shadow:
+   inset 29px 0 35px rgba(62,38,18,.2),
+   inset -2px 0 rgba(255,244,194,.13),
+   inset 0 1px rgba(255,255,255,.12),
+   0 8px 18px rgba(0,0,0,.27);
+}
+.grimoire-parchment::before{
+ content:"";
+ position:absolute;
+ z-index:5;
+ inset:5px;
+ border:1px solid rgba(93,64,30,.15);
+ border-radius:inherit;
+ pointer-events:none;
+}
+.grimoire-parchment::after{
+ content:"";
+ position:absolute;
+ z-index:5;
+ left:10px;right:10px;bottom:7px;height:6px;
+ border-bottom:1px solid rgba(70,48,26,.22);
+ border-radius:50%;
+ pointer-events:none;
+}
+.grimoire-page-stains{
+ position:absolute;
+ inset:0;
+ z-index:0;
+ pointer-events:none;
+ background:
+   radial-gradient(circle at 9% 77%,rgba(90,52,19,.08),transparent 9%),
+   radial-gradient(circle at 90% 9%,rgba(78,46,20,.07),transparent 8%),
+   radial-gradient(ellipse at 45% 53%,transparent 55%,rgba(72,43,22,.045));
+}
+.grimoire-page-runes{
+ position:absolute;
+ z-index:1;
+ left:19px;
+ right:19px;
+ top:10px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:10px;
+ color:rgba(70,45,22,.36);
+ font-family:Georgia,serif;
+ font-size:8px;
+ letter-spacing:.22em;
+ pointer-events:none;
+}
+.grimoire-page-runes i{
+ width:42px;
+ height:1px;
+ background:currentColor;
+}
+
+/* Card mounts look like inked/gilded frames drawn onto the parchment */
+.grimoire-slot-grid{
+ position:relative;
+ z-index:3;
+ display:grid;
+ grid-template-columns:repeat(var(--grimoire-cols,2),minmax(0,1fr));
+ gap:18px 15px;
+ align-content:start;
+}
+.grimoire-card-slot{
+ position:relative;
+ min-width:0;
+ padding:9px;
+ border:1px solid rgba(92,61,28,.48);
+ border-radius:4px;
+ background:
+   radial-gradient(circle at 50% 45%,rgba(150,112,45,.04),transparent 55%),
+   rgba(91,61,29,.035);
+ box-shadow:
+   inset 0 0 0 1px rgba(255,244,190,.08),
+   inset 0 0 14px rgba(71,43,20,.08);
+}
+.grimoire-card-slot::before{
+ content:"";
+ position:absolute;
+ inset:4px;
+ border:1px solid rgba(162,123,52,.22);
+ pointer-events:none;
+}
+.grimoire-card-slot::after{
+ content:"◇";
+ position:absolute;
+ left:50%;
+ top:-8px;
+ transform:translateX(-50%);
+ padding:0 5px;
+ background:#bbae86;
+ color:#6c4b20;
+ font-size:11px;
+ line-height:14px;
+}
+.grimoire-card-mount{position:relative;z-index:2}
+.grimoire-card-slot .collection-card-art{
+ border-radius:3px;
+ border-color:#6f562d;
+ box-shadow:
+   0 2px 3px rgba(49,29,13,.5),
+   0 6px 13px rgba(49,29,13,.18);
+}
+.grimoire-card-slot .collection-card-name{
+ margin:6px 0 -3px;
+ padding:4px 5px;
+ border-radius:2px;
+ background:rgba(74,49,24,.12);
+ color:#49351f;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ font-size:11px;
+ line-height:1.25;
+ text-shadow:none;
+}
+.grimoire-card-slot .collection-favorite{
+ filter:sepia(.75) saturate(.8);
+}
+
+/* Ornamental corners */
+.grimoire-slot-corner{
+ position:absolute;
+ z-index:4;
+ width:15px;height:15px;
+ pointer-events:none;
+}
+.grimoire-slot-corner::before,.grimoire-slot-corner::after{
+ content:"";
+ position:absolute;
+ background:#8e692c;
+ opacity:.62;
+}
+.grimoire-slot-corner::before{width:12px;height:2px}
+.grimoire-slot-corner::after{width:2px;height:12px}
+.grimoire-slot-corner.tl{left:2px;top:2px}
+.grimoire-slot-corner.tr{right:2px;top:2px}
+.grimoire-slot-corner.bl{left:2px;bottom:2px}
+.grimoire-slot-corner.br{right:2px;bottom:2px}
+.grimoire-slot-corner.tr::before,.grimoire-slot-corner.br::before{right:0}
+.grimoire-slot-corner.tr::after,.grimoire-slot-corner.br::after{right:0}
+.grimoire-slot-corner.bl::before,.grimoire-slot-corner.br::before{bottom:0}
+.grimoire-slot-corner.bl::after,.grimoire-slot-corner.br::after{bottom:0}
+
+/* Empty slots become dormant magic seals */
+.grimoire-card-slot.empty{
+ aspect-ratio:5/7;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border-style:dashed;
+ background:
+   radial-gradient(circle at 50% 48%,rgba(122,83,31,.04) 0 30%,transparent 31%),
+   rgba(79,54,29,.02);
+}
+.grimoire-empty-sigil{
+ width:64%;
+ aspect-ratio:1;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:3px;
+ border:1px solid rgba(103,70,31,.2);
+ border-radius:50%;
+ color:rgba(86,58,27,.28);
+ box-shadow:
+   inset 0 0 0 7px rgba(108,75,34,.025),
+   inset 0 0 0 8px rgba(95,65,29,.11);
+}
+.grimoire-empty-sigil span{font-size:30px;line-height:1}
+.grimoire-empty-sigil small{font-size:7px;letter-spacing:.14em}
+
+/* Center binding */
+.grimoire-binding{
+ position:relative;
+ z-index:5;
+ min-height:100%;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+.grimoire-binding-shadow{
+ position:absolute;
+ top:5px;bottom:7px;left:2px;right:2px;
+ border-radius:20px;
+ background:
+   linear-gradient(90deg,rgba(35,18,9,.76),rgba(102,68,31,.15) 46% 54%,rgba(35,18,9,.79));
+ box-shadow:0 0 23px rgba(0,0,0,.42);
+}
+.grimoire-binding-thread{
+ position:absolute;
+ inset:5% 0;
+}
+.grimoire-binding-thread i{
+ position:absolute;
+ top:calc(7% + var(--thread) * 11%);
+ left:50%;
+ width:44px;
+ height:9px;
+ transform:translate(-50%,-50%);
+ border-top:2px solid #80602d;
+ border-bottom:1px solid rgba(40,24,12,.7);
+ border-radius:50%;
+ box-shadow:0 2px 2px rgba(0,0,0,.28);
+}
+.grimoire-binding-gem{
+ position:absolute;
+ left:50%;top:50%;
+ transform:translate(-50%,-50%) rotate(45deg);
+ width:28px;height:28px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border:2px solid #c49a47;
+ background:radial-gradient(circle,#7d5528,#2c170d 67%);
+ color:#e2c66e;
+ box-shadow:
+   0 0 0 3px #3b2412,
+   0 0 15px rgba(199,151,55,.17);
+ font-size:13px;
+}
+
+/* Folio number */
+.grimoire-folio{
+ position:absolute;
+ z-index:5;
+ bottom:10px;
+ left:50%;
+ transform:translateX(-50%);
+ color:rgba(67,45,25,.5);
+ font-family:Georgia,serif;
+ font-size:10px;
+ font-style:italic;
+}
+
+/* Integrated page-turn tabs */
+.grimoire-page-turn{
+ position:absolute;
+ z-index:9;
+ top:50%;
+ width:72px;
+ height:178px;
+ transform:translateY(-50%);
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+ padding:8px 5px;
+ border:1px solid #694827;
+ border-radius:13px;
+ background:
+   repeating-linear-gradient(90deg,rgba(255,255,255,.008) 0 1px,transparent 1px 5px),
+   linear-gradient(90deg,#27170f,#120b08);
+ color:#d3b76d;
+ box-shadow:
+   inset 0 1px rgba(255,235,177,.04),
+   0 8px 21px rgba(0,0,0,.37);
+ cursor:pointer;
+ opacity:.8;
+}
+.grimoire-page-turn:hover:not(:disabled){
+ opacity:1;
+ border-color:#a47b38;
+ background:linear-gradient(90deg,#3b2516,#170e09);
+}
+.grimoire-page-turn:disabled{opacity:.12;cursor:default}
+.grimoire-page-turn-prev{left:-19px}
+.grimoire-page-turn-next{right:-19px}
+.grimoire-page-turn span{font-size:45px;line-height:.8}
+.grimoire-page-turn small{
+ writing-mode:vertical-rl;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ font-size:11px;
+ letter-spacing:.11em;
+}
+.grimoire-page-turn-prev small{transform:none}
+
+/* Page-turn motion */
+.grimoire-turning-next .grimoire-page-right{
+ transform-origin:left center;
+ animation:grimoireTurnNext .58s cubic-bezier(.2,.72,.18,1);
+}
+.grimoire-turning-prev .grimoire-page-left{
+ transform-origin:right center;
+ animation:grimoireTurnPrev .58s cubic-bezier(.2,.72,.18,1);
+}
+.grimoire-turning-next .grimoire-binding,
+.grimoire-turning-prev .grimoire-binding{
+ animation:grimoireBindingSettle .52s ease-out;
+}
+@keyframes grimoireTurnNext{
+ 0%{opacity:.42;transform:perspective(1400px) rotateY(-24deg) translateX(18px);filter:brightness(.68) sepia(.2)}
+ 48%{opacity:.94;transform:perspective(1400px) rotateY(-5deg) translateX(4px);filter:brightness(.9)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes grimoireTurnPrev{
+ 0%{opacity:.42;transform:perspective(1400px) rotateY(24deg) translateX(-18px);filter:brightness(.68) sepia(.2)}
+ 48%{opacity:.94;transform:perspective(1400px) rotateY(5deg) translateX(-4px);filter:brightness(.9)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes grimoireBindingSettle{
+ 0%{filter:brightness(.72);transform:scaleX(.9)}
+ 100%{filter:none;transform:none}
+}
+
+.grimoire-empty-book{
+ min-height:440px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border:1px solid #694b2e;
+ border-radius:18px;
+ background:
+   radial-gradient(circle at 50% 45%,rgba(178,132,49,.05),transparent 30%),
+   linear-gradient(145deg,#2d1c13,#100b08);
+ color:#bca16b;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+
+/* Page size density */
+.grimoire-spread-host[data-page-size="1"] .grimoire-slot-grid,
+.grimoire-spread-host[data-page-size="2"] .grimoire-slot-grid{justify-content:center}
+.grimoire-spread-host[data-page-size="1"] .grimoire-card-slot{
+ width:min(72%,380px);justify-self:center
+}
+.grimoire-spread-host[data-page-size="2"] .grimoire-card-slot{
+ width:min(86%,350px);justify-self:center
+}
+.grimoire-spread-host[data-page-size="16"] .grimoire-slot-grid,
+.grimoire-spread-host[data-page-size="24"] .grimoire-slot-grid{gap:10px 9px}
+.grimoire-spread-host[data-page-size="36"] .grimoire-slot-grid,
+.grimoire-spread-host[data-page-size="48"] .grimoire-slot-grid{gap:7px 6px}
+.grimoire-spread-host[data-page-size="24"] .grimoire-card-slot,
+.grimoire-spread-host[data-page-size="36"] .grimoire-card-slot,
+.grimoire-spread-host[data-page-size="48"] .grimoire-card-slot{padding:5px}
+.grimoire-spread-host[data-page-size="36"] .grimoire-page-runes,
+.grimoire-spread-host[data-page-size="48"] .grimoire-page-runes,
+.grimoire-spread-host[data-page-size="48"] .grimoire-slot-corner{display:none}
+
+/* Bottom/side pagination inherit grimoire palette */
+#screen-collection:has(.collection-book-shell.theme-grimoire) .collection-side-page{
+ border-color:rgba(145,103,48,.58);
+ background:
+   repeating-linear-gradient(90deg,rgba(255,255,255,.008) 0 1px,transparent 1px 5px),
+   linear-gradient(180deg,rgba(47,29,18,.95),rgba(18,11,8,.96));
+ color:#d8bb72;
+ box-shadow:inset 0 1px rgba(255,236,177,.025),0 8px 23px rgba(0,0,0,.34);
+}
+#screen-collection:has(.collection-book-shell.theme-grimoire) #collection-pagination{color:#ad9563}
+#screen-collection:has(.collection-book-shell.theme-grimoire) #collection-pagination .btn{
+ border-color:rgba(145,105,51,.5);
+ background:rgba(39,24,15,.82);
+ color:#cfb372;
+}
+#screen-collection:has(.collection-book-shell.theme-grimoire) #collection-pagination .btn.primary{
+ border-color:#aa813d;
+ background:#5d421f;
+ color:#f1dda2;
+}
+
+/* ---------- Shelf: old chained grimoire ---------- */
+.album-book-card[data-shelf-theme="grimoire"] .album-shelf-book{
+ transform:rotateY(-6deg) rotateZ(-1deg);
+}
+.album-book-card[data-shelf-theme="grimoire"]:hover .album-shelf-book{
+ transform:rotateY(-1deg) rotateZ(0) translateY(-12px) translateZ(8px);
+}
+.album-book-card[data-shelf-theme="grimoire"] .album-book-cover.theme-grimoire{
+ border-color:#735328;
+ border-radius:4px 12px 12px 4px;
+ background:
+   radial-gradient(circle at 50% 28%,rgba(206,158,56,.18) 0 2%,transparent 3% 17%,rgba(186,137,43,.13) 18% 19%,transparent 20%),
+   repeating-linear-gradient(108deg,rgba(255,255,255,.009) 0 1px,transparent 1px 8px),
+   linear-gradient(145deg,#351b11,#170d09 67%,#080605);
+ box-shadow:
+   inset 0 0 0 4px rgba(0,0,0,.18),
+   inset 7px 0 13px rgba(0,0,0,.28),
+   5px 6px 12px rgba(0,0,0,.38);
+}
+.album-book-card[data-shelf-theme="grimoire"] .album-cover-inner-frame{
+ border-color:rgba(194,145,54,.26);
+ box-shadow:inset 0 0 0 3px rgba(93,60,25,.12);
+}
+.album-book-card[data-shelf-theme="grimoire"] .album-cover-corner::before,
+.album-book-card[data-shelf-theme="grimoire"] .album-cover-corner::after{
+ background:linear-gradient(90deg,#5d461d,#d0a84f 46%,#6f5524);
+}
+.album-book-card[data-shelf-theme="grimoire"] .album-cover-crest,
+.album-book-card[data-shelf-theme="grimoire"] .album-cover-title{
+ color:#dfc173;
+}
+.album-book-card[data-shelf-theme="grimoire"] .album-cover-title{
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+.album-book-card[data-shelf-theme="grimoire"] .album-cover-title-plate{
+ border-color:rgba(190,142,52,.2);
+ background:linear-gradient(90deg,transparent,rgba(56,31,14,.32) 14% 86%,transparent);
+}
+.album-book-card[data-shelf-theme="grimoire"] .album-cover-card-frame{
+ border-color:#89672c;
+ background:#140b07;
+}
+.album-book-card[data-shelf-theme="grimoire"] .album-book-spine.theme-grimoire{
+ width:34px;
+ background:
+   repeating-linear-gradient(0deg,rgba(255,255,255,.008) 0 1px,transparent 1px 8px),
+   linear-gradient(90deg,#080504,#4b2817 49%,#120a07);
+ border-color:#4d321c;
+}
+.album-book-card[data-shelf-theme="grimoire"] .album-book-spine-title{
+ color:#d5b86d;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+.album-book-card[data-shelf-theme="grimoire"] .album-book-page-block{
+ background:
+   repeating-linear-gradient(0deg,#a89972 0 1px,#796b4d 1px 2px,#978966 2px 3px);
+ border-color:#6e6043;
+}
+.album-book-card[data-shelf-theme="grimoire"] .album-book-back-cover{
+ background:linear-gradient(145deg,#26130d,#0b0705);
+ border-color:#4e331d;
+}
+.album-book-card[data-shelf-theme="grimoire"] .album-book-caption{
+ border-color:rgba(131,93,43,.25);
+ background:linear-gradient(180deg,rgba(57,35,20,.83),rgba(20,13,9,.9));
+}
+.album-book-card[data-shelf-theme="grimoire"] .album-book-caption::before{
+ background:linear-gradient(90deg,transparent,rgba(203,156,68,.22),transparent);
+}
+
+/* ---------- Opening cover: ceremonial spellbook ---------- */
+.theme-grimoire .collection-cover-book{
+ --cover-metal:#9a762e;
+ --cover-metal-hi:#e2c66f;
+ --cover-line:rgba(190,142,52,.25);
+ --cover-ink:#ebd497;
+ --cover-muted:#bda36b;
+ width:min(92vw,620px);
+ border-color:#745329;
+ border-radius:11px 23px 23px 11px;
+ background:
+   radial-gradient(circle at 50% 19%,rgba(203,156,57,.15) 0 2%,transparent 3% 13%,rgba(191,140,47,.11) 14% 15%,transparent 16%),
+   repeating-linear-gradient(111deg,rgba(255,255,255,.008) 0 1px,transparent 1px 9px),
+   linear-gradient(145deg,#371d12,#190e09 64%,#090605);
+ box-shadow:
+   inset 17px 0 23px rgba(0,0,0,.32),
+   inset 0 0 0 5px rgba(0,0,0,.17),
+   0 26px 61px rgba(0,0,0,.48);
+}
+.theme-grimoire .collection-cover-book::before{
+ background:
+   repeating-linear-gradient(0deg,rgba(255,255,255,.008) 0 1px,transparent 1px 8px),
+   linear-gradient(90deg,#080504,#442519 55%,#100905);
+ border-right-color:rgba(184,132,45,.1);
+}
+.theme-grimoire .collection-cover-inner-frame{
+ border-color:rgba(201,154,62,.28);
+ box-shadow:
+   inset 0 0 0 3px rgba(88,57,24,.16),
+   0 0 0 1px rgba(224,187,102,.025);
+}
+.theme-grimoire .collection-cover-corner::before,
+.theme-grimoire .collection-cover-corner::after{
+ background:linear-gradient(90deg,#60491f,#d5af56 46%,#6e5526);
+}
+.theme-grimoire .collection-cover-crest{color:#e0c36d}
+.theme-grimoire .collection-cover-kicker{color:#a88c55}
+.theme-grimoire .collection-cover-book h1{
+ color:#ecd99f;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+.theme-grimoire .collection-cover-page-subtitle{
+ color:#c0a66c;
+}
+.theme-grimoire .collection-cover-card-frame{
+ border-color:#8f6a2d;
+ background:
+   linear-gradient(145deg,rgba(204,161,72,.05),rgba(0,0,0,.3)),
+   #130a06;
+}
+.theme-grimoire .collection-cover-description{
+ border-color:rgba(184,136,48,.17);
+ background:linear-gradient(90deg,transparent,rgba(62,34,14,.27) 15% 85%,transparent);
+ color:#cbb786;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+.theme-grimoire .collection-cover-meta{color:#a98f5c}
+.theme-grimoire .collection-cover-open-wrap{
+ border-color:rgba(175,130,47,.18);
+ background:rgba(52,29,13,.24);
+}
+.theme-grimoire .collection-cover-open-wrap .btn.primary{
+ border-color:#a57a35;
+ background:linear-gradient(180deg,#785525,#4a3218);
+ color:#f0d99c;
+}
+.theme-grimoire .collection-cover-emblem-panel{
+ border-color:rgba(190,145,57,.23);
+ background:
+   radial-gradient(circle at 50% 44%,rgba(187,137,45,.12),transparent 42%),
+   rgba(45,24,11,.17);
+ color:#d9b85e;
+}
+
+/* Responsive */
+@media(max-width:1000px){
+ .grimoire-spread{grid-template-columns:minmax(0,1fr) 50px minmax(0,1fr);padding:22px 28px 29px}
+ .grimoire-parchment{padding:24px 17px 31px}
+ .grimoire-slot-grid{gap:11px 10px}
+ .grimoire-binding-thread i{width:35px}
+}
+@media(max-width:700px){
+ .collection-book-shell.theme-grimoire{padding:11px 7px 16px}
+ .grimoire-spread{
+   display:block;
+   padding:17px 12px 65px;
+   border-radius:19px;
+ }
+ .grimoire-page{padding:5px;margin-bottom:13px}
+ .grimoire-page-left .grimoire-parchment,
+ .grimoire-page-right .grimoire-parchment{
+   transform:none;
+   border-radius:11px!important;
+ }
+ .grimoire-binding,.grimoire-clasp{display:none}
+ .grimoire-parchment{padding:21px 13px 29px}
+ .grimoire-slot-grid{gap:9px 8px}
+ .grimoire-page-turn{
+   top:auto;bottom:8px;width:126px;height:42px;transform:none;
+   flex-direction:row;border-radius:9px;
+ }
+ .grimoire-page-turn-prev{left:13px}
+ .grimoire-page-turn-next{right:13px}
+ .grimoire-page-turn span{font-size:27px}
+ .grimoire-page-turn small{writing-mode:horizontal-tb;font-size:10px;letter-spacing:.03em}
+ .theme-grimoire .collection-cover-book{width:min(96vw,470px);transform:none}
+}
+
+
+/* ==========================================================
+   v6.0 Album theme — GRIMOIRE II
+   Preserved high-magic codex / gold, ivory and violet arcana
+   ========================================================== */
+
+.collection-book-shell.theme-grimoire2{
+ --g2-gold:#c9a344;
+ --g2-gold-hi:#f0d985;
+ --g2-purple:#6b3a8d;
+ --g2-purple-hi:#a66bd0;
+ --g2-ivory:#e3dcbf;
+ --g2-ivory-low:#bcb28f;
+ --g2-ink:#443058;
+ padding:19px 19px 25px;
+ border:1px solid #a17b34;
+ border-radius:15px;
+ background:
+   radial-gradient(circle at 72% 10%,rgba(141,74,183,.16),transparent 26%),
+   radial-gradient(circle at 21% 87%,rgba(222,183,80,.08),transparent 25%),
+   repeating-linear-gradient(90deg,rgba(255,255,255,.012) 0 1px,transparent 1px 6px),
+   linear-gradient(145deg,#7a5a25,#332243 43%,#170f21 76%,#0e0a13);
+ box-shadow:
+   inset 0 0 0 4px rgba(29,16,38,.22),
+   inset 0 -30px 48px rgba(0,0,0,.25),
+   0 24px 57px rgba(0,0,0,.37);
+ color:#eee0ad;
+}
+.collection-book-shell.theme-grimoire2 .collection-book-top{
+ margin:0 7px 14px;
+ border-bottom:1px solid rgba(222,184,80,.24);
+}
+.collection-book-shell.theme-grimoire2 .collection-source-title{
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ color:#f0dd9a;
+ letter-spacing:.04em;
+ text-shadow:0 2px 7px rgba(28,9,35,.75);
+}
+.collection-book-shell.theme-grimoire2 .muted{color:#c5ad75}
+
+/* Main open codex */
+.grimoire2-spread-host{
+ width:100%;
+ min-width:0;
+ padding:8px 3px 14px;
+}
+.grimoire2-spread{
+ position:relative;
+ isolation:isolate;
+ display:grid;
+ grid-template-columns:minmax(0,1fr) 74px minmax(0,1fr);
+ align-items:stretch;
+ width:min(100%,1500px);
+ margin:0 auto;
+ padding:31px 47px 38px;
+ border:1px solid #9e7931;
+ border-radius:29px 29px 38px 38px;
+ background:
+   radial-gradient(circle at 50% 0%,rgba(195,145,225,.09),transparent 34%),
+   radial-gradient(circle at 8% 48%,rgba(229,192,85,.08),transparent 20%),
+   radial-gradient(circle at 92% 48%,rgba(229,192,85,.08),transparent 20%),
+   linear-gradient(90deg,rgba(0,0,0,.19),transparent 8% 92%,rgba(0,0,0,.2)),
+   linear-gradient(145deg,#765522 0%,#422452 35%,#261432 62%,#6e4c20 100%);
+ box-shadow:
+   inset 0 0 0 7px rgba(45,25,54,.22),
+   inset 0 0 0 9px rgba(240,207,117,.045),
+   inset 13px 0 29px rgba(24,10,32,.2),
+   inset -13px 0 29px rgba(24,10,32,.2),
+   0 24px 48px rgba(0,0,0,.39);
+ perspective:1800px;
+}
+.grimoire2-cover-back{
+ position:absolute;
+ z-index:0;
+ inset:12px;
+ border:1px solid rgba(240,205,109,.2);
+ border-radius:22px 22px 31px 31px;
+ background:
+   repeating-linear-gradient(112deg,rgba(255,255,255,.012) 0 1px,transparent 1px 9px),
+   radial-gradient(circle at 50% 50%,rgba(137,69,178,.1),transparent 38%);
+ box-shadow:
+   inset 0 0 0 3px rgba(75,41,88,.15),
+   inset 0 0 40px rgba(20,8,27,.23);
+ pointer-events:none;
+}
+
+/* Four bright cover emblems */
+.grimoire2-corner-emblem{
+ position:absolute;
+ z-index:7;
+ width:28px;height:28px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border:1px solid #d0ab4f;
+ background:
+   radial-gradient(circle,#8d5caf 0 20%,#4d2e64 21% 53%,#b78b37 54% 66%,#2a172f 67%);
+ color:#f4df91;
+ transform:rotate(45deg);
+ box-shadow:0 0 10px rgba(154,89,198,.18);
+ font-size:10px;
+ pointer-events:none;
+}
+.grimoire2-corner-emblem.emblem-tl{top:15px;left:18px}
+.grimoire2-corner-emblem.emblem-tr{top:15px;right:18px}
+.grimoire2-corner-emblem.emblem-bl{bottom:17px;left:18px}
+.grimoire2-corner-emblem.emblem-br{bottom:17px;right:18px}
+
+/* Ivory enchanted vellum */
+.grimoire2-page{
+ position:relative;
+ z-index:2;
+ min-width:0;
+ display:flex;
+ padding:6px 5px 10px;
+}
+.grimoire2-page-stack{
+ position:absolute;
+ z-index:0;
+ top:11px;bottom:4px;
+ left:9px;right:9px;
+ border-radius:12px;
+ background:
+   repeating-linear-gradient(0deg,#aa9d7b 0 1px,#d2c8a4 1px 2px,#9e9272 2px 3px);
+ box-shadow:0 7px 13px rgba(44,25,51,.24);
+}
+.grimoire2-page-stack.stack-a{transform:translateY(4px);opacity:.7}
+.grimoire2-page-stack.stack-b{transform:translateY(7px);opacity:.34}
+.grimoire2-vellum{
+ position:relative;
+ z-index:2;
+ flex:1;
+ min-width:0;
+ padding:32px 24px 36px;
+ border:1px solid #b79a54;
+ background:
+   radial-gradient(circle at 14% 10%,rgba(139,82,172,.035),transparent 15%),
+   radial-gradient(circle at 83% 84%,rgba(197,156,63,.06),transparent 26%),
+   repeating-linear-gradient(0deg,rgba(84,66,48,.012) 0 1px,transparent 1px 8px),
+   linear-gradient(108deg,#e4ddc3,#d3c9a8 50%,#c2b692);
+ color:var(--g2-ink);
+ overflow:hidden;
+}
+.grimoire2-page-left .grimoire2-vellum{
+ border-radius:18px 5px 5px 21px;
+ transform:perspective(1600px) rotateY(.45deg);
+ transform-origin:right center;
+ box-shadow:
+   inset -31px 0 37px rgba(80,48,91,.13),
+   inset 2px 0 rgba(255,251,225,.28),
+   0 8px 19px rgba(36,16,43,.24);
+}
+.grimoire2-page-right .grimoire2-vellum{
+ border-radius:5px 18px 21px 5px;
+ transform:perspective(1600px) rotateY(-.45deg);
+ transform-origin:left center;
+ box-shadow:
+   inset 31px 0 37px rgba(80,48,91,.13),
+   inset -2px 0 rgba(255,251,225,.28),
+   0 8px 19px rgba(36,16,43,.24);
+}
+.grimoire2-vellum::before{
+ content:"";
+ position:absolute;
+ z-index:2;
+ inset:7px;
+ border:1px solid rgba(151,109,44,.2);
+ box-shadow:
+   inset 0 0 0 3px rgba(123,66,155,.035);
+ border-radius:inherit;
+ pointer-events:none;
+}
+.grimoire2-vellum-light{
+ position:absolute;
+ z-index:1;
+ inset:0;
+ pointer-events:none;
+ background:
+   radial-gradient(circle at 50% 45%,rgba(149,77,188,.07),transparent 42%),
+   linear-gradient(115deg,transparent 8%,rgba(255,250,218,.14) 17%,transparent 27% 72%,rgba(229,204,126,.07) 79%,transparent 88%);
+}
+.grimoire2-page-circuit{
+ position:absolute;
+ z-index:2;
+ top:10px;
+ left:18px;right:18px;
+ height:18px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ pointer-events:none;
+}
+.grimoire2-page-circuit::before,
+.grimoire2-page-circuit::after{
+ content:"";
+ width:31%;
+ height:1px;
+ background:linear-gradient(90deg,transparent,#a48238);
+ opacity:.5;
+}
+.grimoire2-page-circuit::after{transform:scaleX(-1)}
+.grimoire2-page-circuit span{
+ width:11px;height:11px;
+ margin:0 7px;
+ border:1px solid #9b7530;
+ transform:rotate(45deg);
+ box-shadow:0 0 0 3px rgba(111,55,143,.06);
+}
+.grimoire2-page-circuit i,
+.grimoire2-page-circuit b{
+ position:absolute;
+ border-radius:50%;
+ border:1px solid rgba(108,55,138,.25);
+}
+.grimoire2-page-circuit i{width:25px;height:25px}
+.grimoire2-page-circuit b{width:36px;height:36px}
+
+/* Card frames */
+.grimoire2-slot-grid{
+ position:relative;
+ z-index:4;
+ display:grid;
+ grid-template-columns:repeat(var(--grimoire2-cols,2),minmax(0,1fr));
+ gap:17px 14px;
+ align-content:start;
+}
+.grimoire2-card-slot{
+ position:relative;
+ min-width:0;
+ padding:10px;
+ border:1px solid rgba(145,105,42,.6);
+ border-radius:6px;
+ background:
+   radial-gradient(circle at 50% 43%,rgba(125,60,158,.05),transparent 50%),
+   linear-gradient(145deg,rgba(255,255,255,.06),rgba(151,113,49,.035));
+ box-shadow:
+   inset 0 0 0 2px rgba(100,51,127,.055),
+   inset 0 0 15px rgba(124,73,31,.06);
+}
+.grimoire2-card-slot::before{
+ content:"";
+ position:absolute;
+ inset:4px;
+ border:1px solid rgba(163,120,46,.25);
+ border-radius:3px;
+ pointer-events:none;
+}
+.grimoire2-slot-halo{
+ position:absolute;
+ z-index:0;
+ inset:-6px;
+ border:1px solid rgba(123,61,155,.13);
+ border-radius:11px;
+ box-shadow:0 0 12px rgba(136,65,170,.08);
+ pointer-events:none;
+}
+.grimoire2-card-mount{position:relative;z-index:2}
+.grimoire2-card-slot .collection-card-art{
+ border-radius:4px;
+ border-color:#a17d38;
+ box-shadow:
+   0 2px 3px rgba(64,37,67,.42),
+   0 6px 13px rgba(81,42,90,.16);
+}
+.grimoire2-card-slot .collection-card-name{
+ margin:6px 0 -3px;
+ padding:4px 5px;
+ border-radius:3px;
+ background:linear-gradient(90deg,transparent,rgba(112,62,132,.08) 14% 86%,transparent);
+ color:#553d63;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ font-size:11px;
+ line-height:1.25;
+ text-shadow:none;
+}
+.grimoire2-slot-gem{
+ position:absolute;
+ z-index:5;
+ width:9px;height:9px;
+ border:1px solid #b78d39;
+ background:radial-gradient(circle at 38% 30%,#dfb5ff,#8950ad 42%,#382040 75%);
+ transform:rotate(45deg);
+ box-shadow:0 0 5px rgba(131,64,165,.28);
+ pointer-events:none;
+}
+.grimoire2-slot-gem.gem-tl{left:3px;top:3px}
+.grimoire2-slot-gem.gem-tr{right:3px;top:3px}
+.grimoire2-slot-gem.gem-bl{left:3px;bottom:3px}
+.grimoire2-slot-gem.gem-br{right:3px;bottom:3px}
+
+/* Empty slot = inactive geometric spell circuit */
+.grimoire2-card-slot.empty{
+ aspect-ratio:5/7;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border-style:dashed;
+}
+.grimoire2-empty-circle{
+ position:relative;
+ width:68%;
+ aspect-ratio:1;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:3px;
+ border:1px solid rgba(112,61,134,.25);
+ border-radius:50%;
+ color:rgba(84,51,101,.35);
+ box-shadow:
+   inset 0 0 0 7px rgba(185,139,51,.025),
+   inset 0 0 0 8px rgba(114,58,143,.08);
+}
+.grimoire2-empty-circle b{font-size:29px;line-height:1;color:rgba(116,62,143,.34)}
+.grimoire2-empty-circle small{font-size:7px;letter-spacing:.12em}
+.grimoire2-empty-orbit{
+ position:absolute;
+ border:1px solid rgba(156,114,43,.18);
+ border-radius:50%;
+}
+.grimoire2-empty-orbit.orbit-1{inset:10%;transform:rotate(28deg) scaleY(.55)}
+.grimoire2-empty-orbit.orbit-2{inset:17%;transform:rotate(-36deg) scaleX(.52)}
+
+/* Binding: polished arcane spine */
+.grimoire2-binding{
+ position:relative;
+ z-index:5;
+ min-height:100%;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+.grimoire2-binding-glow{
+ position:absolute;
+ top:3px;bottom:5px;left:0;right:0;
+ border-radius:24px;
+ background:
+   radial-gradient(ellipse at 50% 50%,rgba(151,73,191,.11),transparent 46%),
+   linear-gradient(90deg,rgba(34,15,42,.75),rgba(210,172,73,.06) 47% 53%,rgba(34,15,42,.76));
+ box-shadow:0 0 23px rgba(42,17,50,.42);
+}
+.grimoire2-binding-spine{
+ position:absolute;
+ top:5%;bottom:5%;
+ left:50%;
+ width:13px;
+ transform:translateX(-50%);
+ border:1px solid #8e6a2c;
+ border-radius:7px;
+ background:linear-gradient(90deg,#593c16,#dfbd61 35%,#886321 57%,#e6ca75 77%,#5c4218);
+ box-shadow:
+   inset 0 1px rgba(255,245,193,.3),
+   0 2px 7px rgba(39,15,45,.4);
+}
+.grimoire2-binding-gems{
+ position:absolute;
+ inset:5% 0;
+}
+.grimoire2-binding-gems i{
+ position:absolute;
+ left:50%;
+ top:calc(10% + var(--gem) * 20%);
+ width:14px;height:14px;
+ transform:translate(-50%,-50%) rotate(45deg);
+ border:2px solid #c9a24b;
+ background:radial-gradient(circle at 35% 30%,#dfb7ff,#8f50b5 40%,#3c1c4b 72%);
+ box-shadow:
+   0 0 0 2px rgba(57,29,66,.7),
+   0 0 8px rgba(150,75,188,.26);
+}
+.grimoire2-binding-core{
+ position:absolute;
+ left:50%;top:50%;
+ width:38px;height:38px;
+ transform:translate(-50%,-50%) rotate(45deg);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border:2px solid #d6b257;
+ background:
+   radial-gradient(circle,#af78cf 0 22%,#65407c 23% 48%,#2a1734 49%);
+ color:#f3df8e;
+ box-shadow:
+   0 0 0 4px #392043,
+   0 0 18px rgba(150,74,188,.24);
+}
+.grimoire2-binding-core span{transform:rotate(-45deg)}
+
+.grimoire2-folio{
+ position:absolute;
+ z-index:5;
+ bottom:10px;
+ left:50%;
+ transform:translateX(-50%);
+ color:rgba(74,50,89,.48);
+ font-family:Georgia,serif;
+ font-size:9px;
+ letter-spacing:.13em;
+}
+
+/* Page controls */
+.grimoire2-page-turn{
+ position:absolute;
+ z-index:9;
+ top:50%;
+ width:72px;height:178px;
+ transform:translateY(-50%);
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+ border:1px solid #9f7932;
+ border-radius:14px;
+ background:
+   radial-gradient(circle at 50% 28%,rgba(135,70,168,.12),transparent 32%),
+   linear-gradient(90deg,#72511f,#2d1837 56%,#180f1d);
+ color:#efd47e;
+ box-shadow:
+   inset 0 1px rgba(255,243,190,.07),
+   0 8px 21px rgba(27,11,33,.38);
+ cursor:pointer;
+ opacity:.82;
+}
+.grimoire2-page-turn:hover:not(:disabled){
+ opacity:1;
+ border-color:#d0a64d;
+ background:
+   radial-gradient(circle at 50% 28%,rgba(169,88,207,.18),transparent 34%),
+   linear-gradient(90deg,#876226,#3e224b 58%,#1c1022);
+}
+.grimoire2-page-turn:disabled{opacity:.12;cursor:default}
+.grimoire2-page-turn-prev{left:-19px}
+.grimoire2-page-turn-next{right:-19px}
+.grimoire2-page-turn span{font-size:45px;line-height:.8}
+.grimoire2-page-turn small{
+ writing-mode:vertical-rl;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ font-size:11px;
+ letter-spacing:.1em;
+}
+
+/* Page-turn animation */
+.grimoire2-turning-next .grimoire2-page-right{
+ transform-origin:left center;
+ animation:grimoire2TurnNext .58s cubic-bezier(.2,.72,.18,1);
+}
+.grimoire2-turning-prev .grimoire2-page-left{
+ transform-origin:right center;
+ animation:grimoire2TurnPrev .58s cubic-bezier(.2,.72,.18,1);
+}
+.grimoire2-turning-next .grimoire2-binding,
+.grimoire2-turning-prev .grimoire2-binding{
+ animation:grimoire2CoreSettle .52s ease-out;
+}
+@keyframes grimoire2TurnNext{
+ 0%{opacity:.43;transform:perspective(1400px) rotateY(-22deg) translateX(18px);filter:brightness(.76) saturate(.86)}
+ 46%{opacity:.95;transform:perspective(1400px) rotateY(-4deg) translateX(4px);filter:brightness(.94)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes grimoire2TurnPrev{
+ 0%{opacity:.43;transform:perspective(1400px) rotateY(22deg) translateX(-18px);filter:brightness(.76) saturate(.86)}
+ 46%{opacity:.95;transform:perspective(1400px) rotateY(4deg) translateX(-4px);filter:brightness(.94)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes grimoire2CoreSettle{
+ 0%{filter:brightness(.72);transform:scaleX(.92)}
+ 100%{filter:none;transform:none}
+}
+.grimoire2-empty-book{
+ min-height:440px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border:1px solid #a17b35;
+ border-radius:19px;
+ background:
+   radial-gradient(circle at 50% 45%,rgba(145,72,181,.09),transparent 31%),
+   linear-gradient(145deg,#6b4a1d,#281632 54%,#120b16);
+ color:#dfc779;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+
+/* Density */
+.grimoire2-spread-host[data-page-size="1"] .grimoire2-card-slot{
+ width:min(72%,380px);justify-self:center
+}
+.grimoire2-spread-host[data-page-size="2"] .grimoire2-card-slot{
+ width:min(86%,350px);justify-self:center
+}
+.grimoire2-spread-host[data-page-size="16"] .grimoire2-slot-grid,
+.grimoire2-spread-host[data-page-size="24"] .grimoire2-slot-grid{gap:10px 9px}
+.grimoire2-spread-host[data-page-size="36"] .grimoire2-slot-grid,
+.grimoire2-spread-host[data-page-size="48"] .grimoire2-slot-grid{gap:7px 6px}
+.grimoire2-spread-host[data-page-size="24"] .grimoire2-card-slot,
+.grimoire2-spread-host[data-page-size="36"] .grimoire2-card-slot,
+.grimoire2-spread-host[data-page-size="48"] .grimoire2-card-slot{padding:5px}
+.grimoire2-spread-host[data-page-size="36"] .grimoire2-page-circuit,
+.grimoire2-spread-host[data-page-size="48"] .grimoire2-page-circuit,
+.grimoire2-spread-host[data-page-size="48"] .grimoire2-slot-gem{display:none}
+
+/* Navigation palette */
+#screen-collection:has(.collection-book-shell.theme-grimoire2) .collection-side-page{
+ border-color:rgba(177,135,54,.62);
+ background:
+   radial-gradient(circle at 50% 26%,rgba(133,67,169,.12),transparent 35%),
+   linear-gradient(180deg,rgba(83,58,25,.95),rgba(36,19,44,.96));
+ color:#edd37f;
+ box-shadow:inset 0 1px rgba(255,239,173,.04),0 8px 23px rgba(31,12,37,.35);
+}
+#screen-collection:has(.collection-book-shell.theme-grimoire2) #collection-pagination{color:#c5ad72}
+#screen-collection:has(.collection-book-shell.theme-grimoire2) #collection-pagination .btn{
+ border-color:rgba(169,126,50,.55);
+ background:rgba(49,26,59,.82);
+ color:#dec77f;
+}
+#screen-collection:has(.collection-book-shell.theme-grimoire2) #collection-pagination .btn.primary{
+ border-color:#c59b43;
+ background:linear-gradient(180deg,#765527,#51305f);
+ color:#fff0b3;
+}
+
+/* Shelf */
+.album-book-card[data-shelf-theme="grimoire2"] .album-shelf-book{
+ transform:rotateY(-5deg) rotateZ(.6deg);
+}
+.album-book-card[data-shelf-theme="grimoire2"]:hover .album-shelf-book{
+ transform:rotateY(-1deg) rotateZ(0) translateY(-12px) translateZ(9px);
+}
+.album-book-card[data-shelf-theme="grimoire2"] .album-book-cover.theme-grimoire2{
+ border-color:#b58c39;
+ border-radius:5px 14px 14px 5px;
+ background:
+   radial-gradient(circle at 72% 22%,rgba(172,91,211,.23) 0 6%,transparent 7%),
+   radial-gradient(circle at 50% 50%,transparent 0 15%,rgba(223,182,72,.13) 16% 17%,transparent 18%),
+   repeating-linear-gradient(108deg,rgba(255,255,255,.012) 0 1px,transparent 1px 8px),
+   linear-gradient(145deg,#d3aa3d,#8c6024 46%,#6b3b82 78%,#2a1735);
+ box-shadow:
+   inset 0 0 0 4px rgba(69,36,80,.12),
+   inset 7px 0 13px rgba(60,31,71,.21),
+   5px 6px 13px rgba(32,15,39,.34);
+}
+.album-book-card[data-shelf-theme="grimoire2"] .album-cover-inner-frame{
+ border-color:rgba(239,211,120,.35);
+ box-shadow:inset 0 0 0 3px rgba(107,54,131,.12);
+}
+.album-book-card[data-shelf-theme="grimoire2"] .album-cover-corner::before,
+.album-book-card[data-shelf-theme="grimoire2"] .album-cover-corner::after{
+ background:linear-gradient(90deg,#7c5a23,#f0d477 46%,#8d6929);
+}
+.album-book-card[data-shelf-theme="grimoire2"] .album-cover-crest,
+.album-book-card[data-shelf-theme="grimoire2"] .album-cover-title{
+ color:#fff0ad;
+}
+.album-book-card[data-shelf-theme="grimoire2"] .album-cover-title{
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+.album-book-card[data-shelf-theme="grimoire2"] .album-cover-title-plate{
+ border-color:rgba(239,205,109,.25);
+ background:linear-gradient(90deg,transparent,rgba(73,37,89,.28) 13% 87%,transparent);
+}
+.album-book-card[data-shelf-theme="grimoire2"] .album-cover-card-frame{
+ border-color:#c5a04c;
+ background:#24122e;
+}
+.album-book-card[data-shelf-theme="grimoire2"] .album-book-spine.theme-grimoire2{
+ width:34px;
+ background:
+   linear-gradient(90deg,#6a491d,#d2a93e 39%,#7a468f 66%,#2d1838);
+ border-color:#8f6a2a;
+}
+.album-book-card[data-shelf-theme="grimoire2"] .album-book-spine-title{
+ color:#f3dc91;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+.album-book-card[data-shelf-theme="grimoire2"] .album-book-page-block{
+ background:repeating-linear-gradient(0deg,#d4c9a2 0 1px,#a99b78 1px 2px,#c4b88f 2px 3px);
+ border-color:#9b8450;
+}
+.album-book-card[data-shelf-theme="grimoire2"] .album-book-back-cover{
+ background:linear-gradient(145deg,#b68b31,#5f3875 65%,#281432);
+ border-color:#8d6829;
+}
+.album-book-card[data-shelf-theme="grimoire2"] .album-book-caption{
+ border-color:rgba(171,126,48,.3);
+ background:linear-gradient(180deg,rgba(84,59,26,.82),rgba(43,23,52,.9));
+}
+.album-book-card[data-shelf-theme="grimoire2"] .album-book-caption::before{
+ background:linear-gradient(90deg,transparent,rgba(227,190,91,.28),transparent);
+}
+
+/* Opening cover */
+.theme-grimoire2 .collection-cover-book{
+ --cover-metal:#b38a36;
+ --cover-metal-hi:#f0d981;
+ --cover-line:rgba(223,184,73,.32);
+ --cover-ink:#fff0b1;
+ --cover-muted:#d2b872;
+ width:min(92vw,620px);
+ border-color:#b18a39;
+ border-radius:13px 25px 25px 13px;
+ background:
+   radial-gradient(circle at 74% 18%,rgba(165,86,204,.25) 0 5%,transparent 6%),
+   radial-gradient(circle at 50% 31%,transparent 0 12%,rgba(230,190,79,.12) 13% 14%,transparent 15%),
+   repeating-linear-gradient(111deg,rgba(255,255,255,.012) 0 1px,transparent 1px 9px),
+   linear-gradient(145deg,#d2a43c,#8a5e26 43%,#75458b 72%,#2c1737);
+ box-shadow:
+   inset 17px 0 23px rgba(51,25,61,.24),
+   inset 0 0 0 5px rgba(75,38,88,.11),
+   0 26px 61px rgba(33,14,40,.44);
+}
+.theme-grimoire2 .collection-cover-book::before{
+ background:linear-gradient(90deg,#6e4a1d,#d2a63c 48%,#714184 74%,#291632);
+ border-right-color:rgba(239,209,112,.18);
+}
+.theme-grimoire2 .collection-cover-inner-frame{
+ border-color:rgba(239,205,102,.38);
+ box-shadow:inset 0 0 0 3px rgba(103,50,130,.1);
+}
+.theme-grimoire2 .collection-cover-corner::before,
+.theme-grimoire2 .collection-cover-corner::after{
+ background:linear-gradient(90deg,#77561f,#f1d679 46%,#876529);
+}
+.theme-grimoire2 .collection-cover-crest{color:#f4dc88}
+.theme-grimoire2 .collection-cover-kicker{color:#d1b875}
+.theme-grimoire2 .collection-cover-book h1{
+ color:#fff1b8;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ text-shadow:0 3px 8px rgba(56,25,65,.48);
+}
+.theme-grimoire2 .collection-cover-page-subtitle{color:#e1cc91}
+.theme-grimoire2 .collection-cover-card-frame{
+ border-color:#caa349;
+ background:
+   radial-gradient(circle at 50% 45%,rgba(134,65,169,.14),transparent 48%),
+   #2a1534;
+}
+.theme-grimoire2 .collection-cover-description{
+ border-color:rgba(218,176,69,.22);
+ background:linear-gradient(90deg,transparent,rgba(72,38,87,.24) 15% 85%,transparent);
+ color:#eadcae;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+.theme-grimoire2 .collection-cover-meta{color:#dbc687}
+.theme-grimoire2 .collection-cover-open-wrap{
+ border-color:rgba(223,181,68,.24);
+ background:rgba(77,39,91,.19);
+}
+.theme-grimoire2 .collection-cover-open-wrap .btn.primary{
+ border-color:#cda64d;
+ background:linear-gradient(180deg,#9a742e,#664073);
+ color:#fff2bc;
+}
+.theme-grimoire2 .collection-cover-emblem-panel{
+ border-color:rgba(222,180,71,.3);
+ background:
+   radial-gradient(circle at 50% 44%,rgba(152,76,190,.16),transparent 42%),
+   rgba(75,38,89,.14);
+ color:#f0d77b;
+}
+
+/* Mobile */
+@media(max-width:1000px){
+ .grimoire2-spread{grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr);padding:23px 29px 30px}
+ .grimoire2-vellum{padding:24px 17px 31px}
+ .grimoire2-slot-grid{gap:11px 10px}
+}
+@media(max-width:700px){
+ .collection-book-shell.theme-grimoire2{padding:11px 7px 16px}
+ .grimoire2-spread{
+   display:block;
+   padding:17px 12px 65px;
+   border-radius:20px;
+ }
+ .grimoire2-page{padding:5px;margin-bottom:13px}
+ .grimoire2-page-left .grimoire2-vellum,
+ .grimoire2-page-right .grimoire2-vellum{
+   transform:none;
+   border-radius:12px!important;
+ }
+ .grimoire2-binding{display:none}
+ .grimoire2-vellum{padding:21px 13px 29px}
+ .grimoire2-slot-grid{gap:9px 8px}
+ .grimoire2-page-turn{
+   top:auto;bottom:8px;width:126px;height:42px;transform:none;
+   flex-direction:row;border-radius:10px;
+ }
+ .grimoire2-page-turn-prev{left:13px}
+ .grimoire2-page-turn-next{right:13px}
+ .grimoire2-page-turn span{font-size:27px}
+ .grimoire2-page-turn small{writing-mode:horizontal-tb;font-size:10px;letter-spacing:.03em}
+ .theme-grimoire2 .collection-cover-book{width:min(96vw,470px);transform:none}
+}
+
 </style>
 </head>
 <body>
@@ -4006,7 +5406,7 @@ main{zoom:1}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v5.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v6.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -6443,7 +7843,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    });
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'5.8',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'6.0',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:6,
@@ -7771,6 +9171,12 @@ function collectionGridColumns(pageSize){
 function isRealBinderSpread(album=currentAlbum(),view=currentCollectionView()){
  return !!album&&currentCollectionThemeId()==='real-binder'&&view?.viewMode==='gallery';
 }
+function isGrimoireSpread(view=currentCollectionView()){
+ return currentCollectionThemeId()==='grimoire'&&view?.viewMode==='gallery'&&collectionSourceKind()!=='albums';
+}
+function isGrimoire2Spread(view=currentCollectionView()){
+ return currentCollectionThemeId()==='grimoire2'&&view?.viewMode==='gallery'&&collectionSourceKind()!=='albums';
+}
 function collectionItemsPerTurn(view=currentCollectionView(),album=currentAlbum()){
  const size=Math.max(1,Number(view?.pageSize)||9);
  return isRealBinderSpread(album,view)?size*2:size;
@@ -7846,6 +9252,115 @@ function realBinderSpreadHtml(pageRows,pageSize,spreadIndex,showNames,maxSpreadI
    <div class="real-binder-cover-edge real-binder-cover-edge-right" aria-hidden="true"></div>
  </div>`;
 }
+function grimoireSlotHtml(item,showNames,slotIndex){
+ if(item?.c){
+   return `<div class="grimoire-card-slot occupied">
+     <span class="grimoire-slot-corner tl" aria-hidden="true"></span>
+     <span class="grimoire-slot-corner tr" aria-hidden="true"></span>
+     <span class="grimoire-slot-corner bl" aria-hidden="true"></span>
+     <span class="grimoire-slot-corner br" aria-hidden="true"></span>
+     <div class="grimoire-card-mount">${collectionCardGalleryHtml(item.c,showNames)}</div>
+   </div>`;
+ }
+ const manualSlot=item&&Number.isFinite(Number(item.slotIndex));
+ return `<div class="grimoire-card-slot empty ${manualSlot?'manual-empty':''}">
+   <span class="grimoire-slot-corner tl" aria-hidden="true"></span>
+   <span class="grimoire-slot-corner tr" aria-hidden="true"></span>
+   <span class="grimoire-slot-corner bl" aria-hidden="true"></span>
+   <span class="grimoire-slot-corner br" aria-hidden="true"></span>
+   <div class="grimoire-empty-sigil"><span>◇</span><small>${manualSlot?'空き枠':'EMPTY'}</small></div>
+ </div>`;
+}
+function grimoirePageHtml(items,side,physicalPage,showNames,cols){
+ return `<section class="grimoire-page grimoire-page-${side}" aria-label="${side==='left'?'左':'右'}ページ">
+   <div class="grimoire-page-underlay" aria-hidden="true"></div>
+   <div class="grimoire-parchment">
+     <div class="grimoire-page-stains" aria-hidden="true"></div>
+     <div class="grimoire-page-runes" aria-hidden="true"><span>ᚠ ᚢ ᚦ ᚨ ᚱ</span><i></i></div>
+     <div class="grimoire-slot-grid" style="--grimoire-cols:${cols}">
+       ${items.map((x,i)=>grimoireSlotHtml(x,showNames,i)).join('')}
+     </div>
+     <div class="grimoire-folio">${physicalPage}</div>
+   </div>
+ </section>`;
+}
+function grimoireSpreadHtml(pageRows,pageSize,spreadIndex,showNames,maxSpreadIndex){
+ const split=Math.ceil(pageRows.length/2);
+ const left=pageRows.slice(0,split),right=pageRows.slice(split);
+ const cols=Math.max(1,Math.ceil(collectionGridColumns(pageSize)/2));
+ const leftNo=spreadIndex*2+1,rightNo=leftNo+1,canPrev=spreadIndex>0,canNext=spreadIndex<maxSpreadIndex;
+ return `<div class="grimoire-spread" data-grimoire-spread="${spreadIndex+1}">
+   <div class="grimoire-leather-back" aria-hidden="true"></div>
+   <div class="grimoire-clasp grimoire-clasp-top" aria-hidden="true"><i></i></div>
+   <div class="grimoire-clasp grimoire-clasp-bottom" aria-hidden="true"><i></i></div>
+   <button class="grimoire-page-turn grimoire-page-turn-prev" type="button" data-grimoire-turn="prev" ${canPrev?'':'disabled'} aria-label="前のページへ"><span>‹</span><small>前のページへ</small></button>
+   ${grimoirePageHtml(left,'left',leftNo,showNames,cols)}
+   <div class="grimoire-binding" aria-hidden="true">
+     <div class="grimoire-binding-shadow"></div>
+     <div class="grimoire-binding-thread">${Array.from({length:9},(_,i)=>`<i style="--thread:${i}"></i>`).join('')}</div>
+     <div class="grimoire-binding-gem">◇</div>
+   </div>
+   ${grimoirePageHtml(right,'right',rightNo,showNames,cols)}
+   <button class="grimoire-page-turn grimoire-page-turn-next" type="button" data-grimoire-turn="next" ${canNext?'':'disabled'} aria-label="次のページへ"><small>次のページへ</small><span>›</span></button>
+ </div>`;
+}
+function grimoire2SlotHtml(item,showNames){
+ if(item?.c){
+   return `<div class="grimoire2-card-slot occupied">
+     <div class="grimoire2-slot-halo" aria-hidden="true"></div>
+     <span class="grimoire2-slot-gem gem-tl" aria-hidden="true"></span>
+     <span class="grimoire2-slot-gem gem-tr" aria-hidden="true"></span>
+     <span class="grimoire2-slot-gem gem-bl" aria-hidden="true"></span>
+     <span class="grimoire2-slot-gem gem-br" aria-hidden="true"></span>
+     <div class="grimoire2-card-mount">${collectionCardGalleryHtml(item.c,showNames)}</div>
+   </div>`;
+ }
+ const manualSlot=item&&Number.isFinite(Number(item.slotIndex));
+ return `<div class="grimoire2-card-slot empty ${manualSlot?'manual-empty':''}">
+   <div class="grimoire2-empty-circle">
+     <span class="grimoire2-empty-orbit orbit-1"></span>
+     <span class="grimoire2-empty-orbit orbit-2"></span>
+     <b>◇</b><small>${manualSlot?'空き枠':'ARCANE SLOT'}</small>
+   </div>
+ </div>`;
+}
+function grimoire2PageHtml(items,side,physicalPage,showNames,cols){
+ return `<section class="grimoire2-page grimoire2-page-${side}" aria-label="${side==='left'?'左':'右'}ページ">
+   <div class="grimoire2-page-stack stack-a" aria-hidden="true"></div>
+   <div class="grimoire2-page-stack stack-b" aria-hidden="true"></div>
+   <div class="grimoire2-vellum">
+     <div class="grimoire2-vellum-light" aria-hidden="true"></div>
+     <div class="grimoire2-page-circuit" aria-hidden="true"><span></span><i></i><b></b></div>
+     <div class="grimoire2-slot-grid" style="--grimoire2-cols:${cols}">
+       ${items.map(x=>grimoire2SlotHtml(x,showNames)).join('')}
+     </div>
+     <div class="grimoire2-folio">ARCANA ${physicalPage}</div>
+   </div>
+ </section>`;
+}
+function grimoire2SpreadHtml(pageRows,pageSize,spreadIndex,showNames,maxSpreadIndex){
+ const split=Math.ceil(pageRows.length/2);
+ const left=pageRows.slice(0,split),right=pageRows.slice(split);
+ const cols=Math.max(1,Math.ceil(collectionGridColumns(pageSize)/2));
+ const leftNo=spreadIndex*2+1,rightNo=leftNo+1,canPrev=spreadIndex>0,canNext=spreadIndex<maxSpreadIndex;
+ return `<div class="grimoire2-spread" data-grimoire2-spread="${spreadIndex+1}">
+   <div class="grimoire2-cover-back" aria-hidden="true"></div>
+   <div class="grimoire2-corner-emblem emblem-tl" aria-hidden="true">◇</div>
+   <div class="grimoire2-corner-emblem emblem-tr" aria-hidden="true">◇</div>
+   <div class="grimoire2-corner-emblem emblem-bl" aria-hidden="true">◇</div>
+   <div class="grimoire2-corner-emblem emblem-br" aria-hidden="true">◇</div>
+   <button class="grimoire2-page-turn grimoire2-page-turn-prev" type="button" data-grimoire2-turn="prev" ${canPrev?'':'disabled'} aria-label="前のページへ"><span>‹</span><small>前のページへ</small></button>
+   ${grimoire2PageHtml(left,'left',leftNo,showNames,cols)}
+   <div class="grimoire2-binding" aria-hidden="true">
+     <div class="grimoire2-binding-glow"></div>
+     <div class="grimoire2-binding-spine"></div>
+     <div class="grimoire2-binding-gems">${Array.from({length:5},(_,i)=>`<i style="--gem:${i}"></i>`).join('')}</div>
+     <div class="grimoire2-binding-core"><span>◇</span></div>
+   </div>
+   ${grimoire2PageHtml(right,'right',rightNo,showNames,cols)}
+   <button class="grimoire2-page-turn grimoire2-page-turn-next" type="button" data-grimoire2-turn="next" ${canNext?'':'disabled'} aria-label="次のページへ"><small>次のページへ</small><span>›</span></button>
+ </div>`;
+}
 async function hydrateCollectionArt(el){
  const id=el?.dataset?.collectionArt;if(!id||el.dataset.loaded==='1')return;
  el.dataset.loaded='1';if(!imageSystemAvailable)return;
@@ -7908,6 +9423,28 @@ function triggerCollectionPageAnimation(direction='none'){
      const cls=direction==='prev'?'real-binder-turning-prev':'real-binder-turning-next';
      spread.classList.add(cls);
      setTimeout(()=>spread.classList.remove(cls),540);
+   }));
+   return;
+ }
+ const grimoire=$('.grimoire-spread');
+ if(grimoire&&direction!=='none'){
+   grimoire.classList.remove('grimoire-turning-next','grimoire-turning-prev');
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{
+     if(!grimoire.isConnected)return;
+     const cls=direction==='prev'?'grimoire-turning-prev':'grimoire-turning-next';
+     grimoire.classList.add(cls);
+     setTimeout(()=>grimoire.classList.remove(cls),620);
+   }));
+   return;
+ }
+ const grimoire2=$('.grimoire2-spread');
+ if(grimoire2&&direction!=='none'){
+   grimoire2.classList.remove('grimoire2-turning-next','grimoire2-turning-prev');
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{
+     if(!grimoire2.isConnected)return;
+     const cls=direction==='prev'?'grimoire2-turning-prev':'grimoire2-turning-next';
+     grimoire2.classList.add(cls);
+     setTimeout(()=>grimoire2.classList.remove(cls),620);
    }));
    return;
  }
@@ -8033,13 +9570,13 @@ function renderCollection(){
  if(kind==='albums'){renderAlbumShelf();return}
  $('#collection-filter-panel').style.display='';$('#collection-display-settings').style.display='';$('#collection-zoom-controls').style.display='flex';
  applyCollectionBookTheme();
- const view=currentCollectionView(),rows=collectionFilteredCards(),size=view.pageSize,album=currentAlbum(),realBinder=isRealBinderSpread(album,view),turnSize=collectionItemsPerTurn(view,album),max=Math.max(0,Math.ceil(rows.length/turnSize)-1),manual=album?.orderMode==='manual'&&!collectionHasActiveFilter();
+ const view=currentCollectionView(),rows=collectionFilteredCards(),size=view.pageSize,album=currentAlbum(),realBinder=isRealBinderSpread(album,view),grimoire=isGrimoireSpread(view),grimoire2=isGrimoire2Spread(view),turnSize=collectionItemsPerTurn(view,album),max=Math.max(0,Math.ceil(rows.length/turnSize)-1),manual=album?.orderMode==='manual'&&!collectionHasActiveFilter();
  if(collectionPage>max)collectionPage=max;
  const start=collectionPage*turnSize,pageRows=rows.slice(start,start+turnSize);
  $('#collection-source-title').textContent=collectionBookTitle();
  const memberCount=sourceMemberCount();
  $('#collection-result-count').textContent=album&&manual?`${memberCount}枚 / ${rows.length}枠${rows.length?` / ${collectionPage+1}ページ目`:''}`:`${rows.filter(x=>x.c).length}枚${rows.length?` / ${collectionPage+1}ページ目`:''}`;
- $('#collection-view-status').textContent=realBinder?`リアルバインダー / 片面${size}枚 / 見開き最大${turnSize}枚${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:`${view.viewMode==='gallery'?'ギャラリー':'一覧'} / ${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`;
+ $('#collection-view-status').textContent=realBinder?`リアルバインダー / 片面${size}枚 / 見開き最大${turnSize}枚${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:grimoire?`グリモワール / 見開き${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:grimoire2?`グリモワール2 / 見開き${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:`${view.viewMode==='gallery'?'ギャラリー':'一覧'} / ${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`;
  $('#collection-zoom-value').textContent=`${view.zoom}%`;$('#collection-zoom-out').disabled=view.zoom<=25;$('#collection-zoom-reset').disabled=view.zoom>=100;if(currentScreenName==='collection')applyCollectionDisplayZoom(view.zoom);
  const fc=collectionFilterCount();$('#collection-filter-count').textContent=`${fc}条件`;
  $('#collection-sort').value=view.sort;$('#collection-sort').disabled=!!album&&album.orderMode==='manual'&&!collectionHasActiveFilter();
@@ -8061,6 +9598,16 @@ function renderCollection(){
    root.dataset.pageSize=String(size);
    root.style.removeProperty('--collection-cols');
    root.innerHTML=rows.length?realBinderSpreadHtml(pageRows,size,collectionPage,view.showNames,max):`<div class="collection-empty real-binder-empty-album">このアルバムにはカードがありません。</div>`;
+ }else if(grimoire){
+   root.className='collection-grid grimoire-spread-host';
+   root.dataset.pageSize=String(size);
+   root.style.removeProperty('--collection-cols');
+   root.innerHTML=rows.length?grimoireSpreadHtml(pageRows,size,collectionPage,view.showNames,max):`<div class="collection-empty grimoire-empty-book">この魔導書にはまだカードが綴じられていません。</div>`;
+ }else if(grimoire2){
+   root.className='collection-grid grimoire2-spread-host';
+   root.dataset.pageSize=String(size);
+   root.style.removeProperty('--collection-cols');
+   root.innerHTML=rows.length?grimoire2SpreadHtml(pageRows,size,collectionPage,view.showNames,max):`<div class="collection-empty grimoire2-empty-book">この高位魔導書にはまだカードが記録されていません。</div>`;
  }else if(view.viewMode==='gallery'){
    root.className=`collection-grid gallery ${view.spread?'collection-spread-ready':''}`;root.dataset.pageSize=String(size);root.style.setProperty('--collection-cols',String(collectionGridColumns(size)));
    root.innerHTML=pageRows.length?pageRows.map(x=>x.c?collectionCardGalleryHtml(x.c,view.showNames):collectionEmptyGalleryHtml(x.slotIndex)).join(''):`<div class="collection-empty">${kind==='favorites'?'お気に入りカードはまだありません。':album?'このアルバムにはカードがありません。':'該当するカードがありません。'}</div>`;
@@ -8075,6 +9622,16 @@ function renderCollection(){
    e.preventDefault();e.stopPropagation();
    if(b.disabled)return;
    goCollectionPage(collectionPage+(b.dataset.realBinderTurn==='next'?1:-1));
+ });
+ $$('[data-grimoire-turn]').forEach(b=>b.onclick=e=>{
+   e.preventDefault();e.stopPropagation();
+   if(b.disabled)return;
+   goCollectionPage(collectionPage+(b.dataset.grimoireTurn==='next'?1:-1));
+ });
+ $$('[data-grimoire2-turn]').forEach(b=>b.onclick=e=>{
+   e.preventDefault();e.stopPropagation();
+   if(b.disabled)return;
+   goCollectionPage(collectionPage+(b.dataset.grimoire2Turn==='next'?1:-1));
  });
  if(realBinder)bindRealBinderPageGestures(root,max);else{root.onpointerdown=null;root.onpointerup=null;root.onpointercancel=null}
  const pagination=$('#collection-pagination'),prev=$('#collection-prev'),next=$('#collection-next'),nums=$('#collection-page-numbers'),side=$('#collection-side-pagination'),sidePrev=$('#collection-side-prev'),sideNext=$('#collection-side-next');pagination.style.display='flex';
