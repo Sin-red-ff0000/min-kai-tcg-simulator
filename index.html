@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v4.8</title>
+<title>みん会TCG Simulator v5.3</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -1253,6 +1253,1225 @@ main{zoom:1}
 }
 @media(max-width:800px){.collection-side-pagination{display:none!important}}
 
+
+/* ==========================================================
+   v4.9 Album redesign phase 1
+   REAL BINDER — open-spread foundation only
+   Other album themes deliberately keep their existing layout.
+   ========================================================== */
+.collection-book-shell.theme-real-binder{
+ position:relative;
+ overflow:visible;
+ padding:18px 18px 22px;
+ background:
+   radial-gradient(ellipse at 50% 0%,rgba(169,192,215,.08),transparent 48%),
+   linear-gradient(180deg,#161d25 0%,#0b1016 100%);
+ border:1px solid #485563;
+ box-shadow:
+   inset 0 1px 0 rgba(255,255,255,.05),
+   inset 0 -20px 40px rgba(0,0,0,.2),
+   0 22px 58px rgba(0,0,0,.34);
+}
+.collection-book-shell.theme-real-binder .collection-book-top{
+ position:relative;
+ z-index:3;
+ margin:0 6px 14px;
+ padding:8px 10px 10px;
+ border-bottom:1px solid rgba(174,194,211,.16);
+}
+.collection-book-shell.theme-real-binder .collection-source-title{
+ letter-spacing:.02em;
+ text-shadow:0 1px 8px rgba(0,0,0,.6);
+}
+.real-binder-spread-host{
+ position:relative;
+ width:100%;
+ min-width:0;
+ padding:8px 4px 12px;
+}
+.real-binder-spread{
+ --binder-metal:#aeb8c1;
+ --binder-metal-dark:#59636d;
+ --binder-sheet:rgba(181,192,202,.075);
+ --binder-sheet-edge:rgba(213,225,234,.24);
+ position:relative;
+ isolation:isolate;
+ display:grid;
+ grid-template-columns:minmax(0,1fr) 62px minmax(0,1fr);
+ align-items:stretch;
+ width:min(100%,1500px);
+ margin:0 auto;
+ padding:22px 34px 28px;
+ border-radius:28px 28px 34px 34px;
+ background:
+   linear-gradient(90deg,rgba(255,255,255,.018),transparent 6% 94%,rgba(255,255,255,.015)),
+   repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 1px,transparent 1px 4px),
+   linear-gradient(155deg,#293746 0%,#18232d 38%,#10171f 66%,#202c38 100%);
+ border:1px solid #536371;
+ box-shadow:
+   inset 0 2px 0 rgba(255,255,255,.055),
+   inset 0 -5px 14px rgba(0,0,0,.34),
+   inset 12px 0 30px rgba(0,0,0,.17),
+   inset -12px 0 30px rgba(0,0,0,.17),
+   0 22px 42px rgba(0,0,0,.34);
+}
+.real-binder-spread::before{
+ content:"";
+ position:absolute;
+ inset:9px;
+ z-index:-1;
+ border-radius:22px 22px 28px 28px;
+ border:1px solid rgba(177,198,214,.11);
+ box-shadow:inset 0 0 0 1px rgba(0,0,0,.2);
+ pointer-events:none;
+}
+.real-binder-spread::after{
+ content:"";
+ position:absolute;
+ left:3.4%;
+ right:3.4%;
+ bottom:7px;
+ height:12px;
+ z-index:0;
+ border-radius:0 0 50% 50%;
+ background:linear-gradient(180deg,rgba(120,139,153,.14),rgba(0,0,0,.3));
+ filter:blur(.2px);
+ pointer-events:none;
+}
+.real-binder-cover-edge{
+ position:absolute;
+ top:38px;
+ bottom:34px;
+ width:22px;
+ z-index:0;
+ border-radius:8px;
+ background:
+   repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 4px),
+   linear-gradient(90deg,#111820,#2c3946);
+ box-shadow:inset 0 0 0 1px rgba(157,178,194,.09),0 0 18px rgba(0,0,0,.28);
+}
+.real-binder-cover-edge-left{left:11px}
+.real-binder-cover-edge-right{right:11px;transform:scaleX(-1)}
+.real-binder-page{
+ position:relative;
+ z-index:1;
+ min-width:0;
+ display:flex;
+ padding:7px 8px 10px;
+}
+.real-binder-page-left{padding-right:4px}
+.real-binder-page-right{padding-left:4px}
+.real-binder-sheet{
+ position:relative;
+ flex:1;
+ min-width:0;
+ padding:25px 20px 32px;
+ border:1px solid rgba(211,222,231,.21);
+ background:
+   linear-gradient(108deg,rgba(255,255,255,.055),transparent 13% 78%,rgba(255,255,255,.022)),
+   linear-gradient(180deg,rgba(131,143,154,.10),rgba(44,53,63,.07)),
+   rgba(9,13,18,.56);
+ box-shadow:
+   inset 0 1px 0 rgba(255,255,255,.06),
+   inset 0 0 34px rgba(0,0,0,.18),
+   0 7px 18px rgba(0,0,0,.22);
+ overflow:hidden;
+}
+.real-binder-page-left .real-binder-sheet{border-radius:16px 5px 5px 18px}
+.real-binder-page-right .real-binder-sheet{border-radius:5px 16px 18px 5px}
+.real-binder-sheet::before{
+ content:"";
+ position:absolute;
+ inset:0;
+ z-index:4;
+ pointer-events:none;
+ background:
+   linear-gradient(112deg,transparent 0 16%,rgba(255,255,255,.035) 24%,transparent 31% 68%,rgba(255,255,255,.018) 76%,transparent 83%),
+   radial-gradient(ellipse at 50% -12%,rgba(255,255,255,.065),transparent 52%);
+ mix-blend-mode:screen;
+}
+.real-binder-sheet::after{
+ content:"";
+ position:absolute;
+ left:8px;right:8px;bottom:7px;height:7px;
+ border-bottom:1px solid rgba(212,222,230,.16);
+ border-radius:50%;
+ opacity:.8;
+ pointer-events:none;
+}
+.real-binder-page-left .real-binder-sheet{
+ box-shadow:
+   inset -16px 0 22px rgba(0,0,0,.22),
+   inset 0 1px 0 rgba(255,255,255,.055),
+   0 7px 18px rgba(0,0,0,.22);
+}
+.real-binder-page-right .real-binder-sheet{
+ box-shadow:
+   inset 16px 0 22px rgba(0,0,0,.22),
+   inset 0 1px 0 rgba(255,255,255,.055),
+   0 7px 18px rgba(0,0,0,.22);
+}
+.real-binder-pocket-grid{
+ position:relative;
+ z-index:2;
+ display:grid;
+ grid-template-columns:repeat(var(--binder-cols,3),minmax(0,1fr));
+ gap:14px 12px;
+ align-items:start;
+ width:100%;
+}
+.real-binder-pocket{
+ position:relative;
+ min-width:0;
+ padding:7px 7px 11px;
+ border:1px solid rgba(205,217,226,.22);
+ border-radius:6px;
+ background:
+   linear-gradient(118deg,rgba(255,255,255,.055),transparent 24% 75%,rgba(255,255,255,.025)),
+   rgba(121,139,153,.045);
+ box-shadow:
+   inset 0 1px 0 rgba(255,255,255,.055),
+   inset 0 -2px 5px rgba(0,0,0,.22),
+   0 2px 3px rgba(0,0,0,.15);
+ overflow:hidden;
+}
+.real-binder-pocket::before{
+ content:"";
+ position:absolute;
+ z-index:5;
+ pointer-events:none;
+ left:4px;right:4px;top:2px;height:38%;
+ border-radius:5px 5px 45% 45%;
+ background:linear-gradient(112deg,rgba(255,255,255,.12),rgba(255,255,255,.025) 26%,transparent 57%);
+ opacity:.55;
+}
+.real-binder-pocket::after{
+ content:"";
+ position:absolute;
+ z-index:5;
+ pointer-events:none;
+ inset:4px;
+ border:1px solid rgba(230,238,243,.055);
+ border-radius:4px;
+}
+.real-binder-pocket-window{
+ position:relative;
+ z-index:2;
+ min-width:0;
+}
+.real-binder-pocket .collection-card{
+ position:relative;
+ min-width:0;
+}
+.real-binder-pocket .collection-card-art{
+ border-radius:5px;
+ border-color:#3f4851;
+ box-shadow:0 2px 7px rgba(0,0,0,.36);
+}
+.real-binder-pocket .collection-card:hover .collection-card-art{
+ transform:translateY(-2px) scale(1.008);
+ border-color:#8da1b2;
+}
+.real-binder-pocket .collection-card-name{
+ position:relative;
+ z-index:3;
+ margin:5px 1px -5px;
+ padding:3px 5px;
+ min-height:0;
+ border-radius:4px;
+ background:rgba(4,8,12,.58);
+ color:#cbd4dc;
+ font-size:11px;
+ line-height:1.25;
+ text-align:center;
+ overflow:hidden;
+ text-overflow:ellipsis;
+ white-space:nowrap;
+}
+.real-binder-pocket-seam{
+ position:absolute;
+ left:4px;right:4px;bottom:5px;
+ height:2px;
+ border-top:1px solid rgba(220,231,239,.17);
+ border-bottom:1px solid rgba(0,0,0,.24);
+ opacity:.72;
+}
+.real-binder-pocket.empty{
+ aspect-ratio:5/7;
+ min-height:0;
+ background:
+   linear-gradient(120deg,rgba(255,255,255,.045),transparent 30% 72%,rgba(255,255,255,.018)),
+   rgba(83,101,116,.035);
+}
+.real-binder-empty-window{
+ position:absolute;
+ inset:7px 7px 11px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border:1px dashed rgba(210,220,228,.09);
+ border-radius:5px;
+ background:linear-gradient(145deg,rgba(255,255,255,.018),rgba(0,0,0,.045));
+ color:rgba(190,204,215,.28);
+ font-size:11px;
+ letter-spacing:.08em;
+}
+.real-binder-pocket.manual-empty .real-binder-empty-window{
+ border-style:solid;
+ color:rgba(201,214,224,.42);
+}
+.real-binder-sheet-hole-strip{
+ position:absolute;
+ top:16px;bottom:16px;
+ width:24px;
+ z-index:3;
+ pointer-events:none;
+}
+.real-binder-page-left .real-binder-sheet-hole-strip{right:-2px}
+.real-binder-page-right .real-binder-sheet-hole-strip{left:-2px}
+.real-binder-sheet-hole-strip i{
+ position:absolute;
+ top:calc(7% + var(--hole) * 14.25%);
+ left:50%;
+ width:9px;height:13px;
+ transform:translate(-50%,-50%);
+ border:1px solid rgba(181,195,205,.28);
+ border-radius:50%;
+ background:#0d1319;
+ box-shadow:inset 0 1px 2px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.025);
+}
+.real-binder-spine{
+ position:relative;
+ z-index:3;
+ min-height:100%;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+.real-binder-spine-shadow{
+ position:absolute;
+ top:9px;bottom:12px;
+ left:3px;right:3px;
+ border-radius:18px;
+ background:linear-gradient(90deg,rgba(0,0,0,.62),rgba(255,255,255,.035) 47%,rgba(0,0,0,.64));
+ box-shadow:0 0 24px rgba(0,0,0,.48);
+}
+.real-binder-metal-rail{
+ position:absolute;
+ top:13%;bottom:13%;
+ width:14px;
+ border-radius:8px;
+ background:
+   linear-gradient(90deg,#515a62 0%,#d9e0e5 26%,#8b969f 52%,#e0e5e8 72%,#5b646c 100%);
+ border:1px solid #424a50;
+ box-shadow:inset 0 0 3px rgba(255,255,255,.55),0 2px 7px rgba(0,0,0,.5);
+}
+.real-binder-rings{
+ position:absolute;
+ inset:5% 0;
+}
+.real-binder-ring{
+ --ring-pos:calc(8% + var(--ring) * 16.8%);
+ position:absolute;
+ top:var(--ring-pos);
+ left:50%;
+ width:54px;height:18px;
+ transform:translate(-50%,-50%);
+ border:4px solid var(--binder-metal);
+ border-left-color:#66717a;
+ border-right-color:#dbe1e5;
+ border-radius:50%;
+ box-shadow:
+   inset 0 0 2px rgba(0,0,0,.45),
+   0 2px 4px rgba(0,0,0,.5);
+}
+.real-binder-ring i{
+ position:absolute;
+ left:50%;top:50%;
+ width:36px;height:9px;
+ transform:translate(-50%,-50%);
+ border-radius:50%;
+ background:#11171d;
+ box-shadow:inset 0 1px 3px rgba(0,0,0,.7);
+}
+.real-binder-page-number{
+ position:absolute;
+ z-index:5;
+ bottom:8px;
+ left:50%;
+ transform:translateX(-50%);
+ color:rgba(201,212,221,.43);
+ font-size:11px;
+ font-variant-numeric:tabular-nums;
+ letter-spacing:.12em;
+}
+.real-binder-empty-album{
+ min-height:420px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border-radius:24px;
+ background:linear-gradient(145deg,#202b36,#10171e);
+ border:1px solid #4d5b67;
+}
+.collection-book-shell.theme-real-binder .collection-page-info{
+ margin-top:10px;
+ color:#98a7b3;
+}
+/* Dense pocket layouts remain usable without losing the physical sheet impression. */
+.real-binder-spread-host[data-page-size="16"] .real-binder-pocket-grid{gap:9px 8px}
+.real-binder-spread-host[data-page-size="24"] .real-binder-pocket-grid,
+.real-binder-spread-host[data-page-size="36"] .real-binder-pocket-grid{gap:7px 6px}
+.real-binder-spread-host[data-page-size="48"] .real-binder-pocket-grid{gap:5px 4px}
+.real-binder-spread-host[data-page-size="24"] .real-binder-pocket,
+.real-binder-spread-host[data-page-size="36"] .real-binder-pocket,
+.real-binder-spread-host[data-page-size="48"] .real-binder-pocket{padding:4px 4px 7px}
+.real-binder-spread-host[data-page-size="24"] .collection-card-name,
+.real-binder-spread-host[data-page-size="36"] .collection-card-name,
+.real-binder-spread-host[data-page-size="48"] .collection-card-name{font-size:9px;padding:2px 3px}
+@media(max-width:1000px){
+ .real-binder-spread{grid-template-columns:minmax(0,1fr) 46px minmax(0,1fr);padding:17px 22px 22px}
+ .real-binder-spine{width:46px}
+ .real-binder-ring{width:42px;height:15px;border-width:3px}
+ .real-binder-sheet{padding:18px 14px 27px}
+ .real-binder-pocket-grid{gap:9px 8px}
+}
+@media(max-width:700px){
+ .collection-book-shell.theme-real-binder{padding:10px 7px 15px}
+ .real-binder-spread{
+   display:block;
+   width:100%;
+   padding:14px 12px 18px;
+   border-radius:20px;
+ }
+ .real-binder-page{padding:5px}
+ .real-binder-page+.real-binder-spine+.real-binder-page{margin-top:14px}
+ .real-binder-spine,.real-binder-cover-edge{display:none}
+ .real-binder-sheet{padding:18px 13px 27px;border-radius:12px!important}
+ .real-binder-page-left .real-binder-sheet,
+ .real-binder-page-right .real-binder-sheet{box-shadow:inset 0 0 24px rgba(0,0,0,.2),0 6px 14px rgba(0,0,0,.23)}
+ .real-binder-sheet-hole-strip{display:none}
+}
+
+
+/* ==========================================================
+   v5.0 Album redesign phase 2
+   REAL BINDER — pocket/storage detail + page-edge navigation
+   ========================================================== */
+.real-binder-turn-zone{
+ position:absolute;z-index:8;top:50%;width:72px;height:190px;transform:translateY(-50%);
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;padding:10px 6px;
+ border:1px solid rgba(187,203,216,.22);border-radius:16px;
+ background:linear-gradient(90deg,rgba(255,255,255,.045),rgba(16,24,31,.92)),rgba(18,25,32,.9);
+ color:#d8e1e8;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 8px 22px rgba(0,0,0,.33);
+ cursor:pointer;opacity:.78;transition:opacity .16s,transform .16s,border-color .16s,background .16s;
+}
+.real-binder-turn-zone:hover:not(:disabled){opacity:1;border-color:#8ea8bc;background:linear-gradient(90deg,rgba(104,136,160,.24),rgba(16,24,31,.96))}
+.real-binder-turn-zone:disabled{opacity:.13;cursor:default}
+.real-binder-turn-prev{left:-18px}.real-binder-turn-next{right:-18px}
+.real-binder-turn-arrow{font-size:48px;line-height:.75;font-weight:300;text-shadow:0 2px 7px rgba(0,0,0,.5)}
+.real-binder-turn-label{writing-mode:vertical-rl;font-size:15px;line-height:1;letter-spacing:.16em;white-space:nowrap}
+.real-binder-turn-prev .real-binder-turn-label{transform:none}
+.real-binder-turn-zone:not(:disabled)::after{content:"";position:absolute;inset:7px;border:1px solid rgba(255,255,255,.035);border-radius:11px;pointer-events:none}
+
+.real-binder-pocket{
+ padding:9px 9px 13px;border-color:rgba(203,216,226,.26);
+ background:linear-gradient(118deg,rgba(255,255,255,.065),transparent 20% 78%,rgba(255,255,255,.018)),rgba(105,124,139,.048);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.07),inset 0 -3px 7px rgba(0,0,0,.23),0 2px 5px rgba(0,0,0,.2);
+}
+.real-binder-pocket-back{position:absolute;z-index:0;inset:7px 7px 12px;border-radius:5px;background:linear-gradient(145deg,rgba(0,0,0,.22),rgba(255,255,255,.018) 46%,rgba(0,0,0,.12));box-shadow:inset 0 0 10px rgba(0,0,0,.42),0 1px 0 rgba(255,255,255,.025);pointer-events:none}
+.real-binder-pocket-window{z-index:2;transform:translateY(1px);transition:transform .16s,filter .16s}
+.real-binder-pocket.occupied:hover .real-binder-pocket-window{transform:translateY(-2px)}
+.real-binder-pocket .collection-card-art{border-color:#343d46;box-shadow:0 1px 2px rgba(0,0,0,.55),0 5px 12px rgba(0,0,0,.26)}
+.real-binder-pocket-lip{position:absolute;z-index:6;left:6px;right:6px;top:5px;height:11px;border-top:1px solid rgba(235,242,246,.22);border-radius:50% 50% 2px 2px;background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.012) 70%,transparent);box-shadow:0 1px 1px rgba(0,0,0,.08);pointer-events:none}
+.real-binder-pocket-gloss{position:absolute;z-index:5;pointer-events:none;inset:5px 5px 9px;border-radius:5px;background:linear-gradient(113deg,transparent 0 10%,rgba(255,255,255,.095) 16%,rgba(255,255,255,.018) 27%,transparent 36% 69%,rgba(255,255,255,.035) 77%,transparent 87%);opacity:.62;mix-blend-mode:screen}
+.real-binder-pocket:nth-child(3n+2) .real-binder-pocket-gloss{background:linear-gradient(124deg,transparent 0 18%,rgba(255,255,255,.07) 25%,transparent 34% 71%,rgba(255,255,255,.025) 78%,transparent 88%)}
+.real-binder-pocket:nth-child(3n) .real-binder-pocket-gloss{background:linear-gradient(105deg,transparent 0 8%,rgba(255,255,255,.055) 14%,transparent 24% 76%,rgba(255,255,255,.03) 83%,transparent 92%)}
+.real-binder-pocket-seam{z-index:7;left:5px;right:5px;bottom:6px;height:3px;border-top:1px solid rgba(225,235,242,.22);border-bottom:1px solid rgba(0,0,0,.31);opacity:.85}
+.real-binder-pocket::after{inset:5px;border-color:rgba(232,240,245,.075);box-shadow:inset 0 0 0 1px rgba(0,0,0,.055)}
+.real-binder-pocket::before{left:5px;right:5px;top:4px;height:44%;opacity:.43;background:linear-gradient(115deg,rgba(255,255,255,.11),rgba(255,255,255,.025) 24%,transparent 53%)}
+.real-binder-pocket.empty{background:linear-gradient(120deg,rgba(255,255,255,.036),transparent 31% 73%,rgba(255,255,255,.014)),rgba(74,91,105,.032)}
+.real-binder-pocket.empty .real-binder-pocket-back{background:radial-gradient(ellipse at 50% 30%,rgba(255,255,255,.018),transparent 50%),rgba(0,0,0,.11)}
+.real-binder-empty-window{inset:9px 9px 13px;border-color:rgba(210,221,229,.085);background:linear-gradient(145deg,rgba(255,255,255,.012),rgba(0,0,0,.06))}
+.real-binder-page-left .real-binder-sheet::before{background:linear-gradient(104deg,rgba(255,255,255,.035),transparent 8% 24%,rgba(255,255,255,.025) 31%,transparent 43% 75%,rgba(255,255,255,.016) 82%,transparent 91%),radial-gradient(ellipse at 52% -12%,rgba(255,255,255,.055),transparent 52%)}
+.real-binder-page-right .real-binder-sheet::before{background:linear-gradient(76deg,rgba(255,255,255,.035),transparent 8% 24%,rgba(255,255,255,.025) 31%,transparent 43% 75%,rgba(255,255,255,.016) 82%,transparent 91%),radial-gradient(ellipse at 48% -12%,rgba(255,255,255,.055),transparent 52%)}
+.real-binder-sheet{border-color:rgba(217,228,235,.23)}
+.real-binder-page-left .real-binder-sheet{transform:perspective(1600px) rotateY(.35deg);transform-origin:right center}
+.real-binder-page-right .real-binder-sheet{transform:perspective(1600px) rotateY(-.35deg);transform-origin:left center}
+.real-binder-spread-host[data-page-size="16"] .real-binder-pocket{padding:7px 7px 10px}
+.real-binder-spread-host[data-page-size="24"] .real-binder-pocket,.real-binder-spread-host[data-page-size="36"] .real-binder-pocket,.real-binder-spread-host[data-page-size="48"] .real-binder-pocket{padding:4px 4px 7px}
+.real-binder-spread-host[data-page-size="24"] .real-binder-pocket-lip,.real-binder-spread-host[data-page-size="36"] .real-binder-pocket-lip,.real-binder-spread-host[data-page-size="48"] .real-binder-pocket-lip{height:6px}
+.real-binder-spread-host[data-page-size="24"] .real-binder-pocket-gloss,.real-binder-spread-host[data-page-size="36"] .real-binder-pocket-gloss,.real-binder-spread-host[data-page-size="48"] .real-binder-pocket-gloss{opacity:.42}
+@media(max-width:1000px){
+ .real-binder-turn-zone{width:60px;height:158px}.real-binder-turn-prev{left:-12px}.real-binder-turn-next{right:-12px}
+ .real-binder-turn-arrow{font-size:40px}.real-binder-turn-label{font-size:13px}
+}
+@media(max-width:700px){
+ .real-binder-turn-zone{top:auto;bottom:7px;width:124px;height:42px;transform:none;flex-direction:row;gap:7px;border-radius:10px}
+ .real-binder-turn-prev{left:14px}.real-binder-turn-next{right:14px}
+ .real-binder-turn-label{writing-mode:horizontal-tb;font-size:12px;letter-spacing:.04em}
+ .real-binder-turn-prev .real-binder-turn-label{transform:none}.real-binder-turn-arrow{font-size:28px}
+ .real-binder-spread{padding-bottom:64px}
+ .real-binder-page-left .real-binder-sheet,.real-binder-page-right .real-binder-sheet{transform:none}
+}
+
+
+/* ==========================================================
+   v5.1 Album redesign phase 3
+   REAL BINDER — page material / thickness / binding detail
+   ========================================================== */
+
+/* Physical stack beneath each current plastic page. */
+.real-binder-page{isolation:isolate}
+.real-binder-page-stack{
+ position:absolute;
+ z-index:0;
+ top:11px;
+ bottom:13px;
+ pointer-events:none;
+ border:1px solid rgba(172,188,201,.12);
+ background:
+   repeating-linear-gradient(0deg,rgba(215,226,234,.035) 0 1px,transparent 1px 3px),
+   linear-gradient(180deg,rgba(76,91,104,.24),rgba(25,34,42,.26));
+ box-shadow:0 4px 8px rgba(0,0,0,.16);
+}
+.real-binder-page-left .real-binder-page-stack{left:13px;right:7px;border-radius:15px 4px 4px 17px}
+.real-binder-page-right .real-binder-page-stack{left:7px;right:13px;border-radius:4px 15px 17px 4px}
+.real-binder-page-stack-1{transform:translateY(4px);opacity:.7}
+.real-binder-page-stack-2{transform:translateY(7px);opacity:.48}
+.real-binder-page-stack-3{transform:translateY(10px);opacity:.28}
+
+/* Current sheet sits visibly above the stacked pages. */
+.real-binder-sheet{
+ z-index:2;
+ overflow:hidden;
+ backdrop-filter:blur(.35px);
+}
+.real-binder-sheet-material{
+ position:absolute;
+ z-index:1;
+ inset:0;
+ pointer-events:none;
+ background:
+   repeating-linear-gradient(117deg,
+     rgba(255,255,255,.012) 0 1px,
+     transparent 1px 7px),
+   repeating-linear-gradient(11deg,
+     transparent 0 17px,
+     rgba(190,207,219,.008) 18px 19px),
+   radial-gradient(ellipse at 24% 12%,rgba(255,255,255,.026),transparent 36%),
+   radial-gradient(ellipse at 74% 82%,rgba(0,0,0,.035),transparent 44%);
+ opacity:.9;
+}
+.real-binder-sheet-material::after{
+ content:"";
+ position:absolute;
+ inset:1px;
+ border-radius:inherit;
+ box-shadow:
+   inset 0 0 0 1px rgba(255,255,255,.025),
+   inset 0 -16px 26px rgba(0,0,0,.07);
+}
+
+/* Slight curl toward the binder spine. */
+.real-binder-inner-gutter{
+ position:absolute;
+ z-index:3;
+ top:3px;
+ bottom:3px;
+ width:26px;
+ pointer-events:none;
+}
+.real-binder-page-left .real-binder-inner-gutter{
+ right:0;
+ background:linear-gradient(90deg,transparent,rgba(0,0,0,.12) 47%,rgba(0,0,0,.34) 100%);
+ box-shadow:inset -1px 0 rgba(255,255,255,.025);
+}
+.real-binder-page-right .real-binder-inner-gutter{
+ left:0;
+ background:linear-gradient(90deg,rgba(0,0,0,.34),rgba(0,0,0,.12) 53%,transparent);
+ box-shadow:inset 1px 0 rgba(255,255,255,.025);
+}
+
+/* Outer sheet edge catches light like stacked transparent refill pages. */
+.real-binder-page-left .real-binder-sheet{
+ border-left-color:rgba(221,232,240,.28);
+ border-bottom-color:rgba(176,193,205,.24);
+ box-shadow:
+   inset -22px 0 28px rgba(0,0,0,.25),
+   inset 2px 0 0 rgba(255,255,255,.025),
+   inset 0 1px 0 rgba(255,255,255,.07),
+   inset 0 -2px 0 rgba(163,181,195,.08),
+   0 8px 18px rgba(0,0,0,.24);
+}
+.real-binder-page-right .real-binder-sheet{
+ border-right-color:rgba(221,232,240,.28);
+ border-bottom-color:rgba(176,193,205,.24);
+ box-shadow:
+   inset 22px 0 28px rgba(0,0,0,.25),
+   inset -2px 0 0 rgba(255,255,255,.025),
+   inset 0 1px 0 rgba(255,255,255,.07),
+   inset 0 -2px 0 rgba(163,181,195,.08),
+   0 8px 18px rgba(0,0,0,.24);
+}
+
+/* A fine laminated edge is visible along the outer side of each sheet. */
+.real-binder-page-left .real-binder-sheet::after{
+ left:5px;right:auto;top:10px;bottom:12px;width:5px;height:auto;
+ border:0;
+ border-left:1px solid rgba(226,236,242,.14);
+ border-radius:50%;
+ background:linear-gradient(90deg,rgba(255,255,255,.055),transparent);
+ opacity:.75;
+}
+.real-binder-page-right .real-binder-sheet::after{
+ right:5px;left:auto;top:10px;bottom:12px;width:5px;height:auto;
+ border:0;
+ border-right:1px solid rgba(226,236,242,.14);
+ border-radius:50%;
+ background:linear-gradient(270deg,rgba(255,255,255,.055),transparent);
+ opacity:.75;
+}
+
+/* Spine bed: recessed channel between both refill sheets. */
+.real-binder-spine-bed{
+ position:absolute;
+ top:7px;
+ bottom:10px;
+ left:8px;
+ right:8px;
+ border-radius:18px;
+ background:
+   linear-gradient(90deg,#080c10 0%,#17212a 20%,#0b1015 50%,#17212a 80%,#080c10 100%);
+ border:1px solid rgba(90,105,118,.25);
+ box-shadow:
+   inset 0 0 16px rgba(0,0,0,.82),
+   inset 0 1px 0 rgba(255,255,255,.025),
+   0 0 20px rgba(0,0,0,.3);
+}
+.real-binder-metal-rail{
+ z-index:3;
+ width:16px;
+ background:
+   linear-gradient(90deg,
+     #3f474e 0%,
+     #949fa8 12%,
+     #e0e6ea 28%,
+     #7b8790 49%,
+     #e4e9ec 70%,
+     #89949c 86%,
+     #41484f 100%);
+ box-shadow:
+   inset 0 0 3px rgba(255,255,255,.65),
+   inset 0 -2px 3px rgba(0,0,0,.38),
+   0 2px 7px rgba(0,0,0,.58);
+}
+
+/* Hinges give the ring mechanism a believable attachment point. */
+.real-binder-hinge{
+ position:absolute;
+ z-index:4;
+ left:50%;
+ width:34px;
+ height:22px;
+ transform:translateX(-50%);
+ border:1px solid #414950;
+ border-radius:5px;
+ background:
+   linear-gradient(90deg,#4f585f,#c1c9cf 22%,#7f8991 50%,#cbd2d7 78%,#4c545b);
+ box-shadow:
+   inset 0 1px 1px rgba(255,255,255,.45),
+   inset 0 -1px 2px rgba(0,0,0,.45),
+   0 2px 5px rgba(0,0,0,.5);
+}
+.real-binder-hinge-top{top:8.5%}
+.real-binder-hinge-bottom{bottom:8.5%}
+.real-binder-hinge i{
+ position:absolute;
+ top:50%;
+ width:5px;height:5px;
+ transform:translateY(-50%);
+ border-radius:50%;
+ background:radial-gradient(circle at 35% 30%,#dfe4e7,#666f76 55%,#293036 100%);
+ box-shadow:0 0 0 1px rgba(0,0,0,.45);
+}
+.real-binder-hinge i:first-child{left:6px}
+.real-binder-hinge i:last-child{right:6px}
+
+/* Rings gain a specular line and a slightly deeper rear shadow. */
+.real-binder-ring{
+ z-index:5;
+ border-top-color:#dfe5e9;
+ border-bottom-color:#6b757d;
+ box-shadow:
+   inset 0 1px 1px rgba(255,255,255,.55),
+   inset 0 -1px 1px rgba(0,0,0,.42),
+   0 3px 5px rgba(0,0,0,.58);
+}
+.real-binder-ring::after{
+ content:"";
+ position:absolute;
+ left:8px;right:8px;top:1px;height:2px;
+ border-radius:50%;
+ background:rgba(255,255,255,.28);
+ filter:blur(.2px);
+}
+
+/* Outer binder cover edge becomes thicker and less like a plain bar. */
+.real-binder-cover-edge{
+ width:25px;
+ background:
+   repeating-linear-gradient(0deg,rgba(255,255,255,.026) 0 1px,transparent 1px 4px),
+   linear-gradient(90deg,#080d12 0%,#1d2832 27%,#344451 54%,#18222b 100%);
+ border:1px solid rgba(95,113,127,.22);
+ box-shadow:
+   inset 2px 0 rgba(255,255,255,.025),
+   inset -5px 0 10px rgba(0,0,0,.35),
+   0 0 18px rgba(0,0,0,.3);
+}
+.real-binder-cover-edge::after{
+ content:"";
+ position:absolute;
+ top:14px;bottom:14px;
+ width:3px;
+ border-radius:3px;
+ background:linear-gradient(180deg,transparent,rgba(172,193,209,.13) 18% 82%,transparent);
+}
+.real-binder-cover-edge-left::after{left:5px}
+.real-binder-cover-edge-right::after{right:5px}
+
+/* At very small zoom/high density, suppress only the finest texture noise. */
+.real-binder-spread-host[data-page-size="36"] .real-binder-sheet-material,
+.real-binder-spread-host[data-page-size="48"] .real-binder-sheet-material{opacity:.52}
+.real-binder-spread-host[data-page-size="48"] .real-binder-page-stack-3{display:none}
+
+@media(max-width:1000px){
+ .real-binder-page-stack{top:9px;bottom:11px}
+ .real-binder-inner-gutter{width:20px}
+ .real-binder-hinge{width:28px;height:19px}
+}
+@media(max-width:700px){
+ .real-binder-page-stack{left:9px!important;right:9px!important;border-radius:11px!important}
+ .real-binder-inner-gutter{display:none}
+ .real-binder-spine-bed,.real-binder-hinge{display:none}
+ .real-binder-page-left .real-binder-sheet,
+ .real-binder-page-right .real-binder-sheet{
+   transform:none;
+   box-shadow:inset 0 0 24px rgba(0,0,0,.2),0 7px 16px rgba(0,0,0,.25);
+ }
+}
+
+
+/* ==========================================================
+   v5.2 Album redesign phase 4
+   REAL BINDER — page controls / directional page-turn motion
+   ========================================================== */
+
+/* Fix: v5.1's previous-page label was vertically written and then rotated,
+   causing the characters to appear upside down. */
+.real-binder-turn-prev .real-binder-turn-label{
+ transform:none!important;
+ writing-mode:vertical-rl;
+ text-orientation:mixed;
+}
+
+/* Give both page-edge buttons the same readable top-to-bottom label direction. */
+.real-binder-turn-label{
+ text-orientation:mixed;
+}
+.real-binder-turn-prev .real-binder-turn-arrow,
+.real-binder-turn-next .real-binder-turn-arrow{
+ transition:transform .15s;
+}
+.real-binder-turn-prev:hover:not(:disabled) .real-binder-turn-arrow{transform:translateX(-3px)}
+.real-binder-turn-next:hover:not(:disabled) .real-binder-turn-arrow{transform:translateX(3px)}
+
+/* New spread enters with a short physical-page motion.
+   This intentionally stays subtle so card art remains readable at small zoom. */
+.real-binder-spread.real-binder-turning-next{
+ perspective:1800px;
+}
+.real-binder-spread.real-binder-turning-prev{
+ perspective:1800px;
+}
+.real-binder-turning-next .real-binder-page-right{
+ transform-origin:left center;
+ animation:realBinderEnterNext .50s cubic-bezier(.2,.72,.18,1);
+}
+.real-binder-turning-next .real-binder-page-left{
+ animation:realBinderSettleLeft .42s cubic-bezier(.2,.72,.18,1);
+}
+.real-binder-turning-prev .real-binder-page-left{
+ transform-origin:right center;
+ animation:realBinderEnterPrev .50s cubic-bezier(.2,.72,.18,1);
+}
+.real-binder-turning-prev .real-binder-page-right{
+ animation:realBinderSettleRight .42s cubic-bezier(.2,.72,.18,1);
+}
+.real-binder-turning-next .real-binder-spine,
+.real-binder-turning-prev .real-binder-spine{
+ animation:realBinderSpineSettle .46s ease-out;
+}
+@keyframes realBinderEnterNext{
+ 0%{opacity:.46;transform:perspective(1500px) rotateY(-18deg) translateX(18px);filter:brightness(.68)}
+ 44%{opacity:.93;transform:perspective(1500px) rotateY(-4deg) translateX(4px);filter:brightness(.9)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes realBinderEnterPrev{
+ 0%{opacity:.46;transform:perspective(1500px) rotateY(18deg) translateX(-18px);filter:brightness(.68)}
+ 44%{opacity:.93;transform:perspective(1500px) rotateY(4deg) translateX(-4px);filter:brightness(.9)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes realBinderSettleLeft{
+ 0%{transform:translateX(3px);filter:brightness(.84)}
+ 100%{transform:none;filter:none}
+}
+@keyframes realBinderSettleRight{
+ 0%{transform:translateX(-3px);filter:brightness(.84)}
+ 100%{transform:none;filter:none}
+}
+@keyframes realBinderSpineSettle{
+ 0%{filter:brightness(.7);transform:scaleX(.88)}
+ 100%{filter:none;transform:none}
+}
+
+/* A faint moving shadow across the incoming plastic sheet strengthens the turn
+   without hiding the cards. */
+.real-binder-turning-next .real-binder-page-right::after,
+.real-binder-turning-prev .real-binder-page-left::after{
+ content:"";
+ position:absolute;
+ z-index:9;
+ inset:12px 8px 15px;
+ border-radius:12px;
+ pointer-events:none;
+ opacity:0;
+}
+.real-binder-turning-next .real-binder-page-right::after{
+ background:linear-gradient(90deg,rgba(0,0,0,.24),rgba(255,255,255,.055) 35%,transparent 72%);
+ animation:realBinderTurnShadowNext .50s ease-out;
+}
+.real-binder-turning-prev .real-binder-page-left::after{
+ background:linear-gradient(270deg,rgba(0,0,0,.24),rgba(255,255,255,.055) 35%,transparent 72%);
+ animation:realBinderTurnShadowPrev .50s ease-out;
+}
+@keyframes realBinderTurnShadowNext{
+ 0%{opacity:.75;transform:translateX(9%)}
+ 100%{opacity:0;transform:translateX(-12%)}
+}
+@keyframes realBinderTurnShadowPrev{
+ 0%{opacity:.75;transform:translateX(-9%)}
+ 100%{opacity:0;transform:translateX(12%)}
+}
+
+/* Touch users can swipe the sheet margins; cursor hints that non-card sheet
+   areas are also page-navigation surfaces. */
+.real-binder-sheet,
+.real-binder-spread{touch-action:pan-y}
+.real-binder-page{cursor:default}
+
+@media(max-width:700px){
+ .real-binder-turn-prev .real-binder-turn-label{
+   writing-mode:horizontal-tb;
+   text-orientation:mixed;
+   transform:none!important;
+ }
+ .real-binder-turning-next .real-binder-page-right,
+ .real-binder-turning-prev .real-binder-page-left{
+   animation-duration:.34s;
+ }
+}
+
+
+/* ==========================================================
+   v5.3 Album redesign phase 5
+   BOOKSHELF — physical shelf / book body / spine / depth
+   The front-cover art itself is intentionally left for v5.4.
+   ========================================================== */
+
+.collection-book-shell.theme-real-binder:has(.collection-album-shelf){
+ overflow:visible;
+ background:
+   radial-gradient(ellipse at 50% -10%,rgba(218,184,128,.06),transparent 42%),
+   linear-gradient(180deg,#191714 0%,#0e1012 100%);
+ border-color:#4f483d;
+}
+
+/* Cabinet */
+.collection-album-shelf{
+ position:relative;
+ isolation:isolate;
+ display:grid;
+ grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:22px 18px;
+ padding:34px 30px 42px;
+ border:1px solid #4d4539;
+ border-radius:16px;
+ background:
+   linear-gradient(90deg,rgba(0,0,0,.24),transparent 4% 96%,rgba(0,0,0,.28)),
+   repeating-linear-gradient(90deg,
+     rgba(255,255,255,.012) 0 1px,
+     transparent 1px 46px),
+   linear-gradient(180deg,#211d18 0%,#171511 52%,#111211 100%);
+ box-shadow:
+   inset 0 18px 30px rgba(0,0,0,.36),
+   inset 18px 0 32px rgba(0,0,0,.22),
+   inset -18px 0 32px rgba(0,0,0,.24),
+   0 18px 42px rgba(0,0,0,.28);
+}
+.collection-album-shelf::before{
+ content:"";
+ position:absolute;
+ z-index:-1;
+ inset:11px 12px 14px;
+ border:1px solid rgba(151,128,93,.14);
+ border-radius:10px;
+ background:
+   linear-gradient(90deg,rgba(123,94,61,.035),transparent 12% 88%,rgba(123,94,61,.035)),
+   repeating-linear-gradient(0deg,transparent 0 62px,rgba(255,255,255,.008) 63px 64px);
+ box-shadow:inset 0 0 55px rgba(0,0,0,.28);
+ pointer-events:none;
+}
+.collection-album-shelf::after{
+ content:"";
+ position:absolute;
+ z-index:0;
+ left:16px;right:16px;top:12px;height:12px;
+ border-radius:8px 8px 2px 2px;
+ background:
+   linear-gradient(180deg,#5a4832,#2d251c 72%,#171511);
+ border:1px solid rgba(126,102,70,.34);
+ box-shadow:0 7px 12px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.05);
+ pointer-events:none;
+}
+
+/* Each book lives in a little shelf bay so row alignment remains convincing
+   even when album titles and captions have different heights. */
+.album-book-card{
+ position:relative;
+ z-index:1;
+ min-width:0;
+ cursor:pointer;
+ perspective:1300px;
+}
+.album-shelf-slot{
+ position:relative;
+ height:320px;
+ display:flex;
+ align-items:flex-end;
+ justify-content:center;
+ padding:16px 13px 27px;
+ border-left:1px solid rgba(154,128,91,.07);
+ border-right:1px solid rgba(0,0,0,.15);
+ background:
+   radial-gradient(ellipse at 50% 89%,rgba(0,0,0,.36),transparent 47%),
+   linear-gradient(180deg,rgba(255,255,255,.008),rgba(0,0,0,.055));
+ overflow:visible;
+}
+.album-shelf-back{
+ position:absolute;
+ z-index:0;
+ inset:0 0 24px;
+ background:
+   repeating-linear-gradient(90deg,
+     rgba(139,104,68,.022) 0 2px,
+     transparent 2px 51px),
+   linear-gradient(180deg,rgba(52,43,33,.16),rgba(14,13,12,.2));
+ box-shadow:inset 0 14px 18px rgba(0,0,0,.2);
+ pointer-events:none;
+}
+.album-shelf-plank{
+ position:absolute;
+ z-index:8;
+ left:-9px;right:-9px;bottom:7px;height:25px;
+ border:1px solid #51412e;
+ border-radius:3px 3px 7px 7px;
+ background:
+   repeating-linear-gradient(90deg,
+     rgba(255,255,255,.025) 0 1px,
+     transparent 1px 34px),
+   linear-gradient(180deg,#624b31 0%,#45331f 31%,#2b2118 72%,#171511 100%);
+ box-shadow:
+   inset 0 1px rgba(255,255,255,.08),
+   inset 0 -3px 5px rgba(0,0,0,.32),
+   0 10px 14px rgba(0,0,0,.34);
+ pointer-events:none;
+}
+.album-shelf-plank::before{
+ content:"";
+ position:absolute;
+ left:5px;right:5px;top:4px;height:2px;
+ border-radius:50%;
+ background:rgba(216,177,121,.09);
+}
+.album-shelf-plank i{
+ position:absolute;
+ left:0;right:0;bottom:-6px;height:6px;
+ background:linear-gradient(180deg,#201914,#0c0d0e);
+ border-radius:0 0 5px 5px;
+}
+.album-shelf-shadow{
+ position:absolute;
+ z-index:1;
+ left:15%;right:8%;bottom:27px;height:26px;
+ border-radius:50%;
+ background:rgba(0,0,0,.5);
+ filter:blur(8px);
+ transform:skewX(-8deg);
+ pointer-events:none;
+}
+
+/* Complete book body */
+.album-shelf-book{
+ position:relative;
+ z-index:4;
+ width:min(88%,220px);
+ height:270px;
+ transform-style:preserve-3d;
+ transform:rotateY(-5deg) translateZ(0);
+ transform-origin:left bottom;
+ transition:transform .22s cubic-bezier(.2,.8,.2,1),filter .22s;
+ filter:drop-shadow(0 9px 9px rgba(0,0,0,.3));
+}
+.album-book-card:hover .album-shelf-book,
+.album-book-card:focus-within .album-shelf-book{
+ transform:rotateY(-1deg) translateY(-11px) translateZ(8px);
+ filter:drop-shadow(0 16px 15px rgba(0,0,0,.38)) brightness(1.045);
+}
+.album-book-card:active .album-shelf-book{
+ transform:rotateY(-1deg) translateY(-7px) translateZ(5px) scale(.992);
+}
+
+/* Existing themed front cover remains visible, now as one face of the book. */
+.album-shelf-book .album-book-cover{
+ position:absolute;
+ z-index:5;
+ top:0;right:0;bottom:7px;left:25px;
+ min-height:0;
+ height:auto;
+ padding:20px 13px 16px;
+ border-radius:4px 12px 12px 4px;
+ transform:translateZ(8px);
+ border-width:1px;
+ box-shadow:
+   inset 0 0 0 1px rgba(255,255,255,.035),
+   inset 7px 0 12px rgba(0,0,0,.2),
+   5px 5px 12px rgba(0,0,0,.28);
+}
+.album-shelf-book .album-book-cover::after{
+ inset:7px 7px 7px 10px;
+ border-radius:2px 8px 8px 2px;
+}
+.album-shelf-book .album-cover-ornament{font-size:28px;margin-bottom:11px}
+.album-shelf-book .album-cover-title{font-size:17px;line-height:1.3}
+.album-shelf-book .album-cover-subtitle{font-size:10px;max-height:2.8em;overflow:hidden}
+.album-shelf-book .album-cover-count{font-size:10px;margin-top:13px}
+
+/* Spine. It gets the same theme class as the cover, but is shaded as a narrow
+   curved piece instead of reusing the full front-cover layout. */
+.album-book-spine{
+ position:absolute;
+ z-index:7;
+ top:2px;bottom:9px;left:2px;width:31px;
+ border:1px solid rgba(0,0,0,.45);
+ border-right-color:rgba(255,255,255,.13);
+ border-radius:8px 2px 2px 8px;
+ background:linear-gradient(90deg,#18212a,#435363 52%,#1b252e);
+ box-shadow:
+   inset 5px 0 8px rgba(0,0,0,.3),
+   inset -2px 0 3px rgba(255,255,255,.055),
+   2px 2px 6px rgba(0,0,0,.35);
+ transform:translateZ(10px);
+ overflow:hidden;
+}
+.album-book-spine::before{
+ content:"";
+ position:absolute;
+ inset:0;
+ background:
+   linear-gradient(90deg,rgba(0,0,0,.28),transparent 35% 68%,rgba(0,0,0,.2)),
+   linear-gradient(180deg,rgba(255,255,255,.065),transparent 16% 84%,rgba(0,0,0,.25));
+ pointer-events:none;
+}
+.album-book-spine-cap{
+ position:absolute;
+ left:4px;right:4px;top:8px;height:2px;
+ border-top:1px solid rgba(255,255,255,.23);
+ border-bottom:1px solid rgba(0,0,0,.35);
+}
+.album-book-spine-title{
+ position:absolute;
+ top:25px;bottom:36px;left:50%;
+ transform:translateX(-50%);
+ writing-mode:vertical-rl;
+ text-orientation:mixed;
+ overflow:hidden;
+ color:#e8edf0;
+ font-size:10px;
+ font-weight:700;
+ line-height:1.05;
+ letter-spacing:.04em;
+ text-shadow:0 1px 3px rgba(0,0,0,.8);
+ opacity:.9;
+}
+.album-book-spine-mark{
+ position:absolute;
+ left:0;right:0;bottom:10px;
+ text-align:center;
+ color:rgba(240,244,246,.72);
+ font-size:12px;
+ text-shadow:0 1px 3px #000;
+}
+
+/* Page block visible along the bottom/right edges. */
+.album-book-page-block{
+ position:absolute;
+ z-index:3;
+ left:30px;right:3px;bottom:1px;height:13px;
+ transform:translateZ(1px) skewX(-5deg);
+ border:1px solid rgba(126,119,105,.35);
+ border-top-color:rgba(224,217,195,.36);
+ border-radius:1px 1px 8px 2px;
+ background:
+   repeating-linear-gradient(0deg,#c8c2b1 0 1px,#9d988b 1px 2px,#b7b1a1 2px 3px);
+ box-shadow:0 3px 4px rgba(0,0,0,.28);
+ opacity:.76;
+ overflow:hidden;
+}
+.album-book-page-block span{
+ position:absolute;top:0;bottom:0;width:1px;
+ background:rgba(80,76,68,.22);
+}
+.album-book-page-block span:nth-child(1){left:26%}
+.album-book-page-block span:nth-child(2){left:56%}
+.album-book-page-block span:nth-child(3){left:82%}
+
+/* Slight glimpse of the rear cover makes the object read as a volume. */
+.album-book-back-cover{
+ position:absolute;
+ z-index:1;
+ top:4px;bottom:4px;left:18px;right:-4px;
+ border-radius:6px 14px 14px 6px;
+ background:linear-gradient(145deg,#1a2026,#0e1114);
+ border:1px solid rgba(92,105,116,.25);
+ box-shadow:5px 5px 7px rgba(0,0,0,.28);
+ transform:translateZ(-2px);
+}
+
+/* Theme-aware spine colors only. Full theme-specific bookshelf designs will
+   still be handled later one theme at a time. */
+.album-book-spine.theme-grimoire{background:linear-gradient(90deg,#090604,#3a1e13 48%,#100a07)}
+.album-book-spine.theme-grimoire2{background:linear-gradient(90deg,#68411d,#d2a735 48%,#57316b)}
+.album-book-spine.theme-real-binder{background:linear-gradient(90deg,#17212a,#4a5a69 50%,#18222b)}
+.album-book-spine.theme-hobby-anime{background:linear-gradient(90deg,#071a33,#285fa0 45%,#7a246f)}
+.album-book-spine.theme-starry{background:linear-gradient(90deg,#040717,#161c5a 50%,#0a0928)}
+.album-book-spine.theme-stone{background:linear-gradient(90deg,#3b3832,#817a6d 48%,#373530)}
+.album-book-spine.theme-classic{background:linear-gradient(90deg,#28100d,#6b2d24 45%,#143125)}
+.album-book-spine.theme-dragon{background:linear-gradient(90deg,#160606,#6a1818 48%,#1b0907)}
+.album-book-spine.theme-magical-girl{background:linear-gradient(90deg,#b97ea5,#f3c4df 45%,#70bad7)}
+.album-book-spine.theme-blue-sky{background:linear-gradient(90deg,#317da9,#78c9ef 48%,#d3eef9)}
+.album-book-spine.theme-cyber{background:linear-gradient(90deg,#031019,#0d5361 47%,#35124c)}
+.album-book-spine.theme-robot{background:linear-gradient(90deg,#272b2f,#737b82 47%,#2c3136)}
+.album-book-spine.theme-japanese{background:linear-gradient(90deg,#725d43,#d2c2a1 48%,#263f54)}
+.album-book-spine.theme-stained-glass{background:linear-gradient(180deg,#9e2847,#d39b32 27%,#348aae 50%,#5b3280 72%,#35724f)}
+.album-book-spine.theme-fantasy{background:linear-gradient(90deg,#3d2c1b,#8c7048 48%,#21372a)}
+.album-book-spine.theme-fantasy2{background:linear-gradient(90deg,#c9c2b2,#324f87 48%,#967c36)}
+
+/* Captions act as shelf labels instead of looking like loose text. */
+.album-book-caption{
+ position:relative;
+ z-index:9;
+ display:flex;
+ flex-direction:column;
+ gap:3px;
+ margin:8px 8px 0;
+ padding:7px 9px 6px;
+ min-height:44px;
+ text-align:center;
+ border:1px solid rgba(128,111,85,.2);
+ border-radius:5px;
+ background:
+   linear-gradient(180deg,rgba(57,49,39,.76),rgba(22,21,19,.84));
+ box-shadow:inset 0 1px rgba(255,255,255,.025),0 2px 5px rgba(0,0,0,.22);
+}
+.album-book-caption::before{
+ content:"";
+ position:absolute;left:8%;right:8%;top:0;height:1px;
+ background:linear-gradient(90deg,transparent,rgba(198,168,117,.2),transparent);
+}
+.album-book-caption b{
+ font-size:12px;
+ color:#e0ddd5;
+}
+.album-book-caption .muted{
+ font-size:9px;
+ color:#9e9a90;
+}
+
+/* Empty shelf */
+.album-shelf-empty{
+ min-height:390px;
+ display:grid;
+ grid-template-columns:minmax(280px,.8fr) minmax(260px,1fr);
+ gap:28px;
+ align-items:center;
+ padding:30px;
+ border:1px solid rgba(116,96,68,.2);
+ border-radius:10px;
+ background:linear-gradient(180deg,rgba(35,30,25,.62),rgba(17,17,16,.72));
+}
+.album-empty-shelf-visual{
+ position:relative;
+ height:230px;
+ border-radius:8px;
+ background:
+   linear-gradient(180deg,#211d18,#11110f);
+ box-shadow:inset 0 18px 25px rgba(0,0,0,.36),inset 0 -24px 0 #3c2d1e;
+}
+.album-empty-shelf-visual::after{
+ content:"";
+ position:absolute;left:-4px;right:-4px;bottom:18px;height:20px;
+ border-radius:3px 3px 6px 6px;
+ background:linear-gradient(180deg,#654d33,#302419);
+ box-shadow:0 8px 12px rgba(0,0,0,.3);
+}
+.album-empty-shelf-visual span{
+ position:absolute;
+ bottom:38px;
+ width:46px;height:138px;
+ border-radius:5px 7px 3px 3px;
+ background:linear-gradient(90deg,#18232c,#455667,#1a252e);
+ box-shadow:4px 5px 8px rgba(0,0,0,.35);
+}
+.album-empty-shelf-visual span:nth-child(1){left:22%;transform:rotate(-3deg)}
+.album-empty-shelf-visual span:nth-child(2){left:43%;height:164px;background:linear-gradient(90deg,#3e1c16,#7e372b,#28110d)}
+.album-empty-shelf-visual span:nth-child(3){left:65%;height:148px;transform:rotate(2deg);background:linear-gradient(90deg,#132d27,#376b58,#10251f)}
+
+@media(max-width:1100px){
+ .collection-album-shelf{grid-template-columns:repeat(3,minmax(0,1fr));padding:30px 24px 38px}
+ .album-shelf-slot{height:300px}
+ .album-shelf-book{width:min(90%,205px);height:252px}
+}
+@media(max-width:760px){
+ .collection-album-shelf{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 10px;padding:25px 12px 30px}
+ .album-shelf-slot{height:260px;padding:12px 7px 24px}
+ .album-shelf-book{width:min(94%,176px);height:216px;transform:rotateY(-3deg)}
+ .album-shelf-book .album-book-cover{left:21px;padding:14px 8px 12px}
+ .album-book-spine{width:27px}
+ .album-book-spine-title{font-size:8px;top:22px;bottom:31px}
+ .album-shelf-book .album-cover-title{font-size:14px}
+ .album-shelf-book .album-cover-ornament{font-size:22px}
+ .album-shelf-plank{left:-5px;right:-5px;height:21px}
+ .album-book-caption{margin:6px 2px 0;padding:6px 5px}
+ .album-shelf-empty{grid-template-columns:1fr;padding:18px}
+ .album-empty-shelf-visual{height:180px}
+}
+@media(max-width:430px){
+ .collection-album-shelf{grid-template-columns:1fr;padding-left:20px;padding-right:20px}
+ .album-shelf-slot{height:285px}
+ .album-shelf-book{width:min(82%,205px);height:250px}
+}
+
 </style>
 </head>
 <body>
@@ -1261,7 +2480,7 @@ main{zoom:1}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v4.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v5.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -3594,7 +4813,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    });
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'4.8',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'5.3',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:6,
@@ -4919,6 +6138,82 @@ function fitCollectionToViewport(){
 function collectionGridColumns(pageSize){
  if(pageSize<=1)return 1;if(pageSize<=4)return 2;if(pageSize<=9)return 3;if(pageSize<=16)return 4;if(pageSize<=24)return 6;if(pageSize<=36)return 6;return 8;
 }
+function isRealBinderSpread(album=currentAlbum(),view=currentCollectionView()){
+ return !!album&&currentCollectionThemeId()==='real-binder'&&view?.viewMode==='gallery';
+}
+function collectionItemsPerTurn(view=currentCollectionView(),album=currentAlbum()){
+ const size=Math.max(1,Number(view?.pageSize)||9);
+ return isRealBinderSpread(album,view)?size*2:size;
+}
+function realBinderPageColumns(pageSize){
+ return collectionGridColumns(pageSize);
+}
+function realBinderPocketHtml(item,showNames,slotLabel=''){
+ if(item?.c){
+   return `<div class="real-binder-pocket occupied">
+     <div class="real-binder-pocket-back" aria-hidden="true"></div>
+     <div class="real-binder-pocket-window">${collectionCardGalleryHtml(item.c,showNames)}</div>
+     <div class="real-binder-pocket-lip" aria-hidden="true"></div>
+     <div class="real-binder-pocket-gloss" aria-hidden="true"></div>
+     <div class="real-binder-pocket-seam" aria-hidden="true"></div>
+   </div>`;
+ }
+ const manualSlot=item&&Number.isFinite(Number(item.slotIndex));
+ return `<div class="real-binder-pocket empty ${manualSlot?'manual-empty':''}">
+   <div class="real-binder-pocket-back" aria-hidden="true"></div>
+   <div class="real-binder-empty-window"><span>${manualSlot?'空き枠':''}</span></div>
+   <div class="real-binder-pocket-lip" aria-hidden="true"></div>
+   <div class="real-binder-pocket-gloss" aria-hidden="true"></div>
+   <div class="real-binder-pocket-seam" aria-hidden="true"></div>
+ </div>`;
+}
+function realBinderPageHtml(items,pageSize,side,physicalPage,showNames){
+ const padded=items.slice(0,pageSize);
+ while(padded.length<pageSize)padded.push(null);
+ const cols=realBinderPageColumns(pageSize);
+ return `<section class="real-binder-page real-binder-page-${side}" aria-label="${side==='left'?'左':'右'}ページ">
+   <div class="real-binder-page-stack real-binder-page-stack-3" aria-hidden="true"></div>
+   <div class="real-binder-page-stack real-binder-page-stack-2" aria-hidden="true"></div>
+   <div class="real-binder-page-stack real-binder-page-stack-1" aria-hidden="true"></div>
+   <div class="real-binder-sheet">
+     <div class="real-binder-sheet-material" aria-hidden="true"></div>
+     <div class="real-binder-inner-gutter" aria-hidden="true"></div>
+     <div class="real-binder-sheet-hole-strip" aria-hidden="true">
+       ${Array.from({length:7},(_,i)=>`<i style="--hole:${i}"></i>`).join('')}
+     </div>
+     <div class="real-binder-pocket-grid" style="--binder-cols:${cols}">
+       ${padded.map((x,i)=>realBinderPocketHtml(x,showNames,`${physicalPage}-${i+1}`)).join('')}
+     </div>
+     <div class="real-binder-page-number">${physicalPage}</div>
+   </div>
+ </section>`;
+}
+function realBinderSpreadHtml(pageRows,pageSize,spreadIndex,showNames,maxSpreadIndex){
+ const left=pageRows.slice(0,pageSize),right=pageRows.slice(pageSize,pageSize*2);
+ const leftNo=spreadIndex*2+1,rightNo=leftNo+1,canPrev=spreadIndex>0,canNext=spreadIndex<maxSpreadIndex;
+ return `<div class="real-binder-spread" data-real-binder-spread="${spreadIndex+1}">
+   <div class="real-binder-cover-edge real-binder-cover-edge-left" aria-hidden="true"></div>
+   <button class="real-binder-turn-zone real-binder-turn-prev" type="button" data-real-binder-turn="prev" ${canPrev?'':'disabled'} aria-label="前のページへ">
+     <span class="real-binder-turn-arrow">‹</span><span class="real-binder-turn-label">前のページへ</span>
+   </button>
+   ${realBinderPageHtml(left,pageSize,'left',leftNo,showNames)}
+   <div class="real-binder-spine" aria-hidden="true">
+     <div class="real-binder-spine-shadow"></div>
+     <div class="real-binder-spine-bed"></div>
+     <div class="real-binder-metal-rail"></div>
+     <div class="real-binder-hinge real-binder-hinge-top"><i></i><i></i></div>
+     <div class="real-binder-hinge real-binder-hinge-bottom"><i></i><i></i></div>
+     <div class="real-binder-rings">
+       ${Array.from({length:6},(_,i)=>`<span class="real-binder-ring" style="--ring:${i}"><i></i></span>`).join('')}
+     </div>
+   </div>
+   ${realBinderPageHtml(right,pageSize,'right',rightNo,showNames)}
+   <button class="real-binder-turn-zone real-binder-turn-next" type="button" data-real-binder-turn="next" ${canNext?'':'disabled'} aria-label="次のページへ">
+     <span class="real-binder-turn-label">次のページへ</span><span class="real-binder-turn-arrow">›</span>
+   </button>
+   <div class="real-binder-cover-edge real-binder-cover-edge-right" aria-hidden="true"></div>
+ </div>`;
+}
 async function hydrateCollectionArt(el){
  const id=el?.dataset?.collectionArt;if(!id||el.dataset.loaded==='1')return;
  el.dataset.loaded='1';if(!imageSystemAvailable)return;
@@ -4971,8 +6266,19 @@ function collectionCardListHtml(c){
 function collectionEmptyListHtml(slotIndex){
  return `<div class="collection-list-row collection-empty-list"><div class="collection-list-art empty-slot-art"><span>空</span></div><div class="grow"><b>空き枠</b><div class="muted">手動配置用の空きスペース</div></div></div>`;
 }
-function triggerCollectionPageAnimation(){
+function triggerCollectionPageAnimation(direction='none'){
  if(!collectionData.settings.pageAnimation)return;
+ const spread=$('.real-binder-spread');
+ if(spread&&direction!=='none'){
+   spread.classList.remove('real-binder-turning-next','real-binder-turning-prev');
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{
+     if(!spread.isConnected)return;
+     const cls=direction==='prev'?'real-binder-turning-prev':'real-binder-turning-next';
+     spread.classList.add(cls);
+     setTimeout(()=>spread.classList.remove(cls),540);
+   }));
+   return;
+ }
  const stage=$('#collection-scale-stage')||$('.collection-book-shell');if(!stage)return;
  stage.classList.remove('collection-page-animate');
  requestAnimationFrame(()=>requestAnimationFrame(()=>{
@@ -4982,15 +6288,47 @@ function triggerCollectionPageAnimation(){
  }));
 }
 function goCollectionPage(page){
- const view=currentCollectionView(),preservedZoom=Math.max(25,Math.min(100,Math.round(Number(view.zoom)||100)));
- const rows=collectionFilteredCards(),size=view.pageSize,max=Math.max(0,Math.ceil(rows.length/size)-1);
- collectionPage=Math.max(0,Math.min(max,Number(page)||0));
+ const view=currentCollectionView(),album=currentAlbum(),preservedZoom=Math.max(25,Math.min(100,Math.round(Number(view.zoom)||100)));
+ const rows=collectionFilteredCards(),turnSize=collectionItemsPerTurn(view,album),max=Math.max(0,Math.ceil(rows.length/turnSize)-1);
+ const previousPage=collectionPage,nextPage=Math.max(0,Math.min(max,Number(page)||0));
+ if(nextPage===previousPage)return;
+ collectionPage=nextPage;
+ const direction=nextPage>previousPage?'next':'prev';
  view.zoom=preservedZoom;
  renderCollection();
  const refreshed=currentCollectionView();refreshed.zoom=preservedZoom;saveCollectionData();
  requestAnimationFrame(()=>applyCollectionDisplayZoom(preservedZoom));
- triggerCollectionPageAnimation();
+ triggerCollectionPageAnimation(direction);
 }
+function bindRealBinderPageGestures(root,maxPage){
+ if(!root||!isRealBinderSpread())return;
+ let swipe=null;
+ root.onpointerdown=e=>{
+   if(e.pointerType==='mouse')return;
+   if(e.target.closest('button,[data-collection-card],input,select,textarea,a'))return;
+   swipe={id:e.pointerId,x:e.clientX,y:e.clientY};
+   root.setPointerCapture?.(e.pointerId);
+ };
+ root.onpointerup=e=>{
+   if(!swipe||swipe.id!==e.pointerId)return;
+   const dx=e.clientX-swipe.x,dy=e.clientY-swipe.y;swipe=null;
+   if(Math.abs(dx)<58||Math.abs(dx)<=Math.abs(dy)*1.25)return;
+   if(dx<0&&collectionPage<maxPage)goCollectionPage(collectionPage+1);
+   if(dx>0&&collectionPage>0)goCollectionPage(collectionPage-1);
+ };
+ root.onpointercancel=()=>{swipe=null};
+}
+function handleRealBinderCollectionKeys(e){
+ if(currentScreenName!=='collection'||$('#modal-layer')?.classList.contains('open')||!isRealBinderSpread())return;
+ if(e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;
+ if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement?.tagName||'')||document.activeElement?.isContentEditable)return;
+ if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;
+ const view=currentCollectionView(),album=currentAlbum(),rows=collectionFilteredCards(),turnSize=collectionItemsPerTurn(view,album),max=Math.max(0,Math.ceil(rows.length/turnSize)-1);
+ if(e.key==='ArrowLeft'&&collectionPage>0){e.preventDefault();goCollectionPage(collectionPage-1)}
+ if(e.key==='ArrowRight'&&collectionPage<max){e.preventDefault();goCollectionPage(collectionPage+1)}
+}
+document.addEventListener('keydown',handleRealBinderCollectionKeys);
+
 function sourceMemberCount(){
  const kind=collectionSourceKind(),a=currentAlbum();
  if(kind==='favorites')return collectionData.favorites.length;
@@ -5009,16 +6347,32 @@ function renderAlbumShelf(){
  root.className='collection-album-shelf';root.style.removeProperty('--collection-cols');root.removeAttribute('data-page-size');
  root.innerHTML=collectionData.albums.length?collectionData.albums.map(a=>{
    const cover=a.coverCardId&&cards.find(c=>c.id===a.coverCardId),count=albumMemberIds(a).length;
-   return `<div class="album-book-card" data-open-album="${a.id}">
-     <div class="album-book-cover theme-${normalizeCollectionThemeId(a.themeId)} ${cover?'has-card-cover':''}" ${cover?`data-collection-art="${cover.id}"`:''}>
-       <div class="album-cover-ornament">◇</div>
-       <div class="album-cover-title">${esc(a.name)}</div>
-       ${a.subtitle?`<div class="album-cover-subtitle">${esc(a.subtitle)}</div>`:''}
-       <div class="album-cover-count">${count}枚</div>
+   return `<div class="album-book-card" data-open-album="${a.id}" data-shelf-theme="${normalizeCollectionThemeId(a.themeId)}">
+     <div class="album-shelf-slot">
+       <div class="album-shelf-back" aria-hidden="true"></div>
+       <div class="album-shelf-book">
+         <div class="album-book-spine theme-${normalizeCollectionThemeId(a.themeId)}" aria-hidden="true">
+           <span class="album-book-spine-cap"></span>
+           <span class="album-book-spine-title">${esc(a.name)}</span>
+           <span class="album-book-spine-mark">◇</span>
+         </div>
+         <div class="album-book-cover theme-${normalizeCollectionThemeId(a.themeId)} ${cover?'has-card-cover':''}" ${cover?`data-collection-art="${cover.id}"`:''}>
+           <div class="album-cover-ornament">◇</div>
+           <div class="album-cover-title">${esc(a.name)}</div>
+           ${a.subtitle?`<div class="album-cover-subtitle">${esc(a.subtitle)}</div>`:''}
+           <div class="album-cover-count">${count}枚</div>
+         </div>
+         <div class="album-book-page-block" aria-hidden="true">
+           <span></span><span></span><span></span>
+         </div>
+         <div class="album-book-back-cover" aria-hidden="true"></div>
+       </div>
+       <div class="album-shelf-shadow" aria-hidden="true"></div>
+       <div class="album-shelf-plank" aria-hidden="true"><i></i></div>
      </div>
-     <div class="album-book-caption"><b>${esc(a.name)}</b><span class="muted">${a.orderMode==='manual'?'手動配置':'自動並び'} / ${a.view.pageSize}枚</span></div>
+     <div class="album-book-caption"><b>${esc(a.name)}</b><span class="muted">${count}枚 / ${a.orderMode==='manual'?'手動配置':'自動並び'} / 片面${a.view.pageSize}枚</span></div>
    </div>`;
- }).join(''):`<div class="collection-empty album-shelf-empty"><div><b>アルバムはまだありません。</b><div class="muted" style="margin-top:5px">好きなカードをまとめて、自分だけのバインダーを作れます。</div><button class="btn primary" id="collection-empty-new-album" style="margin-top:12px">最初のアルバムを作る</button></div></div>`;
+ }).join(''):`<div class="collection-empty album-shelf-empty"><div class="album-empty-shelf-visual" aria-hidden="true"><span></span><span></span><span></span></div><div><b>アルバムはまだありません。</b><div class="muted" style="margin-top:5px">好きなカードをまとめて、自分だけのバインダーを作れます。</div><button class="btn primary" id="collection-empty-new-album" style="margin-top:12px">最初のアルバムを作る</button></div></div>`;
  pagination.style.display='none';pageInfo.textContent='';
  bindCollectionImages();
  $$('[data-open-album]').forEach(el=>el.onclick=()=>openCollectionSource(`album:${el.dataset.openAlbum}`,true));
@@ -5035,13 +6389,13 @@ function renderCollection(){
  if(kind==='albums'){renderAlbumShelf();return}
  $('#collection-filter-panel').style.display='';$('#collection-display-settings').style.display='';$('#collection-zoom-controls').style.display='flex';
  applyCollectionBookTheme();
- const view=currentCollectionView(),rows=collectionFilteredCards(),size=view.pageSize,max=Math.max(0,Math.ceil(rows.length/size)-1),album=currentAlbum(),manual=album?.orderMode==='manual'&&!collectionHasActiveFilter();
+ const view=currentCollectionView(),rows=collectionFilteredCards(),size=view.pageSize,album=currentAlbum(),realBinder=isRealBinderSpread(album,view),turnSize=collectionItemsPerTurn(view,album),max=Math.max(0,Math.ceil(rows.length/turnSize)-1),manual=album?.orderMode==='manual'&&!collectionHasActiveFilter();
  if(collectionPage>max)collectionPage=max;
- const start=collectionPage*size,pageRows=rows.slice(start,start+size);
+ const start=collectionPage*turnSize,pageRows=rows.slice(start,start+turnSize);
  $('#collection-source-title').textContent=collectionBookTitle();
  const memberCount=sourceMemberCount();
  $('#collection-result-count').textContent=album&&manual?`${memberCount}枚 / ${rows.length}枠${rows.length?` / ${collectionPage+1}ページ目`:''}`:`${rows.filter(x=>x.c).length}枚${rows.length?` / ${collectionPage+1}ページ目`:''}`;
- $('#collection-view-status').textContent=`${view.viewMode==='gallery'?'ギャラリー':'一覧'} / ${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`;
+ $('#collection-view-status').textContent=realBinder?`リアルバインダー / 片面${size}枚 / 見開き最大${turnSize}枚${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:`${view.viewMode==='gallery'?'ギャラリー':'一覧'} / ${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`;
  $('#collection-zoom-value').textContent=`${view.zoom}%`;$('#collection-zoom-out').disabled=view.zoom<=25;$('#collection-zoom-reset').disabled=view.zoom>=100;if(currentScreenName==='collection')applyCollectionDisplayZoom(view.zoom);
  const fc=collectionFilterCount();$('#collection-filter-count').textContent=`${fc}条件`;
  $('#collection-sort').value=view.sort;$('#collection-sort').disabled=!!album&&album.orderMode==='manual'&&!collectionHasActiveFilter();
@@ -5058,7 +6412,12 @@ function renderCollection(){
    $('#collection-start-viewer').onclick=()=>{const id=firstCollectionViewerCardId();if(id)openCollectionViewer(id);else toast('鑑賞できるカードがありません')};
    $('#collection-special-cover-settings').onclick=()=>openSpecialBookEditor(kind);
  }
- if(view.viewMode==='gallery'){
+ if(realBinder){
+   root.className='collection-grid real-binder-spread-host';
+   root.dataset.pageSize=String(size);
+   root.style.removeProperty('--collection-cols');
+   root.innerHTML=rows.length?realBinderSpreadHtml(pageRows,size,collectionPage,view.showNames,max):`<div class="collection-empty real-binder-empty-album">このアルバムにはカードがありません。</div>`;
+ }else if(view.viewMode==='gallery'){
    root.className=`collection-grid gallery ${view.spread?'collection-spread-ready':''}`;root.dataset.pageSize=String(size);root.style.setProperty('--collection-cols',String(collectionGridColumns(size)));
    root.innerHTML=pageRows.length?pageRows.map(x=>x.c?collectionCardGalleryHtml(x.c,view.showNames):collectionEmptyGalleryHtml(x.slotIndex)).join(''):`<div class="collection-empty">${kind==='favorites'?'お気に入りカードはまだありません。':album?'このアルバムにはカードがありません。':'該当するカードがありません。'}</div>`;
  }else{
@@ -5068,6 +6427,12 @@ function renderCollection(){
  bindCollectionImages();
  $$('[data-collection-card]').forEach(el=>el.onclick=()=>openCollectionDetail(el.dataset.collectionCard));
  $$('[data-collection-favorite]').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleCollectionFavorite(b.dataset.collectionFavorite)});
+ $$('[data-real-binder-turn]').forEach(b=>b.onclick=e=>{
+   e.preventDefault();e.stopPropagation();
+   if(b.disabled)return;
+   goCollectionPage(collectionPage+(b.dataset.realBinderTurn==='next'?1:-1));
+ });
+ if(realBinder)bindRealBinderPageGestures(root,max);else{root.onpointerdown=null;root.onpointerup=null;root.onpointercancel=null}
  const pagination=$('#collection-pagination'),prev=$('#collection-prev'),next=$('#collection-next'),nums=$('#collection-page-numbers'),side=$('#collection-side-pagination'),sidePrev=$('#collection-side-prev'),sideNext=$('#collection-side-next');pagination.style.display='flex';
  prev.disabled=collectionPage<=0;next.disabled=collectionPage>=max;prev.onclick=()=>goCollectionPage(collectionPage-1);next.onclick=()=>goCollectionPage(collectionPage+1);
  if(side){
@@ -5079,7 +6444,7 @@ function renderCollection(){
  const pages=[];if(max<=8){for(let i=0;i<=max;i++)pages.push(i)}else{const set=new Set([0,max,collectionPage-2,collectionPage-1,collectionPage,collectionPage+1,collectionPage+2].filter(x=>x>=0&&x<=max));pages.push(...[...set].sort((a,b)=>a-b))}
  nums.innerHTML=pages.map((p,i)=>`${i&&p-pages[i-1]>1?'<span class="muted">…</span>':''}<button class="btn small ${p===collectionPage?'primary':''}" data-collection-page="${p}">${p+1}</button>`).join('');
  $$('[data-collection-page]').forEach(b=>b.onclick=()=>goCollectionPage(Number(b.dataset.collectionPage)));
- $('#collection-page-info').textContent=rows.length?`表示 ${start+1}〜${Math.min(start+size,rows.length)} / ${rows.length}${manual?'枠':'枚'}　${collectionPage+1} / ${max+1}ページ`:'表示 0 / 0枚';
+ $('#collection-page-info').textContent=rows.length?(realBinder?`見開き ${collectionPage+1} / ${max+1}　表示 ${start+1}〜${Math.min(start+turnSize,rows.length)} / ${rows.length}${manual?'枠':'枚'}　（${collectionPage*2+1}・${collectionPage*2+2}ページ）`:`表示 ${start+1}〜${Math.min(start+turnSize,rows.length)} / ${rows.length}${manual?'枠':'枚'}　${collectionPage+1} / ${max+1}ページ`):'表示 0 / 0枚';
 }
 
 async function hydrateCollectionViewerArt(cardId){
