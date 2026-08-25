@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v8.9</title>
+<title>みん会TCG Simulator v8.10</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -15542,6 +15542,16 @@ body.album-direct-dragging *{cursor:grabbing!important}
 .frame-library-badge{font-size:8px;padding:1px 4px}
 .frame-library-item.selected .frame-library-thumb{box-shadow:inset 0 0 0 2px rgba(180,215,255,.48)}
 
+
+/* v8.10 Collection -> frame settings */
+.collection-detail-actions #collection-detail-frame{border-color:rgba(154,184,221,.48)}
+.collection-viewer-top #collection-viewer-frame{border-color:rgba(154,184,221,.42)}
+@media(max-width:650px){
+ .collection-viewer-top #collection-viewer-frame{order:2}
+ .collection-viewer-top .pill{order:3}
+ .collection-viewer-top .muted{order:4}
+}
+
 </style>
 </head>
 <body>
@@ -15550,7 +15560,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v8.9 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v8.10 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -18261,7 +18271,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    });
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'8.9',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'8.10',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:6,
@@ -19147,15 +19157,19 @@ async function openCardImageEditor(cardId){
 
 
 
-async function openCardFrameEditor(cardId){
+async function openCardFrameEditor(cardId,returnTo='manager'){
  const card=cards.find(c=>c.id===cardId);if(!card)return;
  if(!imageSystemAvailable){toast('このブラウザではフレーム保存を利用できません');return}
+ const back=()=>{
+   if(returnTo==='viewer')return openCollectionViewer(cardId);
+   if(returnTo==='collection')return openCollectionDetail(cardId);
+   return openCardManagerDetail(cardId);
+ };
 
- /* Show feedback immediately; v8.8 could appear completely unresponsive while
-    waiting for the frame initialization promise. */
- openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-loading-back">カード詳細へ戻る</button></div>
+ /* フレーム初期化に時間が掛かっても無反応に見せない */
+ openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-loading-back">${returnTo==='viewer'?'鑑賞モードへ戻る':returnTo==='collection'?'コレクションへ戻る':'カード詳細へ戻る'}</button></div>
    <div class="frame-editor-loading"><span class="pill">読み込み中…</span><div class="muted">フレームライブラリを準備しています。</div></div>`);
- $('#frame-editor-loading-back').onclick=()=>openCardManagerDetail(cardId);
+ $('#frame-editor-loading-back').onclick=back;
 
  try{
    const ready=await frameReadyPromise;
@@ -19165,7 +19179,7 @@ async function openCardFrameEditor(cardId){
    const current=await getCardFrameLink(cardId);
    const currentIsBuiltin=!!current&&isBuiltinFrameId(current.frameId);
 
-   openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-back">カード詳細へ戻る</button></div>
+   openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-back">${returnTo==='viewer'?'鑑賞モードへ戻る':returnTo==='collection'?'コレクションへ戻る':'カード詳細へ戻る'}</button></div>
      <div class="frame-editor-layout">
        <section class="frame-editor-preview-section">
          <div id="frame-editor-preview" class="frame-editor-preview">
@@ -19194,7 +19208,7 @@ async function openCardFrameEditor(cardId){
        </section>
      </div>`);
 
-   $('#frame-editor-back').onclick=()=>openCardManagerDetail(cardId);
+   $('#frame-editor-back').onclick=back;
    const preview=$('#frame-editor-preview');
    await hydrateCardArtBackground(preview,cardId,'full',true);
    if(preview.classList.contains('has-image'))preview.querySelector('.frame-editor-fallback')?.setAttribute('hidden','');
@@ -19212,7 +19226,7 @@ async function openCardFrameEditor(cardId){
        await putCardFrameLink(cardId,b.dataset.framePick);
        renderCollection();if(board)renderBoard();hydrateAllCardFrames();
        toast('フレームを設定しました');
-       openCardFrameEditor(cardId);
+       openCardFrameEditor(cardId,returnTo);
      }catch(err){console.error(err);toast(err?.message||'フレームを設定できませんでした')}
    });
 
@@ -19227,7 +19241,7 @@ async function openCardFrameEditor(cardId){
        await putCardFrameLink(cardId,rec.id);
        renderCollection();if(board)renderBoard();updateImageStorageStatus();
        toast('フレームPNGを登録してカードへ設定しました');
-       openCardFrameEditor(cardId);
+       openCardFrameEditor(cardId,returnTo);
      }catch(err){
        console.error(err);toast(err?.message||'フレームを登録できませんでした');
        if(btn?.isConnected){btn.disabled=false;btn.textContent='新しいPNGを登録して設定'}
@@ -19239,7 +19253,7 @@ async function openCardFrameEditor(cardId){
      await deleteCardFrameLink(cardId);
      renderCollection();if(board)renderBoard();hydrateAllCardFrames();
      toast('このカードからフレームを外しました');
-     openCardFrameEditor(cardId);
+     openCardFrameEditor(cardId,returnTo);
    };
 
    $('#frame-delete-current').onclick=async()=>{
@@ -19251,13 +19265,13 @@ async function openCardFrameEditor(cardId){
      await deleteFrameAsset(current.frameId);
      renderCollection();if(board)renderBoard();updateImageStorageStatus();hydrateAllCardFrames();
      toast('フレームをライブラリから削除しました');
-     openCardFrameEditor(cardId);
+     openCardFrameEditor(cardId,returnTo);
    };
  }catch(err){
    console.error('フレーム設定画面を開けませんでした',err);
-   openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-error-back">カード詳細へ戻る</button></div>
+   openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-error-back">${returnTo==='viewer'?'鑑賞モードへ戻る':returnTo==='collection'?'コレクションへ戻る':'カード詳細へ戻る'}</button></div>
      <div class="panel"><b>フレーム設定を開けませんでした。</b><div class="muted" style="margin-top:8px">${esc(err?.message||String(err))}</div></div>`);
-   $('#frame-editor-error-back').onclick=()=>openCardManagerDetail(cardId);
+   $('#frame-editor-error-back').onclick=back;
    toast('フレーム設定を開けませんでした');
  }
 }
@@ -21542,6 +21556,7 @@ function openCollectionViewer(id){
  openModal(`<div class="collection-viewer-shell" id="collection-viewer-shell">
    <div class="collection-viewer-top viewer-controls">
      <button class="btn" id="collection-viewer-close">閉じる</button>
+     <button class="btn" id="collection-viewer-frame">フレーム設定</button>
      <span class="pill">${idx+1} / ${ids.length}</span>
      <span class="muted">画像をタップすると操作表示を隠せます / ← → キーで移動</span>
    </div>
@@ -21557,6 +21572,7 @@ function openCollectionViewer(id){
  </div>`);
  $('#modal').classList.add('collection-viewer-modal');
  $('#collection-viewer-close').onclick=()=>openCollectionDetail(id);
+ $('#collection-viewer-frame').onclick=()=>openCardFrameEditor(id,'viewer');
  if(idx>0)$('#collection-viewer-prev').onclick=()=>openCollectionViewer(ids[idx-1]);
  if(idx<ids.length-1)$('#collection-viewer-next').onclick=()=>openCollectionViewer(ids[idx+1]);
  collectionViewerKeyHandler=e=>{
@@ -21583,7 +21599,7 @@ function openCollectionDetail(id){
  const navIds=collectionFilteredCards().filter(x=>x.c).map(x=>x.c.id),idx=navIds.indexOf(id),flavor=displayFlavorText(c),fav=isCollectionFavorite(id);
  openModal(`<div class="modal-head"><h3>コレクション</h3><button class="btn" id="collection-detail-close">閉じる</button></div>
  <div class="collection-detail">
-   <div id="collection-detail-art" class="collection-detail-art"><span>${esc(c.name)}</span>${cardFxHtml(c,'collection')}</div>
+   <div id="collection-detail-art" class="collection-detail-art"><span>${esc(c.name)}</span>${cardFxHtml(c,'collection')}${cardFrameHtml(c)}</div>
    <div class="collection-detail-main">
      <h2>${esc(c.name)}</h2>${c.rarity?`<div class="collection-detail-rarity">${esc(c.rarity)}</div>`:''}${flavor?`<div class="collection-detail-flavor">${esc(flavor)}</div>`:''}
      <div class="actions collection-detail-actions">
@@ -21591,6 +21607,7 @@ function openCollectionDetail(id){
        <button class="btn" id="collection-detail-albums">アルバムへ追加</button>
        <button class="btn primary" id="collection-detail-viewer">鑑賞モード</button>
        <button class="btn" id="collection-detail-fx">エフェクト設定</button>
+       <button class="btn" id="collection-detail-frame">フレーム設定</button>
        <button class="btn" id="collection-detail-manager">カード管理で開く</button>
      </div>
      <details class="collection-game-info"><summary>ゲーム情報を表示</summary><div class="collection-game-info-body"><div class="muted">${esc(c.type||'')} / Lv ${esc(c.level||'－')} / POWER ${esc(c.power||'－')}</div><div class="muted">種族：${esc(c.race||'－')}</div><div class="collection-game-effect">${esc(c.effect||'効果なし')}</div></div></details>
@@ -21600,6 +21617,7 @@ function openCollectionDetail(id){
  $('#collection-detail-close').onclick=closeModal;
  $('#collection-detail-favorite').onclick=()=>{setCollectionFavorite(id,!isCollectionFavorite(id));renderCollection();openCollectionDetail(id)};
  $('#collection-detail-albums').onclick=()=>openCardAlbumMembership(id);$('#collection-detail-viewer').onclick=()=>openCollectionViewer(id);$('#collection-detail-fx').onclick=()=>openCardEffectEditor(id,'collection');
+ $('#collection-detail-frame').onclick=()=>openCardFrameEditor(id,'collection');
  $('#collection-detail-manager').onclick=()=>{closeModal();nav('card-manager');openCardManagerDetail(id)};
  if(idx>0)$('#collection-detail-prev').onclick=()=>openCollectionDetail(navIds[idx-1]);if(idx>=0&&idx<navIds.length-1)$('#collection-detail-next').onclick=()=>openCollectionDetail(navIds[idx+1]);
  hydrateCollectionDetailArt(id);
