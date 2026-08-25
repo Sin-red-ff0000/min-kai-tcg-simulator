@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v4.0</title>
+<title>みん会TCG Simulator v4.8</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -1004,8 +1004,8 @@ body.ui-text-large .appbar button{font-size:14px}
 /* v3.8 collection page zoom */
 .collection-page-zoom-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 9px;padding:7px 8px;border:1px solid var(--line);border-radius:10px;background:rgba(10,13,18,.72);position:relative;z-index:8}
 .collection-page-zoom-toolbar .collection-zoom-note{margin-left:auto}
-.collection-scale-stage{width:100%!important;zoom:1!important;transform:none!important;margin-bottom:0!important}
-#screen-collection[data-collection-zoom]:not([data-collection-zoom="100"]){transform-origin:top left}
+.collection-scale-stage{width:100%!important;margin-bottom:0!important}
+
 
 /* v3.8 effect editor usability */
 .fx-editor-modal{width:min(980px,100%)}
@@ -1059,8 +1059,8 @@ body.ui-text-large .appbar button{font-size:14px}
 
 
 /* v4.0 collection zoom behaves like browser zoom instead of resizing inner frames */
-.collection-scale-stage{width:100%!important;zoom:1!important;transform:none!important;margin-bottom:0!important}
-#screen-collection[data-collection-zoom]{transform:none!important;width:auto!important}
+.collection-scale-stage{width:100%!important;margin-bottom:0!important}
+#screen-collection[data-collection-zoom]{width:auto!important}
 
 
 /* v4.0 compact album card picker */
@@ -1089,6 +1089,170 @@ body.ui-text-large .appbar button{font-size:14px}
  .album-card-compact-meta{grid-column:2;text-align:left}
 }
 
+
+/* v4.1 performance / compatibility polish */
+.card-fx-stack.fx-offscreen .card-fx-layer,
+.card-fx-stack.fx-offscreen .card-fx-layer::before{animation-play-state:paused!important}
+.manager-card-row,.deck-card-row,.album-card-compact-row{content-visibility:auto;contain-intrinsic-size:auto 44px}
+.collection-card,.collection-list-row{contain:layout paint}
+.collection-card-art,.collection-list-art{contain:paint}
+
+
+/* v4.2 mobile top navigation consistency */
+.theme-nav-default-note{padding:6px 2px 0;line-height:1.5}
+@media(max-width:650px){
+ .appbar{gap:6px;padding-right:calc(env(safe-area-inset-right,0px) + 8px);padding-left:calc(env(safe-area-inset-left,0px) + 8px)}
+ .appbar button{
+   flex:0 0 96px;
+   width:96px;
+   min-width:96px;
+   height:38px;
+   min-height:38px;
+   padding:6px 7px;
+   display:inline-flex;
+   align-items:center;
+   justify-content:center;
+   box-sizing:border-box;
+   white-space:nowrap;
+   font-size:12px;
+   line-height:1;
+ }
+ .appbar .brand{flex:0 0 auto;white-space:nowrap;margin-right:2px}
+}
+
+
+/* v4.3 effect preview rebuild */
+.fx-preview-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;flex-wrap:wrap;margin-bottom:6px}
+.fx-editor-preview-card{background-image:var(--card-bg-image);background-size:cover;background-position:center}
+.fx-editor-preview-image{position:absolute;inset:0;z-index:1;background-image:linear-gradient(rgba(7,11,17,.18),rgba(7,11,17,.18)),var(--card-bg-image);background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.fx-editor-preview-image.has-image{background-color:#0b0e13}
+.fx-editor-preview-fallback{padding:8px 10px;border-radius:8px;background:rgba(5,8,12,.72);font-weight:800;text-align:center;max-width:82%}
+#fx-editor-preview-effects{position:absolute;inset:0;z-index:3;pointer-events:none}
+#fx-editor-preview-effects>.card-fx-stack{position:absolute;inset:0}
+.fx-editor-preview-name{z-index:5}
+.fx-editor-preview-status{position:absolute;z-index:6;top:7px;right:7px;background:rgba(8,11,16,.82);color:#d2d7df}
+@media(max-width:520px){.fx-preview-toolbar{align-items:flex-start}.fx-preview-toolbar .btn{width:auto}}
+
+
+/* v4.4 preview + zoom isolation fixes */
+.fx-editor-preview-image-wrap{position:absolute;inset:0;z-index:1;overflow:hidden;background-image:linear-gradient(rgba(7,11,17,.18),rgba(7,11,17,.18)),var(--card-bg-image);background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center}
+.fx-editor-preview-image{position:absolute;inset:0;width:100%;height:100%;display:block;background:#0b0e13}
+.fx-editor-preview-image[hidden]{display:none!important}
+.fx-editor-preview-fallback[hidden]{display:none!important}
+#screen-collection{transform-origin:top left}
+main{zoom:1}
+
+
+/* v4.5 Collection zoom: visually scale every Collection element, including album cards */
+.collection-zoom-target{width:100%;transform-origin:top center;will-change:transform}
+#screen-collection[data-collection-zoom="100"] .collection-zoom-target{will-change:auto}
+
+
+/* v4.5 Effect preview: initialize on open and use the same card-art background pipeline as Collection detail */
+.fx-editor-preview-card{
+ position:relative;
+ width:min(100%,270px);
+ aspect-ratio:5/7;
+ margin:8px auto;
+ overflow:hidden;
+ background-image:linear-gradient(rgba(7,11,17,.28),rgba(7,11,17,.28)),var(--card-bg-image);
+ background-size:cover;
+ background-position:center;
+}
+.fx-editor-preview-card.has-image .fx-editor-preview-fallback{display:none!important}
+.fx-editor-preview-fallback{position:absolute;z-index:2;left:10%;right:10%;top:45%;padding:8px 10px;border-radius:8px;background:rgba(5,8,12,.72);font-weight:800;text-align:center}
+#fx-editor-preview-effects{position:absolute;inset:0;z-index:3;pointer-events:none}
+#fx-editor-preview-effects>.card-fx-stack{position:absolute;inset:0}
+
+
+/* v4.5 Album deck bulk import */
+.album-deck-import-row{display:grid;grid-template-columns:minmax(220px,.8fr) auto minmax(220px,1fr);gap:8px;align-items:end;padding:8px 9px;margin-bottom:7px;border:1px solid var(--line);border-radius:9px;background:rgba(0,0,0,.08)}
+.album-deck-import-row label{margin:0}
+.album-deck-import-row .muted{align-self:center;line-height:1.45}
+@media(max-width:760px){.album-deck-import-row{grid-template-columns:1fr}.album-deck-import-row .btn{width:100%}}
+
+
+/* v4.6 effect preview collapse fix */
+.fx-editor-preview-panel{
+  position:static;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  width:100%;
+  min-width:0;
+  padding:10px;
+}
+#fx-editor-preview{
+  width:100%;
+  min-width:0;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  min-height:390px;
+  padding:4px 0 8px;
+  box-sizing:border-box;
+}
+.fx-editor-preview-card{
+  flex:0 0 auto;
+  width:270px!important;
+  max-width:min(100%,270px)!important;
+  min-width:180px;
+  height:auto;
+  aspect-ratio:5/7;
+  margin:8px auto;
+}
+@media(max-width:520px){
+  #fx-editor-preview{min-height:330px}
+  .fx-editor-preview-card{
+    width:min(72vw,240px)!important;
+    max-width:100%!important;
+    min-width:160px;
+  }
+}
+
+
+/* v4.7 collection fit-to-screen */
+.collection-page-zoom-toolbar{position:sticky;top:64px;z-index:9}
+@media(max-width:650px){.collection-page-zoom-toolbar{position:relative;top:auto}}
+
+
+/* v4.8 desktop side pagination */
+.collection-side-pagination{display:block}
+.collection-side-page{
+ position:fixed;
+ top:50%;
+ transform:translateY(-50%);
+ z-index:12;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+ min-width:150px;
+ height:58px;
+ padding:0 14px;
+ border:1px solid rgba(113,130,158,.75);
+ border-radius:14px;
+ background:rgba(14,18,25,.88);
+ color:var(--text);
+ box-shadow:0 8px 24px rgba(0,0,0,.28);
+ backdrop-filter:blur(7px);
+ cursor:pointer;
+ font-size:14px;
+ font-weight:700;
+ transition:opacity .15s,border-color .15s,background .15s;
+}
+.collection-side-page:hover:not(:disabled){border-color:var(--accent);background:rgba(25,33,46,.95)}
+.collection-side-page:disabled{opacity:.22;cursor:default}
+.collection-side-prev{left:24px}
+.collection-side-next{right:24px}
+.collection-side-arrow{font-size:32px;line-height:1;font-weight:400}
+.collection-side-pagination[hidden]{display:none!important}
+@media(max-width:1100px){
+ .collection-side-page{min-width:54px;width:54px;padding:0}
+ .collection-side-page>span:not(.collection-side-arrow){display:none}
+}
+@media(max-width:800px){.collection-side-pagination{display:none!important}}
+
 </style>
 </head>
 <body>
@@ -1097,7 +1261,7 @@ body.ui-text-large .appbar button{font-size:14px}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v4.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v4.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -1126,7 +1290,7 @@ body.ui-text-large .appbar button{font-size:14px}
         <div class="collapsible-panel-body">
       <div class="backup-kind-box">
         <h3>通常バックアップ（JSON）</h3>
-        <p class="muted">登録カード、保存デッキ、最近のカード履歴、コレクションのお気に入りを軽いJSONとして保存します。カード画像と表示設定は含みません。</p>
+        <p class="muted">登録カード、保存デッキ、最近のカード履歴、コレクションの全設定・お気に入り・アルバム、カードエフェクト設定を軽いJSONとして保存します。カード画像、背景画像、盤面表示設定、外観テーマは含みません。</p>
         <div class="io-actions">
           <button class="btn" type="button" id="backup-all-data">通常バックアップを作成</button>
           <label class="btn" style="display:inline-flex;align-items:center">通常バックアップから復元<input id="backup-file-input" type="file" accept="application/json,.json" style="display:none"></label>
@@ -1135,7 +1299,7 @@ body.ui-text-large .appbar button{font-size:14px}
       </div>
       <div class="backup-kind-box full-backup-box">
         <h3>完全バックアップ（ZIP）</h3>
-        <p class="muted">カード・デッキ・履歴、カード画像、画像位置設定、盤面表示設定、手札追従設定に加えて、保存済みの外観テーマ、画面・ナビ設定、背景ライブラリまでまとめて保存します。復元すると現在の対象データをバックアップ内容へ置き換えます。</p>
+        <p class="muted">通常バックアップの全内容に加えて、カード画像、画像位置設定、盤面表示設定、手札追従設定、保存済みの外観テーマ、画面・ナビ設定、背景ライブラリまでまとめて保存します。復元すると現在の対象データをバックアップ内容へ置き換えます。</p>
         <p class="muted">※ 設定画面でまだ「変更を保存」していない外観変更は完全バックアップには含まれません。</p>
         <div class="io-actions">
           <button class="btn primary" type="button" id="full-backup-create">完全バックアップZIPを作成</button>
@@ -1300,8 +1464,9 @@ body.ui-text-large .appbar button{font-size:14px}
       <span id="collection-zoom-value" class="pill">100%</span>
       <button class="btn small" type="button" id="collection-zoom-fit">1画面に合わせる</button>
       <button class="btn small" type="button" id="collection-zoom-reset">標準に戻す</button>
-      <span class="muted collection-zoom-note">コレクション画面全体を縮小します</span>
+      <span class="muted collection-zoom-note">コレクション全体を25〜100%で縮小します</span>
     </div>
+    <div id="collection-zoom-target" class="collection-zoom-target">
     <div class="section-head collection-title-head">
       <h2>コレクション</h2>
       <span id="collection-stats" class="pill"></span>
@@ -1365,6 +1530,15 @@ body.ui-text-large .appbar button{font-size:14px}
         </div>
         <div id="collection-page-info" class="muted collection-page-info"></div>
       </div>
+    </div>
+      </div>
+    <div id="collection-side-pagination" class="collection-side-pagination" aria-label="コレクションページ送り">
+      <button class="collection-side-page collection-side-prev" type="button" id="collection-side-prev" aria-label="前のページへ">
+        <span class="collection-side-arrow">‹</span><span>前のページへ</span>
+      </button>
+      <button class="collection-side-page collection-side-next" type="button" id="collection-side-next" aria-label="次のページへ">
+        <span>次のページへ</span><span class="collection-side-arrow">›</span>
+      </button>
     </div>
   </section>
 
@@ -1905,10 +2079,10 @@ save(LS_BOARD_DISPLAY,boardDisplayPrefs);
 const THEME_SCREEN_KEYS=['home','cards','card-manager','collection','decks','setup','settings'];
 const THEME_SCREEN_LABELS={home:'ホーム',cards:'カード登録','card-manager':'カード管理',collection:'コレクション',decks:'デッキ',setup:'盤面開始',settings:'設定'};
 const THEME_NAV_KEYS=['cards','card-manager','collection','decks','setup'];
-const THEME_NAV_MOVABLE_KEYS=['cards','card-manager','collection','decks'];
+const THEME_NAV_MOVABLE_KEYS=[...THEME_NAV_KEYS];
 const THEME_HOME_SHORTCUT_KEYS=['cards','card-manager','collection','decks','setup-one','setup-two'];
 const THEME_DEFAULTS={
-  version:4,
+  version:5,
   ui:{accent:'#78a7ff',opacity:94,readability:true},
   text:{copyFlavor:false,emptyFlavorDivider:true},
   layout:{
@@ -1985,14 +2159,14 @@ function normalizeThemePrefs(raw={}){
  board.p2=normalizeInheritedThemeBackground(boardRaw.p2,true);
  const layoutRaw=raw.layout&&typeof raw.layout==='object'?raw.layout:{};
  const navRaw=layoutRaw.nav&&typeof layoutRaw.nav==='object'?layoutRaw.nav:{},homeRaw=layoutRaw.home&&typeof layoutRaw.home==='object'?layoutRaw.home:{};
- const rawOrder=Array.isArray(navRaw.order)?navRaw.order.filter(k=>THEME_NAV_MOVABLE_KEYS.includes(k)):[];
- const movableOrder=[...new Set([...rawOrder,...THEME_NAV_MOVABLE_KEYS])].filter(k=>THEME_NAV_MOVABLE_KEYS.includes(k));
- const navOrder=[...movableOrder,'setup'];
- const navVisible={};THEME_NAV_KEYS.forEach(k=>navVisible[k]=k==='setup'?true:navRaw.visible?.[k]!==false);
+ const rawOrder=Array.isArray(navRaw.order)?navRaw.order.filter(k=>THEME_NAV_KEYS.includes(k)):[];
+ const defaultOrder=THEME_DEFAULTS.layout.nav.order;
+ const navOrder=[...new Set([...rawOrder,...defaultOrder])].filter(k=>THEME_NAV_KEYS.includes(k));
+ const navVisible={};THEME_NAV_KEYS.forEach(k=>navVisible[k]=navRaw.visible?.[k]!==false);
  const homeShortcuts={};THEME_HOME_SHORTCUT_KEYS.forEach(k=>homeShortcuts[k]=homeRaw.shortcuts?.[k]!==false);
  const listSize=[15,30,50,100].includes(Number(layoutRaw.listPageSize))?Number(layoutRaw.listPageSize):30;
  return {
-   version:4,
+   version:5,
    ui:{
      accent:normalizeHexColor(ui.accent,'#78a7ff'),
      opacity:clampNumber(ui.opacity,45,100,94),
@@ -2122,7 +2296,7 @@ function normalizeCollectionView(raw={}){
    pageSize:COLLECTION_PAGE_SIZES.includes(Number(raw.pageSize))?Number(raw.pageSize):9,
    sort:['newest','oldest','name','levelAsc','levelDesc','powerAsc','powerDesc','type','favorite'].includes(raw.sort)?raw.sort:'newest',
    spread:raw.spread!==false,
-   zoom:[50,60,70,80,90,100].includes(Number(raw.zoom))?Number(raw.zoom):100
+   zoom:Number.isFinite(Number(raw.zoom))?Math.max(25,Math.min(100,Math.round(Number(raw.zoom)))):100
  };
 }
 function normalizeSpecialBook(raw={},key='all',validIds=null){
@@ -2190,9 +2364,27 @@ function normalizeCollectionData(raw={},validIds=null){
  };
 }
 let collectionData=normalizeCollectionData(load(LS_COLLECTION,{}),new Set(cards.map(c=>c.id)));
-let collectionSource='all',collectionPage=0,collectionImageObserver=null;
+let collectionSource='all',collectionPage=0,collectionImageObserver=null,collectionViewerKeyHandler=null;
 save(LS_COLLECTION,collectionData);
 function saveCollectionData(){collectionData=normalizeCollectionData(collectionData,new Set(cards.map(c=>c.id)));save(LS_COLLECTION,collectionData)}
+function repairPersistentReferences(){
+ const validIds=new Set(cards.map(c=>c.id));let deckRefsRemoved=0;
+ decks=Array.isArray(decks)?decks.map(d=>{
+   const entries={};
+   for(const [id,n] of Object.entries(d?.entries||{})){
+     const count=Math.max(0,Math.floor(Number(n)||0));
+     if(validIds.has(id)&&count)entries[id]=count;
+     else if(count)deckRefsRemoved+=count;
+   }
+   return {...d,entries};
+ }):[];
+ const beforeFavorites=Array.isArray(collectionData?.favorites)?collectionData.favorites.length:0;
+ collectionData=normalizeCollectionData(collectionData||{},validIds);
+ const favoritesRemoved=Math.max(0,beforeFavorites-collectionData.favorites.length);
+ save(LS_DECKS,decks);save(LS_COLLECTION,collectionData);
+ return {deckRefsRemoved,favoritesRemoved};
+}
+repairPersistentReferences();
 function collectionSourceKind(){
  if(collectionSource==='all'||collectionSource==='favorites'||collectionSource==='albums')return collectionSource;
  return collectionSource.startsWith('album:')?'album':'all';
@@ -2752,9 +2944,7 @@ function applyNavigationPrefs(theme){
    const btn=header.querySelector(`[data-nav="${key}"]`);
    if(btn)header.insertBefore(btn,settingsBtn);
  }
- const setupBtn=header.querySelector('[data-nav="setup"]');
- if(setupBtn){setupBtn.hidden=false;header.insertBefore(setupBtn,settingsBtn)}
- THEME_NAV_MOVABLE_KEYS.forEach(key=>{
+ THEME_NAV_KEYS.forEach(key=>{
    const btn=header.querySelector(`[data-nav="${key}"]`);
    if(btn)btn.hidden=t.layout.nav.visible[key]===false;
  });
@@ -2781,19 +2971,19 @@ function applyDisplayLayoutPrefs(theme){
 function renderScreenNavSettings(){
  const d=ensureThemeDraft(),layout=d.layout,host=$('#theme-nav-settings-list');
  if(host){
-   const movable=layout.nav.order.filter(k=>THEME_NAV_MOVABLE_KEYS.includes(k));
+   const movable=layout.nav.order.filter(k=>THEME_NAV_KEYS.includes(k));
    host.innerHTML=movable.map((key,i)=>`<div class="theme-nav-setting-row">
      <label class="board-follow-row"><input type="checkbox" data-theme-nav-visible="${key}" ${layout.nav.visible[key]===false?'':'checked'}><span>${esc(THEME_SCREEN_LABELS[key])}</span></label>
      <div class="actions"><button class="btn small" data-theme-nav-up="${key}" ${i===0?'disabled':''}>↑</button><button class="btn small" data-theme-nav-down="${key}" ${i===movable.length-1?'disabled':''}>↓</button></div>
-   </div>`).join('')+`<div class="theme-nav-setting-row theme-nav-fixed-row"><div><b>盤面開始</b><div class="muted">設定の左に固定 / 常に表示</div></div><span class="pill">固定</span></div>`;
+   </div>`).join('')+`<div class="muted theme-nav-default-note">初期配置では「盤面開始」が「設定」の左側です。設定ボタン自体は常に一番右へ固定されます。</div>`;
    $$('[data-theme-nav-visible]').forEach(x=>x.onchange=()=>applyThemeDraftChange(t=>{t.layout.nav.visible[x.dataset.themeNavVisible]=x.checked}));
    $$('[data-theme-nav-up]').forEach(b=>b.onclick=()=>{
      const key=b.dataset.themeNavUp;
-     applyThemeDraftChange(t=>{const a=t.layout.nav.order.filter(k=>THEME_NAV_MOVABLE_KEYS.includes(k)),i=a.indexOf(key);if(i>0)[a[i-1],a[i]]=[a[i],a[i-1]];t.layout.nav.order=[...a,'setup']});
+     applyThemeDraftChange(t=>{const a=t.layout.nav.order.filter(k=>THEME_NAV_KEYS.includes(k)),i=a.indexOf(key);if(i>0)[a[i-1],a[i]]=[a[i],a[i-1]];t.layout.nav.order=a});
    });
    $$('[data-theme-nav-down]').forEach(b=>b.onclick=()=>{
      const key=b.dataset.themeNavDown;
-     applyThemeDraftChange(t=>{const a=t.layout.nav.order.filter(k=>THEME_NAV_MOVABLE_KEYS.includes(k)),i=a.indexOf(key);if(i>=0&&i<a.length-1)[a[i+1],a[i]]=[a[i],a[i+1]];t.layout.nav.order=[...a,'setup']});
+     applyThemeDraftChange(t=>{const a=t.layout.nav.order.filter(k=>THEME_NAV_KEYS.includes(k)),i=a.indexOf(key);if(i>=0&&i<a.length-1)[a[i+1],a[i]]=[a[i],a[i+1]];t.layout.nav.order=a});
    });
  }
  const intro=$('#theme-home-intro-visible');
@@ -3150,7 +3340,7 @@ function deckStatusParts(d){
 function deckStatusText(d){const parts=deckStatusParts(d);return parts.length?parts.join(' / '):'非表示'}
 function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),1800)}
-function nav(name){if(name!=='collection')clearCollectionPageZoom();$$('.screen').forEach(x=>x.classList.remove('active'));const screen=$('#screen-'+name);if(!screen)return;currentScreenName=name;screen.classList.add('active');applyThemePrefs(currentThemeForDisplay());if(name==='home')updateImageStorageStatus();if(name==='cards')renderRegisterHistory();if(name==='card-manager')renderCards();if(name==='collection'){renderCollection();setTimeout(()=>maybeOpenCurrentCollectionCover(),0)}if(name==='decks')renderDecks();if(name==='setup')renderSetup();if(name==='settings'){ensureThemeDraft();renderThemeSettings()}window.scrollTo(0,0)}
+function nav(name){clearLegacyMainZoom();if(name!=='collection')clearCollectionPageZoom();$$('.screen').forEach(x=>x.classList.remove('active'));const screen=$('#screen-'+name);if(!screen)return;currentScreenName=name;screen.classList.add('active');applyThemePrefs(currentThemeForDisplay());if(name==='home')updateImageStorageStatus();if(name==='cards')renderRegisterHistory();if(name==='card-manager')renderCards();if(name==='collection'){renderCollection();setTimeout(()=>maybeOpenCurrentCollectionCover(),0)}if(name==='decks')renderDecks();if(name==='setup')renderSetup();if(name==='settings'){ensureThemeDraft();renderThemeSettings()}window.scrollTo(0,0)}
 $$('[data-nav]').forEach(b=>b.onclick=()=>nav(b.dataset.nav));
 $('#home-two-player').onclick=()=>{nav('setup');$('#mode-select').value='2';syncSetupMode()};
 
@@ -3262,7 +3452,7 @@ function renderTextPreview(){
   actions.style.display=textPreviewCards.length?'flex':'none';
   root.querySelectorAll('[data-preview-index]').forEach(el=>{const i=Number(el.dataset.previewIndex);el.querySelectorAll('[data-pv]').forEach(inp=>inp.addEventListener('input',()=>{textPreviewCards[i][inp.dataset.pv]=inp.value}))});
 }
-function portablePreviewData(){return {format:'min-kai-tcg-cards',version:2,cards:textPreviewCards.map(c=>cardToPortable({...c,id:undefined}))}}
+function portablePreviewData(){return {format:'min-kai-tcg-cards',version:3,cards:textPreviewCards.map(c=>cardToPortable({...c,id:undefined}))}}
 async function copyText(txt){
   try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(txt);return true}}catch{}
   const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch{}ta.remove();return ok;
@@ -3272,7 +3462,7 @@ function exportCardsObject(){return {format:'min-kai-tcg-cards',version:3,cards:
 function exportAllObject(){return {format:SIM_FORMAT,version:5,cardFxPrefs:normalizeCardFxPrefs(cardFxPrefs),cards:cards.map(cardToPortable),decks:decks.map(d=>({id:d.id,name:d.name,...deckSettingsFrom(d),cards:Object.entries(d.entries).filter(([,n])=>n>0).map(([cardId,count])=>({cardId,cardName:cards.find(c=>c.id===cardId)?.name||'',count}))}))}}
 
 // v2.4 Full backup ZIP (store method: images are already compressed)
-const FULL_BACKUP_FORMAT='min-kai-tcg-full-backup',FULL_BACKUP_VERSION=2;
+const FULL_BACKUP_FORMAT='min-kai-tcg-full-backup',FULL_BACKUP_VERSION=3;
 const zipEncoder=new TextEncoder(),zipDecoder=new TextDecoder();
 let crc32Table=null;
 function getCrc32Table(){
@@ -3404,8 +3594,14 @@ async function buildFullBackupZip(onProgress=()=>{}){
    });
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'4.0',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'4.8',
    data:exportBackupObject(),
+   schema:{
+     normalBackupVersion:6,
+     collectionVersion:Number(collectionData?.version||0),
+     themeVersion:Number(themePrefs?.version||0),
+     cardEffectSettings:true
+   },
    settings:{
      boardDisplay:{...boardDisplayPrefs},
      handFollow:[...handFollowPrefs]
@@ -3439,8 +3635,9 @@ function parseFullBackupZip(bytes){
  if(!manifestBytes)throw new Error('manifest.json が見つかりません。');
  let manifest;try{manifest=JSON.parse(zipDecoder.decode(manifestBytes))}catch{throw new Error('manifest.json を読み取れません。')}
  const backupVersion=Number(manifest?.version);
- if(!manifest||manifest.format!==FULL_BACKUP_FORMAT||![1,2,3,4,5].includes(backupVersion))throw new Error('対応している完全バックアップZIPではありません。');
+ if(!manifest||manifest.format!==FULL_BACKUP_FORMAT||![1,2,3].includes(backupVersion))throw new Error('対応している完全バックアップZIPではありません。');
  if(!manifest.data||manifest.data.format!=='min-kai-tcg-backup'||!Array.isArray(manifest.data.cards)||!Array.isArray(manifest.data.decks))throw new Error('完全バックアップ内のカード・デッキ情報が不正です。');
+ const innerVersion=Number(manifest.data.version);if(![1,2,3,4,5,6].includes(innerVersion))throw new Error('完全バックアップ内の通常バックアップ形式に対応していません。');
  const cardIds=new Set(manifest.data.cards.map(c=>String(c.id||'')).filter(Boolean)),imageRecords=[],imageIds=new Set();
  for(const meta of Array.isArray(manifest.images)?manifest.images:[]){
    if(!meta||!meta.id||!meta.full?.path||!meta.thumb?.path)throw new Error('完全バックアップ内の画像情報が不正です。');
@@ -3500,7 +3697,7 @@ async function restoreFullBackupZip(parsed){
  renderCards();renderDecks();renderSetup(true);updateImageStorageStatus();applyBoardDisplaySettings();
  await applyThemePrefs(themePrefs);
  if($('#screen-settings')?.classList.contains('active'))renderThemeSettings();
- return {cards:r.cards,decks:r.decks,images:parsed.imageRecords.length,linkedCards:parsed.links.length,backgrounds:restoresTheme?parsed.backgroundRecords.length:null,themeRestored:restoresTheme};
+ return {cards:r.cards,decks:r.decks,favorites:r.favorites,albums:collectionData.albums.length,images:parsed.imageRecords.length,linkedCards:parsed.links.length,backgrounds:restoresTheme?parsed.backgroundRecords.length:null,themeRestored:restoresTheme};
 }
 function exportBackupObject(){
  return {
@@ -3619,7 +3816,7 @@ $('#backup-file-input').onchange=async e=>{
    const text=await f.text(),data=JSON.parse(text);
    if(!confirm('現在の登録カード・保存デッキ・コレクション情報を、このバックアップ内容に置き換えます。復元しますか？')){e.target.value='';return}
    const r=restoreBackupObject(data);
-   $('#backup-status').textContent=`復元しました。カード ${r.cards}枚 / デッキ ${r.decks}個`;
+   $('#backup-status').textContent=`復元しました。カード ${r.cards}枚 / デッキ ${r.decks}個 / お気に入り ${r.favorites}枚 / アルバム ${collectionData.albums.length}冊`;
    toast('バックアップから復元しました');
  }catch(err){
    $('#backup-status').textContent='復元エラー: '+err.message;
@@ -3635,7 +3832,7 @@ $('#full-backup-create').onclick=async()=>{
    const result=await buildFullBackupZip(msg=>{status.textContent=msg});
    const stamp=new Date().toISOString().slice(0,10).replaceAll('-','');
    downloadBlob(result.blob,`minkai_tcg_full_backup_${stamp}.zip`);
-   status.textContent=`完全バックアップを作成しました。カード ${cards.length}枚 / デッキ ${decks.length}個 / カード画像 ${result.manifest.images.length}件 / 背景 ${result.manifest.backgrounds.length}件 / ${formatBytes(result.blob.size)}`;
+   status.textContent=`完全バックアップを作成しました。カード ${cards.length}枚 / デッキ ${decks.length}個 / アルバム ${collectionData.albums.length}冊 / カード画像 ${result.manifest.images.length}件 / 背景 ${result.manifest.backgrounds.length}件 / ${formatBytes(result.blob.size)}`;
    toast('完全バックアップZIPを作成しました');
  }catch(err){
    console.error(err);status.textContent='完全バックアップ作成エラー: '+(err?.message||err);
@@ -3651,7 +3848,7 @@ $('#full-backup-file-input').onchange=async e=>{
    if(!confirm(`現在の登録カード・保存デッキ・カード画像・対象設定を、この完全バックアップ内容に置き換えます。\n\nカード ${cardCount}枚 / デッキ ${deckCount}個 / カード画像 ${imageCount}件${themeText}\n\n復元しますか？`)){e.target.value='';status.textContent='復元をキャンセルしました。';return}
    status.textContent='完全バックアップを復元しています…';
    const r=await restoreFullBackupZip(parsed);
-   status.textContent=`完全復元しました。カード ${r.cards}枚 / デッキ ${r.decks}個 / カード画像 ${r.images}件 / 画像設定カード ${r.linkedCards}枚${r.themeRestored?` / 背景 ${r.backgrounds}件 / 外観設定を復元`:''}`;
+   status.textContent=`完全復元しました。カード ${r.cards}枚 / デッキ ${r.decks}個 / お気に入り ${r.favorites}枚 / アルバム ${r.albums}冊 / カード画像 ${r.images}件 / 画像設定カード ${r.linkedCards}枚${r.themeRestored?` / 背景 ${r.backgrounds}件 / 外観設定を復元`:''}`;
    toast('完全バックアップから復元しました');
  }catch(err){
    console.error(err);status.textContent='完全復元エラー: '+(err?.message||err);
@@ -4274,25 +4471,91 @@ function readFxEditorLayers(card){
  }
  return normalizeCardVisualEffects(result);
 }
-async function hydrateFxEditorPreviewImage(cardId){
- const art=$('#fx-editor-preview-art');if(!art||!imageSystemAvailable)return;
+async function hydrateCardArtBackground(el,cardId,quality='full',force=false){
+ if(!el||!cardId)return {ok:false,reason:'missing'};
+ if(!force&&el.dataset.imageReady==='1'&&el.classList.contains('has-image'))return {ok:true,reason:'cached'};
+ el.dataset.imageReady='0';
+ el.classList.remove('has-image');
+ el.style.backgroundImage='';
+ el.style.backgroundSize='';
+ el.style.backgroundPosition='';
+ el.style.backgroundRepeat='';
+ if(!imageSystemAvailable){el.dataset.imageReady='1';return {ok:false,reason:'unavailable'}}
  try{
    await imageReadyPromise;
-   const link=getCachedImageLink(cardId)||await getCardImageLink(cardId);if(!link||!art.isConnected||art.dataset.cardId!==String(cardId))return;
-   const url=await getImageObjectUrl(link.imageId,'full');if(!url||!art.isConnected||art.dataset.cardId!==String(cardId))return;
+   if(!el.isConnected)return {ok:false,reason:'detached'};
+   const card=cards.find(c=>c.id===cardId),sourceId=cardImageSourceId(card||{id:cardId});
+   let link=getCachedImageLink(cardId)||await getCardImageLink(cardId);
+   if(!link&&sourceId&&sourceId!==String(cardId))link=getCachedImageLink(sourceId)||await getCardImageLink(sourceId);
+   if(!el.isConnected)return {ok:false,reason:'detached'};
+   if(!link){el.dataset.imageReady='1';return {ok:false,reason:'none'}}
+   const url=await getImageObjectUrl(link.imageId,quality);
+   if(!el.isConnected)return {ok:false,reason:'detached'};
+   if(!url){el.dataset.imageReady='1';return {ok:false,reason:'load'}}
    const view=normalizeImageView(link.portrait||{});
-   art.classList.add('has-image');
-   art.style.backgroundImage=`url("${url}")`;
-   art.style.backgroundSize=view.fit;
-   art.style.backgroundPosition=`${view.x}% ${view.y}%`;
-   art.style.backgroundRepeat='no-repeat';
- }catch(err){console.warn('エフェクトプレビュー画像読込失敗',err)}
+   el.classList.add('has-image');
+   el.style.backgroundImage=`url("${url}")`;
+   el.style.backgroundSize=view.fit;
+   el.style.backgroundPosition=`${view.x}% ${view.y}%`;
+   el.style.backgroundRepeat='no-repeat';
+   el.dataset.imageReady='1';
+   return {ok:true,reason:'loaded'};
+ }catch(err){
+   console.warn('カード画像読込失敗',err);
+   if(el.isConnected)el.dataset.imageReady='1';
+   return {ok:false,reason:'error'};
+ }
 }
-function renderFxEditorPreview(card){
- const host=$('#fx-editor-preview');if(!host)return;
- const layers=readFxEditorLayers(card),animate=$('#fx-preview-animate')?.checked===true;
- host.innerHTML=`<div id="fx-editor-preview-art" data-card-id="${esc(card.id)}" class="fx-editor-preview-card"><div class="fx-editor-preview-name">${esc(card.name)}</div>${cardFxStackHtmlFromLayers(layers,{maxLayers:cardFxPrefs.maxLayers,visible:true,animate})}</div>`;
- hydrateFxEditorPreviewImage(card.id);
+function ensureFxEditorPreviewShell(card){
+ const host=$('#fx-editor-preview');if(!host)return null;
+ const cardId=String(card?.id||'');
+ let art=$('#fx-editor-preview-art');
+ if(!art||art.dataset.cardId!==cardId){
+   host.innerHTML=`<div id="fx-editor-preview-art" data-card-id="${esc(cardId)}" class="fx-editor-preview-card">
+     <span id="fx-editor-preview-fallback" class="fx-editor-preview-fallback">${esc(card.name)}</span>
+     <div id="fx-editor-preview-effects"></div>
+     <div class="fx-editor-preview-name">${esc(card.name)}</div>
+     <div id="fx-editor-preview-status" class="fx-editor-preview-status pill">プレビュー準備中</div>
+   </div>`;
+   art=$('#fx-editor-preview-art');
+ }
+ return art;
+}
+async function hydrateFxEditorPreviewImage(cardId,force=false){
+ const card=cards.find(c=>c.id===cardId);if(!card)return;
+ const details=$('#fx-preview-details');if(!details?.open)return;
+ const art=ensureFxEditorPreviewShell(card),fallback=$('#fx-editor-preview-fallback'),status=$('#fx-editor-preview-status');
+ if(!art)return;
+ if(status)status.textContent='画像を確認中…';
+ const result=await hydrateCardArtBackground(art,cardId,'full',force);
+ if(!art.isConnected)return;
+ if(result.ok){
+   if(fallback)fallback.hidden=true;
+   if(status)status.textContent='カード画像あり';
+ }else{
+   if(fallback)fallback.hidden=false;
+   if(status){
+     status.textContent=result.reason==='none'?'画像未登録':
+       result.reason==='unavailable'?'画像機能 利用不可':
+       result.reason==='detached'?'プレビュー再表示待ち':'画像読込失敗';
+   }
+ }
+}
+function renderFxEditorPreview(card,{forceImage=false}={}){
+ const details=$('#fx-preview-details');if(!details?.open)return;
+ const art=ensureFxEditorPreviewShell(card);if(!art)return;
+ const layers=readFxEditorLayers(card),animate=$('#fx-preview-animate')?.checked===true,effects=$('#fx-editor-preview-effects');
+ if(effects)effects.innerHTML=cardFxStackHtmlFromLayers(layers,{maxLayers:cardFxPrefs.maxLayers,visible:true,animate});
+ requestAnimationFrame(()=>{
+   if(!art.isConnected)return;
+   const box=art.getBoundingClientRect();
+   if(box.width<100||box.height<140){
+     art.style.width='270px';
+     art.style.maxWidth='100%';
+     art.style.minWidth='180px';
+   }
+ });
+ if(forceImage||art.dataset.imageReady!=='1')hydrateFxEditorPreviewImage(card.id,forceImage);
 }
 function openCardEffectEditor(cardId,returnTo='manager'){
  const card=cards.find(c=>c.id===cardId);if(!card)return;
@@ -4312,10 +4575,13 @@ function openCardEffectEditor(cardId,returnTo='manager'){
    <div class="muted">最大 ${cardFxPrefs.maxLayers}レイヤー${cardFxPrefs.maxLayers>2?' / 高負荷設定':''}</div>
    <div class="fx-editor-list">${rows}</div>
    ${cardFxPrefs.maxLayers>2?'<div class="fx-setting-warning">3～4レイヤーは端末によって動作が重くなる場合があります。</div>':''}
-   <details class="fx-preview-details">
-     <summary>プレビューを開く</summary>
+   <details class="fx-preview-details" id="fx-preview-details">
+     <summary>プレビューを開く（開いた時に読み込み）</summary>
      <div class="fx-editor-preview-panel">
-       <label class="board-follow-row fx-preview-animation-toggle"><input id="fx-preview-animate" type="checkbox">アニメーションで確認</label>
+       <div class="fx-preview-toolbar">
+         <label class="board-follow-row fx-preview-animation-toggle"><input id="fx-preview-animate" type="checkbox">アニメーションで確認</label>
+         <button class="btn small" type="button" id="fx-preview-reload-image">画像を再読込</button>
+       </div>
        <div id="fx-editor-preview"></div>
        <div class="muted">プレビューは確認用です。通常は閉じたまま個別レイヤーを編集できます。</div>
      </div>
@@ -4329,8 +4595,10 @@ function openCardEffectEditor(cardId,returnTo='manager'){
    [`fx-edit-type-${slot}`,`fx-edit-intensity-${slot}`,`fx-edit-enabled-${slot}`].forEach(id=>$('#'+id)?.addEventListener('change',()=>renderFxEditorPreview(card)));
    $(`#fx-edit-opacity-${slot}`)?.addEventListener('input',e=>{$(`#fx-edit-opacity-label-${slot}`).textContent=e.target.value+'%';renderFxEditorPreview(card)});
  }
+ const previewDetails=$('#fx-preview-details');
+ previewDetails?.addEventListener('toggle',()=>{if(previewDetails.open)renderFxEditorPreview(card,{forceImage:true})});
  $('#fx-preview-animate')?.addEventListener('change',()=>renderFxEditorPreview(card));
- renderFxEditorPreview(card);
+ $('#fx-preview-reload-image')?.addEventListener('click',()=>renderFxEditorPreview(card,{forceImage:true}));
  const back=()=>returnTo==='collection'?openCollectionDetail(cardId):openCardManagerDetail(cardId);
  $('#fx-editor-close').onclick=back;
  $('#fx-editor-save').onclick=()=>{
@@ -4478,7 +4746,7 @@ function commitCardFxSettings(){
    boardVisible:$('#card-fx-board-visible').checked,
    boardAnimation:$('#card-fx-board-animation').checked
  });
- saveCardFxPrefs();syncCardFxSettingsUI();renderCollection();if(board)renderBoard();
+ saveCardFxPrefs();syncCardFxSettingsUI();if(currentScreenName==='collection')renderCollection();if(board)renderBoard();
 }
 ['card-fx-max-layers','card-fx-collection-visible','card-fx-collection-animation','card-fx-board-visible','card-fx-board-animation'].forEach(id=>$('#'+id)?.addEventListener('change',commitCardFxSettings));
 syncCardFxSettingsUI();
@@ -4489,6 +4757,7 @@ function syncFxRuntimePause(){
 }
 document.addEventListener('visibilitychange',syncFxRuntimePause);
 syncFxRuntimePause();
+clearLegacyMainZoom();
 
 // Collection v3.3
 function renderCollectionAlbumFilter(){
@@ -4567,40 +4836,83 @@ function collectionFilteredCards(){
  return rows;
 }
 
-function clearCollectionPageZoom(){
+function clearLegacyMainZoom(){
  const main=document.querySelector('main');if(!main)return;
- main.style.zoom='';main.style.transform='';main.style.transformOrigin='';main.style.width='';main.style.maxWidth='';
+ main.style.zoom='';main.style.transform='';main.style.transformOrigin='';main.style.width='';main.style.maxWidth='';main.style.marginBottom='';
+}
+let collectionZoomScale=1,collectionZoomResizeObserver=null;
+const COLLECTION_ZOOM_STEPS=[100,90,80,70,60,50,45,40,35,30,25];
+function syncCollectionZoomLayout(){
+ const target=$('#collection-zoom-target');if(!target)return;
+ const scale=collectionZoomScale;
+ target.style.marginBottom=scale<1?`-${Math.max(0,target.scrollHeight*(1-scale))}px`:'';
+}
+function bindCollectionZoomResizeObserver(){
+ const target=$('#collection-zoom-target');if(!target)return;
+ if(collectionZoomResizeObserver){collectionZoomResizeObserver.disconnect();collectionZoomResizeObserver=null}
+ if('ResizeObserver' in window){
+   collectionZoomResizeObserver=new ResizeObserver(()=>syncCollectionZoomLayout());
+   collectionZoomResizeObserver.observe(target);
+ }
+}
+function clearCollectionPageZoom(){
+ clearLegacyMainZoom();
+ const screen=$('#screen-collection'),target=$('#collection-zoom-target');
+ collectionZoomScale=1;
+ if(target){
+   target.style.transform='';
+   target.style.transformOrigin='';
+   target.style.marginBottom='';
+ }
+ if(screen)delete screen.dataset.collectionZoom;
 }
 function applyCollectionDisplayZoom(percent=100){
- const main=document.querySelector('main');if(!main)return;
- const p=[50,60,70,80,90,100].includes(Number(percent))?Number(percent):100,scale=p/100;
- clearCollectionPageZoom();
- if(window.CSS?.supports?.('zoom','0.8')){
-   // Browser zoomに近く、レイアウト枠の横幅を補正して膨らませない。
-   main.style.zoom=String(scale);
- }else{
-   main.style.transform=`scale(${scale})`;
-   main.style.transformOrigin='top center';
- }
- const screen=$('#screen-collection');if(screen)screen.dataset.collectionZoom=String(p);
+ clearLegacyMainZoom();
+ const screen=$('#screen-collection'),target=$('#collection-zoom-target');if(!screen||!target)return;
+ const raw=Math.round(Number(percent)||100);
+ const p=Math.max(25,Math.min(100,raw)),scale=p/100;
+ collectionZoomScale=scale;
+ target.style.transform=scale===1?'':`scale(${scale})`;
+ target.style.transformOrigin='top center';
+ screen.dataset.collectionZoom=String(p);
+ syncCollectionZoomLayout();
+ requestAnimationFrame(syncCollectionZoomLayout);
+ if(!collectionZoomResizeObserver)bindCollectionZoomResizeObserver();
 }
-
+function nextCollectionZoomOut(current){
+ const n=Number(current)||100;
+ return COLLECTION_ZOOM_STEPS.find(p=>p<n)??25;
+}
 function fitCollectionToViewport(){
- const view=currentCollectionView(),screen=$('#screen-collection');if(!screen)return;
+ const view=currentCollectionView(),screen=$('#screen-collection'),target=$('#collection-zoom-target');if(!screen||!target)return;
  applyCollectionDisplayZoom(100);
  requestAnimationFrame(()=>{
-   const top=Math.max(0,screen.getBoundingClientRect().top);
-   const available=Math.max(260,window.innerHeight-top-8);
-   const rawHeight=Math.max(1,screen.scrollHeight);
-   const ratio=Math.min(1,available/rawHeight);
-   const choices=[100,90,80,70,60,50];
-   let chosen=50;
-   for(const p of choices){if(p/100<=ratio+0.01){chosen=p;break}}
+   const toolbar=$('#collection-zoom-controls');
+   const top=Math.max(0,target.getBoundingClientRect().top);
+   const bottomPadding=10;
+   const available=Math.max(220,window.innerHeight-top-bottomPadding);
+   const rawHeight=Math.max(1,target.scrollHeight);
+   // ページ送りまで含めて少し余裕を持たせる。
+   const exact=Math.max(.25,Math.min(1,(available/rawHeight)*.97));
+   const chosen=Math.max(25,Math.min(100,Math.floor(exact*100)));
    view.zoom=chosen;saveCollectionData();
    $('#collection-zoom-value').textContent=`${chosen}%`;
-   $('#collection-zoom-out').disabled=chosen<=50;$('#collection-zoom-reset').disabled=chosen>=100;
+   $('#collection-zoom-out').disabled=chosen<=25;
+   $('#collection-zoom-reset').disabled=chosen>=100;
    applyCollectionDisplayZoom(chosen);
-   if(chosen===50&&ratio<.5)toast('50%まで縮小しました。内容量によっては少しスクロールが必要です');
+   requestAnimationFrame(()=>{
+     const pagination=$('#collection-pagination');
+     if(!pagination||pagination.style.display==='none')return;
+     const bottom=pagination.getBoundingClientRect().bottom;
+     if(bottom>window.innerHeight-4&&chosen>25){
+       const needed=Math.max(25,Math.floor(chosen*((window.innerHeight-8-top)/Math.max(1,bottom-top))*.96));
+       view.zoom=needed;saveCollectionData();
+       $('#collection-zoom-value').textContent=`${needed}%`;
+       $('#collection-zoom-out').disabled=needed<=25;
+       $('#collection-zoom-reset').disabled=needed>=100;
+       applyCollectionDisplayZoom(needed);
+     }
+   });
  });
 }
 
@@ -4618,6 +4930,17 @@ async function hydrateCollectionArt(el){
    el.classList.add('has-image');el.style.backgroundImage=`url("${url}")`;el.style.backgroundSize=view.fit;el.style.backgroundPosition=`${view.x}% ${view.y}%`;el.style.backgroundRepeat='no-repeat';
  }catch(err){console.warn('コレクション画像読込失敗',err)}
 }
+let collectionFxObserver=null;
+function bindCollectionFxVisibility(){
+ if(collectionFxObserver){collectionFxObserver.disconnect();collectionFxObserver=null}
+ const animated=$$('.collection-card-art .card-fx-stack.fx-animate,.collection-list-art .card-fx-stack.fx-animate');
+ if(!animated.length)return;
+ if('IntersectionObserver' in window){
+   collectionFxObserver=new IntersectionObserver(entries=>entries.forEach(entry=>entry.target.classList.toggle('fx-offscreen',!entry.isIntersecting)),{rootMargin:'80px'});
+   animated.forEach(el=>collectionFxObserver.observe(el));
+ }else animated.forEach(el=>el.classList.remove('fx-offscreen'));
+}
+
 function bindCollectionImages(){
  if(collectionImageObserver){collectionImageObserver.disconnect();collectionImageObserver=null}
  const els=$$('[data-collection-art]');
@@ -4625,6 +4948,7 @@ function bindCollectionImages(){
    collectionImageObserver=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){collectionImageObserver.unobserve(e.target);hydrateCollectionArt(e.target)}}),{rootMargin:'240px'});
    els.forEach(el=>collectionImageObserver.observe(el));
  }else els.forEach(hydrateCollectionArt);
+ bindCollectionFxVisibility();
 }
 function collectionCardGalleryHtml(c,showNames){
  const fav=isCollectionFavorite(c.id);
@@ -4658,9 +4982,13 @@ function triggerCollectionPageAnimation(){
  }));
 }
 function goCollectionPage(page){
- const rows=collectionFilteredCards(),size=currentCollectionView().pageSize,max=Math.max(0,Math.ceil(rows.length/size)-1);
+ const view=currentCollectionView(),preservedZoom=Math.max(25,Math.min(100,Math.round(Number(view.zoom)||100)));
+ const rows=collectionFilteredCards(),size=view.pageSize,max=Math.max(0,Math.ceil(rows.length/size)-1);
  collectionPage=Math.max(0,Math.min(max,Number(page)||0));
+ view.zoom=preservedZoom;
  renderCollection();
+ const refreshed=currentCollectionView();refreshed.zoom=preservedZoom;saveCollectionData();
+ requestAnimationFrame(()=>applyCollectionDisplayZoom(preservedZoom));
  triggerCollectionPageAnimation();
 }
 function sourceMemberCount(){
@@ -4670,9 +4998,10 @@ function sourceMemberCount(){
  return cards.length;
 }
 function renderAlbumShelf(){
- const root=$('#collection-grid'),pagination=$('#collection-pagination'),pageInfo=$('#collection-page-info');
+ const root=$('#collection-grid'),pagination=$('#collection-pagination'),pageInfo=$('#collection-page-info'),side=$('#collection-side-pagination');
+ if(side)side.hidden=true;
  $('#collection-filter-panel').style.display='none';$('#collection-display-settings').style.display='none';$('#collection-zoom-controls').style.display='flex';
- const shell=$('.collection-book-shell');if(shell){shell.className=shell.className.replace(/\btheme-[\w-]+\b/g,'').replace(/\s+/g,' ').trim();shell.classList.add('theme-real-binder')}applyCollectionDisplayZoom(100);if($('#collection-zoom-value'))$('#collection-zoom-value').textContent='100%';if($('#collection-zoom-out'))$('#collection-zoom-out').disabled=false;if($('#collection-zoom-reset'))$('#collection-zoom-reset').disabled=true;
+ const shell=$('.collection-book-shell');if(shell){shell.className=shell.className.replace(/\btheme-[\w-]+\b/g,'').replace(/\s+/g,' ').trim();shell.classList.add('theme-real-binder')}if(currentScreenName==='collection')applyCollectionDisplayZoom(100);if($('#collection-zoom-value'))$('#collection-zoom-value').textContent='100%';if($('#collection-zoom-out'))$('#collection-zoom-out').disabled=false;if($('#collection-zoom-reset'))$('#collection-zoom-reset').disabled=true;
  $('#collection-source-title').textContent='アルバム';
  $('#collection-result-count').textContent=`${collectionData.albums.length}冊`;
  $('#collection-view-status').textContent='本棚';
@@ -4713,7 +5042,7 @@ function renderCollection(){
  const memberCount=sourceMemberCount();
  $('#collection-result-count').textContent=album&&manual?`${memberCount}枚 / ${rows.length}枠${rows.length?` / ${collectionPage+1}ページ目`:''}`:`${rows.filter(x=>x.c).length}枚${rows.length?` / ${collectionPage+1}ページ目`:''}`;
  $('#collection-view-status').textContent=`${view.viewMode==='gallery'?'ギャラリー':'一覧'} / ${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`;
- $('#collection-zoom-value').textContent=`${view.zoom}%`;$('#collection-zoom-out').disabled=view.zoom<=50;$('#collection-zoom-reset').disabled=view.zoom>=100;applyCollectionDisplayZoom(view.zoom);
+ $('#collection-zoom-value').textContent=`${view.zoom}%`;$('#collection-zoom-out').disabled=view.zoom<=25;$('#collection-zoom-reset').disabled=view.zoom>=100;if(currentScreenName==='collection')applyCollectionDisplayZoom(view.zoom);
  const fc=collectionFilterCount();$('#collection-filter-count').textContent=`${fc}条件`;
  $('#collection-sort').value=view.sort;$('#collection-sort').disabled=!!album&&album.orderMode==='manual'&&!collectionHasActiveFilter();
  const actions=$('#collection-album-actions');
@@ -4739,8 +5068,14 @@ function renderCollection(){
  bindCollectionImages();
  $$('[data-collection-card]').forEach(el=>el.onclick=()=>openCollectionDetail(el.dataset.collectionCard));
  $$('[data-collection-favorite]').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleCollectionFavorite(b.dataset.collectionFavorite)});
- const pagination=$('#collection-pagination'),prev=$('#collection-prev'),next=$('#collection-next'),nums=$('#collection-page-numbers');pagination.style.display='flex';
+ const pagination=$('#collection-pagination'),prev=$('#collection-prev'),next=$('#collection-next'),nums=$('#collection-page-numbers'),side=$('#collection-side-pagination'),sidePrev=$('#collection-side-prev'),sideNext=$('#collection-side-next');pagination.style.display='flex';
  prev.disabled=collectionPage<=0;next.disabled=collectionPage>=max;prev.onclick=()=>goCollectionPage(collectionPage-1);next.onclick=()=>goCollectionPage(collectionPage+1);
+ if(side){
+   side.hidden=max<=0;
+   side.dataset.zoom=String(view.zoom);
+   sidePrev.disabled=collectionPage<=0;sideNext.disabled=collectionPage>=max;
+   sidePrev.onclick=()=>goCollectionPage(collectionPage-1);sideNext.onclick=()=>goCollectionPage(collectionPage+1);
+ }
  const pages=[];if(max<=8){for(let i=0;i<=max;i++)pages.push(i)}else{const set=new Set([0,max,collectionPage-2,collectionPage-1,collectionPage,collectionPage+1,collectionPage+2].filter(x=>x>=0&&x<=max));pages.push(...[...set].sort((a,b)=>a-b))}
  nums.innerHTML=pages.map((p,i)=>`${i&&p-pages[i-1]>1?'<span class="muted">…</span>':''}<button class="btn small ${p===collectionPage?'primary':''}" data-collection-page="${p}">${p+1}</button>`).join('');
  $$('[data-collection-page]').forEach(b=>b.onclick=()=>goCollectionPage(Number(b.dataset.collectionPage)));
@@ -4764,7 +5099,7 @@ function openCollectionViewer(id){
    <div class="collection-viewer-top viewer-controls">
      <button class="btn" id="collection-viewer-close">閉じる</button>
      <span class="pill">${idx+1} / ${ids.length}</span>
-     <span class="muted">画像をタップすると操作表示を隠せます</span>
+     <span class="muted">画像をタップすると操作表示を隠せます / ← → キーで移動</span>
    </div>
    <div class="collection-viewer-center">
      <button class="collection-viewer-arrow viewer-controls" id="collection-viewer-prev" ${idx<=0?'disabled':''} aria-label="前のカード">‹</button>
@@ -4780,6 +5115,13 @@ function openCollectionViewer(id){
  $('#collection-viewer-close').onclick=()=>openCollectionDetail(id);
  if(idx>0)$('#collection-viewer-prev').onclick=()=>openCollectionViewer(ids[idx-1]);
  if(idx<ids.length-1)$('#collection-viewer-next').onclick=()=>openCollectionViewer(ids[idx+1]);
+ collectionViewerKeyHandler=e=>{
+   if(e.key==='ArrowLeft'&&idx>0){e.preventDefault();openCollectionViewer(ids[idx-1]);return}
+   if(e.key==='ArrowRight'&&idx<ids.length-1){e.preventDefault();openCollectionViewer(ids[idx+1]);return}
+   if(e.key==='Escape'){e.preventDefault();openCollectionDetail(id);return}
+   if((e.key===' '||e.key==='Enter')&&!/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement?.tagName||'')){e.preventDefault();$('#collection-viewer-shell')?.classList.toggle('viewer-ui-hidden')}
+ };
+ document.addEventListener('keydown',collectionViewerKeyHandler);
  const shell=$('#collection-viewer-shell'),art=$('#collection-viewer-art');
  art.onclick=e=>{if(e.target.closest('button'))return;shell.classList.toggle('viewer-ui-hidden')};
  let swipe=null;
@@ -4789,10 +5131,8 @@ function openCollectionViewer(id){
 }
 
 async function hydrateCollectionDetailArt(cardId){
- const art=$('#collection-detail-art');if(!art||!imageSystemAvailable)return;
- await imageReadyPromise;const link=getCachedImageLink(cardId)||await getCardImageLink(cardId);if(!link)return;
- const url=await getImageObjectUrl(link.imageId,'full');if(!art.isConnected||!url)return;
- const view=normalizeImageView(link.portrait||{});art.classList.add('has-image');art.style.backgroundImage=`url("${url}")`;art.style.backgroundSize=view.fit;art.style.backgroundPosition=`${view.x}% ${view.y}%`;art.style.backgroundRepeat='no-repeat';
+ const art=$('#collection-detail-art');if(!art)return;
+ await hydrateCardArtBackground(art,cardId,'full',true);
 }
 function openCollectionDetail(id){
  const c=cards.find(x=>x.id===id);if(!c)return;
@@ -4927,6 +5267,13 @@ function openAlbumCardsEditor(albumId){
  const initial=albumById(albumId);if(!initial)return;
  let page=0;const pageSize=60,selected=new Set(albumMemberIds(initial));
  openModal(`<div class="modal-head"><h3>${esc(initial.name)} / 収録カード</h3><button class="btn" id="album-cards-close">閉じる</button></div>
+ <div class="album-deck-import-row">
+   <label>デッキから一括追加
+     <select id="album-card-deck-source"><option value="">デッキを選択</option>${decks.map(d=>`<option value="${d.id}">${esc(d.name)}</option>`).join('')}</select>
+   </label>
+   <button class="btn" type="button" id="album-card-deck-add" ${decks.length?'':'disabled'}>デッキのカードを全部選択に追加</button>
+   <span id="album-card-deck-status" class="muted">${decks.length?'同名カードの枚数に関係なく、カード種類ごとに1枚として追加します。':'保存済みデッキがありません。'}</span>
+ </div>
  <details class="album-card-filter-details" open>
    <summary>検索・絞り込み <span id="album-card-filter-count" class="pill">0条件</span></summary>
    <div class="album-card-filter-grid">
@@ -5010,6 +5357,14 @@ function openAlbumCardsEditor(albumId){
  };
  $('#album-card-select-visible').onclick=()=>{filteredRows().forEach(x=>selected.add(x.c.id));render()};
  $('#album-card-unselect-visible').onclick=()=>{filteredRows().forEach(x=>selected.delete(x.c.id));render()};
+ $('#album-card-deck-add').onclick=()=>{
+   const deck=decks.find(d=>d.id===$('#album-card-deck-source').value),status=$('#album-card-deck-status');
+   if(!deck){toast('追加するデッキを選択してください');return}
+   const valid=new Set(cards.map(c=>c.id)),ids=Object.entries(deck.entries||{}).filter(([id,n])=>valid.has(id)&&Number(n)>0).map(([id])=>id);
+   const before=selected.size;ids.forEach(id=>selected.add(id));const added=selected.size-before;
+   if(status)status.textContent=`${esc(deck.name)}：${ids.length}種類を読み込み、未選択だった${added}種類を追加しました。最後に「変更を保存」で反映します。`;
+   render();
+ };
  $('#album-card-editor-prev').onclick=()=>{page--;render()};
  $('#album-card-editor-next').onclick=()=>{page++;render()};
  const closeWithoutSave=()=>{closeModal();renderCollection()};
@@ -5065,7 +5420,7 @@ $('#collection-search-custom-type').oninput=()=>{collectionPage=0;renderCollecti
 ['collection-search-image','collection-search-favorite','collection-search-album'].forEach(id=>$('#'+id).onchange=()=>{collectionPage=0;renderCollection()});
 $('#collection-sort').onchange=()=>{currentCollectionView().sort=$('#collection-sort').value;collectionPage=0;saveCollectionData();renderCollection()};
 $('#collection-filter-clear').onclick=()=>{['collection-search-name','collection-search-race','collection-search-rarity','collection-search-custom-type'].forEach(id=>$('#'+id).value='');$('#collection-search-type').value='all';$('#collection-search-image').value='all';$('#collection-search-favorite').value='all';$('#collection-search-album').value='all';syncCollectionCustomTypeSearch();collectionPage=0;renderCollection()};
-$('#collection-zoom-out').onclick=()=>{const view=currentCollectionView();view.zoom=Math.max(50,(Number(view.zoom)||100)-10);saveCollectionData();renderCollection()};
+$('#collection-zoom-out').onclick=()=>{const view=currentCollectionView();view.zoom=nextCollectionZoomOut(view.zoom);saveCollectionData();renderCollection()};
 $('#collection-zoom-fit').onclick=fitCollectionToViewport;
 $('#collection-zoom-reset').onclick=()=>{const view=currentCollectionView();view.zoom=100;saveCollectionData();renderCollection()};
 syncCollectionCustomTypeSearch();
@@ -5708,8 +6063,8 @@ function findCardInstance(pi,z,instanceId){
  }
  return null;
 }
-function openModal(html,closable=true){$('#modal').classList.remove('collection-viewer-modal','fx-editor-modal');$('#modal').innerHTML=html;$('#modal-layer').classList.add('open');$('#modal-layer').dataset.closable=closable?'1':'0'}
-function closeModal(){if($('#modal-layer').dataset.closable==='0')return;cleanupImageEditorTemp();$('#modal-layer').classList.remove('open');$('#modal').classList.remove('collection-viewer-modal','fx-editor-modal');detailCtx=null;detailNav=null;browseSession=null}
+function openModal(html,closable=true){if(collectionViewerKeyHandler){document.removeEventListener('keydown',collectionViewerKeyHandler);collectionViewerKeyHandler=null}$('#modal').classList.remove('collection-viewer-modal','fx-editor-modal');$('#modal').innerHTML=html;$('#modal-layer').classList.add('open');$('#modal-layer').dataset.closable=closable?'1':'0'}
+function closeModal(){if($('#modal-layer').dataset.closable==='0')return;if(collectionViewerKeyHandler){document.removeEventListener('keydown',collectionViewerKeyHandler);collectionViewerKeyHandler=null}cleanupImageEditorTemp();$('#modal-layer').classList.remove('open');$('#modal').classList.remove('collection-viewer-modal','fx-editor-modal');detailCtx=null;detailNav=null;browseSession=null}
 $('#modal-layer').onclick=e=>{if(e.target===$('#modal-layer'))closeModal()};
 function openDetail(pi,z,index,cardIndex=0,navIds){const pile=getPile(pi,z,index);if(!pile)return;cardIndex=Math.min(cardIndex,pile.cards.length-1);detailCtx={pi,z,index,cardIndex};const c=pile.cards[cardIndex];
  if(Array.isArray(navIds))detailNav={pi,z,ids:navIds.filter(id=>findCardInstance(pi,z,id))};
