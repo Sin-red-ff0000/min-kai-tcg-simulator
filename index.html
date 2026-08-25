@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v1.7</title>
+<title>みん会TCG Simulator v2.0</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -217,11 +217,137 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
 .deck-pool-top{scroll-margin-top:82px}
 .deck-pool-pagination{margin-top:10px}
 
+
+/* v1.8 デッキ使用先 / お気に入り */
+.deck-settings-status{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:8px 0 2px;min-height:24px}
+.deck-settings-status .pill.favorite{border-color:#7c6a2f;color:#e8d796}
+.deck-settings-status .pill.hidden-deck{opacity:.8}
+.deck-settings-box{display:grid;gap:12px}
+.deck-settings-group{border:1px solid var(--line);border-radius:10px;background:#10141b;padding:10px}
+.deck-settings-group h4{margin:0 0 8px}
+.deck-setting-row{display:flex;flex-direction:row;align-items:center;gap:9px;color:var(--text);font-size:14px;padding:6px 2px}
+.deck-setting-row input[type="checkbox"]{width:18px;height:18px;flex:0 0 auto}
+.deck-settings-note{line-height:1.55}
+
+
+/* v1.9 簡易コピペ登録 */
+.import-format-help{margin:8px 0 10px;border:1px solid var(--line);border-radius:10px;background:#10141b;padding:8px 10px}
+.import-format-help summary{cursor:pointer;color:var(--text);font-size:13px}
+.import-format-help pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:9px 0 2px;color:var(--muted);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;line-height:1.5}
+
+
+/* v2.0 盤面表示設定 */
+.board-zoom-center{min-width:58px;font-variant-numeric:tabular-nums}
+.board-display-status{margin:2px 0 8px;line-height:1.4}
+.board-setting-grid{display:grid;gap:12px}
+.board-setting-group{border:1px solid var(--line);border-radius:11px;background:#10141b;padding:11px}
+.board-setting-group h4{margin:0 0 8px}
+.board-radio-row{display:flex;gap:8px;flex-wrap:wrap}
+.board-radio-row label,.board-follow-row{display:flex;flex-direction:row;align-items:center;gap:7px;color:var(--text)}
+.board-radio-row label{border:1px solid var(--line);border-radius:9px;padding:7px 9px;background:var(--panel2);cursor:pointer}
+.board-radio-row input,.board-follow-row input{width:auto}
+.board-setting-preview-wrap{display:flex;justify-content:center;padding:12px;border:1px dashed var(--line);border-radius:11px;background:#0e1218}
+.board-setting-preview{position:relative;background-image:linear-gradient(rgba(7,11,17,.55),rgba(7,11,17,.55)),var(--card-bg-image);background-size:cover;background-position:center;border:1px solid #596477;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.23);overflow:hidden}
+.board-setting-preview.landscape{width:118px;height:86px}
+.board-setting-preview.portrait{width:84px;height:118px}
+.board-setting-preview .preview-name{position:absolute;z-index:2;font-size:11px;font-weight:800;line-height:1.1;background:rgba(6,9,14,.82);border-radius:5px;padding:3px 5px;left:6px;right:6px}
+.board-setting-preview.name-overlay .preview-name{top:7px}
+.board-setting-preview.name-bar .preview-name{bottom:7px}
+.board-setting-preview .preview-stats{position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:9px;color:#d5dbe5}
+.board-follow-list{display:grid;gap:7px}
+.board-follow-row{padding:7px 2px}
+.board-setting-note{line-height:1.55}
+
+/* カード方向 */
+.board-main.orientation-landscape .pile,
+.board-main.orientation-landscape .slot{flex-basis:118px;min-width:118px;height:86px}
+.board-main.orientation-portrait .pile,
+.board-main.orientation-portrait .slot{flex-basis:84px;min-width:84px;height:118px}
+.board-main.orientation-portrait .zone-body.fixed{overflow-x:auto}
+.board-main.orientation-portrait .pile:not(.face-down){background-position:center top}
+
+/* 名前位置。レスト中は常に正位置の中央表示に寄せる */
+.board-main.name-position-overlay .pile:not(.face-down):not(.rested) .name{
+  position:relative;
+  left:auto;right:auto;top:auto;bottom:auto;
+  width:100%;
+  margin:-2px -4px 1px;
+  transform:scale(var(--board-name-comp,1));
+  transform-origin:top center;
+}
+.board-main.name-position-bar .pile:not(.face-down):not(.rested) .name{
+  position:absolute;
+  left:5px;right:5px;bottom:5px;top:auto;
+  width:auto;
+  margin:0;
+  max-height:2.35em;
+  transform:scale(var(--board-name-comp,1));
+  transform-origin:bottom center;
+  background:rgba(6,9,14,.88);
+}
+.board-main.name-position-bar .pile:not(.face-down):not(.rested) .counter-line{margin-bottom:27px}
+
+/* レスト時はカード本体だけ横倒し、重要文字は正位置 */
+.board-main .pile.rested:not(.face-down) .name{
+  position:absolute;
+  left:50%;top:45%;bottom:auto;right:auto;
+  width:92%;margin:0;
+  transform:translate(-50%,-50%) rotate(-90deg) scale(var(--board-name-comp,1));
+  transform-origin:center;
+  z-index:12;
+}
+.board-main .pile.rested .counter-line{
+  position:absolute;
+  left:50%;top:77%;
+  width:88%;margin:0;
+  text-align:center;
+  transform:translate(-50%,-50%) rotate(-90deg);
+  transform-origin:center;
+  z-index:11;
+  background:rgba(6,9,14,.66);
+  border-radius:4px;
+  padding:1px 3px;
+}
+
+/* ズーム段階 */
+.board-main.zoom-mid .pile .stats{opacity:.72}
+.board-main.zoom-low .pile .stats{display:none}
+.board-main.zoom-low .pile .flags{opacity:.65}
+.board-main.zoom-tiny .pile .stats,
+.board-main.zoom-tiny .pile .flags{display:none}
+.board-main.zoom-overview .pile:not(.face-down):not(.rested) .name{
+  position:absolute;
+  left:50%;top:48%;right:auto;bottom:auto;
+  width:94%;margin:0;
+  transform:translate(-50%,-50%) scale(var(--board-name-comp,1));
+  transform-origin:center;
+  text-align:center;
+  background:rgba(6,9,14,.88);
+}
+.board-main.zoom-overview .pile:not(.face-down):not(.rested) .counter-line{
+  position:absolute;left:4px;right:4px;bottom:4px;margin:0;text-align:center;
+  background:rgba(6,9,14,.72);border-radius:4px;padding:1px 2px
+}
+.board-main.zoom-overview .pile.rested:not(.face-down) .name{top:44%}
+.board-main.zoom-overview .pile.rested .counter-line{top:78%}
+
+/* 縦長・タッチ端末：横スワイプで固定ゾーンを閲覧 */
+@media (pointer:coarse){
+  .board-main.orientation-portrait .zone-body.fixed .pile{touch-action:pan-x}
+}
+@media(max-width:850px){
+  .board-main.orientation-landscape .pile,
+  .board-main.orientation-landscape .slot{flex-basis:104px;min-width:104px;height:80px}
+  .board-main.orientation-portrait .pile,
+  .board-main.orientation-portrait .slot{flex-basis:76px;min-width:76px;height:108px}
+  .board-setting-preview.portrait{width:76px;height:108px}
+}
+
 </style>
 </head>
 <body>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v1.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v2.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -279,8 +405,22 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
       </div>
 
       <div id="tool-pane-text" class="tool-pane">
-        <p class="muted">既存のカードテキストを貼り付けてください。【】付き・なしの両方に対応します。複数枚まとめて変換でき、判定結果は登録前に編集できます。</p>
-        <textarea id="text-import-source" class="json-area" placeholder="【廻る時間の越境者 ミデン】
+        <p class="muted">カード文章をそのまま貼り付けて変換できます。従来の【】形式に加えて、カード名 → 「レベル4 パワー5000」→ 種族 → 効果、の簡易形式にも対応しています。複数枚はカードごとに空行を1つ入れてください。変換後は登録前に内容を編集できます。</p>
+        <details class="import-format-help">
+          <summary>簡易コピペ形式の例</summary>
+          <pre>毒殿の大僧正
+レベル4 パワー5000
+毒
+・ヴェノム/リンク：……
+・自分のターン終了時に発動する。……</pre>
+        </details>
+        <textarea id="text-import-source" class="json-area" placeholder="毒殿の大僧正
+レベル4 パワー5000
+毒
+・ヴェノム/リンク：……
+・自分のターン終了時に発動する。……
+
+【廻る時間の越境者 ミデン】
 レベル:12
 パワー:12000
 種族:時間/災厄/境界
@@ -351,7 +491,8 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
       <div class="panel">
         <label>編集するデッキ<select id="deck-select"></select></label>
         <label style="margin-top:8px">デッキ名<input id="deck-name" /></label>
-        <div class="actions"><button class="btn primary" id="save-deck">保存</button><button class="btn danger" id="delete-deck">削除</button></div>
+        <div id="deck-settings-status" class="deck-settings-status"></div>
+        <div class="actions"><button class="btn primary" id="save-deck">保存</button><button class="btn" id="deck-settings" type="button">デッキ設定</button><button class="btn danger" id="delete-deck">削除</button></div>
         <div class="actions" style="margin-top:6px"><button class="btn small" id="export-selected-deck" type="button">デッキJSONをコピー</button><button class="btn small" id="open-deck-import" type="button">デッキJSONを貼り付けて読み込む</button></div>
         <div id="deck-io-status" class="muted"></div>
         <div class="section-head" style="margin-top:12px"><h2 style="font-size:17px">カード追加</h2></div>
@@ -410,16 +551,19 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
         <button class="btn small" id="turn-plus" title="ターン数を1増やす">＋</button>
       </div>
       <div class="board-zoom-controls" aria-label="盤面ズーム">
-        <button class="btn small" id="board-zoom-out" title="盤面を縮小">−</button>
-        <span id="board-zoom-value" class="pill board-zoom-value">100%</span>
-        <button class="btn small" id="board-zoom-in" title="盤面を拡大">＋</button>
-        <button class="btn small" id="board-zoom-reset" title="100%に戻す">100%</button>
+        <button class="btn small" id="board-zoom-out" title="盤面を10%縮小">−</button>
+        <button class="btn small board-zoom-center" id="board-zoom-value" title="100%に戻す">100%</button>
+        <button class="btn small" id="board-zoom-in" title="盤面を10%拡大">＋</button>
       </div>
     </div>
     <div class="board-wrap">
       <div id="board-main" class="board-main"></div>
       <aside class="board-tools"><div class="board-tools-inner">
-        <div class="panel"><h3>盤面操作</h3><div class="actions"><button class="btn" id="create-token">トークン作成</button><button class="btn danger" id="reset-board">盤面リセット</button></div></div>
+        <div class="panel">
+          <h3>盤面操作</h3>
+          <div id="board-display-status" class="muted board-display-status">表示：横長 / 名前：画像上</div>
+          <div class="actions"><button class="btn" id="board-settings">設定</button><button class="btn" id="create-token">トークン作成</button><button class="btn danger" id="reset-board">盤面リセット</button></div>
+        </div>
         <div class="panel"><h3>盤面メモ</h3><textarea id="board-note" class="board-note" placeholder="召喚権使用済み、ターン中の記録など"></textarea></div>
       </div></aside>
     </div>
@@ -432,20 +576,65 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
 <script>
 (() => {
 'use strict';
-const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01', LS_CARD_REGISTER_RECENT='minkai_tcg_card_register_recent_v16', LS_HAND_FOLLOW='minkai_tcg_hand_follow_v11';
+const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01', LS_CARD_REGISTER_RECENT='minkai_tcg_card_register_recent_v16', LS_HAND_FOLLOW='minkai_tcg_hand_follow_v11', LS_BOARD_DISPLAY='minkai_tcg_board_display_v20';
 const ZONE_LABELS={character:'キャラクター',pain:'ペインカウント',room:'ルーム',rulePlus:'ルールプラス',hand:'手札',deck:'デッキ',otherDeck:'その他デッキ',grave:'墓地',banish:'消失領域'};
 const FIXED=['character','pain','room','rulePlus'];
 const COLLAPSIBLE=['pain','room','rulePlus'];
-let cards=load(LS_CARDS,[]), decks=load(LS_DECKS,[]), recentCardIds=load(LS_CARD_RECENT,[]), registeredRecentCardIds=load(LS_CARD_REGISTER_RECENT,[]), cardManagerShowAll=true, cardManagerPage=0, cardManagerDuplicateOnly=false, deckPoolPage=0, editingDeckId=null, workingDeck={name:'',entries:{}};
+let cards=load(LS_CARDS,[]), decks=load(LS_DECKS,[]), recentCardIds=load(LS_CARD_RECENT,[]), registeredRecentCardIds=load(LS_CARD_REGISTER_RECENT,[]), cardManagerShowAll=true, cardManagerPage=0, cardManagerDuplicateOnly=false, deckPoolPage=0, editingDeckId=null, workingDeck={name:'',entries:{},mainEnabled:true,otherEnabled:true,mainFavorite:false,otherFavorite:false};
 let handFollowPrefs=load(LS_HAND_FOLLOW,[true,true]);
 if(!Array.isArray(handFollowPrefs))handFollowPrefs=[true,true];
 handFollowPrefs=[handFollowPrefs[0]!==false,handFollowPrefs[1]!==false];
-let handScrollPositions=[0,0], pendingHandFollow=new Set();
+let boardDisplayPrefs=load(LS_BOARD_DISPLAY,{orientation:'landscape',namePositionLandscape:'overlay',namePositionPortrait:'bar'});
+if(!boardDisplayPrefs||typeof boardDisplayPrefs!=='object')boardDisplayPrefs={};
+boardDisplayPrefs={
+  orientation:boardDisplayPrefs.orientation==='portrait'?'portrait':'landscape',
+  namePositionLandscape:boardDisplayPrefs.namePositionLandscape==='bar'?'bar':'overlay',
+  namePositionPortrait:boardDisplayPrefs.namePositionPortrait==='overlay'?'overlay':'bar'
+};
+save(LS_BOARD_DISPLAY,boardDisplayPrefs);
+let handScrollPositions=[0,0], zoneScrollPositions={}, pendingHandFollow=new Set();
 let board=null, detailCtx=null, detailNav=null, inspectSession=null, browseSession=null, boardZoom=1;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 function uid(p='id'){return p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
 function load(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function deckSettingsFrom(raw={}){
+ return {
+   mainEnabled:raw.mainEnabled!==false,
+   otherEnabled:raw.otherEnabled!==false,
+   mainFavorite:raw.mainFavorite===true,
+   otherFavorite:raw.otherFavorite===true
+ };
+}
+function blankWorkingDeck(){return {name:'',entries:{},mainEnabled:true,otherEnabled:true,mainFavorite:false,otherFavorite:false}}
+function workingDeckFrom(d){const s=deckSettingsFrom(d);return {name:d?.name||'',entries:{...(d?.entries||{})},...s}}
+function normalizeDeckSettings(){
+ let mainSeen=false,otherSeen=false,changed=false;
+ decks=decks.map(d=>{
+   const s=deckSettingsFrom(d),n={...d,...s};
+   if(n.mainFavorite){
+     if(mainSeen){n.mainFavorite=false;changed=true}else{mainSeen=true;if(!n.mainEnabled){n.mainEnabled=true;changed=true}}
+   }
+   if(n.otherFavorite){
+     if(otherSeen){n.otherFavorite=false;changed=true}else{otherSeen=true;if(!n.otherEnabled){n.otherEnabled=true;changed=true}}
+   }
+   if(d.mainEnabled===undefined||d.otherEnabled===undefined||d.mainFavorite===undefined||d.otherFavorite===undefined)changed=true;
+   return n;
+ });
+ if(changed)save(LS_DECKS,decks);
+}
+normalizeDeckSettings();
+function applyExclusiveFavorite(deckId,kind){
+ const key=kind==='main'?'mainFavorite':'otherFavorite';
+ decks.forEach(d=>{if(d.id!==deckId)d[key]=false});
+}
+function deckStatusParts(d){
+ const s=deckSettingsFrom(d),parts=[];
+ if(s.mainEnabled)parts.push(`メイン${s.mainFavorite?' ★':''}`);
+ if(s.otherEnabled)parts.push(`その他${s.otherFavorite?' ★':''}`);
+ return parts;
+}
+function deckStatusText(d){const parts=deckStatusParts(d);return parts.length?parts.join(' / '):'非表示'}
 function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),1800)}
 function nav(name){$$('.screen').forEach(x=>x.classList.remove('active'));const screen=$('#screen-'+name);if(!screen)return;screen.classList.add('active');if(name==='cards')renderRegisterHistory();if(name==='card-manager')renderCards();if(name==='decks')renderDecks();if(name==='setup')renderSetup();window.scrollTo(0,0)}
@@ -465,6 +654,7 @@ function normalizeImportedCard(raw){
 function splitCardText(src){
   src=String(src||'').replace(/\r\n?/g,'\n').trim();
   if(!src)return [];
+  // 【カード名】形式は従来通り、次の【カード名】までを1枚として扱う。
   const starts=[...src.matchAll(/^\s*【[^\n】]+】\s*$/gm)];
   if(starts.length){
     const out=[],prefix=src.slice(0,starts[0].index).trim();
@@ -472,34 +662,100 @@ function splitCardText(src){
     out.push(...starts.map((m,i)=>src.slice(m.index,starts[i+1]?.index??src.length).trim()).filter(Boolean));
     return out;
   }
+  // 簡易形式は空行でカードを区切る。
   return src.split(/\n\s*\n+/).map(x=>x.trim()).filter(Boolean);
+}
+function normalizeCardNumber(v=''){
+ return String(v).trim().replace(/[０-９]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0xFEE0)).replace(/[，,]/g,'');
+}
+function normalizeRaceText(v=''){
+ return String(v||'').trim().replace(/\s*[\/／]\s*/g,' / ');
+}
+function isEffectLikeLine(t=''){
+ return /^[・●○◆◇■□★☆▶▷►→\-＊*]/.test(String(t).trim());
 }
 function parseOneCardText(block){
   const lines=block.replace(/\r\n?/g,'\n').split('\n');
-  let name='',type='',level='',power='',race='',nameLineIndex=-1;
+  const trimmed=lines.map(x=>x.trim());
+  let name='',type='',level='',power='',race='',nameLineIndex=-1,raceLineIndex=-1;
+  const ignoredLineIndexes=new Set();
+
   const nameMatch=block.match(/^\s*【([^\n】]+)】\s*$/m);
-  if(nameMatch){name=nameMatch[1].trim();nameLineIndex=lines.findIndex(line=>line.trim()===nameMatch[0].trim())}
-  if(!name){nameLineIndex=lines.findIndex(line=>line.trim());if(nameLineIndex>=0)name=lines[nameLineIndex].trim().replace(/^【|】$/g,'').trim()}
-  const lv=block.match(/^\s*(?:レベル|Lv|LV)\s*[:：]\s*([^\n]+)\s*$/mi); if(lv)level=lv[1].trim();
-  const pw=block.match(/^\s*パワー\s*[:：]\s*([^\n]+)\s*$/mi); if(pw)power=pw[1].trim();
-  const rc=block.match(/^\s*種族\s*[:：]\s*([^\n]+)\s*$/mi); if(rc)race=rc[1].trim().replace(/\s*[\/／]\s*/g,' / ');
+  if(nameMatch){
+    name=nameMatch[1].trim();
+    nameLineIndex=lines.findIndex(line=>line.trim()===nameMatch[0].trim());
+  }
+  if(!name){
+    nameLineIndex=trimmed.findIndex(Boolean);
+    if(nameLineIndex>=0)name=trimmed[nameLineIndex].replace(/^【|】$/g,'').trim();
+  }
+  if(nameLineIndex>=0)ignoredLineIndexes.add(nameLineIndex);
+
+  // レベル / パワーは、従来の「レベル:4」「パワー:5000」に加えて
+  // 「レベル4 パワー5000」「Lv4 パワー5000」の同一行表記にも対応。
+  let compactStatLineIndex=-1;
+  trimmed.forEach((t,index)=>{
+    if(!t)return;
+    const lv=t.match(/(?:^|\s)(?:レベル|Lv|LV)\s*[:：]?\s*([0-9０-９,，]+)(?=\s|$|[\/／｜|])/i);
+    const pw=t.match(/(?:^|\s)パワー\s*[:：]?\s*([0-9０-９,，]+)(?=\s|$|[\/／｜|])/i);
+    if(lv&&!level){level=normalizeCardNumber(lv[1]);ignoredLineIndexes.add(index)}
+    if(pw&&!power){power=normalizeCardNumber(pw[1]);ignoredLineIndexes.add(index)}
+    if(lv&&pw)compactStatLineIndex=index;
+  });
+
+  // 従来形式で数値以外の記述がある場合のフォールバック。
+  if(!level){
+    const lv=block.match(/^\s*(?:レベル|Lv|LV)\s*[:：]\s*([^\n]+)\s*$/mi);
+    if(lv)level=normalizeCardNumber(lv[1]);
+  }
+  if(!power){
+    const pw=block.match(/^\s*パワー\s*[:：]\s*([^\n]+)\s*$/mi);
+    if(pw)power=normalizeCardNumber(pw[1]);
+  }
+
+  // 明示された「種族:」を最優先。
+  const rc=block.match(/^\s*種族\s*[:：]\s*([^\n]+)\s*$/mi);
+  if(rc){
+    race=normalizeRaceText(rc[1]);
+    const idx=trimmed.findIndex(t=>/^種族\s*[:：]/.test(t));
+    if(idx>=0){raceLineIndex=idx;ignoredLineIndexes.add(idx)}
+  }
+
+  // 簡易形式では「レベル4 パワー5000」の次の実データ行を種族として扱う。
+  // 箇条書き・カード種類・別の項目ラベルは種族と誤認しない。
+  if(!race&&compactStatLineIndex>=0){
+    for(let i=compactStatLineIndex+1;i<trimmed.length;i++){
+      const t=trimmed[i];
+      if(!t)continue;
+      if(isEffectLikeLine(t))break;
+      if(/^(?:キャラクター|ルーム|ロール|ルールプラス)$/.test(t))continue;
+      if(/^(?:レベル|Lv|LV|パワー|種族)\s*[:：]?/i.test(t))continue;
+      race=normalizeRaceText(t);
+      raceLineIndex=i;
+      ignoredLineIndexes.add(i);
+      break;
+    }
+  }
+
   if(/^\s*ルールプラス\s*$/m.test(block))type='ルールプラス';
   else if(/^\s*ルーム\s*$/m.test(block))type='ルーム';
   else if(/^\s*ロール\s*$/m.test(block))type='ロール';
-  else if(lv||pw||rc)type='キャラクター';
+  else if(/^\s*キャラクター\s*$/m.test(block)||level||power||race)type='キャラクター';
   else type='キャラクター';
+
   const effectLines=lines.filter((line,index)=>{
     const t=line.trim();
     if(!t)return false;
-    if(nameLineIndex===index)return false;
+    if(ignoredLineIndexes.has(index))return false;
     if(t===name||t===`【${name}】`)return false;
     if(/^【[^】]+】$/.test(t))return false;
-    if(/^(?:レベル|Lv|LV)\s*[:：]/i.test(t))return false;
-    if(/^パワー\s*[:：]/i.test(t))return false;
+    if(/^(?:レベル|Lv|LV)\s*[:：]?\s*[0-9０-９,，]+\s*$/i.test(t))return false;
+    if(/^パワー\s*[:：]?\s*[0-9０-９,，]+\s*$/i.test(t))return false;
     if(/^種族\s*[:：]/i.test(t))return false;
     if(/^(?:キャラクター|ルーム|ロール|ルールプラス)$/.test(t))return false;
     return true;
   });
+
   return {name,type,level,power,race,effect:effectLines.join('\n').trim()};
 }
 function parseCardText(src){return splitCardText(src).map(parseOneCardText).filter(c=>c.name||c.effect)}
@@ -516,14 +772,14 @@ async function copyText(txt){
 }
 function downloadJson(obj,filename){const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function exportCardsObject(){return {format:'min-kai-tcg-cards',version:1,cards:cards.map(cardToPortable)}}
-function exportAllObject(){return {format:SIM_FORMAT,version:2,cards:cards.map(cardToPortable),decks:decks.map(d=>({id:d.id,name:d.name,cards:Object.entries(d.entries).filter(([,n])=>n>0).map(([cardId,count])=>({cardId,cardName:cards.find(c=>c.id===cardId)?.name||'',count}))}))}}
+function exportAllObject(){return {format:SIM_FORMAT,version:3,cards:cards.map(cardToPortable),decks:decks.map(d=>({id:d.id,name:d.name,...deckSettingsFrom(d),cards:Object.entries(d.entries).filter(([,n])=>n>0).map(([cardId,count])=>({cardId,cardName:cards.find(c=>c.id===cardId)?.name||'',count}))}))}}
 function exportBackupObject(){
  return {
    format:'min-kai-tcg-backup',
    version:1,
    createdAt:new Date().toISOString(),
    cards:cards.map(c=>({id:c.id,name:c.name,type:c.type,level:c.level,power:c.power,race:c.race,effect:c.effect})),
-   decks:decks.map(d=>({id:d.id,name:d.name,entries:{...d.entries}})),
+   decks:decks.map(d=>({id:d.id,name:d.name,entries:{...d.entries},...deckSettingsFrom(d)})),
    recentCardIds:[...recentCardIds],
    registeredRecentCardIds:[...registeredRecentCardIds]
  };
@@ -563,15 +819,15 @@ function restoreBackupObject(data){
      const count=Math.max(0,Math.floor(Number(countRaw)||0));
      if(validIds.has(cardId)&&count)entries[cardId]=count;
    }
-   restoredDecks.push({id,name:String(raw.name||'名称未設定デッキ'),entries});
+   restoredDecks.push({id,name:String(raw.name||'名称未設定デッキ'),entries,...deckSettingsFrom(raw)});
  }
  cards=restoredCards;
  decks=restoredDecks;
  recentCardIds=(Array.isArray(data.recentCardIds)?data.recentCardIds:[]).filter(id=>validIds.has(id)).slice(0,10);
  registeredRecentCardIds=(Array.isArray(data.registeredRecentCardIds)?data.registeredRecentCardIds:restoredCards.slice(-5).reverse().map(c=>c.id)).filter(id=>validIds.has(id)).slice(0,5);
  save(LS_CARDS,cards);save(LS_DECKS,decks);save(LS_CARD_RECENT,recentCardIds);save(LS_CARD_REGISTER_RECENT,registeredRecentCardIds);
- editingDeckId=null;workingDeck={name:'',entries:{}};board=null;detailCtx=null;detailNav=null;inspectSession=null;
- renderRegisterHistory();renderCards();renderDecks();renderSetup();
+ editingDeckId=null;workingDeck=blankWorkingDeck();board=null;detailCtx=null;detailNav=null;inspectSession=null;
+ normalizeDeckSettings();renderRegisterHistory();renderCards();renderDecks();renderSetup(true);
  return {cards:cards.length,decks:decks.length};
 }
 function parseImportPayload(data){
@@ -597,9 +853,12 @@ function importPayload(data,conflict){
     const entries={};
     const rows=Array.isArray(rawDeck.cards)?rawDeck.cards:Object.entries(rawDeck.entries||{}).map(([cardId,count])=>({cardId,count}));
     for(const row of rows){const localId=idMap.get(String(row.cardId||''))||nameMap.get(String(row.cardName||''));const count=Math.max(0,Number(row.count)||0);if(localId&&count)entries[localId]=(entries[localId]||0)+count}
-    decks.push({id:uid('deck'),name:String(rawDeck.name||'インポートデッキ'),entries});deckAdded++;
+    const importedDeck={id:uid('deck'),name:String(rawDeck.name||'インポートデッキ'),entries,...deckSettingsFrom(rawDeck)};
+    if(importedDeck.mainFavorite)applyExclusiveFavorite(importedDeck.id,'main');
+    if(importedDeck.otherFavorite)applyExclusiveFavorite(importedDeck.id,'other');
+    decks.push(importedDeck);deckAdded++;
   }
-  save(LS_CARDS,cards);save(LS_DECKS,decks);if(touchedIds.length)touchRecentCards(touchedIds);if(registeredIds.length)touchRegisteredCards(registeredIds);renderRegisterHistory();renderCards();renderDecks();renderSetup();
+  normalizeDeckSettings();save(LS_CARDS,cards);save(LS_DECKS,decks);if(touchedIds.length)touchRecentCards(touchedIds);if(registeredIds.length)touchRegisteredCards(registeredIds);renderRegisterHistory();renderCards();renderDecks();renderSetup(true);
   return {added,updated,skipped,deckAdded};
 }
 $$('[data-tool-tab]').forEach(btn=>btn.onclick=()=>{$$('[data-tool-tab]').forEach(b=>b.classList.remove('primary'));btn.classList.add('primary');$$('#screen-cards .tool-pane').forEach(p=>p.classList.remove('active'));$('#tool-pane-'+btn.dataset.toolTab)?.classList.add('active');if(btn.dataset.toolTab==='manual')renderRegisterHistory()});
@@ -632,13 +891,16 @@ $('#backup-file-input').onchange=async e=>{
  e.target.value='';
 };
 
-function exportDeckObject(d){return {format:'min-kai-tcg-deck',version:1,deck:{name:d.name,cards:Object.entries(d.entries).filter(([,n])=>n>0).map(([cardId,count])=>({cardId,cardName:cards.find(c=>c.id===cardId)?.name||'',count}))}}}
+function exportDeckObject(d){return {format:'min-kai-tcg-deck',version:2,deck:{name:d.name,...deckSettingsFrom(d),cards:Object.entries(d.entries).filter(([,n])=>n>0).map(([cardId,count])=>({cardId,cardName:cards.find(c=>c.id===cardId)?.name||'',count}))}}}
 function importDeckObject(data){
   const raw=(data&&data.format==='min-kai-tcg-deck'&&data.deck)?data.deck:(data&&data.deck?data.deck:null);
   if(!raw||typeof raw!=='object'||!Array.isArray(raw.cards))throw new Error('対応しているデッキJSON形式ではありません。');
   const entries={};let missing=0,found=0;
   for(const row of raw.cards){const local=cards.find(c=>c.id===row.cardId)||cards.find(c=>c.name===row.cardName);const count=Math.max(0,Number(row.count)||0);if(local&&count){entries[local.id]=(entries[local.id]||0)+count;found+=count}else if(count)missing+=count}
-  const d={id:uid('deck'),name:String(raw.name||'インポートデッキ'),entries};decks.push(d);save(LS_DECKS,decks);editingDeckId=d.id;workingDeck={name:d.name,entries:{...entries}};renderDecks();renderSetup();return {found,missing};
+  const d={id:uid('deck'),name:String(raw.name||'インポートデッキ'),entries,...deckSettingsFrom(raw)};
+  if(d.mainFavorite)applyExclusiveFavorite(d.id,'main');
+  if(d.otherFavorite)applyExclusiveFavorite(d.id,'other');
+  decks.push(d);normalizeDeckSettings();save(LS_DECKS,decks);editingDeckId=d.id;workingDeck=workingDeckFrom(d);renderDecks();renderSetup(true);return {found,missing};
 }
 
 // Card registry / manager
@@ -906,8 +1168,14 @@ $('#card-manager-clear').onclick=()=>{
 // Deck editor
 const DECK_POOL_PAGE_SIZE=30;
 function renderDecks(){
- $('#deck-select').innerHTML='<option value="">新規デッキ</option>'+decks.map(d=>`<option value="${d.id}">${esc(d.name)}</option>`).join('');
- $('#deck-select').value=editingDeckId||'';$('#deck-name').value=workingDeck.name||'';renderDeckPool();renderDeckCurrent();
+ $('#deck-select').innerHTML='<option value="">新規デッキ</option>'+decks.map(d=>`<option value="${d.id}">${esc(d.name)} 〔${esc(deckStatusText(d))}〕</option>`).join('');
+ $('#deck-select').value=editingDeckId||'';$('#deck-name').value=workingDeck.name||'';
+ const status=$('#deck-settings-status');
+ if(status){
+   const parts=deckStatusParts(workingDeck);
+   status.innerHTML=parts.length?parts.map(x=>`<span class="pill ${x.includes('★')?'favorite':''}">${esc(x)}</span>`).join(''):'<span class="pill hidden-deck">盤面開始では非表示</span>';
+ }
+ renderDeckPool();renderDeckCurrent();
 }
 function filteredDeckPoolCards(){
  const f=$('#deck-type-filter').value,q=($('#deck-card-search')?.value||'').trim().toLowerCase(),raceQ=($('#deck-race-search')?.value||'').trim().toLowerCase(),levelQ=($('#deck-level-search')?.value||'').trim(),sort=$('#deck-level-sort')?.value||'default';
@@ -947,65 +1215,178 @@ function bindDeckQty(){
 function changeQty(id,d){const n=Math.max(0,(workingDeck.entries[id]||0)+d);if(n)workingDeck.entries[id]=n;else delete workingDeck.entries[id];renderDeckPool();renderDeckCurrent()}
 function renderDeckCurrent(){const entries=Object.entries(workingDeck.entries).filter(([,n])=>n>0);const total=entries.reduce((a,[,n])=>a+n,0);$('#deck-total').textContent=total+'枚';$('#deck-current').innerHTML=entries.length?entries.map(([id,n])=>{const c=cards.find(x=>x.id===id);return `<div class="list-row deck-card-row"><div class="grow"><b>${esc(c?.name||'削除済みカード')}</b><div class="muted">${esc(c?.type||'')}</div></div><div class="qty"><button class="btn small" data-current-minus="${id}">−</button><b>${n}</b><button class="btn small" data-current-plus="${id}">＋</button></div></div>`}).join(''):'<div class="muted">カードが入っていません。</div>';bindDeckQty()}
 $('#deck-type-filter').onchange=resetDeckPoolPageAndRender;$('#deck-level-sort').onchange=resetDeckPoolPageAndRender;$('#deck-card-search').oninput=resetDeckPoolPageAndRender;$('#deck-race-search').oninput=resetDeckPoolPageAndRender;$('#deck-level-search').oninput=resetDeckPoolPageAndRender;
-$('#deck-select').onchange=()=>{const id=$('#deck-select').value;editingDeckId=id||null;deckPoolPage=0;if(id){const d=decks.find(x=>x.id===id);workingDeck={name:d.name,entries:{...d.entries}}}else workingDeck={name:'',entries:{}};renderDecks()};
-$('#new-deck').onclick=()=>{editingDeckId=null;deckPoolPage=0;workingDeck={name:'',entries:{}};renderDecks()};
-$('#save-deck').onclick=()=>{workingDeck.name=$('#deck-name').value.trim()||'名称未設定デッキ';if(editingDeckId){const i=decks.findIndex(x=>x.id===editingDeckId);decks[i]={id:editingDeckId,name:workingDeck.name,entries:{...workingDeck.entries}}}else{editingDeckId=uid('deck');decks.push({id:editingDeckId,name:workingDeck.name,entries:{...workingDeck.entries}})}save(LS_DECKS,decks);renderDecks();toast('デッキを保存しました')};
-$('#delete-deck').onclick=()=>{if(!editingDeckId||!confirm('このデッキを削除しますか？'))return;decks=decks.filter(x=>x.id!==editingDeckId);save(LS_DECKS,decks);editingDeckId=null;workingDeck={name:'',entries:{}};renderDecks()};
+$('#deck-select').onchange=()=>{const id=$('#deck-select').value;editingDeckId=id||null;deckPoolPage=0;if(id){const d=decks.find(x=>x.id===id);workingDeck=workingDeckFrom(d)}else workingDeck=blankWorkingDeck();renderDecks()};
+$('#new-deck').onclick=()=>{editingDeckId=null;deckPoolPage=0;workingDeck=blankWorkingDeck();renderDecks()};
+function saveWorkingDeck(){
+ workingDeck.name=$('#deck-name').value.trim()||'名称未設定デッキ';
+ const settings=deckSettingsFrom(workingDeck);
+ if(!settings.mainEnabled)settings.mainFavorite=false;
+ if(!settings.otherEnabled)settings.otherFavorite=false;
+ let id=editingDeckId;
+ if(!id)id=uid('deck');
+ if(settings.mainFavorite)applyExclusiveFavorite(id,'main');
+ if(settings.otherFavorite)applyExclusiveFavorite(id,'other');
+ const obj={id,name:workingDeck.name,entries:{...workingDeck.entries},...settings};
+ if(editingDeckId){
+   const i=decks.findIndex(x=>x.id===editingDeckId);
+   if(i>=0)decks[i]=obj;
+ }else{
+   editingDeckId=id;decks.push(obj);
+ }
+ workingDeck=workingDeckFrom(obj);
+ normalizeDeckSettings();save(LS_DECKS,decks);renderDecks();renderSetup(true);toast('デッキを保存しました');
+}
+$('#save-deck').onclick=saveWorkingDeck;
+$('#deck-settings').onclick=()=>{
+ const s=deckSettingsFrom(workingDeck);
+ openModal(`<div class="modal-head"><h3>デッキ設定</h3><button class="btn" id="deck-settings-close">閉じる</button></div>
+ <div class="deck-settings-box">
+   <div class="deck-settings-group"><h4>使用先</h4>
+     <label class="deck-setting-row"><input id="deck-setting-main-enabled" type="checkbox" ${s.mainEnabled?'checked':''}><span>メインデッキとして盤面開始に表示</span></label>
+     <label class="deck-setting-row"><input id="deck-setting-other-enabled" type="checkbox" ${s.otherEnabled?'checked':''}><span>その他デッキとして盤面開始に表示</span></label>
+   </div>
+   <div class="deck-settings-group"><h4>お気に入り</h4>
+     <label class="deck-setting-row"><input id="deck-setting-main-favorite" type="checkbox" ${s.mainFavorite?'checked':''}><span>メインお気に入り</span></label>
+     <label class="deck-setting-row"><input id="deck-setting-other-favorite" type="checkbox" ${s.otherFavorite?'checked':''}><span>その他お気に入り</span></label>
+   </div>
+   <p class="muted deck-settings-note">お気に入りは各使用先につき1デッキだけ設定できます。お気に入りにすると対応する使用先も自動でONになります。使用先をOFFにすると、そのお気に入りも解除されます。非表示設定は盤面開始の候補だけに作用し、デッキ作成画面からは消えません。</p>
+   <div class="actions"><button class="btn primary" id="deck-settings-apply">設定を保存</button><button class="btn" id="deck-settings-cancel">キャンセル</button></div>
+ </div>`);
+ const mainEnabled=$('#deck-setting-main-enabled'),otherEnabled=$('#deck-setting-other-enabled'),mainFav=$('#deck-setting-main-favorite'),otherFav=$('#deck-setting-other-favorite');
+ mainFav.onchange=()=>{if(mainFav.checked)mainEnabled.checked=true};
+ otherFav.onchange=()=>{if(otherFav.checked)otherEnabled.checked=true};
+ mainEnabled.onchange=()=>{if(!mainEnabled.checked)mainFav.checked=false};
+ otherEnabled.onchange=()=>{if(!otherEnabled.checked)otherFav.checked=false};
+ $('#deck-settings-close').onclick=closeModal;$('#deck-settings-cancel').onclick=closeModal;
+ $('#deck-settings-apply').onclick=()=>{
+   const next={mainEnabled:mainEnabled.checked,otherEnabled:otherEnabled.checked,mainFavorite:mainFav.checked,otherFavorite:otherFav.checked};
+   if(next.mainFavorite)next.mainEnabled=true;if(next.otherFavorite)next.otherEnabled=true;
+   Object.assign(workingDeck,next);
+   if(editingDeckId){
+     const d=decks.find(x=>x.id===editingDeckId);
+     if(d){
+       if(next.mainFavorite)applyExclusiveFavorite(editingDeckId,'main');
+       if(next.otherFavorite)applyExclusiveFavorite(editingDeckId,'other');
+       Object.assign(d,next);
+       normalizeDeckSettings();save(LS_DECKS,decks);
+     }
+     renderSetup(true);toast('デッキ設定を保存しました');
+   }else{
+     toast('デッキ保存時に設定も保存されます');
+   }
+   closeModal();renderDecks();
+ };
+};
+$('#delete-deck').onclick=()=>{if(!editingDeckId||!confirm('このデッキを削除しますか？'))return;decks=decks.filter(x=>x.id!==editingDeckId);save(LS_DECKS,decks);editingDeckId=null;workingDeck=blankWorkingDeck();renderDecks();renderSetup(true)};
 $('#export-selected-deck').onclick=async()=>{if(!editingDeckId){toast('先にデッキを保存してください');return}const d=decks.find(x=>x.id===editingDeckId);if(!d)return;const txt=JSON.stringify(exportDeckObject(d),null,2);const ok=await copyText(txt);if(ok){$('#deck-io-status').textContent='デッキJSONをクリップボードへコピーしました。';toast('デッキJSONをコピーしました')}else{openModal(`<div class="modal-head"><h3>デッキJSON</h3><button class="btn" id="deck-copy-close">閉じる</button></div><p class="muted">自動コピーできなかったため、下の内容を手動でコピーしてください。</p><textarea id="deck-copy-fallback" class="json-area">${esc(txt)}</textarea>`);$('#deck-copy-close').onclick=closeModal;setTimeout(()=>{$('#deck-copy-fallback')?.select()},0)}};
 $('#open-deck-import').onclick=()=>{openModal(`<div class="modal-head"><h3>デッキJSONを読み込む</h3><button class="btn" id="deck-import-close">閉じる</button></div><p class="muted">共有されたデッキJSONを貼り付けてください。端末に未登録のカードはデッキへ追加されません。</p><textarea id="deck-import-text" class="json-area" placeholder="ここにデッキJSONを貼り付け"></textarea><div class="io-actions"><button class="btn primary" id="deck-import-run">読み込む</button></div><div id="deck-import-modal-status" class="muted"></div>`);$('#deck-import-close').onclick=closeModal;$('#deck-import-run').onclick=()=>{try{const data=JSON.parse($('#deck-import-text').value),r=importDeckObject(data);$('#deck-io-status').textContent=`デッキを読み込みました。登録 ${r.found}枚 / 未登録カード ${r.missing}枚`;closeModal();toast('デッキを読み込みました')}catch(err){$('#deck-import-modal-status').textContent='読み込みエラー: '+err.message}}};
 
 // Setup
 function favoriteOptions(deckId){const d=decks.find(x=>x.id===deckId);if(!d)return '<option value="">最推しなし</option>';const rows=Object.entries(d.entries).filter(([,n])=>n>0).map(([id])=>cards.find(c=>c.id===id)).filter(Boolean);return '<option value="">最推しなし</option>'+rows.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}
 function syncFavoriteOptions(which){const deckSel=$(`#setup-deck-${which}`),fav=$(`#setup-favorite-${which}`);if(!deckSel||!fav)return;const prev=fav.value;fav.innerHTML=favoriteOptions(deckSel.value);if([...fav.options].some(o=>o.value===prev))fav.value=prev}
-function renderSetup(){const opts=decks.map(d=>`<option value="${d.id}">${esc(d.name)}</option>`).join(''),otherOpts='<option value="">その他デッキなし</option>'+opts;$('#setup-deck-1').innerHTML=opts||'<option value="">デッキなし</option>';$('#setup-deck-2').innerHTML=opts||'<option value="">デッキなし</option>';$('#setup-other-deck-1').innerHTML=otherOpts;$('#setup-other-deck-2').innerHTML=otherOpts;syncFavoriteOptions(1);syncFavoriteOptions(2);syncSetupMode()}
+function setupDeckList(kind){
+ const enabledKey=kind==='main'?'mainEnabled':'otherEnabled',favoriteKey=kind==='main'?'mainFavorite':'otherFavorite';
+ return decks.filter(d=>deckSettingsFrom(d)[enabledKey]).sort((a,b)=>Number(deckSettingsFrom(b)[favoriteKey])-Number(deckSettingsFrom(a)[favoriteKey]));
+}
+function fillSetupDeckSelect(sel,list,kind,{allowNone=false,forceDefault=false}={}){
+ if(!sel)return;
+ const prev=sel.value,favoriteKey=kind==='main'?'mainFavorite':'otherFavorite';
+ const none=allowNone?'<option value="">その他デッキなし</option>':'';
+ const options=list.map(d=>`<option value="${d.id}">${deckSettingsFrom(d)[favoriteKey]?'★ ':''}${esc(d.name)}</option>`).join('');
+ if(!list.length){
+   sel.innerHTML=allowNone?none:'<option value="">選択できるデッキがありません</option>';
+   sel.value='';
+   return;
+ }
+ sel.innerHTML=none+options;
+ const favorite=list.find(d=>deckSettingsFrom(d)[favoriteKey]);
+ if(!forceDefault&&prev&&list.some(d=>d.id===prev))sel.value=prev;
+ else if(favorite)sel.value=favorite.id;
+ else if(allowNone)sel.value='';
+ else sel.value=list[0].id;
+}
+function renderSetup(forceDefaults=false){
+ const mainList=setupDeckList('main'),otherList=setupDeckList('other');
+ fillSetupDeckSelect($('#setup-deck-1'),mainList,'main',{forceDefault:forceDefaults});
+ fillSetupDeckSelect($('#setup-deck-2'),mainList,'main',{forceDefault:forceDefaults});
+ fillSetupDeckSelect($('#setup-other-deck-1'),otherList,'other',{allowNone:true,forceDefault:forceDefaults});
+ fillSetupDeckSelect($('#setup-other-deck-2'),otherList,'other',{allowNone:true,forceDefault:forceDefaults});
+ syncFavoriteOptions(1);syncFavoriteOptions(2);syncSetupMode();
+}
 function syncSetupMode(){const two=$('#mode-select').value==='2';$('#setup-p2-label').style.display=two?'flex':'none';$('#setup-p2-other-label').style.display=two?'flex':'none';$('#setup-p2-favorite-label').style.display=two?'flex':'none'}
 $('#mode-select').onchange=syncSetupMode;$('#setup-deck-1').onchange=()=>syncFavoriteOptions(1);$('#setup-deck-2').onchange=()=>syncFavoriteOptions(2);
 function cloneInstance(c){return {...c,instanceId:uid('inst'),faceDown:false,rested:false,counters:[],memo:'',powerMod:0,token:false}}
 function makeDeckPiles(deckId){const d=decks.find(x=>x.id===deckId),phys=[];if(d)Object.entries(d.entries).forEach(([id,n])=>{const c=cards.find(x=>x.id===id);if(c)for(let i=0;i<n;i++)phys.push({id:uid('pile'),cards:[cloneInstance(c)]})});return phys}
 function shufflePileArray(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}}
 function makePlayer(deckId,index,favoriteCardId='',otherDeckId=''){const phys=makeDeckPiles(deckId),other=makeDeckPiles(otherDeckId);const player={name:'プレイヤー'+(index+1),character:Array(5).fill(null),pain:Array(5).fill(null),room:Array(5).fill(null),rulePlus:Array(1).fill(null),hand:[],handMode:'scroll',deck:phys,otherDeck:other,grave:[],banish:[],collapsed:{pain:false,room:false,rulePlus:false}};if(favoriteCardId){const i=player.deck.findIndex(p=>p.cards[0]?.id===favoriteCardId);if(i>=0){const [pile]=player.deck.splice(i,1);player.hand.push(pile)}}shufflePileArray(player.deck);return player}
-$('#start-board').onclick=()=>{const mode=Number($('#mode-select').value);if(!$('#setup-deck-1').value){alert('デッキを1つ以上作成してください。');return}const setup={mode,deck1:$('#setup-deck-1').value,otherDeck1:$('#setup-other-deck-1').value,favorite1:$('#setup-favorite-1').value,deck2:$('#setup-deck-2').value||$('#setup-deck-1').value,otherDeck2:$('#setup-other-deck-2').value,favorite2:$('#setup-favorite-2').value};board={mode,setup,players:[makePlayer(setup.deck1,0,setup.favorite1,setup.otherDeck1)],note:'',turn:1};if(mode===2)board.players.push(makePlayer(setup.deck2,1,setup.favorite2,setup.otherDeck2));boardZoom=1;renderBoard();nav('board')};
+$('#start-board').onclick=()=>{const mode=Number($('#mode-select').value);if(!$('#setup-deck-1').value){alert(decks.length?'メインデッキとして盤面開始に表示されているデッキがありません。デッキ設定を確認してください。':'デッキを1つ以上作成してください。');return}const setup={mode,deck1:$('#setup-deck-1').value,otherDeck1:$('#setup-other-deck-1').value,favorite1:$('#setup-favorite-1').value,deck2:$('#setup-deck-2').value||$('#setup-deck-1').value,otherDeck2:$('#setup-other-deck-2').value,favorite2:$('#setup-favorite-2').value};board={mode,setup,players:[makePlayer(setup.deck1,0,setup.favorite1,setup.otherDeck1)],note:'',turn:1};if(mode===2)board.players.push(makePlayer(setup.deck2,1,setup.favorite2,setup.otherDeck2));boardZoom=1;renderBoard();nav('board')};
 
 // Board rendering
+function currentNamePosition(){
+ return boardDisplayPrefs.orientation==='portrait'?boardDisplayPrefs.namePositionPortrait:boardDisplayPrefs.namePositionLandscape;
+}
+function saveBoardDisplayPrefs(){save(LS_BOARD_DISPLAY,boardDisplayPrefs)}
+function applyBoardDisplaySettings(){
+ const root=$('#board-main');if(!root)return;
+ const portrait=boardDisplayPrefs.orientation==='portrait',namePos=currentNamePosition();
+ root.classList.toggle('orientation-portrait',portrait);
+ root.classList.toggle('orientation-landscape',!portrait);
+ root.classList.toggle('name-position-bar',namePos==='bar');
+ root.classList.toggle('name-position-overlay',namePos!=='bar');
+ const status=$('#board-display-status');
+ if(status)status.textContent=`表示：${portrait?'縦長':'横長'} / 名前：${namePos==='bar'?'下部名前欄':'画像上'}`;
+}
 function applyBoardZoom(){
   const root=$('#board-main');
   if(!root)return;
   root.style.setProperty('--board-zoom',String(boardZoom));
-  const nameComp=boardZoom<1?Math.min(2.6,1/boardZoom):1;
+  let nameComp=1;
+  if(boardZoom<1)nameComp=boardZoom<=.4?Math.min(2.2,1/boardZoom):Math.min(2.6,1/boardZoom);
   root.style.setProperty('--board-name-comp',String(nameComp));
   root.classList.toggle('zoom-name-priority',boardZoom<1);
-  root.classList.toggle('zoom-low',boardZoom<=.7);
-  root.classList.toggle('zoom-tiny',boardZoom<=.55);
+  root.classList.toggle('zoom-mid',boardZoom>=.7&&boardZoom<1);
+  root.classList.toggle('zoom-low',boardZoom>=.5&&boardZoom<.7);
+  root.classList.toggle('zoom-tiny',boardZoom<.5);
+  root.classList.toggle('zoom-overview',boardZoom<=.4);
   const label=$('#board-zoom-value');
   if(label)label.textContent=Math.round(boardZoom*100)+'%';
+  const out=$('#board-zoom-out'),inn=$('#board-zoom-in');
+  if(out)out.disabled=boardZoom<=.3;
+  if(inn)inn.disabled=boardZoom>=2;
 }
 function setBoardZoom(next){
-  boardZoom=Math.max(.5,Math.min(1.5,Math.round(next*10)/10));
+  boardZoom=Math.max(.3,Math.min(2,Math.round(next*10)/10));
   applyBoardZoom();
 }
 function captureHandScroll(){
  if(!board)return;
  board.players.forEach((_,pi)=>{const el=document.querySelector(`[data-hand-scroll="${pi}"]`);if(el)handScrollPositions[pi]=el.scrollLeft});
 }
-function restoreHandScroll(){
+function captureFixedZoneScroll(){
+ document.querySelectorAll('[data-zone-scroll]').forEach(el=>{zoneScrollPositions[el.dataset.zoneScroll]=el.scrollLeft});
+}
+function restoreBoardScroll(){
  if(!board)return;
  const followNow=new Set(pendingHandFollow);
  pendingHandFollow.clear();
- requestAnimationFrame(()=>board.players.forEach((_,pi)=>{
-   const el=document.querySelector(`[data-hand-scroll="${pi}"]`);if(!el)return;
-   if(followNow.has(pi)){
-     el.scrollLeft=Math.max(0,el.scrollWidth-el.clientWidth);
-     handScrollPositions[pi]=el.scrollLeft;
-   }else{
-     el.scrollLeft=handScrollPositions[pi]||0;
-   }
- }));
+ requestAnimationFrame(()=>{
+   board.players.forEach((_,pi)=>{
+     const el=document.querySelector(`[data-hand-scroll="${pi}"]`);if(!el)return;
+     if(followNow.has(pi)){
+       el.scrollLeft=Math.max(0,el.scrollWidth-el.clientWidth);
+       handScrollPositions[pi]=el.scrollLeft;
+     }else{
+       el.scrollLeft=handScrollPositions[pi]||0;
+     }
+   });
+   document.querySelectorAll('[data-zone-scroll]').forEach(el=>{el.scrollLeft=zoneScrollPositions[el.dataset.zoneScroll]||0});
+ });
 }
-function renderBoard(){if(!board)return;captureHandScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardZoom();restoreHandScroll()}
-function zoneHeader(pi,z){const p=board.players[pi], n=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button>`;else if(z==='grave'||z==='banish')controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll',follow=handFollowPrefs[pi]!==false;controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button><button class="btn small hand-follow ${follow?'active':''}" data-hand-follow="${pi}">追従${follow?'ON':'OFF'}</button></span>`}return `<div class="zone-head"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
+function renderBoard(){if(!board)return;captureHandScroll();captureFixedZoneScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardDisplaySettings();applyBoardZoom();restoreBoardScroll()}
+function zoneHeader(pi,z){const p=board.players[pi], n=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button>`;else if(z==='grave'||z==='banish')controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll';controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button></span>`}return `<div class="zone-head"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
 function renderPlayer(p,pi,reverse){const rows=reverse?['utility','hand','rulePlus','room','pain','character']:['character','pain','room','rulePlus','hand','utility'];return `<div class="player-board"><div class="player-title"><b>${esc(p.name)}</b><span class="pill">デッキ ${physicalCount(p.deck)}枚</span><span class="pill">その他 ${physicalCount(p.otherDeck)}枚</span></div>${rows.map(z=>z==='utility'?renderUtility(p,pi):renderZone(p,pi,z)).join('')}</div>`}
 function renderCompressedPiles(piles,pi,z){return piles.map((pile,i)=>{const depth=Math.min(i,10),html=renderPile(pile,pi,z,i);return html.replace('draggable="true"',`draggable="true" style="left:${6+depth*4}px;top:${5+depth*2}px;z-index:${i+1}"`)}).join('')}
-function renderZone(p,pi,z){const collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];if(FIXED.includes(z)){return `<div class="zone ${collapsed?'collapsed':''}">${zoneHeader(pi,z)}${collapsed?'':`<div class="zone-body fixed" data-zone="${pi}|${z}">${p[z].map((pile,i)=>pile?renderPile(pile,pi,z,i):`<div class="slot" data-slot="${pi}|${z}|${i}">${i+1}</div>`).join('')}</div>`}</div>`}const handClass=z==='hand'?` hand-${p.handMode==='operation'?'operation':'scroll'}-mode`:'';const handAttr=z==='hand'?` data-hand-scroll="${pi}"`:'';return `<div class="zone">${zoneHeader(pi,z)}<div class="dropzone ${p[z].length?'':'empty'}${handClass}" data-zone="${pi}|${z}"${handAttr}>${p[z].map((pile,i)=>renderPile(pile,pi,z,i)).join('')}</div></div>`}
+function renderZone(p,pi,z){const collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];if(FIXED.includes(z)){return `<div class="zone ${collapsed?'collapsed':''}">${zoneHeader(pi,z)}${collapsed?'':`<div class="zone-body fixed" data-zone="${pi}|${z}" data-zone-scroll="${pi}|${z}">${p[z].map((pile,i)=>pile?renderPile(pile,pi,z,i):`<div class="slot" data-slot="${pi}|${z}|${i}">${i+1}</div>`).join('')}</div>`}</div>`}const handClass=z==='hand'?` hand-${p.handMode==='operation'?'operation':'scroll'}-mode`:'';const handAttr=z==='hand'?` data-hand-scroll="${pi}"`:'';return `<div class="zone">${zoneHeader(pi,z)}<div class="dropzone ${p[z].length?'':'empty'}${handClass}" data-zone="${pi}|${z}"${handAttr}>${p[z].map((pile,i)=>renderPile(pile,pi,z,i)).join('')}</div></div>`}
 function compactZoneBox(p,pi,z){return `<div class="deck-box">${zoneHeader(pi,z)}<div class="dropzone pile-zone ${p[z].length?'':'empty'}" data-zone="${pi}|${z}">${renderCompressedPiles(p[z],pi,z)}</div></div>`}
 function renderDeckBox(p,pi,z,label){const count=physicalCount(p[z]),empty=count<=0;const common=`<button class="btn small" data-deck-action="shuffle|${pi}|${z}">シャッフル</button><button class="btn small" data-deck-action="draw|${pi}|${z}">1枚引く</button><button class="btn small" data-deck-action="painFace|${pi}|${z}">PCへ(表)</button><button class="btn small" data-deck-action="painBack|${pi}|${z}">PCへ(裏)</button><button class="btn small" data-deck-action="browse|${pi}|${z}">中を見る</button><button class="btn small" data-deck-action="look|${pi}|${z}">上からX枚</button>`;const extra=z==='otherDeck'?`<button class="btn small" data-deck-action="rulePlus|${pi}|${z}">RPに追加</button>`:`<button class="btn small" data-deck-action="topToGrave|${pi}|${z}" ${empty?'disabled':''}>1枚墓地</button><button class="btn small" data-deck-action="topToBanish|${pi}|${z}" ${empty?'disabled':''}>1枚消失</button>`;return `<div class="deck-box ${z==='deck'?'deck-box-main':''}" data-zone="${pi}|${z}"><h4>${label} <span>${count}枚</span></h4><div class="deck-controls">${common}${extra}</div><div class="deck-drop-note">ドラッグで戻すと一番下</div></div>`}
 function renderUtility(p,pi){return `<div class="utility-grid"><div class="deck-pair">${renderDeckBox(p,pi,'deck','デッキ')}${renderDeckBox(p,pi,'otherDeck','その他デッキ')}</div><div class="grave-banish-pair">${compactZoneBox(p,pi,'grave')}${compactZoneBox(p,pi,'banish')}</div></div>`}
@@ -1121,8 +1502,50 @@ function endHandScrollCardTouch(e){
   const [pi,z,i]=s.src.split('|');
   openDetail(Number(pi),z,Number(i),0);
 }
+
+function beginZoneScrollCardTouch(e,el){
+  if(!e.touches||e.touches.length!==1)return;
+  const t=e.touches[0];
+  touchDragState={
+    src:el.dataset.pile,
+    startX:t.clientX,startY:t.clientY,
+    x:t.clientX,y:t.clientY,
+    moved:false,ghost:null,target:null,
+    mode:'zone-scroll',gesture:'pending'
+  };
+}
+function moveZoneScrollCardTouch(e){
+  const s=touchDragState;
+  if(!s||s.mode!=='zone-scroll'||!e.touches||e.touches.length!==1)return;
+  const t=e.touches[0];
+  s.x=t.clientX;s.y=t.clientY;
+  const dx=s.x-s.startX,dy=s.y-s.startY;
+  if(s.gesture==='pending'){
+    if(Math.hypot(dx,dy)<8)return;
+    if(Math.abs(dx)>=Math.abs(dy)*1.15){
+      s.gesture='scroll';
+      touchClickBlockUntil=Date.now()+250;
+      return;
+    }
+    s.gesture='drag';s.moved=true;e.preventDefault();makeTouchDragGhost(s);
+  }
+  if(s.gesture==='scroll')return;
+  e.preventDefault();
+  if(!s.ghost)makeTouchDragGhost(s);
+  updateTouchDragVisual(s);
+}
+function endZoneScrollCardTouch(e){
+  const s=touchDragState;
+  if(!s||s.mode!=='zone-scroll')return;
+  touchDragState=null;
+  if(s.gesture==='scroll'){touchClickBlockUntil=Date.now()+250;return}
+  e.preventDefault();touchClickBlockUntil=Date.now()+350;
+  if(s.gesture==='drag'||s.moved){finishTouchCardMove(s);return}
+  const [pi,z,i]=s.src.split('|');openDetail(Number(pi),z,Number(i),0);
+}
+
 function moveTouchCardDrag(e){
-  if(!touchDragState||touchDragState.mode==='hand-scroll'||!e.touches||e.touches.length!==1)return;
+  if(!touchDragState||touchDragState.mode==='hand-scroll'||touchDragState.mode==='zone-scroll'||!e.touches||e.touches.length!==1)return;
   e.preventDefault();
   const t=e.touches[0],s=touchDragState;
   s.x=t.clientX;s.y=t.clientY;
@@ -1134,7 +1557,7 @@ function moveTouchCardDrag(e){
   updateTouchDragVisual(s);
 }
 function endTouchCardDrag(e){
-  if(!touchDragState||touchDragState.mode==='hand-scroll')return;
+  if(!touchDragState||touchDragState.mode==='hand-scroll'||touchDragState.mode==='zone-scroll')return;
   e.preventDefault();
   const s=touchDragState;
   touchDragState=null;
@@ -1162,11 +1585,17 @@ function bindBoard(){
      el.oncontextmenu=e=>e.preventDefault();
      const [epi,ez]=el.dataset.pile.split('|');
      const handScroll=ez==='hand'&&board.players[Number(epi)].handMode!=='operation';
+     const zoneScroll=boardDisplayPrefs.orientation==='portrait'&&FIXED.includes(ez);
      if(handScroll){
        el.addEventListener('touchstart',e=>beginHandScrollCardTouch(e,el),{passive:true});
        el.addEventListener('touchmove',moveHandScrollCardTouch,{passive:false});
        el.addEventListener('touchend',endHandScrollCardTouch,{passive:false});
        el.addEventListener('touchcancel',endHandScrollCardTouch,{passive:false});
+     }else if(zoneScroll){
+       el.addEventListener('touchstart',e=>beginZoneScrollCardTouch(e,el),{passive:true});
+       el.addEventListener('touchmove',moveZoneScrollCardTouch,{passive:false});
+       el.addEventListener('touchend',endZoneScrollCardTouch,{passive:false});
+       el.addEventListener('touchcancel',endZoneScrollCardTouch,{passive:false});
      }else{
        el.addEventListener('touchstart',e=>beginTouchCardDrag(e,el),{passive:false});
        el.addEventListener('touchmove',moveTouchCardDrag,{passive:false});
@@ -1183,7 +1612,6 @@ function bindBoard(){
  $$('[data-deck-action]').forEach(b=>b.onclick=()=>{const[a,pi,z='deck']=b.dataset.deckAction.split('|');deckAction(a,Number(pi),z)});
  $$('[data-zone-view]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,z]=b.dataset.zoneView.split('|');openZoneViewer(Number(pi),z)});
  $$('[data-hand-mode]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,mode]=b.dataset.handMode.split('|');board.players[Number(pi)].handMode=mode==='operation'?'operation':'scroll';renderBoard()});
- $$('[data-hand-follow]').forEach(b=>b.onclick=e=>{e.stopPropagation();const pi=Number(b.dataset.handFollow);handFollowPrefs[pi]=!(handFollowPrefs[pi]!==false);save(LS_HAND_FOLLOW,handFollowPrefs);renderBoard()});
 }
 function getPile(pi,z,index){return board.players[pi][z][index]}
 function removeCardAt(pi,z,index,cardIndex){const area=board.players[pi][z],pile=area[index];const [card]=pile.cards.splice(cardIndex,1);if(!pile.cards.length){if(FIXED.includes(z))area[index]=null;else area.splice(index,1)}return card}
@@ -1474,13 +1902,90 @@ function openTokenCreator(baseCard=null,defaultPlayer=0){
    closeModal();renderBoard();
  };
 }
+
+function openBoardSettings(){
+ if(!board)return;
+ const portrait=boardDisplayPrefs.orientation==='portrait',namePos=currentNamePosition();
+ openModal(`<div class="modal-head"><h3>盤面設定</h3><button class="btn" id="board-settings-close">閉じる</button></div>
+ <div class="board-setting-grid">
+   <div class="board-setting-group">
+     <h4>表示設定</h4>
+     <div class="muted" style="margin-bottom:5px">カード形状</div>
+     <div class="board-radio-row">
+       <label><input type="radio" name="board-orientation" value="landscape" ${portrait?'':'checked'}>横長</label>
+       <label><input type="radio" name="board-orientation" value="portrait" ${portrait?'checked':''}>縦長</label>
+     </div>
+     <div class="muted" style="margin:10px 0 5px">カード名の表示場所</div>
+     <div class="board-radio-row">
+       <label><input type="radio" name="board-name-position" value="overlay" ${namePos==='overlay'?'checked':''}>画像上</label>
+       <label><input type="radio" name="board-name-position" value="bar" ${namePos==='bar'?'checked':''}>下部名前欄</label>
+     </div>
+   </div>
+   <div class="board-setting-preview-wrap">
+     <div id="board-setting-preview" class="board-setting-preview"><div class="preview-name">サンプルカード</div><div class="preview-stats">Lv 4 / PW 5000</div></div>
+   </div>
+   <div class="board-setting-group">
+     <h4>操作設定</h4>
+     <div class="board-follow-list">
+       <label class="board-follow-row"><input type="checkbox" id="board-follow-p1" ${handFollowPrefs[0]!==false?'checked':''}>プレイヤー1 手札追従</label>
+       ${board.mode===2?`<label class="board-follow-row"><input type="checkbox" id="board-follow-p2" ${handFollowPrefs[1]!==false?'checked':''}>プレイヤー2 手札追従</label>`:''}
+     </div>
+   </div>
+   <p class="muted board-setting-note">カード形状・カード名位置・手札追従は変更した時点で保存されます。カード名位置は横長と縦長で別々に記憶します。ズーム倍率は保存されず、新しく盤面を開くと100%から始まります。</p>
+   <div class="actions"><button class="btn" id="board-display-reset">表示設定を初期状態に戻す</button></div>
+ </div>`);
+
+ function syncSettingsUI(){
+   const isPortrait=boardDisplayPrefs.orientation==='portrait',pos=currentNamePosition();
+   $$('input[name="board-orientation"]').forEach(r=>r.checked=r.value===boardDisplayPrefs.orientation);
+   $$('input[name="board-name-position"]').forEach(r=>r.checked=r.value===pos);
+   const pv=$('#board-setting-preview');
+   if(pv){
+     pv.className=`board-setting-preview ${isPortrait?'portrait':'landscape'} ${pos==='bar'?'name-bar':'name-overlay'}`;
+   }
+   const p1=$('#board-follow-p1'),p2=$('#board-follow-p2');
+   if(p1)p1.checked=handFollowPrefs[0]!==false;
+   if(p2)p2.checked=handFollowPrefs[1]!==false;
+ }
+ function applyDisplayChange(){
+   saveBoardDisplayPrefs();applyBoardDisplaySettings();applyBoardZoom();syncSettingsUI();
+ }
+ $('#board-settings-close').onclick=closeModal;
+ $$('input[name="board-orientation"]').forEach(r=>r.onchange=()=>{
+   if(!r.checked)return;
+   captureFixedZoneScroll();
+   boardDisplayPrefs.orientation=r.value==='portrait'?'portrait':'landscape';
+   applyDisplayChange();
+   bindBoard();
+   restoreBoardScroll();
+ });
+ $$('input[name="board-name-position"]').forEach(r=>r.onchange=()=>{
+   if(!r.checked)return;
+   if(boardDisplayPrefs.orientation==='portrait')boardDisplayPrefs.namePositionPortrait=r.value==='bar'?'bar':'overlay';
+   else boardDisplayPrefs.namePositionLandscape=r.value==='bar'?'bar':'overlay';
+   applyDisplayChange();
+ });
+ const p1=$('#board-follow-p1'),p2=$('#board-follow-p2');
+ if(p1)p1.onchange=()=>{handFollowPrefs[0]=p1.checked;save(LS_HAND_FOLLOW,handFollowPrefs)};
+ if(p2)p2.onchange=()=>{handFollowPrefs[1]=p2.checked;save(LS_HAND_FOLLOW,handFollowPrefs)};
+ $('#board-display-reset').onclick=()=>{
+   boardDisplayPrefs={orientation:'landscape',namePositionLandscape:'overlay',namePositionPortrait:'bar'};
+   handFollowPrefs=[true,true];
+   saveBoardDisplayPrefs();save(LS_HAND_FOLLOW,handFollowPrefs);
+   applyBoardDisplaySettings();applyBoardZoom();syncSettingsUI();
+   toast('表示設定を初期状態に戻しました');
+ };
+ syncSettingsUI();
+}
+
 $('#create-token').onclick=()=>openTokenCreator(null,0);
+$('#board-settings').onclick=openBoardSettings;
 $('#board-note').oninput=e=>{if(board)board.note=e.target.value};
 $('#turn-minus').onclick=()=>{if(!board)return;board.turn=Math.max(1,(Number(board.turn)||1)-1);renderBoard()};
 $('#turn-plus').onclick=()=>{if(!board)return;board.turn=(Number(board.turn)||1)+1;renderBoard()};
 $('#board-zoom-out').onclick=()=>setBoardZoom(boardZoom-.1);
 $('#board-zoom-in').onclick=()=>setBoardZoom(boardZoom+.1);
-$('#board-zoom-reset').onclick=()=>setBoardZoom(1);
+$('#board-zoom-value').onclick=()=>setBoardZoom(1);
 
 $('#reset-board').onclick=()=>{if(!board)return;const s=board.setup;if(!s){board=null;detailCtx=null;inspectSession=null;nav('setup');return}board={mode:s.mode,setup:{...s},players:[makePlayer(s.deck1,0,s.favorite1,s.otherDeck1)],note:'',turn:1};if(s.mode===2)board.players.push(makePlayer(s.deck2,1,s.favorite2,s.otherDeck2));detailCtx=null;inspectSession=null;$('#modal-layer').classList.remove('open');renderBoard();toast('盤面を初期状態に戻しました')};
 
