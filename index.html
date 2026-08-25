@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v6.0</title>
+<title>みん会TCG Simulator v6.6</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -5398,6 +5398,2834 @@ main{zoom:1}
  .theme-grimoire2 .collection-cover-book{width:min(96vw,470px);transform:none}
 }
 
+
+/* ==========================================================
+   v6.1 Album theme — CLASSIC
+   Traditional collector's album / burgundy, forest green, brass
+   ========================================================== */
+
+.collection-book-shell.theme-classic{
+ --classic-burgundy:#55261f;
+ --classic-burgundy-low:#25120f;
+ --classic-green:#173126;
+ --classic-green-hi:#2b4c3b;
+ --classic-brass:#a47c3f;
+ --classic-brass-hi:#d5b56c;
+ --classic-paper:#d9cfb5;
+ --classic-paper-low:#b8aa8b;
+ --classic-ink:#43382a;
+ padding:19px 19px 25px;
+ border:1px solid #71532d;
+ border-radius:13px;
+ background:
+   radial-gradient(ellipse at 50% -12%,rgba(209,178,110,.06),transparent 43%),
+   repeating-linear-gradient(90deg,rgba(255,255,255,.008) 0 1px,transparent 1px 7px),
+   linear-gradient(150deg,#54241f,#241410 47%,#15291f 76%,#0c100d);
+ box-shadow:
+   inset 0 0 0 4px rgba(0,0,0,.19),
+   inset 0 -29px 48px rgba(0,0,0,.27),
+   0 23px 56px rgba(0,0,0,.37);
+ color:#dfd2af;
+}
+.collection-book-shell.theme-classic .collection-book-top{
+ margin:0 7px 14px;
+ border-bottom:1px solid rgba(185,145,74,.19);
+}
+.collection-book-shell.theme-classic .collection-source-title{
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ color:#e5d5ad;
+ letter-spacing:.035em;
+}
+.collection-book-shell.theme-classic .muted{color:#a99b7b}
+
+/* Open hardcover collector album */
+.classic-spread-host{
+ width:100%;
+ min-width:0;
+ padding:8px 3px 14px;
+}
+.classic-spread{
+ position:relative;
+ isolation:isolate;
+ display:grid;
+ grid-template-columns:minmax(0,1fr) 62px minmax(0,1fr);
+ align-items:stretch;
+ width:min(100%,1500px);
+ margin:0 auto;
+ padding:30px 44px 37px;
+ border:1px solid #775632;
+ border-radius:25px 25px 32px 32px;
+ background:
+   linear-gradient(90deg,rgba(0,0,0,.24),transparent 8% 92%,rgba(0,0,0,.25)),
+   radial-gradient(ellipse at 50% 0%,rgba(207,175,105,.05),transparent 38%),
+   repeating-linear-gradient(105deg,rgba(255,255,255,.008) 0 1px,transparent 1px 9px),
+   linear-gradient(150deg,#5c2922 0%,#321816 38%,#1e3328 68%,#102019 100%);
+ box-shadow:
+   inset 0 0 0 7px rgba(7,4,3,.22),
+   inset 0 0 0 8px rgba(203,159,79,.035),
+   inset 12px 0 26px rgba(0,0,0,.18),
+   inset -12px 0 26px rgba(0,0,0,.18),
+   0 24px 47px rgba(0,0,0,.38);
+ perspective:1800px;
+}
+.classic-cover-underlay{
+ position:absolute;
+ z-index:0;
+ inset:11px;
+ border:1px solid rgba(186,143,69,.14);
+ border-radius:18px 18px 25px 25px;
+ background:
+   repeating-linear-gradient(111deg,rgba(255,255,255,.006) 0 1px,transparent 1px 11px),
+   radial-gradient(ellipse at 35% 16%,rgba(255,255,255,.012),transparent 36%);
+ box-shadow:inset 0 0 34px rgba(0,0,0,.24);
+ pointer-events:none;
+}
+
+/* Brass reinforced corners on the cover */
+.classic-corner-brass{
+ position:absolute;
+ z-index:7;
+ width:42px;height:42px;
+ pointer-events:none;
+}
+.classic-corner-brass::before,
+.classic-corner-brass::after{
+ content:"";
+ position:absolute;
+ background:
+   linear-gradient(90deg,#6e5127,#d4b46b 45%,#81602f);
+ box-shadow:0 1px 2px rgba(0,0,0,.32);
+}
+.classic-corner-brass::before{width:38px;height:6px}
+.classic-corner-brass::after{width:6px;height:38px}
+.classic-corner-brass.brass-tl{top:13px;left:15px}
+.classic-corner-brass.brass-tr{top:13px;right:15px}
+.classic-corner-brass.brass-bl{bottom:15px;left:15px}
+.classic-corner-brass.brass-br{bottom:15px;right:15px}
+.classic-corner-brass.brass-tr::before,.classic-corner-brass.brass-br::before{right:0}
+.classic-corner-brass.brass-tr::after,.classic-corner-brass.brass-br::after{right:0}
+.classic-corner-brass.brass-bl::before,.classic-corner-brass.brass-br::before{bottom:0}
+.classic-corner-brass.brass-bl::after,.classic-corner-brass.brass-br::after{bottom:0}
+
+/* Cream archival paper */
+.classic-page{
+ position:relative;
+ z-index:2;
+ min-width:0;
+ display:flex;
+ padding:6px 5px 10px;
+}
+.classic-page-stack{
+ position:absolute;
+ z-index:0;
+ top:11px;bottom:5px;left:9px;right:9px;
+ border-radius:10px;
+ background:
+   repeating-linear-gradient(0deg,#96896f 0 1px,#c1b498 1px 2px,#897d66 2px 3px);
+ box-shadow:0 7px 13px rgba(0,0,0,.25);
+}
+.classic-page-stack.stack-1{transform:translateY(4px);opacity:.66}
+.classic-page-stack.stack-2{transform:translateY(7px);opacity:.34}
+.classic-paper{
+ position:relative;
+ z-index:2;
+ flex:1;
+ min-width:0;
+ padding:31px 24px 35px;
+ border:1px solid #8f7b58;
+ background:
+   radial-gradient(circle at 15% 13%,rgba(94,73,48,.035),transparent 13%),
+   radial-gradient(ellipse at 78% 84%,rgba(75,57,39,.045),transparent 27%),
+   repeating-linear-gradient(0deg,rgba(69,55,42,.01) 0 1px,transparent 1px 8px),
+   linear-gradient(105deg,#ddd4bc,#d0c5aa 54%,#bdb091);
+ color:var(--classic-ink);
+ overflow:hidden;
+}
+.classic-page-left .classic-paper{
+ border-radius:15px 4px 4px 19px;
+ transform:perspective(1600px) rotateY(.4deg);
+ transform-origin:right center;
+ box-shadow:
+   inset -29px 0 35px rgba(65,45,31,.14),
+   inset 2px 0 rgba(255,250,231,.17),
+   0 8px 18px rgba(0,0,0,.24);
+}
+.classic-page-right .classic-paper{
+ border-radius:4px 15px 19px 4px;
+ transform:perspective(1600px) rotateY(-.4deg);
+ transform-origin:left center;
+ box-shadow:
+   inset 29px 0 35px rgba(65,45,31,.14),
+   inset -2px 0 rgba(255,250,231,.17),
+   0 8px 18px rgba(0,0,0,.24);
+}
+.classic-paper::before{
+ content:"";
+ position:absolute;
+ z-index:2;
+ inset:7px;
+ border:1px solid rgba(98,75,45,.17);
+ border-radius:inherit;
+ pointer-events:none;
+}
+.classic-paper-grain{
+ position:absolute;
+ inset:0;
+ z-index:0;
+ pointer-events:none;
+ background:
+   repeating-linear-gradient(113deg,rgba(62,49,37,.008) 0 1px,transparent 1px 10px),
+   radial-gradient(ellipse at 45% 55%,transparent 57%,rgba(68,51,36,.03));
+}
+.classic-page-rule{
+ position:absolute;
+ z-index:3;
+ top:12px;
+ left:20px;right:20px;
+ height:14px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ pointer-events:none;
+}
+.classic-page-rule::before,
+.classic-page-rule::after{
+ content:"";
+ width:34%;
+ height:1px;
+ background:linear-gradient(90deg,transparent,#78613b);
+ opacity:.45;
+}
+.classic-page-rule::after{transform:scaleX(-1)}
+.classic-page-rule span{
+ width:7px;height:7px;
+ margin:0 8px;
+ transform:rotate(45deg);
+ background:#8c6a32;
+ box-shadow:0 0 0 2px rgba(85,59,30,.08);
+}
+.classic-page-rule i{
+ position:absolute;
+ width:42px;height:8px;
+ border-top:1px solid rgba(86,65,39,.22);
+ border-radius:50%;
+}
+
+/* Traditional photo-corner style mounts */
+.classic-slot-grid{
+ position:relative;
+ z-index:4;
+ display:grid;
+ grid-template-columns:repeat(var(--classic-cols,2),minmax(0,1fr));
+ gap:18px 15px;
+ align-content:start;
+}
+.classic-card-slot{
+ position:relative;
+ min-width:0;
+ padding:11px;
+ border:1px solid rgba(99,74,42,.33);
+ border-radius:3px;
+ background:
+   linear-gradient(145deg,rgba(255,255,255,.045),rgba(88,65,38,.025));
+ box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.classic-card-slot::before{
+ content:"";
+ position:absolute;
+ inset:5px;
+ border:1px solid rgba(111,84,47,.13);
+ pointer-events:none;
+}
+.classic-card-mount{position:relative;z-index:2}
+.classic-card-slot .collection-card-art{
+ border-radius:2px;
+ border-color:#78613c;
+ box-shadow:
+   0 2px 3px rgba(55,39,25,.42),
+   0 6px 12px rgba(54,38,25,.15);
+}
+.classic-card-slot .collection-card-name{
+ margin:7px 0 -3px;
+ padding:4px 5px;
+ border-top:1px solid rgba(91,69,42,.12);
+ border-bottom:1px solid rgba(91,69,42,.12);
+ border-radius:0;
+ background:transparent;
+ color:#493d2d;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ font-size:11px;
+ line-height:1.25;
+ text-shadow:none;
+}
+.classic-photo-corner{
+ position:absolute;
+ z-index:5;
+ width:20px;height:20px;
+ pointer-events:none;
+}
+.classic-photo-corner::before{
+ content:"";
+ position:absolute;
+ inset:0;
+ background:linear-gradient(135deg,#a77e3d 0 46%,transparent 47%);
+ filter:drop-shadow(0 1px 1px rgba(0,0,0,.18));
+}
+.classic-photo-corner.corner-tl{left:3px;top:3px}
+.classic-photo-corner.corner-tr{right:3px;top:3px;transform:rotate(90deg)}
+.classic-photo-corner.corner-bl{left:3px;bottom:3px;transform:rotate(-90deg)}
+.classic-photo-corner.corner-br{right:3px;bottom:3px;transform:rotate(180deg)}
+
+/* Empty mount is an embossed archival plate */
+.classic-card-slot.empty{
+ aspect-ratio:5/7;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border-style:dashed;
+ background:rgba(102,78,49,.018);
+}
+.classic-empty-plate{
+ width:66%;
+ aspect-ratio:5/4;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:4px;
+ border:1px solid rgba(92,70,44,.19);
+ box-shadow:
+   inset 0 0 0 5px rgba(111,84,49,.018),
+   inset 0 0 0 6px rgba(96,71,43,.08);
+ color:rgba(82,62,41,.32);
+}
+.classic-empty-plate span{font-size:25px;line-height:1}
+.classic-empty-plate small{font-size:7px;letter-spacing:.14em}
+
+/* Traditional leather binding with raised brass bands */
+.classic-binding{
+ position:relative;
+ z-index:5;
+ min-height:100%;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+.classic-binding-shadow{
+ position:absolute;
+ top:5px;bottom:7px;left:2px;right:2px;
+ border-radius:18px;
+ background:
+   linear-gradient(90deg,rgba(31,15,12,.76),rgba(112,83,49,.09) 45% 55%,rgba(26,36,29,.78));
+ box-shadow:0 0 22px rgba(0,0,0,.39);
+}
+.classic-binding-leather{
+ position:absolute;
+ top:4%;bottom:4%;
+ left:50%;
+ width:26px;
+ transform:translateX(-50%);
+ border:1px solid #53321f;
+ border-radius:10px;
+ background:
+   repeating-linear-gradient(0deg,rgba(255,255,255,.008) 0 1px,transparent 1px 8px),
+   linear-gradient(90deg,#1b0d0b,#5c2b24 46%,#253e31 70%,#111c16);
+ box-shadow:
+   inset 0 0 7px rgba(0,0,0,.4),
+   0 1px 5px rgba(0,0,0,.35);
+}
+.classic-binding-band{
+ position:absolute;
+ left:50%;
+ width:42px;height:8px;
+ transform:translateX(-50%);
+ border:1px solid #715324;
+ border-radius:4px;
+ background:linear-gradient(90deg,#6d5126,#d4b66c 44%,#8b6a33);
+ box-shadow:inset 0 1px rgba(255,244,205,.22),0 2px 3px rgba(0,0,0,.28);
+}
+.classic-binding-band.band-1{top:18%}
+.classic-binding-band.band-2{top:49%}
+.classic-binding-band.band-3{bottom:18%}
+.classic-bookmark{
+ position:absolute;
+ top:7%;
+ left:50%;
+ width:8px;
+ height:62%;
+ transform:translateX(7px);
+ background:linear-gradient(#7c2724,#4b1716);
+ box-shadow:1px 0 1px rgba(0,0,0,.22);
+ opacity:.8;
+}
+.classic-bookmark::after{
+ content:"";
+ position:absolute;
+ left:0;bottom:-11px;
+ border-left:4px solid transparent;
+ border-right:4px solid transparent;
+ border-top:11px solid #4b1716;
+}
+
+.classic-page-number{
+ position:absolute;
+ z-index:5;
+ bottom:10px;
+ left:50%;
+ transform:translateX(-50%);
+ color:rgba(74,58,39,.46);
+ font-family:Georgia,serif;
+ font-size:10px;
+ letter-spacing:.08em;
+}
+
+/* Page controls */
+.classic-page-turn{
+ position:absolute;
+ z-index:9;
+ top:50%;
+ width:70px;height:176px;
+ transform:translateY(-50%);
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+ border:1px solid #74532f;
+ border-radius:12px;
+ background:
+   repeating-linear-gradient(105deg,rgba(255,255,255,.007) 0 1px,transparent 1px 7px),
+   linear-gradient(90deg,#4b211d,#182d23);
+ color:#d5b879;
+ box-shadow:inset 0 1px rgba(255,238,191,.035),0 8px 20px rgba(0,0,0,.35);
+ cursor:pointer;
+ opacity:.8;
+}
+.classic-page-turn:hover:not(:disabled){
+ opacity:1;
+ border-color:#a27a3f;
+ background:linear-gradient(90deg,#642c25,#244535);
+}
+.classic-page-turn:disabled{opacity:.12;cursor:default}
+.classic-page-turn-prev{left:-18px}
+.classic-page-turn-next{right:-18px}
+.classic-page-turn span{font-size:44px;line-height:.8}
+.classic-page-turn small{
+ writing-mode:vertical-rl;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ font-size:11px;
+ letter-spacing:.09em;
+}
+
+/* Page-turn movement: restrained, heavier paper */
+.classic-turning-next .classic-page-right{
+ transform-origin:left center;
+ animation:classicTurnNext .56s cubic-bezier(.2,.72,.18,1);
+}
+.classic-turning-prev .classic-page-left{
+ transform-origin:right center;
+ animation:classicTurnPrev .56s cubic-bezier(.2,.72,.18,1);
+}
+.classic-turning-next .classic-binding,
+.classic-turning-prev .classic-binding{
+ animation:classicBindingSettle .5s ease-out;
+}
+@keyframes classicTurnNext{
+ 0%{opacity:.48;transform:perspective(1400px) rotateY(-19deg) translateX(15px);filter:brightness(.82)}
+ 48%{opacity:.96;transform:perspective(1400px) rotateY(-4deg) translateX(3px)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes classicTurnPrev{
+ 0%{opacity:.48;transform:perspective(1400px) rotateY(19deg) translateX(-15px);filter:brightness(.82)}
+ 48%{opacity:.96;transform:perspective(1400px) rotateY(4deg) translateX(-3px)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes classicBindingSettle{
+ 0%{transform:scaleX(.93);filter:brightness(.8)}
+ 100%{transform:none;filter:none}
+}
+
+.classic-empty-book{
+ min-height:440px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border:1px solid #795934;
+ border-radius:18px;
+ background:
+   linear-gradient(145deg,#54251f,#261411 52%,#173025);
+ color:#c7af7a;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+
+/* Density */
+.classic-spread-host[data-page-size="1"] .classic-card-slot{
+ width:min(72%,380px);justify-self:center
+}
+.classic-spread-host[data-page-size="2"] .classic-card-slot{
+ width:min(86%,350px);justify-self:center
+}
+.classic-spread-host[data-page-size="16"] .classic-slot-grid,
+.classic-spread-host[data-page-size="24"] .classic-slot-grid{gap:10px 9px}
+.classic-spread-host[data-page-size="36"] .classic-slot-grid,
+.classic-spread-host[data-page-size="48"] .classic-slot-grid{gap:7px 6px}
+.classic-spread-host[data-page-size="24"] .classic-card-slot,
+.classic-spread-host[data-page-size="36"] .classic-card-slot,
+.classic-spread-host[data-page-size="48"] .classic-card-slot{padding:5px}
+.classic-spread-host[data-page-size="36"] .classic-page-rule,
+.classic-spread-host[data-page-size="48"] .classic-page-rule,
+.classic-spread-host[data-page-size="48"] .classic-photo-corner{display:none}
+
+/* Pagination palette */
+#screen-collection:has(.collection-book-shell.theme-classic) .collection-side-page{
+ border-color:rgba(138,100,52,.57);
+ background:
+   repeating-linear-gradient(105deg,rgba(255,255,255,.007) 0 1px,transparent 1px 7px),
+   linear-gradient(180deg,rgba(75,32,28,.94),rgba(20,43,32,.96));
+ color:#d8bc7d;
+ box-shadow:inset 0 1px rgba(255,239,196,.025),0 8px 22px rgba(0,0,0,.33);
+}
+#screen-collection:has(.collection-book-shell.theme-classic) #collection-pagination{color:#aa966d}
+#screen-collection:has(.collection-book-shell.theme-classic) #collection-pagination .btn{
+ border-color:rgba(135,99,54,.49);
+ background:rgba(45,29,22,.82);
+ color:#ccb37b;
+}
+#screen-collection:has(.collection-book-shell.theme-classic) #collection-pagination .btn.primary{
+ border-color:#a37c42;
+ background:linear-gradient(180deg,#6a332b,#294938);
+ color:#f0dfb5;
+}
+
+/* Shelf */
+.album-book-card[data-shelf-theme="classic"] .album-shelf-book{
+ transform:rotateY(-5deg) rotateZ(-.4deg);
+}
+.album-book-card[data-shelf-theme="classic"]:hover .album-shelf-book{
+ transform:rotateY(-1deg) rotateZ(0) translateY(-11px) translateZ(8px);
+}
+.album-book-card[data-shelf-theme="classic"] .album-book-cover.theme-classic{
+ border-color:#866333;
+ background:
+   linear-gradient(90deg,transparent 0 66%,rgba(23,49,36,.45) 67% 100%),
+   radial-gradient(circle at 50% 28%,transparent 0 15%,rgba(189,145,68,.13) 16% 17%,transparent 18%),
+   repeating-linear-gradient(108deg,rgba(255,255,255,.008) 0 1px,transparent 1px 9px),
+   linear-gradient(145deg,#652e27,#3a1b18 68%,#193329);
+ box-shadow:
+   inset 0 0 0 4px rgba(0,0,0,.16),
+   inset 7px 0 13px rgba(0,0,0,.25),
+   5px 6px 12px rgba(0,0,0,.35);
+}
+.album-book-card[data-shelf-theme="classic"] .album-cover-inner-frame{
+ border-color:rgba(201,160,84,.28);
+ box-shadow:inset 0 0 0 2px rgba(80,55,29,.1);
+}
+.album-book-card[data-shelf-theme="classic"] .album-cover-corner::before,
+.album-book-card[data-shelf-theme="classic"] .album-cover-corner::after{
+ background:linear-gradient(90deg,#705127,#d5b56d 46%,#7f6030);
+}
+.album-book-card[data-shelf-theme="classic"] .album-cover-crest,
+.album-book-card[data-shelf-theme="classic"] .album-cover-title{color:#dfc58b}
+.album-book-card[data-shelf-theme="classic"] .album-cover-title{
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+.album-book-card[data-shelf-theme="classic"] .album-cover-title-plate{
+ border-color:rgba(191,148,72,.2);
+ background:linear-gradient(90deg,transparent,rgba(44,25,18,.25) 13% 87%,transparent);
+}
+.album-book-card[data-shelf-theme="classic"] .album-cover-card-frame{
+ border-color:#98733c;
+ background:#21130f;
+}
+.album-book-card[data-shelf-theme="classic"] .album-book-spine.theme-classic{
+ width:34px;
+ background:
+   repeating-linear-gradient(0deg,rgba(255,255,255,.007) 0 1px,transparent 1px 8px),
+   linear-gradient(90deg,#21100d,#682f28 49%,#203d30);
+ border-color:#5d4328;
+}
+.album-book-card[data-shelf-theme="classic"] .album-book-spine-title{
+ color:#d9c08b;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+.album-book-card[data-shelf-theme="classic"] .album-book-page-block{
+ background:repeating-linear-gradient(0deg,#c8bda2 0 1px,#94866c 1px 2px,#b7ab90 2px 3px);
+ border-color:#817255;
+}
+.album-book-card[data-shelf-theme="classic"] .album-book-back-cover{
+ background:linear-gradient(145deg,#4f241e,#182f25);
+ border-color:#62462a;
+}
+.album-book-card[data-shelf-theme="classic"] .album-book-caption{
+ border-color:rgba(133,95,50,.25);
+ background:linear-gradient(180deg,rgba(66,34,26,.84),rgba(19,36,27,.9));
+}
+.album-book-card[data-shelf-theme="classic"] .album-book-caption::before{
+ background:linear-gradient(90deg,transparent,rgba(196,153,80,.22),transparent);
+}
+
+/* Opening cover */
+.theme-classic .collection-cover-book{
+ --cover-metal:#98723a;
+ --cover-metal-hi:#d9bc78;
+ --cover-line:rgba(192,148,71,.26);
+ --cover-ink:#e7d4a6;
+ --cover-muted:#b7a07a;
+ width:min(92vw,620px);
+ border-color:#806036;
+ border-radius:12px 24px 24px 12px;
+ background:
+   linear-gradient(90deg,transparent 0 70%,rgba(20,49,35,.36) 71% 100%),
+   radial-gradient(circle at 50% 21%,transparent 0 12%,rgba(190,145,68,.11) 13% 14%,transparent 15%),
+   repeating-linear-gradient(111deg,rgba(255,255,255,.008) 0 1px,transparent 1px 10px),
+   linear-gradient(145deg,#673028,#391b18 67%,#183126);
+ box-shadow:
+   inset 17px 0 23px rgba(0,0,0,.28),
+   inset 0 0 0 5px rgba(0,0,0,.14),
+   0 26px 61px rgba(0,0,0,.45);
+}
+.theme-classic .collection-cover-book::before{
+ background:linear-gradient(90deg,#160b09,#5f2b25 56%,#1b372b);
+ border-right-color:rgba(189,146,72,.1);
+}
+.theme-classic .collection-cover-inner-frame{
+ border-color:rgba(203,159,79,.29);
+ box-shadow:inset 0 0 0 2px rgba(86,59,31,.12);
+}
+.theme-classic .collection-cover-corner::before,
+.theme-classic .collection-cover-corner::after{
+ background:linear-gradient(90deg,#6e5026,#d7b86f 46%,#806131);
+}
+.theme-classic .collection-cover-crest{color:#ddc27e}
+.theme-classic .collection-cover-kicker{color:#aa966c}
+.theme-classic .collection-cover-book h1{
+ color:#ead8ae;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+.theme-classic .collection-cover-page-subtitle{color:#c3ae84}
+.theme-classic .collection-cover-card-frame{
+ border-color:#9a753d;
+ background:
+   linear-gradient(145deg,rgba(205,168,95,.035),rgba(0,0,0,.28)),
+   #1c100d;
+}
+.theme-classic .collection-cover-description{
+ border-color:rgba(181,139,67,.16);
+ background:linear-gradient(90deg,transparent,rgba(48,28,19,.22) 15% 85%,transparent);
+ color:#cdbf9d;
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+.theme-classic .collection-cover-meta{color:#aa9874}
+.theme-classic .collection-cover-open-wrap{
+ border-color:rgba(174,132,63,.19);
+ background:rgba(46,27,19,.18);
+}
+.theme-classic .collection-cover-open-wrap .btn.primary{
+ border-color:#9e783f;
+ background:linear-gradient(180deg,#6d362d,#294837);
+ color:#ead9ad;
+}
+.theme-classic .collection-cover-emblem-panel{
+ border-color:rgba(185,142,69,.22);
+ background:
+   radial-gradient(circle at 50% 44%,rgba(161,119,54,.08),transparent 42%),
+   rgba(42,24,17,.14);
+ color:#d6b875;
+}
+
+/* Responsive */
+@media(max-width:1000px){
+ .classic-spread{grid-template-columns:minmax(0,1fr) 48px minmax(0,1fr);padding:22px 28px 29px}
+ .classic-paper{padding:24px 17px 31px}
+ .classic-slot-grid{gap:11px 10px}
+ .classic-binding-band{width:34px}
+}
+@media(max-width:700px){
+ .collection-book-shell.theme-classic{padding:11px 7px 16px}
+ .classic-spread{
+   display:block;
+   padding:17px 12px 64px;
+   border-radius:18px;
+ }
+ .classic-page{padding:5px;margin-bottom:13px}
+ .classic-page-left .classic-paper,
+ .classic-page-right .classic-paper{
+   transform:none;
+   border-radius:11px!important;
+ }
+ .classic-binding,.classic-corner-brass{display:none}
+ .classic-paper{padding:21px 13px 29px}
+ .classic-slot-grid{gap:9px 8px}
+ .classic-page-turn{
+   top:auto;bottom:8px;width:126px;height:42px;transform:none;
+   flex-direction:row;border-radius:9px;
+ }
+ .classic-page-turn-prev{left:13px}
+ .classic-page-turn-next{right:13px}
+ .classic-page-turn span{font-size:27px}
+ .classic-page-turn small{writing-mode:horizontal-tb;font-size:10px;letter-spacing:.03em}
+ .theme-classic .collection-cover-book{width:min(96vw,470px);transform:none}
+}
+
+
+/* ==========================================================
+   v6.2 Album theme — FANTASY
+   Adventurer's archive / guild chronicle / field bestiary
+   ========================================================== */
+
+.collection-book-shell.theme-fantasy{
+ --fan-leather:#4a3421;
+ --fan-leather-low:#23180f;
+ --fan-green:#2b4a34;
+ --fan-green-low:#17281d;
+ --fan-brass:#a98146;
+ --fan-brass-hi:#d1b47a;
+ --fan-paper:#d2c29b;
+ --fan-paper-low:#a9946d;
+ --fan-wood:#694829;
+ --fan-ink:#4b3823;
+ padding:19px 19px 25px;
+ border:1px solid #76603c;
+ border-radius:15px;
+ background:
+   radial-gradient(ellipse at 50% -14%,rgba(180,151,94,.07),transparent 44%),
+   radial-gradient(circle at 87% 20%,rgba(62,113,74,.08),transparent 24%),
+   repeating-linear-gradient(90deg,rgba(255,255,255,.008) 0 1px,transparent 1px 7px),
+   linear-gradient(150deg,#66492c,#302317 46%,#203a29 72%,#111a13);
+ box-shadow:
+   inset 0 0 0 4px rgba(0,0,0,.18),
+   inset 0 -30px 48px rgba(0,0,0,.27),
+   0 24px 56px rgba(0,0,0,.38);
+ color:#e1d1a7;
+}
+.collection-book-shell.theme-fantasy .collection-book-top{
+ margin:0 7px 14px;
+ border-bottom:1px solid rgba(180,139,72,.2);
+}
+.collection-book-shell.theme-fantasy .collection-source-title{
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ color:#e4d3a9;
+ letter-spacing:.035em;
+ text-shadow:0 2px 7px rgba(0,0,0,.55);
+}
+.collection-book-shell.theme-fantasy .muted{color:#a89a78}
+
+.fantasy-spread-host{width:100%;min-width:0;padding:8px 3px 14px}
+.fantasy-spread{
+ position:relative;
+ isolation:isolate;
+ display:grid;
+ grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr);
+ align-items:stretch;
+ width:min(100%,1500px);
+ margin:0 auto;
+ padding:30px 45px 37px;
+ border:1px solid #755733;
+ border-radius:28px 28px 35px 35px;
+ background:
+   radial-gradient(circle at 10% 14%,rgba(97,143,86,.07),transparent 23%),
+   radial-gradient(circle at 90% 86%,rgba(168,126,65,.07),transparent 24%),
+   linear-gradient(90deg,rgba(0,0,0,.23),transparent 8% 92%,rgba(0,0,0,.25)),
+   repeating-linear-gradient(105deg,rgba(255,255,255,.008) 0 1px,transparent 1px 9px),
+   linear-gradient(150deg,#67472c 0%,#362416 40%,#294432 69%,#142319 100%);
+ box-shadow:
+   inset 0 0 0 7px rgba(5,4,2,.22),
+   inset 0 0 0 8px rgba(197,157,85,.035),
+   inset 12px 0 27px rgba(0,0,0,.18),
+   inset -12px 0 27px rgba(0,0,0,.18),
+   0 24px 47px rgba(0,0,0,.39);
+ perspective:1800px;
+}
+.fantasy-cover-back{
+ position:absolute;z-index:0;inset:11px;
+ border:1px solid rgba(177,136,69,.15);
+ border-radius:21px 21px 28px 28px;
+ background:
+   repeating-linear-gradient(111deg,rgba(255,255,255,.006) 0 1px,transparent 1px 11px),
+   radial-gradient(ellipse at 30% 16%,rgba(255,255,255,.012),transparent 35%);
+ box-shadow:inset 0 0 35px rgba(0,0,0,.23);
+ pointer-events:none;
+}
+
+/* leather buckles */
+.fantasy-buckle{
+ position:absolute;z-index:7;left:50%;width:82px;height:22px;
+ transform:translateX(-50%);
+ border:1px solid #765528;border-radius:5px;
+ background:linear-gradient(90deg,#3f2a15,#b48d4e 24%,#725425 51%,#c5a366 76%,#463018);
+ box-shadow:inset 0 1px rgba(255,239,193,.18),0 3px 7px rgba(0,0,0,.4);
+ pointer-events:none;
+}
+.fantasy-buckle-top{top:10px}.fantasy-buckle-bottom{bottom:12px}
+.fantasy-buckle i{
+ position:absolute;left:50%;top:50%;width:18px;height:10px;
+ transform:translate(-50%,-50%);
+ border:2px solid #d0b071;border-radius:2px;
+ box-shadow:inset 0 0 3px rgba(0,0,0,.4);
+}
+
+/* pages */
+.fantasy-page{position:relative;z-index:2;min-width:0;display:flex;padding:6px 5px 10px}
+.fantasy-page-stack{
+ position:absolute;z-index:0;top:11px;bottom:5px;left:9px;right:9px;border-radius:10px;
+ background:repeating-linear-gradient(0deg,#8f7d5b 0 1px,#b9a77e 1px 2px,#817151 2px 3px);
+ box-shadow:0 7px 13px rgba(0,0,0,.25);
+}
+.fantasy-page-stack.stack-a{transform:translateY(4px);opacity:.66}
+.fantasy-page-stack.stack-b{transform:translateY(7px);opacity:.34}
+.fantasy-parchment{
+ position:relative;z-index:2;flex:1;min-width:0;
+ padding:32px 24px 36px;
+ border:1px solid #8a754e;
+ background:
+   radial-gradient(circle at 12% 11%,rgba(72,95,48,.05),transparent 16%),
+   radial-gradient(circle at 83% 83%,rgba(113,75,34,.055),transparent 22%),
+   repeating-linear-gradient(0deg,rgba(71,54,35,.012) 0 1px,transparent 1px 8px),
+   linear-gradient(106deg,#d7c8a3,#c8b88e 54%,#b29f75);
+ color:var(--fan-ink);
+ overflow:hidden;
+}
+.fantasy-page-left .fantasy-parchment{
+ border-radius:17px 4px 4px 20px;
+ transform:perspective(1600px) rotateY(.45deg);transform-origin:right center;
+ box-shadow:inset -30px 0 36px rgba(59,41,25,.15),inset 2px 0 rgba(255,246,213,.16),0 8px 18px rgba(0,0,0,.25);
+}
+.fantasy-page-right .fantasy-parchment{
+ border-radius:4px 17px 20px 4px;
+ transform:perspective(1600px) rotateY(-.45deg);transform-origin:left center;
+ box-shadow:inset 30px 0 36px rgba(59,41,25,.15),inset -2px 0 rgba(255,246,213,.16),0 8px 18px rgba(0,0,0,.25);
+}
+.fantasy-parchment::before{
+ content:"";position:absolute;z-index:3;inset:7px;border:1px solid rgba(91,70,42,.16);border-radius:inherit;pointer-events:none;
+}
+.fantasy-map-watermark{
+ position:absolute;z-index:1;inset:0;pointer-events:none;opacity:.28;
+ background:
+   radial-gradient(circle at 24% 34%,transparent 0 17%,rgba(71,91,48,.09) 18% 18.5%,transparent 19%),
+   radial-gradient(circle at 72% 61%,transparent 0 22%,rgba(101,75,38,.07) 23% 23.5%,transparent 24%);
+}
+.fantasy-map-watermark i{
+ position:absolute;left:17%;top:22%;width:42%;height:28%;
+ border:1px dashed rgba(70,91,47,.16);
+ border-radius:48% 41% 55% 39%;
+ transform:rotate(-11deg);
+}
+.fantasy-map-watermark span{
+ position:absolute;right:14%;bottom:20%;width:26%;height:18%;
+ border-left:1px dashed rgba(95,67,36,.17);
+ border-bottom:1px dashed rgba(95,67,36,.17);
+ transform:rotate(18deg);
+}
+.fantasy-map-watermark b{
+ position:absolute;left:48%;top:46%;width:9px;height:9px;
+ border:1px solid rgba(90,61,32,.2);transform:rotate(45deg);
+}
+.fantasy-header-ornament{
+ position:absolute;z-index:3;top:10px;left:20px;right:20px;height:17px;
+ display:flex;align-items:center;justify-content:center;gap:8px;
+ color:rgba(69,78,39,.52);pointer-events:none;
+}
+.fantasy-header-ornament span{font-size:10px}
+.fantasy-header-ornament i{width:42px;height:1px;background:currentColor;opacity:.55}
+.fantasy-header-ornament b{
+ font-family:Georgia,serif;font-size:7px;letter-spacing:.12em;font-weight:400;
+}
+
+/* card mounts: small wooden frames with vines */
+.fantasy-slot-grid{
+ position:relative;z-index:4;display:grid;
+ grid-template-columns:repeat(var(--fantasy-cols,2),minmax(0,1fr));
+ gap:18px 15px;align-content:start;
+}
+.fantasy-card-slot{
+ position:relative;min-width:0;padding:10px;
+ border:1px solid rgba(91,62,32,.48);border-radius:5px;
+ background:rgba(95,69,37,.035);
+ box-shadow:inset 0 0 0 1px rgba(255,247,217,.05);
+}
+.fantasy-slot-wood{
+ position:absolute;z-index:0;inset:4px;border:1px solid rgba(102,70,34,.2);border-radius:3px;
+ background:
+   repeating-linear-gradient(0deg,rgba(112,76,38,.03) 0 1px,transparent 1px 5px);
+}
+.fantasy-card-mount{position:relative;z-index:2}
+.fantasy-card-slot .collection-card-art{
+ border-radius:3px;border-color:#73512d;
+ box-shadow:0 2px 3px rgba(53,35,19,.45),0 6px 12px rgba(53,35,19,.16);
+}
+.fantasy-card-slot .collection-card-name{
+ margin:6px 0 -3px;padding:4px 5px;border-radius:2px;
+ background:linear-gradient(90deg,transparent,rgba(57,77,43,.08) 15% 85%,transparent);
+ color:#493922;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;font-size:11px;line-height:1.25;text-shadow:none;
+}
+.fantasy-vine{
+ position:absolute;z-index:5;width:19px;height:19px;pointer-events:none;
+ border-color:#557041;
+}
+.fantasy-vine::before,.fantasy-vine::after{content:"";position:absolute}
+.fantasy-vine::before{
+ width:15px;height:7px;border-top:2px solid #557041;border-radius:50%;
+}
+.fantasy-vine::after{
+ width:7px;height:12px;border-left:2px solid #557041;border-radius:50%;
+}
+.fantasy-vine.vine-tl{left:2px;top:3px}
+.fantasy-vine.vine-tr{right:2px;top:3px;transform:scaleX(-1)}
+.fantasy-vine.vine-bl{left:2px;bottom:3px;transform:scaleY(-1)}
+.fantasy-vine.vine-br{right:2px;bottom:3px;transform:scale(-1)}
+
+/* empty record */
+.fantasy-card-slot.empty{
+ aspect-ratio:5/7;display:flex;align-items:center;justify-content:center;border-style:dashed;
+ background:radial-gradient(circle at 50% 48%,rgba(73,98,54,.04),transparent 40%);
+}
+.fantasy-empty-crest{
+ width:67%;aspect-ratio:5/4;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+ border:1px solid rgba(76,91,49,.18);
+ box-shadow:inset 0 0 0 5px rgba(100,75,39,.02),inset 0 0 0 6px rgba(72,92,50,.07);
+ color:rgba(66,78,43,.32);
+}
+.fantasy-empty-crest span{font-size:25px;line-height:1}
+.fantasy-empty-crest small{font-size:7px;letter-spacing:.11em}
+
+/* rope-bound spine */
+.fantasy-binding{position:relative;z-index:5;min-height:100%;display:flex;align-items:center;justify-content:center}
+.fantasy-binding-shadow{
+ position:absolute;top:5px;bottom:7px;left:2px;right:2px;border-radius:19px;
+ background:linear-gradient(90deg,rgba(31,18,10,.76),rgba(88,76,43,.09) 46% 54%,rgba(23,39,28,.78));
+ box-shadow:0 0 22px rgba(0,0,0,.39);
+}
+.fantasy-binding-rope{position:absolute;inset:5% 0}
+.fantasy-binding-rope i{
+ position:absolute;left:50%;top:calc(7% + var(--rope) * 12%);
+ width:43px;height:9px;transform:translate(-50%,-50%);
+ border-top:3px solid #927140;border-bottom:1px solid rgba(53,36,21,.7);
+ border-radius:50%;box-shadow:0 2px 2px rgba(0,0,0,.25);
+}
+.fantasy-binding-emblem{
+ position:absolute;left:50%;top:50%;width:32px;height:32px;
+ transform:translate(-50%,-50%) rotate(45deg);
+ display:flex;align-items:center;justify-content:center;
+ border:2px solid #b48a4c;background:radial-gradient(circle,#4b6844,#233823 64%);
+ color:#d5b879;box-shadow:0 0 0 3px #3a2818,0 0 13px rgba(85,115,75,.16);
+}
+.fantasy-binding-emblem span{transform:rotate(-45deg)}
+
+.fantasy-page-number{
+ position:absolute;z-index:5;bottom:10px;left:50%;transform:translateX(-50%);
+ color:rgba(68,54,36,.48);font-family:Georgia,serif;font-size:10px;font-style:italic;
+}
+
+/* navigation */
+.fantasy-page-turn{
+ position:absolute;z-index:9;top:50%;width:72px;height:178px;transform:translateY(-50%);
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+ border:1px solid #755534;border-radius:13px;
+ background:
+   radial-gradient(circle at 50% 28%,rgba(70,105,66,.08),transparent 36%),
+   repeating-linear-gradient(105deg,rgba(255,255,255,.007) 0 1px,transparent 1px 7px),
+   linear-gradient(90deg,#563921,#1f3727);
+ color:#d2b477;box-shadow:inset 0 1px rgba(255,238,193,.035),0 8px 21px rgba(0,0,0,.35);
+ cursor:pointer;opacity:.8;
+}
+.fantasy-page-turn:hover:not(:disabled){opacity:1;border-color:#a17a43;background:linear-gradient(90deg,#694528,#294b35)}
+.fantasy-page-turn:disabled{opacity:.12;cursor:default}
+.fantasy-page-turn-prev{left:-19px}.fantasy-page-turn-next{right:-19px}
+.fantasy-page-turn span{font-size:45px;line-height:.8}
+.fantasy-page-turn small{
+ writing-mode:vertical-rl;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;font-size:11px;letter-spacing:.09em;
+}
+
+/* page motion */
+.fantasy-turning-next .fantasy-page-right{transform-origin:left center;animation:fantasyTurnNext .57s cubic-bezier(.2,.72,.18,1)}
+.fantasy-turning-prev .fantasy-page-left{transform-origin:right center;animation:fantasyTurnPrev .57s cubic-bezier(.2,.72,.18,1)}
+.fantasy-turning-next .fantasy-binding,.fantasy-turning-prev .fantasy-binding{animation:fantasyBindingSettle .5s ease-out}
+@keyframes fantasyTurnNext{
+ 0%{opacity:.46;transform:perspective(1400px) rotateY(-20deg) translateX(16px);filter:brightness(.78) sepia(.08)}
+ 48%{opacity:.96;transform:perspective(1400px) rotateY(-4deg) translateX(3px)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes fantasyTurnPrev{
+ 0%{opacity:.46;transform:perspective(1400px) rotateY(20deg) translateX(-16px);filter:brightness(.78) sepia(.08)}
+ 48%{opacity:.96;transform:perspective(1400px) rotateY(4deg) translateX(-3px)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes fantasyBindingSettle{0%{transform:scaleX(.92);filter:brightness(.78)}100%{transform:none;filter:none}}
+
+.fantasy-empty-book{
+ min-height:440px;display:flex;align-items:center;justify-content:center;
+ border:1px solid #765835;border-radius:19px;
+ background:radial-gradient(circle at 50% 45%,rgba(70,103,67,.07),transparent 31%),linear-gradient(145deg,#62432a,#2e2116 52%,#213a2b);
+ color:#c6af7b;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+
+/* density */
+.fantasy-spread-host[data-page-size="1"] .fantasy-card-slot{width:min(72%,380px);justify-self:center}
+.fantasy-spread-host[data-page-size="2"] .fantasy-card-slot{width:min(86%,350px);justify-self:center}
+.fantasy-spread-host[data-page-size="16"] .fantasy-slot-grid,
+.fantasy-spread-host[data-page-size="24"] .fantasy-slot-grid{gap:10px 9px}
+.fantasy-spread-host[data-page-size="36"] .fantasy-slot-grid,
+.fantasy-spread-host[data-page-size="48"] .fantasy-slot-grid{gap:7px 6px}
+.fantasy-spread-host[data-page-size="24"] .fantasy-card-slot,
+.fantasy-spread-host[data-page-size="36"] .fantasy-card-slot,
+.fantasy-spread-host[data-page-size="48"] .fantasy-card-slot{padding:5px}
+.fantasy-spread-host[data-page-size="36"] .fantasy-header-ornament,
+.fantasy-spread-host[data-page-size="48"] .fantasy-header-ornament,
+.fantasy-spread-host[data-page-size="48"] .fantasy-vine{display:none}
+
+/* external navigation palette */
+#screen-collection:has(.collection-book-shell.theme-fantasy) .collection-side-page{
+ border-color:rgba(131,98,54,.57);
+ background:
+   radial-gradient(circle at 50% 25%,rgba(69,102,65,.08),transparent 36%),
+   linear-gradient(180deg,rgba(79,50,28,.95),rgba(24,48,34,.96));
+ color:#d6b97c;box-shadow:inset 0 1px rgba(255,240,197,.025),0 8px 22px rgba(0,0,0,.33);
+}
+#screen-collection:has(.collection-book-shell.theme-fantasy) #collection-pagination{color:#a89972}
+#screen-collection:has(.collection-book-shell.theme-fantasy) #collection-pagination .btn{
+ border-color:rgba(133,99,55,.48);background:rgba(43,31,21,.82);color:#c9b17b;
+}
+#screen-collection:has(.collection-book-shell.theme-fantasy) #collection-pagination .btn.primary{
+ border-color:#a07a44;background:linear-gradient(180deg,#674126,#31533b);color:#f0dfb3;
+}
+
+/* shelf */
+.album-book-card[data-shelf-theme="fantasy"] .album-shelf-book{transform:rotateY(-5deg) rotateZ(-.6deg)}
+.album-book-card[data-shelf-theme="fantasy"]:hover .album-shelf-book{
+ transform:rotateY(-1deg) rotateZ(0) translateY(-12px) translateZ(8px)
+}
+.album-book-card[data-shelf-theme="fantasy"] .album-book-cover.theme-fantasy{
+ border-color:#81633b;
+ background:
+   radial-gradient(circle at 77% 20%,rgba(66,111,72,.18) 0 11%,transparent 12%),
+   linear-gradient(34deg,transparent 0 69%,rgba(43,79,48,.42) 70% 100%),
+   repeating-linear-gradient(108deg,rgba(255,255,255,.008) 0 1px,transparent 1px 9px),
+   linear-gradient(145deg,#8a6a3f,#56391f 64%,#243c2a);
+ box-shadow:inset 0 0 0 4px rgba(0,0,0,.14),inset 7px 0 13px rgba(0,0,0,.23),5px 6px 12px rgba(0,0,0,.34);
+}
+.album-book-card[data-shelf-theme="fantasy"] .album-cover-inner-frame{
+ border-color:rgba(196,154,82,.26);box-shadow:inset 0 0 0 2px rgba(75,54,30,.1)
+}
+.album-book-card[data-shelf-theme="fantasy"] .album-cover-corner::before,
+.album-book-card[data-shelf-theme="fantasy"] .album-cover-corner::after{
+ background:linear-gradient(90deg,#70512c,#d0b16f 46%,#80613b)
+}
+.album-book-card[data-shelf-theme="fantasy"] .album-cover-crest,
+.album-book-card[data-shelf-theme="fantasy"] .album-cover-title{color:#e1c58a}
+.album-book-card[data-shelf-theme="fantasy"] .album-cover-title{
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif
+}
+.album-book-card[data-shelf-theme="fantasy"] .album-cover-title-plate{
+ border-color:rgba(187,145,72,.19);background:linear-gradient(90deg,transparent,rgba(51,37,22,.25) 13% 87%,transparent)
+}
+.album-book-card[data-shelf-theme="fantasy"] .album-cover-card-frame{border-color:#93713e;background:#23170e}
+.album-book-card[data-shelf-theme="fantasy"] .album-book-spine.theme-fantasy{
+ width:34px;
+ background:repeating-linear-gradient(0deg,rgba(255,255,255,.007) 0 1px,transparent 1px 8px),linear-gradient(90deg,#2b1c10,#89683e 48%,#294330);
+ border-color:#61482d
+}
+.album-book-card[data-shelf-theme="fantasy"] .album-book-spine-title{
+ color:#dbc28c;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif
+}
+.album-book-card[data-shelf-theme="fantasy"] .album-book-page-block{
+ background:repeating-linear-gradient(0deg,#c3b28b 0 1px,#8f7d5e 1px 2px,#b4a37d 2px 3px);border-color:#7c6a4b
+}
+.album-book-card[data-shelf-theme="fantasy"] .album-book-back-cover{
+ background:linear-gradient(145deg,#5b3c22,#21382a);border-color:#624a2e
+}
+.album-book-card[data-shelf-theme="fantasy"] .album-book-caption{
+ border-color:rgba(132,98,52,.25);background:linear-gradient(180deg,rgba(65,43,26,.84),rgba(23,43,31,.9))
+}
+.album-book-card[data-shelf-theme="fantasy"] .album-book-caption::before{
+ background:linear-gradient(90deg,transparent,rgba(194,153,84,.22),transparent)
+}
+
+/* opening cover */
+.theme-fantasy .collection-cover-book{
+ --cover-metal:#98723f;--cover-metal-hi:#d8bb7b;--cover-line:rgba(192,151,80,.26);
+ --cover-ink:#ead7a9;--cover-muted:#b7a27b;
+ width:min(92vw,620px);border-color:#80633d;border-radius:13px 25px 25px 13px;
+ background:
+   radial-gradient(circle at 78% 20%,rgba(63,110,69,.18) 0 11%,transparent 12%),
+   linear-gradient(34deg,transparent 0 70%,rgba(39,76,45,.38) 71% 100%),
+   repeating-linear-gradient(111deg,rgba(255,255,255,.008) 0 1px,transparent 1px 10px),
+   linear-gradient(145deg,#8d6d42,#54371f 66%,#243e2b);
+ box-shadow:inset 17px 0 23px rgba(0,0,0,.25),inset 0 0 0 5px rgba(0,0,0,.12),0 26px 61px rgba(0,0,0,.43);
+}
+.theme-fantasy .collection-cover-book::before{
+ background:linear-gradient(90deg,#2c1c10,#765532 56%,#243c2a);border-right-color:rgba(187,146,74,.1)
+}
+.theme-fantasy .collection-cover-inner-frame{
+ border-color:rgba(200,158,85,.28);box-shadow:inset 0 0 0 2px rgba(82,60,32,.1)
+}
+.theme-fantasy .collection-cover-corner::before,
+.theme-fantasy .collection-cover-corner::after{
+ background:linear-gradient(90deg,#70522e,#d2b371 46%,#80623a)
+}
+.theme-fantasy .collection-cover-crest{color:#dcc17d}
+.theme-fantasy .collection-cover-kicker{color:#ad996f}
+.theme-fantasy .collection-cover-book h1{
+ color:#ead8ae;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif
+}
+.theme-fantasy .collection-cover-page-subtitle{color:#c4ae83}
+.theme-fantasy .collection-cover-card-frame{
+ border-color:#97733e;background:linear-gradient(145deg,rgba(188,151,83,.035),rgba(0,0,0,.27)),#20150d
+}
+.theme-fantasy .collection-cover-description{
+ border-color:rgba(181,141,71,.16);background:linear-gradient(90deg,transparent,rgba(47,33,19,.2) 15% 85%,transparent);
+ color:#cebd98;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif
+}
+.theme-fantasy .collection-cover-meta{color:#ac9972}
+.theme-fantasy .collection-cover-open-wrap{
+ border-color:rgba(174,135,66,.19);background:rgba(44,31,19,.18)
+}
+.theme-fantasy .collection-cover-open-wrap .btn.primary{
+ border-color:#9d7841;background:linear-gradient(180deg,#76502d,#31503a);color:#ecd9aa
+}
+.theme-fantasy .collection-cover-emblem-panel{
+ border-color:rgba(181,142,71,.22);
+ background:radial-gradient(circle at 50% 44%,rgba(76,106,65,.09),transparent 42%),rgba(42,29,18,.14);
+ color:#d2b875
+}
+
+@media(max-width:1000px){
+ .fantasy-spread{grid-template-columns:minmax(0,1fr) 49px minmax(0,1fr);padding:22px 28px 29px}
+ .fantasy-parchment{padding:24px 17px 31px}
+ .fantasy-slot-grid{gap:11px 10px}
+ .fantasy-binding-rope i{width:35px}
+}
+@media(max-width:700px){
+ .collection-book-shell.theme-fantasy{padding:11px 7px 16px}
+ .fantasy-spread{display:block;padding:17px 12px 64px;border-radius:19px}
+ .fantasy-page{padding:5px;margin-bottom:13px}
+ .fantasy-page-left .fantasy-parchment,.fantasy-page-right .fantasy-parchment{transform:none;border-radius:11px!important}
+ .fantasy-binding,.fantasy-buckle{display:none}
+ .fantasy-parchment{padding:21px 13px 29px}
+ .fantasy-slot-grid{gap:9px 8px}
+ .fantasy-page-turn{top:auto;bottom:8px;width:126px;height:42px;transform:none;flex-direction:row;border-radius:9px}
+ .fantasy-page-turn-prev{left:13px}.fantasy-page-turn-next{right:13px}
+ .fantasy-page-turn span{font-size:27px}
+ .fantasy-page-turn small{writing-mode:horizontal-tb;font-size:10px;letter-spacing:.03em}
+ .theme-fantasy .collection-cover-book{width:min(96vw,470px);transform:none}
+}
+
+
+/* ==========================================================
+   v6.3 Album theme — FANTASY II
+   Royal celestial chronicle / ivory, royal blue and gold
+   ========================================================== */
+
+.collection-book-shell.theme-fantasy2{
+ --f2-ivory:#e9e3d4;
+ --f2-blue:#243f78;
+ --f2-blue-hi:#5579bd;
+ --f2-gold:#b99a4c;
+ --f2-gold-hi:#e2cc83;
+ --f2-paper:#e2dac4;
+ --f2-ink:#38496f;
+ padding:19px 19px 25px;
+ border:1px solid #9f8749;
+ border-radius:16px;
+ background:
+   radial-gradient(circle at 50% -5%,rgba(105,145,211,.15),transparent 37%),
+   radial-gradient(circle at 85% 78%,rgba(211,182,83,.08),transparent 24%),
+   repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 7px),
+   linear-gradient(145deg,#ded8c9,#415f99 38%,#203866 68%,#8c7135 100%);
+ box-shadow:
+   inset 0 0 0 4px rgba(37,50,78,.14),
+   inset 0 -30px 48px rgba(22,33,57,.2),
+   0 24px 57px rgba(0,0,0,.34);
+ color:#f5ead0;
+}
+.collection-book-shell.theme-fantasy2 .collection-book-top{
+ margin:0 7px 14px;
+ border-bottom:1px solid rgba(224,201,124,.24);
+}
+.collection-book-shell.theme-fantasy2 .collection-source-title{
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ color:#fff0bf;
+ letter-spacing:.045em;
+ text-shadow:0 2px 7px rgba(23,39,70,.55);
+}
+.collection-book-shell.theme-fantasy2 .muted{color:#d8cda9}
+
+.fantasy2-spread-host{width:100%;min-width:0;padding:8px 3px 14px}
+.fantasy2-spread{
+ position:relative;isolation:isolate;display:grid;
+ grid-template-columns:minmax(0,1fr) 70px minmax(0,1fr);
+ align-items:stretch;width:min(100%,1500px);margin:0 auto;
+ padding:31px 46px 38px;border:1px solid #b19448;border-radius:30px 30px 38px 38px;
+ background:
+   radial-gradient(circle at 50% 0%,rgba(194,214,250,.15),transparent 34%),
+   radial-gradient(circle at 9% 20%,rgba(238,216,137,.08),transparent 20%),
+   radial-gradient(circle at 91% 80%,rgba(238,216,137,.08),transparent 20%),
+   linear-gradient(90deg,rgba(34,49,81,.15),transparent 8% 92%,rgba(34,49,81,.15)),
+   linear-gradient(145deg,#e0dacb 0%,#5573ad 31%,#274476 66%,#947737 100%);
+ box-shadow:
+   inset 0 0 0 7px rgba(47,65,104,.13),
+   inset 0 0 0 9px rgba(239,216,138,.08),
+   inset 13px 0 29px rgba(41,55,88,.16),
+   inset -13px 0 29px rgba(41,55,88,.16),
+   0 24px 48px rgba(0,0,0,.34);
+ perspective:1800px;
+}
+.fantasy2-cover-back{
+ position:absolute;z-index:0;inset:12px;border:1px solid rgba(234,211,130,.3);
+ border-radius:23px 23px 31px 31px;
+ background:
+   repeating-linear-gradient(110deg,rgba(255,255,255,.012) 0 1px,transparent 1px 9px),
+   radial-gradient(circle at 50% 50%,rgba(92,125,186,.08),transparent 37%);
+ box-shadow:inset 0 0 0 3px rgba(65,89,139,.08),inset 0 0 38px rgba(30,45,76,.14);
+ pointer-events:none;
+}
+
+/* Four royal corner plates */
+.fantasy2-corner-plate{
+ position:absolute;z-index:7;width:34px;height:34px;
+ display:flex;align-items:center;justify-content:center;
+ border:1px solid #b89749;border-radius:7px;
+ background:linear-gradient(145deg,#e7d38c,#9d7a32 48%,#38578f 70%,#203c70);
+ color:#fff1b8;box-shadow:0 2px 7px rgba(36,52,83,.28);
+ transform:rotate(45deg);pointer-events:none;
+}
+.fantasy2-corner-plate span{transform:rotate(-45deg);font-size:11px}
+.fantasy2-corner-plate.plate-tl{top:15px;left:18px}
+.fantasy2-corner-plate.plate-tr{top:15px;right:18px}
+.fantasy2-corner-plate.plate-bl{bottom:17px;left:18px}
+.fantasy2-corner-plate.plate-br{bottom:17px;right:18px}
+
+/* Pale manuscript pages */
+.fantasy2-page{position:relative;z-index:2;min-width:0;display:flex;padding:6px 5px 10px}
+.fantasy2-page-stack{
+ position:absolute;z-index:0;top:11px;bottom:5px;left:9px;right:9px;border-radius:12px;
+ background:repeating-linear-gradient(0deg,#aaa080 0 1px,#d8ceb2 1px 2px,#9c9276 2px 3px);
+ box-shadow:0 7px 13px rgba(37,50,80,.22);
+}
+.fantasy2-page-stack.stack-a{transform:translateY(4px);opacity:.66}
+.fantasy2-page-stack.stack-b{transform:translateY(7px);opacity:.32}
+.fantasy2-page-surface{
+ position:relative;z-index:2;flex:1;min-width:0;
+ padding:32px 24px 36px;border:1px solid #af985c;
+ background:
+   radial-gradient(circle at 15% 10%,rgba(72,103,166,.04),transparent 16%),
+   radial-gradient(circle at 84% 85%,rgba(181,148,64,.055),transparent 25%),
+   repeating-linear-gradient(0deg,rgba(81,75,58,.01) 0 1px,transparent 1px 8px),
+   linear-gradient(107deg,#eee8d9,#dfd7c2 54%,#cfc4a7);
+ color:var(--f2-ink);overflow:hidden;
+}
+.fantasy2-page-left .fantasy2-page-surface{
+ border-radius:18px 5px 5px 21px;transform:perspective(1600px) rotateY(.4deg);transform-origin:right center;
+ box-shadow:inset -31px 0 37px rgba(61,76,111,.11),inset 2px 0 rgba(255,255,255,.31),0 8px 19px rgba(38,49,76,.21);
+}
+.fantasy2-page-right .fantasy2-page-surface{
+ border-radius:5px 18px 21px 5px;transform:perspective(1600px) rotateY(-.4deg);transform-origin:left center;
+ box-shadow:inset 31px 0 37px rgba(61,76,111,.11),inset -2px 0 rgba(255,255,255,.31),0 8px 19px rgba(38,49,76,.21);
+}
+.fantasy2-page-surface::before{
+ content:"";position:absolute;z-index:2;inset:7px;border:1px solid rgba(149,121,55,.18);
+ box-shadow:inset 0 0 0 3px rgba(66,94,151,.035);border-radius:inherit;pointer-events:none;
+}
+.fantasy2-cloud-watermark{
+ position:absolute;z-index:1;inset:0;pointer-events:none;opacity:.34;
+ background:
+   radial-gradient(ellipse at 25% 36%,rgba(94,130,194,.08) 0 12%,transparent 13%),
+   radial-gradient(ellipse at 32% 39%,rgba(94,130,194,.06) 0 9%,transparent 10%),
+   radial-gradient(ellipse at 77% 72%,rgba(184,151,69,.06) 0 12%,transparent 13%);
+}
+.fantasy2-cloud-watermark i{
+ position:absolute;left:17%;top:21%;width:31%;height:21%;
+ border-bottom:1px solid rgba(65,96,157,.14);border-radius:50%;
+ transform:rotate(-8deg);
+}
+.fantasy2-cloud-watermark span{
+ position:absolute;right:16%;bottom:19%;width:29%;height:19%;
+ border-top:1px solid rgba(151,118,51,.13);border-radius:50%;
+ transform:rotate(11deg);
+}
+.fantasy2-cloud-watermark b{
+ position:absolute;left:50%;top:46%;width:10px;height:10px;
+ border:1px solid rgba(86,112,165,.18);transform:rotate(45deg);
+}
+.fantasy2-header-crest{
+ position:absolute;z-index:3;top:10px;left:20px;right:20px;height:18px;
+ display:flex;align-items:center;justify-content:center;gap:7px;
+ color:rgba(71,91,136,.55);pointer-events:none;
+}
+.fantasy2-header-crest i{width:32px;height:1px;background:linear-gradient(90deg,transparent,#9f7e36)}
+.fantasy2-header-crest i:last-child{transform:scaleX(-1)}
+.fantasy2-header-crest span{font-size:9px;color:#a98a43}
+.fantasy2-header-crest strong{
+ font-family:Georgia,serif;font-size:7px;letter-spacing:.13em;font-weight:400;
+}
+
+/* royal card plaques */
+.fantasy2-slot-grid{
+ position:relative;z-index:4;display:grid;
+ grid-template-columns:repeat(var(--fantasy2-cols,2),minmax(0,1fr));
+ gap:17px 14px;align-content:start;
+}
+.fantasy2-card-slot{
+ position:relative;min-width:0;padding:10px;
+ border:1px solid rgba(145,116,51,.48);border-radius:6px;
+ background:
+   radial-gradient(circle at 50% 42%,rgba(80,110,172,.045),transparent 52%),
+   linear-gradient(145deg,rgba(255,255,255,.08),rgba(160,131,61,.025));
+ box-shadow:inset 0 0 0 2px rgba(70,97,151,.04);
+}
+.fantasy2-slot-plaque{
+ position:absolute;z-index:0;inset:4px;border:1px solid rgba(159,128,57,.18);border-radius:4px;
+ box-shadow:inset 0 0 0 3px rgba(67,95,150,.025);
+}
+.fantasy2-card-mount{position:relative;z-index:2}
+.fantasy2-card-slot .collection-card-art{
+ border-radius:4px;border-color:#a18445;
+ box-shadow:0 2px 3px rgba(43,55,83,.38),0 6px 13px rgba(46,59,91,.14);
+}
+.fantasy2-card-slot .collection-card-name{
+ margin:6px 0 -3px;padding:4px 5px;border-radius:3px;
+ background:linear-gradient(90deg,transparent,rgba(67,96,153,.07) 14% 86%,transparent);
+ color:#40537d;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ font-size:11px;line-height:1.25;text-shadow:none;
+}
+.fantasy2-slot-wing{
+ position:absolute;z-index:5;top:4px;width:18px;height:11px;pointer-events:none;
+ border-top:2px solid #5576ad;border-radius:60%;
+}
+.fantasy2-slot-wing::after{
+ content:"";position:absolute;top:3px;width:12px;height:8px;border-top:1px solid rgba(181,147,67,.6);border-radius:50%;
+}
+.fantasy2-slot-wing.wing-l{left:5px;transform:rotate(-18deg)}
+.fantasy2-slot-wing.wing-r{right:5px;transform:scaleX(-1) rotate(-18deg)}
+.fantasy2-slot-gem{
+ position:absolute;z-index:5;top:2px;left:50%;width:10px;height:10px;
+ transform:translateX(-50%) rotate(45deg);border:1px solid #b69342;
+ background:radial-gradient(circle at 35% 30%,#b9d5ff,#5c86c9 44%,#284574 75%);
+ box-shadow:0 0 5px rgba(62,92,149,.2);pointer-events:none;
+}
+
+/* empty royal seal */
+.fantasy2-card-slot.empty{
+ aspect-ratio:5/7;display:flex;align-items:center;justify-content:center;border-style:dashed;
+ background:radial-gradient(circle at 50% 48%,rgba(73,103,163,.04),transparent 40%);
+}
+.fantasy2-empty-seal{
+ width:66%;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+ border:1px solid rgba(72,99,153,.2);border-radius:50%;
+ box-shadow:inset 0 0 0 6px rgba(177,143,60,.025),inset 0 0 0 7px rgba(72,99,153,.055);
+ color:rgba(62,87,137,.33);
+}
+.fantasy2-empty-seal span{font-size:26px;line-height:1;color:rgba(165,133,60,.38)}
+.fantasy2-empty-seal small{font-size:7px;letter-spacing:.12em}
+
+/* raised royal spine */
+.fantasy2-binding{position:relative;z-index:5;min-height:100%;display:flex;align-items:center;justify-content:center}
+.fantasy2-binding-shadow{
+ position:absolute;top:4px;bottom:6px;left:1px;right:1px;border-radius:22px;
+ background:linear-gradient(90deg,rgba(38,51,83,.62),rgba(203,178,101,.07) 47% 53%,rgba(38,51,83,.63));
+ box-shadow:0 0 22px rgba(31,44,73,.31);
+}
+.fantasy2-binding-ridge{
+ position:absolute;top:5%;bottom:5%;left:50%;width:16px;transform:translateX(-50%);
+ border:1px solid #9b7c36;border-radius:8px;
+ background:linear-gradient(90deg,#415d96,#e2cb83 29%,#967833 50%,#e8d695 73%,#405d97);
+ box-shadow:inset 0 1px rgba(255,250,216,.3),0 2px 7px rgba(38,50,81,.31);
+}
+.fantasy2-binding-stars{position:absolute;inset:5% 0}
+.fantasy2-binding-stars i{
+ position:absolute;left:50%;top:calc(7% + var(--star) * 14.3%);
+ transform:translate(-50%,-50%);font-style:normal;font-size:11px;color:#e5cc78;
+ text-shadow:0 0 5px rgba(92,124,183,.25);
+}
+.fantasy2-binding-crown{
+ position:absolute;left:50%;top:50%;width:38px;height:38px;
+ transform:translate(-50%,-50%) rotate(45deg);
+ display:flex;align-items:center;justify-content:center;
+ border:2px solid #c2a24f;background:radial-gradient(circle,#6a8cc7 0 26%,#385b98 27% 57%,#1f3868 58%);
+ color:#f0d985;box-shadow:0 0 0 4px #d9c278,0 0 15px rgba(56,84,136,.2);
+}
+.fantasy2-binding-crown span{transform:rotate(-45deg);font-size:14px}
+
+.fantasy2-page-number{
+ position:absolute;z-index:5;bottom:10px;left:50%;transform:translateX(-50%);
+ color:rgba(66,85,126,.48);font-family:Georgia,serif;font-size:9px;letter-spacing:.12em;
+}
+
+/* page navigation */
+.fantasy2-page-turn{
+ position:absolute;z-index:9;top:50%;width:72px;height:178px;transform:translateY(-50%);
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+ border:1px solid #a0803d;border-radius:14px;
+ background:
+   radial-gradient(circle at 50% 26%,rgba(129,162,218,.1),transparent 35%),
+   linear-gradient(90deg,#d5cdb8,#36568f 57%,#203a6a);
+ color:#f1d98d;box-shadow:inset 0 1px rgba(255,255,255,.13),0 8px 21px rgba(33,46,76,.31);
+ cursor:pointer;opacity:.83;
+}
+.fantasy2-page-turn:hover:not(:disabled){
+ opacity:1;border-color:#c3a353;
+ background:radial-gradient(circle at 50% 26%,rgba(154,188,240,.14),transparent 35%),linear-gradient(90deg,#e2dac6,#456aa8 57%,#294879);
+}
+.fantasy2-page-turn:disabled{opacity:.12;cursor:default}
+.fantasy2-page-turn-prev{left:-19px}.fantasy2-page-turn-next{right:-19px}
+.fantasy2-page-turn span{font-size:45px;line-height:.8}
+.fantasy2-page-turn small{
+ writing-mode:vertical-rl;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;font-size:11px;letter-spacing:.09em;
+}
+
+/* page-turn motion */
+.fantasy2-turning-next .fantasy2-page-right{transform-origin:left center;animation:fantasy2TurnNext .57s cubic-bezier(.2,.72,.18,1)}
+.fantasy2-turning-prev .fantasy2-page-left{transform-origin:right center;animation:fantasy2TurnPrev .57s cubic-bezier(.2,.72,.18,1)}
+.fantasy2-turning-next .fantasy2-binding,.fantasy2-turning-prev .fantasy2-binding{animation:fantasy2BindingSettle .51s ease-out}
+@keyframes fantasy2TurnNext{
+ 0%{opacity:.45;transform:perspective(1400px) rotateY(-20deg) translateX(16px);filter:brightness(.84) saturate(.86)}
+ 48%{opacity:.96;transform:perspective(1400px) rotateY(-4deg) translateX(3px)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes fantasy2TurnPrev{
+ 0%{opacity:.45;transform:perspective(1400px) rotateY(20deg) translateX(-16px);filter:brightness(.84) saturate(.86)}
+ 48%{opacity:.96;transform:perspective(1400px) rotateY(4deg) translateX(-3px)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes fantasy2BindingSettle{0%{transform:scaleX(.93);filter:brightness(.85)}100%{transform:none;filter:none}}
+
+.fantasy2-empty-book{
+ min-height:440px;display:flex;align-items:center;justify-content:center;
+ border:1px solid #a18749;border-radius:20px;
+ background:radial-gradient(circle at 50% 44%,rgba(87,119,180,.09),transparent 31%),linear-gradient(145deg,#ddd7c8,#3c5c97 54%,#263f70);
+ color:#f0dfa9;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+
+/* density */
+.fantasy2-spread-host[data-page-size="1"] .fantasy2-card-slot{width:min(72%,380px);justify-self:center}
+.fantasy2-spread-host[data-page-size="2"] .fantasy2-card-slot{width:min(86%,350px);justify-self:center}
+.fantasy2-spread-host[data-page-size="16"] .fantasy2-slot-grid,
+.fantasy2-spread-host[data-page-size="24"] .fantasy2-slot-grid{gap:10px 9px}
+.fantasy2-spread-host[data-page-size="36"] .fantasy2-slot-grid,
+.fantasy2-spread-host[data-page-size="48"] .fantasy2-slot-grid{gap:7px 6px}
+.fantasy2-spread-host[data-page-size="24"] .fantasy2-card-slot,
+.fantasy2-spread-host[data-page-size="36"] .fantasy2-card-slot,
+.fantasy2-spread-host[data-page-size="48"] .fantasy2-card-slot{padding:5px}
+.fantasy2-spread-host[data-page-size="36"] .fantasy2-header-crest,
+.fantasy2-spread-host[data-page-size="48"] .fantasy2-header-crest,
+.fantasy2-spread-host[data-page-size="48"] .fantasy2-slot-wing{display:none}
+
+/* pagination */
+#screen-collection:has(.collection-book-shell.theme-fantasy2) .collection-side-page{
+ border-color:rgba(172,141,67,.59);
+ background:
+   radial-gradient(circle at 50% 25%,rgba(103,139,201,.12),transparent 36%),
+   linear-gradient(180deg,rgba(222,216,199,.94),rgba(46,71,119,.96));
+ color:#f2dc94;box-shadow:inset 0 1px rgba(255,255,255,.12),0 8px 22px rgba(32,44,72,.31);
+}
+#screen-collection:has(.collection-book-shell.theme-fantasy2) #collection-pagination{color:#cbbd92}
+#screen-collection:has(.collection-book-shell.theme-fantasy2) #collection-pagination .btn{
+ border-color:rgba(170,139,67,.52);background:rgba(52,75,119,.82);color:#e7d59d;
+}
+#screen-collection:has(.collection-book-shell.theme-fantasy2) #collection-pagination .btn.primary{
+ border-color:#c0a04f;background:linear-gradient(180deg,#587bb6,#314f87);color:#fff0b8;
+}
+
+/* shelf */
+.album-book-card[data-shelf-theme="fantasy2"] .album-shelf-book{transform:rotateY(-4deg) rotateZ(.45deg)}
+.album-book-card[data-shelf-theme="fantasy2"]:hover .album-shelf-book{
+ transform:rotateY(-.8deg) rotateZ(0) translateY(-12px) translateZ(9px)
+}
+.album-book-card[data-shelf-theme="fantasy2"] .album-book-cover.theme-fantasy2{
+ border-color:#a98e48;border-radius:6px 15px 15px 6px;
+ background:
+   radial-gradient(circle at 50% 26%,#6a90ce 0 5%,#d4b75f 6% 9%,transparent 10%),
+   radial-gradient(circle at 78% 18%,rgba(107,146,208,.13),transparent 18%),
+   repeating-linear-gradient(108deg,rgba(255,255,255,.012) 0 1px,transparent 1px 8px),
+   linear-gradient(145deg,#eee9dc,#d9d1bd 36%,#3c5e9c 65%,#987a38);
+ box-shadow:inset 0 0 0 4px rgba(58,77,116,.09),inset 7px 0 13px rgba(50,67,105,.13),5px 6px 13px rgba(32,43,70,.3);
+}
+.album-book-card[data-shelf-theme="fantasy2"] .album-cover-inner-frame{
+ border-color:rgba(208,178,88,.35);box-shadow:inset 0 0 0 3px rgba(70,95,149,.055)
+}
+.album-book-card[data-shelf-theme="fantasy2"] .album-cover-corner::before,
+.album-book-card[data-shelf-theme="fantasy2"] .album-cover-corner::after{
+ background:linear-gradient(90deg,#80672f,#e5cd80 46%,#92773a)
+}
+.album-book-card[data-shelf-theme="fantasy2"] .album-cover-crest,
+.album-book-card[data-shelf-theme="fantasy2"] .album-cover-title{color:#fff0b5}
+.album-book-card[data-shelf-theme="fantasy2"] .album-cover-title{
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;text-shadow:0 2px 5px rgba(39,55,89,.52)
+}
+.album-book-card[data-shelf-theme="fantasy2"] .album-cover-title-plate{
+ border-color:rgba(208,175,82,.25);background:linear-gradient(90deg,transparent,rgba(54,78,124,.21) 13% 87%,transparent)
+}
+.album-book-card[data-shelf-theme="fantasy2"] .album-cover-card-frame{border-color:#b3974c;background:#243d6c}
+.album-book-card[data-shelf-theme="fantasy2"] .album-book-spine.theme-fantasy2{
+ width:34px;background:linear-gradient(90deg,#d8d0bd,#40639f 45%,#253f74 72%,#a1843c);border-color:#8f7539
+}
+.album-book-card[data-shelf-theme="fantasy2"] .album-book-spine-title{
+ color:#fff0ba;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif
+}
+.album-book-card[data-shelf-theme="fantasy2"] .album-book-page-block{
+ background:repeating-linear-gradient(0deg,#d9d0b6 0 1px,#aa9f84 1px 2px,#cbbfa2 2px 3px);border-color:#9a8b67
+}
+.album-book-card[data-shelf-theme="fantasy2"] .album-book-back-cover{
+ background:linear-gradient(145deg,#ddd6c5,#365890 62%,#8e7336);border-color:#94793d
+}
+.album-book-card[data-shelf-theme="fantasy2"] .album-book-caption{
+ border-color:rgba(160,131,64,.27);background:linear-gradient(180deg,rgba(69,88,123,.82),rgba(34,53,91,.9))
+}
+.album-book-card[data-shelf-theme="fantasy2"] .album-book-caption::before{
+ background:linear-gradient(90deg,transparent,rgba(224,196,112,.27),transparent)
+}
+
+/* opening cover */
+.theme-fantasy2 .collection-cover-book{
+ --cover-metal:#a4853e;--cover-metal-hi:#e4cd80;--cover-line:rgba(210,178,82,.32);
+ --cover-ink:#fff0ba;--cover-muted:#d9cda7;
+ width:min(92vw,620px);border-color:#ad924c;border-radius:15px 27px 27px 15px;
+ background:
+   radial-gradient(circle at 50% 18%,#6c92cf 0 4%,#d3b65b 5% 8%,transparent 9%),
+   radial-gradient(circle at 78% 14%,rgba(110,151,214,.14),transparent 18%),
+   repeating-linear-gradient(111deg,rgba(255,255,255,.012) 0 1px,transparent 1px 9px),
+   linear-gradient(145deg,#efeadc,#d9d1bd 37%,#3f629f 67%,#997b39);
+ box-shadow:inset 17px 0 23px rgba(48,66,105,.13),inset 0 0 0 5px rgba(64,87,137,.07),0 26px 61px rgba(32,43,70,.37);
+}
+.theme-fantasy2 .collection-cover-book::before{
+ background:linear-gradient(90deg,#d7cfbc,#4a6ba5 50%,#284476 75%,#a28740);border-right-color:rgba(224,194,104,.18)
+}
+.theme-fantasy2 .collection-cover-inner-frame{
+ border-color:rgba(222,190,93,.38);box-shadow:inset 0 0 0 3px rgba(72,98,151,.05)
+}
+.theme-fantasy2 .collection-cover-corner::before,
+.theme-fantasy2 .collection-cover-corner::after{
+ background:linear-gradient(90deg,#80672e,#e6cf82 46%,#92783a)
+}
+.theme-fantasy2 .collection-cover-crest{color:#f2d982}
+.theme-fantasy2 .collection-cover-kicker{color:#d4c79f}
+.theme-fantasy2 .collection-cover-book h1{
+ color:#fff2bf;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;text-shadow:0 3px 8px rgba(41,59,95,.36)
+}
+.theme-fantasy2 .collection-cover-page-subtitle{color:#e4d8b5}
+.theme-fantasy2 .collection-cover-card-frame{
+ border-color:#bea04d;background:radial-gradient(circle at 50% 45%,rgba(114,152,214,.1),transparent 47%),#294779
+}
+.theme-fantasy2 .collection-cover-description{
+ border-color:rgba(208,174,82,.21);background:linear-gradient(90deg,transparent,rgba(55,79,126,.18) 15% 85%,transparent);
+ color:#eee1c0;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif
+}
+.theme-fantasy2 .collection-cover-meta{color:#d9caa2}
+.theme-fantasy2 .collection-cover-open-wrap{border-color:rgba(213,180,86,.23);background:rgba(57,81,128,.14)}
+.theme-fantasy2 .collection-cover-open-wrap .btn.primary{
+ border-color:#c1a14f;background:linear-gradient(180deg,#6689c1,#3d6099);color:#fff1bc
+}
+.theme-fantasy2 .collection-cover-emblem-panel{
+ border-color:rgba(213,181,88,.28);background:radial-gradient(circle at 50% 44%,rgba(107,146,208,.12),transparent 42%),rgba(61,84,129,.11);color:#f0d67d
+}
+
+@media(max-width:1000px){
+ .fantasy2-spread{grid-template-columns:minmax(0,1fr) 52px minmax(0,1fr);padding:23px 29px 30px}
+ .fantasy2-page-surface{padding:24px 17px 31px}
+ .fantasy2-slot-grid{gap:11px 10px}
+}
+@media(max-width:700px){
+ .collection-book-shell.theme-fantasy2{padding:11px 7px 16px}
+ .fantasy2-spread{display:block;padding:17px 12px 65px;border-radius:20px}
+ .fantasy2-page{padding:5px;margin-bottom:13px}
+ .fantasy2-page-left .fantasy2-page-surface,.fantasy2-page-right .fantasy2-page-surface{transform:none;border-radius:12px!important}
+ .fantasy2-binding,.fantasy2-corner-plate{display:none}
+ .fantasy2-page-surface{padding:21px 13px 29px}
+ .fantasy2-slot-grid{gap:9px 8px}
+ .fantasy2-page-turn{top:auto;bottom:8px;width:126px;height:42px;transform:none;flex-direction:row;border-radius:10px}
+ .fantasy2-page-turn-prev{left:13px}.fantasy2-page-turn-next{right:13px}
+ .fantasy2-page-turn span{font-size:27px}
+ .fantasy2-page-turn small{writing-mode:horizontal-tb;font-size:10px;letter-spacing:.03em}
+ .theme-fantasy2 .collection-cover-book{width:min(96vw,470px);transform:none}
+}
+
+
+/* ==========================================================
+   v6.4 Album theme — STARRY
+   Celestial observation ledger / indigo, violet, silver
+   ========================================================== */
+
+.collection-book-shell.theme-starry{
+ --st-night:#080c25;
+ --st-night2:#15123b;
+ --st-indigo:#243b72;
+ --st-violet:#563a82;
+ --st-silver:#aebed2;
+ --st-silver-hi:#e9f1ff;
+ --st-blue:#78b8ed;
+ padding:19px 19px 25px;
+ border:1px solid #465681;
+ border-radius:16px;
+ background:
+   radial-gradient(circle at 15% 18%,rgba(118,184,237,.16),transparent 20%),
+   radial-gradient(circle at 82% 10%,rgba(146,102,201,.13),transparent 22%),
+   radial-gradient(circle at 50% 110%,rgba(78,101,167,.16),transparent 38%),
+   repeating-linear-gradient(90deg,rgba(255,255,255,.007) 0 1px,transparent 1px 8px),
+   linear-gradient(145deg,#0c1230,#17113e 48%,#0a0d22);
+ box-shadow:
+   inset 0 0 0 4px rgba(2,4,13,.28),
+   inset 0 -30px 48px rgba(0,0,0,.24),
+   0 24px 58px rgba(0,0,0,.41);
+ color:#e4ecfa;
+}
+.collection-book-shell.theme-starry .collection-book-top{
+ margin:0 7px 14px;
+ border-bottom:1px solid rgba(142,174,215,.18);
+}
+.collection-book-shell.theme-starry .collection-source-title{
+ color:#edf4ff;
+ letter-spacing:.055em;
+ text-shadow:0 0 8px rgba(104,167,221,.24),0 2px 7px rgba(0,0,0,.6);
+}
+.collection-book-shell.theme-starry .muted{color:#97a8c4}
+
+.starry-spread-host{width:100%;min-width:0;padding:8px 3px 14px}
+.starry-spread{
+ position:relative;isolation:isolate;display:grid;
+ grid-template-columns:minmax(0,1fr) 68px minmax(0,1fr);
+ align-items:stretch;width:min(100%,1500px);margin:0 auto;
+ padding:31px 46px 38px;border:1px solid #435786;border-radius:30px 30px 38px 38px;
+ background:
+   radial-gradient(circle at 18% 10%,rgba(111,187,239,.11),transparent 20%),
+   radial-gradient(circle at 82% 18%,rgba(132,83,190,.12),transparent 22%),
+   radial-gradient(circle at 50% 85%,rgba(66,89,158,.14),transparent 28%),
+   linear-gradient(90deg,rgba(0,0,0,.2),transparent 8% 92%,rgba(0,0,0,.21)),
+   linear-gradient(145deg,#0b1231 0%,#16103d 45%,#10152f 72%,#070a18 100%);
+ box-shadow:
+   inset 0 0 0 7px rgba(4,7,20,.35),
+   inset 0 0 0 9px rgba(134,171,217,.025),
+   inset 13px 0 29px rgba(0,0,0,.24),
+   inset -13px 0 29px rgba(0,0,0,.24),
+   0 24px 49px rgba(0,0,0,.44);
+ perspective:1800px;
+ overflow:visible;
+}
+.starry-cover-back{
+ position:absolute;z-index:0;inset:12px;border:1px solid rgba(121,158,205,.15);
+ border-radius:23px 23px 31px 31px;
+ background:
+   radial-gradient(circle at 18% 22%,#fff 0 1px,transparent 2px),
+   radial-gradient(circle at 27% 77%,#8bc6ff 0 1px,transparent 2px),
+   radial-gradient(circle at 75% 30%,#fff 0 1px,transparent 2px),
+   radial-gradient(circle at 88% 68%,#b496ef 0 1px,transparent 2px),
+   repeating-linear-gradient(110deg,rgba(255,255,255,.005) 0 1px,transparent 1px 10px);
+ box-shadow:inset 0 0 38px rgba(0,0,0,.24);
+ pointer-events:none;
+}
+.starry-cover-star{
+ position:absolute;z-index:7;color:#d8e9ff;text-shadow:0 0 10px currentColor;pointer-events:none;opacity:.8
+}
+.starry-cover-star.star-a{top:14px;left:23px;font-size:15px}
+.starry-cover-star.star-b{top:19px;right:28px;font-size:13px;color:#b9a3ef}
+.starry-cover-star.star-c{bottom:19px;left:29px;font-size:11px;color:#9dd3ff}
+.starry-cover-star.star-d{bottom:18px;right:24px;font-size:20px}
+
+/* dark sky pages */
+.starry-page{position:relative;z-index:2;min-width:0;display:flex;padding:6px 5px 10px}
+.starry-page-layer{
+ position:absolute;z-index:0;top:11px;bottom:5px;left:9px;right:9px;border-radius:12px;
+ background:linear-gradient(180deg,#131b3a,#080d21);
+ box-shadow:0 7px 13px rgba(0,0,0,.31);
+ border:1px solid rgba(78,103,159,.13);
+}
+.starry-page-layer.layer-a{transform:translateY(4px);opacity:.72}
+.starry-page-layer.layer-b{transform:translateY(7px);opacity:.38}
+.starry-sky-page{
+ position:relative;z-index:2;flex:1;min-width:0;
+ padding:32px 24px 36px;border:1px solid #405885;
+ background:
+   radial-gradient(circle at 17% 13%,#fff 0 1px,transparent 1.7px),
+   radial-gradient(circle at 41% 22%,#8dcaff 0 1px,transparent 1.6px),
+   radial-gradient(circle at 76% 14%,#d5c6ff 0 1px,transparent 1.7px),
+   radial-gradient(circle at 89% 70%,#fff 0 1px,transparent 1.6px),
+   radial-gradient(circle at 25% 78%,#8cbcff 0 1px,transparent 1.7px),
+   linear-gradient(110deg,#101735,#17113f 54%,#0c122e);
+ color:#dbe7fa;overflow:hidden;
+}
+.starry-page-left .starry-sky-page{
+ border-radius:18px 5px 5px 21px;transform:perspective(1600px) rotateY(.4deg);transform-origin:right center;
+ box-shadow:inset -31px 0 37px rgba(0,0,0,.28),inset 2px 0 rgba(179,210,244,.035),0 8px 19px rgba(0,0,0,.3);
+}
+.starry-page-right .starry-sky-page{
+ border-radius:5px 18px 21px 5px;transform:perspective(1600px) rotateY(-.4deg);transform-origin:left center;
+ box-shadow:inset 31px 0 37px rgba(0,0,0,.28),inset -2px 0 rgba(179,210,244,.035),0 8px 19px rgba(0,0,0,.3);
+}
+.starry-sky-page::before{
+ content:"";position:absolute;z-index:2;inset:7px;border:1px solid rgba(111,150,199,.1);
+ border-radius:inherit;box-shadow:inset 0 0 0 3px rgba(95,64,148,.025);pointer-events:none;
+}
+.starry-nebula{
+ position:absolute;z-index:1;border-radius:50%;filter:blur(12px);pointer-events:none;
+}
+.starry-nebula.nebula-a{
+ width:42%;height:28%;left:8%;top:13%;
+ background:radial-gradient(ellipse,rgba(66,161,220,.12),rgba(76,70,165,.06) 45%,transparent 70%);
+ transform:rotate(-18deg);
+}
+.starry-nebula.nebula-b{
+ width:38%;height:27%;right:8%;bottom:15%;
+ background:radial-gradient(ellipse,rgba(145,81,185,.12),rgba(70,86,170,.06) 46%,transparent 72%);
+ transform:rotate(14deg);
+}
+.starry-page-heading{
+ position:absolute;z-index:3;top:10px;left:19px;right:19px;height:17px;
+ display:flex;align-items:center;justify-content:center;gap:9px;
+ color:rgba(171,197,229,.47);pointer-events:none;
+}
+.starry-page-heading i{width:39px;height:1px;background:linear-gradient(90deg,transparent,currentColor)}
+.starry-page-heading i:last-child{transform:scaleX(-1)}
+.starry-page-heading span{font-size:7px;letter-spacing:.17em}
+
+/* faint background constellation */
+.starry-constellation-map{position:absolute;z-index:1;inset:0;pointer-events:none;opacity:.32}
+.starry-constellation-map span{
+ position:absolute;width:4px;height:4px;border-radius:50%;background:#a9d4ff;box-shadow:0 0 7px rgba(122,188,238,.55)
+}
+.starry-constellation-map .s1{left:18%;top:38%}
+.starry-constellation-map .s2{left:31%;top:27%}
+.starry-constellation-map .s3{left:45%;top:46%}
+.starry-constellation-map .s4{left:68%;top:35%}
+.starry-constellation-map .s5{left:79%;top:52%}
+.starry-constellation-map i{position:absolute;height:1px;background:rgba(133,183,226,.26);transform-origin:left center}
+.starry-constellation-map .l1{left:18%;top:38%;width:17%;transform:rotate(-34deg)}
+.starry-constellation-map .l2{left:31%;top:27%;width:22%;transform:rotate(40deg)}
+.starry-constellation-map .l3{left:45%;top:46%;width:25%;transform:rotate(-23deg)}
+.starry-constellation-map .l4{left:68%;top:35%;width:18%;transform:rotate(34deg)}
+
+/* constellation card mounts */
+.starry-slot-grid{
+ position:relative;z-index:4;display:grid;
+ grid-template-columns:repeat(var(--starry-cols,2),minmax(0,1fr));
+ gap:17px 14px;align-content:start;
+}
+.starry-card-slot{
+ position:relative;min-width:0;padding:10px;
+ border:1px solid rgba(112,153,205,.28);border-radius:7px;
+ background:
+   radial-gradient(circle at 50% 42%,rgba(95,133,195,.045),transparent 50%),
+   linear-gradient(145deg,rgba(255,255,255,.016),rgba(79,56,128,.025));
+ box-shadow:inset 0 0 0 2px rgba(112,81,166,.025);
+}
+.starry-card-mount{position:relative;z-index:2}
+.starry-card-slot .collection-card-art{
+ border-radius:5px;border-color:#496a9c;
+ box-shadow:0 2px 3px rgba(0,0,0,.49),0 6px 13px rgba(0,0,0,.23),0 0 11px rgba(76,125,184,.09);
+}
+.starry-card-slot .collection-card-name{
+ margin:6px 0 -3px;padding:4px 5px;border-radius:3px;
+ background:linear-gradient(90deg,transparent,rgba(89,111,173,.09) 14% 86%,transparent);
+ color:#cfddf4;font-size:11px;line-height:1.25;text-shadow:0 1px 2px #050816;
+}
+.starry-slot-orbit{
+ position:absolute;z-index:1;border:1px solid rgba(112,151,201,.1);border-radius:50%;pointer-events:none
+}
+.starry-slot-orbit.orbit-a{inset:3px;transform:scaleY(.63) rotate(12deg)}
+.starry-slot-orbit.orbit-b{inset:8px;transform:scaleX(.62) rotate(-22deg);border-color:rgba(153,106,196,.09)}
+.starry-slot-star{
+ position:absolute;z-index:5;color:#b4d8fa;text-shadow:0 0 6px currentColor;pointer-events:none;font-size:9px
+}
+.starry-slot-star.star-tl{left:4px;top:3px}
+.starry-slot-star.star-tr{right:5px;top:3px}
+.starry-slot-star.star-bl{left:5px;bottom:3px}
+.starry-slot-star.star-br{right:4px;bottom:3px;color:#c7b0ed}
+
+/* empty constellation */
+.starry-card-slot.empty{
+ aspect-ratio:5/7;display:flex;align-items:center;justify-content:center;border-style:dashed;
+ background:radial-gradient(circle at 50% 48%,rgba(82,117,176,.05),transparent 43%);
+}
+.starry-empty-constellation{
+ position:relative;width:68%;aspect-ratio:1;color:rgba(148,188,227,.35)
+}
+.starry-empty-constellation svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.starry-empty-constellation path{stroke:rgba(133,177,219,.22);stroke-width:1}
+.starry-empty-constellation i{
+ position:absolute;width:5px;height:5px;border-radius:50%;background:#8fc6ed;box-shadow:0 0 6px rgba(111,181,232,.4)
+}
+.starry-empty-constellation i:nth-child(1){left:18%;top:70%}
+.starry-empty-constellation i:nth-child(2){left:34%;top:36%}
+.starry-empty-constellation i:nth-child(3){left:56%;top:56%}
+.starry-empty-constellation i:nth-child(4){left:75%;top:23%;background:#c2a9ec}
+.starry-empty-constellation i:nth-child(5){left:82%;top:66%}
+.starry-empty-constellation small{
+ position:absolute;left:50%;bottom:-15px;transform:translateX(-50%);
+ white-space:nowrap;font-size:7px;letter-spacing:.12em;color:rgba(148,177,214,.34)
+}
+
+/* central celestial spine */
+.starry-binding{position:relative;z-index:5;min-height:100%;display:flex;align-items:center;justify-content:center}
+.starry-binding-shadow{
+ position:absolute;top:4px;bottom:6px;left:1px;right:1px;border-radius:22px;
+ background:linear-gradient(90deg,rgba(0,0,0,.69),rgba(79,106,158,.055) 47% 53%,rgba(0,0,0,.7));
+ box-shadow:0 0 23px rgba(0,0,0,.43);
+}
+.starry-binding-column{
+ position:absolute;top:5%;bottom:5%;left:50%;width:14px;transform:translateX(-50%);
+ border:1px solid #536a98;border-radius:8px;
+ background:linear-gradient(90deg,#172447,#9eb3d0 27%,#425b89 51%,#bbcbe0 73%,#1b2c51);
+ box-shadow:inset 0 1px rgba(255,255,255,.21),0 2px 7px rgba(0,0,0,.45);
+}
+.starry-binding-orbits{
+ position:absolute;left:50%;top:50%;border:1px solid rgba(145,180,221,.2);border-radius:50%;pointer-events:none
+}
+.starry-binding-orbits.orbit-1{width:54px;height:27px;transform:translate(-50%,-50%) rotate(24deg)}
+.starry-binding-orbits.orbit-2{width:31px;height:58px;transform:translate(-50%,-50%) rotate(-31deg);border-color:rgba(158,110,205,.18)}
+.starry-binding-core{
+ position:absolute;left:50%;top:50%;width:37px;height:37px;
+ transform:translate(-50%,-50%) rotate(45deg);
+ display:flex;align-items:center;justify-content:center;
+ border:2px solid #809bc1;background:radial-gradient(circle,#8fc5ed 0 18%,#496da5 19% 50%,#1c2854 51%);
+ color:#eff7ff;box-shadow:0 0 0 4px #22214e,0 0 17px rgba(113,179,226,.22);
+}
+.starry-binding-core span{transform:rotate(-45deg);text-shadow:0 0 8px #fff}
+
+.starry-page-number{
+ position:absolute;z-index:5;bottom:10px;left:50%;transform:translateX(-50%);
+ color:rgba(150,177,211,.4);font-size:8px;letter-spacing:.14em;
+}
+
+/* page controls */
+.starry-page-turn{
+ position:absolute;z-index:9;top:50%;width:72px;height:178px;transform:translateY(-50%);
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+ border:1px solid #425d8c;border-radius:14px;
+ background:
+   radial-gradient(circle at 50% 26%,rgba(104,171,224,.1),transparent 34%),
+   linear-gradient(90deg,#111a3c,#1d1546 58%,#090d25);
+ color:#d7e7fa;box-shadow:inset 0 1px rgba(255,255,255,.045),0 8px 22px rgba(0,0,0,.39);
+ cursor:pointer;opacity:.82;
+}
+.starry-page-turn:hover:not(:disabled){
+ opacity:1;border-color:#6389ba;
+ background:radial-gradient(circle at 50% 26%,rgba(124,190,238,.14),transparent 34%),linear-gradient(90deg,#172650,#2a1d5b 58%,#101332)
+}
+.starry-page-turn:disabled{opacity:.12;cursor:default}
+.starry-page-turn-prev{left:-19px}.starry-page-turn-next{right:-19px}
+.starry-page-turn span{font-size:45px;line-height:.8}
+.starry-page-turn small{writing-mode:vertical-rl;font-size:11px;letter-spacing:.09em;color:#a9bad2}
+
+/* page-turn motion */
+.starry-turning-next .starry-page-right{transform-origin:left center;animation:starryTurnNext .58s cubic-bezier(.2,.72,.18,1)}
+.starry-turning-prev .starry-page-left{transform-origin:right center;animation:starryTurnPrev .58s cubic-bezier(.2,.72,.18,1)}
+.starry-turning-next .starry-binding,.starry-turning-prev .starry-binding{animation:starryBindingSettle .52s ease-out}
+@keyframes starryTurnNext{
+ 0%{opacity:.39;transform:perspective(1400px) rotateY(-21deg) translateX(17px);filter:brightness(.7) saturate(.7)}
+ 47%{opacity:.95;transform:perspective(1400px) rotateY(-4deg) translateX(3px);filter:brightness(.92)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes starryTurnPrev{
+ 0%{opacity:.39;transform:perspective(1400px) rotateY(21deg) translateX(-17px);filter:brightness(.7) saturate(.7)}
+ 47%{opacity:.95;transform:perspective(1400px) rotateY(4deg) translateX(-3px);filter:brightness(.92)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes starryBindingSettle{0%{transform:scaleX(.91);filter:brightness(.7)}100%{transform:none;filter:none}}
+
+.starry-empty-book{
+ min-height:440px;display:flex;align-items:center;justify-content:center;
+ border:1px solid #415783;border-radius:20px;
+ background:
+   radial-gradient(circle at 20% 25%,rgba(98,169,225,.11),transparent 22%),
+   radial-gradient(circle at 78% 72%,rgba(141,88,188,.1),transparent 23%),
+   linear-gradient(145deg,#0b1230,#17113e 56%,#090c20);
+ color:#b9c9e2;
+}
+
+/* density */
+.starry-spread-host[data-page-size="1"] .starry-card-slot{width:min(72%,380px);justify-self:center}
+.starry-spread-host[data-page-size="2"] .starry-card-slot{width:min(86%,350px);justify-self:center}
+.starry-spread-host[data-page-size="16"] .starry-slot-grid,
+.starry-spread-host[data-page-size="24"] .starry-slot-grid{gap:10px 9px}
+.starry-spread-host[data-page-size="36"] .starry-slot-grid,
+.starry-spread-host[data-page-size="48"] .starry-slot-grid{gap:7px 6px}
+.starry-spread-host[data-page-size="24"] .starry-card-slot,
+.starry-spread-host[data-page-size="36"] .starry-card-slot,
+.starry-spread-host[data-page-size="48"] .starry-card-slot{padding:5px}
+.starry-spread-host[data-page-size="36"] .starry-page-heading,
+.starry-spread-host[data-page-size="48"] .starry-page-heading,
+.starry-spread-host[data-page-size="48"] .starry-slot-orbit{display:none}
+
+/* external navigation */
+#screen-collection:has(.collection-book-shell.theme-starry) .collection-side-page{
+ border-color:rgba(74,104,151,.6);
+ background:
+   radial-gradient(circle at 50% 25%,rgba(101,170,222,.11),transparent 36%),
+   linear-gradient(180deg,rgba(17,26,61,.95),rgba(25,17,66,.96));
+ color:#d7e8fa;box-shadow:inset 0 1px rgba(255,255,255,.035),0 8px 23px rgba(0,0,0,.36);
+}
+#screen-collection:has(.collection-book-shell.theme-starry) #collection-pagination{color:#94a7c3}
+#screen-collection:has(.collection-book-shell.theme-starry) #collection-pagination .btn{
+ border-color:rgba(75,104,152,.5);background:rgba(15,23,54,.84);color:#bdcde3;
+}
+#screen-collection:has(.collection-book-shell.theme-starry) #collection-pagination .btn.primary{
+ border-color:#6687b5;background:linear-gradient(180deg,#304f82,#33235f);color:#eef6ff;
+}
+
+/* shelf */
+.album-book-card[data-shelf-theme="starry"] .album-shelf-book{transform:rotateY(-4deg) rotateZ(-.35deg)}
+.album-book-card[data-shelf-theme="starry"]:hover .album-shelf-book{
+ transform:rotateY(-.8deg) rotateZ(0) translateY(-12px) translateZ(9px)
+}
+.album-book-card[data-shelf-theme="starry"] .album-book-cover.theme-starry{
+ border-color:#53678e;border-radius:7px 15px 15px 7px;
+ background:
+   radial-gradient(circle at 20% 18%,#fff 0 1px,transparent 2px),
+   radial-gradient(circle at 72% 31%,#8dccff 0 1px,transparent 2px),
+   radial-gradient(circle at 50% 27%,rgba(118,184,237,.18) 0 5%,rgba(99,73,169,.12) 6% 10%,transparent 11%),
+   linear-gradient(145deg,#0b1231,#161043 64%,#090d27);
+ box-shadow:inset 0 0 0 4px rgba(0,0,0,.22),inset 7px 0 13px rgba(0,0,0,.26),5px 6px 13px rgba(0,0,0,.38);
+}
+.album-book-card[data-shelf-theme="starry"] .album-cover-inner-frame{
+ border-color:rgba(139,174,216,.24);box-shadow:inset 0 0 0 2px rgba(112,78,166,.06)
+}
+.album-book-card[data-shelf-theme="starry"] .album-cover-corner::before,
+.album-book-card[data-shelf-theme="starry"] .album-cover-corner::after{
+ background:linear-gradient(90deg,#3e5278,#c4d2e3 46%,#667ba0)
+}
+.album-book-card[data-shelf-theme="starry"] .album-cover-crest,
+.album-book-card[data-shelf-theme="starry"] .album-cover-title{color:#e8f2ff}
+.album-book-card[data-shelf-theme="starry"] .album-cover-title{text-shadow:0 0 8px rgba(110,174,222,.22),0 2px 4px #000}
+.album-book-card[data-shelf-theme="starry"] .album-cover-title-plate{
+ border-color:rgba(121,158,205,.18);background:linear-gradient(90deg,transparent,rgba(11,17,45,.36) 13% 87%,transparent)
+}
+.album-book-card[data-shelf-theme="starry"] .album-cover-card-frame{border-color:#566f9e;background:#090e25}
+.album-book-card[data-shelf-theme="starry"] .album-book-spine.theme-starry{
+ width:34px;background:linear-gradient(90deg,#050819,#182553 48%,#291c59 75%,#0b0d25);border-color:#3f5078
+}
+.album-book-card[data-shelf-theme="starry"] .album-book-spine-title{color:#d7e8fb}
+.album-book-card[data-shelf-theme="starry"] .album-book-page-block{
+ background:repeating-linear-gradient(0deg,#1d284b 0 1px,#080d22 1px 2px,#151d3a 2px 3px);border-color:#36486d
+}
+.album-book-card[data-shelf-theme="starry"] .album-book-back-cover{
+ background:linear-gradient(145deg,#0b1130,#191042);border-color:#3f4f78
+}
+.album-book-card[data-shelf-theme="starry"] .album-book-caption{
+ border-color:rgba(72,99,143,.24);background:linear-gradient(180deg,rgba(18,28,62,.86),rgba(19,14,51,.92))
+}
+.album-book-card[data-shelf-theme="starry"] .album-book-caption::before{
+ background:linear-gradient(90deg,transparent,rgba(123,163,207,.23),transparent)
+}
+
+/* opening cover */
+.theme-starry .collection-cover-book{
+ --cover-metal:#6f84a6;--cover-metal-hi:#d9e5f3;--cover-line:rgba(121,158,205,.24);
+ --cover-ink:#eef6ff;--cover-muted:#a7b7cf;
+ width:min(92vw,620px);border-color:#53678f;border-radius:15px 27px 27px 15px;
+ background:
+   radial-gradient(circle at 19% 18%,#fff 0 1px,transparent 2px),
+   radial-gradient(circle at 78% 28%,#93cbff 0 1px,transparent 2px),
+   radial-gradient(circle at 50% 19%,rgba(114,183,235,.18) 0 5%,rgba(110,78,171,.13) 6% 10%,transparent 11%),
+   linear-gradient(145deg,#0a1231,#171043 66%,#090c25);
+ box-shadow:inset 17px 0 23px rgba(0,0,0,.29),inset 0 0 0 5px rgba(0,0,0,.18),0 26px 61px rgba(0,0,0,.49);
+}
+.theme-starry .collection-cover-book::before{
+ background:linear-gradient(90deg,#050818,#182553 56%,#281b57);border-right-color:rgba(117,155,201,.1)
+}
+.theme-starry .collection-cover-inner-frame{
+ border-color:rgba(132,169,214,.26);box-shadow:inset 0 0 0 2px rgba(108,72,161,.07)
+}
+.theme-starry .collection-cover-corner::before,
+.theme-starry .collection-cover-corner::after{
+ background:linear-gradient(90deg,#415476,#cfdae8 46%,#6a7e9f)
+}
+.theme-starry .collection-cover-crest{color:#e5f0fb}
+.theme-starry .collection-cover-kicker{color:#8ea3c2}
+.theme-starry .collection-cover-book h1{
+ color:#f2f7ff;text-shadow:0 0 12px rgba(115,183,230,.18),0 3px 8px rgba(0,0,0,.62)
+}
+.theme-starry .collection-cover-page-subtitle{color:#b1bfd5}
+.theme-starry .collection-cover-card-frame{
+ border-color:#5f78a8;background:radial-gradient(circle at 50% 45%,rgba(102,165,215,.11),transparent 47%),#080d25
+}
+.theme-starry .collection-cover-description{
+ border-color:rgba(115,150,195,.15);background:linear-gradient(90deg,transparent,rgba(19,22,62,.26) 15% 85%,transparent);
+ color:#c4d0e4
+}
+.theme-starry .collection-cover-meta{color:#99aac4}
+.theme-starry .collection-cover-open-wrap{border-color:rgba(109,145,190,.17);background:rgba(17,21,56,.21)}
+.theme-starry .collection-cover-open-wrap .btn.primary{
+ border-color:#607eaa;background:linear-gradient(180deg,#294a79,#32215e);color:#eef6ff
+}
+.theme-starry .collection-cover-emblem-panel{
+ border-color:rgba(116,153,198,.2);background:radial-gradient(circle at 50% 44%,rgba(103,164,215,.11),transparent 42%),rgba(18,20,59,.14);color:#dcecff
+}
+
+@media(max-width:1000px){
+ .starry-spread{grid-template-columns:minmax(0,1fr) 51px minmax(0,1fr);padding:23px 29px 30px}
+ .starry-sky-page{padding:24px 17px 31px}
+ .starry-slot-grid{gap:11px 10px}
+}
+@media(max-width:700px){
+ .collection-book-shell.theme-starry{padding:11px 7px 16px}
+ .starry-spread{display:block;padding:17px 12px 65px;border-radius:20px}
+ .starry-page{padding:5px;margin-bottom:13px}
+ .starry-page-left .starry-sky-page,.starry-page-right .starry-sky-page{transform:none;border-radius:12px!important}
+ .starry-binding,.starry-cover-star{display:none}
+ .starry-sky-page{padding:21px 13px 29px}
+ .starry-slot-grid{gap:9px 8px}
+ .starry-page-turn{top:auto;bottom:8px;width:126px;height:42px;transform:none;flex-direction:row;border-radius:10px}
+ .starry-page-turn-prev{left:13px}.starry-page-turn-next{right:13px}
+ .starry-page-turn span{font-size:27px}
+ .starry-page-turn small{writing-mode:horizontal-tb;font-size:10px;letter-spacing:.03em}
+ .theme-starry .collection-cover-book{width:min(96vw,470px);transform:none}
+}
+
+
+/* ==========================================================
+   v6.5 Album theme — STONE
+   Opened stone tablets / ruin archive / carved recesses
+   ========================================================== */
+
+.collection-book-shell.theme-stone{
+ --stone-1:#6e6a60;
+ --stone-2:#4d4b45;
+ --stone-3:#2f302e;
+ --stone-dark:#1a1b1a;
+ --stone-metal:#777b78;
+ --stone-metal-hi:#b3b8b5;
+ --stone-moss:#4b5d45;
+ --stone-rune:#9f987f;
+ padding:18px 18px 24px;
+ border:1px solid #66665f;
+ border-radius:11px;
+ background:
+   radial-gradient(circle at 17% 18%,rgba(139,143,132,.09),transparent 21%),
+   radial-gradient(circle at 83% 76%,rgba(64,87,62,.08),transparent 25%),
+   repeating-linear-gradient(31deg,rgba(255,255,255,.006) 0 1px,transparent 1px 9px),
+   linear-gradient(145deg,#55544e,#343532 52%,#20211f);
+ box-shadow:
+   inset 0 0 0 4px rgba(14,15,14,.23),
+   inset 0 -28px 45px rgba(0,0,0,.24),
+   0 24px 58px rgba(0,0,0,.43);
+ color:#dedbd0;
+}
+.collection-book-shell.theme-stone .collection-book-top{
+ margin:0 7px 14px;
+ border-bottom:1px solid rgba(165,163,146,.16);
+}
+.collection-book-shell.theme-stone .collection-source-title{
+ color:#dedbd0;
+ letter-spacing:.08em;
+ text-shadow:0 2px 6px rgba(0,0,0,.65);
+}
+.collection-book-shell.theme-stone .muted{color:#aaa79b}
+
+.stone-spread-host{width:100%;min-width:0;padding:8px 3px 14px}
+.stone-spread{
+ position:relative;isolation:isolate;display:grid;
+ grid-template-columns:minmax(0,1fr) 72px minmax(0,1fr);
+ align-items:stretch;width:min(100%,1500px);margin:0 auto;
+ padding:29px 45px 36px;
+ border:1px solid #676860;border-radius:17px;
+ background:
+   radial-gradient(circle at 15% 20%,rgba(128,135,124,.08),transparent 22%),
+   radial-gradient(circle at 85% 80%,rgba(57,84,58,.07),transparent 25%),
+   repeating-linear-gradient(32deg,rgba(255,255,255,.006) 0 1px,transparent 1px 9px),
+   linear-gradient(145deg,#5b5a53,#3b3c38 51%,#262724);
+ box-shadow:
+   inset 0 0 0 7px rgba(20,21,20,.2),
+   inset 0 0 0 8px rgba(183,183,168,.025),
+   inset 13px 0 27px rgba(0,0,0,.17),
+   inset -13px 0 27px rgba(0,0,0,.17),
+   0 24px 49px rgba(0,0,0,.43);
+ perspective:1800px;
+}
+.stone-plinth{
+ position:absolute;z-index:0;inset:10px;border:1px solid rgba(151,151,139,.13);
+ border-radius:12px;
+ background:
+   repeating-linear-gradient(115deg,rgba(255,255,255,.005) 0 1px,transparent 1px 11px),
+   radial-gradient(circle at 12% 15%,rgba(93,105,87,.05),transparent 22%);
+ box-shadow:inset 0 0 33px rgba(0,0,0,.2);
+ pointer-events:none;
+}
+.stone-corner-rivet{
+ position:absolute;z-index:7;width:24px;height:24px;border-radius:50%;
+ border:1px solid #555955;
+ background:radial-gradient(circle at 35% 30%,#b1b5b1,#686d69 42%,#343735 72%);
+ box-shadow:inset 0 0 3px rgba(255,255,255,.18),0 2px 4px rgba(0,0,0,.38);
+ pointer-events:none;
+}
+.stone-corner-rivet::after{
+ content:"";position:absolute;left:50%;top:50%;width:8px;height:2px;transform:translate(-50%,-50%) rotate(31deg);
+ background:#353836;border-radius:2px;
+}
+.stone-corner-rivet.rivet-tl{top:13px;left:15px}
+.stone-corner-rivet.rivet-tr{top:13px;right:15px}
+.stone-corner-rivet.rivet-bl{bottom:14px;left:15px}
+.stone-corner-rivet.rivet-br{bottom:14px;right:15px}
+
+/* individual stone slabs */
+.stone-page{position:relative;z-index:2;min-width:0;display:flex;padding:6px 5px 10px}
+.stone-slab-depth{
+ position:absolute;z-index:0;top:10px;bottom:4px;left:8px;right:8px;border-radius:8px;
+ background:linear-gradient(145deg,#4a4b47,#2e302d);
+ border:1px solid rgba(110,112,106,.2);
+ box-shadow:0 8px 14px rgba(0,0,0,.29);
+}
+.stone-slab-depth.depth-a{transform:translateY(4px);opacity:.75}
+.stone-slab-depth.depth-b{transform:translateY(8px);opacity:.37}
+.stone-slab{
+ position:relative;z-index:2;flex:1;min-width:0;
+ padding:31px 23px 35px;border:1px solid #6f7069;
+ background:
+   radial-gradient(circle at 13% 12%,rgba(126,128,118,.08),transparent 17%),
+   radial-gradient(circle at 79% 84%,rgba(60,77,58,.05),transparent 24%),
+   repeating-linear-gradient(24deg,rgba(255,255,255,.005) 0 1px,transparent 1px 9px),
+   linear-gradient(135deg,#74736b,#5b5b55 53%,#474843);
+ color:#d8d5c8;overflow:hidden;
+}
+.stone-page-left .stone-slab{
+ border-radius:11px 4px 4px 13px;
+ transform:perspective(1600px) rotateY(.3deg);transform-origin:right center;
+ box-shadow:inset -27px 0 34px rgba(0,0,0,.17),inset 2px 0 rgba(255,255,255,.035),0 9px 20px rgba(0,0,0,.3);
+}
+.stone-page-right .stone-slab{
+ border-radius:4px 11px 13px 4px;
+ transform:perspective(1600px) rotateY(-.3deg);transform-origin:left center;
+ box-shadow:inset 27px 0 34px rgba(0,0,0,.17),inset -2px 0 rgba(255,255,255,.035),0 9px 20px rgba(0,0,0,.3);
+}
+.stone-slab::before{
+ content:"";position:absolute;z-index:3;inset:7px;border:1px solid rgba(49,51,48,.25);
+ box-shadow:inset 0 0 0 2px rgba(162,162,149,.025);border-radius:inherit;pointer-events:none;
+}
+.stone-grain{
+ position:absolute;z-index:1;inset:0;pointer-events:none;
+ background:
+   radial-gradient(circle at 22% 34%,rgba(27,29,27,.08) 0 1px,transparent 2px),
+   radial-gradient(circle at 76% 24%,rgba(28,30,28,.06) 0 1px,transparent 2px),
+   radial-gradient(circle at 62% 74%,rgba(26,28,26,.07) 0 1px,transparent 2px);
+}
+.stone-crack{
+ position:absolute;z-index:2;width:2px;height:90px;background:rgba(38,40,38,.34);
+ transform-origin:top center;box-shadow:1px 0 rgba(166,165,151,.035);pointer-events:none;
+}
+.stone-crack::before,.stone-crack::after{
+ content:"";position:absolute;width:2px;background:rgba(38,40,38,.28);transform-origin:top center
+}
+.stone-crack.crack-a{left:12%;top:8%;transform:rotate(-17deg)}
+.stone-crack.crack-a::before{height:31px;left:0;top:37px;transform:rotate(39deg)}
+.stone-crack.crack-a::after{height:25px;left:0;top:58px;transform:rotate(-33deg)}
+.stone-crack.crack-b{right:10%;bottom:3%;height:72px;transform:rotate(22deg)}
+.stone-crack.crack-b::before{height:25px;left:0;top:28px;transform:rotate(-44deg)}
+.stone-carved-heading{
+ position:absolute;z-index:3;top:9px;left:19px;right:19px;height:18px;
+ display:flex;align-items:center;justify-content:center;gap:9px;
+ color:rgba(42,45,42,.55);text-shadow:0 1px rgba(185,184,169,.08);pointer-events:none;
+}
+.stone-carved-heading i{width:37px;height:1px;background:linear-gradient(90deg,transparent,currentColor)}
+.stone-carved-heading i:last-child{transform:scaleX(-1)}
+.stone-carved-heading span{font-size:7px;letter-spacing:.17em;font-weight:700}
+
+/* recessed card slots */
+.stone-slot-grid{
+ position:relative;z-index:4;display:grid;
+ grid-template-columns:repeat(var(--stone-cols,2),minmax(0,1fr));
+ gap:17px 14px;align-content:start;
+}
+.stone-card-slot{
+ position:relative;min-width:0;padding:10px;
+ border:1px solid rgba(43,45,43,.5);border-radius:5px;
+ background:linear-gradient(145deg,rgba(0,0,0,.12),rgba(255,255,255,.015));
+ box-shadow:
+   inset 0 3px 8px rgba(0,0,0,.24),
+   inset 0 -1px rgba(176,176,163,.045),
+   0 1px rgba(255,255,255,.025);
+}
+.stone-slot-recess{
+ position:absolute;z-index:0;inset:4px;border:1px solid rgba(30,32,30,.34);border-radius:3px;
+ box-shadow:inset 0 0 12px rgba(0,0,0,.29);
+}
+.stone-card-mount{position:relative;z-index:2}
+.stone-card-slot .collection-card-art{
+ border-radius:3px;border-color:#3b403c;
+ box-shadow:0 2px 3px rgba(0,0,0,.58),0 5px 11px rgba(0,0,0,.25);
+}
+.stone-card-slot .collection-card-name{
+ margin:6px 0 -3px;padding:4px 5px;border-radius:2px;
+ background:rgba(33,35,33,.25);color:#ddd9ca;font-size:11px;line-height:1.25;
+ text-shadow:0 1px 2px #202220;
+}
+.stone-slot-bolt{
+ position:absolute;z-index:5;width:7px;height:7px;border-radius:50%;
+ border:1px solid #555a56;background:radial-gradient(circle at 35% 30%,#aaa,#676b67 45%,#343735);
+ box-shadow:0 1px 2px rgba(0,0,0,.32);pointer-events:none;
+}
+.stone-slot-bolt::after{
+ content:"";position:absolute;left:1px;right:1px;top:2px;height:1px;background:#3b3e3b;transform:rotate(26deg)
+}
+.stone-slot-bolt.bolt-tl{left:3px;top:3px}
+.stone-slot-bolt.bolt-tr{right:3px;top:3px}
+.stone-slot-bolt.bolt-bl{left:3px;bottom:3px}
+.stone-slot-bolt.bolt-br{right:3px;bottom:3px}
+
+/* empty carved glyph */
+.stone-card-slot.empty{
+ aspect-ratio:5/7;display:flex;align-items:center;justify-content:center;border-style:dashed;
+ background:radial-gradient(circle at 50% 48%,rgba(33,36,33,.12),transparent 43%);
+}
+.stone-empty-glyph{
+ width:64%;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+ border:2px groove rgba(44,47,44,.34);border-radius:50%;
+ box-shadow:inset 0 0 0 6px rgba(49,52,49,.08),inset 0 0 15px rgba(0,0,0,.16);
+ color:rgba(45,48,45,.5);text-shadow:0 1px rgba(170,169,155,.08);
+}
+.stone-empty-glyph span{font-size:27px;line-height:1}
+.stone-empty-glyph small{font-size:7px;letter-spacing:.11em}
+
+/* heavy metal hinge between slabs */
+.stone-binding{position:relative;z-index:5;min-height:100%;display:flex;align-items:center;justify-content:center}
+.stone-binding-trench{
+ position:absolute;top:4px;bottom:6px;left:1px;right:1px;border-radius:14px;
+ background:linear-gradient(90deg,rgba(0,0,0,.66),rgba(79,83,79,.08) 48% 52%,rgba(0,0,0,.67));
+ box-shadow:inset 0 0 15px rgba(0,0,0,.5),0 0 17px rgba(0,0,0,.28);
+}
+.stone-binding-hinge{
+ position:absolute;left:50%;width:44px;height:28px;transform:translateX(-50%);
+ border:1px solid #4f5451;border-radius:5px;
+ background:linear-gradient(90deg,#343837,#8e9491 25%,#555b58 51%,#a0a6a3 75%,#393d3b);
+ box-shadow:inset 0 1px rgba(255,255,255,.12),0 2px 5px rgba(0,0,0,.43);
+}
+.stone-binding-hinge.hinge-top{top:13%}
+.stone-binding-hinge.hinge-mid{top:50%;transform:translate(-50%,-50%)}
+.stone-binding-hinge.hinge-bottom{bottom:13%}
+.stone-binding-hinge i{
+ position:absolute;top:50%;width:7px;height:7px;transform:translateY(-50%);border-radius:50%;
+ background:radial-gradient(circle at 35% 30%,#b4b8b5,#686d6a 44%,#333634);box-shadow:0 1px 2px rgba(0,0,0,.4)
+}
+.stone-binding-hinge i:first-child{left:6px}.stone-binding-hinge i:last-child{right:6px}
+.stone-binding-core{
+ position:absolute;left:50%;top:50%;width:35px;height:35px;
+ transform:translate(-50%,-50%) rotate(45deg);
+ display:flex;align-items:center;justify-content:center;
+ border:2px solid #777e79;background:radial-gradient(circle,#8e968e 0 18%,#505751 19% 52%,#272b28 53%);
+ color:#bbc0bb;box-shadow:0 0 0 3px #343936,0 0 11px rgba(0,0,0,.35);
+}
+.stone-binding-core span{transform:rotate(-45deg)}
+
+.stone-page-number{
+ position:absolute;z-index:5;bottom:9px;left:50%;transform:translateX(-50%);
+ color:rgba(37,40,37,.48);font-size:8px;letter-spacing:.15em;text-shadow:0 1px rgba(178,177,164,.07);
+}
+
+/* page controls = stone tabs */
+.stone-page-turn{
+ position:absolute;z-index:9;top:50%;width:74px;height:178px;transform:translateY(-50%);
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+ border:1px solid #545953;border-radius:9px;
+ background:
+   radial-gradient(circle at 50% 24%,rgba(133,139,130,.08),transparent 36%),
+   repeating-linear-gradient(31deg,rgba(255,255,255,.006) 0 1px,transparent 1px 8px),
+   linear-gradient(90deg,#5b5b55,#323431);
+ color:#d0cdc0;box-shadow:inset 0 2px rgba(255,255,255,.025),0 9px 22px rgba(0,0,0,.39);
+ cursor:pointer;opacity:.8;
+}
+.stone-page-turn:hover:not(:disabled){opacity:1;border-color:#747a73;background:linear-gradient(90deg,#6b6b64,#3f423e)}
+.stone-page-turn:disabled{opacity:.12;cursor:default}
+.stone-page-turn-prev{left:-20px}.stone-page-turn-next{right:-20px}
+.stone-page-turn span{font-size:45px;line-height:.8}
+.stone-page-turn small{writing-mode:vertical-rl;font-size:10px;letter-spacing:.08em;color:#aaa99f}
+
+/* "turning" a tablet is a restrained weight shift */
+.stone-turning-next .stone-page-right{transform-origin:left center;animation:stoneTurnNext .58s cubic-bezier(.2,.72,.18,1)}
+.stone-turning-prev .stone-page-left{transform-origin:right center;animation:stoneTurnPrev .58s cubic-bezier(.2,.72,.18,1)}
+.stone-turning-next .stone-binding,.stone-turning-prev .stone-binding{animation:stoneBindingSettle .52s ease-out}
+@keyframes stoneTurnNext{
+ 0%{opacity:.52;transform:perspective(1400px) rotateY(-14deg) translateX(12px);filter:brightness(.76)}
+ 50%{opacity:.96;transform:perspective(1400px) rotateY(-3deg) translateX(2px)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes stoneTurnPrev{
+ 0%{opacity:.52;transform:perspective(1400px) rotateY(14deg) translateX(-12px);filter:brightness(.76)}
+ 50%{opacity:.96;transform:perspective(1400px) rotateY(3deg) translateX(-2px)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes stoneBindingSettle{0%{transform:scaleX(.94);filter:brightness(.75)}100%{transform:none;filter:none}}
+
+.stone-empty-book{
+ min-height:440px;display:flex;align-items:center;justify-content:center;
+ border:1px solid #65675f;border-radius:14px;
+ background:
+   radial-gradient(circle at 23% 24%,rgba(113,120,108,.08),transparent 22%),
+   linear-gradient(145deg,#595951,#373936 55%,#242522);
+ color:#bbb9ae;
+}
+
+/* density */
+.stone-spread-host[data-page-size="1"] .stone-card-slot{width:min(72%,380px);justify-self:center}
+.stone-spread-host[data-page-size="2"] .stone-card-slot{width:min(86%,350px);justify-self:center}
+.stone-spread-host[data-page-size="16"] .stone-slot-grid,
+.stone-spread-host[data-page-size="24"] .stone-slot-grid{gap:10px 9px}
+.stone-spread-host[data-page-size="36"] .stone-slot-grid,
+.stone-spread-host[data-page-size="48"] .stone-slot-grid{gap:7px 6px}
+.stone-spread-host[data-page-size="24"] .stone-card-slot,
+.stone-spread-host[data-page-size="36"] .stone-card-slot,
+.stone-spread-host[data-page-size="48"] .stone-card-slot{padding:5px}
+.stone-spread-host[data-page-size="36"] .stone-carved-heading,
+.stone-spread-host[data-page-size="48"] .stone-carved-heading,
+.stone-spread-host[data-page-size="48"] .stone-slot-bolt{display:none}
+
+/* external navigation palette */
+#screen-collection:has(.collection-book-shell.theme-stone) .collection-side-page{
+ border-color:rgba(92,98,92,.62);
+ background:
+   repeating-linear-gradient(31deg,rgba(255,255,255,.005) 0 1px,transparent 1px 8px),
+   linear-gradient(180deg,rgba(86,86,79,.95),rgba(43,45,42,.96));
+ color:#d2d0c5;box-shadow:inset 0 1px rgba(255,255,255,.025),0 8px 23px rgba(0,0,0,.37);
+}
+#screen-collection:has(.collection-book-shell.theme-stone) #collection-pagination{color:#a6a49a}
+#screen-collection:has(.collection-book-shell.theme-stone) #collection-pagination .btn{
+ border-color:rgba(91,97,91,.54);background:rgba(48,50,47,.84);color:#c1bfb4;
+}
+#screen-collection:has(.collection-book-shell.theme-stone) #collection-pagination .btn.primary{
+ border-color:#777e77;background:linear-gradient(180deg,#666a65,#444844);color:#eceae1;
+}
+
+/* shelf: slab-like artifact */
+.album-book-card[data-shelf-theme="stone"] .album-shelf-book{transform:rotateY(-3deg) rotateZ(-.3deg)}
+.album-book-card[data-shelf-theme="stone"]:hover .album-shelf-book{
+ transform:rotateY(-.6deg) rotateZ(0) translateY(-10px) translateZ(7px)
+}
+.album-book-card[data-shelf-theme="stone"] .album-book-cover.theme-stone{
+ border-color:#6c6d67;border-radius:5px 9px 9px 5px;
+ background:
+   radial-gradient(circle at 19% 18%,rgba(128,130,120,.09),transparent 18%),
+   radial-gradient(circle at 80% 78%,rgba(65,85,61,.08),transparent 22%),
+   repeating-linear-gradient(29deg,rgba(255,255,255,.005) 0 1px,transparent 1px 8px),
+   linear-gradient(145deg,#74736b,#555650 65%,#3a3b38);
+ box-shadow:inset 0 0 0 4px rgba(18,19,18,.14),inset 7px 0 13px rgba(0,0,0,.2),5px 7px 13px rgba(0,0,0,.36);
+}
+.album-book-card[data-shelf-theme="stone"] .album-cover-inner-frame{
+ border-color:rgba(46,49,46,.28);box-shadow:inset 0 0 0 2px rgba(184,182,168,.025)
+}
+.album-book-card[data-shelf-theme="stone"] .album-cover-corner::before,
+.album-book-card[data-shelf-theme="stone"] .album-cover-corner::after{
+ background:linear-gradient(90deg,#4e5350,#aeb3af 46%,#606560)
+}
+.album-book-card[data-shelf-theme="stone"] .album-cover-crest,
+.album-book-card[data-shelf-theme="stone"] .album-cover-title{color:#dedbd0}
+.album-book-card[data-shelf-theme="stone"] .album-cover-title{text-shadow:0 2px 4px rgba(0,0,0,.58)}
+.album-book-card[data-shelf-theme="stone"] .album-cover-title-plate{
+ border-color:rgba(47,50,47,.23);background:linear-gradient(90deg,transparent,rgba(27,29,27,.25) 13% 87%,transparent)
+}
+.album-book-card[data-shelf-theme="stone"] .album-cover-card-frame{border-color:#525753;background:#2b2e2b}
+.album-book-card[data-shelf-theme="stone"] .album-book-spine.theme-stone{
+ width:35px;background:linear-gradient(90deg,#343633,#74746d 48%,#464843);border-color:#575a55
+}
+.album-book-card[data-shelf-theme="stone"] .album-book-spine-title{color:#d3d0c5}
+.album-book-card[data-shelf-theme="stone"] .album-book-page-block{
+ background:repeating-linear-gradient(0deg,#575a55 0 2px,#2e302e 2px 3px,#494c48 3px 4px);border-color:#454843
+}
+.album-book-card[data-shelf-theme="stone"] .album-book-back-cover{
+ background:linear-gradient(145deg,#5d5e58,#393b37);border-color:#51544f
+}
+.album-book-card[data-shelf-theme="stone"] .album-book-caption{
+ border-color:rgba(86,92,86,.27);background:linear-gradient(180deg,rgba(66,68,64,.87),rgba(37,39,37,.92))
+}
+.album-book-card[data-shelf-theme="stone"] .album-book-caption::before{
+ background:linear-gradient(90deg,transparent,rgba(167,168,157,.18),transparent)
+}
+
+/* opening cover = sealed tablet */
+.theme-stone .collection-cover-book{
+ --cover-metal:#747975;--cover-metal-hi:#b9bdb9;--cover-line:rgba(73,78,73,.3);
+ --cover-ink:#e0ddd1;--cover-muted:#aaa89f;
+ width:min(92vw,620px);border-color:#686b65;border-radius:9px 14px 14px 9px;
+ background:
+   radial-gradient(circle at 18% 18%,rgba(126,129,118,.09),transparent 19%),
+   radial-gradient(circle at 82% 78%,rgba(62,83,59,.08),transparent 23%),
+   repeating-linear-gradient(29deg,rgba(255,255,255,.005) 0 1px,transparent 1px 9px),
+   linear-gradient(145deg,#77766e,#565751 66%,#3c3d39);
+ box-shadow:inset 17px 0 23px rgba(0,0,0,.19),inset 0 0 0 5px rgba(25,26,25,.11),0 26px 61px rgba(0,0,0,.45);
+}
+.theme-stone .collection-cover-book::before{
+ background:linear-gradient(90deg,#333532,#73736c 56%,#484a45);border-right-color:rgba(177,177,164,.07)
+}
+.theme-stone .collection-cover-inner-frame{
+ border-color:rgba(51,54,51,.3);box-shadow:inset 0 0 0 2px rgba(181,180,166,.025)
+}
+.theme-stone .collection-cover-corner::before,
+.theme-stone .collection-cover-corner::after{
+ background:linear-gradient(90deg,#4f5450,#b1b6b2 46%,#636862)
+}
+.theme-stone .collection-cover-crest{color:#d7d9d5}
+.theme-stone .collection-cover-kicker{color:#9f9f96}
+.theme-stone .collection-cover-book h1{color:#e5e2d8;text-shadow:0 3px 8px rgba(0,0,0,.5)}
+.theme-stone .collection-cover-page-subtitle{color:#b9b6aa}
+.theme-stone .collection-cover-card-frame{
+ border-color:#555b56;background:linear-gradient(145deg,rgba(255,255,255,.015),rgba(0,0,0,.24)),#2b2e2b
+}
+.theme-stone .collection-cover-description{
+ border-color:rgba(56,60,56,.22);background:linear-gradient(90deg,transparent,rgba(38,40,38,.2) 15% 85%,transparent);color:#cbc8bd
+}
+.theme-stone .collection-cover-meta{color:#a5a39a}
+.theme-stone .collection-cover-open-wrap{border-color:rgba(76,81,76,.22);background:rgba(43,45,42,.18)}
+.theme-stone .collection-cover-open-wrap .btn.primary{
+ border-color:#737a74;background:linear-gradient(180deg,#676b67,#454945);color:#efede4
+}
+.theme-stone .collection-cover-emblem-panel{
+ border-color:rgba(71,76,71,.25);background:radial-gradient(circle at 50% 44%,rgba(110,116,108,.07),transparent 42%),rgba(44,46,43,.13);color:#c6c9c5
+}
+
+/* responsive */
+@media(max-width:1000px){
+ .stone-spread{grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr);padding:22px 29px 29px}
+ .stone-slab{padding:24px 17px 31px}
+ .stone-slot-grid{gap:11px 10px}
+ .stone-binding-hinge{width:35px}
+}
+@media(max-width:700px){
+ .collection-book-shell.theme-stone{padding:11px 7px 16px}
+ .stone-spread{display:block;padding:17px 12px 64px;border-radius:13px}
+ .stone-page{padding:5px;margin-bottom:13px}
+ .stone-page-left .stone-slab,.stone-page-right .stone-slab{transform:none;border-radius:9px!important}
+ .stone-binding,.stone-corner-rivet{display:none}
+ .stone-slab{padding:21px 13px 29px}
+ .stone-slot-grid{gap:9px 8px}
+ .stone-page-turn{top:auto;bottom:8px;width:126px;height:42px;transform:none;flex-direction:row;border-radius:8px}
+ .stone-page-turn-prev{left:13px}.stone-page-turn-next{right:13px}
+ .stone-page-turn span{font-size:27px}
+ .stone-page-turn small{writing-mode:horizontal-tb;font-size:10px;letter-spacing:.03em}
+ .theme-stone .collection-cover-book{width:min(96vw,470px);transform:none}
+}
+
+
+/* ==========================================================
+   v6.6 Album theme — DRAGON
+   Dragon lord's hoard / scales, wing membrane, horn and armor
+   ========================================================== */
+
+.collection-book-shell.theme-dragon{
+ --dr-red:#6b1715;
+ --dr-red-hi:#a83224;
+ --dr-black:#160b0a;
+ --dr-scale:#4d211c;
+ --dr-gold:#b78738;
+ --dr-gold-hi:#e0bd67;
+ --dr-bone:#b6a17f;
+ --dr-ember:#e45f2f;
+ padding:19px 19px 25px;
+ border:1px solid #6d4329;
+ border-radius:16px;
+ background:
+   radial-gradient(circle at 18% 16%,rgba(225,92,43,.11),transparent 21%),
+   radial-gradient(circle at 83% 82%,rgba(166,112,40,.08),transparent 24%),
+   repeating-radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.008) 0 7px,transparent 8px 18px),
+   linear-gradient(145deg,#4a1713,#1c0d0b 48%,#130b0a);
+ box-shadow:
+   inset 0 0 0 4px rgba(0,0,0,.23),
+   inset 0 -30px 48px rgba(0,0,0,.29),
+   0 24px 58px rgba(0,0,0,.45);
+ color:#f0ddbd;
+}
+.collection-book-shell.theme-dragon .collection-book-top{
+ margin:0 7px 14px;
+ border-bottom:1px solid rgba(197,145,58,.2);
+}
+.collection-book-shell.theme-dragon .collection-source-title{
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ color:#f1d9a5;
+ letter-spacing:.055em;
+ text-shadow:0 2px 7px rgba(0,0,0,.67);
+}
+.collection-book-shell.theme-dragon .muted{color:#b49c7c}
+
+.dragon-spread-host{width:100%;min-width:0;padding:8px 3px 14px}
+.dragon-spread{
+ position:relative;isolation:isolate;display:grid;
+ grid-template-columns:minmax(0,1fr) 70px minmax(0,1fr);
+ align-items:stretch;width:min(100%,1500px);margin:0 auto;
+ padding:31px 47px 38px;border:1px solid #70442b;border-radius:31px 31px 39px 39px;
+ background:
+   radial-gradient(circle at 13% 18%,rgba(220,85,37,.1),transparent 21%),
+   radial-gradient(circle at 88% 78%,rgba(197,142,51,.08),transparent 22%),
+   repeating-radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.006) 0 7px,transparent 8px 18px),
+   linear-gradient(145deg,#5a1d17 0%,#2c100e 41%,#1b0d0c 68%,#0f0908);
+ box-shadow:
+   inset 0 0 0 7px rgba(4,2,2,.31),
+   inset 0 0 0 9px rgba(224,171,75,.028),
+   inset 13px 0 29px rgba(0,0,0,.23),
+   inset -13px 0 29px rgba(0,0,0,.23),
+   0 25px 50px rgba(0,0,0,.46);
+ perspective:1800px;
+}
+.dragon-cover-back{
+ position:absolute;z-index:0;inset:12px;border:1px solid rgba(192,137,53,.16);
+ border-radius:23px 23px 31px 31px;
+ background:
+   repeating-radial-gradient(ellipse at 50% 0%,rgba(188,71,34,.055) 0 8px,transparent 9px 21px),
+   radial-gradient(circle at 50% 50%,rgba(203,81,32,.04),transparent 40%);
+ box-shadow:inset 0 0 38px rgba(0,0,0,.28);
+ pointer-events:none;
+}
+
+/* Horns make the outer silhouette unlike any book theme */
+.dragon-horn{
+ position:absolute;z-index:8;width:34px;height:54px;
+ background:linear-gradient(90deg,#594932,#b6a17d 44%,#746044 72%,#3f3425);
+ clip-path:polygon(50% 0,78% 28%,100% 100%,51% 73%,0 100%,22% 29%);
+ filter:drop-shadow(0 3px 4px rgba(0,0,0,.38));
+ pointer-events:none;
+}
+.dragon-horn.horn-tl{top:-27px;left:35px;transform:rotate(-18deg)}
+.dragon-horn.horn-tr{top:-27px;right:35px;transform:scaleX(-1) rotate(-18deg)}
+.dragon-horn.horn-bl{bottom:-27px;left:35px;transform:scaleY(-1) rotate(-18deg)}
+.dragon-horn.horn-br{bottom:-27px;right:35px;transform:scale(-1) rotate(-18deg)}
+
+/* wing-membrane pages */
+.dragon-page{position:relative;z-index:2;min-width:0;display:flex;padding:6px 5px 10px}
+.dragon-page-layer{
+ position:absolute;z-index:0;top:11px;bottom:5px;left:9px;right:9px;border-radius:13px;
+ background:linear-gradient(145deg,#472019,#21100e);
+ border:1px solid rgba(102,54,37,.3);
+ box-shadow:0 8px 14px rgba(0,0,0,.3);
+}
+.dragon-page-layer.layer-a{transform:translateY(4px);opacity:.72}
+.dragon-page-layer.layer-b{transform:translateY(7px);opacity:.37}
+.dragon-wing-page{
+ position:relative;z-index:2;flex:1;min-width:0;
+ padding:32px 24px 36px;border:1px solid #71432c;
+ background:
+   radial-gradient(circle at 16% 12%,rgba(229,98,51,.055),transparent 18%),
+   radial-gradient(circle at 82% 84%,rgba(173,116,41,.045),transparent 23%),
+   repeating-linear-gradient(118deg,rgba(255,255,255,.007) 0 1px,transparent 1px 10px),
+   linear-gradient(112deg,#51221b,#351512 54%,#27100f);
+ color:#ead5b8;overflow:hidden;
+}
+.dragon-page-left .dragon-wing-page{
+ border-radius:19px 5px 5px 22px;transform:perspective(1600px) rotateY(.45deg);transform-origin:right center;
+ box-shadow:inset -31px 0 37px rgba(0,0,0,.27),inset 2px 0 rgba(255,194,143,.025),0 8px 19px rgba(0,0,0,.32);
+}
+.dragon-page-right .dragon-wing-page{
+ border-radius:5px 19px 22px 5px;transform:perspective(1600px) rotateY(-.45deg);transform-origin:left center;
+ box-shadow:inset 31px 0 37px rgba(0,0,0,.27),inset -2px 0 rgba(255,194,143,.025),0 8px 19px rgba(0,0,0,.32);
+}
+.dragon-wing-page::before{
+ content:"";position:absolute;z-index:2;inset:7px;border:1px solid rgba(117,68,44,.24);
+ box-shadow:inset 0 0 0 3px rgba(201,139,53,.02);border-radius:inherit;pointer-events:none;
+}
+.dragon-wing-vein{
+ position:absolute;z-index:1;height:2px;background:rgba(114,53,38,.33);transform-origin:left center;pointer-events:none
+}
+.dragon-wing-vein::before,.dragon-wing-vein::after{
+ content:"";position:absolute;height:1px;background:rgba(106,47,35,.26);transform-origin:left center
+}
+.dragon-wing-vein.vein-a{left:2%;top:37%;width:62%;transform:rotate(-14deg)}
+.dragon-wing-vein.vein-a::before{left:24%;top:0;width:44%;transform:rotate(-29deg)}
+.dragon-wing-vein.vein-a::after{left:54%;top:0;width:36%;transform:rotate(28deg)}
+.dragon-wing-vein.vein-b{right:2%;bottom:28%;width:53%;transform:rotate(163deg)}
+.dragon-wing-vein.vein-b::before{left:31%;top:0;width:38%;transform:rotate(-31deg)}
+.dragon-page-heading{
+ position:absolute;z-index:3;top:10px;left:19px;right:19px;height:18px;
+ display:flex;align-items:center;justify-content:center;gap:9px;
+ color:rgba(202,153,77,.52);pointer-events:none;
+}
+.dragon-page-heading i{width:38px;height:1px;background:linear-gradient(90deg,transparent,currentColor)}
+.dragon-page-heading i:last-child{transform:scaleX(-1)}
+.dragon-page-heading span{font-family:Georgia,serif;font-size:7px;letter-spacing:.16em}
+
+/* armored scale card mounts */
+.dragon-slot-grid{
+ position:relative;z-index:4;display:grid;
+ grid-template-columns:repeat(var(--dragon-cols,2),minmax(0,1fr));
+ gap:17px 14px;align-content:start;
+}
+.dragon-card-slot{
+ position:relative;min-width:0;padding:10px;
+ border:1px solid rgba(154,103,45,.45);border-radius:7px;
+ background:
+   radial-gradient(circle at 50% 42%,rgba(208,79,32,.045),transparent 50%),
+   linear-gradient(145deg,rgba(255,255,255,.012),rgba(82,27,22,.06));
+ box-shadow:inset 0 0 0 2px rgba(104,43,31,.11);
+}
+.dragon-slot-scale-frame{
+ position:absolute;z-index:0;inset:4px;border:1px solid rgba(129,81,38,.25);border-radius:4px;
+ background:
+   repeating-radial-gradient(ellipse at 50% 0%,rgba(110,43,30,.09) 0 5px,transparent 6px 14px);
+ box-shadow:inset 0 0 13px rgba(0,0,0,.17);
+}
+.dragon-card-mount{position:relative;z-index:2}
+.dragon-card-slot .collection-card-art{
+ border-radius:4px;border-color:#82572f;
+ box-shadow:0 2px 3px rgba(0,0,0,.54),0 6px 13px rgba(0,0,0,.25),0 0 10px rgba(212,82,31,.055);
+}
+.dragon-card-slot .collection-card-name{
+ margin:6px 0 -3px;padding:4px 5px;border-radius:3px;
+ background:linear-gradient(90deg,transparent,rgba(96,35,27,.23) 14% 86%,transparent);
+ color:#ecd7b5;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+ font-size:11px;line-height:1.25;text-shadow:0 1px 2px #150807;
+}
+.dragon-slot-claw{
+ position:absolute;z-index:5;width:15px;height:15px;pointer-events:none;
+ border-top:3px solid #b09a74;border-radius:65%;
+ filter:drop-shadow(0 1px 1px rgba(0,0,0,.35));
+}
+.dragon-slot-claw::after{
+ content:"";position:absolute;top:-3px;left:5px;width:10px;height:3px;border-top:2px solid #8b7658;border-radius:50%;transform:rotate(37deg)
+}
+.dragon-slot-claw.claw-tl{left:2px;top:3px;transform:rotate(-22deg)}
+.dragon-slot-claw.claw-tr{right:2px;top:3px;transform:scaleX(-1) rotate(-22deg)}
+.dragon-slot-claw.claw-bl{left:2px;bottom:3px;transform:scaleY(-1) rotate(-22deg)}
+.dragon-slot-claw.claw-br{right:2px;bottom:3px;transform:scale(-1) rotate(-22deg)}
+.dragon-slot-gem{
+ position:absolute;z-index:6;left:50%;top:2px;width:10px;height:10px;
+ transform:translateX(-50%) rotate(45deg);border:1px solid #b88437;
+ background:radial-gradient(circle at 35% 30%,#ffb07c,#df5a2d 42%,#792117 74%);
+ box-shadow:0 0 7px rgba(229,87,38,.22);pointer-events:none;
+}
+
+/* empty slot = dormant dragon egg */
+.dragon-card-slot.empty{
+ aspect-ratio:5/7;display:flex;align-items:center;justify-content:center;border-style:dashed;
+ background:radial-gradient(circle at 50% 50%,rgba(188,70,30,.035),transparent 44%);
+}
+.dragon-empty-egg{
+ position:relative;width:55%;aspect-ratio:4/5;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+ border:2px solid rgba(116,73,38,.35);
+ border-radius:50% 50% 47% 47% / 58% 58% 42% 42%;
+ background:
+   repeating-radial-gradient(ellipse at 50% 0%,rgba(126,50,34,.09) 0 5px,transparent 6px 14px),
+   rgba(67,29,24,.08);
+ box-shadow:inset 0 0 17px rgba(0,0,0,.2);
+ color:rgba(206,156,82,.36);
+}
+.dragon-empty-egg b{font-size:21px;color:rgba(220,88,37,.35)}
+.dragon-empty-egg small{font-size:7px;letter-spacing:.09em;white-space:nowrap}
+.dragon-empty-crack{
+ position:absolute;width:2px;height:28px;background:rgba(92,50,31,.38);transform-origin:top center
+}
+.dragon-empty-crack.crack-1{left:42%;top:8%;transform:rotate(-24deg)}
+.dragon-empty-crack.crack-2{right:36%;top:18%;height:20px;transform:rotate(31deg)}
+
+/* central armored spine + dragon eye */
+.dragon-binding{position:relative;z-index:5;min-height:100%;display:flex;align-items:center;justify-content:center}
+.dragon-binding-shadow{
+ position:absolute;top:4px;bottom:6px;left:1px;right:1px;border-radius:22px;
+ background:linear-gradient(90deg,rgba(0,0,0,.73),rgba(116,67,33,.07) 47% 53%,rgba(0,0,0,.74));
+ box-shadow:0 0 23px rgba(0,0,0,.45);
+}
+.dragon-binding-spine{
+ position:absolute;top:4%;bottom:4%;left:50%;width:18px;transform:translateX(-50%);
+ border:1px solid #785126;border-radius:8px;
+ background:linear-gradient(90deg,#25110d,#9d6e2e 28%,#4d2117 50%,#b68136 73%,#25110d);
+ box-shadow:inset 0 1px rgba(255,221,157,.14),0 2px 7px rgba(0,0,0,.47);
+}
+.dragon-binding-spikes{position:absolute;inset:5% 0}
+.dragon-binding-spikes i{
+ position:absolute;left:50%;top:calc(7% + var(--spike) * 14.2%);
+ width:27px;height:13px;transform:translate(-50%,-50%);
+ background:linear-gradient(90deg,#6f5d43,#c0aa81 48%,#746044);
+ clip-path:polygon(0 50%,39% 14%,50% 50%,61% 14%,100% 50%,61% 86%,50% 50%,39% 86%);
+ opacity:.75;
+}
+.dragon-binding-eye{
+ position:absolute;left:50%;top:50%;width:43px;height:31px;
+ transform:translate(-50%,-50%);
+ border:2px solid #a67631;border-radius:60% 60% 48% 48%;
+ background:radial-gradient(ellipse at 50% 50%,#f5a84d 0 28%,#bd3d20 29% 52%,#3b110d 53%);
+ box-shadow:0 0 0 4px #3d1a13,0 0 16px rgba(222,79,29,.25);
+}
+.dragon-binding-eye span{
+ position:absolute;left:50%;top:50%;width:4px;height:20px;transform:translate(-50%,-50%);
+ border-radius:50%;background:#170706;box-shadow:0 0 5px rgba(255,199,87,.22)
+}
+
+.dragon-page-number{
+ position:absolute;z-index:5;bottom:10px;left:50%;transform:translateX(-50%);
+ color:rgba(199,151,79,.4);font-family:Georgia,serif;font-size:8px;letter-spacing:.15em;
+}
+
+/* page controls */
+.dragon-page-turn{
+ position:absolute;z-index:9;top:50%;width:74px;height:180px;transform:translateY(-50%);
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+ border:1px solid #74462c;border-radius:14px;
+ background:
+   radial-gradient(circle at 50% 24%,rgba(222,81,31,.1),transparent 35%),
+   repeating-radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.005) 0 5px,transparent 6px 14px),
+   linear-gradient(90deg,#4d1b16,#1c0d0b);
+ color:#ecd6ae;box-shadow:inset 0 1px rgba(255,227,172,.035),0 8px 22px rgba(0,0,0,.42);
+ cursor:pointer;opacity:.81;
+}
+.dragon-page-turn:hover:not(:disabled){
+ opacity:1;border-color:#a36d37;
+ background:radial-gradient(circle at 50% 24%,rgba(233,93,37,.14),transparent 35%),linear-gradient(90deg,#66241c,#28100e)
+}
+.dragon-page-turn:disabled{opacity:.12;cursor:default}
+.dragon-page-turn-prev{left:-20px}.dragon-page-turn-next{right:-20px}
+.dragon-page-turn span{font-size:45px;line-height:.8}
+.dragon-page-turn small{
+ writing-mode:vertical-rl;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;font-size:10px;letter-spacing:.08em;color:#c3ab86
+}
+
+/* page turn feels leathery/heavy rather than papery */
+.dragon-turning-next .dragon-page-right{transform-origin:left center;animation:dragonTurnNext .58s cubic-bezier(.2,.72,.18,1)}
+.dragon-turning-prev .dragon-page-left{transform-origin:right center;animation:dragonTurnPrev .58s cubic-bezier(.2,.72,.18,1)}
+.dragon-turning-next .dragon-binding,.dragon-turning-prev .dragon-binding{animation:dragonBindingSettle .52s ease-out}
+@keyframes dragonTurnNext{
+ 0%{opacity:.43;transform:perspective(1400px) rotateY(-18deg) translateX(15px);filter:brightness(.68) saturate(.8)}
+ 48%{opacity:.96;transform:perspective(1400px) rotateY(-4deg) translateX(3px);filter:brightness(.9)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes dragonTurnPrev{
+ 0%{opacity:.43;transform:perspective(1400px) rotateY(18deg) translateX(-15px);filter:brightness(.68) saturate(.8)}
+ 48%{opacity:.96;transform:perspective(1400px) rotateY(4deg) translateX(-3px);filter:brightness(.9)}
+ 100%{opacity:1;transform:none;filter:none}
+}
+@keyframes dragonBindingSettle{0%{transform:scaleX(.92);filter:brightness(.7)}100%{transform:none;filter:none}}
+
+.dragon-empty-book{
+ min-height:440px;display:flex;align-items:center;justify-content:center;
+ border:1px solid #71442c;border-radius:20px;
+ background:
+   radial-gradient(circle at 23% 24%,rgba(212,81,35,.08),transparent 22%),
+   radial-gradient(circle at 78% 72%,rgba(173,117,38,.06),transparent 24%),
+   linear-gradient(145deg,#511b16,#29100e 56%,#140a09);
+ color:#d1b791;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+
+/* density */
+.dragon-spread-host[data-page-size="1"] .dragon-card-slot{width:min(72%,380px);justify-self:center}
+.dragon-spread-host[data-page-size="2"] .dragon-card-slot{width:min(86%,350px);justify-self:center}
+.dragon-spread-host[data-page-size="16"] .dragon-slot-grid,
+.dragon-spread-host[data-page-size="24"] .dragon-slot-grid{gap:10px 9px}
+.dragon-spread-host[data-page-size="36"] .dragon-slot-grid,
+.dragon-spread-host[data-page-size="48"] .dragon-slot-grid{gap:7px 6px}
+.dragon-spread-host[data-page-size="24"] .dragon-card-slot,
+.dragon-spread-host[data-page-size="36"] .dragon-card-slot,
+.dragon-spread-host[data-page-size="48"] .dragon-card-slot{padding:5px}
+.dragon-spread-host[data-page-size="36"] .dragon-page-heading,
+.dragon-spread-host[data-page-size="48"] .dragon-page-heading,
+.dragon-spread-host[data-page-size="48"] .dragon-slot-claw{display:none}
+
+/* external pagination */
+#screen-collection:has(.collection-book-shell.theme-dragon) .collection-side-page{
+ border-color:rgba(125,77,42,.61);
+ background:
+   radial-gradient(circle at 50% 25%,rgba(218,81,31,.1),transparent 35%),
+   linear-gradient(180deg,rgba(83,29,23,.95),rgba(25,12,10,.97));
+ color:#edd7b3;box-shadow:inset 0 1px rgba(255,230,183,.025),0 8px 23px rgba(0,0,0,.4);
+}
+#screen-collection:has(.collection-book-shell.theme-dragon) #collection-pagination{color:#b49c7c}
+#screen-collection:has(.collection-book-shell.theme-dragon) #collection-pagination .btn{
+ border-color:rgba(130,82,44,.5);background:rgba(50,20,16,.84);color:#d5ba91;
+}
+#screen-collection:has(.collection-book-shell.theme-dragon) #collection-pagination .btn.primary{
+ border-color:#a16b37;background:linear-gradient(180deg,#743024,#35130f);color:#f1ddb5;
+}
+
+/* shelf */
+.album-book-card[data-shelf-theme="dragon"] .album-shelf-book{transform:rotateY(-5deg) rotateZ(-.5deg)}
+.album-book-card[data-shelf-theme="dragon"]:hover .album-shelf-book{
+ transform:rotateY(-1deg) rotateZ(0) translateY(-12px) translateZ(9px)
+}
+.album-book-card[data-shelf-theme="dragon"] .album-book-cover.theme-dragon{
+ border-color:#75472d;border-radius:7px 15px 15px 7px;
+ background:
+   radial-gradient(ellipse at 50% 21%,#e75a2d 0 5%,#7d2118 6% 10%,transparent 11%),
+   repeating-radial-gradient(ellipse at 50% 0%,rgba(122,42,29,.16) 0 7px,transparent 8px 18px),
+   linear-gradient(145deg,#6b211b,#37120f 66%,#180b0a);
+ box-shadow:inset 0 0 0 4px rgba(0,0,0,.2),inset 7px 0 13px rgba(0,0,0,.26),5px 6px 13px rgba(0,0,0,.39);
+}
+.album-book-card[data-shelf-theme="dragon"] .album-cover-inner-frame{
+ border-color:rgba(189,136,50,.29);box-shadow:inset 0 0 0 2px rgba(84,36,24,.1)
+}
+.album-book-card[data-shelf-theme="dragon"] .album-cover-corner::before,
+.album-book-card[data-shelf-theme="dragon"] .album-cover-corner::after{
+ background:linear-gradient(90deg,#6e4f2e,#d4b36d 46%,#7d5d36)
+}
+.album-book-card[data-shelf-theme="dragon"] .album-cover-crest,
+.album-book-card[data-shelf-theme="dragon"] .album-cover-title{color:#e9ca83}
+.album-book-card[data-shelf-theme="dragon"] .album-cover-title{
+ font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;text-shadow:0 2px 5px rgba(0,0,0,.58)
+}
+.album-book-card[data-shelf-theme="dragon"] .album-cover-title-plate{
+ border-color:rgba(185,130,48,.2);background:linear-gradient(90deg,transparent,rgba(61,22,17,.3) 13% 87%,transparent)
+}
+.album-book-card[data-shelf-theme="dragon"] .album-cover-card-frame{border-color:#926333;background:#1c0c0a}
+.album-book-card[data-shelf-theme="dragon"] .album-book-spine.theme-dragon{
+ width:35px;background:linear-gradient(90deg,#180a08,#6b221b 47%,#2c100d 72%,#9b6a2e);border-color:#614127
+}
+.album-book-card[data-shelf-theme="dragon"] .album-book-spine-title{
+ color:#e2c487;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif
+}
+.album-book-card[data-shelf-theme="dragon"] .album-book-page-block{
+ background:repeating-linear-gradient(0deg,#50231b 0 1px,#1e0e0c 1px 2px,#3c1914 2px 3px);border-color:#45281d
+}
+.album-book-card[data-shelf-theme="dragon"] .album-book-back-cover{
+ background:linear-gradient(145deg,#4f1814,#1b0c0a);border-color:#55341f
+}
+.album-book-card[data-shelf-theme="dragon"] .album-book-caption{
+ border-color:rgba(127,79,42,.27);background:linear-gradient(180deg,rgba(73,28,22,.86),rgba(32,14,12,.92))
+}
+.album-book-card[data-shelf-theme="dragon"] .album-book-caption::before{
+ background:linear-gradient(90deg,transparent,rgba(200,147,61,.22),transparent)
+}
+
+/* opening cover */
+.theme-dragon .collection-cover-book{
+ --cover-metal:#9a6b31;--cover-metal-hi:#e0bd6a;--cover-line:rgba(188,133,49,.25);
+ --cover-ink:#f0d9a7;--cover-muted:#b89e79;
+ width:min(92vw,620px);border-color:#75482d;border-radius:15px 27px 27px 15px;
+ background:
+   radial-gradient(ellipse at 50% 17%,#e75b2d 0 4%,#7c2118 5% 9%,transparent 10%),
+   repeating-radial-gradient(ellipse at 50% 0%,rgba(124,43,29,.14) 0 7px,transparent 8px 18px),
+   linear-gradient(145deg,#6d221c,#38130f 66%,#190b09);
+ box-shadow:inset 17px 0 23px rgba(0,0,0,.3),inset 0 0 0 5px rgba(0,0,0,.18),0 26px 61px rgba(0,0,0,.5);
+}
+.theme-dragon .collection-cover-book::before{
+ background:linear-gradient(90deg,#140806,#612019 56%,#29100d);border-right-color:rgba(186,132,49,.08)
+}
+.theme-dragon .collection-cover-inner-frame{
+ border-color:rgba(199,145,57,.28);box-shadow:inset 0 0 0 2px rgba(92,39,25,.09)
+}
+.theme-dragon .collection-cover-corner::before,
+.theme-dragon .collection-cover-corner::after{
+ background:linear-gradient(90deg,#6c4e2d,#d8b871 46%,#7f5e36)
+}
+.theme-dragon .collection-cover-crest{color:#e7c56f}
+.theme-dragon .collection-cover-kicker{color:#ad9270}
+.theme-dragon .collection-cover-book h1{
+ color:#f2dca9;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;text-shadow:0 3px 8px rgba(0,0,0,.61)
+}
+.theme-dragon .collection-cover-page-subtitle{color:#c9ae83}
+.theme-dragon .collection-cover-card-frame{
+ border-color:#936333;background:radial-gradient(circle at 50% 45%,rgba(216,78,29,.08),transparent 47%),#190b09
+}
+.theme-dragon .collection-cover-description{
+ border-color:rgba(180,124,45,.17);background:linear-gradient(90deg,transparent,rgba(57,20,15,.26) 15% 85%,transparent);
+ color:#d2bc96;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif
+}
+.theme-dragon .collection-cover-meta{color:#aa9272}
+.theme-dragon .collection-cover-open-wrap{border-color:rgba(172,118,44,.18);background:rgba(54,19,15,.2)}
+.theme-dragon .collection-cover-open-wrap .btn.primary{
+ border-color:#a06c37;background:linear-gradient(180deg,#7b3225,#38140f);color:#f0d9a8
+}
+.theme-dragon .collection-cover-emblem-panel{
+ border-color:rgba(181,126,47,.22);background:radial-gradient(circle at 50% 44%,rgba(210,76,29,.09),transparent 42%),rgba(54,19,15,.15);color:#e3c471
+}
+
+/* responsive */
+@media(max-width:1000px){
+ .dragon-spread{grid-template-columns:minmax(0,1fr) 52px minmax(0,1fr);padding:23px 29px 30px}
+ .dragon-wing-page{padding:24px 17px 31px}
+ .dragon-slot-grid{gap:11px 10px}
+}
+@media(max-width:700px){
+ .collection-book-shell.theme-dragon{padding:11px 7px 16px}
+ .dragon-spread{display:block;padding:17px 12px 65px;border-radius:20px}
+ .dragon-page{padding:5px;margin-bottom:13px}
+ .dragon-page-left .dragon-wing-page,.dragon-page-right .dragon-wing-page{transform:none;border-radius:12px!important}
+ .dragon-binding,.dragon-horn{display:none}
+ .dragon-wing-page{padding:21px 13px 29px}
+ .dragon-slot-grid{gap:9px 8px}
+ .dragon-page-turn{top:auto;bottom:8px;width:126px;height:42px;transform:none;flex-direction:row;border-radius:10px}
+ .dragon-page-turn-prev{left:13px}.dragon-page-turn-next{right:13px}
+ .dragon-page-turn span{font-size:27px}
+ .dragon-page-turn small{writing-mode:horizontal-tb;font-size:10px;letter-spacing:.03em}
+ .theme-dragon .collection-cover-book{width:min(96vw,470px);transform:none}
+}
+
 </style>
 </head>
 <body>
@@ -5406,7 +8234,7 @@ main{zoom:1}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v6.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v6.6 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -7843,7 +10671,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    });
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'6.0',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'6.6',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:6,
@@ -9177,6 +12005,24 @@ function isGrimoireSpread(view=currentCollectionView()){
 function isGrimoire2Spread(view=currentCollectionView()){
  return currentCollectionThemeId()==='grimoire2'&&view?.viewMode==='gallery'&&collectionSourceKind()!=='albums';
 }
+function isClassicSpread(view=currentCollectionView()){
+ return currentCollectionThemeId()==='classic'&&view?.viewMode==='gallery'&&collectionSourceKind()!=='albums';
+}
+function isFantasySpread(view=currentCollectionView()){
+ return currentCollectionThemeId()==='fantasy'&&view?.viewMode==='gallery'&&collectionSourceKind()!=='albums';
+}
+function isFantasy2Spread(view=currentCollectionView()){
+ return currentCollectionThemeId()==='fantasy2'&&view?.viewMode==='gallery'&&collectionSourceKind()!=='albums';
+}
+function isStarrySpread(view=currentCollectionView()){
+ return currentCollectionThemeId()==='starry'&&view?.viewMode==='gallery'&&collectionSourceKind()!=='albums';
+}
+function isStoneSpread(view=currentCollectionView()){
+ return currentCollectionThemeId()==='stone'&&view?.viewMode==='gallery'&&collectionSourceKind()!=='albums';
+}
+function isDragonSpread(view=currentCollectionView()){
+ return currentCollectionThemeId()==='dragon'&&view?.viewMode==='gallery'&&collectionSourceKind()!=='albums';
+}
 function collectionItemsPerTurn(view=currentCollectionView(),album=currentAlbum()){
  const size=Math.max(1,Number(view?.pageSize)||9);
  return isRealBinderSpread(album,view)?size*2:size;
@@ -9361,6 +12207,353 @@ function grimoire2SpreadHtml(pageRows,pageSize,spreadIndex,showNames,maxSpreadIn
    <button class="grimoire2-page-turn grimoire2-page-turn-next" type="button" data-grimoire2-turn="next" ${canNext?'':'disabled'} aria-label="次のページへ"><small>次のページへ</small><span>›</span></button>
  </div>`;
 }
+function classicSlotHtml(item,showNames){
+ if(item?.c){
+   return `<div class="classic-card-slot occupied">
+     <span class="classic-photo-corner corner-tl" aria-hidden="true"></span>
+     <span class="classic-photo-corner corner-tr" aria-hidden="true"></span>
+     <span class="classic-photo-corner corner-bl" aria-hidden="true"></span>
+     <span class="classic-photo-corner corner-br" aria-hidden="true"></span>
+     <div class="classic-card-mount">${collectionCardGalleryHtml(item.c,showNames)}</div>
+   </div>`;
+ }
+ const manualSlot=item&&Number.isFinite(Number(item.slotIndex));
+ return `<div class="classic-card-slot empty ${manualSlot?'manual-empty':''}">
+   <div class="classic-empty-plate"><span>◇</span><small>${manualSlot?'空き枠':'ARCHIVE'}</small></div>
+ </div>`;
+}
+function classicPageHtml(items,side,physicalPage,showNames,cols){
+ return `<section class="classic-page classic-page-${side}" aria-label="${side==='left'?'左':'右'}ページ">
+   <div class="classic-page-stack stack-2" aria-hidden="true"></div>
+   <div class="classic-page-stack stack-1" aria-hidden="true"></div>
+   <div class="classic-paper">
+     <div class="classic-paper-grain" aria-hidden="true"></div>
+     <div class="classic-page-rule" aria-hidden="true"><span></span><i></i></div>
+     <div class="classic-slot-grid" style="--classic-cols:${cols}">
+       ${items.map(x=>classicSlotHtml(x,showNames)).join('')}
+     </div>
+     <div class="classic-page-number">${physicalPage}</div>
+   </div>
+ </section>`;
+}
+function classicSpreadHtml(pageRows,pageSize,spreadIndex,showNames,maxSpreadIndex){
+ const split=Math.ceil(pageRows.length/2);
+ const left=pageRows.slice(0,split),right=pageRows.slice(split);
+ const cols=Math.max(1,Math.ceil(collectionGridColumns(pageSize)/2));
+ const leftNo=spreadIndex*2+1,rightNo=leftNo+1,canPrev=spreadIndex>0,canNext=spreadIndex<maxSpreadIndex;
+ return `<div class="classic-spread" data-classic-spread="${spreadIndex+1}">
+   <div class="classic-cover-underlay" aria-hidden="true"></div>
+   <div class="classic-corner-brass brass-tl" aria-hidden="true"></div>
+   <div class="classic-corner-brass brass-tr" aria-hidden="true"></div>
+   <div class="classic-corner-brass brass-bl" aria-hidden="true"></div>
+   <div class="classic-corner-brass brass-br" aria-hidden="true"></div>
+   <button class="classic-page-turn classic-page-turn-prev" type="button" data-classic-turn="prev" ${canPrev?'':'disabled'} aria-label="前のページへ"><span>‹</span><small>前のページへ</small></button>
+   ${classicPageHtml(left,'left',leftNo,showNames,cols)}
+   <div class="classic-binding" aria-hidden="true">
+     <div class="classic-binding-shadow"></div>
+     <div class="classic-binding-leather"></div>
+     <div class="classic-binding-band band-1"></div>
+     <div class="classic-binding-band band-2"></div>
+     <div class="classic-binding-band band-3"></div>
+     <div class="classic-bookmark"></div>
+   </div>
+   ${classicPageHtml(right,'right',rightNo,showNames,cols)}
+   <button class="classic-page-turn classic-page-turn-next" type="button" data-classic-turn="next" ${canNext?'':'disabled'} aria-label="次のページへ"><small>次のページへ</small><span>›</span></button>
+ </div>`;
+}
+function fantasySlotHtml(item,showNames){
+ if(item?.c){
+   return `<div class="fantasy-card-slot occupied">
+     <div class="fantasy-slot-wood" aria-hidden="true"></div>
+     <span class="fantasy-vine vine-tl" aria-hidden="true"></span>
+     <span class="fantasy-vine vine-tr" aria-hidden="true"></span>
+     <span class="fantasy-vine vine-bl" aria-hidden="true"></span>
+     <span class="fantasy-vine vine-br" aria-hidden="true"></span>
+     <div class="fantasy-card-mount">${collectionCardGalleryHtml(item.c,showNames)}</div>
+   </div>`;
+ }
+ const manualSlot=item&&Number.isFinite(Number(item.slotIndex));
+ return `<div class="fantasy-card-slot empty ${manualSlot?'manual-empty':''}">
+   <div class="fantasy-empty-crest">
+     <span>♜</span>
+     <small>${manualSlot?'空き枠':'UNRECORDED'}</small>
+   </div>
+ </div>`;
+}
+function fantasyPageHtml(items,side,physicalPage,showNames,cols){
+ return `<section class="fantasy-page fantasy-page-${side}" aria-label="${side==='left'?'左':'右'}ページ">
+   <div class="fantasy-page-stack stack-b" aria-hidden="true"></div>
+   <div class="fantasy-page-stack stack-a" aria-hidden="true"></div>
+   <div class="fantasy-parchment">
+     <div class="fantasy-map-watermark" aria-hidden="true"><i></i><span></span><b></b></div>
+     <div class="fantasy-header-ornament" aria-hidden="true"><span>✦</span><i></i><b>ADVENTURER'S ARCHIVE</b></div>
+     <div class="fantasy-slot-grid" style="--fantasy-cols:${cols}">
+       ${items.map(x=>fantasySlotHtml(x,showNames)).join('')}
+     </div>
+     <div class="fantasy-page-number">${physicalPage}</div>
+   </div>
+ </section>`;
+}
+function fantasySpreadHtml(pageRows,pageSize,spreadIndex,showNames,maxSpreadIndex){
+ const split=Math.ceil(pageRows.length/2);
+ const left=pageRows.slice(0,split),right=pageRows.slice(split);
+ const cols=Math.max(1,Math.ceil(collectionGridColumns(pageSize)/2));
+ const leftNo=spreadIndex*2+1,rightNo=leftNo+1,canPrev=spreadIndex>0,canNext=spreadIndex<maxSpreadIndex;
+ return `<div class="fantasy-spread" data-fantasy-spread="${spreadIndex+1}">
+   <div class="fantasy-cover-back" aria-hidden="true"></div>
+   <div class="fantasy-buckle buckle-top" aria-hidden="true"><i></i></div>
+   <div class="fantasy-buckle buckle-bottom" aria-hidden="true"><i></i></div>
+   <button class="fantasy-page-turn fantasy-page-turn-prev" type="button" data-fantasy-turn="prev" ${canPrev?'':'disabled'} aria-label="前のページへ"><span>‹</span><small>前のページへ</small></button>
+   ${fantasyPageHtml(left,'left',leftNo,showNames,cols)}
+   <div class="fantasy-binding" aria-hidden="true">
+     <div class="fantasy-binding-shadow"></div>
+     <div class="fantasy-binding-rope">${Array.from({length:8},(_,i)=>`<i style="--rope:${i}"></i>`).join('')}</div>
+     <div class="fantasy-binding-emblem"><span>✦</span></div>
+   </div>
+   ${fantasyPageHtml(right,'right',rightNo,showNames,cols)}
+   <button class="fantasy-page-turn fantasy-page-turn-next" type="button" data-fantasy-turn="next" ${canNext?'':'disabled'} aria-label="次のページへ"><small>次のページへ</small><span>›</span></button>
+ </div>`;
+}
+function fantasy2SlotHtml(item,showNames){
+ if(item?.c){
+   return `<div class="fantasy2-card-slot occupied">
+     <div class="fantasy2-slot-plaque" aria-hidden="true"></div>
+     <span class="fantasy2-slot-wing wing-l" aria-hidden="true"></span>
+     <span class="fantasy2-slot-wing wing-r" aria-hidden="true"></span>
+     <span class="fantasy2-slot-gem" aria-hidden="true"></span>
+     <div class="fantasy2-card-mount">${collectionCardGalleryHtml(item.c,showNames)}</div>
+   </div>`;
+ }
+ const manualSlot=item&&Number.isFinite(Number(item.slotIndex));
+ return `<div class="fantasy2-card-slot empty ${manualSlot?'manual-empty':''}">
+   <div class="fantasy2-empty-seal">
+     <span>✧</span>
+     <small>${manualSlot?'空き枠':'UNRECORDED'}</small>
+   </div>
+ </div>`;
+}
+function fantasy2PageHtml(items,side,physicalPage,showNames,cols){
+ return `<section class="fantasy2-page fantasy2-page-${side}" aria-label="${side==='left'?'左':'右'}ページ">
+   <div class="fantasy2-page-stack stack-b" aria-hidden="true"></div>
+   <div class="fantasy2-page-stack stack-a" aria-hidden="true"></div>
+   <div class="fantasy2-page-surface">
+     <div class="fantasy2-cloud-watermark" aria-hidden="true"><i></i><span></span><b></b></div>
+     <div class="fantasy2-header-crest" aria-hidden="true"><i></i><span>✧</span><strong>ROYAL CHRONICLE</strong><span>✧</span><i></i></div>
+     <div class="fantasy2-slot-grid" style="--fantasy2-cols:${cols}">
+       ${items.map(x=>fantasy2SlotHtml(x,showNames)).join('')}
+     </div>
+     <div class="fantasy2-page-number">CHAPTER ${physicalPage}</div>
+   </div>
+ </section>`;
+}
+function fantasy2SpreadHtml(pageRows,pageSize,spreadIndex,showNames,maxSpreadIndex){
+ const split=Math.ceil(pageRows.length/2);
+ const left=pageRows.slice(0,split),right=pageRows.slice(split);
+ const cols=Math.max(1,Math.ceil(collectionGridColumns(pageSize)/2));
+ const leftNo=spreadIndex*2+1,rightNo=leftNo+1,canPrev=spreadIndex>0,canNext=spreadIndex<maxSpreadIndex;
+ return `<div class="fantasy2-spread" data-fantasy2-spread="${spreadIndex+1}">
+   <div class="fantasy2-cover-back" aria-hidden="true"></div>
+   <div class="fantasy2-corner-plate plate-tl" aria-hidden="true"><span>✧</span></div>
+   <div class="fantasy2-corner-plate plate-tr" aria-hidden="true"><span>✧</span></div>
+   <div class="fantasy2-corner-plate plate-bl" aria-hidden="true"><span>✧</span></div>
+   <div class="fantasy2-corner-plate plate-br" aria-hidden="true"><span>✧</span></div>
+   <button class="fantasy2-page-turn fantasy2-page-turn-prev" type="button" data-fantasy2-turn="prev" ${canPrev?'':'disabled'} aria-label="前のページへ"><span>‹</span><small>前のページへ</small></button>
+   ${fantasy2PageHtml(left,'left',leftNo,showNames,cols)}
+   <div class="fantasy2-binding" aria-hidden="true">
+     <div class="fantasy2-binding-shadow"></div>
+     <div class="fantasy2-binding-ridge"></div>
+     <div class="fantasy2-binding-stars">${Array.from({length:7},(_,i)=>`<i style="--star:${i}">✦</i>`).join('')}</div>
+     <div class="fantasy2-binding-crown"><span>♛</span></div>
+   </div>
+   ${fantasy2PageHtml(right,'right',rightNo,showNames,cols)}
+   <button class="fantasy2-page-turn fantasy2-page-turn-next" type="button" data-fantasy2-turn="next" ${canNext?'':'disabled'} aria-label="次のページへ"><small>次のページへ</small><span>›</span></button>
+ </div>`;
+}
+function starrySlotHtml(item,showNames){
+ if(item?.c){
+   return `<div class="starry-card-slot occupied">
+     <div class="starry-slot-orbit orbit-a" aria-hidden="true"></div>
+     <div class="starry-slot-orbit orbit-b" aria-hidden="true"></div>
+     <span class="starry-slot-star star-tl" aria-hidden="true">✦</span>
+     <span class="starry-slot-star star-tr" aria-hidden="true">·</span>
+     <span class="starry-slot-star star-bl" aria-hidden="true">·</span>
+     <span class="starry-slot-star star-br" aria-hidden="true">✦</span>
+     <div class="starry-card-mount">${collectionCardGalleryHtml(item.c,showNames)}</div>
+   </div>`;
+ }
+ const manualSlot=item&&Number.isFinite(Number(item.slotIndex));
+ return `<div class="starry-card-slot empty ${manualSlot?'manual-empty':''}">
+   <div class="starry-empty-constellation">
+     <i></i><i></i><i></i><i></i><i></i>
+     <svg viewBox="0 0 100 100" aria-hidden="true">
+       <path d="M20 72 L36 38 L58 58 L77 25 L84 67" fill="none" vector-effect="non-scaling-stroke"/>
+     </svg>
+     <small>${manualSlot?'空き枠':'UNOBSERVED'}</small>
+   </div>
+ </div>`;
+}
+function starryPageHtml(items,side,physicalPage,showNames,cols){
+ return `<section class="starry-page starry-page-${side}" aria-label="${side==='left'?'左':'右'}ページ">
+   <div class="starry-page-layer layer-b" aria-hidden="true"></div>
+   <div class="starry-page-layer layer-a" aria-hidden="true"></div>
+   <div class="starry-sky-page">
+     <div class="starry-nebula nebula-a" aria-hidden="true"></div>
+     <div class="starry-nebula nebula-b" aria-hidden="true"></div>
+     <div class="starry-constellation-map" aria-hidden="true">
+       <span class="s1"></span><span class="s2"></span><span class="s3"></span><span class="s4"></span><span class="s5"></span>
+       <i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i>
+     </div>
+     <div class="starry-page-heading" aria-hidden="true"><i></i><span>CELESTIAL ARCHIVE</span><i></i></div>
+     <div class="starry-slot-grid" style="--starry-cols:${cols}">
+       ${items.map(x=>starrySlotHtml(x,showNames)).join('')}
+     </div>
+     <div class="starry-page-number">OBSERVATION ${physicalPage}</div>
+   </div>
+ </section>`;
+}
+function starrySpreadHtml(pageRows,pageSize,spreadIndex,showNames,maxSpreadIndex){
+ const split=Math.ceil(pageRows.length/2);
+ const left=pageRows.slice(0,split),right=pageRows.slice(split);
+ const cols=Math.max(1,Math.ceil(collectionGridColumns(pageSize)/2));
+ const leftNo=spreadIndex*2+1,rightNo=leftNo+1,canPrev=spreadIndex>0,canNext=spreadIndex<maxSpreadIndex;
+ return `<div class="starry-spread" data-starry-spread="${spreadIndex+1}">
+   <div class="starry-cover-back" aria-hidden="true"></div>
+   <div class="starry-cover-star star-a" aria-hidden="true">✦</div>
+   <div class="starry-cover-star star-b" aria-hidden="true">✧</div>
+   <div class="starry-cover-star star-c" aria-hidden="true">✦</div>
+   <div class="starry-cover-star star-d" aria-hidden="true">·</div>
+   <button class="starry-page-turn starry-page-turn-prev" type="button" data-starry-turn="prev" ${canPrev?'':'disabled'} aria-label="前のページへ"><span>‹</span><small>前のページへ</small></button>
+   ${starryPageHtml(left,'left',leftNo,showNames,cols)}
+   <div class="starry-binding" aria-hidden="true">
+     <div class="starry-binding-shadow"></div>
+     <div class="starry-binding-column"></div>
+     <div class="starry-binding-orbits orbit-1"></div>
+     <div class="starry-binding-orbits orbit-2"></div>
+     <div class="starry-binding-core"><span>✦</span></div>
+   </div>
+   ${starryPageHtml(right,'right',rightNo,showNames,cols)}
+   <button class="starry-page-turn starry-page-turn-next" type="button" data-starry-turn="next" ${canNext?'':'disabled'} aria-label="次のページへ"><small>次のページへ</small><span>›</span></button>
+ </div>`;
+}
+function stoneSlotHtml(item,showNames){
+ if(item?.c){
+   return `<div class="stone-card-slot occupied">
+     <div class="stone-slot-recess" aria-hidden="true"></div>
+     <span class="stone-slot-bolt bolt-tl" aria-hidden="true"></span>
+     <span class="stone-slot-bolt bolt-tr" aria-hidden="true"></span>
+     <span class="stone-slot-bolt bolt-bl" aria-hidden="true"></span>
+     <span class="stone-slot-bolt bolt-br" aria-hidden="true"></span>
+     <div class="stone-card-mount">${collectionCardGalleryHtml(item.c,showNames)}</div>
+   </div>`;
+ }
+ const manualSlot=item&&Number.isFinite(Number(item.slotIndex));
+ return `<div class="stone-card-slot empty ${manualSlot?'manual-empty':''}">
+   <div class="stone-empty-glyph">
+     <span>⌘</span>
+     <small>${manualSlot?'空き枠':'UNSEALED'}</small>
+   </div>
+ </div>`;
+}
+function stonePageHtml(items,side,physicalPage,showNames,cols){
+ return `<section class="stone-page stone-page-${side}" aria-label="${side==='left'?'左':'右'}石板">
+   <div class="stone-slab-depth depth-b" aria-hidden="true"></div>
+   <div class="stone-slab-depth depth-a" aria-hidden="true"></div>
+   <div class="stone-slab">
+     <div class="stone-grain" aria-hidden="true"></div>
+     <div class="stone-crack crack-a" aria-hidden="true"></div>
+     <div class="stone-crack crack-b" aria-hidden="true"></div>
+     <div class="stone-carved-heading" aria-hidden="true"><i></i><span>ANCIENT RECORD</span><i></i></div>
+     <div class="stone-slot-grid" style="--stone-cols:${cols}">
+       ${items.map(x=>stoneSlotHtml(x,showNames)).join('')}
+     </div>
+     <div class="stone-page-number">TABLET ${physicalPage}</div>
+   </div>
+ </section>`;
+}
+function stoneSpreadHtml(pageRows,pageSize,spreadIndex,showNames,maxSpreadIndex){
+ const split=Math.ceil(pageRows.length/2);
+ const left=pageRows.slice(0,split),right=pageRows.slice(split);
+ const cols=Math.max(1,Math.ceil(collectionGridColumns(pageSize)/2));
+ const leftNo=spreadIndex*2+1,rightNo=leftNo+1,canPrev=spreadIndex>0,canNext=spreadIndex<maxSpreadIndex;
+ return `<div class="stone-spread" data-stone-spread="${spreadIndex+1}">
+   <div class="stone-plinth" aria-hidden="true"></div>
+   <div class="stone-corner-rivet rivet-tl" aria-hidden="true"></div>
+   <div class="stone-corner-rivet rivet-tr" aria-hidden="true"></div>
+   <div class="stone-corner-rivet rivet-bl" aria-hidden="true"></div>
+   <div class="stone-corner-rivet rivet-br" aria-hidden="true"></div>
+   <button class="stone-page-turn stone-page-turn-prev" type="button" data-stone-turn="prev" ${canPrev?'':'disabled'} aria-label="前のページへ"><span>‹</span><small>前の石板へ</small></button>
+   ${stonePageHtml(left,'left',leftNo,showNames,cols)}
+   <div class="stone-binding" aria-hidden="true">
+     <div class="stone-binding-trench"></div>
+     <div class="stone-binding-hinge hinge-top"><i></i><i></i></div>
+     <div class="stone-binding-hinge hinge-mid"><i></i><i></i></div>
+     <div class="stone-binding-hinge hinge-bottom"><i></i><i></i></div>
+     <div class="stone-binding-core"><span>⌘</span></div>
+   </div>
+   ${stonePageHtml(right,'right',rightNo,showNames,cols)}
+   <button class="stone-page-turn stone-page-turn-next" type="button" data-stone-turn="next" ${canNext?'':'disabled'} aria-label="次のページへ"><small>次の石板へ</small><span>›</span></button>
+ </div>`;
+}
+function dragonSlotHtml(item,showNames){
+ if(item?.c){
+   return `<div class="dragon-card-slot occupied">
+     <div class="dragon-slot-scale-frame" aria-hidden="true"></div>
+     <span class="dragon-slot-claw claw-tl" aria-hidden="true"></span>
+     <span class="dragon-slot-claw claw-tr" aria-hidden="true"></span>
+     <span class="dragon-slot-claw claw-bl" aria-hidden="true"></span>
+     <span class="dragon-slot-claw claw-br" aria-hidden="true"></span>
+     <span class="dragon-slot-gem" aria-hidden="true"></span>
+     <div class="dragon-card-mount">${collectionCardGalleryHtml(item.c,showNames)}</div>
+   </div>`;
+ }
+ const manualSlot=item&&Number.isFinite(Number(item.slotIndex));
+ return `<div class="dragon-card-slot empty ${manualSlot?'manual-empty':''}">
+   <div class="dragon-empty-egg">
+     <span class="dragon-empty-crack crack-1"></span>
+     <span class="dragon-empty-crack crack-2"></span>
+     <b>◆</b>
+     <small>${manualSlot?'空き枠':'DORMANT EGG'}</small>
+   </div>
+ </div>`;
+}
+function dragonPageHtml(items,side,physicalPage,showNames,cols){
+ return `<section class="dragon-page dragon-page-${side}" aria-label="${side==='left'?'左':'右'}ページ">
+   <div class="dragon-page-layer layer-b" aria-hidden="true"></div>
+   <div class="dragon-page-layer layer-a" aria-hidden="true"></div>
+   <div class="dragon-wing-page">
+     <div class="dragon-wing-vein vein-a" aria-hidden="true"></div>
+     <div class="dragon-wing-vein vein-b" aria-hidden="true"></div>
+     <div class="dragon-page-heading" aria-hidden="true"><i></i><span>DRACONIC ARCHIVE</span><i></i></div>
+     <div class="dragon-slot-grid" style="--dragon-cols:${cols}">
+       ${items.map(x=>dragonSlotHtml(x,showNames)).join('')}
+     </div>
+     <div class="dragon-page-number">HOARD ${physicalPage}</div>
+   </div>
+ </section>`;
+}
+function dragonSpreadHtml(pageRows,pageSize,spreadIndex,showNames,maxSpreadIndex){
+ const split=Math.ceil(pageRows.length/2);
+ const left=pageRows.slice(0,split),right=pageRows.slice(split);
+ const cols=Math.max(1,Math.ceil(collectionGridColumns(pageSize)/2));
+ const leftNo=spreadIndex*2+1,rightNo=leftNo+1,canPrev=spreadIndex>0,canNext=spreadIndex<maxSpreadIndex;
+ return `<div class="dragon-spread" data-dragon-spread="${spreadIndex+1}">
+   <div class="dragon-cover-back" aria-hidden="true"></div>
+   <div class="dragon-horn horn-tl" aria-hidden="true"></div>
+   <div class="dragon-horn horn-tr" aria-hidden="true"></div>
+   <div class="dragon-horn horn-bl" aria-hidden="true"></div>
+   <div class="dragon-horn horn-br" aria-hidden="true"></div>
+   <button class="dragon-page-turn dragon-page-turn-prev" type="button" data-dragon-turn="prev" ${canPrev?'':'disabled'} aria-label="前のページへ"><span>‹</span><small>前のページへ</small></button>
+   ${dragonPageHtml(left,'left',leftNo,showNames,cols)}
+   <div class="dragon-binding" aria-hidden="true">
+     <div class="dragon-binding-shadow"></div>
+     <div class="dragon-binding-spine"></div>
+     <div class="dragon-binding-spikes">${Array.from({length:7},(_,i)=>`<i style="--spike:${i}"></i>`).join('')}</div>
+     <div class="dragon-binding-eye"><span></span></div>
+   </div>
+   ${dragonPageHtml(right,'right',rightNo,showNames,cols)}
+   <button class="dragon-page-turn dragon-page-turn-next" type="button" data-dragon-turn="next" ${canNext?'':'disabled'} aria-label="次のページへ"><small>次のページへ</small><span>›</span></button>
+ </div>`;
+}
 async function hydrateCollectionArt(el){
  const id=el?.dataset?.collectionArt;if(!id||el.dataset.loaded==='1')return;
  el.dataset.loaded='1';if(!imageSystemAvailable)return;
@@ -9445,6 +12638,72 @@ function triggerCollectionPageAnimation(direction='none'){
      const cls=direction==='prev'?'grimoire2-turning-prev':'grimoire2-turning-next';
      grimoire2.classList.add(cls);
      setTimeout(()=>grimoire2.classList.remove(cls),620);
+   }));
+   return;
+ }
+ const classic=$('.classic-spread');
+ if(classic&&direction!=='none'){
+   classic.classList.remove('classic-turning-next','classic-turning-prev');
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{
+     if(!classic.isConnected)return;
+     const cls=direction==='prev'?'classic-turning-prev':'classic-turning-next';
+     classic.classList.add(cls);
+     setTimeout(()=>classic.classList.remove(cls),600);
+   }));
+   return;
+ }
+ const fantasy=$('.fantasy-spread');
+ if(fantasy&&direction!=='none'){
+   fantasy.classList.remove('fantasy-turning-next','fantasy-turning-prev');
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{
+     if(!fantasy.isConnected)return;
+     const cls=direction==='prev'?'fantasy-turning-prev':'fantasy-turning-next';
+     fantasy.classList.add(cls);
+     setTimeout(()=>fantasy.classList.remove(cls),610);
+   }));
+   return;
+ }
+ const fantasy2=$('.fantasy2-spread');
+ if(fantasy2&&direction!=='none'){
+   fantasy2.classList.remove('fantasy2-turning-next','fantasy2-turning-prev');
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{
+     if(!fantasy2.isConnected)return;
+     const cls=direction==='prev'?'fantasy2-turning-prev':'fantasy2-turning-next';
+     fantasy2.classList.add(cls);
+     setTimeout(()=>fantasy2.classList.remove(cls),610);
+   }));
+   return;
+ }
+ const starry=$('.starry-spread');
+ if(starry&&direction!=='none'){
+   starry.classList.remove('starry-turning-next','starry-turning-prev');
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{
+     if(!starry.isConnected)return;
+     const cls=direction==='prev'?'starry-turning-prev':'starry-turning-next';
+     starry.classList.add(cls);
+     setTimeout(()=>starry.classList.remove(cls),620);
+   }));
+   return;
+ }
+ const stone=$('.stone-spread');
+ if(stone&&direction!=='none'){
+   stone.classList.remove('stone-turning-next','stone-turning-prev');
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{
+     if(!stone.isConnected)return;
+     const cls=direction==='prev'?'stone-turning-prev':'stone-turning-next';
+     stone.classList.add(cls);
+     setTimeout(()=>stone.classList.remove(cls),620);
+   }));
+   return;
+ }
+ const dragon=$('.dragon-spread');
+ if(dragon&&direction!=='none'){
+   dragon.classList.remove('dragon-turning-next','dragon-turning-prev');
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{
+     if(!dragon.isConnected)return;
+     const cls=direction==='prev'?'dragon-turning-prev':'dragon-turning-next';
+     dragon.classList.add(cls);
+     setTimeout(()=>dragon.classList.remove(cls),620);
    }));
    return;
  }
@@ -9570,13 +12829,13 @@ function renderCollection(){
  if(kind==='albums'){renderAlbumShelf();return}
  $('#collection-filter-panel').style.display='';$('#collection-display-settings').style.display='';$('#collection-zoom-controls').style.display='flex';
  applyCollectionBookTheme();
- const view=currentCollectionView(),rows=collectionFilteredCards(),size=view.pageSize,album=currentAlbum(),realBinder=isRealBinderSpread(album,view),grimoire=isGrimoireSpread(view),grimoire2=isGrimoire2Spread(view),turnSize=collectionItemsPerTurn(view,album),max=Math.max(0,Math.ceil(rows.length/turnSize)-1),manual=album?.orderMode==='manual'&&!collectionHasActiveFilter();
+ const view=currentCollectionView(),rows=collectionFilteredCards(),size=view.pageSize,album=currentAlbum(),realBinder=isRealBinderSpread(album,view),grimoire=isGrimoireSpread(view),grimoire2=isGrimoire2Spread(view),classic=isClassicSpread(view),fantasy=isFantasySpread(view),fantasy2=isFantasy2Spread(view),starry=isStarrySpread(view),stone=isStoneSpread(view),dragon=isDragonSpread(view),turnSize=collectionItemsPerTurn(view,album),max=Math.max(0,Math.ceil(rows.length/turnSize)-1),manual=album?.orderMode==='manual'&&!collectionHasActiveFilter();
  if(collectionPage>max)collectionPage=max;
  const start=collectionPage*turnSize,pageRows=rows.slice(start,start+turnSize);
  $('#collection-source-title').textContent=collectionBookTitle();
  const memberCount=sourceMemberCount();
  $('#collection-result-count').textContent=album&&manual?`${memberCount}枚 / ${rows.length}枠${rows.length?` / ${collectionPage+1}ページ目`:''}`:`${rows.filter(x=>x.c).length}枚${rows.length?` / ${collectionPage+1}ページ目`:''}`;
- $('#collection-view-status').textContent=realBinder?`リアルバインダー / 片面${size}枚 / 見開き最大${turnSize}枚${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:grimoire?`グリモワール / 見開き${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:grimoire2?`グリモワール2 / 見開き${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:`${view.viewMode==='gallery'?'ギャラリー':'一覧'} / ${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`;
+ $('#collection-view-status').textContent=realBinder?`リアルバインダー / 片面${size}枚 / 見開き最大${turnSize}枚${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:grimoire?`グリモワール / 見開き${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:grimoire2?`グリモワール2 / 見開き${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:classic?`クラシック / 見開き${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:fantasy?`ファンタジー / 見開き${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:fantasy2?`ファンタジー2 / 見開き${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:starry?`星空 / 見開き${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:stone?`ストーン / 見開き${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:dragon?`ドラゴン / 見開き${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`:`${view.viewMode==='gallery'?'ギャラリー':'一覧'} / ${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`;
  $('#collection-zoom-value').textContent=`${view.zoom}%`;$('#collection-zoom-out').disabled=view.zoom<=25;$('#collection-zoom-reset').disabled=view.zoom>=100;if(currentScreenName==='collection')applyCollectionDisplayZoom(view.zoom);
  const fc=collectionFilterCount();$('#collection-filter-count').textContent=`${fc}条件`;
  $('#collection-sort').value=view.sort;$('#collection-sort').disabled=!!album&&album.orderMode==='manual'&&!collectionHasActiveFilter();
@@ -9608,6 +12867,36 @@ function renderCollection(){
    root.dataset.pageSize=String(size);
    root.style.removeProperty('--collection-cols');
    root.innerHTML=rows.length?grimoire2SpreadHtml(pageRows,size,collectionPage,view.showNames,max):`<div class="collection-empty grimoire2-empty-book">この高位魔導書にはまだカードが記録されていません。</div>`;
+ }else if(classic){
+   root.className='collection-grid classic-spread-host';
+   root.dataset.pageSize=String(size);
+   root.style.removeProperty('--collection-cols');
+   root.innerHTML=rows.length?classicSpreadHtml(pageRows,size,collectionPage,view.showNames,max):`<div class="collection-empty classic-empty-book">このアルバムにはまだカードが収蔵されていません。</div>`;
+ }else if(fantasy){
+   root.className='collection-grid fantasy-spread-host';
+   root.dataset.pageSize=String(size);
+   root.style.removeProperty('--collection-cols');
+   root.innerHTML=rows.length?fantasySpreadHtml(pageRows,size,collectionPage,view.showNames,max):`<div class="collection-empty fantasy-empty-book">この冒険記録帳にはまだカードが記されていません。</div>`;
+ }else if(fantasy2){
+   root.className='collection-grid fantasy2-spread-host';
+   root.dataset.pageSize=String(size);
+   root.style.removeProperty('--collection-cols');
+   root.innerHTML=rows.length?fantasy2SpreadHtml(pageRows,size,collectionPage,view.showNames,max):`<div class="collection-empty fantasy2-empty-book">この王国年代記にはまだカードが記録されていません。</div>`;
+ }else if(starry){
+   root.className='collection-grid starry-spread-host';
+   root.dataset.pageSize=String(size);
+   root.style.removeProperty('--collection-cols');
+   root.innerHTML=rows.length?starrySpreadHtml(pageRows,size,collectionPage,view.showNames,max):`<div class="collection-empty starry-empty-book">この星空観測記録にはまだカードが登録されていません。</div>`;
+ }else if(stone){
+   root.className='collection-grid stone-spread-host';
+   root.dataset.pageSize=String(size);
+   root.style.removeProperty('--collection-cols');
+   root.innerHTML=rows.length?stoneSpreadHtml(pageRows,size,collectionPage,view.showNames,max):`<div class="collection-empty stone-empty-book">この石板にはまだ記録が刻まれていません。</div>`;
+ }else if(dragon){
+   root.className='collection-grid dragon-spread-host';
+   root.dataset.pageSize=String(size);
+   root.style.removeProperty('--collection-cols');
+   root.innerHTML=rows.length?dragonSpreadHtml(pageRows,size,collectionPage,view.showNames,max):`<div class="collection-empty dragon-empty-book">この竜王の宝物庫にはまだカードが収められていません。</div>`;
  }else if(view.viewMode==='gallery'){
    root.className=`collection-grid gallery ${view.spread?'collection-spread-ready':''}`;root.dataset.pageSize=String(size);root.style.setProperty('--collection-cols',String(collectionGridColumns(size)));
    root.innerHTML=pageRows.length?pageRows.map(x=>x.c?collectionCardGalleryHtml(x.c,view.showNames):collectionEmptyGalleryHtml(x.slotIndex)).join(''):`<div class="collection-empty">${kind==='favorites'?'お気に入りカードはまだありません。':album?'このアルバムにはカードがありません。':'該当するカードがありません。'}</div>`;
@@ -9632,6 +12921,36 @@ function renderCollection(){
    e.preventDefault();e.stopPropagation();
    if(b.disabled)return;
    goCollectionPage(collectionPage+(b.dataset.grimoire2Turn==='next'?1:-1));
+ });
+ $$('[data-classic-turn]').forEach(b=>b.onclick=e=>{
+   e.preventDefault();e.stopPropagation();
+   if(b.disabled)return;
+   goCollectionPage(collectionPage+(b.dataset.classicTurn==='next'?1:-1));
+ });
+ $$('[data-fantasy-turn]').forEach(b=>b.onclick=e=>{
+   e.preventDefault();e.stopPropagation();
+   if(b.disabled)return;
+   goCollectionPage(collectionPage+(b.dataset.fantasyTurn==='next'?1:-1));
+ });
+ $$('[data-fantasy2-turn]').forEach(b=>b.onclick=e=>{
+   e.preventDefault();e.stopPropagation();
+   if(b.disabled)return;
+   goCollectionPage(collectionPage+(b.dataset.fantasy2Turn==='next'?1:-1));
+ });
+ $$('[data-starry-turn]').forEach(b=>b.onclick=e=>{
+   e.preventDefault();e.stopPropagation();
+   if(b.disabled)return;
+   goCollectionPage(collectionPage+(b.dataset.starryTurn==='next'?1:-1));
+ });
+ $$('[data-stone-turn]').forEach(b=>b.onclick=e=>{
+   e.preventDefault();e.stopPropagation();
+   if(b.disabled)return;
+   goCollectionPage(collectionPage+(b.dataset.stoneTurn==='next'?1:-1));
+ });
+ $$('[data-dragon-turn]').forEach(b=>b.onclick=e=>{
+   e.preventDefault();e.stopPropagation();
+   if(b.disabled)return;
+   goCollectionPage(collectionPage+(b.dataset.dragonTurn==='next'?1:-1));
  });
  if(realBinder)bindRealBinderPageGestures(root,max);else{root.onpointerdown=null;root.onpointerup=null;root.onpointercancel=null}
  const pagination=$('#collection-pagination'),prev=$('#collection-prev'),next=$('#collection-next'),nums=$('#collection-page-numbers'),side=$('#collection-side-pagination'),sidePrev=$('#collection-side-prev'),sideNext=$('#collection-side-next');pagination.style.display='flex';
