@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v2.1</title>
+<title>みん会TCG Simulator v2.6</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -348,11 +348,130 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
 .manager-text-export{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
 .manager-text-export-title{font-size:12px;margin-bottom:3px}
 
+
+/* v2.2 カード画像 */
+.pile .card-art{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  border-radius:9px;background-repeat:no-repeat;background-color:#0c1118;
+  opacity:0;transition:opacity .12s;box-shadow:inset 0 0 0 999px rgba(0,0,0,.10)
+}
+.pile .card-art.image-loaded{opacity:1}
+.board-main.card-images-off .pile .card-art{display:none}
+.board-main.name-position-bar:not(.zoom-overview) .pile:not(.face-down) .card-art{bottom:31px;border-radius:9px 9px 4px 4px}
+.board-main.orientation-landscape.name-position-bar:not(.zoom-overview) .pile:not(.face-down) .card-art{bottom:29px}
+.board-main.zoom-overview .pile .card-art{bottom:0!important;border-radius:9px!important}
+.pile .name,.pile .stats,.pile .counter-line,.pile .flags,.pile .stack-badge{z-index:4}
+.pile .stats,.pile .counter-line,.pile .flags{position:relative}
+.pile .stats{ text-shadow:0 1px 2px #000 }
+.pile .stack-badge{z-index:8}
+
+.manager-image-section{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.manager-card-image-preview{height:190px;border:1px dashed #465063;border-radius:11px;background:#0e1218;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;color:var(--muted);cursor:pointer}
+.manager-card-image-preview.portrait-preview{height:240px;max-width:190px;margin:0 auto}
+.manager-card-image-preview.image-loaded{border-style:solid;background-repeat:no-repeat}
+.manager-card-image-preview .image-preview-label{position:absolute;left:7px;bottom:7px;background:rgba(5,8,12,.78);padding:3px 6px;border-radius:6px;font-size:11px;color:#e8ecf3}
+
+.image-editor-layout{display:grid;grid-template-columns:minmax(240px,1fr) minmax(260px,.9fr);gap:14px}
+.image-editor-preview-area{display:flex;flex-direction:column;align-items:center;gap:8px}
+.image-editor-card{position:relative;border:1px solid #596477;border-radius:12px;background:#0b0f15;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.25);touch-action:none;user-select:none}
+.image-editor-card.landscape{width:min(100%,420px);aspect-ratio:118/86}
+.image-editor-card.portrait{width:min(100%,270px);aspect-ratio:84/118}
+.image-editor-art{position:absolute;inset:0;background-repeat:no-repeat;background-color:#0b0f15;cursor:grab}
+.image-editor-art.dragging{cursor:grabbing}
+.image-editor-card.name-bar .image-editor-art{bottom:20%}
+.image-editor-card.name-overlay .image-editor-art{bottom:0}
+.image-editor-card .image-editor-name{position:absolute;z-index:3;left:5%;right:5%;padding:5px 7px;border-radius:6px;background:rgba(5,8,12,.82);font-size:12px;font-weight:800;line-height:1.15}
+.image-editor-card.name-overlay .image-editor-name{top:6%}
+.image-editor-card.name-bar .image-editor-name{bottom:4%}
+.image-editor-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;padding:16px;text-align:center}
+.image-drop-zone{border:1px dashed #596477;border-radius:11px;padding:12px;background:#0e1218;outline:none}
+.image-drop-zone.drag-over{border-color:var(--accent);box-shadow:0 0 0 2px rgba(109,120,144,.25)}
+.image-drop-zone:focus{border-color:#6d7890}
+.image-editor-controls{display:grid;gap:12px}
+.image-editor-group{border:1px solid var(--line);border-radius:10px;background:#10141b;padding:10px}
+.image-editor-group h4{margin:0 0 8px}
+.image-orientation-buttons,.image-mode-buttons,.image-fit-buttons{display:flex;gap:6px;flex-wrap:wrap}
+.image-position-grid{display:grid;grid-template-columns:repeat(3,42px);grid-template-rows:repeat(3,34px);gap:5px;justify-content:center;margin-top:8px}
+.image-position-grid .btn{padding:4px;min-width:0}
+.image-position-grid .btn.active{border-color:var(--accent);background:#273244}
+.image-free-readout{text-align:center;margin-top:7px;font-size:11px;color:var(--muted)}
+.image-editor-status{min-height:1.4em}
+.image-full-view{max-width:min(92vw,900px);max-height:72vh;display:block;margin:0 auto;border-radius:10px;object-fit:contain;background:#090c11}
+.board-detail-image{display:none;height:180px;border-radius:10px;background-repeat:no-repeat;background-color:#0c1118;margin-bottom:10px;border:1px solid var(--line)}
+.board-detail-image.image-loaded{display:block}
+@media(max-width:720px){
+  .image-editor-layout{grid-template-columns:1fr}
+  .manager-card-image-preview{height:160px}
+}
+
+
+/* v2.3 画像管理・一括登録 */
+.image-storage-panel{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.image-storage-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:7px}
+.image-storage-stat{background:#10141b;border:1px solid var(--line);border-radius:9px;padding:8px}
+.image-storage-stat b{display:block;font-size:14px;margin-bottom:2px}
+.image-storage-note{line-height:1.5}
+.manager-image-pill{margin-left:5px}
+.bulk-image-box{display:grid;gap:11px}
+.bulk-image-drop{border:1px dashed #596477;border-radius:11px;background:#0e1218;padding:16px;text-align:center;cursor:pointer}
+.bulk-image-drop.drag-over{border-color:var(--accent);box-shadow:0 0 0 2px rgba(109,120,144,.25)}
+.bulk-image-summary{display:flex;gap:6px;flex-wrap:wrap}
+.bulk-image-list{display:grid;gap:7px;max-height:48vh;overflow:auto;padding-right:2px}
+.bulk-image-row{display:grid;grid-template-columns:minmax(150px,1fr) minmax(180px,1.1fr) auto;gap:8px;align-items:center;background:#10141b;border:1px solid var(--line);border-radius:9px;padding:8px}
+.bulk-image-file{overflow-wrap:anywhere}
+.bulk-image-match{min-width:0}
+.bulk-image-match select{width:100%}
+.bulk-image-row .pill{justify-self:end}
+.bulk-image-row.status-unmatched{opacity:.75}
+.bulk-image-row.status-duplicate{border-color:#6a5f3a}
+.bulk-image-row.status-existing{border-color:#596477}
+.bulk-image-progress{min-height:1.5em}
+@media(max-width:650px){
+  .image-storage-summary-grid{grid-template-columns:1fr}
+  .bulk-image-row{grid-template-columns:1fr}
+  .bulk-image-row .pill{justify-self:start}
+}
+
+
+/* v2.4 完全バックアップ */
+.backup-kind-box{border:1px solid var(--line);border-radius:11px;background:#10141b;padding:11px;margin-top:10px}
+.backup-kind-box h3{font-size:15px;margin:0 0 5px}
+.full-backup-box{border-color:#4c596d}
+.full-backup-progress{margin-top:8px;min-height:1.4em}
+
+
+/* v2.5 ホームPOWER全体修正 / ペイン移動設定 */
+.home-power-panel h3{margin-bottom:9px}
+.home-power-row{display:grid;gap:6px;padding:8px 0;border-top:1px solid var(--line)}
+.home-power-row:first-child{border-top:0;padding-top:0}
+.home-power-player{display:flex;align-items:center;gap:7px}
+.home-power-player b{margin-right:auto}
+.home-power-player .active-mod,.home-power-badge{border-color:#7b6f3a;color:#eadb9c}
+.home-power-actions{display:grid;grid-template-columns:auto minmax(72px,1fr) auto auto;gap:5px;align-items:center}
+.home-power-actions input{min-width:0;text-align:center;padding:6px}
+.power-breakdown{margin:-1px 0 5px;font-size:11px}
+.board-setting-subgroup{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+@media(max-width:650px){
+  .home-power-actions{grid-template-columns:auto minmax(64px,1fr) auto}
+  .home-power-actions [data-home-power-reset]{grid-column:1/-1}
+}
+
+
+/* v2.6 カード詳細の画像欄を折りたたみ */
+.manager-image-section{padding-top:9px}
+.manager-image-collapsed-head{display:flex;align-items:center;gap:8px;justify-content:space-between;min-height:34px}
+.manager-image-title{display:flex;align-items:center;gap:7px;min-width:0}
+.manager-image-title h3{font-size:15px;margin:0}
+.manager-image-title .pill{white-space:nowrap;font-size:11px}
+.manager-image-body{margin-top:8px}
+.manager-image-section.collapsed{padding-bottom:1px}
+.manager-image-section.expanded .manager-image-collapsed-head{margin-bottom:2px}
+
 </style>
 </head>
 <body>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v2.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v2.6 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -373,13 +492,31 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
       </div>
     </div>
     <div class="panel data-tools home-data-tools">
-      <div class="section-head"><h2 style="font-size:18px">データ管理</h2><span class="muted">カード＋デッキをまとめて保存</span></div>
-      <p class="muted">登録カード、保存デッキ、最近のカード履歴を1つのバックアップファイルに保存します。対戦中の盤面状態は含みません。復元すると現在の登録データはバックアップ内容に置き換わります。</p>
-      <div class="io-actions">
-        <button class="btn primary" type="button" id="backup-all-data">全データをバックアップ</button>
-        <label class="btn" style="display:inline-flex;align-items:center">バックアップから復元<input id="backup-file-input" type="file" accept="application/json,.json" style="display:none"></label>
+      <div class="section-head"><h2 style="font-size:18px">データ管理</h2><span class="muted">通常JSON / 画像込みZIP</span></div>
+      <div class="backup-kind-box">
+        <h3>通常バックアップ（JSON）</h3>
+        <p class="muted">登録カード、保存デッキ、最近のカード履歴を軽いJSONとして保存します。カード画像と表示設定は含みません。</p>
+        <div class="io-actions">
+          <button class="btn" type="button" id="backup-all-data">通常バックアップを作成</button>
+          <label class="btn" style="display:inline-flex;align-items:center">通常バックアップから復元<input id="backup-file-input" type="file" accept="application/json,.json" style="display:none"></label>
+        </div>
+        <div id="backup-status" class="muted" style="margin-top:8px"></div>
       </div>
-      <div id="backup-status" class="muted" style="margin-top:8px"></div>
+      <div class="backup-kind-box full-backup-box">
+        <h3>完全バックアップ（ZIP）</h3>
+        <p class="muted">カード・デッキ・履歴に加えて、カード画像、横長/縦長の画像位置設定、盤面表示設定、手札追従設定までまとめて保存します。復元すると現在の対象データをバックアップ内容へ置き換えます。</p>
+        <div class="io-actions">
+          <button class="btn primary" type="button" id="full-backup-create">完全バックアップZIPを作成</button>
+          <label class="btn" style="display:inline-flex;align-items:center">完全バックアップZIPから復元<input id="full-backup-file-input" type="file" accept=".zip,application/zip,application/x-zip-compressed" style="display:none"></label>
+        </div>
+        <div id="full-backup-status" class="muted" style="margin-top:8px"></div>
+      </div>
+      <div class="image-storage-panel">
+        <div class="section-head"><h3 style="font-size:15px;margin:0">カード画像ストレージ</h3><button class="btn small" type="button" id="image-storage-refresh">更新</button></div>
+        <div id="image-storage-summary" class="muted">画像ストレージを確認中…</div>
+        <div class="actions"><button class="btn small" type="button" id="image-storage-cleanup">不要画像を整理</button></div>
+        <div class="muted image-storage-note">画像データは端末内のIndexedDBに保存されています。通常JSONには含まれませんが、完全バックアップZIPには含まれます。</div>
+      </div>
     </div>
   </section>
 
@@ -455,14 +592,14 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
       </div>
 
       <div id="tool-pane-export" class="tool-pane">
-        <p class="muted">登録データをJSONファイルとして保存できます。盤面の状態は含みません。</p>
+        <p class="muted">登録データをJSONファイルとして保存できます。盤面の状態とカード画像は含みません。</p>
         <div class="io-actions"><button class="btn primary" type="button" id="export-cards-json">カードのみを書き出す</button><button class="btn" type="button" id="export-all-json">カード＋デッキを書き出す</button></div>
       </div>
     </div>
   </section>
 
   <section id="screen-card-manager" class="screen">
-    <div class="section-head"><h2>カード管理</h2><span id="card-count" class="pill"></span></div>
+    <div class="section-head"><h2>カード管理</h2><span id="card-count" class="pill"></span><span id="card-image-count" class="pill"></span></div>
     <div class="panel card-manager-panel">
       <div class="form-grid card-manager-search-grid">
         <label class="wide">カード名<input id="card-manager-search" type="search" placeholder="カード名の一部を入力" autocomplete="off"></label>
@@ -470,6 +607,7 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
         <label>Lv<input id="card-manager-level" inputmode="numeric" placeholder="完全一致"></label>
         <label>種族<input id="card-manager-race" placeholder="含まれる文字で検索" autocomplete="off"></label>
         <label>効果内テキスト<input id="card-manager-effect" placeholder="含まれる文字で検索" autocomplete="off"></label>
+        <label>画像<select id="card-manager-image"><option value="all">すべて</option><option value="with">画像あり</option><option value="without">画像なし</option></select></label>
         <label class="wide">並び順<select id="card-manager-sort">
           <option value="newest">登録が新しい順</option>
           <option value="oldest">登録が古い順</option>
@@ -483,6 +621,7 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
         <button class="btn small" type="button" id="card-manager-duplicates">重複カードのみ</button>
         <button class="btn small" type="button" id="card-manager-recent">最近の10枚</button>
         <button class="btn small" type="button" id="card-manager-clear">条件クリア</button>
+        <button class="btn small" type="button" id="bulk-image-import">画像をまとめて登録</button>
       </div>
       <div class="section-head card-manager-result-head" id="card-manager-list-top" style="margin-top:12px">
         <span id="card-list-title" class="muted">全カード</span>
@@ -578,6 +717,10 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
           <div id="board-display-status" class="muted board-display-status">表示：横長 / 名前：画像上</div>
           <div class="actions"><button class="btn" id="board-settings">設定</button><button class="btn" id="create-token">トークン作成</button><button class="btn danger" id="reset-board">盤面リセット</button></div>
         </div>
+        <div class="panel home-power-panel">
+          <h3>ホームキャラクター POWER修正</h3>
+          <div id="home-power-controls"></div>
+        </div>
         <div class="panel"><h3>盤面メモ</h3><textarea id="board-note" class="board-note" placeholder="召喚権使用済み、ターン中の記録など"></textarea></div>
       </div></aside>
     </div>
@@ -603,7 +746,9 @@ if(!boardDisplayPrefs||typeof boardDisplayPrefs!=='object')boardDisplayPrefs={};
 boardDisplayPrefs={
   orientation:boardDisplayPrefs.orientation==='portrait'?'portrait':'landscape',
   namePositionLandscape:boardDisplayPrefs.namePositionLandscape==='bar'?'bar':'overlay',
-  namePositionPortrait:boardDisplayPrefs.namePositionPortrait==='overlay'?'overlay':'bar'
+  namePositionPortrait:boardDisplayPrefs.namePositionPortrait==='overlay'?'overlay':'bar',
+  showCardImages:boardDisplayPrefs.showCardImages!==false,
+  painRevealOnMove:boardDisplayPrefs.painRevealOnMove!==false
 };
 save(LS_BOARD_DISPLAY,boardDisplayPrefs);
 let handScrollPositions=[0,0], zoneScrollPositions={}, pendingHandFollow=new Set();
@@ -612,6 +757,318 @@ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 function uid(p='id'){return p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
 function load(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+// v2.2 Card image system
+const IMAGE_DB_NAME='minkai_tcg_images_v22',IMAGE_DB_VERSION=1;
+let imageDbPromise=null,imageReadyPromise=Promise.resolve(),imageSystemAvailable='indexedDB' in window;
+const imageLinkCache=new Map(),imageUrlCache=new Map();
+
+function normalizeImageView(v={}){
+ const pointMap={
+   'top-left':[0,0],top:[50,0],'top-right':[100,0],
+   left:[0,50],center:[50,50],right:[100,50],
+   'bottom-left':[0,100],bottom:[50,100],'bottom-right':[100,100]
+ };
+ const point=pointMap[v.point]?v.point:'center',fallback=pointMap[point];
+ const clamp=n=>Math.max(0,Math.min(100,Number.isFinite(Number(n))?Number(n):50));
+ return {
+   fit:v.fit==='contain'?'contain':'cover',
+   mode:v.mode==='free'?'free':'grid',
+   point,
+   x:v.mode==='free'?clamp(v.x):fallback[0],
+   y:v.mode==='free'?clamp(v.y):fallback[1]
+ };
+}
+function defaultImageLink(cardId,imageId=''){
+ return {cardId,imageId,landscape:normalizeImageView(),portrait:normalizeImageView()};
+}
+function normalizeImageLink(raw,cardId=raw?.cardId||''){
+ const base=defaultImageLink(cardId,String(raw?.imageId||''));
+ base.landscape=normalizeImageView(raw?.landscape||{});
+ base.portrait=normalizeImageView(raw?.portrait||{});
+ return base;
+}
+function openImageDb(){
+ if(!imageSystemAvailable)return Promise.reject(new Error('IndexedDB unavailable'));
+ if(imageDbPromise)return imageDbPromise;
+ imageDbPromise=new Promise((resolve,reject)=>{
+   const req=indexedDB.open(IMAGE_DB_NAME,IMAGE_DB_VERSION);
+   req.onupgradeneeded=()=>{
+     const db=req.result;
+     if(!db.objectStoreNames.contains('images'))db.createObjectStore('images',{keyPath:'id'});
+     if(!db.objectStoreNames.contains('links'))db.createObjectStore('links',{keyPath:'cardId'});
+   };
+   req.onsuccess=()=>resolve(req.result);
+   req.onerror=()=>reject(req.error||new Error('画像データベースを開けませんでした'));
+ });
+ return imageDbPromise;
+}
+async function imageDbGet(store,key){
+ const db=await openImageDb();
+ return new Promise((resolve,reject)=>{
+   const tx=db.transaction(store,'readonly'),req=tx.objectStore(store).get(key);
+   req.onsuccess=()=>resolve(req.result||null);
+   req.onerror=()=>reject(req.error);
+ });
+}
+async function imageDbGetAll(store){
+ const db=await openImageDb();
+ return new Promise((resolve,reject)=>{
+   const tx=db.transaction(store,'readonly'),req=tx.objectStore(store).getAll();
+   req.onsuccess=()=>resolve(req.result||[]);
+   req.onerror=()=>reject(req.error);
+ });
+}
+async function imageDbPut(store,value){
+ const db=await openImageDb();
+ return new Promise((resolve,reject)=>{
+   const tx=db.transaction(store,'readwrite');
+   tx.objectStore(store).put(value);
+   tx.oncomplete=()=>resolve(value);
+   tx.onerror=()=>reject(tx.error);
+   tx.onabort=()=>reject(tx.error||new Error('画像保存処理が中断されました'));
+ });
+}
+async function imageDbDelete(store,key){
+ const db=await openImageDb();
+ return new Promise((resolve,reject)=>{
+   const tx=db.transaction(store,'readwrite');
+   tx.objectStore(store).delete(key);
+   tx.oncomplete=()=>resolve();
+   tx.onerror=()=>reject(tx.error);
+   tx.onabort=()=>reject(tx.error||new Error('画像削除処理が中断されました'));
+ });
+}
+
+async function replaceImageDatabase(records,links){
+ const db=await openImageDb();
+ return new Promise((resolve,reject)=>{
+   const tx=db.transaction(['images','links'],'readwrite');
+   const imageStore=tx.objectStore('images'),linkStore=tx.objectStore('links');
+   imageStore.clear();linkStore.clear();
+   for(const rec of records)imageStore.put(rec);
+   for(const link of links)linkStore.put(link);
+   tx.oncomplete=()=>resolve();
+   tx.onerror=()=>reject(tx.error||new Error('画像データベースの復元に失敗しました'));
+   tx.onabort=()=>reject(tx.error||new Error('画像データベースの復元が中断されました'));
+ });
+}
+function resetImageRuntimeCache(){
+ for(const url of imageUrlCache.values()){try{URL.revokeObjectURL(url)}catch{}}
+ imageUrlCache.clear();imageLinkCache.clear();
+}
+
+async function initImageSystem(){
+ if(!imageSystemAvailable)return false;
+ const links=await imageDbGetAll('links');
+ imageLinkCache.clear();
+ links.forEach(raw=>{
+   const link=normalizeImageLink(raw);
+   if(link.cardId&&link.imageId)imageLinkCache.set(link.cardId,link);
+ });
+ return true;
+}
+function getCachedImageLink(cardId){return imageLinkCache.get(String(cardId||''))||null}
+async function getCardImageLink(cardId){
+ await imageReadyPromise;
+ const key=String(cardId||'');
+ if(!key)return null;
+ if(imageLinkCache.has(key))return imageLinkCache.get(key);
+ const raw=await imageDbGet('links',key);
+ if(!raw)return null;
+ const link=normalizeImageLink(raw,key);
+ imageLinkCache.set(key,link);
+ return link;
+}
+async function putCardImageLink(link){
+ const normalized=normalizeImageLink(link,link.cardId);
+ if(!normalized.cardId||!normalized.imageId)throw new Error('画像リンクが不正です');
+ await imageDbPut('links',normalized);
+ imageLinkCache.set(normalized.cardId,normalized);
+ return normalized;
+}
+function revokeImageUrls(imageId){
+ for(const key of [...imageUrlCache.keys()]){
+   if(key.startsWith(String(imageId)+'|')){
+     try{URL.revokeObjectURL(imageUrlCache.get(key))}catch{}
+     imageUrlCache.delete(key);
+   }
+ }
+}
+async function getImageObjectUrl(imageId,kind='thumb'){
+ await imageReadyPromise;
+ const id=String(imageId||''),key=id+'|'+kind;
+ if(!id)return '';
+ if(imageUrlCache.has(key))return imageUrlCache.get(key);
+ const rec=await imageDbGet('images',id);
+ if(!rec)return '';
+ const blob=(kind==='full'?rec.fullBlob:rec.thumbBlob)||rec.fullBlob||rec.thumbBlob;
+ if(!blob)return '';
+ const url=URL.createObjectURL(blob);
+ imageUrlCache.set(key,url);
+ return url;
+}
+async function cleanupImageIfUnused(imageId){
+ if(!imageId)return;
+ const links=await imageDbGetAll('links');
+ if(links.some(x=>x.imageId===imageId))return;
+ await imageDbDelete('images',imageId);
+ revokeImageUrls(imageId);
+}
+async function deleteCardImageLink(cardId){
+ await imageReadyPromise;
+ const old=await getCardImageLink(cardId);
+ if(!old)return;
+ await imageDbDelete('links',cardId);
+ imageLinkCache.delete(cardId);
+ await cleanupImageIfUnused(old.imageId);
+}
+async function cloneCardImageLink(sourceCardId,targetCardId){
+ await imageReadyPromise;
+ const old=await getCardImageLink(sourceCardId);
+ if(!old)return null;
+ const copy=normalizeImageLink({...old,cardId:targetCardId},targetCardId);
+ await putCardImageLink(copy);
+ return copy;
+}
+async function reconcileImageLinksWithCards(){
+ await imageReadyPromise;
+ const valid=new Set(cards.map(c=>c.id)),links=await imageDbGetAll('links'),maybeOrphan=new Set();
+ for(const raw of links){
+   if(valid.has(raw.cardId))continue;
+   if(raw.imageId)maybeOrphan.add(raw.imageId);
+   await imageDbDelete('links',raw.cardId);
+   imageLinkCache.delete(raw.cardId);
+ }
+ for(const imageId of maybeOrphan)await cleanupImageIfUnused(imageId);
+}
+
+function formatBytes(bytes){
+ const n=Number(bytes)||0;
+ if(n<1024)return `${n} B`;
+ if(n<1024*1024)return `${(n/1024).toFixed(n<10240?1:0)} KB`;
+ if(n<1024*1024*1024)return `${(n/1024/1024).toFixed(n<10*1024*1024?1:0)} MB`;
+ return `${(n/1024/1024/1024).toFixed(2)} GB`;
+}
+async function getImageStorageStats(){
+ if(!imageSystemAvailable)return {available:false};
+ await imageReadyPromise;
+ const [images,links]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links')]);
+ const validLinks=links.filter(x=>cards.some(c=>c.id===x.cardId)&&x.imageId);
+ const usedImageIds=new Set(validLinks.map(x=>x.imageId));
+ let imageBytes=0;
+ images.forEach(rec=>{
+   imageBytes+=(Number(rec.fullBlob?.size)||0)+(Number(rec.thumbBlob?.size)||0);
+ });
+ let estimate=null;
+ try{if(navigator.storage?.estimate)estimate=await navigator.storage.estimate()}catch{}
+ return {
+   available:true,
+   linkedCards:validLinks.length,
+   uniqueImages:images.length,
+   usedUniqueImages:usedImageIds.size,
+   imageBytes,
+   originUsage:Number(estimate?.usage)||0,
+   originQuota:Number(estimate?.quota)||0
+ };
+}
+async function cleanupOrphanImages(){
+ if(!imageSystemAvailable)return {removed:0};
+ await imageReadyPromise;
+ await reconcileImageLinksWithCards();
+ const [images,links]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links')]);
+ const used=new Set(links.map(x=>x.imageId).filter(Boolean));
+ let removed=0;
+ for(const rec of images){
+   if(used.has(rec.id))continue;
+   await imageDbDelete('images',rec.id);
+   revokeImageUrls(rec.id);
+   removed++;
+ }
+ return {removed};
+}
+async function updateImageStorageStatus(){
+ const root=$('#image-storage-summary'),count=$('#card-image-count');
+ if(!root&&!count)return;
+ if(!imageSystemAvailable){
+   if(root)root.textContent='このブラウザではカード画像ストレージを利用できません。';
+   if(count)count.textContent='画像 利用不可';
+   return;
+ }
+ try{
+   const s=await getImageStorageStats();
+   if(count)count.textContent=`画像 ${s.linkedCards}/${cards.length}`;
+   if(root){
+     const quota=s.originQuota?`${formatBytes(s.originUsage)} / ${formatBytes(s.originQuota)}`:s.originUsage?formatBytes(s.originUsage):'取得できません';
+     root.innerHTML=`<div class="image-storage-summary-grid">
+       <div class="image-storage-stat"><b>${s.linkedCards}枚</b><span>画像設定済みカード / ${cards.length}枚</span></div>
+       <div class="image-storage-stat"><b>${s.uniqueImages}画像</b><span>保存されている画像データ</span></div>
+       <div class="image-storage-stat"><b>${formatBytes(s.imageBytes)}</b><span>カード画像データの概算容量</span></div>
+       <div class="image-storage-stat"><b>${quota}</b><span>このサイト全体の保存領域 使用量 / 上限</span></div>
+     </div>`;
+   }
+ }catch(err){
+   console.warn('画像ストレージ情報の取得に失敗',err);
+   if(root)root.textContent='画像ストレージ情報を取得できませんでした。';
+ }
+}
+
+function cardImageSourceId(c){return String(c?.imageSourceCardId||c?.id||'')}
+function imageViewForOrientation(link,orientation=boardDisplayPrefs.orientation){
+ return normalizeImageView(orientation==='portrait'?link?.portrait:link?.landscape);
+}
+
+async function loadImageDrawable(file){
+ if('createImageBitmap' in window){
+   const bitmap=await createImageBitmap(file);
+   return {source:bitmap,width:bitmap.width,height:bitmap.height,close:()=>{try{bitmap.close()}catch{}}};
+ }
+ const url=URL.createObjectURL(file);
+ try{
+   const img=await new Promise((resolve,reject)=>{
+     const el=new Image();
+     el.onload=()=>resolve(el);
+     el.onerror=()=>reject(new Error('画像を読み込めませんでした'));
+     el.src=url;
+   });
+   return {source:img,width:img.naturalWidth,height:img.naturalHeight,close:()=>{}};
+ }finally{URL.revokeObjectURL(url)}
+}
+function canvasToBlob(canvas,type,quality){
+ return new Promise(resolve=>canvas.toBlob(resolve,type,quality));
+}
+async function resizeImageBlob(source,width,height,maxLong,quality){
+ const scale=Math.min(1,maxLong/Math.max(width,height));
+ const w=Math.max(1,Math.round(width*scale)),h=Math.max(1,Math.round(height*scale));
+ const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+ const ctx=canvas.getContext('2d',{alpha:true});
+ ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+ ctx.drawImage(source,0,0,w,h);
+ let blob=await canvasToBlob(canvas,'image/webp',quality);
+ if(!blob)blob=await canvasToBlob(canvas,'image/png');
+ if(!blob)throw new Error('画像の変換に失敗しました');
+ return {blob,width:w,height:h};
+}
+async function createOptimizedImageRecord(file){
+ if(!file||!String(file.type||'').startsWith('image/'))throw new Error('画像ファイルを選択してください');
+ const drawable=await loadImageDrawable(file);
+ try{
+   if(!drawable.width||!drawable.height)throw new Error('画像サイズを取得できませんでした');
+   const full=await resizeImageBlob(drawable.source,drawable.width,drawable.height,1400,.90);
+   const thumb=await resizeImageBlob(drawable.source,drawable.width,drawable.height,360,.84);
+   return {
+     id:uid('img'),
+     fullBlob:full.blob,
+     thumbBlob:thumb.blob,
+     width:full.width,height:full.height,
+     originalWidth:drawable.width,originalHeight:drawable.height,
+     originalName:String(file.name||''),
+     createdAt:new Date().toISOString()
+   };
+ }finally{drawable.close()}
+}
+window.addEventListener('beforeunload',()=>{for(const url of imageUrlCache.values()){try{URL.revokeObjectURL(url)}catch{}}});
+
 function deckSettingsFrom(raw={}){
  return {
    mainEnabled:raw.mainEnabled!==false,
@@ -651,7 +1108,7 @@ function deckStatusParts(d){
 function deckStatusText(d){const parts=deckStatusParts(d);return parts.length?parts.join(' / '):'非表示'}
 function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),1800)}
-function nav(name){$$('.screen').forEach(x=>x.classList.remove('active'));const screen=$('#screen-'+name);if(!screen)return;screen.classList.add('active');if(name==='cards')renderRegisterHistory();if(name==='card-manager')renderCards();if(name==='decks')renderDecks();if(name==='setup')renderSetup();window.scrollTo(0,0)}
+function nav(name){$$('.screen').forEach(x=>x.classList.remove('active'));const screen=$('#screen-'+name);if(!screen)return;screen.classList.add('active');if(name==='home')updateImageStorageStatus();if(name==='cards')renderRegisterHistory();if(name==='card-manager')renderCards();if(name==='decks')renderDecks();if(name==='setup')renderSetup();window.scrollTo(0,0)}
 $$('[data-nav]').forEach(b=>b.onclick=()=>nav(b.dataset.nav));
 $('#home-two-player').onclick=()=>{nav('setup');$('#mode-select').value='2';syncSetupMode()};
 
@@ -787,6 +1244,190 @@ async function copyText(txt){
 function downloadJson(obj,filename){const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function exportCardsObject(){return {format:'min-kai-tcg-cards',version:1,cards:cards.map(cardToPortable)}}
 function exportAllObject(){return {format:SIM_FORMAT,version:3,cards:cards.map(cardToPortable),decks:decks.map(d=>({id:d.id,name:d.name,...deckSettingsFrom(d),cards:Object.entries(d.entries).filter(([,n])=>n>0).map(([cardId,count])=>({cardId,cardName:cards.find(c=>c.id===cardId)?.name||'',count}))}))}}
+
+// v2.4 Full backup ZIP (store method: images are already compressed)
+const FULL_BACKUP_FORMAT='min-kai-tcg-full-backup',FULL_BACKUP_VERSION=1;
+const zipEncoder=new TextEncoder(),zipDecoder=new TextDecoder();
+let crc32Table=null;
+function getCrc32Table(){
+ if(crc32Table)return crc32Table;
+ crc32Table=new Uint32Array(256);
+ for(let n=0;n<256;n++){
+   let c=n;
+   for(let k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);
+   crc32Table[n]=c>>>0;
+ }
+ return crc32Table;
+}
+function crc32(bytes){
+ const table=getCrc32Table();let c=0xFFFFFFFF;
+ for(const b of bytes)c=table[(c^b)&0xFF]^(c>>>8);
+ return (c^0xFFFFFFFF)>>>0;
+}
+function concatBytes(parts){
+ const total=parts.reduce((n,p)=>n+p.length,0),out=new Uint8Array(total);
+ let off=0;for(const p of parts){out.set(p,off);off+=p.length}
+ return out;
+}
+function dosDateTime(date=new Date()){
+ let y=Math.max(1980,date.getFullYear()),m=date.getMonth()+1,d=date.getDate(),h=date.getHours(),min=date.getMinutes(),sec=Math.floor(date.getSeconds()/2);
+ return {time:((h&31)<<11)|((min&63)<<5)|(sec&31),date:(((y-1980)&127)<<9)|((m&15)<<5)|(d&31)};
+}
+function makeZipStored(entries){
+ const locals=[],centrals=[];let offset=0;
+ const dt=dosDateTime(new Date());
+ for(const entry of entries){
+   const nameBytes=zipEncoder.encode(entry.name),data=entry.data instanceof Uint8Array?entry.data:new Uint8Array(entry.data),crc=crc32(data);
+   const local=new Uint8Array(30+nameBytes.length),lv=new DataView(local.buffer);
+   lv.setUint32(0,0x04034b50,true);lv.setUint16(4,20,true);lv.setUint16(6,0,true);lv.setUint16(8,0,true);
+   lv.setUint16(10,dt.time,true);lv.setUint16(12,dt.date,true);lv.setUint32(14,crc,true);
+   lv.setUint32(18,data.length,true);lv.setUint32(22,data.length,true);lv.setUint16(26,nameBytes.length,true);lv.setUint16(28,0,true);
+   local.set(nameBytes,30);
+   locals.push(local,data);
+   const central=new Uint8Array(46+nameBytes.length),cv=new DataView(central.buffer);
+   cv.setUint32(0,0x02014b50,true);cv.setUint16(4,20,true);cv.setUint16(6,20,true);cv.setUint16(8,0,true);cv.setUint16(10,0,true);
+   cv.setUint16(12,dt.time,true);cv.setUint16(14,dt.date,true);cv.setUint32(16,crc,true);
+   cv.setUint32(20,data.length,true);cv.setUint32(24,data.length,true);cv.setUint16(28,nameBytes.length,true);
+   cv.setUint16(30,0,true);cv.setUint16(32,0,true);cv.setUint16(34,0,true);cv.setUint16(36,0,true);cv.setUint32(38,0,true);cv.setUint32(42,offset,true);
+   central.set(nameBytes,46);centrals.push(central);
+   offset+=local.length+data.length;
+ }
+ const centralOffset=offset,centralSize=centrals.reduce((n,p)=>n+p.length,0);
+ const eocd=new Uint8Array(22),ev=new DataView(eocd.buffer);
+ ev.setUint32(0,0x06054b50,true);ev.setUint16(4,0,true);ev.setUint16(6,0,true);ev.setUint16(8,entries.length,true);ev.setUint16(10,entries.length,true);
+ ev.setUint32(12,centralSize,true);ev.setUint32(16,centralOffset,true);ev.setUint16(20,0,true);
+ return concatBytes([...locals,...centrals,eocd]);
+}
+function findZipEocd(bytes){
+ const min=Math.max(0,bytes.length-65557);
+ for(let i=bytes.length-22;i>=min;i--){
+   if(bytes[i]===0x50&&bytes[i+1]===0x4b&&bytes[i+2]===0x05&&bytes[i+3]===0x06)return i;
+ }
+ return -1;
+}
+function readZipStored(bytes){
+ if(!(bytes instanceof Uint8Array))bytes=new Uint8Array(bytes);
+ const eocd=findZipEocd(bytes);if(eocd<0)throw new Error('ZIPの終端情報が見つかりません。');
+ const ev=new DataView(bytes.buffer,bytes.byteOffset+eocd,22),count=ev.getUint16(10,true),centralOffset=ev.getUint32(16,true);
+ const files=new Map();let pos=centralOffset;
+ for(let i=0;i<count;i++){
+   if(pos+46>bytes.length)throw new Error('ZIPの中央ディレクトリが壊れています。');
+   const cv=new DataView(bytes.buffer,bytes.byteOffset+pos,46);
+   if(cv.getUint32(0,true)!==0x02014b50)throw new Error('ZIPの中央ディレクトリ形式が不正です。');
+   const method=cv.getUint16(10,true),expectedCrc=cv.getUint32(16,true),compSize=cv.getUint32(20,true),uncompSize=cv.getUint32(24,true);
+   const nameLen=cv.getUint16(28,true),extraLen=cv.getUint16(30,true),commentLen=cv.getUint16(32,true),localOffset=cv.getUint32(42,true);
+   if(method!==0)throw new Error('この完全バックアップでは扱えない圧縮方式です。');
+   const name=zipDecoder.decode(bytes.subarray(pos+46,pos+46+nameLen));
+   if(localOffset+30>bytes.length)throw new Error('ZIP内ファイルの位置情報が不正です。');
+   const lv=new DataView(bytes.buffer,bytes.byteOffset+localOffset,30);
+   if(lv.getUint32(0,true)!==0x04034b50)throw new Error('ZIP内ファイルヘッダーが不正です。');
+   const localNameLen=lv.getUint16(26,true),localExtraLen=lv.getUint16(28,true),dataStart=localOffset+30+localNameLen+localExtraLen;
+   const data=bytes.slice(dataStart,dataStart+compSize);
+   if(data.length!==uncompSize||crc32(data)!==expectedCrc)throw new Error(`ZIP内ファイルが破損しています：${name}`);
+   files.set(name,data);
+   pos+=46+nameLen+extraLen+commentLen;
+ }
+ return files;
+}
+function mimeExtension(mime){
+ const m=String(mime||'').toLowerCase();
+ if(m.includes('webp'))return 'webp';
+ if(m.includes('png'))return 'png';
+ if(m.includes('jpeg')||m.includes('jpg'))return 'jpg';
+ if(m.includes('gif'))return 'gif';
+ return 'bin';
+}
+function downloadBlob(blob,filename){
+ const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1200);
+}
+async function buildFullBackupZip(onProgress=()=>{}){
+ if(!imageSystemAvailable)throw new Error('このブラウザでは画像ストレージを利用できません。');
+ await imageReadyPromise;
+ onProgress('バックアップ対象を確認中…');
+ const [allImages,allLinks]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links')]);
+ const validCardIds=new Set(cards.map(c=>c.id));
+ const validLinks=allLinks.map(x=>normalizeImageLink(x,x.cardId)).filter(x=>validCardIds.has(x.cardId)&&x.imageId);
+ const usedImageIds=new Set(validLinks.map(x=>x.imageId)),images=allImages.filter(x=>usedImageIds.has(x.id));
+ const imageMap=new Map(images.map(x=>[x.id,x]));
+ const finalLinks=validLinks.filter(x=>imageMap.has(x.imageId));
+ const entries=[],imageMeta=[];
+ for(let i=0;i<images.length;i++){
+   const rec=images[i];onProgress(`画像を準備中 ${i+1}/${images.length}…`);
+   const fullBytes=new Uint8Array(await rec.fullBlob.arrayBuffer()),thumbBytes=new Uint8Array(await rec.thumbBlob.arrayBuffer());
+   const fullPath=`images/${rec.id}/full.${mimeExtension(rec.fullBlob.type)}`,thumbPath=`images/${rec.id}/thumb.${mimeExtension(rec.thumbBlob.type)}`;
+   entries.push({name:fullPath,data:fullBytes},{name:thumbPath,data:thumbBytes});
+   imageMeta.push({
+     id:rec.id,width:rec.width,height:rec.height,originalWidth:rec.originalWidth,originalHeight:rec.originalHeight,
+     originalName:rec.originalName||'',createdAt:rec.createdAt||'',
+     full:{path:fullPath,mime:rec.fullBlob.type||'application/octet-stream',size:fullBytes.length},
+     thumb:{path:thumbPath,mime:rec.thumbBlob.type||'application/octet-stream',size:thumbBytes.length}
+   });
+ }
+ const manifest={
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'2.6',
+   data:exportBackupObject(),
+   settings:{
+     boardDisplay:{...boardDisplayPrefs},
+     handFollow:[...handFollowPrefs]
+   },
+   imageLinks:finalLinks,
+   images:imageMeta
+ };
+ entries.unshift({name:'manifest.json',data:zipEncoder.encode(JSON.stringify(manifest,null,2))});
+ onProgress('ZIPを組み立て中…');
+ const zipBytes=makeZipStored(entries);
+ return {blob:new Blob([zipBytes],{type:'application/zip'}),manifest,zipBytes};
+}
+function normalizeFullBackupSettings(settings={}){
+ const bd=settings.boardDisplay&&typeof settings.boardDisplay==='object'?settings.boardDisplay:{};
+ const hf=Array.isArray(settings.handFollow)?settings.handFollow:[true,true];
+ return {
+   boardDisplay:{
+     orientation:bd.orientation==='portrait'?'portrait':'landscape',
+     namePositionLandscape:bd.namePositionLandscape==='bar'?'bar':'overlay',
+     namePositionPortrait:bd.namePositionPortrait==='overlay'?'overlay':'bar',
+     showCardImages:bd.showCardImages!==false,
+     painRevealOnMove:bd.painRevealOnMove!==false
+   },
+   handFollow:[hf[0]!==false,hf[1]!==false]
+ };
+}
+function parseFullBackupZip(bytes){
+ const files=readZipStored(bytes),manifestBytes=files.get('manifest.json');
+ if(!manifestBytes)throw new Error('manifest.json が見つかりません。');
+ let manifest;try{manifest=JSON.parse(zipDecoder.decode(manifestBytes))}catch{throw new Error('manifest.json を読み取れません。')}
+ if(!manifest||manifest.format!==FULL_BACKUP_FORMAT||Number(manifest.version)!==FULL_BACKUP_VERSION)throw new Error('対応している完全バックアップZIPではありません。');
+ if(!manifest.data||manifest.data.format!=='min-kai-tcg-backup'||!Array.isArray(manifest.data.cards)||!Array.isArray(manifest.data.decks))throw new Error('完全バックアップ内のカード・デッキ情報が不正です。');
+ const cardIds=new Set(manifest.data.cards.map(c=>String(c.id||'')).filter(Boolean)),imageRecords=[],imageIds=new Set();
+ for(const meta of Array.isArray(manifest.images)?manifest.images:[]){
+   if(!meta||!meta.id||!meta.full?.path||!meta.thumb?.path)throw new Error('完全バックアップ内の画像情報が不正です。');
+   const full=files.get(meta.full.path),thumb=files.get(meta.thumb.path);
+   if(!full||!thumb)throw new Error(`画像ファイルが不足しています：${meta.id}`);
+   imageIds.add(meta.id);
+   imageRecords.push({
+     id:String(meta.id),
+     fullBlob:new Blob([full],{type:String(meta.full.mime||'application/octet-stream')}),
+     thumbBlob:new Blob([thumb],{type:String(meta.thumb.mime||'application/octet-stream')}),
+     width:Number(meta.width)||0,height:Number(meta.height)||0,originalWidth:Number(meta.originalWidth)||0,originalHeight:Number(meta.originalHeight)||0,
+     originalName:String(meta.originalName||''),createdAt:String(meta.createdAt||'')
+   });
+ }
+ const links=(Array.isArray(manifest.imageLinks)?manifest.imageLinks:[]).map(x=>normalizeImageLink(x,x?.cardId)).filter(x=>cardIds.has(x.cardId)&&imageIds.has(x.imageId));
+ return {manifest,imageRecords,links,settings:normalizeFullBackupSettings(manifest.settings||{})};
+}
+async function restoreFullBackupZip(parsed){
+ if(!imageSystemAvailable)throw new Error('このブラウザでは画像ストレージを利用できません。');
+ await imageReadyPromise;
+ await replaceImageDatabase(parsed.imageRecords,parsed.links);
+ resetImageRuntimeCache();
+ const r=restoreBackupObject(parsed.manifest.data,{skipImageReconcile:true});
+ boardDisplayPrefs=parsed.settings.boardDisplay;handFollowPrefs=parsed.settings.handFollow;
+ save(LS_BOARD_DISPLAY,boardDisplayPrefs);save(LS_HAND_FOLLOW,handFollowPrefs);
+ imageLinkCache.clear();for(const raw of parsed.links){const link=normalizeImageLink(raw,raw.cardId);imageLinkCache.set(link.cardId,link)}
+ renderCards();renderDecks();renderSetup(true);updateImageStorageStatus();applyBoardDisplaySettings();
+ return {cards:r.cards,decks:r.decks,images:parsed.imageRecords.length,linkedCards:parsed.links.length};
+}
+
 function exportBackupObject(){
  return {
    format:'min-kai-tcg-backup',
@@ -798,7 +1439,7 @@ function exportBackupObject(){
    registeredRecentCardIds:[...registeredRecentCardIds]
  };
 }
-function restoreBackupObject(data){
+function restoreBackupObject(data,opt={}){
  if(!data||data.format!=='min-kai-tcg-backup'||Number(data.version)!==1||!Array.isArray(data.cards)||!Array.isArray(data.decks))throw new Error('対応しているバックアップ形式ではありません。');
  const restoredCards=[];
  const usedIds=new Set();
@@ -842,6 +1483,7 @@ function restoreBackupObject(data){
  save(LS_CARDS,cards);save(LS_DECKS,decks);save(LS_CARD_RECENT,recentCardIds);save(LS_CARD_REGISTER_RECENT,registeredRecentCardIds);
  editingDeckId=null;workingDeck=blankWorkingDeck();board=null;detailCtx=null;detailNav=null;inspectSession=null;
  normalizeDeckSettings();renderRegisterHistory();renderCards();renderDecks();renderSetup(true);
+ if(!opt.skipImageReconcile)reconcileImageLinksWithCards().catch(err=>console.warn('画像リンク整理に失敗',err));
  return {cards:cards.length,decks:decks.length};
 }
 function parseImportPayload(data){
@@ -901,6 +1543,37 @@ $('#backup-file-input').onchange=async e=>{
    toast('バックアップから復元しました');
  }catch(err){
    $('#backup-status').textContent='復元エラー: '+err.message;
+ }
+ e.target.value='';
+};
+
+
+$('#full-backup-create').onclick=async()=>{
+ const btn=$('#full-backup-create'),status=$('#full-backup-status');
+ btn.disabled=true;status.textContent='完全バックアップを準備しています…';
+ try{
+   const result=await buildFullBackupZip(msg=>{status.textContent=msg});
+   const stamp=new Date().toISOString().slice(0,10).replaceAll('-','');
+   downloadBlob(result.blob,`minkai_tcg_full_backup_${stamp}.zip`);
+   status.textContent=`完全バックアップを作成しました。カード ${cards.length}枚 / デッキ ${decks.length}個 / 画像 ${result.manifest.images.length}件 / ${formatBytes(result.blob.size)}`;
+   toast('完全バックアップZIPを作成しました');
+ }catch(err){
+   console.error(err);status.textContent='完全バックアップ作成エラー: '+(err?.message||err);
+ }finally{btn.disabled=false}
+};
+$('#full-backup-file-input').onchange=async e=>{
+ const f=e.target.files?.[0];if(!f)return;
+ const status=$('#full-backup-status');status.textContent='ZIPを確認しています…';
+ try{
+   const parsed=parseFullBackupZip(new Uint8Array(await f.arrayBuffer()));
+   const cardCount=parsed.manifest.data.cards.length,deckCount=parsed.manifest.data.decks.length,imageCount=parsed.imageRecords.length;
+   if(!confirm(`現在の登録カード・保存デッキ・カード画像・表示設定を、この完全バックアップ内容に置き換えます。\n\nカード ${cardCount}枚 / デッキ ${deckCount}個 / 画像 ${imageCount}件\n\n復元しますか？`)){e.target.value='';status.textContent='復元をキャンセルしました。';return}
+   status.textContent='完全バックアップを復元しています…';
+   const r=await restoreFullBackupZip(parsed);
+   status.textContent=`完全復元しました。カード ${r.cards}枚 / デッキ ${r.decks}個 / 画像 ${r.images}件 / 画像設定カード ${r.linkedCards}枚`;
+   toast('完全バックアップから復元しました');
+ }catch(err){
+   console.error(err);status.textContent='完全復元エラー: '+(err?.message||err);
  }
  e.target.value='';
 };
@@ -983,6 +1656,7 @@ function managerDetailedFilterCount(){
  if(($('#card-manager-level')?.value||'').trim())n++;
  if(($('#card-manager-race')?.value||'').trim())n++;
  if(($('#card-manager-effect')?.value||'').trim())n++;
+ if(($('#card-manager-image')?.value||'all')!=='all')n++;
  return n;
 }
 function managerHasFilters(){
@@ -998,6 +1672,7 @@ function cardManagerFilteredCards(){
  const levelQ=($('#card-manager-level')?.value||'').trim();
  const raceQ=($('#card-manager-race')?.value||'').trim().toLocaleLowerCase();
  const effectQ=($('#card-manager-effect')?.value||'').trim().toLocaleLowerCase();
+ const imageFilter=$('#card-manager-image')?.value||'all';
  const sort=$('#card-manager-sort')?.value||'newest';
  const filteredMode=managerHasFilters()||cardManagerShowAll;
  let rows=(filteredMode?cards:recentCards()).map(c=>({c,index:cards.findIndex(x=>x.id===c.id)}));
@@ -1008,6 +1683,8 @@ function cardManagerFilteredCards(){
  if(levelQ)rows=rows.filter(x=>String(x.c.level??'').trim()===levelQ);
  if(raceQ)rows=rows.filter(x=>String(x.c.race||'').toLocaleLowerCase().includes(raceQ));
  if(effectQ)rows=rows.filter(x=>String(x.c.effect||'').toLocaleLowerCase().includes(effectQ));
+ if(imageFilter==='with')rows=rows.filter(x=>!!getCachedImageLink(x.c.id));
+ if(imageFilter==='without')rows=rows.filter(x=>!getCachedImageLink(x.c.id));
  if(cardManagerDuplicateOnly)rows=rows.filter(x=>(dupCounts.get(normalizedDuplicateName(x.c.name))||0)>1);
 
  if(filteredMode){
@@ -1038,6 +1715,8 @@ function resetManagerPageAndRender(){
 function renderCards(){
  const totalPill=$('#card-count');
  if(totalPill)totalPill.textContent=`登録済み ${cards.length}枚`;
+ const imageCountPill=$('#card-image-count');
+ if(imageCountPill)imageCountPill.textContent=`画像 ${cards.filter(c=>!!getCachedImageLink(c.id)).length}/${cards.length}`;
  const list=$('#card-list');
  if(!list)return;
 
@@ -1060,9 +1739,11 @@ function renderCards(){
    const dupCount=dupCounts.get(normalizedDuplicateName(c.name))||0;
    const level=(c.level!==''&&c.level!=null)?`Lv${esc(c.level)}`:'Lv－';
    const race=c.race?esc(c.race):'－';
+   const hasImage=!!getCachedImageLink(c.id);
+   const imagePill=hasImage?'<span class="pill manager-image-pill">画像あり</span>':'';
    const dupInfo=cardManagerDuplicateOnly?`<div class="manager-dup-info"><span class="pill">重複 ${dupCount}件</span><span class="pill">採用デッキ ${deckUsageCount(c.id)}</span></div>`:'';
    return `<div class="list-row manager-card-row" data-manage-card="${c.id}">
-     <div class="grow"><b>${esc(c.name)}</b><div class="manager-card-meta"><span class="pill">${esc(c.type)}</span><span class="muted">${level}</span></div><div class="manager-card-race">種族：${race}</div></div>
+     <div class="grow"><b>${esc(c.name)}</b>${imagePill}<div class="manager-card-meta"><span class="pill">${esc(c.type)}</span><span class="muted">${level}</span></div><div class="manager-card-race">種族：${race}</div></div>
      ${dupInfo}
      <button class="btn small" data-manage-detail="${c.id}">詳細</button>
    </div>`;
@@ -1088,6 +1769,132 @@ function renderCards(){
 
  $$('[data-manage-card]').forEach(row=>row.onclick=()=>openCardManagerDetail(row.dataset.manageCard));
  $$('[data-manage-detail]').forEach(b=>b.onclick=e=>{e.stopPropagation();openCardManagerDetail(b.dataset.manageDetail)});
+}
+
+
+function imageFilenameBase(filename){
+ const s=String(filename||'').trim();
+ return s.replace(/\.[^.]+$/,'').trim();
+}
+function cardBulkChoiceLabel(c){
+ const idx=cards.findIndex(x=>x.id===c.id);
+ const parts=[`登録順 ${idx+1}`,c.type||'',c.level!==''&&c.level!=null?`Lv${c.level}`:'',c.race?`種族:${c.race}`:''].filter(Boolean);
+ return parts.join(' / ');
+}
+function buildBulkImageRows(files){
+ return files.filter(f=>String(f.type||'').startsWith('image/')).map((file,i)=>{
+   const base=imageFilenameBase(file.name);
+   const matches=cards.filter(c=>String(c.name||'').trim()===base);
+   return {
+     key:`bulk_${Date.now()}_${i}`,
+     file,base,matches,
+     targetId:matches.length===1?matches[0].id:'',
+     status:matches.length===0?'unmatched':matches.length===1?'matched':'duplicate'
+   };
+ });
+}
+function openBulkImageImport(){
+ if(!imageSystemAvailable){toast('このブラウザでは画像保存を利用できません');return}
+ let rows=[];
+ openModal(`<div class="modal-head"><h3>画像をまとめて登録</h3><button class="btn" id="bulk-image-close">閉じる</button></div>
+ <div class="bulk-image-box">
+   <p class="muted">画像ファイル名から拡張子を除いた文字列とカード名を完全一致で照合します。曖昧一致は行いません。同名カードが複数ある場合だけ、登録先を選択してください。</p>
+   <div id="bulk-image-drop" class="bulk-image-drop">
+     <div>画像をまとめてここへドロップ</div>
+     <div class="muted" style="margin-top:4px">またはクリックして複数ファイルを選択</div>
+     <input id="bulk-image-input" type="file" accept="image/*" multiple style="display:none">
+   </div>
+   <label class="board-follow-row"><input id="bulk-image-overwrite" type="checkbox">すでに画像があるカードも上書きする</label>
+   <div id="bulk-image-summary" class="bulk-image-summary"></div>
+   <div id="bulk-image-list" class="bulk-image-list"><div class="muted">まだ画像が選択されていません。</div></div>
+   <div id="bulk-image-progress" class="muted bulk-image-progress"></div>
+   <div class="actions"><button class="btn primary" id="bulk-image-run" disabled>一致した画像を登録</button><button class="btn" id="bulk-image-reselect">画像を選び直す</button></div>
+ </div>`);
+ const input=$('#bulk-image-input'),drop=$('#bulk-image-drop'),list=$('#bulk-image-list'),summary=$('#bulk-image-summary'),run=$('#bulk-image-run'),progress=$('#bulk-image-progress');
+
+ function statusFor(row){
+   if(row.status==='unmatched')return {text:'一致なし',cls:'status-unmatched'};
+   if(row.status==='duplicate')return {text:row.targetId?'登録先選択済み':'同名複数',cls:'status-duplicate'};
+   if(getCachedImageLink(row.targetId))return {text:'画像あり',cls:'status-existing'};
+   return {text:'一致',cls:''};
+ }
+ function render(){
+   const matched=rows.filter(r=>r.status==='matched').length;
+   const dup=rows.filter(r=>r.status==='duplicate').length;
+   const unmatched=rows.filter(r=>r.status==='unmatched').length;
+   const ready=rows.filter(r=>r.targetId).length;
+   summary.innerHTML=rows.length?`<span class="pill">画像 ${rows.length}件</span><span class="pill">一意一致 ${matched}</span><span class="pill">同名複数 ${dup}</span><span class="pill">一致なし ${unmatched}</span><span class="pill">登録先決定 ${ready}</span>`:'';
+   list.innerHTML=rows.length?rows.map((r,i)=>{
+     const st=statusFor(r);
+     let matchHtml='';
+     if(r.matches.length===0)matchHtml='<span class="muted">該当カードなし</span>';
+     else if(r.matches.length===1)matchHtml=`<span>${esc(r.matches[0].name)}</span>`;
+     else matchHtml=`<select data-bulk-target="${i}"><option value="">登録先を選択</option>${r.matches.map(c=>`<option value="${c.id}" ${r.targetId===c.id?'selected':''}>${esc(cardBulkChoiceLabel(c))}</option>`).join('')}</select>`;
+     return `<div class="bulk-image-row ${st.cls}">
+       <div class="bulk-image-file"><b>${esc(r.file.name)}</b><div class="muted">判定名：${esc(r.base)}</div></div>
+       <div class="bulk-image-match">${matchHtml}</div>
+       <span class="pill">${st.text}</span>
+     </div>`;
+   }).join(''):'<div class="muted">まだ画像が選択されていません。</div>';
+   run.disabled=!rows.some(r=>r.targetId);
+   $$('[data-bulk-target]').forEach(sel=>sel.onchange=()=>{const r=rows[Number(sel.dataset.bulkTarget)];if(r){r.targetId=sel.value;render()}});
+ }
+ function accept(files){
+   const img=[...files].filter(f=>String(f.type||'').startsWith('image/'));
+   if(!img.length){toast('画像ファイルを選択してください');return}
+   rows=buildBulkImageRows(img);progress.textContent='';render();
+ }
+ input.onchange=()=>{accept(input.files||[]);input.value=''};
+ drop.onclick=e=>{if(e.target!==input)input.click()};
+ drop.ondragover=e=>{e.preventDefault();drop.classList.add('drag-over')};
+ drop.ondragleave=()=>drop.classList.remove('drag-over');
+ drop.ondrop=e=>{e.preventDefault();drop.classList.remove('drag-over');accept(e.dataTransfer?.files||[])};
+ $('#bulk-image-reselect').onclick=()=>input.click();
+ $('#bulk-image-close').onclick=closeModal;
+
+ run.onclick=async()=>{
+   const overwrite=$('#bulk-image-overwrite').checked;
+   const targets=rows.filter(r=>r.targetId);
+   if(!targets.length)return;
+   run.disabled=true;$('#bulk-image-close').disabled=true;$('#bulk-image-reselect').disabled=true;
+   let added=0,skipped=0,failed=0;
+   const targetSeen=new Set();
+   for(let i=0;i<targets.length;i++){
+     const r=targets[i];
+     progress.textContent=`処理中 ${i+1}/${targets.length}：${r.file.name}`;
+     try{
+       if(targetSeen.has(r.targetId)){skipped++;continue}
+       targetSeen.add(r.targetId);
+       const old=await getCardImageLink(r.targetId);
+       if(old&&!overwrite){skipped++;continue}
+       const rec=await createOptimizedImageRecord(r.file);
+       let linked=false;
+       try{
+         await imageDbPut('images',rec);
+         const link=old?normalizeImageLink({...old,imageId:rec.id},r.targetId):defaultImageLink(r.targetId,rec.id);
+         await putCardImageLink(link);
+         linked=true;
+         if(old?.imageId&&old.imageId!==rec.id)await cleanupImageIfUnused(old.imageId);
+         added++;
+       }finally{
+         if(!linked){
+           try{await imageDbDelete('images',rec.id);revokeImageUrls(rec.id)}catch{}
+         }
+       }
+     }catch(err){
+       console.warn('一括画像登録失敗',r.file.name,err);failed++;
+     }
+   }
+   progress.textContent=`完了：登録 ${added}件 / スキップ ${skipped}件 / 失敗 ${failed}件`;
+   await updateImageStorageStatus();
+   renderCards();
+   if(board)renderBoard();
+   $('#bulk-image-close').disabled=false;$('#bulk-image-reselect').disabled=false;
+   run.textContent='一致した画像を登録';
+   run.disabled=!rows.some(r=>r.targetId);
+   toast(`画像を${added}件登録しました`);
+ };
+ render();
 }
 
 function formatCardBakeStyle(c){
@@ -1139,10 +1946,209 @@ function managerCardSummary(c){
  const stats=[c.type||'',c.level!==''&&c.level!=null?`Lv${c.level}`:'',c.power!==''&&c.power!=null?`POWER ${c.power}`:''].filter(Boolean).map(esc).join(' / ');
  return `<div class="card-full"><h3>${esc(c.name)}</h3><div class="muted">${stats}</div><div class="muted" style="margin-top:4px">種族：${esc(c.race||'－')}</div><div class="muted" style="margin-top:4px">採用デッキ：${deckUsageCount(c.id)}</div><div class="manager-detail-effect" style="margin-top:10px">${esc(c.effect||'効果なし')}</div></div>`;
 }
-function openCardManagerDetail(id){
+async function hydrateManagerCardImage(cardId){
+ const preview=$('#manager-card-image-preview'),status=$('#manager-card-image-status'),enlarge=$('#manager-image-enlarge');
+ if(!imageSystemAvailable){
+   if(status)status.textContent='画像機能 利用不可';
+   if(preview)preview.textContent='このブラウザでは画像保存を利用できません';
+   return;
+ }
+ await imageReadyPromise;
+ const link=getCachedImageLink(cardId)||await getCardImageLink(cardId);
+ if(!link){
+   if(status)status.textContent='未登録';
+   if(preview){
+     preview.className='manager-card-image-preview';
+     preview.style.backgroundImage='';
+     preview.innerHTML='<span>画像未登録</span>';
+   }
+   if(enlarge)enlarge.style.display='none';
+   return;
+ }
+ const view=imageViewForOrientation(link,boardDisplayPrefs.orientation);
+ if(status)status.textContent='画像あり';
+ if(!preview)return;
+ const orientation=boardDisplayPrefs.orientation,url=await getImageObjectUrl(link.imageId,'thumb');
+ if(!preview.isConnected)return;
+ preview.className=`manager-card-image-preview image-loaded ${orientation==='portrait'?'portrait-preview':''}`;
+ preview.innerHTML=`<span class="image-preview-label">${orientation==='portrait'?'縦長':'横長'}表示プレビュー</span>`;
+ preview.style.backgroundImage=`url("${url}")`;preview.style.backgroundSize=view.fit;preview.style.backgroundPosition=`${view.x}% ${view.y}%`;preview.style.backgroundRepeat='no-repeat';
+ if(enlarge)enlarge.style.display='';
+ preview.onclick=()=>openCardImageViewer(cardId);
+}
+
+
+let imageEditorTempUrl='';
+function cleanupImageEditorTemp(){
+ if(imageEditorTempUrl){try{URL.revokeObjectURL(imageEditorTempUrl)}catch{}imageEditorTempUrl=''}
+}
+async function openCardImageViewer(cardId){
+ const c=cards.find(x=>x.id===cardId);if(!c)return;
+ await imageReadyPromise;
+ const link=await getCardImageLink(cardId);if(!link){toast('画像が登録されていません');return}
+ const url=await getImageObjectUrl(link.imageId,'full');if(!url){toast('画像を読み込めませんでした');return}
+ openModal(`<div class="modal-head"><h3>${esc(c.name)} / 画像</h3><button class="btn" id="image-view-back">カード詳細へ戻る</button></div><img class="image-full-view" src="${url}" alt="${esc(c.name)}">`);
+ $('#image-view-back').onclick=()=>openCardManagerDetail(cardId,{imageExpanded:true});
+}
+function imagePointCoords(point){
+ return ({
+   'top-left':[0,0],top:[50,0],'top-right':[100,0],
+   left:[0,50],center:[50,50],right:[100,50],
+   'bottom-left':[0,100],bottom:[50,100],'bottom-right':[100,100]
+ })[point]||[50,50];
+}
+async function openCardImageEditor(cardId){
+ const c=cards.find(x=>x.id===cardId);if(!c)return;
+ if(!imageSystemAvailable){toast('このブラウザでは画像保存を利用できません');return}
+ await imageReadyPromise;
+ cleanupImageEditorTemp();
+ const original=await getCardImageLink(cardId);
+ let working=original?normalizeImageLink(JSON.parse(JSON.stringify(original)),cardId):defaultImageLink(cardId,'');
+ let pendingFile=null,previewUrl=working.imageId?await getImageObjectUrl(working.imageId,'full'):'';
+ let editOrientation=boardDisplayPrefs.orientation==='portrait'?'portrait':'landscape';
+ let dragging=null;
+
+ openModal(`<div class="modal-head"><h3>${esc(c.name)} / 画像設定</h3><button class="btn" id="image-editor-back">カード詳細へ戻る</button></div>
+ <div class="image-editor-layout">
+   <div class="image-editor-preview-area">
+     <div id="image-editor-card" class="image-editor-card"><div id="image-editor-art" class="image-editor-art"></div><div class="image-editor-name">${esc(c.name)}</div><div id="image-editor-empty" class="image-editor-empty">画像を選択してください</div></div>
+     <div id="image-editor-status" class="muted image-editor-status"></div>
+     <div id="image-drop-zone" class="image-drop-zone" tabindex="0">
+       <div>画像をここへドロップ、またはクリックして選択</div>
+       <div class="muted" style="margin-top:4px">PCではこの枠を選択して Ctrl+V でも貼り付けできます。スマホは画像選択から登録できます。</div>
+       <input id="image-file-input" type="file" accept="image/*" style="display:none">
+     </div>
+   </div>
+   <div class="image-editor-controls">
+     <div class="image-editor-group">
+       <h4>調整するカード形状</h4>
+       <div class="image-orientation-buttons"><button class="btn small" data-image-orientation="landscape">横長</button><button class="btn small" data-image-orientation="portrait">縦長</button></div>
+     </div>
+     <div class="image-editor-group">
+       <h4>画像の見せ方</h4>
+       <div class="image-fit-buttons"><button class="btn small" data-image-fit="cover">全面表示</button><button class="btn small" data-image-fit="contain">全体表示</button></div>
+       <div class="muted" style="margin-top:6px">全面表示はカード領域いっぱいに表示し、はみ出す部分を切ります。全体表示は画像全体を収めます。</div>
+     </div>
+     <div class="image-editor-group">
+       <h4>表示位置の調整</h4>
+       <div class="image-mode-buttons"><button class="btn small" data-image-mode="grid">9点形式</button><button class="btn small" data-image-mode="free">自由ドラッグ</button></div>
+       <div id="image-grid-controls" class="image-position-grid">
+         ${['top-left','top','top-right','left','center','right','bottom-left','bottom','bottom-right'].map((p,i)=>`<button class="btn small" data-image-point="${p}" title="${p}">${['↖','↑','↗','←','●','→','↙','↓','↘'][i]}</button>`).join('')}
+       </div>
+       <div id="image-free-help" class="muted" style="margin-top:8px">自由ドラッグでは、左のプレビュー上で画像をドラッグして位置を調整します。</div>
+       <div id="image-free-readout" class="image-free-readout"></div>
+     </div>
+     <div class="actions"><button class="btn primary" id="image-save">画像と設定を保存</button><button class="btn" id="image-change">画像を選び直す</button>${original?'<button class="btn danger" id="image-delete">画像を削除</button>':''}</div>
+   </div>
+ </div>`);
+
+ function view(){return editOrientation==='portrait'?working.portrait:working.landscape}
+ function setView(next){if(editOrientation==='portrait')working.portrait=normalizeImageView(next);else working.landscape=normalizeImageView(next)}
+ function currentNameMode(){return editOrientation==='portrait'?boardDisplayPrefs.namePositionPortrait:boardDisplayPrefs.namePositionLandscape}
+ function refresh(){
+   const v=view(),card=$('#image-editor-card'),art=$('#image-editor-art'),empty=$('#image-editor-empty');
+   if(!card||!art)return;
+   card.className=`image-editor-card ${editOrientation} ${currentNameMode()==='bar'?'name-bar':'name-overlay'}`;
+   art.style.backgroundImage=previewUrl?`url("${previewUrl}")`:'';
+   art.style.backgroundSize=v.fit;
+   art.style.backgroundPosition=`${v.x}% ${v.y}%`;
+   if(empty)empty.style.display=previewUrl?'none':'flex';
+   $$('[data-image-orientation]').forEach(b=>b.classList.toggle('primary',b.dataset.imageOrientation===editOrientation));
+   $$('[data-image-fit]').forEach(b=>b.classList.toggle('primary',b.dataset.imageFit===v.fit));
+   $$('[data-image-mode]').forEach(b=>b.classList.toggle('primary',b.dataset.imageMode===v.mode));
+   $$('[data-image-point]').forEach(b=>b.classList.toggle('active',v.mode==='grid'&&b.dataset.imagePoint===v.point));
+   const grid=$('#image-grid-controls'),freeHelp=$('#image-free-help'),readout=$('#image-free-readout');
+   if(grid)grid.style.opacity=v.mode==='grid'?'1':'.45';
+   if(freeHelp)freeHelp.style.display=v.mode==='free'?'block':'none';
+   if(readout)readout.textContent=v.mode==='free'?`位置 X ${Math.round(v.x)}% / Y ${Math.round(v.y)}%`:`9点位置：${v.point}`;
+   const status=$('#image-editor-status');
+   if(status)status.textContent=pendingFile?`選択中：${pendingFile.name}（まだ保存されていません）`:(working.imageId?'登録済み画像を調整中':'画像未登録');
+ }
+ function acceptFile(file){
+   if(!file||!String(file.type||'').startsWith('image/')){toast('画像ファイルを選択してください');return}
+   cleanupImageEditorTemp();pendingFile=file;imageEditorTempUrl=URL.createObjectURL(file);previewUrl=imageEditorTempUrl;refresh();
+ }
+ const fileInput=$('#image-file-input'),drop=$('#image-drop-zone');
+ fileInput.onchange=()=>{if(fileInput.files?.[0])acceptFile(fileInput.files[0]);fileInput.value=''};
+ drop.onclick=e=>{if(e.target!==fileInput)fileInput.click()};
+ drop.ondragover=e=>{e.preventDefault();drop.classList.add('drag-over')};
+ drop.ondragleave=()=>drop.classList.remove('drag-over');
+ drop.ondrop=e=>{e.preventDefault();drop.classList.remove('drag-over');const f=[...(e.dataTransfer?.files||[])].find(x=>String(x.type||'').startsWith('image/'));if(f)acceptFile(f)};
+ drop.onpaste=e=>{const f=[...(e.clipboardData?.files||[])].find(x=>String(x.type||'').startsWith('image/'));if(f){e.preventDefault();acceptFile(f)}};
+
+ $$('[data-image-orientation]').forEach(b=>b.onclick=()=>{editOrientation=b.dataset.imageOrientation==='portrait'?'portrait':'landscape';refresh()});
+ $$('[data-image-fit]').forEach(b=>b.onclick=()=>{const v=view();setView({...v,fit:b.dataset.imageFit==='contain'?'contain':'cover'});refresh()});
+ $$('[data-image-mode]').forEach(b=>b.onclick=()=>{const v=view();setView({...v,mode:b.dataset.imageMode==='free'?'free':'grid'});refresh()});
+ $$('[data-image-point]').forEach(b=>b.onclick=()=>{
+   const point=b.dataset.imagePoint,[x,y]=imagePointCoords(point),v=view();
+   setView({...v,mode:'grid',point,x,y});refresh();
+ });
+
+ const art=$('#image-editor-art');
+ art.onpointerdown=e=>{
+   const v=view();if(v.mode!=='free'||!previewUrl)return;
+   e.preventDefault();art.setPointerCapture?.(e.pointerId);art.classList.add('dragging');
+   dragging={id:e.pointerId,startClientX:e.clientX,startClientY:e.clientY,startX:v.x,startY:v.y,width:Math.max(1,art.clientWidth),height:Math.max(1,art.clientHeight)};
+ };
+ art.onpointermove=e=>{
+   if(!dragging||dragging.id!==e.pointerId)return;
+   const dx=e.clientX-dragging.startClientX,dy=e.clientY-dragging.startClientY;
+   const clamp=n=>Math.max(0,Math.min(100,n));
+   const v=view();
+   setView({...v,mode:'free',x:clamp(dragging.startX-dx/dragging.width*100),y:clamp(dragging.startY-dy/dragging.height*100)});
+   refresh();
+ };
+ const endDrag=e=>{if(!dragging||dragging.id!==e.pointerId)return;dragging=null;art.classList.remove('dragging')};
+ art.onpointerup=endDrag;art.onpointercancel=endDrag;
+
+ $('#image-change').onclick=()=>fileInput.click();
+ $('#image-editor-back').onclick=()=>{cleanupImageEditorTemp();openCardManagerDetail(cardId,{imageExpanded:true})};
+ $('#image-save').onclick=async()=>{
+   const btn=$('#image-save');btn.disabled=true;btn.textContent='保存中…';
+   try{
+     const oldImageId=original?.imageId||'';
+     if(pendingFile){
+       const rec=await createOptimizedImageRecord(pendingFile);
+       await imageDbPut('images',rec);
+       working.imageId=rec.id;
+     }
+     if(!working.imageId){toast('先に画像を選択してください');return}
+     await putCardImageLink(working);
+     if(oldImageId&&oldImageId!==working.imageId)await cleanupImageIfUnused(oldImageId);
+     cleanupImageEditorTemp();
+     if(board)renderBoard();
+     renderCards();updateImageStorageStatus();
+     openCardManagerDetail(cardId,{imageExpanded:true});
+     toast('カード画像を保存しました');
+   }catch(err){
+     console.error(err);toast(err?.message||'画像を保存できませんでした');
+     if(btn){btn.disabled=false;btn.textContent='画像と設定を保存'}
+   }
+ };
+ if($('#image-delete'))$('#image-delete').onclick=async()=>{
+   if(!confirm('このカードの画像設定を削除しますか？'))return;
+   try{
+     await deleteCardImageLink(cardId);cleanupImageEditorTemp();if(board)renderBoard();renderCards();updateImageStorageStatus();openCardManagerDetail(cardId,{imageExpanded:true});toast('カード画像を削除しました');
+   }catch(err){console.error(err);toast('画像を削除できませんでした')}
+ };
+ refresh();
+}
+
+function openCardManagerDetail(id,opt={}){
  const c=cards.find(x=>x.id===id);if(!c)return;
+ const imageExpanded=opt.imageExpanded===true;
  openModal(`<div class="modal-head"><h3>カード詳細</h3><button class="btn" id="manager-detail-close">閉じる</button></div>
  ${managerCardSummary(c)}
+ <div class="manager-image-section ${imageExpanded?'expanded':'collapsed'}">
+   <div class="manager-image-collapsed-head">
+     <div class="manager-image-title"><h3>カード画像</h3><span id="manager-card-image-status" class="pill">確認中…</span></div>
+     <button class="btn small" id="manager-image-toggle">${imageExpanded?'閉じる':'展開'}</button>
+   </div>
+   ${imageExpanded?`<div class="manager-image-body">
+     <div id="manager-card-image-preview" class="manager-card-image-preview"><span>画像を確認中…</span></div>
+     <div class="actions"><button class="btn" id="manager-image-settings">画像設定</button><button class="btn" id="manager-image-enlarge" style="display:none">画像を拡大</button></div>
+   </div>`:''}
+ </div>
  <div class="manager-text-export">
    <div class="muted manager-text-export-title">テキスト出力</div>
    <div class="actions"><button class="btn" id="manager-copy-jelly">ゼリー君式をコピー</button><button class="btn" id="manager-copy-bake">化けさん式をコピー</button></div>
@@ -1150,6 +2156,12 @@ function openCardManagerDetail(id){
  <div class="actions"><button class="btn primary" id="manager-edit-card">編集</button><button class="btn" id="manager-clone-card">複製</button></div>
  <div class="manager-danger-zone"><button class="btn danger" id="manager-delete-card">削除</button></div>`);
  $('#manager-detail-close').onclick=closeModal;
+ $('#manager-image-toggle').onclick=()=>openCardManagerDetail(id,{imageExpanded:!imageExpanded});
+ if(imageExpanded){
+   $('#manager-image-settings').onclick=()=>openCardImageEditor(id);
+   $('#manager-image-enlarge').onclick=()=>openCardImageViewer(id);
+ }
+ hydrateManagerCardImage(id);
  $('#manager-copy-jelly').onclick=()=>copyManagerCardText(c,'jelly');
  $('#manager-copy-bake').onclick=()=>copyManagerCardText(c,'bake');
  $('#manager-edit-card').onclick=()=>openCardManagerEdit(id);
@@ -1181,18 +2193,19 @@ function openCardManagerEdit(id){
    toast('カードを更新しました');
  };
 }
-function cloneCard(id){
+async function cloneCard(id){
  const c=cards.find(x=>x.id===id);if(!c)return;
  const clone={...c,id:uid('card'),name:c.name+'（複製）'};
  cards.push(clone);
  save(LS_CARDS,cards);
+ try{await cloneCardImageLink(id,clone.id)}catch(err){console.warn('画像リンクの複製に失敗',err)}
  touchRecentCards(clone.id);
  touchRegisteredCards(clone.id);
- renderRegisterHistory();renderCards();renderDecks();renderSetup();
+ renderRegisterHistory();renderCards();renderDecks();renderSetup();updateImageStorageStatus();
  closeModal();
  toast('カードを複製しました');
 }
-function deleteCard(id){
+async function deleteCard(id){
  const c=cards.find(x=>x.id===id);if(!c)return;
  const used=deckUsageCount(id);
  const msg=used>0?`このカードは${used}個の保存デッキで使用されています。削除すると、それらのデッキからもこのカードを取り除きます。削除しますか？`:'このカードを削除しますか？';
@@ -1203,8 +2216,9 @@ function deleteCard(id){
  recentCardIds=recentCardIds.filter(x=>x!==id);
  registeredRecentCardIds=registeredRecentCardIds.filter(x=>x!==id);
  save(LS_CARDS,cards);save(LS_DECKS,decks);save(LS_CARD_RECENT,recentCardIds);save(LS_CARD_REGISTER_RECENT,registeredRecentCardIds);
+ try{await deleteCardImageLink(id)}catch(err){console.warn('画像リンクの削除に失敗',err)}
  closeModal();
- renderRegisterHistory();renderCards();renderDecks();renderSetup();
+ renderRegisterHistory();renderCards();renderDecks();renderSetup();updateImageStorageStatus();
  toast('カードを削除しました');
 }
 
@@ -1218,16 +2232,18 @@ $('#card-manager-type').onchange=activateManagerSearchAndRender;
 $('#card-manager-level').oninput=activateManagerSearchAndRender;
 $('#card-manager-race').oninput=activateManagerSearchAndRender;
 $('#card-manager-effect').oninput=activateManagerSearchAndRender;
+$('#card-manager-image').onchange=activateManagerSearchAndRender;
 $('#card-manager-sort').onchange=activateManagerSearchAndRender;
 $('#card-manager-duplicates').onclick=()=>{cardManagerDuplicateOnly=!cardManagerDuplicateOnly;cardManagerShowAll=true;resetManagerPageAndRender()};
 $('#card-manager-recent').onclick=()=>{
  cardManagerShowAll=false;cardManagerDuplicateOnly=false;cardManagerPage=0;
- $('#card-manager-search').value='';$('#card-manager-type').value='all';$('#card-manager-level').value='';$('#card-manager-race').value='';$('#card-manager-effect').value='';$('#card-manager-sort').value='newest';
+ $('#card-manager-search').value='';$('#card-manager-type').value='all';$('#card-manager-level').value='';$('#card-manager-race').value='';$('#card-manager-effect').value='';$('#card-manager-image').value='all';$('#card-manager-sort').value='newest';
  renderCards();
 };
+$('#bulk-image-import').onclick=openBulkImageImport;
 $('#card-manager-clear').onclick=()=>{
  cardManagerShowAll=true;cardManagerDuplicateOnly=false;cardManagerPage=0;
- $('#card-manager-search').value='';$('#card-manager-type').value='all';$('#card-manager-level').value='';$('#card-manager-race').value='';$('#card-manager-effect').value='';$('#card-manager-sort').value='newest';
+ $('#card-manager-search').value='';$('#card-manager-type').value='all';$('#card-manager-level').value='';$('#card-manager-race').value='';$('#card-manager-effect').value='';$('#card-manager-image').value='all';$('#card-manager-sort').value='newest';
  renderCards();
 };
 
@@ -1384,7 +2400,7 @@ $('#mode-select').onchange=syncSetupMode;$('#setup-deck-1').onchange=()=>syncFav
 function cloneInstance(c){return {...c,instanceId:uid('inst'),faceDown:false,rested:false,counters:[],memo:'',powerMod:0,token:false}}
 function makeDeckPiles(deckId){const d=decks.find(x=>x.id===deckId),phys=[];if(d)Object.entries(d.entries).forEach(([id,n])=>{const c=cards.find(x=>x.id===id);if(c)for(let i=0;i<n;i++)phys.push({id:uid('pile'),cards:[cloneInstance(c)]})});return phys}
 function shufflePileArray(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}}
-function makePlayer(deckId,index,favoriteCardId='',otherDeckId=''){const phys=makeDeckPiles(deckId),other=makeDeckPiles(otherDeckId);const player={name:'プレイヤー'+(index+1),character:Array(5).fill(null),pain:Array(5).fill(null),room:Array(5).fill(null),rulePlus:Array(1).fill(null),hand:[],handMode:'scroll',deck:phys,otherDeck:other,grave:[],banish:[],collapsed:{pain:false,room:false,rulePlus:false}};if(favoriteCardId){const i=player.deck.findIndex(p=>p.cards[0]?.id===favoriteCardId);if(i>=0){const [pile]=player.deck.splice(i,1);player.hand.push(pile)}}shufflePileArray(player.deck);return player}
+function makePlayer(deckId,index,favoriteCardId='',otherDeckId=''){const phys=makeDeckPiles(deckId),other=makeDeckPiles(otherDeckId);const player={name:'プレイヤー'+(index+1),homePowerMod:0,character:Array(5).fill(null),pain:Array(5).fill(null),room:Array(5).fill(null),rulePlus:Array(1).fill(null),hand:[],handMode:'scroll',deck:phys,otherDeck:other,grave:[],banish:[],collapsed:{pain:false,room:false,rulePlus:false}};if(favoriteCardId){const i=player.deck.findIndex(p=>p.cards[0]?.id===favoriteCardId);if(i>=0){const [pile]=player.deck.splice(i,1);player.hand.push(pile)}}shufflePileArray(player.deck);return player}
 $('#start-board').onclick=()=>{const mode=Number($('#mode-select').value);if(!$('#setup-deck-1').value){alert(decks.length?'メインデッキとして盤面開始に表示されているデッキがありません。デッキ設定を確認してください。':'デッキを1つ以上作成してください。');return}const setup={mode,deck1:$('#setup-deck-1').value,otherDeck1:$('#setup-other-deck-1').value,favorite1:$('#setup-favorite-1').value,deck2:$('#setup-deck-2').value||$('#setup-deck-1').value,otherDeck2:$('#setup-other-deck-2').value,favorite2:$('#setup-favorite-2').value};board={mode,setup,players:[makePlayer(setup.deck1,0,setup.favorite1,setup.otherDeck1)],note:'',turn:1};if(mode===2)board.players.push(makePlayer(setup.deck2,1,setup.favorite2,setup.otherDeck2));boardZoom=1;renderBoard();nav('board')};
 
 // Board rendering
@@ -1399,8 +2415,10 @@ function applyBoardDisplaySettings(){
  root.classList.toggle('orientation-landscape',!portrait);
  root.classList.toggle('name-position-bar',namePos==='bar');
  root.classList.toggle('name-position-overlay',namePos!=='bar');
+ root.classList.toggle('card-images-off',boardDisplayPrefs.showCardImages===false);
  const status=$('#board-display-status');
- if(status)status.textContent=`表示：${portrait?'縦長':'横長'} / 名前：${namePos==='bar'?'下部名前欄':'画像上'}`;
+ if(status)status.textContent=`表示：${portrait?'縦長':'横長'} / 名前：${namePos==='bar'?'下部名前欄':'画像上'} / 画像：${boardDisplayPrefs.showCardImages===false?'OFF':'ON'}`;
+ hydrateBoardImages();
 }
 function applyBoardZoom(){
   const root=$('#board-main');
@@ -1448,9 +2466,52 @@ function restoreBoardScroll(){
    document.querySelectorAll('[data-zone-scroll]').forEach(el=>{el.scrollLeft=zoneScrollPositions[el.dataset.zoneScroll]||0});
  });
 }
-function renderBoard(){if(!board)return;captureHandScroll();captureFixedZoneScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardDisplaySettings();applyBoardZoom();restoreBoardScroll()}
+function renderBoard(){if(!board)return;captureHandScroll();captureFixedZoneScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardDisplaySettings();applyBoardZoom();renderHomePowerControls();restoreBoardScroll()}
 function zoneHeader(pi,z){const p=board.players[pi], n=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button>`;else if(z==='grave'||z==='banish')controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll';controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button></span>`}return `<div class="zone-head"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
-function renderPlayer(p,pi,reverse){const rows=reverse?['utility','hand','rulePlus','room','pain','character']:['character','pain','room','rulePlus','hand','utility'];return `<div class="player-board"><div class="player-title"><b>${esc(p.name)}</b><span class="pill">デッキ ${physicalCount(p.deck)}枚</span><span class="pill">その他 ${physicalCount(p.otherDeck)}枚</span></div>${rows.map(z=>z==='utility'?renderUtility(p,pi):renderZone(p,pi,z)).join('')}</div>`}
+
+function signedNumber(n){
+ const v=Number(n)||0;
+ return v>0?`+${v}`:String(v);
+}
+function cardPowerParts(c,pi,z){
+ const raw=c?.power;
+ if(raw===''||raw==null)return {has:false,base:null,individual:0,home:0,total:null};
+ const base=Number(raw);
+ if(!Number.isFinite(base))return {has:false,base:null,individual:0,home:0,total:null};
+ const individual=Number(c?.powerMod)||0;
+ const home=z==='character'?(Number(board?.players?.[pi]?.homePowerMod)||0):0;
+ return {has:true,base,individual,home,total:base+individual+home};
+}
+function renderHomePowerControls(){
+ const root=$('#home-power-controls');if(!root)return;
+ if(!board){root.innerHTML='<div class="muted">盤面開始後に使用できます。</div>';return}
+ root.innerHTML=board.players.map((p,pi)=>{
+   const mod=Number(p.homePowerMod)||0;
+   return `<div class="home-power-row">
+     <div class="home-power-player"><b>${esc(p.name)}</b><span class="pill ${mod?'active-mod':''}">${signedNumber(mod)}</span></div>
+     <div class="home-power-actions">
+       <button class="btn small" data-home-power-step="${pi}|-1000">−1000</button>
+       <input data-home-power-input="${pi}" type="number" inputmode="numeric" step="1000" value="${mod}" aria-label="${esc(p.name)} ホームPOWER修正">
+       <button class="btn small" data-home-power-step="${pi}|1000">＋1000</button>
+       <button class="btn small" data-home-power-reset="${pi}">0に戻す</button>
+     </div>
+   </div>`;
+ }).join('');
+ $$('[data-home-power-step]').forEach(b=>b.onclick=()=>{
+   const [pi,step]=b.dataset.homePowerStep.split('|'),p=board.players[Number(pi)];if(!p)return;
+   p.homePowerMod=(Number(p.homePowerMod)||0)+Number(step);renderBoard();
+ });
+ $$('[data-home-power-input]').forEach(inp=>inp.onchange=()=>{
+   const p=board.players[Number(inp.dataset.homePowerInput)];if(!p)return;
+   p.homePowerMod=Number(inp.value)||0;renderBoard();
+ });
+ $$('[data-home-power-reset]').forEach(b=>b.onclick=()=>{
+   const p=board.players[Number(b.dataset.homePowerReset)];if(!p)return;
+   p.homePowerMod=0;renderBoard();
+ });
+}
+
+function renderPlayer(p,pi,reverse){const rows=reverse?['utility','hand','rulePlus','room','pain','character']:['character','pain','room','rulePlus','hand','utility'],homeMod=Number(p.homePowerMod)||0;return `<div class="player-board"><div class="player-title"><b>${esc(p.name)}</b><span class="pill">デッキ ${physicalCount(p.deck)}枚</span><span class="pill">その他 ${physicalCount(p.otherDeck)}枚</span>${homeMod?`<span class="pill home-power-badge">ホームPW ${signedNumber(homeMod)}</span>`:''}</div>${rows.map(z=>z==='utility'?renderUtility(p,pi):renderZone(p,pi,z)).join('')}</div>`}
 function renderCompressedPiles(piles,pi,z){return piles.map((pile,i)=>{const depth=Math.min(i,10),html=renderPile(pile,pi,z,i);return html.replace('draggable="true"',`draggable="true" style="left:${6+depth*4}px;top:${5+depth*2}px;z-index:${i+1}"`)}).join('')}
 function renderZone(p,pi,z){const collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];if(FIXED.includes(z)){return `<div class="zone ${collapsed?'collapsed':''}">${zoneHeader(pi,z)}${collapsed?'':`<div class="zone-body fixed" data-zone="${pi}|${z}" data-zone-scroll="${pi}|${z}">${p[z].map((pile,i)=>pile?renderPile(pile,pi,z,i):`<div class="slot" data-slot="${pi}|${z}|${i}">${i+1}</div>`).join('')}</div>`}</div>`}const handClass=z==='hand'?` hand-${p.handMode==='operation'?'operation':'scroll'}-mode`:'';const handAttr=z==='hand'?` data-hand-scroll="${pi}"`:'';return `<div class="zone">${zoneHeader(pi,z)}<div class="dropzone ${p[z].length?'':'empty'}${handClass}" data-zone="${pi}|${z}"${handAttr}>${p[z].map((pile,i)=>renderPile(pile,pi,z,i)).join('')}</div></div>`}
 function compactZoneBox(p,pi,z){return `<div class="deck-box">${zoneHeader(pi,z)}<div class="dropzone pile-zone ${p[z].length?'':'empty'}" data-zone="${pi}|${z}">${renderCompressedPiles(p[z],pi,z)}</div></div>`}
@@ -1458,7 +2519,33 @@ function renderDeckBox(p,pi,z,label){const count=physicalCount(p[z]),empty=count
 function renderUtility(p,pi){return `<div class="utility-grid"><div class="deck-pair">${renderDeckBox(p,pi,'deck','デッキ')}${renderDeckBox(p,pi,'otherDeck','その他デッキ')}</div><div class="grave-banish-pair">${compactZoneBox(p,pi,'grave')}${compactZoneBox(p,pi,'banish')}</div></div>`}
 function physicalCount(arr){return arr.reduce((a,p)=>a+p.cards.length,0)}
 function topCard(pile){return pile.cards[0]}
-function renderPile(pile,pi,z,index){const c=topCard(pile), counters=c.counters?.length?c.counters.map(x=>`${esc(x.name)} ${x.value}`).join(' / '):'カウンターなし';const pow=c.power?Number(c.power)+(Number(c.powerMod)||0):'';const title=`${c.name}${c.memo?'\nメモ: '+c.memo:''}${pile.cards.length>1?'\n重なり: '+pile.cards.map(x=>x.name).join(' → '):''}`;if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}"><div class="back-title">裏向きカード</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;return `<div class="pile ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}"><div class="name">${esc(c.name)}</div><div class="stats"><span>Lv ${esc(c.level||'-')}</span><span>PW ${pow||'-'}</span></div><div class="counter-line">${counters}</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`}
+function renderPile(pile,pi,z,index){const c=topCard(pile), counters=c.counters?.length?c.counters.map(x=>`${esc(x.name)} ${x.value}`).join(' / '):'カウンターなし';const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;const title=`${c.name}${c.memo?'\nメモ: '+c.memo:''}${pile.cards.length>1?'\n重なり: '+pile.cards.map(x=>x.name).join(' → '):''}`;if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}"><div class="back-title">裏向きカード</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';return `<div class="pile ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}<div class="name">${esc(c.name)}</div><div class="stats"><span>Lv ${esc(c.level||'-')}</span><span>PW ${pow===null?'-':pow}</span></div><div class="counter-line">${counters}</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`}
+
+async function hydrateBoardImages(){
+ const root=$('#board-main');
+ if(!root||boardDisplayPrefs.showCardImages===false)return;
+ await imageReadyPromise;
+ const orientation=boardDisplayPrefs.orientation;
+ root.querySelectorAll('[data-card-art]').forEach(async el=>{
+   const cardId=el.dataset.cardArt,link=getCachedImageLink(cardId)||await getCardImageLink(cardId);
+   if(!link||!el.isConnected)return;
+   const view=imageViewForOrientation(link,orientation),url=await getImageObjectUrl(link.imageId,'thumb');
+   if(!url||!el.isConnected||el.dataset.cardArt!==cardId)return;
+   el.style.backgroundImage=`url("${url}")`;
+   el.style.backgroundSize=view.fit;
+   el.style.backgroundPosition=`${view.x}% ${view.y}%`;
+   el.classList.add('image-loaded');
+ });
+}
+async function hydrateBoardDetailImage(cardId){
+ const el=$('#board-detail-image');if(!el||!cardId)return;
+ await imageReadyPromise;
+ const link=getCachedImageLink(cardId)||await getCardImageLink(cardId);if(!link||!el.isConnected)return;
+ const url=await getImageObjectUrl(link.imageId,'thumb');if(!url||!el.isConnected)return;
+ const view=imageViewForOrientation(link,boardDisplayPrefs.orientation);
+ el.style.backgroundImage=`url("${url}")`;el.style.backgroundSize=view.fit;el.style.backgroundPosition=`${view.x}% ${view.y}%`;el.classList.add('image-loaded');
+}
+
 let touchDragState=null,touchClickBlockUntil=0;
 function clearTouchDropHighlight(){
   $$('.drag-over').forEach(el=>el.classList.remove('drag-over'));
@@ -1679,9 +2766,21 @@ function bindBoard(){
  $$('[data-zone-view]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,z]=b.dataset.zoneView.split('|');openZoneViewer(Number(pi),z)});
  $$('[data-hand-mode]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,mode]=b.dataset.handMode.split('|');board.players[Number(pi)].handMode=mode==='operation'?'operation':'scroll';renderBoard()});
 }
+
+const moveSourceZones=new WeakMap();
+function prepareCardForDestination(card,destZone){
+ if(!card||typeof card!=='object')return card;
+ const srcZone=moveSourceZones.get(card);
+ moveSourceZones.delete(card);
+ if(srcZone==='pain'&&card.faceDown&&boardDisplayPrefs.painRevealOnMove!==false&&!['pain','deck','otherDeck'].includes(destZone)){
+   card.faceDown=false;
+ }
+ return card;
+}
+
 function getPile(pi,z,index){return board.players[pi][z][index]}
-function removeCardAt(pi,z,index,cardIndex){const area=board.players[pi][z],pile=area[index];const [card]=pile.cards.splice(cardIndex,1);if(!pile.cards.length){if(FIXED.includes(z))area[index]=null;else area.splice(index,1)}return card}
-function addAsPile(pi,z,card,opt={}){const a=board.players[pi][z],pile={id:uid('pile'),cards:[card]};if(FIXED.includes(z)){let slot=opt.slot;if(slot==null)slot=a.findIndex(x=>!x);if(slot<0){a.push(pile)}else if(!a[slot])a[slot]=pile;else{a[slot].cards[opt.stack==='bottom'?'push':'unshift'](card)}}else if(z==='deck'||z==='otherDeck'){if(opt.position==='bottom')a.push(pile);else a.unshift(pile)}else{if(opt.position==='start')a.unshift(pile);else a.push(pile)}if(z==='hand'&&handFollowPrefs[pi]!==false)pendingHandFollow.add(pi)}
+function removeCardAt(pi,z,index,cardIndex){const area=board.players[pi][z],pile=area[index];const [card]=pile.cards.splice(cardIndex,1);if(card&&typeof card==='object')moveSourceZones.set(card,z);if(!pile.cards.length){if(FIXED.includes(z))area[index]=null;else area.splice(index,1)}return card}
+function addAsPile(pi,z,card,opt={}){prepareCardForDestination(card,z);const a=board.players[pi][z],pile={id:uid('pile'),cards:[card]};if(FIXED.includes(z)){let slot=opt.slot;if(slot==null)slot=a.findIndex(x=>!x);if(slot<0){a.push(pile)}else if(!a[slot])a[slot]=pile;else{a[slot].cards[opt.stack==='bottom'?'push':'unshift'](card)}}else if(z==='deck'||z==='otherDeck'){if(opt.position==='bottom')a.push(pile);else a.unshift(pile)}else{if(opt.position==='start')a.unshift(pile);else a.push(pile)}if(z==='hand'&&handFollowPrefs[pi]!==false)pendingHandFollow.add(pi)}
 function moveTopByDrag(spi,sz,si,dpi,dz,dslot){if(spi===dpi&&sz===dz&&FIXED.includes(sz)&&dslot!=null){const a=board.players[spi][sz];[a[si],a[dslot]]=[a[dslot],a[si]];renderBoard();return}if(spi===dpi&&sz===dz&&!FIXED.includes(sz)&&dslot==null){if(dz==='deck'||dz==='otherDeck')return;const a=board.players[spi][sz];const [p]=a.splice(si,1);a.push(p);renderBoard();return}const c=removeCardAt(spi,sz,si,0);addAsPile(dpi,dz,c,{slot:dslot,position:(dz==='deck'||dz==='otherDeck')?'bottom':undefined});renderBoard()}
 
 function openZoneViewer(pi,z,initialQuery=''){
@@ -1764,12 +2863,15 @@ function openDetail(pi,z,index,cardIndex=0,navIds){const pile=getPile(pi,z,index
  else if(!detailNav||detailNav.pi!==pi||detailNav.z!==z||!detailNav.ids.includes(c.instanceId))detailNav={pi,z,ids:zoneDetailIds(pi,z)};
  if(!detailNav.ids.includes(c.instanceId))detailNav.ids.push(c.instanceId);
  const navPos=detailNav.ids.indexOf(c.instanceId),navTotal=detailNav.ids.length;
- const pow=c.power?Number(c.power)+(Number(c.powerMod)||0):'';openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><h3>${esc(c.name)}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(c.level||'-')}</span><span class="pill">POWER ${pow||'-'}</span></div><div class="muted">${esc(c.race||'種族なし')}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${esc(c.effect||'効果テキストなし')}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><label style="margin-top:10px">POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h3>重なり</h3><div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span>${i+1}</span><div><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}</div></div><div><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div><h3>カウンター</h3><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button></div></div>`);
+ const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;
+ const powerBreakdown=powerInfo.has?`<div class="muted power-breakdown">元値 ${powerInfo.base} / 個別 ${signedNumber(powerInfo.individual)}${z==='character'?` / ホーム ${signedNumber(powerInfo.home)}`:''}</div>`:'';
+ openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image"></div><h3>${esc(c.name)}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(c.level||'-')}</span><span class="pill">POWER ${pow===null?'-':pow}</span></div>${powerBreakdown}<div class="muted">${esc(c.race||'種族なし')}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${esc(c.effect||'効果テキストなし')}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><label style="margin-top:10px">POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h3>重なり</h3><div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span>${i+1}</span><div><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}</div></div><div><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div><h3>カウンター</h3><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button></div></div>`);
+ hydrateBoardDetailImage(cardImageSourceId(c));
  $('#detail-close').onclick=closeModal;
  const moveDetailNav=step=>{if(!detailNav)return;const pos=detailNav.ids.indexOf(c.instanceId),id=detailNav.ids[pos+step];if(!id)return;const loc=findCardInstance(detailNav.pi,detailNav.z,id);if(loc)openDetail(detailNav.pi,detailNav.z,loc.index,loc.cardIndex,detailNav.ids)};
  if($('#detail-prev'))$('#detail-prev').onclick=()=>moveDetailNav(-1);
  if($('#detail-next'))$('#detail-next').onclick=()=>moveDetailNav(1);
- $('#detail-memo').oninput=e=>{c.memo=e.target.value;renderBoard()};$('#toggle-face').onclick=()=>{c.faceDown=!c.faceDown;openDetail(pi,z,index,cardIndex);renderBoard()};$('#toggle-rest').onclick=()=>{c.rested=!c.rested;openDetail(pi,z,index,cardIndex);renderBoard()};$('#power-mod').onchange=e=>{c.powerMod=Number(e.target.value)||0;renderBoard()};$('#move-card').onclick=()=>openMoveDialog();$('#stack-card').onclick=()=>openStackDialog();$('#token-from-card').onclick=()=>openTokenCreator(c,pi);$$('[data-quick-move]').forEach(b=>b.onclick=()=>quickMoveFromDetail(b.dataset.quickMove));$('#add-counter').onclick=()=>{c.counters.push({name:'新規',value:1});openDetail(pi,z,index,cardIndex);renderBoard()};
+ $('#detail-memo').oninput=e=>{c.memo=e.target.value;renderBoard()};$('#toggle-face').onclick=()=>{c.faceDown=!c.faceDown;openDetail(pi,z,index,cardIndex);renderBoard()};$('#toggle-rest').onclick=()=>{c.rested=!c.rested;openDetail(pi,z,index,cardIndex);renderBoard()};$('#power-mod').onchange=e=>{c.powerMod=Number(e.target.value)||0;renderBoard();const loc=findCardInstance(pi,z,c.instanceId);if(loc)openDetail(pi,z,loc.index,loc.cardIndex,detailNav?.ids)};$('#move-card').onclick=()=>openMoveDialog();$('#stack-card').onclick=()=>openStackDialog();$('#token-from-card').onclick=()=>openTokenCreator(c,pi);$$('[data-quick-move]').forEach(b=>b.onclick=()=>quickMoveFromDetail(b.dataset.quickMove));$('#add-counter').onclick=()=>{c.counters.push({name:'新規',value:1});openDetail(pi,z,index,cardIndex);renderBoard()};
  $$('[data-stack-select]').forEach(x=>x.onclick=e=>{if(e.target.tagName==='BUTTON')return;openDetail(pi,z,index,Number(x.dataset.stackSelect))});$$('[data-stack-up]').forEach(b=>b.onclick=e=>{e.stopPropagation();const i=Number(b.dataset.stackUp);if(i<=0)return;[pile.cards[i-1],pile.cards[i]]=[pile.cards[i],pile.cards[i-1]];openDetail(pi,z,index,i-1);renderBoard()});$$('[data-stack-down]').forEach(b=>b.onclick=e=>{e.stopPropagation();const i=Number(b.dataset.stackDown);if(i>=pile.cards.length-1)return;[pile.cards[i+1],pile.cards[i]]=[pile.cards[i],pile.cards[i+1]];openDetail(pi,z,index,i+1);renderBoard()});bindCounters(c,()=>openDetail(pi,z,index,cardIndex));
 }
 function quickMoveFromDetail(dest){
@@ -1796,7 +2898,7 @@ function openStackDialog(){const ctx={...detailCtx},srcPile=getPile(ctx.pi,ctx.z
  const refreshCards=()=>{const pi=Number($('#stack-player').value),z=$('#stack-zone').value,targets=stackCandidates(pi,z,ctx),sel=$('#stack-target-card');sel.innerHTML=targets.map(x=>`<option value="${x.pile.id}">${esc(topCard(x.pile).name)}${x.pile.cards.length>1?`（重なり${x.pile.cards.length}枚）`:''}</option>`).join('');$('#stack-empty').textContent=targets.length?'':'このゾーンに重ね先のカードがありません。';$('#stack-confirm').disabled=!targets.length};
  const pickFirstAvailable=()=>{for(let pi=0;pi<board.players.length;pi++){for(const z of Object.keys(ZONE_LABELS)){if(stackCandidates(pi,z,ctx).length){$('#stack-player').value=String(pi);$('#stack-zone').value=z;refreshCards();return true}}}return false};
  $('#stack-player').onchange=refreshCards;$('#stack-zone').onchange=refreshCards;if(!pickFirstAvailable()){$('#stack-confirm').disabled=true;$('#stack-empty').textContent='重ね先のカードがありません。'}
- $('#stack-confirm').onclick=()=>{const tpi=Number($('#stack-player').value),z=$('#stack-zone').value,targetId=$('#stack-target-card').value;if(!targetId)return;const card=removeCardAt(ctx.pi,ctx.z,ctx.index,ctx.cardIndex),area=board.players[tpi][z],newIndex=area.findIndex(p=>p&&p.id===targetId),target=newIndex>=0?area[newIndex]:null;if(!target){addAsPile(tpi,z,card);toast('重ね先が移動したため通常配置しました')}else if($('#stack-pos').value==='top')target.cards.unshift(card);else target.cards.push(card);$('#modal-layer').classList.remove('open');detailCtx=null;detailNav=null;renderBoard()}}
+ $('#stack-confirm').onclick=()=>{const tpi=Number($('#stack-player').value),z=$('#stack-zone').value,targetId=$('#stack-target-card').value;if(!targetId)return;const card=removeCardAt(ctx.pi,ctx.z,ctx.index,ctx.cardIndex),area=board.players[tpi][z],newIndex=area.findIndex(p=>p&&p.id===targetId),target=newIndex>=0?area[newIndex]:null;if(!target){addAsPile(tpi,z,card);toast('重ね先が移動したため通常配置しました')}else{prepareCardForDestination(card,z);if($('#stack-pos').value==='top')target.cards.unshift(card);else target.cards.push(card)};$('#modal-layer').classList.remove('open');detailCtx=null;detailNav=null;renderBoard()}}
 
 // Deck actions
 function takeTopCard(pi,z='deck'){const d=board.players[pi][z];if(!d.length)return null;const c=d[0].cards.shift();if(!d[0].cards.length)d.shift();return c}
@@ -1955,6 +3057,7 @@ function openTokenCreator(baseCard=null,defaultPlayer=0){
  $('#token-create').onclick=()=>{
    const c={
      id:uid('tokenDef'),instanceId:uid('inst'),
+     imageSourceCardId:baseCard?cardImageSourceId(baseCard):'',
      name:$('#token-name').value.trim()||'トークン',
      type:'トークン',
      level:$('#token-level').value.trim(),
@@ -1986,6 +3089,7 @@ function openBoardSettings(){
        <label><input type="radio" name="board-name-position" value="overlay" ${namePos==='overlay'?'checked':''}>画像上</label>
        <label><input type="radio" name="board-name-position" value="bar" ${namePos==='bar'?'checked':''}>下部名前欄</label>
      </div>
+     <label class="board-follow-row" style="margin-top:10px"><input type="checkbox" id="board-show-card-images" ${boardDisplayPrefs.showCardImages===false?'':'checked'}>個別カード画像を表示</label>
    </div>
    <div class="board-setting-preview-wrap">
      <div id="board-setting-preview" class="board-setting-preview"><div class="preview-name">サンプルカード</div><div class="preview-stats">Lv 4 / PW 5000</div></div>
@@ -1996,9 +3100,17 @@ function openBoardSettings(){
        <label class="board-follow-row"><input type="checkbox" id="board-follow-p1" ${handFollowPrefs[0]!==false?'checked':''}>プレイヤー1 手札追従</label>
        ${board.mode===2?`<label class="board-follow-row"><input type="checkbox" id="board-follow-p2" ${handFollowPrefs[1]!==false?'checked':''}>プレイヤー2 手札追従</label>`:''}
      </div>
+     <div class="board-setting-subgroup">
+       <div class="muted" style="margin-bottom:5px">裏向きペインカウントを移動した時</div>
+       <div class="board-radio-row">
+         <label><input type="radio" name="pain-move-face" value="reveal" ${boardDisplayPrefs.painRevealOnMove!==false?'checked':''}>山札系以外では表向き</label>
+         <label><input type="radio" name="pain-move-face" value="keep" ${boardDisplayPrefs.painRevealOnMove===false?'checked':''}>裏向きのまま</label>
+       </div>
+       <div class="muted" style="margin-top:6px">ペインカウント内の移動、デッキ、その他デッキへの移動では裏向きを維持します。</div>
+     </div>
    </div>
-   <p class="muted board-setting-note">カード形状・カード名位置・手札追従は変更した時点で保存されます。カード名位置は横長と縦長で別々に記憶します。ズーム倍率は保存されず、新しく盤面を開くと100%から始まります。</p>
-   <div class="actions"><button class="btn" id="board-display-reset">表示設定を初期状態に戻す</button></div>
+   <p class="muted board-setting-note">カード形状・カード名位置・個別カード画像の表示・手札追従・ペインカウント移動時の表裏設定は変更した時点で保存されます。カード名位置は横長と縦長で別々に記憶します。ズーム倍率は保存されず、新しく盤面を開くと100%から始まります。</p>
+   <div class="actions"><button class="btn" id="board-display-reset">盤面設定を初期状態に戻す</button></div>
  </div>`);
 
  function syncSettingsUI(){
@@ -2009,6 +3121,9 @@ function openBoardSettings(){
    if(pv){
      pv.className=`board-setting-preview ${isPortrait?'portrait':'landscape'} ${pos==='bar'?'name-bar':'name-overlay'}`;
    }
+   const imgToggle=$('#board-show-card-images');
+   if(imgToggle)imgToggle.checked=boardDisplayPrefs.showCardImages!==false;
+   $$('input[name="pain-move-face"]').forEach(r=>r.checked=(r.value==='reveal')===(boardDisplayPrefs.painRevealOnMove!==false));
    const p1=$('#board-follow-p1'),p2=$('#board-follow-p2');
    if(p1)p1.checked=handFollowPrefs[0]!==false;
    if(p2)p2.checked=handFollowPrefs[1]!==false;
@@ -2031,15 +3146,18 @@ function openBoardSettings(){
    else boardDisplayPrefs.namePositionLandscape=r.value==='bar'?'bar':'overlay';
    applyDisplayChange();
  });
+ const imgToggle=$('#board-show-card-images');
+ if(imgToggle)imgToggle.onchange=()=>{boardDisplayPrefs.showCardImages=imgToggle.checked;saveBoardDisplayPrefs();applyBoardDisplaySettings()};
+ $$('input[name="pain-move-face"]').forEach(r=>r.onchange=()=>{if(!r.checked)return;boardDisplayPrefs.painRevealOnMove=r.value!=='keep';saveBoardDisplayPrefs();syncSettingsUI()});
  const p1=$('#board-follow-p1'),p2=$('#board-follow-p2');
  if(p1)p1.onchange=()=>{handFollowPrefs[0]=p1.checked;save(LS_HAND_FOLLOW,handFollowPrefs)};
  if(p2)p2.onchange=()=>{handFollowPrefs[1]=p2.checked;save(LS_HAND_FOLLOW,handFollowPrefs)};
  $('#board-display-reset').onclick=()=>{
-   boardDisplayPrefs={orientation:'landscape',namePositionLandscape:'overlay',namePositionPortrait:'bar'};
+   boardDisplayPrefs={orientation:'landscape',namePositionLandscape:'overlay',namePositionPortrait:'bar',showCardImages:true,painRevealOnMove:true};
    handFollowPrefs=[true,true];
    saveBoardDisplayPrefs();save(LS_HAND_FOLLOW,handFollowPrefs);
    applyBoardDisplaySettings();applyBoardZoom();syncSettingsUI();
-   toast('表示設定を初期状態に戻しました');
+   toast('盤面設定を初期状態に戻しました');
  };
  syncSettingsUI();
 }
@@ -2055,8 +3173,20 @@ $('#board-zoom-value').onclick=()=>setBoardZoom(1);
 
 $('#reset-board').onclick=()=>{if(!board)return;const s=board.setup;if(!s){board=null;detailCtx=null;inspectSession=null;nav('setup');return}board={mode:s.mode,setup:{...s},players:[makePlayer(s.deck1,0,s.favorite1,s.otherDeck1)],note:'',turn:1};if(s.mode===2)board.players.push(makePlayer(s.deck2,1,s.favorite2,s.otherDeck2));detailCtx=null;inspectSession=null;$('#modal-layer').classList.remove('open');renderBoard();toast('盤面を初期状態に戻しました')};
 
+$('#image-storage-refresh').onclick=()=>updateImageStorageStatus();
+$('#image-storage-cleanup').onclick=async()=>{
+ const b=$('#image-storage-cleanup');b.disabled=true;
+ try{
+   const r=await cleanupOrphanImages();
+   await updateImageStorageStatus();renderCards();
+   toast(r.removed?`不要画像を${r.removed}件削除しました`:'不要な画像はありませんでした');
+ }catch(err){console.warn(err);toast('画像整理に失敗しました')}
+ finally{b.disabled=false}
+};
+
 // initialize
 renderRegisterHistory();renderCards();renderDecks();renderSetup();
+imageReadyPromise=initImageSystem().then(ok=>{renderCards();updateImageStorageStatus();if(board)renderBoard();return ok}).catch(err=>{imageSystemAvailable=false;renderCards();updateImageStorageStatus();console.warn('カード画像機能を初期化できませんでした',err);return false});
 })();
 </script>
 
