@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v5.7</title>
+<title>みん会TCG Simulator v5.8</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -3943,6 +3943,61 @@ main{zoom:1}
  .theme-real-binder .collection-cover-card-frame{width:min(58%,205px)}
 }
 
+
+/* ==========================================================
+   v5.8 Smartphone navigation — optional left-edge swipe back
+   ========================================================== */
+.mobile-edge-back-zone{
+ display:none;
+ position:fixed;
+ z-index:180;
+ left:0;
+ top:0;
+ bottom:0;
+ width:max(28px,calc(env(safe-area-inset-left,0px) + 18px));
+ pointer-events:none;
+ touch-action:pan-y;
+ overscroll-behavior:contain;
+ --edge-back-progress:0;
+}
+.mobile-edge-back-indicator{
+ position:absolute;
+ left:max(5px,env(safe-area-inset-left,0px));
+ top:50%;
+ width:46px;
+ height:62px;
+ transform:translateX(-38px) scale(.82);
+ transform-origin:left center;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:1px;
+ border:1px solid rgba(152,178,196,.32);
+ border-radius:0 18px 18px 0;
+ background:rgba(13,21,27,.9);
+ color:#d9e3e9;
+ box-shadow:0 7px 20px rgba(0,0,0,.3);
+ opacity:calc(.16 + var(--edge-back-progress) * .84);
+ backdrop-filter:blur(7px);
+ pointer-events:none;
+ transition:border-color .1s,background .1s,opacity .1s;
+}
+.mobile-edge-back-indicator span{font-size:31px;line-height:.75;font-weight:300}
+.mobile-edge-back-indicator small{font-size:8px;letter-spacing:.08em;color:#91a5b2}
+.mobile-edge-back-zone.ready .mobile-edge-back-indicator{
+ border-color:#81a6bd;
+ background:rgba(38,65,80,.95);
+ color:#f2f6f8;
+}
+.mobile-edge-back-zone.ready .mobile-edge-back-indicator small{color:#c7d8e2}
+@media(max-width:900px) and (pointer:coarse){
+ body.mobile-edge-back-enabled .mobile-edge-back-zone{
+   display:block;
+   pointer-events:auto;
+ }
+}
+
 </style>
 </head>
 <body>
@@ -3951,7 +4006,7 @@ main{zoom:1}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v5.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v5.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -4517,6 +4572,12 @@ main{zoom:1}
           <p class="muted">表示数はカード管理とデッキ作成のカード追加一覧に共通で使います。</p>
         </div>
 
+        <div class="panel" id="mobile-edge-back-settings-panel">
+          <h3 style="margin-top:0">スマートフォン操作</h3>
+          <label class="board-follow-row"><input id="theme-mobile-edge-back" type="checkbox">画面端を右へスワイプして前の画面へ戻る</label>
+          <p class="muted" style="margin-bottom:0">初期OFFです。ONの場合、タッチ端末の画面左端から右へ十分スワイプした時だけ反応します。HOMEでは何も起こりません。カード詳細などのモーダル表示中は、まずモーダルを閉じます。端末やブラウザ側の「戻る」ジェスチャーが優先される場合があります。</p>
+        </div>
+
         <div class="panel">
           <h3 style="margin-top:0">カードテキスト</h3>
           <label class="board-follow-row"><input id="theme-copy-flavor" type="checkbox">ゼリー君式 / 化けさん式のコピーにフレーバーテキストを含める</label>
@@ -4594,6 +4655,9 @@ main{zoom:1}
 </main>
 
 <div id="modal-layer" class="modal-layer"><div id="modal" class="modal"></div></div>
+<div id="mobile-edge-back-zone" class="mobile-edge-back-zone" aria-hidden="true">
+  <div id="mobile-edge-back-indicator" class="mobile-edge-back-indicator"><span>‹</span><small>戻る</small></div>
+</div>
 <div id="toast" class="toast"></div>
 
 <script>
@@ -4772,7 +4836,7 @@ const THEME_NAV_KEYS=['cards','card-manager','collection','decks','setup'];
 const THEME_NAV_MOVABLE_KEYS=[...THEME_NAV_KEYS];
 const THEME_HOME_SHORTCUT_KEYS=['cards','card-manager','collection','decks','setup-one','setup-two'];
 const THEME_DEFAULTS={
-  version:5,
+  version:6,
   ui:{accent:'#78a7ff',opacity:94,readability:true},
   text:{copyFlavor:false,emptyFlavorDivider:true},
   layout:{
@@ -4780,7 +4844,8 @@ const THEME_DEFAULTS={
     home:{introVisible:true,shortcuts:{cards:true,'card-manager':true,collection:true,decks:true,'setup-one':true,'setup-two':true}},
     density:'standard',
     textSize:'standard',
-    listPageSize:30
+    listPageSize:30,
+    mobileEdgeBack:false
   },
   backgrounds:{
     common:{
@@ -4856,7 +4921,7 @@ function normalizeThemePrefs(raw={}){
  const homeShortcuts={};THEME_HOME_SHORTCUT_KEYS.forEach(k=>homeShortcuts[k]=homeRaw.shortcuts?.[k]!==false);
  const listSize=[15,30,50,100].includes(Number(layoutRaw.listPageSize))?Number(layoutRaw.listPageSize):30;
  return {
-   version:5,
+   version:6,
    ui:{
      accent:normalizeHexColor(ui.accent,'#78a7ff'),
      opacity:clampNumber(ui.opacity,45,100,94),
@@ -4871,7 +4936,8 @@ function normalizeThemePrefs(raw={}){
      home:{introVisible:homeRaw.introVisible!==false,shortcuts:homeShortcuts},
      density:layoutRaw.density==='compact'?'compact':'standard',
      textSize:['small','large'].includes(layoutRaw.textSize)?layoutRaw.textSize:'standard',
-     listPageSize:listSize
+     listPageSize:listSize,
+     mobileEdgeBack:layoutRaw.mobileEdgeBack===true
    },
    backgrounds:{
      common:normalizeThemeBackground(backgrounds.common||{}),
@@ -5657,6 +5723,7 @@ function applyDisplayLayoutPrefs(theme){
  document.body.classList.toggle('ui-density-compact',t.layout.density==='compact');
  document.body.classList.toggle('ui-text-small',t.layout.textSize==='small');
  document.body.classList.toggle('ui-text-large',t.layout.textSize==='large');
+ document.body.classList.toggle('mobile-edge-back-enabled',t.layout.mobileEdgeBack===true);
 }
 function renderScreenNavSettings(){
  const d=ensureThemeDraft(),layout=d.layout,host=$('#theme-nav-settings-list');
@@ -5682,6 +5749,7 @@ function renderScreenNavSettings(){
  if($('#theme-ui-density'))$('#theme-ui-density').value=layout.density;
  if($('#theme-text-size'))$('#theme-text-size').value=layout.textSize;
  if($('#theme-list-page-size'))$('#theme-list-page-size').value=String(layout.listPageSize);
+ if($('#theme-mobile-edge-back'))$('#theme-mobile-edge-back').checked=layout.mobileEdgeBack===true;
 }
 
 function backgroundConfigSummary(theme,target){
@@ -5869,6 +5937,7 @@ function syncThemeSettingsControls(){
  const accent=$('#theme-accent'),opacity=$('#theme-ui-opacity'),readability=$('#theme-readability');
  if($('#theme-copy-flavor'))$('#theme-copy-flavor').checked=d.text.copyFlavor===true;
  if($('#theme-empty-flavor-divider'))$('#theme-empty-flavor-divider').checked=d.text.emptyFlavorDivider!==false;
+ if($('#theme-mobile-edge-back'))$('#theme-mobile-edge-back').checked=d.layout.mobileEdgeBack===true;
  if(accent)accent.value=ui.accent;
  if($('#theme-accent-value'))$('#theme-accent-value').textContent=ui.accent.toUpperCase();
  if(opacity)opacity.value=String(ui.opacity);
@@ -6030,7 +6099,97 @@ function deckStatusParts(d){
 function deckStatusText(d){const parts=deckStatusParts(d);return parts.length?parts.join(' / '):'非表示'}
 function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),1800)}
-function nav(name){clearLegacyMainZoom();if(name!=='collection')clearCollectionPageZoom();$$('.screen').forEach(x=>x.classList.remove('active'));const screen=$('#screen-'+name);if(!screen)return;currentScreenName=name;screen.classList.add('active');applyThemePrefs(currentThemeForDisplay());if(name==='home')updateImageStorageStatus();if(name==='cards')renderRegisterHistory();if(name==='card-manager')renderCards();if(name==='collection'){renderCollection();setTimeout(()=>maybeOpenCurrentCollectionCover(),0)}if(name==='decks')renderDecks();if(name==='setup')renderSetup();if(name==='settings'){ensureThemeDraft();renderThemeSettings()}window.scrollTo(0,0)}
+const appScreenHistory=[];
+function appScreenCanRestore(name){
+ if(!name||!$('#screen-'+name))return false;
+ if(name==='board'&&!board)return false;
+ return true;
+}
+function pushAppScreenHistory(name){
+ if(!name)return;
+ if(appScreenHistory[appScreenHistory.length-1]===name)return;
+ appScreenHistory.push(name);
+ if(appScreenHistory.length>30)appScreenHistory.splice(0,appScreenHistory.length-30);
+}
+function nav(name,opt={}){
+ const screen=$('#screen-'+name);if(!screen)return;
+ const previous=currentScreenName;
+ if(name!==previous){
+   if(name==='home')appScreenHistory.length=0;
+   else if(!opt.fromHistory&&previous)pushAppScreenHistory(previous);
+ }
+ clearLegacyMainZoom();if(name!=='collection')clearCollectionPageZoom();
+ $$('.screen').forEach(x=>x.classList.remove('active'));
+ currentScreenName=name;screen.classList.add('active');applyThemePrefs(currentThemeForDisplay());
+ if(name==='home')updateImageStorageStatus();
+ if(name==='cards')renderRegisterHistory();
+ if(name==='card-manager')renderCards();
+ if(name==='collection'){renderCollection();setTimeout(()=>maybeOpenCurrentCollectionCover(),0)}
+ if(name==='decks')renderDecks();
+ if(name==='setup')renderSetup();
+ if(name==='settings'){ensureThemeDraft();renderThemeSettings()}
+ window.scrollTo(0,0);
+}
+function performAppScreenBack(){
+ const modalLayer=$('#modal-layer');
+ if(modalLayer?.classList.contains('open')){
+   if(modalLayer.dataset.closable==='0')return false;
+   closeModal();return true;
+ }
+ if(currentScreenName==='home')return false;
+ while(appScreenHistory.length){
+   const target=appScreenHistory.pop();
+   if(!appScreenCanRestore(target)||target===currentScreenName)continue;
+   nav(target,{fromHistory:true});
+   return true;
+ }
+ return false;
+}
+function mobileEdgeBackAvailable(){
+ return currentThemeForDisplay()?.layout?.mobileEdgeBack===true
+   && window.innerWidth<=900
+   && (window.matchMedia?.('(pointer: coarse)').matches||navigator.maxTouchPoints>0);
+}
+function initMobileEdgeBackGesture(){
+ const zone=$('#mobile-edge-back-zone'),indicator=$('#mobile-edge-back-indicator');
+ if(!zone||!indicator)return;
+ const THRESHOLD=72,VERTICAL_TOLERANCE=1.35;
+ let drag=null;
+ const reset=()=>{
+   drag=null;
+   zone.classList.remove('tracking','ready');
+   zone.style.removeProperty('--edge-back-progress');
+   indicator.style.removeProperty('transform');
+ };
+ zone.onpointerdown=e=>{
+   if(!mobileEdgeBackAvailable()||e.pointerType==='mouse'||(e.button!==undefined&&e.button!==0))return;
+   drag={id:e.pointerId,x:e.clientX,y:e.clientY,dx:0,dy:0};
+   zone.classList.add('tracking');
+   zone.setPointerCapture?.(e.pointerId);
+ };
+ zone.onpointermove=e=>{
+   if(!drag||drag.id!==e.pointerId)return;
+   const dx=Math.max(0,e.clientX-drag.x),dy=e.clientY-drag.y;
+   drag.dx=dx;drag.dy=dy;
+   const progress=Math.max(0,Math.min(1,dx/THRESHOLD));
+   zone.style.setProperty('--edge-back-progress',String(progress));
+   indicator.style.transform=`translateX(${Math.min(54,dx*.46)}px) scale(${.82+progress*.18})`;
+   const horizontal=dx>=THRESHOLD&&dx>Math.abs(dy)*VERTICAL_TOLERANCE;
+   zone.classList.toggle('ready',horizontal);
+   if(dx>8&&dx>Math.abs(dy))e.preventDefault();
+ };
+ zone.onpointerup=e=>{
+   if(!drag||drag.id!==e.pointerId){reset();return}
+   const shouldBack=drag.dx>=THRESHOLD&&drag.dx>Math.abs(drag.dy)*VERTICAL_TOLERANCE;
+   if(shouldBack){
+     performAppScreenBack();
+   }
+   reset();
+ };
+ zone.onpointercancel=reset;
+ window.addEventListener('resize',()=>{if(!mobileEdgeBackAvailable())reset()},{passive:true});
+}
+initMobileEdgeBackGesture();
 $$('[data-nav]').forEach(b=>b.onclick=()=>nav(b.dataset.nav));
 $('#home-two-player').onclick=()=>{nav('setup');$('#mode-select').value='2';syncSetupMode()};
 
@@ -6284,7 +6443,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    });
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'5.7',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'5.8',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:6,
@@ -9256,6 +9415,7 @@ $('#theme-list-page-size').onchange=e=>{
  applyThemeDraftChange(t=>{const n=Number(e.target.value);t.layout.listPageSize=[15,30,50,100].includes(n)?n:30});
  cardManagerPage=0;deckPoolPage=0;renderCards();renderDeckPool();
 };
+$('#theme-mobile-edge-back').onchange=e=>applyThemeDraftChange(t=>{t.layout.mobileEdgeBack=e.target.checked});
 $$('[data-settings-open-screen]').forEach(b=>b.onclick=()=>nav(b.dataset.settingsOpenScreen));
 
 $('#theme-accent').oninput=e=>applyThemeDraftChange(d=>{d.ui.accent=normalizeHexColor(e.target.value,d.ui.accent)});
