@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v1.3</title>
+<title>みん会TCG Simulator v1.7</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -182,13 +182,49 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
   .hand-scroll-mode .pile{touch-action:pan-x}
 }
 
+
+/* v1.6 カード登録 / 管理 */
+.home-data-tools{max-width:720px;margin:0 auto 28px}
+.registration-tabs{position:sticky;top:64px;z-index:4;background:var(--panel);padding-bottom:8px}
+.register-history{border-top:1px solid var(--line);margin-top:14px;padding-top:2px}
+.compact-list .list-row{padding:7px 9px}
+.card-manager-panel{max-width:1050px;margin:0 auto}
+.card-manager-primary{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(170px,.6fr);gap:10px;align-items:end}
+.card-manager-actions{margin:10px 0}
+.card-manager-detail-filters{border:1px solid var(--line);background:#10141b;border-radius:10px;padding:10px;margin:8px 0}
+.card-manager-detail-filters[hidden]{display:none}
+.card-manager-result-head{scroll-margin-top:82px}
+.card-manager-list .list-row{cursor:pointer}
+.card-manager-list .list-row:hover{border-color:#586174}
+.manager-card-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:3px}
+.manager-card-race{font-size:12px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+.manager-dup-info{margin-left:auto;display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.manager-pagination{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.manager-pagination .actions{margin:0}
+.manager-detail-effect{white-space:pre-wrap;line-height:1.55;color:#d7dce5;background:#10141b;border:1px solid var(--line);border-radius:10px;padding:10px;max-height:45vh;overflow:auto}
+.manager-danger-zone{border-top:1px solid var(--line);padding-top:10px;margin-top:14px}
+@media(max-width:650px){
+  .card-manager-primary{grid-template-columns:1fr}
+  .manager-pagination{align-items:flex-start;flex-direction:column}
+  .manager-pagination .actions{width:100%}
+  .manager-pagination .actions .btn{flex:1}
+  .registration-tabs{top:58px}
+}
+
+
+/* v1.7 カード管理常時検索 / デッキカード一覧ページ制 */
+.card-manager-search-grid{margin-bottom:8px}
+.deck-pool-top{scroll-margin-top:82px}
+.deck-pool-pagination{margin-top:10px}
+
 </style>
 </head>
 <body>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v1.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v1.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
-  <button data-nav="cards">カード</button>
+  <button data-nav="cards">カード登録</button>
+  <button data-nav="card-manager">カード管理</button>
   <button data-nav="decks">デッキ</button>
   <button data-nav="setup">盤面開始</button>
 </header>
@@ -199,50 +235,50 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
       <p>カード効果やルール判定を行わない、完全手動型のオフライン用プロトタイプです。登録カードとデッキはこの端末に保存されますが、対戦盤面は保存されません。</p>
       <div class="hero-actions">
         <button class="btn primary" data-nav="cards">カードを登録</button>
+        <button class="btn" data-nav="card-manager">カードを管理</button>
         <button class="btn" data-nav="decks">デッキを作成</button>
         <button class="btn" data-nav="setup">一人用で始める</button>
         <button class="btn" id="home-two-player">二人用で始める</button>
       </div>
     </div>
+    <div class="panel data-tools home-data-tools">
+      <div class="section-head"><h2 style="font-size:18px">データ管理</h2><span class="muted">カード＋デッキをまとめて保存</span></div>
+      <p class="muted">登録カード、保存デッキ、最近のカード履歴を1つのバックアップファイルに保存します。対戦中の盤面状態は含みません。復元すると現在の登録データはバックアップ内容に置き換わります。</p>
+      <div class="io-actions">
+        <button class="btn primary" type="button" id="backup-all-data">全データをバックアップ</button>
+        <label class="btn" style="display:inline-flex;align-items:center">バックアップから復元<input id="backup-file-input" type="file" accept="application/json,.json" style="display:none"></label>
+      </div>
+      <div id="backup-status" class="muted" style="margin-top:8px"></div>
+    </div>
   </section>
 
   <section id="screen-cards" class="screen">
-    <div class="section-head"><h2>カード登録</h2><span class="muted">画像なし・テキスト登録</span></div>
-    <div class="grid2">
-      <div class="panel">
+    <div class="section-head"><h2>カード登録</h2><span id="card-register-count" class="pill"></span></div>
+    <div class="panel data-tools">
+      <div class="tool-tabs registration-tabs">
+        <button class="btn small primary" type="button" data-tool-tab="manual">1枚ずつ登録</button>
+        <button class="btn small" type="button" data-tool-tab="text">テキスト一括登録</button>
+        <button class="btn small" type="button" data-tool-tab="json">JSONから登録</button>
+        <button class="btn small" type="button" data-tool-tab="export">エクスポート</button>
+      </div>
+
+      <div id="tool-pane-manual" class="tool-pane active">
         <form id="card-form" class="form-grid">
-          <input id="card-id" type="hidden" />
           <label class="wide">カード名<input id="card-name" required /></label>
           <label>種類<select id="card-type"><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option></select></label>
           <label>Lv<input id="card-level" inputmode="numeric" /></label>
           <label>パワー<input id="card-power" inputmode="numeric" /></label>
           <label>種族<input id="card-race" placeholder="例：神秘 / 伝承" /></label>
           <label class="wide">効果<textarea id="card-effect"></textarea></label>
-          <div class="wide actions"><button class="btn primary" type="submit">保存</button><button class="btn" type="button" id="card-clear">新規入力</button></div>
+          <div class="wide actions"><button class="btn primary" type="submit">登録</button><button class="btn" type="button" id="card-clear">入力をクリア</button></div>
         </form>
-      </div>
-      <div class="panel">
-        <div class="section-head"><h2 style="font-size:18px">カード管理</h2><span id="card-count" class="pill"></span></div>
-        <div class="form-grid card-manager-filter">
-          <label class="wide">カード名検索<input id="card-manager-search" type="search" placeholder="カード名の一部を入力" autocomplete="off"></label>
-          <label>種類<select id="card-manager-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option></select></label>
-          <div class="actions" style="align-self:end;margin:0">
-            <button class="btn small" type="button" id="card-manager-show-all">全カード表示</button>
-            <button class="btn small" type="button" id="card-manager-recent">最近の10枚</button>
-          </div>
+        <div class="register-history">
+          <div class="section-head" style="margin-top:14px"><h2 style="font-size:16px">最近登録したカード</h2><span class="muted">最大5枚</span></div>
+          <div id="card-register-history" class="list compact-list"></div>
         </div>
-        <div class="section-head" style="margin-top:10px"><span id="card-list-title" class="muted">最近登録・編集したカード</span><span id="card-list-count" class="pill"></span></div>
-        <div id="card-list" class="list"></div>
       </div>
-    </div>
-    <div class="panel data-tools">
-      <div class="section-head"><h2 style="font-size:18px">インポート / エクスポート</h2><span class="muted">カード文章・JSON対応</span></div>
-      <div class="tool-tabs">
-        <button class="btn small primary" type="button" data-tool-tab="text">テキストから変換</button>
-        <button class="btn small" type="button" data-tool-tab="json">JSONインポート</button>
-        <button class="btn small" type="button" data-tool-tab="export">エクスポート</button>
-      </div>
-      <div id="tool-pane-text" class="tool-pane active">
+
+      <div id="tool-pane-text" class="tool-pane">
         <p class="muted">既存のカードテキストを貼り付けてください。【】付き・なしの両方に対応します。複数枚まとめて変換でき、判定結果は登録前に編集できます。</p>
         <textarea id="text-import-source" class="json-area" placeholder="【廻る時間の越境者 ミデン】
 レベル:12
@@ -255,6 +291,7 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
         <div id="text-preview" class="preview-list"></div>
         <div id="text-preview-actions" class="io-actions" style="display:none"><button class="btn primary" type="button" id="register-preview-cards">表示中をすべて登録</button><button class="btn" type="button" id="copy-preview-json">JSONをコピー</button></div>
       </div>
+
       <div id="tool-pane-json" class="tool-pane">
         <p class="muted">カード1枚、cards配列、または「カード＋デッキ」一括データを読み込めます。</p>
         <textarea id="json-import-source" class="json-area" placeholder="ここにJSONを貼り付け"></textarea>
@@ -262,19 +299,49 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
         <div class="import-summary">同名カードが既にある場合： <select id="import-conflict" style="width:auto"><option value="skip">スキップ</option><option value="overwrite">既存カードを上書き</option><option value="duplicate">別カードとして追加</option></select></div>
         <div id="json-import-status" class="muted"></div>
       </div>
+
       <div id="tool-pane-export" class="tool-pane">
         <p class="muted">登録データをJSONファイルとして保存できます。盤面の状態は含みません。</p>
         <div class="io-actions"><button class="btn primary" type="button" id="export-cards-json">カードのみを書き出す</button><button class="btn" type="button" id="export-all-json">カード＋デッキを書き出す</button></div>
       </div>
     </div>
-    <div class="panel data-tools">
-      <div class="section-head"><h2 style="font-size:18px">データバックアップ</h2><span class="muted">カード＋デッキをまとめて保存</span></div>
-      <p class="muted">登録カード、保存デッキ、最近編集したカードの履歴を1つのバックアップファイルに保存します。対戦中の盤面状態は含みません。復元すると現在の登録データはバックアップ内容に置き換わります。</p>
-      <div class="io-actions">
-        <button class="btn primary" type="button" id="backup-all-data">全データをバックアップ</button>
-        <label class="btn" style="display:inline-flex;align-items:center">バックアップから復元<input id="backup-file-input" type="file" accept="application/json,.json" style="display:none"></label>
+  </section>
+
+  <section id="screen-card-manager" class="screen">
+    <div class="section-head"><h2>カード管理</h2><span id="card-count" class="pill"></span></div>
+    <div class="panel card-manager-panel">
+      <div class="form-grid card-manager-search-grid">
+        <label class="wide">カード名<input id="card-manager-search" type="search" placeholder="カード名の一部を入力" autocomplete="off"></label>
+        <label>種類<select id="card-manager-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option></select></label>
+        <label>Lv<input id="card-manager-level" inputmode="numeric" placeholder="完全一致"></label>
+        <label>種族<input id="card-manager-race" placeholder="含まれる文字で検索" autocomplete="off"></label>
+        <label>効果内テキスト<input id="card-manager-effect" placeholder="含まれる文字で検索" autocomplete="off"></label>
+        <label class="wide">並び順<select id="card-manager-sort">
+          <option value="newest">登録が新しい順</option>
+          <option value="oldest">登録が古い順</option>
+          <option value="name">カード名順</option>
+          <option value="levelAsc">Lv昇順</option>
+          <option value="levelDesc">Lv降順</option>
+          <option value="type">種類順</option>
+        </select></label>
       </div>
-      <div id="backup-status" class="muted" style="margin-top:8px"></div>
+      <div class="actions card-manager-actions">
+        <button class="btn small" type="button" id="card-manager-duplicates">重複カードのみ</button>
+        <button class="btn small" type="button" id="card-manager-recent">最近の10枚</button>
+        <button class="btn small" type="button" id="card-manager-clear">条件クリア</button>
+      </div>
+      <div class="section-head card-manager-result-head" id="card-manager-list-top" style="margin-top:12px">
+        <span id="card-list-title" class="muted">全カード</span>
+        <span id="card-list-count" class="pill"></span>
+      </div>
+      <div id="card-list" class="list card-manager-list"></div>
+      <div class="manager-pagination">
+        <span id="card-manager-page-info" class="muted"></span>
+        <div class="actions">
+          <button class="btn small" type="button" id="card-manager-prev">前の30件</button>
+          <button class="btn small" type="button" id="card-manager-next">次の30件</button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -295,7 +362,15 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
           <label>種族検索<input id="deck-race-search" placeholder="例：神秘" autocomplete="off"></label>
           <label>レベル検索<input id="deck-level-search" type="number" min="0" step="1" inputmode="numeric" placeholder="例：4"></label>
         </div>
+        <div id="deck-card-pool-top" class="deck-pool-top"></div>
         <div id="deck-card-pool" class="list"></div>
+        <div class="manager-pagination deck-pool-pagination">
+          <span id="deck-pool-page-info" class="muted"></span>
+          <div class="actions">
+            <button class="btn small" type="button" id="deck-pool-prev">前の30件</button>
+            <button class="btn small" type="button" id="deck-pool-next">次の30件</button>
+          </div>
+        </div>
       </div>
       <div class="panel">
         <div class="section-head"><h2 style="font-size:17px">デッキ内容</h2><span id="deck-total" class="pill">0枚</span></div>
@@ -357,11 +432,11 @@ main{padding:16px;max-width:1500px;margin:auto}.screen{display:none}.screen.acti
 <script>
 (() => {
 'use strict';
-const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01', LS_HAND_FOLLOW='minkai_tcg_hand_follow_v11';
+const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01', LS_CARD_REGISTER_RECENT='minkai_tcg_card_register_recent_v16', LS_HAND_FOLLOW='minkai_tcg_hand_follow_v11';
 const ZONE_LABELS={character:'キャラクター',pain:'ペインカウント',room:'ルーム',rulePlus:'ルールプラス',hand:'手札',deck:'デッキ',otherDeck:'その他デッキ',grave:'墓地',banish:'消失領域'};
 const FIXED=['character','pain','room','rulePlus'];
 const COLLAPSIBLE=['pain','room','rulePlus'];
-let cards=load(LS_CARDS,[]), decks=load(LS_DECKS,[]), recentCardIds=load(LS_CARD_RECENT,[]), cardManagerShowAll=false, editingDeckId=null, workingDeck={name:'',entries:{}};
+let cards=load(LS_CARDS,[]), decks=load(LS_DECKS,[]), recentCardIds=load(LS_CARD_RECENT,[]), registeredRecentCardIds=load(LS_CARD_REGISTER_RECENT,[]), cardManagerShowAll=true, cardManagerPage=0, cardManagerDuplicateOnly=false, deckPoolPage=0, editingDeckId=null, workingDeck={name:'',entries:{}};
 let handFollowPrefs=load(LS_HAND_FOLLOW,[true,true]);
 if(!Array.isArray(handFollowPrefs))handFollowPrefs=[true,true];
 handFollowPrefs=[handFollowPrefs[0]!==false,handFollowPrefs[1]!==false];
@@ -373,7 +448,7 @@ function load(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{retur
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),1800)}
-function nav(name){$$('.screen').forEach(x=>x.classList.remove('active'));$('#screen-'+name).classList.add('active');if(name==='cards')renderCards();if(name==='decks')renderDecks();if(name==='setup')renderSetup();window.scrollTo(0,0)}
+function nav(name){$$('.screen').forEach(x=>x.classList.remove('active'));const screen=$('#screen-'+name);if(!screen)return;screen.classList.add('active');if(name==='cards')renderRegisterHistory();if(name==='card-manager')renderCards();if(name==='decks')renderDecks();if(name==='setup')renderSetup();window.scrollTo(0,0)}
 $$('[data-nav]').forEach(b=>b.onclick=()=>nav(b.dataset.nav));
 $('#home-two-player').onclick=()=>{nav('setup');$('#mode-select').value='2';syncSetupMode()};
 
@@ -449,7 +524,8 @@ function exportBackupObject(){
    createdAt:new Date().toISOString(),
    cards:cards.map(c=>({id:c.id,name:c.name,type:c.type,level:c.level,power:c.power,race:c.race,effect:c.effect})),
    decks:decks.map(d=>({id:d.id,name:d.name,entries:{...d.entries}})),
-   recentCardIds:[...recentCardIds]
+   recentCardIds:[...recentCardIds],
+   registeredRecentCardIds:[...registeredRecentCardIds]
  };
 }
 function restoreBackupObject(data){
@@ -492,9 +568,10 @@ function restoreBackupObject(data){
  cards=restoredCards;
  decks=restoredDecks;
  recentCardIds=(Array.isArray(data.recentCardIds)?data.recentCardIds:[]).filter(id=>validIds.has(id)).slice(0,10);
- save(LS_CARDS,cards);save(LS_DECKS,decks);save(LS_CARD_RECENT,recentCardIds);
+ registeredRecentCardIds=(Array.isArray(data.registeredRecentCardIds)?data.registeredRecentCardIds:restoredCards.slice(-5).reverse().map(c=>c.id)).filter(id=>validIds.has(id)).slice(0,5);
+ save(LS_CARDS,cards);save(LS_DECKS,decks);save(LS_CARD_RECENT,recentCardIds);save(LS_CARD_REGISTER_RECENT,registeredRecentCardIds);
  editingDeckId=null;workingDeck={name:'',entries:{}};board=null;detailCtx=null;detailNav=null;inspectSession=null;
- renderCards();renderDecks();renderSetup();
+ renderRegisterHistory();renderCards();renderDecks();renderSetup();
  return {cards:cards.length,decks:decks.length};
 }
 function parseImportPayload(data){
@@ -505,14 +582,14 @@ function parseImportPayload(data){
 }
 function importPayload(data,conflict){
   const payload=parseImportPayload(data), idMap=new Map(), nameMap=new Map(cards.map(c=>[c.name,c.id]));
-  let added=0,updated=0,skipped=0,deckAdded=0,touchedIds=[];
+  let added=0,updated=0,skipped=0,deckAdded=0,touchedIds=[],registeredIds=[];
   for(const raw of payload.cards){
     const n=normalizeImportedCard(raw); if(!n||!n.name){skipped++;continue}
     const existingIndex=cards.findIndex(c=>c.name===n.name);
     let localId;
     if(existingIndex>=0&&conflict==='skip'){localId=cards[existingIndex].id;skipped++}
     else if(existingIndex>=0&&conflict==='overwrite'){localId=cards[existingIndex].id;cards[existingIndex]={id:localId,name:n.name,type:n.type,level:n.level,power:n.power,race:n.race,effect:n.effect};touchedIds.push(localId);updated++}
-    else {localId=uid('card');cards.push({id:localId,name:n.name,type:n.type,level:n.level,power:n.power,race:n.race,effect:n.effect});touchedIds.push(localId);added++}
+    else {localId=uid('card');cards.push({id:localId,name:n.name,type:n.type,level:n.level,power:n.power,race:n.race,effect:n.effect});touchedIds.push(localId);registeredIds.push(localId);added++}
     if(n.sourceId)idMap.set(String(n.sourceId),localId);nameMap.set(n.name,localId);
   }
   for(const rawDeck of payload.decks){
@@ -522,15 +599,15 @@ function importPayload(data,conflict){
     for(const row of rows){const localId=idMap.get(String(row.cardId||''))||nameMap.get(String(row.cardName||''));const count=Math.max(0,Number(row.count)||0);if(localId&&count)entries[localId]=(entries[localId]||0)+count}
     decks.push({id:uid('deck'),name:String(rawDeck.name||'インポートデッキ'),entries});deckAdded++;
   }
-  save(LS_CARDS,cards);save(LS_DECKS,decks);if(touchedIds.length)touchRecentCards(touchedIds);renderCards();renderDecks();renderSetup();
+  save(LS_CARDS,cards);save(LS_DECKS,decks);if(touchedIds.length)touchRecentCards(touchedIds);if(registeredIds.length)touchRegisteredCards(registeredIds);renderRegisterHistory();renderCards();renderDecks();renderSetup();
   return {added,updated,skipped,deckAdded};
 }
-$$('[data-tool-tab]').forEach(btn=>btn.onclick=()=>{$$('[data-tool-tab]').forEach(b=>b.classList.remove('primary'));btn.classList.add('primary');$$('.tool-pane').forEach(p=>p.classList.remove('active'));$('#tool-pane-'+btn.dataset.toolTab).classList.add('active')});
+$$('[data-tool-tab]').forEach(btn=>btn.onclick=()=>{$$('[data-tool-tab]').forEach(b=>b.classList.remove('primary'));btn.classList.add('primary');$$('#screen-cards .tool-pane').forEach(p=>p.classList.remove('active'));$('#tool-pane-'+btn.dataset.toolTab)?.classList.add('active');if(btn.dataset.toolTab==='manual')renderRegisterHistory()});
 $('#parse-text-cards').onclick=()=>{textPreviewCards=parseCardText($('#text-import-source').value);$('#text-import-status').textContent=textPreviewCards.length?`${textPreviewCards.length}枚のカードを検出しました。内容を確認してから登録してください。`:'カードを検出できませんでした。';renderTextPreview()};
 $('#clear-text-import').onclick=()=>{$('#text-import-source').value='';$('#text-import-status').textContent='';textPreviewCards=[];renderTextPreview()};
-$('#register-preview-cards').onclick=()=>{if(!textPreviewCards.length)return;let n=0,addedIds=[];for(const c of textPreviewCards){if(!c.name.trim())continue;const id=uid('card');cards.push({id,name:c.name.trim(),type:c.type||'キャラクター',level:String(c.level||'').trim(),power:String(c.power||'').trim(),race:String(c.race||'').trim(),effect:c.effect||''});addedIds.push(id);n++}save(LS_CARDS,cards);touchRecentCards(addedIds);renderCards();renderDecks();renderSetup();toast(`${n}枚を登録しました`)};
+$('#register-preview-cards').onclick=()=>{if(!textPreviewCards.length)return;let n=0,addedIds=[];for(const c of textPreviewCards){if(!c.name.trim())continue;const id=uid('card');cards.push({id,name:c.name.trim(),type:c.type||'キャラクター',level:String(c.level||'').trim(),power:String(c.power||'').trim(),race:String(c.race||'').trim(),effect:c.effect||''});addedIds.push(id);n++}save(LS_CARDS,cards);touchRecentCards(addedIds);touchRegisteredCards(addedIds);$('#text-import-source').value='';$('#text-import-status').textContent=n?`${n}枚を登録しました。入力欄をクリアしました。`:'';textPreviewCards=[];renderTextPreview();renderRegisterHistory();renderCards();renderDecks();renderSetup();toast(`${n}枚を登録しました`)};
 $('#copy-preview-json').onclick=async()=>{if(!textPreviewCards.length)return;const ok=await copyText(JSON.stringify(portablePreviewData(),null,2));toast(ok?'JSONをコピーしました':'コピーできませんでした')};
-function runJsonImportText(text){try{const data=JSON.parse(text),r=importPayload(data,$('#import-conflict').value);$('#json-import-status').textContent=`カード追加 ${r.added} / 上書き ${r.updated} / スキップ ${r.skipped} / デッキ追加 ${r.deckAdded}`;toast('インポートしました')}catch(e){$('#json-import-status').textContent='読み込みエラー: '+e.message}}
+function runJsonImportText(text){try{const data=JSON.parse(text),r=importPayload(data,$('#import-conflict').value);$('#json-import-source').value='';$('#json-import-status').textContent=`カード追加 ${r.added} / 上書き ${r.updated} / スキップ ${r.skipped} / デッキ追加 ${r.deckAdded}。入力欄をクリアしました。`;toast('インポートしました')}catch(e){$('#json-import-status').textContent='読み込みエラー: '+e.message}}
 $('#import-json-text').onclick=()=>runJsonImportText($('#json-import-source').value);
 $('#json-file-input').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const text=await f.text();$('#json-import-source').value=text;runJsonImportText(text)}catch(err){$('#json-import-status').textContent='ファイルを読み込めませんでした。'}e.target.value=''};
 $('#export-cards-json').onclick=()=>downloadJson(exportCardsObject(),'minkai_tcg_cards.json');
@@ -564,73 +641,314 @@ function importDeckObject(data){
   const d={id:uid('deck'),name:String(raw.name||'インポートデッキ'),entries};decks.push(d);save(LS_DECKS,decks);editingDeckId=d.id;workingDeck={name:d.name,entries:{...entries}};renderDecks();renderSetup();return {found,missing};
 }
 
-// Card registry
+// Card registry / manager
+const CARD_MANAGER_PAGE_SIZE=30;
+
 function touchRecentCards(ids){
  const valid=[...new Set((Array.isArray(ids)?ids:[ids]).filter(Boolean))];
  for(const id of valid)recentCardIds=recentCardIds.filter(x=>x!==id);
  recentCardIds=[...valid.slice().reverse(),...recentCardIds].filter(id=>cards.some(c=>c.id===id)).slice(0,10);
  save(LS_CARD_RECENT,recentCardIds);
 }
+function touchRegisteredCards(ids){
+ const valid=[...new Set((Array.isArray(ids)?ids:[ids]).filter(Boolean))];
+ for(const id of valid)registeredRecentCardIds=registeredRecentCardIds.filter(x=>x!==id);
+ registeredRecentCardIds=[...valid.slice().reverse(),...registeredRecentCardIds].filter(id=>cards.some(c=>c.id===id)).slice(0,5);
+ save(LS_CARD_REGISTER_RECENT,registeredRecentCardIds);
+}
 function recentCards(){
  const fromHistory=recentCardIds.map(id=>cards.find(c=>c.id===id)).filter(Boolean);
  if(fromHistory.length)return fromHistory.slice(0,10);
  return cards.slice(-10).reverse();
 }
-function cardManagerFilteredCards(){
- const search=$('#card-manager-search');
- const typeSel=$('#card-manager-type');
- const q=(search?.value||'').trim().toLocaleLowerCase();
- const type=typeSel?.value||'all';
- const hasSearch=!!q;
- let base=(hasSearch||cardManagerShowAll)?cards.slice():recentCards();
- if(type!=='all')base=base.filter(c=>c.type===type);
- if(hasSearch)base=base.filter(c=>String(c.name||'').toLocaleLowerCase().includes(q));
- if(hasSearch||cardManagerShowAll)base.reverse();
- return {base,hasSearch,type};
+function recentRegisteredCards(){
+ const fromHistory=registeredRecentCardIds.map(id=>cards.find(c=>c.id===id)).filter(Boolean);
+ if(fromHistory.length)return fromHistory.slice(0,5);
+ return cards.slice(-5).reverse();
 }
-function bindCardManagerRows(){
- $$('[data-edit-card]').forEach(b=>b.onclick=()=>editCard(b.dataset.editCard));
- $$('[data-clone-card]').forEach(b=>b.onclick=()=>cloneCard(b.dataset.cloneCard));
- $$('[data-del-card]').forEach(b=>b.onclick=()=>deleteCard(b.dataset.delCard));
+function renderRegisterHistory(){
+ const count=$('#card-register-count');
+ if(count)count.textContent=`登録済み ${cards.length}枚`;
+ const root=$('#card-register-history');
+ if(!root)return;
+ const arr=recentRegisteredCards();
+ root.innerHTML=arr.length?arr.map(c=>`<div class="list-row"><div class="grow"><b>${esc(c.name)}</b><div class="muted">${esc(c.type)}${c.level!==''&&c.level!=null?` / Lv${esc(c.level)}`:''}${c.race?` / ${esc(c.race)}`:''}</div></div></div>`).join(''):'<div class="muted">まだカードが登録されていません。</div>';
+}
+function clearCardForm(){
+ ['card-name','card-level','card-power','card-race','card-effect'].forEach(id=>{const el=$('#'+id);if(el)el.value=''});
+ if($('#card-type'))$('#card-type').value='キャラクター';
+}
+$('#card-clear').onclick=clearCardForm;
+$('#card-form').onsubmit=e=>{
+ e.preventDefault();
+ const obj={id:uid('card'),name:$('#card-name').value.trim(),type:$('#card-type').value,level:$('#card-level').value.trim(),power:$('#card-power').value.trim(),race:$('#card-race').value.trim(),effect:$('#card-effect').value};
+ if(!obj.name)return;
+ cards.push(obj);
+ save(LS_CARDS,cards);
+ touchRecentCards(obj.id);
+ touchRegisteredCards(obj.id);
+ clearCardForm();
+ renderRegisterHistory();renderCards();renderDecks();renderSetup();
+ toast('カードを登録しました');
+};
+
+function deckUsageCount(cardId){
+ return decks.reduce((n,d)=>n+(Number(d.entries?.[cardId]||0)>0?1:0),0);
+}
+function normalizedDuplicateName(name){return String(name||'').trim()}
+function duplicateNameCounts(){
+ const map=new Map();
+ cards.forEach(c=>{const k=normalizedDuplicateName(c.name);if(k)map.set(k,(map.get(k)||0)+1)});
+ return map;
+}
+function managerDetailedFilterCount(){
+ let n=0;
+ if(($('#card-manager-type')?.value||'all')!=='all')n++;
+ if(($('#card-manager-level')?.value||'').trim())n++;
+ if(($('#card-manager-race')?.value||'').trim())n++;
+ if(($('#card-manager-effect')?.value||'').trim())n++;
+ return n;
+}
+function managerHasFilters(){
+ return !!(
+   ($('#card-manager-search')?.value||'').trim() ||
+   managerDetailedFilterCount() ||
+   cardManagerDuplicateOnly
+ );
+}
+function cardManagerFilteredCards(){
+ const nameQ=($('#card-manager-search')?.value||'').trim().toLocaleLowerCase();
+ const type=$('#card-manager-type')?.value||'all';
+ const levelQ=($('#card-manager-level')?.value||'').trim();
+ const raceQ=($('#card-manager-race')?.value||'').trim().toLocaleLowerCase();
+ const effectQ=($('#card-manager-effect')?.value||'').trim().toLocaleLowerCase();
+ const sort=$('#card-manager-sort')?.value||'newest';
+ const filteredMode=managerHasFilters()||cardManagerShowAll;
+ let rows=(filteredMode?cards:recentCards()).map(c=>({c,index:cards.findIndex(x=>x.id===c.id)}));
+ const dupCounts=duplicateNameCounts();
+
+ if(nameQ)rows=rows.filter(x=>String(x.c.name||'').toLocaleLowerCase().includes(nameQ));
+ if(type!=='all')rows=rows.filter(x=>x.c.type===type);
+ if(levelQ)rows=rows.filter(x=>String(x.c.level??'').trim()===levelQ);
+ if(raceQ)rows=rows.filter(x=>String(x.c.race||'').toLocaleLowerCase().includes(raceQ));
+ if(effectQ)rows=rows.filter(x=>String(x.c.effect||'').toLocaleLowerCase().includes(effectQ));
+ if(cardManagerDuplicateOnly)rows=rows.filter(x=>(dupCounts.get(normalizedDuplicateName(x.c.name))||0)>1);
+
+ if(filteredMode){
+   const levelInfo=c=>{
+     const has=c.level!==''&&c.level!=null&&Number.isFinite(Number(c.level));
+     return {has,val:has?Number(c.level):0};
+   };
+   rows.sort((a,b)=>{
+     if(sort==='oldest')return a.index-b.index;
+     if(sort==='name')return String(a.c.name||'').localeCompare(String(b.c.name||''),'ja');
+     if(sort==='type')return String(a.c.type||'').localeCompare(String(b.c.type||''),'ja')||String(a.c.name||'').localeCompare(String(b.c.name||''),'ja');
+     if(sort==='levelAsc'||sort==='levelDesc'){
+       const av=levelInfo(a.c),bv=levelInfo(b.c);
+       if(av.has&&!bv.has)return -1;
+       if(!av.has&&bv.has)return 1;
+       if(!av.has&&!bv.has)return b.index-a.index;
+       return sort==='levelAsc'?av.val-bv.val:bv.val-av.val;
+     }
+     return b.index-a.index;
+   });
+ }
+ return {rows,filteredMode,dupCounts};
+}
+function resetManagerPageAndRender(){
+ cardManagerPage=0;
+ renderCards();
 }
 function renderCards(){
- $('#card-count').textContent=cards.length+'枚';
- const {base,hasSearch,type}=cardManagerFilteredCards();
+ const totalPill=$('#card-count');
+ if(totalPill)totalPill.textContent=`登録済み ${cards.length}枚`;
+ const list=$('#card-list');
+ if(!list)return;
+
+ const {rows,filteredMode,dupCounts}=cardManagerFilteredCards();
  const title=$('#card-list-title'),count=$('#card-list-count');
  if(title){
-   if(hasSearch)title.textContent='検索結果';
-   else if(cardManagerShowAll)title.textContent='全カード';
-   else title.textContent='最近登録・編集したカード';
+   if(cardManagerDuplicateOnly)title.textContent='カード名が重複しているカード';
+   else if(!cardManagerShowAll)title.textContent='最近登録・編集したカード';
+   else if(managerHasFilters())title.textContent='検索結果';
+   else title.textContent='全カード';
  }
- if(count)count.textContent=base.length+'件';
- $('#card-list').innerHTML=base.length?base.map(c=>`<div class="list-row"><div class="grow"><b>${esc(c.name)}</b><div class="muted">${esc(c.type)}${c.level?' / Lv'+esc(c.level):''}${c.power?' / '+esc(c.power):''}</div></div><button class="btn small" data-edit-card="${c.id}">編集</button><button class="btn small" data-clone-card="${c.id}">複製</button><button class="btn small danger" data-del-card="${c.id}">削除</button></div>`).join(''):(cards.length?(hasSearch||type!=='all'?'<div class="muted">一致するカードがありません。</div>':'<div class="muted">表示するカードがありません。</div>'):'<div class="muted">まだカードが登録されていません。</div>');
- bindCardManagerRows();
+ if(count)count.textContent=`${rows.length}件`;
+
+ const pageMax=Math.max(0,Math.ceil(rows.length/CARD_MANAGER_PAGE_SIZE)-1);
+ if(cardManagerPage>pageMax)cardManagerPage=pageMax;
+ const start=cardManagerPage*CARD_MANAGER_PAGE_SIZE;
+ const pageRows=rows.slice(start,start+CARD_MANAGER_PAGE_SIZE);
+
+ list.innerHTML=pageRows.length?pageRows.map(({c})=>{
+   const dupCount=dupCounts.get(normalizedDuplicateName(c.name))||0;
+   const level=(c.level!==''&&c.level!=null)?`Lv${esc(c.level)}`:'Lv－';
+   const race=c.race?esc(c.race):'－';
+   const dupInfo=cardManagerDuplicateOnly?`<div class="manager-dup-info"><span class="pill">重複 ${dupCount}件</span><span class="pill">採用デッキ ${deckUsageCount(c.id)}</span></div>`:'';
+   return `<div class="list-row manager-card-row" data-manage-card="${c.id}">
+     <div class="grow"><b>${esc(c.name)}</b><div class="manager-card-meta"><span class="pill">${esc(c.type)}</span><span class="muted">${level}</span></div><div class="manager-card-race">種族：${race}</div></div>
+     ${dupInfo}
+     <button class="btn small" data-manage-detail="${c.id}">詳細</button>
+   </div>`;
+ }).join(''):(cards.length?'<div class="muted">一致するカードがありません。</div>':'<div class="muted">まだカードが登録されていません。</div>');
+
+ const pageInfo=$('#card-manager-page-info'),prev=$('#card-manager-prev'),next=$('#card-manager-next');
+ if(rows.length){
+   const end=Math.min(start+CARD_MANAGER_PAGE_SIZE,rows.length);
+   pageInfo.textContent=`表示 ${start+1}〜${end} / ${rows.length}件`;
+ }else pageInfo.textContent='表示 0 / 0件';
+ prev.disabled=cardManagerPage<=0;
+ next.disabled=start+CARD_MANAGER_PAGE_SIZE>=rows.length;
+ prev.onclick=()=>{if(cardManagerPage<=0)return;cardManagerPage--;renderCards();$('#card-manager-list-top')?.scrollIntoView({behavior:'smooth',block:'start'})};
+ next.onclick=()=>{if(start+CARD_MANAGER_PAGE_SIZE>=rows.length)return;cardManagerPage++;renderCards();$('#card-manager-list-top')?.scrollIntoView({behavior:'smooth',block:'start'})};
+
+ const dupBtn=$('#card-manager-duplicates');
+ if(dupBtn){
+   dupBtn.classList.toggle('primary',cardManagerDuplicateOnly);
+   dupBtn.textContent=cardManagerDuplicateOnly?'重複カードのみ ON':'重複カードのみ';
+ }
+ const recentBtn=$('#card-manager-recent');
+ if(recentBtn)recentBtn.classList.toggle('primary',!cardManagerShowAll);
+
+ $$('[data-manage-card]').forEach(row=>row.onclick=()=>openCardManagerDetail(row.dataset.manageCard));
+ $$('[data-manage-detail]').forEach(b=>b.onclick=e=>{e.stopPropagation();openCardManagerDetail(b.dataset.manageDetail)});
 }
-function clearCardForm(){['card-id','card-name','card-level','card-power','card-race','card-effect'].forEach(id=>$('#'+id).value='');$('#card-type').value='キャラクター'}
-$('#card-clear').onclick=clearCardForm;
-$('#card-manager-search').oninput=()=>{cardManagerShowAll=false;renderCards()};
-$('#card-manager-type').onchange=renderCards;
-$('#card-manager-show-all').onclick=()=>{cardManagerShowAll=true;$('#card-manager-search').value='';renderCards()};
-$('#card-manager-recent').onclick=()=>{cardManagerShowAll=false;$('#card-manager-search').value='';renderCards()};
-$('#card-form').onsubmit=e=>{e.preventDefault();const id=$('#card-id').value||uid('card');const obj={id,name:$('#card-name').value.trim(),type:$('#card-type').value,level:$('#card-level').value.trim(),power:$('#card-power').value.trim(),race:$('#card-race').value.trim(),effect:$('#card-effect').value};if(!obj.name)return;const i=cards.findIndex(x=>x.id===id);if(i>=0)cards[i]=obj;else cards.push(obj);save(LS_CARDS,cards);touchRecentCards(id);clearCardForm();renderCards();renderDecks();renderSetup();toast('カードを保存しました')};
-function editCard(id){const c=cards.find(x=>x.id===id);if(!c)return;touchRecentCards(id);$('#card-id').value=c.id;$('#card-name').value=c.name;$('#card-type').value=c.type;$('#card-level').value=c.level;$('#card-power').value=c.power;$('#card-race').value=c.race;$('#card-effect').value=c.effect;renderCards();window.scrollTo(0,0)}
-function cloneCard(id){const c=cards.find(x=>x.id===id);if(!c)return;const clone={...c,id:uid('card'),name:c.name+'（複製）'};cards.push(clone);save(LS_CARDS,cards);touchRecentCards(clone.id);renderCards();renderDecks();renderSetup();toast('カードを複製しました')}
-function deleteCard(id){if(!confirm('このカードを削除しますか？'))return;cards=cards.filter(x=>x.id!==id);recentCardIds=recentCardIds.filter(x=>x!==id);save(LS_CARDS,cards);save(LS_CARD_RECENT,recentCardIds);renderCards();renderDecks();renderSetup()}
+function managerCardSummary(c){
+ const stats=[c.type||'',c.level!==''&&c.level!=null?`Lv${c.level}`:'',c.power!==''&&c.power!=null?`POWER ${c.power}`:''].filter(Boolean).map(esc).join(' / ');
+ return `<div class="card-full"><h3>${esc(c.name)}</h3><div class="muted">${stats}</div><div class="muted" style="margin-top:4px">種族：${esc(c.race||'－')}</div><div class="muted" style="margin-top:4px">採用デッキ：${deckUsageCount(c.id)}</div><div class="manager-detail-effect" style="margin-top:10px">${esc(c.effect||'効果なし')}</div></div>`;
+}
+function openCardManagerDetail(id){
+ const c=cards.find(x=>x.id===id);if(!c)return;
+ openModal(`<div class="modal-head"><h3>カード詳細</h3><button class="btn" id="manager-detail-close">閉じる</button></div>
+ ${managerCardSummary(c)}
+ <div class="actions"><button class="btn primary" id="manager-edit-card">編集</button><button class="btn" id="manager-clone-card">複製</button></div>
+ <div class="manager-danger-zone"><button class="btn danger" id="manager-delete-card">削除</button></div>`);
+ $('#manager-detail-close').onclick=closeModal;
+ $('#manager-edit-card').onclick=()=>openCardManagerEdit(id);
+ $('#manager-clone-card').onclick=()=>cloneCard(id);
+ $('#manager-delete-card').onclick=()=>deleteCard(id);
+}
+function openCardManagerEdit(id){
+ const c=cards.find(x=>x.id===id);if(!c)return;
+ openModal(`<div class="modal-head"><h3>カード編集</h3><button class="btn" id="manager-edit-close">閉じる</button></div>
+ <form id="manager-edit-form" class="form-grid">
+   <label class="wide">カード名<input id="manager-edit-name" required value="${esc(c.name)}"></label>
+   <label>種類<select id="manager-edit-type">${['キャラクター','ルーム','ロール','ルールプラス'].map(t=>`<option${t===c.type?' selected':''}>${t}</option>`).join('')}</select></label>
+   <label>Lv<input id="manager-edit-level" inputmode="numeric" value="${esc(c.level||'')}"></label>
+   <label>パワー<input id="manager-edit-power" inputmode="numeric" value="${esc(c.power||'')}"></label>
+   <label>種族<input id="manager-edit-race" value="${esc(c.race||'')}"></label>
+   <label class="wide">効果<textarea id="manager-edit-effect">${esc(c.effect||'')}</textarea></label>
+   <div class="wide actions"><button class="btn primary" type="submit">変更を保存</button><button class="btn" type="button" id="manager-edit-cancel">キャンセル</button></div>
+ </form>`);
+ $('#manager-edit-close').onclick=closeModal;
+ $('#manager-edit-cancel').onclick=()=>openCardManagerDetail(id);
+ $('#manager-edit-form').onsubmit=e=>{
+   e.preventDefault();
+   const i=cards.findIndex(x=>x.id===id);if(i<0)return;
+   const name=$('#manager-edit-name').value.trim();if(!name)return;
+   cards[i]={id,name,type:$('#manager-edit-type').value,level:$('#manager-edit-level').value.trim(),power:$('#manager-edit-power').value.trim(),race:$('#manager-edit-race').value.trim(),effect:$('#manager-edit-effect').value};
+   save(LS_CARDS,cards);touchRecentCards(id);
+   renderCards();renderDecks();renderSetup();
+   openCardManagerDetail(id);
+   toast('カードを更新しました');
+ };
+}
+function cloneCard(id){
+ const c=cards.find(x=>x.id===id);if(!c)return;
+ const clone={...c,id:uid('card'),name:c.name+'（複製）'};
+ cards.push(clone);
+ save(LS_CARDS,cards);
+ touchRecentCards(clone.id);
+ touchRegisteredCards(clone.id);
+ renderRegisterHistory();renderCards();renderDecks();renderSetup();
+ closeModal();
+ toast('カードを複製しました');
+}
+function deleteCard(id){
+ const c=cards.find(x=>x.id===id);if(!c)return;
+ const used=deckUsageCount(id);
+ const msg=used>0?`このカードは${used}個の保存デッキで使用されています。削除すると、それらのデッキからもこのカードを取り除きます。削除しますか？`:'このカードを削除しますか？';
+ if(!confirm(msg))return;
+ cards=cards.filter(x=>x.id!==id);
+ decks.forEach(d=>{if(d.entries&&d.entries[id]!=null)delete d.entries[id]});
+ if(workingDeck?.entries&&workingDeck.entries[id]!=null)delete workingDeck.entries[id];
+ recentCardIds=recentCardIds.filter(x=>x!==id);
+ registeredRecentCardIds=registeredRecentCardIds.filter(x=>x!==id);
+ save(LS_CARDS,cards);save(LS_DECKS,decks);save(LS_CARD_RECENT,recentCardIds);save(LS_CARD_REGISTER_RECENT,registeredRecentCardIds);
+ closeModal();
+ renderRegisterHistory();renderCards();renderDecks();renderSetup();
+ toast('カードを削除しました');
+}
+
+function activateManagerSearchAndRender(){
+ cardManagerShowAll=true;
+ cardManagerPage=0;
+ renderCards();
+}
+$('#card-manager-search').oninput=activateManagerSearchAndRender;
+$('#card-manager-type').onchange=activateManagerSearchAndRender;
+$('#card-manager-level').oninput=activateManagerSearchAndRender;
+$('#card-manager-race').oninput=activateManagerSearchAndRender;
+$('#card-manager-effect').oninput=activateManagerSearchAndRender;
+$('#card-manager-sort').onchange=activateManagerSearchAndRender;
+$('#card-manager-duplicates').onclick=()=>{cardManagerDuplicateOnly=!cardManagerDuplicateOnly;cardManagerShowAll=true;resetManagerPageAndRender()};
+$('#card-manager-recent').onclick=()=>{
+ cardManagerShowAll=false;cardManagerDuplicateOnly=false;cardManagerPage=0;
+ $('#card-manager-search').value='';$('#card-manager-type').value='all';$('#card-manager-level').value='';$('#card-manager-race').value='';$('#card-manager-effect').value='';$('#card-manager-sort').value='newest';
+ renderCards();
+};
+$('#card-manager-clear').onclick=()=>{
+ cardManagerShowAll=true;cardManagerDuplicateOnly=false;cardManagerPage=0;
+ $('#card-manager-search').value='';$('#card-manager-type').value='all';$('#card-manager-level').value='';$('#card-manager-race').value='';$('#card-manager-effect').value='';$('#card-manager-sort').value='newest';
+ renderCards();
+};
 
 // Deck editor
+const DECK_POOL_PAGE_SIZE=30;
 function renderDecks(){
  $('#deck-select').innerHTML='<option value="">新規デッキ</option>'+decks.map(d=>`<option value="${d.id}">${esc(d.name)}</option>`).join('');
  $('#deck-select').value=editingDeckId||'';$('#deck-name').value=workingDeck.name||'';renderDeckPool();renderDeckCurrent();
 }
-function renderDeckPool(){const f=$('#deck-type-filter').value,q=($('#deck-card-search')?.value||'').trim().toLowerCase(),raceQ=($('#deck-race-search')?.value||'').trim().toLowerCase(),levelQ=($('#deck-level-search')?.value||'').trim(),sort=$('#deck-level-sort')?.value||'default';let arr=cards.filter(c=>(f==='all'||c.type===f)&&(!q||String(c.name||'').toLowerCase().includes(q))&&(!raceQ||String(c.race||'').toLowerCase().includes(raceQ))&&(!levelQ||String(c.level??'').trim()===levelQ));if(sort!=='default'){arr=arr.slice().sort((a,b)=>{const ah=a.level!==''&&a.level!=null&&Number.isFinite(Number(a.level)),bh=b.level!==''&&b.level!=null&&Number.isFinite(Number(b.level));if(ah&&!bh)return -1;if(!ah&&bh)return 1;if(!ah&&!bh)return 0;const av=Number(a.level),bv=Number(b.level);return sort==='levelAsc'?av-bv:bv-av})}$('#deck-card-pool').innerHTML=arr.length?arr.map(c=>`<div class="deck-card-row list-row"><div class="grow"><b>${esc(c.name)}</b><div class="muted">${esc(c.type)}${c.level?' / Lv'+esc(c.level):''}${c.race?' / '+esc(c.race):''}</div></div><div class="qty"><button class="btn small" data-pool-minus="${c.id}">−</button><b>${workingDeck.entries[c.id]||0}</b><button class="btn small" data-pool-plus="${c.id}">＋</button></div></div>`).join(''):'<div class="muted">該当カードなし</div>';bindDeckQty()}
+function filteredDeckPoolCards(){
+ const f=$('#deck-type-filter').value,q=($('#deck-card-search')?.value||'').trim().toLowerCase(),raceQ=($('#deck-race-search')?.value||'').trim().toLowerCase(),levelQ=($('#deck-level-search')?.value||'').trim(),sort=$('#deck-level-sort')?.value||'default';
+ let arr=cards.filter(c=>(f==='all'||c.type===f)&&(!q||String(c.name||'').toLowerCase().includes(q))&&(!raceQ||String(c.race||'').toLowerCase().includes(raceQ))&&(!levelQ||String(c.level??'').trim()===levelQ));
+ if(sort!=='default'){
+   arr=arr.slice().sort((a,b)=>{
+     const ah=a.level!==''&&a.level!=null&&Number.isFinite(Number(a.level)),bh=b.level!==''&&b.level!=null&&Number.isFinite(Number(b.level));
+     if(ah&&!bh)return -1;if(!ah&&bh)return 1;if(!ah&&!bh)return 0;
+     const av=Number(a.level),bv=Number(b.level);
+     return sort==='levelAsc'?av-bv:bv-av;
+   });
+ }
+ return arr;
+}
+function renderDeckPool(){
+ const arr=filteredDeckPoolCards();
+ const pageMax=Math.max(0,Math.ceil(arr.length/DECK_POOL_PAGE_SIZE)-1);
+ if(deckPoolPage>pageMax)deckPoolPage=pageMax;
+ const start=deckPoolPage*DECK_POOL_PAGE_SIZE;
+ const pageRows=arr.slice(start,start+DECK_POOL_PAGE_SIZE);
+ $('#deck-card-pool').innerHTML=pageRows.length?pageRows.map(c=>`<div class="deck-card-row list-row"><div class="grow"><b>${esc(c.name)}</b><div class="muted">${esc(c.type)}${c.level?' / Lv'+esc(c.level):''}${c.race?' / '+esc(c.race):''}</div></div><div class="qty"><button class="btn small" data-pool-minus="${c.id}">−</button><b>${workingDeck.entries[c.id]||0}</b><button class="btn small" data-pool-plus="${c.id}">＋</button></div></div>`).join(''):'<div class="muted">該当カードなし</div>';
+ const info=$('#deck-pool-page-info'),prev=$('#deck-pool-prev'),next=$('#deck-pool-next');
+ if(arr.length){
+   const end=Math.min(start+DECK_POOL_PAGE_SIZE,arr.length);
+   info.textContent=`表示 ${start+1}〜${end} / ${arr.length}件`;
+ }else info.textContent='表示 0 / 0件';
+ prev.disabled=deckPoolPage<=0;
+ next.disabled=start+DECK_POOL_PAGE_SIZE>=arr.length;
+ prev.onclick=()=>{if(deckPoolPage<=0)return;deckPoolPage--;renderDeckPool();$('#deck-card-pool-top')?.scrollIntoView({behavior:'smooth',block:'start'})};
+ next.onclick=()=>{if(start+DECK_POOL_PAGE_SIZE>=arr.length)return;deckPoolPage++;renderDeckPool();$('#deck-card-pool-top')?.scrollIntoView({behavior:'smooth',block:'start'})};
+ bindDeckQty();
+}
+function resetDeckPoolPageAndRender(){deckPoolPage=0;renderDeckPool()}
 function bindDeckQty(){
  $$('[data-pool-plus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.poolPlus,1));$$('[data-pool-minus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.poolMinus,-1));$$('[data-current-plus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.currentPlus,1));$$('[data-current-minus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.currentMinus,-1));
 }
 function changeQty(id,d){const n=Math.max(0,(workingDeck.entries[id]||0)+d);if(n)workingDeck.entries[id]=n;else delete workingDeck.entries[id];renderDeckPool();renderDeckCurrent()}
 function renderDeckCurrent(){const entries=Object.entries(workingDeck.entries).filter(([,n])=>n>0);const total=entries.reduce((a,[,n])=>a+n,0);$('#deck-total').textContent=total+'枚';$('#deck-current').innerHTML=entries.length?entries.map(([id,n])=>{const c=cards.find(x=>x.id===id);return `<div class="list-row deck-card-row"><div class="grow"><b>${esc(c?.name||'削除済みカード')}</b><div class="muted">${esc(c?.type||'')}</div></div><div class="qty"><button class="btn small" data-current-minus="${id}">−</button><b>${n}</b><button class="btn small" data-current-plus="${id}">＋</button></div></div>`}).join(''):'<div class="muted">カードが入っていません。</div>';bindDeckQty()}
-$('#deck-type-filter').onchange=renderDeckPool;$('#deck-level-sort').onchange=renderDeckPool;$('#deck-card-search').oninput=renderDeckPool;$('#deck-race-search').oninput=renderDeckPool;$('#deck-level-search').oninput=renderDeckPool;
-$('#deck-select').onchange=()=>{const id=$('#deck-select').value;editingDeckId=id||null;if(id){const d=decks.find(x=>x.id===id);workingDeck={name:d.name,entries:{...d.entries}}}else workingDeck={name:'',entries:{}};renderDecks()};
-$('#new-deck').onclick=()=>{editingDeckId=null;workingDeck={name:'',entries:{}};renderDecks()};
+$('#deck-type-filter').onchange=resetDeckPoolPageAndRender;$('#deck-level-sort').onchange=resetDeckPoolPageAndRender;$('#deck-card-search').oninput=resetDeckPoolPageAndRender;$('#deck-race-search').oninput=resetDeckPoolPageAndRender;$('#deck-level-search').oninput=resetDeckPoolPageAndRender;
+$('#deck-select').onchange=()=>{const id=$('#deck-select').value;editingDeckId=id||null;deckPoolPage=0;if(id){const d=decks.find(x=>x.id===id);workingDeck={name:d.name,entries:{...d.entries}}}else workingDeck={name:'',entries:{}};renderDecks()};
+$('#new-deck').onclick=()=>{editingDeckId=null;deckPoolPage=0;workingDeck={name:'',entries:{}};renderDecks()};
 $('#save-deck').onclick=()=>{workingDeck.name=$('#deck-name').value.trim()||'名称未設定デッキ';if(editingDeckId){const i=decks.findIndex(x=>x.id===editingDeckId);decks[i]={id:editingDeckId,name:workingDeck.name,entries:{...workingDeck.entries}}}else{editingDeckId=uid('deck');decks.push({id:editingDeckId,name:workingDeck.name,entries:{...workingDeck.entries}})}save(LS_DECKS,decks);renderDecks();toast('デッキを保存しました')};
 $('#delete-deck').onclick=()=>{if(!editingDeckId||!confirm('このデッキを削除しますか？'))return;decks=decks.filter(x=>x.id!==editingDeckId);save(LS_DECKS,decks);editingDeckId=null;workingDeck={name:'',entries:{}};renderDecks()};
 $('#export-selected-deck').onclick=async()=>{if(!editingDeckId){toast('先にデッキを保存してください');return}const d=decks.find(x=>x.id===editingDeckId);if(!d)return;const txt=JSON.stringify(exportDeckObject(d),null,2);const ok=await copyText(txt);if(ok){$('#deck-io-status').textContent='デッキJSONをクリップボードへコピーしました。';toast('デッキJSONをコピーしました')}else{openModal(`<div class="modal-head"><h3>デッキJSON</h3><button class="btn" id="deck-copy-close">閉じる</button></div><p class="muted">自動コピーできなかったため、下の内容を手動でコピーしてください。</p><textarea id="deck-copy-fallback" class="json-area">${esc(txt)}</textarea>`);$('#deck-copy-close').onclick=closeModal;setTimeout(()=>{$('#deck-copy-fallback')?.select()},0)}};
@@ -689,7 +1007,7 @@ function renderPlayer(p,pi,reverse){const rows=reverse?['utility','hand','rulePl
 function renderCompressedPiles(piles,pi,z){return piles.map((pile,i)=>{const depth=Math.min(i,10),html=renderPile(pile,pi,z,i);return html.replace('draggable="true"',`draggable="true" style="left:${6+depth*4}px;top:${5+depth*2}px;z-index:${i+1}"`)}).join('')}
 function renderZone(p,pi,z){const collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];if(FIXED.includes(z)){return `<div class="zone ${collapsed?'collapsed':''}">${zoneHeader(pi,z)}${collapsed?'':`<div class="zone-body fixed" data-zone="${pi}|${z}">${p[z].map((pile,i)=>pile?renderPile(pile,pi,z,i):`<div class="slot" data-slot="${pi}|${z}|${i}">${i+1}</div>`).join('')}</div>`}</div>`}const handClass=z==='hand'?` hand-${p.handMode==='operation'?'operation':'scroll'}-mode`:'';const handAttr=z==='hand'?` data-hand-scroll="${pi}"`:'';return `<div class="zone">${zoneHeader(pi,z)}<div class="dropzone ${p[z].length?'':'empty'}${handClass}" data-zone="${pi}|${z}"${handAttr}>${p[z].map((pile,i)=>renderPile(pile,pi,z,i)).join('')}</div></div>`}
 function compactZoneBox(p,pi,z){return `<div class="deck-box">${zoneHeader(pi,z)}<div class="dropzone pile-zone ${p[z].length?'':'empty'}" data-zone="${pi}|${z}">${renderCompressedPiles(p[z],pi,z)}</div></div>`}
-function renderDeckBox(p,pi,z,label){const common=`<button class="btn small" data-deck-action="shuffle|${pi}|${z}">シャッフル</button><button class="btn small" data-deck-action="draw|${pi}|${z}">1枚引く</button><button class="btn small" data-deck-action="painFace|${pi}|${z}">PCへ(表)</button><button class="btn small" data-deck-action="painBack|${pi}|${z}">PCへ(裏)</button><button class="btn small" data-deck-action="browse|${pi}|${z}">中を見る</button><button class="btn small" data-deck-action="look|${pi}|${z}">上からX枚</button>`;const extra=z==='otherDeck'?`<button class="btn small" data-deck-action="rulePlus|${pi}|${z}">RPに追加</button>`:`<button class="btn small" data-deck-action="picktop|${pi}|${z}">一番上へ</button><button class="btn small" data-deck-action="pickbottom|${pi}|${z}">一番下へ</button>`;return `<div class="deck-box ${z==='deck'?'deck-box-main':''}" data-zone="${pi}|${z}"><h4>${label} <span>${physicalCount(p[z])}枚</span></h4><div class="deck-controls">${common}${extra}</div><div class="deck-drop-note">ドラッグで戻すと一番下</div></div>`}
+function renderDeckBox(p,pi,z,label){const count=physicalCount(p[z]),empty=count<=0;const common=`<button class="btn small" data-deck-action="shuffle|${pi}|${z}">シャッフル</button><button class="btn small" data-deck-action="draw|${pi}|${z}">1枚引く</button><button class="btn small" data-deck-action="painFace|${pi}|${z}">PCへ(表)</button><button class="btn small" data-deck-action="painBack|${pi}|${z}">PCへ(裏)</button><button class="btn small" data-deck-action="browse|${pi}|${z}">中を見る</button><button class="btn small" data-deck-action="look|${pi}|${z}">上からX枚</button>`;const extra=z==='otherDeck'?`<button class="btn small" data-deck-action="rulePlus|${pi}|${z}">RPに追加</button>`:`<button class="btn small" data-deck-action="topToGrave|${pi}|${z}" ${empty?'disabled':''}>1枚墓地</button><button class="btn small" data-deck-action="topToBanish|${pi}|${z}" ${empty?'disabled':''}>1枚消失</button>`;return `<div class="deck-box ${z==='deck'?'deck-box-main':''}" data-zone="${pi}|${z}"><h4>${label} <span>${count}枚</span></h4><div class="deck-controls">${common}${extra}</div><div class="deck-drop-note">ドラッグで戻すと一番下</div></div>`}
 function renderUtility(p,pi){return `<div class="utility-grid"><div class="deck-pair">${renderDeckBox(p,pi,'deck','デッキ')}${renderDeckBox(p,pi,'otherDeck','その他デッキ')}</div><div class="grave-banish-pair">${compactZoneBox(p,pi,'grave')}${compactZoneBox(p,pi,'banish')}</div></div>`}
 function physicalCount(arr){return arr.reduce((a,p)=>a+p.cards.length,0)}
 function topCard(pile){return pile.cards[0]}
@@ -952,7 +1270,7 @@ function openDetail(pi,z,index,cardIndex=0,navIds){const pile=getPile(pi,z,index
  else if(!detailNav||detailNav.pi!==pi||detailNav.z!==z||!detailNav.ids.includes(c.instanceId))detailNav={pi,z,ids:zoneDetailIds(pi,z)};
  if(!detailNav.ids.includes(c.instanceId))detailNav.ids.push(c.instanceId);
  const navPos=detailNav.ids.indexOf(c.instanceId),navTotal=detailNav.ids.length;
- const pow=c.power?Number(c.power)+(Number(c.powerMod)||0):'';openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><h3>${esc(c.name)}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(c.level||'-')}</span><span class="pill">POWER ${pow||'-'}</span></div><div class="muted">${esc(c.race||'種族なし')}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${esc(c.effect||'効果テキストなし')}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deck">デッキ下へ</button></div><label style="margin-top:10px">POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h3>重なり</h3><div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span>${i+1}</span><div><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}</div></div><div><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div><h3>カウンター</h3><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button></div></div>`);
+ const pow=c.power?Number(c.power)+(Number(c.powerMod)||0):'';openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><h3>${esc(c.name)}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(c.level||'-')}</span><span class="pill">POWER ${pow||'-'}</span></div><div class="muted">${esc(c.race||'種族なし')}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${esc(c.effect||'効果テキストなし')}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><label style="margin-top:10px">POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h3>重なり</h3><div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span>${i+1}</span><div><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}</div></div><div><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div><h3>カウンター</h3><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button></div></div>`);
  $('#detail-close').onclick=closeModal;
  const moveDetailNav=step=>{if(!detailNav)return;const pos=detailNav.ids.indexOf(c.instanceId),id=detailNav.ids[pos+step];if(!id)return;const loc=findCardInstance(detailNav.pi,detailNav.z,id);if(loc)openDetail(detailNav.pi,detailNav.z,loc.index,loc.cardIndex,detailNav.ids)};
  if($('#detail-prev'))$('#detail-prev').onclick=()=>moveDetailNav(-1);
@@ -966,7 +1284,8 @@ function quickMoveFromDetail(dest){
  const pile=getPile(ctx.pi,ctx.z,ctx.index);
  if(!pile||!pile.cards[ctx.cardIndex])return;
  const card=removeCardAt(ctx.pi,ctx.z,ctx.index,ctx.cardIndex);
- if(dest==='deck')addAsPile(ctx.pi,'deck',card,{position:'bottom'});
+ if(dest==='deckTop')addAsPile(ctx.pi,'deck',card,{position:'top'});
+ else if(dest==='deckBottom')addAsPile(ctx.pi,'deck',card,{position:'bottom'});
  else addAsPile(ctx.pi,dest,card);
  $('#modal-layer').classList.remove('open');
  detailCtx=null;
@@ -988,7 +1307,16 @@ function openStackDialog(){const ctx={...detailCtx},srcPile=getPile(ctx.pi,ctx.z
 // Deck actions
 function takeTopCard(pi,z='deck'){const d=board.players[pi][z];if(!d.length)return null;const c=d[0].cards.shift();if(!d[0].cards.length)d.shift();return c}
 function shuffleDeck(pi,z='deck'){const d=board.players[pi][z],all=[];d.forEach(p=>p.cards.forEach(c=>all.push(c)));for(let i=all.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[all[i],all[j]]=[all[j],all[i]]}board.players[pi][z]=all.map(c=>({id:uid('pile'),cards:[c]}))}
-function deckAction(a,pi,z='deck'){if(a==='shuffle'){shuffleDeck(pi,z);renderBoard();toast(`${ZONE_LABELS[z]}をシャッフルしました`)}else if(a==='draw'){const c=takeTopCard(pi,z);if(c)addAsPile(pi,'hand',c);renderBoard()}else if(a==='painFace'||a==='painBack'){const c=takeTopCard(pi,z);if(c){c.faceDown=a==='painBack';addAsPile(pi,'pain',c);toast(a==='painBack'?'PCへ裏向きで1枚追加しました':'PCへ表向きで1枚追加しました')}renderBoard()}else if(a==='rulePlus'&&z==='otherDeck'){const c=takeTopCard(pi,z);if(c){c.faceDown=false;addAsPile(pi,'rulePlus',c);toast('RPに1枚追加しました')}renderBoard()}else if(a==='browse')browseDeck(pi,z);else if(a==='look')lookTopX(pi,z);else if(a==='picktop'||a==='pickbottom')pickCardForDeck(pi,a==='picktop'?'top':'bottom',z)}
+function deckAction(a,pi,z='deck'){
+ if(a==='shuffle'){shuffleDeck(pi,z);renderBoard();toast(`${ZONE_LABELS[z]}をシャッフルしました`)}
+ else if(a==='draw'){const c=takeTopCard(pi,z);if(c)addAsPile(pi,'hand',c);renderBoard()}
+ else if(a==='painFace'||a==='painBack'){const c=takeTopCard(pi,z);if(c){c.faceDown=a==='painBack';addAsPile(pi,'pain',c);toast(a==='painBack'?'PCへ裏向きで1枚追加しました':'PCへ表向きで1枚追加しました')}renderBoard()}
+ else if(a==='rulePlus'&&z==='otherDeck'){const c=takeTopCard(pi,z);if(c){c.faceDown=false;addAsPile(pi,'rulePlus',c);toast('RPに1枚追加しました')}renderBoard()}
+ else if(a==='topToGrave'&&z==='deck'){const c=takeTopCard(pi,z);if(c){c.faceDown=false;c.rested=false;addAsPile(pi,'grave',c)}renderBoard()}
+ else if(a==='topToBanish'&&z==='deck'){const c=takeTopCard(pi,z);if(c){c.faceDown=false;c.rested=false;addAsPile(pi,'banish',c)}renderBoard()}
+ else if(a==='browse')browseDeck(pi,z);
+ else if(a==='look')lookTopX(pi,z);
+}
 function browseDeck(pi,z='deck'){
  browseSession={pi,z,field:'name',query:'',typeValue:''};
  openModal(`<div class="modal-head"><h3>${ZONE_LABELS[z]}の中を見る</h3><button class="btn" id="browse-close">閉じる</button></div>
@@ -1114,11 +1442,12 @@ function pickCardForDeck(targetPi,pos,targetZone='deck'){const options=allPileOp
 function openTokenCreator(baseCard=null,defaultPlayer=0){
  if(!board)return;
  const base=baseCard||{};
+ const defaultTokenName=baseCard?`${base.name||'トークン'}（コピー）`:(base.name||'トークン');
  const title=baseCard?'カードを元にトークン作成':'トークン作成';
  openModal(`<div class="modal-head"><h3>${title}</h3><button class="btn" id="token-close">閉じる</button></div>
  <p class="muted">${baseCard?'元カードの情報を引き継いでいます。必要な項目だけ変更して作成できます。':'盤面上だけで使う一時的なトークンを作成します。'}</p>
  <div class="form-grid">
-   <label class="wide">名前<input id="token-name" value="${esc(base.name||'トークン')}"></label>
+   <label class="wide">名前<input id="token-name" value="${esc(defaultTokenName)}"></label>
    <label>レベル<input id="token-level" inputmode="numeric" value="${esc(base.level||'')}"></label>
    <label>パワー<input id="token-power" inputmode="numeric" value="${esc(base.power||'')}"></label>
    <label>種族<input id="token-race" value="${esc(base.race||'')}"></label>
@@ -1156,7 +1485,7 @@ $('#board-zoom-reset').onclick=()=>setBoardZoom(1);
 $('#reset-board').onclick=()=>{if(!board)return;const s=board.setup;if(!s){board=null;detailCtx=null;inspectSession=null;nav('setup');return}board={mode:s.mode,setup:{...s},players:[makePlayer(s.deck1,0,s.favorite1,s.otherDeck1)],note:'',turn:1};if(s.mode===2)board.players.push(makePlayer(s.deck2,1,s.favorite2,s.otherDeck2));detailCtx=null;inspectSession=null;$('#modal-layer').classList.remove('open');renderBoard();toast('盤面を初期状態に戻しました')};
 
 // initialize
-renderCards();renderDecks();renderSetup();
+renderRegisterHistory();renderCards();renderDecks();renderSetup();
 })();
 </script>
 
