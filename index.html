@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v3.3</title>
+<title>みん会TCG Simulator v3.5</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -668,12 +668,12 @@ body.ui-text-large .appbar button{font-size:14px}
 }
 
 
-.collection-grid.gallery[data-page-size="1"] .collection-card{width:min(100%,560px);justify-self:center}
-.collection-grid.gallery[data-page-size="2"] .collection-card{width:min(100%,430px);justify-self:center}
-.collection-grid.gallery[data-page-size="4"] .collection-card{width:min(100%,340px);justify-self:center}
+
+
+
 @media(max-width:650px){
  .collection-grid.gallery[data-page-size="1"]{grid-template-columns:1fr}
- .collection-grid.gallery[data-page-size="1"] .collection-card{width:min(100%,420px)}
+ 
 }
 
 
@@ -729,6 +729,98 @@ body.ui-text-large .appbar button{font-size:14px}
  .album-arrange-row .actions{width:100%;justify-content:flex-end}
 }
 
+
+/* v3.3.1 zoom-out / custom card types */
+.custom-type-fields{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:end;padding:10px;border:1px dashed var(--line);border-radius:10px;background:rgba(0,0,0,.10)}
+.custom-type-fields[hidden]{display:none!important}
+.custom-type-fields label{margin:0}
+.custom-type-colon{font-size:24px;font-weight:800;padding-bottom:7px;color:var(--muted)}
+.custom-type-preview{grid-column:1/-1}
+.collection-zoom-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.collection-grid.gallery .collection-card{width:calc(100% * var(--collection-zoom,1));justify-self:center}
+.collection-grid.list-mode .collection-list-row{width:calc(100% * var(--collection-zoom,1));justify-self:center}
+.collection-grid.gallery[data-page-size="1"] .collection-card{width:min(calc(100% * var(--collection-zoom,1)),560px)}
+.collection-grid.gallery[data-page-size="2"] .collection-card{width:min(calc(100% * var(--collection-zoom,1)),430px)}
+.collection-grid.gallery[data-page-size="4"] .collection-card{width:min(calc(100% * var(--collection-zoom,1)),340px)}
+@media(max-width:650px){
+ .custom-type-fields{grid-template-columns:1fr}
+ .custom-type-colon{display:none}
+ .collection-book-top-actions{justify-content:flex-start}
+ .collection-zoom-controls{width:100%}
+ .collection-grid.gallery[data-page-size="1"] .collection-card{width:min(calc(100% * var(--collection-zoom,1)),420px)}
+}
+
+
+/* v3.5 Collection book themes */
+.collection-theme-label{font-weight:700;margin:4px 0 8px}
+.collection-theme-picker{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.collection-theme-choice{cursor:pointer;min-width:0}
+.collection-theme-choice input{position:absolute;opacity:0;pointer-events:none}
+.collection-theme-swatch{display:flex;min-height:118px;flex-direction:column;justify-content:flex-end;padding:10px;border:2px solid transparent;border-radius:12px;overflow:hidden;position:relative;background:#25272d;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.collection-theme-swatch::before{content:"";position:absolute;inset:0;opacity:.88}
+.collection-theme-swatch i{position:absolute;inset:10px;border:1px solid rgba(255,255,255,.28);border-radius:7px}
+.collection-theme-swatch b,.collection-theme-swatch small{position:relative;z-index:1;text-shadow:0 1px 4px rgba(0,0,0,.9)}
+.collection-theme-swatch b{font-size:13px}
+.collection-theme-swatch small{font-size:10px;color:#e3e5ea;margin-top:3px;line-height:1.3}
+.collection-theme-choice.selected .collection-theme-swatch{border-color:var(--accent);box-shadow:0 0 0 2px rgba(120,167,255,.18)}
+.collection-theme-choice:hover .collection-theme-swatch{transform:translateY(-1px)}
+
+.theme-grimoire .collection-theme-swatch::before,.collection-theme-choice.theme-grimoire .collection-theme-swatch::before{background:radial-gradient(circle at 50% 36%,rgba(211,171,71,.45) 0 2%,transparent 3% 13%,rgba(211,171,71,.28) 14% 15%,transparent 16%),linear-gradient(135deg,#20130f,#080706 70%)}
+.theme-grimoire2 .collection-theme-swatch::before,.collection-theme-choice.theme-grimoire2 .collection-theme-swatch::before{background:radial-gradient(circle at 68% 28%,#8a55c7 0 8%,transparent 9%),linear-gradient(135deg,#f0cf51,#d7a52c 55%,#6f3d99)}
+.theme-real-binder .collection-theme-swatch::before,.collection-theme-choice.theme-real-binder .collection-theme-swatch::before{background:repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 1px,transparent 1px 35px),linear-gradient(135deg,#394657,#1d252e)}
+.theme-hobby-anime .collection-theme-swatch::before,.collection-theme-choice.theme-hobby-anime .collection-theme-swatch::before{background:linear-gradient(120deg,transparent 38%,#56e6ff 39% 42%,transparent 43% 57%,#ff4ca1 58% 61%,transparent 62%),linear-gradient(135deg,#10274c,#461b63)}
+.theme-starry .collection-theme-swatch::before,.collection-theme-choice.theme-starry .collection-theme-swatch::before{background:radial-gradient(circle at 20% 20%,white 0 1px,transparent 2px),radial-gradient(circle at 70% 30%,#9fd2ff 0 1px,transparent 2px),radial-gradient(circle at 42% 72%,white 0 1px,transparent 2px),linear-gradient(#080b25,#1a164d)}
+.theme-stone .collection-theme-swatch::before,.collection-theme-choice.theme-stone .collection-theme-swatch::before{background:linear-gradient(72deg,transparent 46%,rgba(30,25,18,.5) 47% 49%,transparent 50%),linear-gradient(135deg,#8e8778,#4c4942)}
+.theme-classic .collection-theme-swatch::before,.collection-theme-choice.theme-classic .collection-theme-swatch::before{background:linear-gradient(135deg,#5b241f,#281512 60%,#193424)}
+.theme-dragon .collection-theme-swatch::before,.collection-theme-choice.theme-dragon .collection-theme-swatch::before{background:repeating-radial-gradient(ellipse at 20% 20%,#5d1515 0 8px,#1a0d0d 9px 17px),linear-gradient(#321010,#090707)}
+.theme-magical-girl .collection-theme-swatch::before,.collection-theme-choice.theme-magical-girl .collection-theme-swatch::before{background:radial-gradient(circle at 70% 23%,#fff 0 4%,#ffd9ef 5% 9%,transparent 10%),linear-gradient(135deg,#fff5fb,#efacd7 55%,#91d7ef)}
+.theme-blue-sky .collection-theme-swatch::before,.collection-theme-choice.theme-blue-sky .collection-theme-swatch::before{background:radial-gradient(ellipse at 25% 35%,#fff 0 13%,transparent 14%),radial-gradient(ellipse at 70% 55%,#fff 0 10%,transparent 11%),linear-gradient(#6ab9ef,#d8f2ff)}
+.theme-cyber .collection-theme-swatch::before,.collection-theme-choice.theme-cyber .collection-theme-swatch::before{background:repeating-linear-gradient(90deg,transparent 0 18px,rgba(57,240,255,.25) 19px 20px),repeating-linear-gradient(0deg,transparent 0 18px,rgba(255,57,212,.17) 19px 20px),linear-gradient(#07121e,#120b27)}
+.theme-robot .collection-theme-swatch::before,.collection-theme-choice.theme-robot .collection-theme-swatch::before{background:linear-gradient(45deg,transparent 44%,rgba(255,178,46,.6) 45% 49%,transparent 50%),repeating-linear-gradient(90deg,#4b5158 0 28px,#2c3036 29px 31px)}
+.theme-japanese .collection-theme-swatch::before,.collection-theme-choice.theme-japanese .collection-theme-swatch::before{background:radial-gradient(circle at 76% 25%,#d7382e 0 10%,transparent 11%),linear-gradient(135deg,#eee4cd,#d7c3a0 60%,#20394d)}
+.theme-stained-glass .collection-theme-swatch::before,.collection-theme-choice.theme-stained-glass .collection-theme-swatch::before{background:conic-gradient(from 20deg at 50% 45%,#c83155,#f2b840,#53acd1,#693a9e,#4b9b6b,#c83155)}
+.theme-fantasy .collection-theme-swatch::before,.collection-theme-choice.theme-fantasy .collection-theme-swatch::before{background:radial-gradient(circle at 70% 30%,rgba(49,94,57,.45) 0 12%,transparent 13%),linear-gradient(135deg,#a28354,#5d4328 65%,#26382a)}
+.theme-fantasy2 .collection-theme-swatch::before,.collection-theme-choice.theme-fantasy2 .collection-theme-swatch::before{background:radial-gradient(circle at 50% 30%,#6e96d7 0 6%,#d7b85f 7% 10%,transparent 11%),linear-gradient(135deg,#f3eee1,#223c72 66%,#c4a653)}
+
+.collection-book-shell,.album-book-cover,.collection-cover-book{transition:background .18s,border-color .18s,box-shadow .18s,color .18s}
+.collection-book-shell.theme-grimoire,.theme-grimoire .collection-cover-book{background:radial-gradient(circle at 50% 18%,rgba(202,151,55,.08),transparent 25%),linear-gradient(135deg,#20120d,#090706 72%);border-color:#705a32}
+.collection-book-shell.theme-grimoire2,.theme-grimoire2 .collection-cover-book{background:radial-gradient(circle at 80% 15%,rgba(112,45,160,.22),transparent 20%),linear-gradient(135deg,#e4bf47,#b98027 70%,#5e337d);border-color:#ead783;color:#24152b}
+.collection-book-shell.theme-real-binder,.theme-real-binder .collection-cover-book{background:linear-gradient(135deg,#34404d,#171d23 72%);border-color:#6a7988}
+.collection-book-shell.theme-hobby-anime,.theme-hobby-anime .collection-cover-book{background:linear-gradient(125deg,transparent 37%,rgba(72,221,255,.17) 38% 41%,transparent 42% 60%,rgba(255,65,162,.13) 61% 64%,transparent 65%),linear-gradient(135deg,#0b2343,#35124d);border-color:#4ed8ef}
+.collection-book-shell.theme-starry,.theme-starry .collection-cover-book{background:radial-gradient(circle at 22% 24%,#fff 0 1px,transparent 2px),radial-gradient(circle at 78% 32%,#98cfff 0 1px,transparent 2px),radial-gradient(circle at 48% 76%,#fff 0 1px,transparent 2px),linear-gradient(#070b23,#181341);border-color:#6b77ad}
+.collection-book-shell.theme-stone,.theme-stone .collection-cover-book{background:linear-gradient(74deg,transparent 47%,rgba(40,35,29,.28) 48% 49%,transparent 50%),linear-gradient(135deg,#777267,#413f3a);border-color:#928a77}
+.collection-book-shell.theme-classic,.theme-classic .collection-cover-book{background:linear-gradient(135deg,#4f201c,#241311 62%,#173126);border-color:#9b7c4e}
+.collection-book-shell.theme-dragon,.theme-dragon .collection-cover-book{background:repeating-radial-gradient(ellipse at 15% 20%,rgba(118,24,24,.8) 0 13px,rgba(25,12,12,.8) 14px 27px),linear-gradient(#2a0c0c,#080606);border-color:#a56b38}
+.collection-book-shell.theme-magical-girl,.theme-magical-girl .collection-cover-book{background:radial-gradient(circle at 85% 10%,rgba(255,255,255,.8) 0 3%,rgba(255,196,232,.4) 4% 8%,transparent 9%),linear-gradient(135deg,#fff3fb,#e8a9d3 58%,#86cde9);border-color:#fff0bc;color:#3b2741}
+.collection-book-shell.theme-blue-sky,.theme-blue-sky .collection-cover-book{background:radial-gradient(ellipse at 18% 25%,rgba(255,255,255,.92) 0 10%,transparent 11%),radial-gradient(ellipse at 75% 42%,rgba(255,255,255,.75) 0 9%,transparent 10%),linear-gradient(#61b5ec,#d7f1ff);border-color:#f3fbff;color:#18344b}
+.collection-book-shell.theme-cyber,.theme-cyber .collection-cover-book{background:repeating-linear-gradient(90deg,transparent 0 28px,rgba(60,238,255,.07) 29px 30px),repeating-linear-gradient(0deg,transparent 0 28px,rgba(244,67,208,.06) 29px 30px),linear-gradient(#06121d,#110923);border-color:#35e6f2}
+.collection-book-shell.theme-robot,.theme-robot .collection-cover-book{background:linear-gradient(45deg,transparent 45%,rgba(233,156,33,.13) 46% 49%,transparent 50%),repeating-linear-gradient(90deg,#3e444b 0 65px,#252a2f 66px 69px);border-color:#8f969e}
+.collection-book-shell.theme-japanese,.theme-japanese .collection-cover-book{background:radial-gradient(circle at 82% 15%,rgba(198,46,39,.75) 0 8%,transparent 9%),linear-gradient(135deg,#dfd4bc,#bca786 62%,#183248);border-color:#a36e39;color:#2c211a}
+.collection-book-shell.theme-stained-glass,.theme-stained-glass .collection-cover-book{background:linear-gradient(rgba(7,7,11,.68),rgba(7,7,11,.72)),conic-gradient(from 15deg at 50% 40%,#ba294d,#e8ad34,#3aa1cf,#61338f,#3c8d63,#ba294d);border-color:#d6bd76}
+.collection-book-shell.theme-fantasy,.theme-fantasy .collection-cover-book{background:radial-gradient(circle at 78% 22%,rgba(44,91,55,.2) 0 13%,transparent 14%),linear-gradient(135deg,#8b7047,#503920 68%,#223529);border-color:#a98751}
+.collection-book-shell.theme-fantasy2,.theme-fantasy2 .collection-cover-book{background:radial-gradient(circle at 50% 16%,rgba(101,139,205,.24) 0 6%,rgba(208,177,84,.16) 7% 11%,transparent 12%),linear-gradient(135deg,#e9e3d7,#1d376d 70%,#aa8d3c);border-color:#d4bd72}
+
+.album-book-cover.theme-grimoire{background:radial-gradient(circle at 50% 32%,rgba(219,172,62,.3) 0 2%,transparent 3% 18%,rgba(219,172,62,.2) 19% 20%,transparent 21%),linear-gradient(145deg,#27140e,#0b0806)}
+.album-book-cover.theme-grimoire2{background:radial-gradient(circle at 72% 24%,#7846a7 0 7%,transparent 8%),linear-gradient(145deg,#e7c446,#bb8128 68%,#653683)}
+.album-book-cover.theme-real-binder{background:linear-gradient(145deg,#445365,#202932)}
+.album-book-cover.theme-hobby-anime{background:linear-gradient(120deg,transparent 38%,#45dcff 39% 41%,transparent 42% 61%,#ed4aa3 62% 64%,transparent 65%),linear-gradient(145deg,#112b54,#43175e)}
+.album-book-cover.theme-starry{background:radial-gradient(circle at 20% 20%,white 0 1px,transparent 2px),radial-gradient(circle at 72% 32%,#8acaff 0 1px,transparent 2px),linear-gradient(#090d2c,#161044)}
+.album-book-cover.theme-stone{background:linear-gradient(72deg,transparent 47%,rgba(37,31,27,.38) 48% 49%,transparent 50%),linear-gradient(145deg,#888274,#4b4841)}
+.album-book-cover.theme-classic{background:linear-gradient(145deg,#5a241f,#261310 68%,#173024)}
+.album-book-cover.theme-dragon{background:repeating-radial-gradient(ellipse at 18% 20%,#681818 0 10px,#180b0b 11px 21px)}
+.album-book-cover.theme-magical-girl{background:radial-gradient(circle at 74% 25%,#fff 0 4%,#f8c8e4 5% 9%,transparent 10%),linear-gradient(145deg,#fff3fb,#e7a5cf 60%,#80c9e7)}
+.album-book-cover.theme-blue-sky{background:radial-gradient(ellipse at 26% 35%,#fff 0 12%,transparent 13%),linear-gradient(#60b7ee,#d9f3ff)}
+.album-book-cover.theme-cyber{background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(47,232,246,.19) 23px 24px),linear-gradient(#071622,#120b29)}
+.album-book-cover.theme-robot{background:repeating-linear-gradient(90deg,#4c5259 0 45px,#292e33 46px 49px)}
+.album-book-cover.theme-japanese{background:radial-gradient(circle at 77% 25%,#c83b32 0 10%,transparent 11%),linear-gradient(145deg,#e7dcc4,#bda887 62%,#1a3348)}
+.album-book-cover.theme-stained-glass{background:linear-gradient(rgba(8,8,12,.36),rgba(8,8,12,.48)),conic-gradient(from 15deg,#ba2d50,#e7ad37,#3aa4cc,#633795,#3e9167,#ba2d50)}
+.album-book-cover.theme-fantasy{background:linear-gradient(145deg,#8d7148,#503921 66%,#223429)}
+.album-book-cover.theme-fantasy2{background:radial-gradient(circle at 50% 28%,#678fd0 0 6%,#c9aa52 7% 10%,transparent 11%),linear-gradient(145deg,#eee9dd,#203a70 68%,#aa8e40)}
+
+.theme-grimoire2 .collection-source-title,.theme-grimoire2 .muted,.theme-magical-girl .collection-source-title,.theme-magical-girl .muted,.theme-blue-sky .collection-source-title,.theme-blue-sky .muted,.theme-japanese .collection-source-title,.theme-japanese .muted{color:inherit}
+@media(max-width:900px){.collection-theme-picker{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.collection-theme-picker{grid-template-columns:repeat(2,minmax(0,1fr))}.collection-theme-swatch{min-height:105px}}
+
 </style>
 </head>
 <body>
@@ -737,7 +829,7 @@ body.ui-text-large .appbar button{font-size:14px}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v3.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v3.5 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -807,7 +899,13 @@ body.ui-text-large .appbar button{font-size:14px}
       <div id="tool-pane-manual" class="tool-pane">
         <form id="card-form" class="form-grid">
           <label class="wide">カード名<input id="card-name" required /></label>
-          <label>種類<select id="card-type"><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option></select></label>
+          <label>種類<select id="card-type"><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="__custom__">その他（自由入力）</option></select></label>
+          <div class="wide custom-type-fields" id="card-custom-type-fields" hidden>
+            <label>自由種類・左側<input id="card-custom-type-left" placeholder="自由入力"></label>
+            <span class="custom-type-colon">:</span>
+            <label>自由種類・右側<input id="card-custom-type-right" placeholder="自由入力"></label>
+            <div class="muted custom-type-preview">保存形式：<span id="card-custom-type-preview">左側:右側</span></div>
+          </div>
           <label>Lv<input id="card-level" inputmode="numeric" /></label>
           <label>パワー<input id="card-power" inputmode="numeric" /></label>
           <label>種族<input id="card-race" placeholder="例：神秘 / 伝承" /></label>
@@ -824,7 +922,7 @@ body.ui-text-large .appbar button{font-size:14px}
       </div>
 
       <div id="tool-pane-text" class="tool-pane active">
-        <p class="muted">カード文章をそのまま貼り付けて変換できます。【カード名】から始まる化けさん式と、カード名 → 「レベル4 パワー5000」→ 種族 → 効果のゼリー君式に対応しています。「レアリティ:」「フレーバー:」も読み取れます。複数枚はカードごとに空行を1つ入れてください。変換後は登録前に内容を編集できます。</p>
+        <p class="muted">カード文章をそのまま貼り付けて変換できます。【カード名】から始まる化けさん式と、カード名 → 「レベル4 パワー5000」→ 種族 → 効果のゼリー君式に対応しています。「レアリティ:」「フレーバー:」に加え、自由種類は「種類:左側:右側」で読み取れます。複数枚はカードごとに空行を1つ入れてください。変換後は登録前に内容を編集できます。</p>
         <details class="import-format-help">
           <summary>ゼリー君式の例</summary>
           <pre>毒殿の大僧正
@@ -880,7 +978,8 @@ body.ui-text-large .appbar button{font-size:14px}
     <div class="panel card-manager-panel">
       <div class="form-grid card-manager-search-grid">
         <label class="wide">カード名<input id="card-manager-search" type="search" placeholder="カード名の一部を入力" autocomplete="off"></label>
-        <label>種類<select id="card-manager-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option></select></label>
+        <label>種類<select id="card-manager-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
+        <label id="card-manager-custom-type-wrap" hidden>その他の種類<input id="card-manager-custom-type" placeholder="左側:右側 を部分一致検索" autocomplete="off"></label>
         <label>Lv<input id="card-manager-level" inputmode="numeric" placeholder="完全一致"></label>
         <label>種族<input id="card-manager-race" placeholder="複数語はすべて含むカード" autocomplete="off"></label>
         <label>レアリティ<input id="card-manager-rarity" placeholder="部分一致" autocomplete="off"></label>
@@ -938,7 +1037,8 @@ body.ui-text-large .appbar button{font-size:14px}
       <div class="collapsible-panel-body">
         <div class="form-grid collection-filter-grid">
           <label class="wide">カード名<input id="collection-search-name" type="search" placeholder="カード名の一部を入力" autocomplete="off"></label>
-          <label>種類<select id="collection-search-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option></select></label>
+          <label>種類<select id="collection-search-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
+          <label id="collection-custom-type-wrap" hidden>その他の種類<input id="collection-search-custom-type" placeholder="左側:右側 を部分一致検索" autocomplete="off"></label>
           <label>種族<input id="collection-search-race" placeholder="例：神秘 伝承（AND検索）" autocomplete="off"></label>
           <label>レアリティ<input id="collection-search-rarity" placeholder="部分一致" autocomplete="off"></label>
           <label>画像<select id="collection-search-image"><option value="all">すべて</option><option value="with">画像あり</option><option value="without">画像なし</option></select></label>
@@ -968,6 +1068,11 @@ body.ui-text-large .appbar button{font-size:14px}
         </div>
         <div class="collection-book-top-actions">
           <div id="collection-view-status" class="pill"></div>
+          <div id="collection-zoom-controls" class="collection-zoom-controls">
+            <button class="btn small" type="button" id="collection-zoom-out">縮小 −</button>
+            <span id="collection-zoom-value" class="pill">100%</span>
+            <button class="btn small" type="button" id="collection-zoom-reset">標準に戻す</button>
+          </div>
           <div id="collection-album-actions" class="actions"></div>
         </div>
       </div>
@@ -993,7 +1098,7 @@ body.ui-text-large .appbar button{font-size:14px}
         <div id="deck-io-status" class="muted"></div>
         <div class="section-head" style="margin-top:12px"><h2 style="font-size:17px">カード追加</h2></div>
         <div class="form-grid" style="margin-bottom:8px">
-          <label>種類<select id="deck-type-filter"><option value="all">全種類</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option></select></label>
+          <label>種類<select id="deck-type-filter"><option value="all">全種類</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
           <label>並び順<select id="deck-level-sort"><option value="default">登録順</option><option value="levelAsc">レベル昇順</option><option value="levelDesc">レベル降順</option></select></label>
           <label class="wide">カード名検索<input id="deck-card-search" placeholder="含まれる文字で検索"></label>
           <label>種族検索<input id="deck-race-search" placeholder="例：神秘" autocomplete="off"></label>
@@ -1269,8 +1374,8 @@ body.ui-text-large .appbar button{font-size:14px}
         <div class="panel">
           <h3 style="margin-top:0">カードテキスト</h3>
           <label class="board-follow-row"><input id="theme-copy-flavor" type="checkbox">ゼリー君式 / 化けさん式のコピーにフレーバーテキストを含める</label>
-          <label class="board-follow-row" style="margin-top:8px"><input id="theme-empty-flavor-divider" type="checkbox">フレーバー未入力時に「───」を表示する</label>
-          <p class="muted" style="margin-bottom:0">レアリティはコピー対象になりません。「───」はカードの実データには保存せず、未入力時だけ表示上で補います。</p>
+          <label class="board-follow-row" style="margin-top:8px"><input id="theme-empty-flavor-divider" type="checkbox">フレーバー先頭に「───」を自動表示する</label>
+          <p class="muted" style="margin-bottom:0">レアリティはコピー対象になりません。「───」はカードの実データには保存せず、表示・コピー時にフレーバーの先頭へ付けます。フレーバーが空欄の場合は「───」だけを表示します。</p>
         </div>
 
         <div class="panel">
@@ -1323,10 +1428,55 @@ body.ui-text-large .appbar button{font-size:14px}
 'use strict';
 const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01', LS_CARD_REGISTER_RECENT='minkai_tcg_card_register_recent_v16', LS_HAND_FOLLOW='minkai_tcg_hand_follow_v11', LS_BOARD_DISPLAY='minkai_tcg_board_display_v20', LS_THEME='minkai_tcg_theme_v27', LS_COLLECTION='minkai_tcg_collection_v32';
 const ZONE_LABELS={character:'キャラクター',pain:'ペインカウント',room:'ルーム',rulePlus:'ルールプラス',hand:'手札',deck:'デッキ',otherDeck:'その他デッキ',grave:'墓地',banish:'消失領域'};
+
+const CARD_FIXED_TYPES=['キャラクター','ルーム','ロール','ルールプラス','アナザーゲート'];
+function normalizeCustomTypePart(v=''){return String(v||'').trim()}
+function isValidCustomTypePart(v=''){
+ const s=normalizeCustomTypePart(v);
+ return !!s&&!/[:：\r\n]/.test(s);
+}
+function buildCustomCardType(left,right){
+ const a=normalizeCustomTypePart(left),b=normalizeCustomTypePart(right);
+ return isValidCustomTypePart(a)&&isValidCustomTypePart(b)?`${a}:${b}`:'';
+}
+function isCustomCardType(type=''){
+ const s=String(type||'').trim();
+ if(CARD_FIXED_TYPES.includes(s))return false;
+ return /^[^:：\r\n]+[:：][^:：\r\n]+$/.test(s);
+}
+function normalizeCardType(type=''){
+ const s=String(type||'').trim();
+ if(CARD_FIXED_TYPES.includes(s))return s;
+ if(isCustomCardType(s)){
+   const parts=s.split(/[:：]/);
+   return `${parts[0].trim()}:${parts[1].trim()}`;
+ }
+ return 'キャラクター';
+}
+function splitCustomCardType(type=''){
+ const s=normalizeCardType(type);
+ return isCustomCardType(s)?s.split(':'):['',''];
+}
+function cardTypeMatches(type,filter='all',customQuery=''){
+ const normalized=normalizeCardType(type),f=String(filter||'all');
+ if(f==='all'||!f)return true;
+ if(f==='other'){
+   if(!isCustomCardType(normalized))return false;
+   const q=String(customQuery||'').trim().toLocaleLowerCase();
+   return !q||normalized.toLocaleLowerCase().includes(q);
+ }
+ return normalized===f;
+}
+function cardTypeOptionsHtml(selected='',allowCustomChoice=false){
+ const s=normalizeCardType(selected),custom=isCustomCardType(s);
+ return CARD_FIXED_TYPES.map(t=>`<option value="${t}"${t===s?' selected':''}>${t}</option>`).join('')+
+   (allowCustomChoice?`<option value="__custom__"${custom?' selected':''}>その他（自由入力）</option>`:(custom?`<option value="${esc(s)}" selected>${esc(s)}</option>`:''));
+}
+
 const FIXED=['character','pain','room','rulePlus'];
 const COLLAPSIBLE=['pain','room','rulePlus'];
 let cards=load(LS_CARDS,[]), decks=load(LS_DECKS,[]), recentCardIds=load(LS_CARD_RECENT,[]), registeredRecentCardIds=load(LS_CARD_REGISTER_RECENT,[]), cardManagerShowAll=true, cardManagerPage=0, cardManagerDuplicateOnly=false, deckPoolPage=0, editingDeckId=null, workingDeck={name:'',entries:{},mainEnabled:true,otherEnabled:true,mainFavorite:false,otherFavorite:false};
-cards=Array.isArray(cards)?cards.map(c=>({...c,rarity:String(c?.rarity||''),flavor:String(c?.flavor||'')})):[];
+cards=Array.isArray(cards)?cards.map(c=>({...c,type:normalizeCardType(c?.type),rarity:String(c?.rarity||''),flavor:String(c?.flavor||'')})):[];
 save(LS_CARDS,cards);
 let handFollowPrefs=load(LS_HAND_FOLLOW,[true,true]);
 if(!Array.isArray(handFollowPrefs))handFollowPrefs=[true,true];
@@ -1518,26 +1668,61 @@ function markThemeDraftDirty(){
 function currentThemeForDisplay(){return themeDraft||themePrefs}
 
 
+
+const COLLECTION_BOOK_THEMES=[
+ {id:'grimoire',name:'魔導書風',desc:'黒革・古紙・金の魔法陣'},
+ {id:'grimoire2',name:'魔導書風2',desc:'黄色ベース・紫と金の魔術装飾'},
+ {id:'real-binder',name:'リアルバインダー風',desc:'透明ポケットとリング金具'},
+ {id:'hobby-anime',name:'ホビーアニメ風',desc:'鮮やかな発光ラインと競技デバイス感'},
+ {id:'starry',name:'星空風',desc:'濃紺の星空・星座・銀の縁'},
+ {id:'stone',name:'石板風',desc:'石材・亀裂・古代彫刻'},
+ {id:'classic',name:'クラシック風',desc:'古書・布張り・落ち着いた金装飾'},
+ {id:'dragon',name:'ドラゴン風',desc:'黒赤金・鱗・角・竜の背骨'},
+ {id:'magical-girl',name:'魔法少女風',desc:'白・桃・水色・宝石とリボン'},
+ {id:'blue-sky',name:'青空風',desc:'空色・白雲・柔らかな光'},
+ {id:'cyber',name:'サイバー風',desc:'黒紺・シアン・マゼンタのHUD'},
+ {id:'robot',name:'ロボット風',desc:'装甲・ボルト・工業機構'},
+ {id:'japanese',name:'和風',desc:'和紙・朱・藍・金箔・組紐'},
+ {id:'stained-glass',name:'ステンドグラス風',desc:'黒縁と色ガラスの光'},
+ {id:'fantasy',name:'ファンタジー風',desc:'冒険者の図鑑・地図・羊皮紙'},
+ {id:'fantasy2',name:'ファンタジー風2',desc:'王立図鑑・白紺金・宝石と紋章'}
+];
+function normalizeCollectionThemeId(id){
+ const s=String(id||'');
+ return COLLECTION_BOOK_THEMES.some(t=>t.id===s)?s:'real-binder';
+}
+function collectionThemeName(id){return COLLECTION_BOOK_THEMES.find(t=>t.id===normalizeCollectionThemeId(id))?.name||'リアルバインダー風'}
+function collectionThemePickerHtml(selected){
+ const s=normalizeCollectionThemeId(selected);
+ return `<div class="collection-theme-picker">${COLLECTION_BOOK_THEMES.map(t=>`<label class="collection-theme-choice theme-${t.id} ${t.id===s?'selected':''}"><input type="radio" name="collection-theme" value="${t.id}" ${t.id===s?'checked':''}><span class="collection-theme-swatch"><i></i><b>${t.name}</b><small>${t.desc}</small></span></label>`).join('')}</div>`;
+}
+function selectedCollectionThemeId(){return normalizeCollectionThemeId(document.querySelector('input[name="collection-theme"]:checked')?.value)}
+function bindCollectionThemePicker(){
+ $$('input[name="collection-theme"]').forEach(r=>r.onchange=()=>$$('.collection-theme-choice').forEach(x=>x.classList.toggle('selected',x.querySelector('input')?.checked)));
+}
+
 const COLLECTION_PAGE_SIZES=[1,2,4,6,9,12,16,24,36,48];
-function defaultCollectionView(){return {viewMode:'gallery',showNames:true,pageSize:9,sort:'newest',spread:true}}
+function defaultCollectionView(){return {viewMode:'gallery',showNames:true,pageSize:9,sort:'newest',spread:true,zoom:100}}
 function normalizeCollectionView(raw={}){
  return {
    viewMode:raw.viewMode==='list'?'list':'gallery',
    showNames:raw.showNames!==false,
    pageSize:COLLECTION_PAGE_SIZES.includes(Number(raw.pageSize))?Number(raw.pageSize):9,
    sort:['newest','oldest','name','levelAsc','levelDesc','powerAsc','powerDesc','type','favorite'].includes(raw.sort)?raw.sort:'newest',
-   spread:raw.spread!==false
+   spread:raw.spread!==false,
+   zoom:[50,60,70,80,90,100].includes(Number(raw.zoom))?Number(raw.zoom):100
  };
 }
 function normalizeSpecialBook(raw={},key='all',validIds=null){
  const valid=id=>!id||(validIds&&validIds.has(id));
  const id=valid(String(raw.coverCardId||''))?String(raw.coverCardId||''):'';
+ const defaultShow=key!=='all';
  return {
    subtitle:String(raw.subtitle||''),
    description:String(raw.description||''),
    coverCardId:id,
-   showCoverOnOpen:raw.showCoverOnOpen!==false,
-   themeId:String(raw.themeId||'real-binder')
+   showCoverOnOpen:raw.showCoverOnOpen===undefined?defaultShow:raw.showCoverOnOpen!==false,
+   themeId:normalizeCollectionThemeId(raw.themeId)
  };
 }
 function normalizeAlbum(raw={},validIds=null){
@@ -1563,7 +1748,7 @@ function normalizeAlbum(raw={},validIds=null){
    orderMode:mode,
    cards:albumCards,
    view:normalizeCollectionView(raw.view||{}),
-   themeId:String(raw.themeId||'real-binder'),
+   themeId:normalizeCollectionThemeId(raw.themeId),
    createdAt:String(raw.createdAt||new Date().toISOString())
  };
 }
@@ -1576,17 +1761,18 @@ function normalizeCollectionData(raw={},validIds=null){
    if(albumIds.has(a.id))a.id=uid('album');
    albumIds.add(a.id);albums.push(a);
  }
+ const allBook=normalizeSpecialBook(raw.special?.all||{},'all',validIds);
+ const favoriteBook=normalizeSpecialBook(raw.special?.favorites||{},'favorites',validIds);
+ // v3までの「全カード」は旧仕様で表紙表示ONが既定だったため、v4移行時だけOFFへ補正。
+ if(Number(raw.version||0)<4)allBook.showCoverOnOpen=false;
  return {
-   version:2,
+   version:4,
    favorites:fav,
    views:{
      all:normalizeCollectionView(raw.views?.all||{}),
      favorites:normalizeCollectionView(raw.views?.favorites||{})
    },
-   special:{
-     all:normalizeSpecialBook(raw.special?.all||{},'all',validIds),
-     favorites:normalizeSpecialBook(raw.special?.favorites||{},'favorites',validIds)
-   },
+   special:{all:allBook,favorites:favoriteBook},
    settings:{pageAnimation:raw.settings?.pageAnimation===true},
    albums
  };
@@ -1616,6 +1802,12 @@ function currentCollectionView(){
 function currentCollectionBook(){
  const album=currentAlbum();if(album)return album;
  const kind=collectionSourceKind();return kind==='all'||kind==='favorites'?collectionData.special[kind]:null;
+}
+function currentCollectionThemeId(){return normalizeCollectionThemeId(currentCollectionBook()?.themeId)}
+function applyCollectionBookTheme(){
+ const shell=$('.collection-book-shell');if(!shell)return;
+ shell.className=shell.className.replace(/\btheme-[\w-]+\b/g,'').replace(/\s+/g,' ').trim();
+ shell.classList.add(`theme-${currentCollectionThemeId()}`);
 }
 function collectionBookTitle(){
  const album=currentAlbum();if(album)return album.name;
@@ -1653,8 +1845,8 @@ function removeCardFromAlbum(album,id){
 function themeTextPrefs(){return currentThemeForDisplay()?.text||THEME_DEFAULTS.text}
 function displayFlavorText(c){
  const raw=String(c?.flavor||'');
- if(raw.trim())return raw;
- return themeTextPrefs().emptyFlavorDivider!==false?'───':'';
+ if(themeTextPrefs().emptyFlavorDivider!==false)return raw.trim()?`───${raw}`:'───';
+ return raw;
 }
 function multiTokenIncludes(value,query){
  const hay=String(value||'').toLocaleLowerCase();
@@ -2553,7 +2745,7 @@ let textPreviewCards=[];
 function cardToPortable(c){return {id:c.id||undefined,name:c.name||'',type:c.type||'キャラクター',level:c.level===''||c.level==null?null:Number.isFinite(Number(c.level))?Number(c.level):c.level,power:c.power===''||c.power==null?null:Number.isFinite(Number(c.power))?Number(c.power):c.power,races:String(c.race||'').split(/[\/／]/).map(x=>x.trim()).filter(Boolean),rarity:String(c.rarity||''),effect:c.effect||'',flavor:String(c.flavor||'')}}
 function normalizeImportedCard(raw){
   if(!raw||typeof raw!=='object')return null;
-  const type=['キャラクター','ルーム','ロール','ルールプラス'].includes(raw.type)?raw.type:'キャラクター';
+  const type=normalizeCardType(raw.type);
   const races=Array.isArray(raw.races)?raw.races.join(' / '):(raw.race??'');
   return {sourceId:raw.id||null,name:String(raw.name??'').trim(),type,level:raw.level==null?'':String(raw.level),power:raw.power==null?'':String(raw.power),race:String(races),rarity:String(raw.rarity??''),effect:String(raw.effect??''),flavor:String(raw.flavor??'')};
 }
@@ -2587,14 +2779,8 @@ function parseOneCardText(block){
   const ignoredLineIndexes=new Set();
 
   const nameMatch=block.match(/^\s*【([^\n】]+)】\s*$/m);
-  if(nameMatch){
-    name=nameMatch[1].trim();
-    nameLineIndex=lines.findIndex(line=>line.trim()===nameMatch[0].trim());
-  }
-  if(!name){
-    nameLineIndex=trimmed.findIndex(Boolean);
-    if(nameLineIndex>=0)name=trimmed[nameLineIndex].replace(/^【|】$/g,'').trim();
-  }
+  if(nameMatch){name=nameMatch[1].trim();nameLineIndex=lines.findIndex(line=>line.trim()===nameMatch[0].trim())}
+  if(!name){nameLineIndex=trimmed.findIndex(Boolean);if(nameLineIndex>=0)name=trimmed[nameLineIndex].replace(/^【|】$/g,'').trim()}
   if(nameLineIndex>=0)ignoredLineIndexes.add(nameLineIndex);
 
   let compactStatLineIndex=-1;
@@ -2609,60 +2795,55 @@ function parseOneCardText(block){
   if(!level){const m=block.match(/^\s*(?:レベル|Lv|LV)\s*[:：]\s*([^\n]+)\s*$/mi);if(m)level=normalizeCardNumber(m[1])}
   if(!power){const m=block.match(/^\s*パワー\s*[:：]\s*([^\n]+)\s*$/mi);if(m)power=normalizeCardNumber(m[1])}
 
+  const explicitType=block.match(/^\s*種類\s*[:：]\s*([^\n]+)\s*$/mi);
+  if(explicitType){
+    const normalized=normalizeCardType(explicitType[1]);
+    if(CARD_FIXED_TYPES.includes(normalized)||isCustomCardType(normalized))type=normalized;
+    const idx=trimmed.findIndex(t=>/^種類\s*[:：]/.test(t));if(idx>=0)ignoredLineIndexes.add(idx);
+  }
+  if(!type){
+    const fixedIndex=trimmed.findIndex(t=>CARD_FIXED_TYPES.includes(t));
+    if(fixedIndex>=0){type=trimmed[fixedIndex];ignoredLineIndexes.add(fixedIndex)}
+  }
+
   const rc=block.match(/^\s*種族\s*[:：]\s*([^\n]+)\s*$/mi);
-  if(rc){
-    race=normalizeRaceText(rc[1]);
-    const idx=trimmed.findIndex(t=>/^種族\s*[:：]/.test(t));
-    if(idx>=0)ignoredLineIndexes.add(idx);
-  }
+  if(rc){race=normalizeRaceText(rc[1]);const idx=trimmed.findIndex(t=>/^種族\s*[:：]/.test(t));if(idx>=0)ignoredLineIndexes.add(idx)}
   const rr=block.match(/^\s*レアリティ\s*[:：]\s*([^\n]+)\s*$/mi);
-  if(rr){
-    rarity=String(rr[1]||'').trim();
-    const idx=trimmed.findIndex(t=>/^レアリティ\s*[:：]/.test(t));
-    if(idx>=0)ignoredLineIndexes.add(idx);
-  }
+  if(rr){rarity=String(rr[1]||'').trim();const idx=trimmed.findIndex(t=>/^レアリティ\s*[:：]/.test(t));if(idx>=0)ignoredLineIndexes.add(idx)}
 
   const flavorIndex=trimmed.findIndex(t=>/^フレーバー(?:テキスト)?\s*[:：]/.test(t));
   if(flavorIndex>=0){
     const first=lines[flavorIndex].replace(/^\s*フレーバー(?:テキスト)?\s*[:：]\s*/,'');
     flavor=[first,...lines.slice(flavorIndex+1)].join('\n').trim();
+    if(flavor.startsWith('───'))flavor=flavor.slice(3);
     for(let i=flavorIndex;i<lines.length;i++)ignoredLineIndexes.add(i);
   }
 
   if(!race&&compactStatLineIndex>=0){
     for(let i=compactStatLineIndex+1;i<trimmed.length;i++){
-      const t=trimmed[i];
-      if(!t)continue;
-      if(isEffectLikeLine(t))break;
-      if(/^(?:キャラクター|ルーム|ロール|ルールプラス)$/.test(t))continue;
-      if(/^(?:レベル|Lv|LV|パワー|種族|レアリティ|フレーバー(?:テキスト)?)\s*[:：]?/i.test(t))continue;
+      const t=trimmed[i];if(!t)continue;if(isEffectLikeLine(t))break;
+      if(CARD_FIXED_TYPES.includes(t))continue;
+      if(/^(?:種類|レベル|Lv|LV|パワー|種族|レアリティ|フレーバー(?:テキスト)?)\s*[:：]?/i.test(t))continue;
       race=normalizeRaceText(t);ignoredLineIndexes.add(i);break;
     }
   }
-
-  if(/^\s*ルールプラス\s*$/m.test(block))type='ルールプラス';
-  else if(/^\s*ルーム\s*$/m.test(block))type='ルーム';
-  else if(/^\s*ロール\s*$/m.test(block))type='ロール';
-  else if(/^\s*キャラクター\s*$/m.test(block)||level||power||race)type='キャラクター';
-  else type='キャラクター';
+  if(!type)type=(level||power||race)?'キャラクター':'キャラクター';
 
   const effectLines=lines.filter((line,index)=>{
-    const t=line.trim();
-    if(!t||ignoredLineIndexes.has(index))return false;
+    const t=line.trim();if(!t||ignoredLineIndexes.has(index))return false;
     if(t===name||t===`【${name}】`||/^【[^】]+】$/.test(t))return false;
     if(/^(?:レベル|Lv|LV)\s*[:：]?\s*[0-9０-９,，]+\s*$/i.test(t))return false;
     if(/^パワー\s*[:：]?\s*[0-9０-９,，]+\s*$/i.test(t))return false;
-    if(/^(?:種族|レアリティ|フレーバー(?:テキスト)?)\s*[:：]/i.test(t))return false;
-    if(/^(?:キャラクター|ルーム|ロール|ルールプラス)$/.test(t))return false;
+    if(/^(?:種類|種族|レアリティ|フレーバー(?:テキスト)?)\s*[:：]/i.test(t))return false;
+    if(CARD_FIXED_TYPES.includes(t))return false;
     return true;
   });
-
-  return {name,type,level,power,race,rarity,effect:effectLines.join('\n').trim(),flavor};
+  return {name,type:normalizeCardType(type),level,power,race,rarity,effect:effectLines.join('\n').trim(),flavor};
 }
 function parseCardText(src){return splitCardText(src).map(parseOneCardText).filter(c=>c.name||c.effect||c.flavor)}
 function renderTextPreview(){
   const root=$('#text-preview'), actions=$('#text-preview-actions');
-  root.innerHTML=textPreviewCards.map((c,i)=>`<div class="preview-card" data-preview-index="${i}"><div class="preview-head"><b>カード ${i+1}</b><span class="pill">${esc(c.type||'未判定')}</span></div><div class="form-grid"><label class="wide">カード名<input data-pv="name" value="${esc(c.name)}"></label><label>種類<select data-pv="type">${['キャラクター','ルーム','ロール','ルールプラス'].map(t=>`<option${t===c.type?' selected':''}>${t}</option>`).join('')}</select></label><label>Lv<input data-pv="level" value="${esc(c.level)}"></label><label>パワー<input data-pv="power" value="${esc(c.power)}"></label><label>種族<input data-pv="race" value="${esc(c.race)}"></label><label>レアリティ<input data-pv="rarity" value="${esc(c.rarity||'')}"></label><label class="wide">効果<textarea data-pv="effect">${esc(c.effect)}</textarea></label><label class="wide">フレーバーテキスト<textarea data-pv="flavor">${esc(c.flavor||'')}</textarea></label></div></div>`).join('');
+  root.innerHTML=textPreviewCards.map((c,i)=>`<div class="preview-card" data-preview-index="${i}"><div class="preview-head"><b>カード ${i+1}</b><span class="pill">${esc(c.type||'未判定')}</span></div><div class="form-grid"><label class="wide">カード名<input data-pv="name" value="${esc(c.name)}"></label><label>種類<select data-pv="type">${cardTypeOptionsHtml(c.type,false)}</select></label><label>Lv<input data-pv="level" value="${esc(c.level)}"></label><label>パワー<input data-pv="power" value="${esc(c.power)}"></label><label>種族<input data-pv="race" value="${esc(c.race)}"></label><label>レアリティ<input data-pv="rarity" value="${esc(c.rarity||'')}"></label><label class="wide">効果<textarea data-pv="effect">${esc(c.effect)}</textarea></label><label class="wide">フレーバーテキスト<textarea data-pv="flavor">${esc(c.flavor||'')}</textarea></label></div></div>`).join('');
   actions.style.display=textPreviewCards.length?'flex':'none';
   root.querySelectorAll('[data-preview-index]').forEach(el=>{const i=Number(el.dataset.previewIndex);el.querySelectorAll('[data-pv]').forEach(inp=>inp.addEventListener('input',()=>{textPreviewCards[i][inp.dataset.pv]=inp.value}))});
 }
@@ -2808,7 +2989,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    });
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'3.3',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'3.5',
    data:exportBackupObject(),
    settings:{
      boardDisplay:{...boardDisplayPrefs},
@@ -2843,7 +3024,7 @@ function parseFullBackupZip(bytes){
  if(!manifestBytes)throw new Error('manifest.json が見つかりません。');
  let manifest;try{manifest=JSON.parse(zipDecoder.decode(manifestBytes))}catch{throw new Error('manifest.json を読み取れません。')}
  const backupVersion=Number(manifest?.version);
- if(!manifest||manifest.format!==FULL_BACKUP_FORMAT||![1,2,3].includes(backupVersion))throw new Error('対応している完全バックアップZIPではありません。');
+ if(!manifest||manifest.format!==FULL_BACKUP_FORMAT||![1,2,3,4,5].includes(backupVersion))throw new Error('対応している完全バックアップZIPではありません。');
  if(!manifest.data||manifest.data.format!=='min-kai-tcg-backup'||!Array.isArray(manifest.data.cards)||!Array.isArray(manifest.data.decks))throw new Error('完全バックアップ内のカード・デッキ情報が不正です。');
  const cardIds=new Set(manifest.data.cards.map(c=>String(c.id||'')).filter(Boolean)),imageRecords=[],imageIds=new Set();
  for(const meta of Array.isArray(manifest.images)?manifest.images:[]){
@@ -2909,7 +3090,7 @@ async function restoreFullBackupZip(parsed){
 function exportBackupObject(){
  return {
    format:'min-kai-tcg-backup',
-   version:3,
+   version:5,
    createdAt:new Date().toISOString(),
    cards:cards.map(c=>({id:c.id,name:c.name,type:c.type,level:c.level,power:c.power,race:c.race,rarity:String(c.rarity||''),effect:c.effect,flavor:String(c.flavor||'')})),
    decks:decks.map(d=>({id:d.id,name:d.name,entries:{...d.entries},...deckSettingsFrom(d)})),
@@ -2932,7 +3113,7 @@ function restoreBackupObject(data,opt={}){
    usedIds.add(id);
    restoredCards.push({
      id,name,
-     type:['キャラクター','ルーム','ロール','ルールプラス'].includes(raw.type)?raw.type:'キャラクター',
+     type:normalizeCardType(raw.type),
      level:raw.level==null?'':String(raw.level),
      power:raw.power==null?'':String(raw.power),
      race:String(raw.race||''),
@@ -3109,22 +3290,32 @@ function renderRaritySuggestions(){
  const values=[...new Set(cards.map(c=>String(c.rarity||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
  const dl=$('#rarity-suggestions');if(dl)dl.innerHTML=values.map(x=>`<option value="${esc(x)}"></option>`).join('');
 }
-function clearCardForm(){
- ['card-name','card-level','card-power','card-race','card-rarity','card-effect','card-flavor'].forEach(id=>{const el=$('#'+id);if(el)el.value=''});
- if($('#card-type'))$('#card-type').value='キャラクター';
+function syncManualCustomTypeFields(){
+ const custom=$('#card-type')?.value==='__custom__',box=$('#card-custom-type-fields');
+ if(box)box.hidden=!custom;
+ const left=$('#card-custom-type-left')?.value||'',right=$('#card-custom-type-right')?.value||'',preview=$('#card-custom-type-preview');
+ if(preview)preview.textContent=(left.trim()||'左側')+':'+(right.trim()||'右側');
 }
+function clearCardForm(){
+ ['card-name','card-level','card-power','card-race','card-rarity','card-effect','card-flavor','card-custom-type-left','card-custom-type-right'].forEach(id=>{const el=$('#'+id);if(el)el.value=''});
+ if($('#card-type'))$('#card-type').value='キャラクター';syncManualCustomTypeFields();
+}
+$('#card-type').onchange=syncManualCustomTypeFields;
+$('#card-custom-type-left').oninput=syncManualCustomTypeFields;
+$('#card-custom-type-right').oninput=syncManualCustomTypeFields;
+syncManualCustomTypeFields();
 $('#card-clear').onclick=clearCardForm;
 $('#card-form').onsubmit=e=>{
  e.preventDefault();
- const obj={id:uid('card'),name:$('#card-name').value.trim(),type:$('#card-type').value,level:$('#card-level').value.trim(),power:$('#card-power').value.trim(),race:$('#card-race').value.trim(),rarity:$('#card-rarity').value.trim(),effect:$('#card-effect').value,flavor:$('#card-flavor').value};
+ let type=$('#card-type').value;
+ if(type==='__custom__'){
+   type=buildCustomCardType($('#card-custom-type-left').value,$('#card-custom-type-right').value);
+   if(!type){toast('自由種類は左右どちらも入力してください。「:」は入力欄の中では使用できません。');return}
+ }
+ const obj={id:uid('card'),name:$('#card-name').value.trim(),type:normalizeCardType(type),level:$('#card-level').value.trim(),power:$('#card-power').value.trim(),race:$('#card-race').value.trim(),rarity:$('#card-rarity').value.trim(),effect:$('#card-effect').value,flavor:$('#card-flavor').value};
  if(!obj.name)return;
- cards.push(obj);
- save(LS_CARDS,cards);
- touchRecentCards(obj.id);
- touchRegisteredCards(obj.id);
- clearCardForm();
- renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();
- toast('カードを登録しました');
+ cards.push(obj);save(LS_CARDS,cards);touchRecentCards(obj.id);touchRegisteredCards(obj.id);clearCardForm();
+ renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();toast('カードを登録しました');
 };
 
 function deckUsageCount(cardId){
@@ -3135,6 +3326,10 @@ function duplicateNameCounts(){
  const map=new Map();
  cards.forEach(c=>{const k=normalizedDuplicateName(c.name);if(k)map.set(k,(map.get(k)||0)+1)});
  return map;
+}
+function syncManagerCustomTypeSearch(){
+ const show=$('#card-manager-type')?.value==='other',wrap=$('#card-manager-custom-type-wrap');
+ if(wrap)wrap.hidden=!show;
 }
 function managerDetailedFilterCount(){
  let n=0;
@@ -3156,6 +3351,7 @@ function managerHasFilters(){
 function cardManagerFilteredCards(){
  const nameQ=($('#card-manager-search')?.value||'').trim().toLocaleLowerCase();
  const type=$('#card-manager-type')?.value||'all';
+ const customTypeQ=type==='other'?($('#card-manager-custom-type')?.value||''):'';
  const levelQ=($('#card-manager-level')?.value||'').trim();
  const raceQ=($('#card-manager-race')?.value||'').trim();
  const rarityQ=($('#card-manager-rarity')?.value||'').trim().toLocaleLowerCase();
@@ -3167,7 +3363,7 @@ function cardManagerFilteredCards(){
  const dupCounts=duplicateNameCounts();
 
  if(nameQ)rows=rows.filter(x=>String(x.c.name||'').toLocaleLowerCase().includes(nameQ));
- if(type!=='all')rows=rows.filter(x=>x.c.type===type);
+ if(type!=='all')rows=rows.filter(x=>cardTypeMatches(x.c.type,type,customTypeQ));
  if(levelQ)rows=rows.filter(x=>String(x.c.level??'').trim()===levelQ);
  if(raceQ)rows=rows.filter(x=>multiTokenIncludes(x.c.race,raceQ));
  if(rarityQ)rows=rows.filter(x=>String(x.c.rarity||'').toLocaleLowerCase().includes(rarityQ));
@@ -3391,33 +3587,30 @@ function openBulkImageImport(){
 function flavorForCopy(c){
  if(themeTextPrefs().copyFlavor!==true)return '';
  const raw=String(c?.flavor||'');
- if(raw.trim())return raw;
- return themeTextPrefs().emptyFlavorDivider!==false?'───':'';
+ if(themeTextPrefs().emptyFlavorDivider!==false)return raw.trim()?`───${raw}`:'───';
+ return raw;
 }
 function appendFlavorCopy(lines,c){
  const flavor=flavorForCopy(c);if(!flavor)return;
  lines.push(`フレーバー:\n${flavor}`);
 }
 function formatCardBakeStyle(c){
- const lines=[`【${String(c.name||'').trim()}】`];
- const type=['キャラクター','ルーム','ロール','ルールプラス'].includes(c.type)?c.type:'キャラクター';
+ const lines=[`【${String(c.name||'').trim()}】`],type=normalizeCardType(c.type);
  if(type==='キャラクター'){
    if(c.level!==''&&c.level!=null)lines.push(`レベル:${c.level}`);
    if(c.power!==''&&c.power!=null)lines.push(`パワー:${c.power}`);
    if(String(c.race||'').trim())lines.push(`種族:${String(c.race).trim().replace(/\s*\/\s*/g,'/')}`);
  }else{
-   lines.push(type);
+   lines.push(isCustomCardType(type)?`種類:${type}`:type);
    if(c.level!==''&&c.level!=null)lines.push(`レベル:${c.level}`);
    if(c.power!==''&&c.power!=null)lines.push(`パワー:${c.power}`);
    if(String(c.race||'').trim())lines.push(`種族:${String(c.race).trim().replace(/\s*\/\s*/g,'/')}`);
  }
  if(String(c.effect||'').length)lines.push(String(c.effect));
- appendFlavorCopy(lines,c);
- return lines.join('\n');
+ appendFlavorCopy(lines,c);return lines.join('\n');
 }
 function formatCardJellyStyle(c){
- const lines=[String(c.name||'').trim()];
- const type=['キャラクター','ルーム','ロール','ルールプラス'].includes(c.type)?c.type:'キャラクター';
+ const lines=[String(c.name||'').trim()],type=normalizeCardType(c.type);
  if(type==='キャラクター'){
    const stats=[];
    if(c.level!==''&&c.level!=null)stats.push(`レベル${c.level}`);
@@ -3426,14 +3619,13 @@ function formatCardJellyStyle(c){
    const race=String(c.race||'').trim();
    if(race)lines.push(stats.length?race.replace(/\s*\/\s*/g,'/'):`種族:${race.replace(/\s*\/\s*/g,'/')}`);
  }else{
-   lines.push(type);
+   lines.push(isCustomCardType(type)?`種類:${type}`:type);
    if(c.level!==''&&c.level!=null)lines.push(`レベル:${c.level}`);
    if(c.power!==''&&c.power!=null)lines.push(`パワー:${c.power}`);
    if(String(c.race||'').trim())lines.push(`種族:${String(c.race).trim().replace(/\s*\/\s*/g,'/')}`);
  }
  if(String(c.effect||'').length)lines.push(String(c.effect));
- appendFlavorCopy(lines,c);
- return lines.join('\n');
+ appendFlavorCopy(lines,c);return lines.join('\n');
 }
 async function copyManagerCardText(c,style){
  const text=style==='bake'?formatCardBakeStyle(c):formatCardJellyStyle(c);
@@ -3676,10 +3868,14 @@ function openCardManagerDetail(id,opt={}){
 }
 function openCardManagerEdit(id){
  const c=cards.find(x=>x.id===id);if(!c)return;
+ const custom=isCustomCardType(c.type),parts=splitCustomCardType(c.type);
  openModal(`<div class="modal-head"><h3>カード編集</h3><button class="btn" id="manager-edit-close">閉じる</button></div>
  <form id="manager-edit-form" class="form-grid">
    <label class="wide">カード名<input id="manager-edit-name" required value="${esc(c.name)}"></label>
-   <label>種類<select id="manager-edit-type">${['キャラクター','ルーム','ロール','ルールプラス'].map(t=>`<option${t===c.type?' selected':''}>${t}</option>`).join('')}</select></label>
+   <label>種類<select id="manager-edit-type">${cardTypeOptionsHtml(c.type,true)}</select></label>
+   <div class="wide custom-type-fields" id="manager-edit-custom-type-fields" ${custom?'':'hidden'}>
+     <label>自由種類・左側<input id="manager-edit-custom-left" value="${esc(parts[0])}" placeholder="自由入力"></label><span class="custom-type-colon">:</span><label>自由種類・右側<input id="manager-edit-custom-right" value="${esc(parts[1])}" placeholder="自由入力"></label>
+   </div>
    <label>Lv<input id="manager-edit-level" inputmode="numeric" value="${esc(c.level||'')}"></label>
    <label>パワー<input id="manager-edit-power" inputmode="numeric" value="${esc(c.power||'')}"></label>
    <label>種族<input id="manager-edit-race" value="${esc(c.race||'')}"></label>
@@ -3688,17 +3884,16 @@ function openCardManagerEdit(id){
    <label class="wide">フレーバーテキスト<textarea id="manager-edit-flavor">${esc(c.flavor||'')}</textarea></label>
    <div class="wide actions"><button class="btn primary" type="submit">変更を保存</button><button class="btn" type="button" id="manager-edit-cancel">キャンセル</button></div>
  </form>`);
- $('#manager-edit-close').onclick=closeModal;
- $('#manager-edit-cancel').onclick=()=>openCardManagerDetail(id);
+ const syncCustom=()=>{$('#manager-edit-custom-type-fields').hidden=$('#manager-edit-type').value!=='__custom__'};
+ $('#manager-edit-type').onchange=syncCustom;syncCustom();
+ $('#manager-edit-close').onclick=closeModal;$('#manager-edit-cancel').onclick=()=>openCardManagerDetail(id);
  $('#manager-edit-form').onsubmit=e=>{
-   e.preventDefault();
-   const i=cards.findIndex(x=>x.id===id);if(i<0)return;
+   e.preventDefault();const i=cards.findIndex(x=>x.id===id);if(i<0)return;
    const name=$('#manager-edit-name').value.trim();if(!name)return;
-   cards[i]={id,name,type:$('#manager-edit-type').value,level:$('#manager-edit-level').value.trim(),power:$('#manager-edit-power').value.trim(),race:$('#manager-edit-race').value.trim(),rarity:$('#manager-edit-rarity').value.trim(),effect:$('#manager-edit-effect').value,flavor:$('#manager-edit-flavor').value};
-   save(LS_CARDS,cards);touchRecentCards(id);
-   renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();
-   openCardManagerDetail(id);
-   toast('カードを更新しました');
+   let type=$('#manager-edit-type').value;
+   if(type==='__custom__'){type=buildCustomCardType($('#manager-edit-custom-left').value,$('#manager-edit-custom-right').value);if(!type){toast('自由種類は左右どちらも入力してください。「:」は入力欄の中では使用できません。');return}}
+   cards[i]={id,name,type:normalizeCardType(type),level:$('#manager-edit-level').value.trim(),power:$('#manager-edit-power').value.trim(),race:$('#manager-edit-race').value.trim(),rarity:$('#manager-edit-rarity').value.trim(),effect:$('#manager-edit-effect').value,flavor:$('#manager-edit-flavor').value};
+   save(LS_CARDS,cards);touchRecentCards(id);renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();openCardManagerDetail(id);toast('カードを更新しました');
  };
 }
 async function cloneCard(id){
@@ -3737,7 +3932,8 @@ function activateManagerSearchAndRender(){
  renderCards();
 }
 $('#card-manager-search').oninput=activateManagerSearchAndRender;
-$('#card-manager-type').onchange=activateManagerSearchAndRender;
+$('#card-manager-type').onchange=()=>{syncManagerCustomTypeSearch();activateManagerSearchAndRender()};
+$('#card-manager-custom-type').oninput=activateManagerSearchAndRender;
 $('#card-manager-level').oninput=activateManagerSearchAndRender;
 $('#card-manager-race').oninput=activateManagerSearchAndRender;
 $('#card-manager-rarity').oninput=activateManagerSearchAndRender;
@@ -3747,14 +3943,14 @@ $('#card-manager-sort').onchange=activateManagerSearchAndRender;
 $('#card-manager-duplicates').onclick=()=>{cardManagerDuplicateOnly=!cardManagerDuplicateOnly;cardManagerShowAll=true;resetManagerPageAndRender()};
 $('#card-manager-recent').onclick=()=>{
  cardManagerShowAll=false;cardManagerDuplicateOnly=false;cardManagerPage=0;
- $('#card-manager-search').value='';$('#card-manager-type').value='all';$('#card-manager-level').value='';$('#card-manager-race').value='';$('#card-manager-rarity').value='';$('#card-manager-effect').value='';$('#card-manager-image').value='all';$('#card-manager-sort').value='newest';
- renderCards();
+ $('#card-manager-search').value='';$('#card-manager-type').value='all';$('#card-manager-custom-type').value='';$('#card-manager-level').value='';$('#card-manager-race').value='';$('#card-manager-rarity').value='';$('#card-manager-effect').value='';$('#card-manager-image').value='all';$('#card-manager-sort').value='newest';
+ syncManagerCustomTypeSearch();renderCards();
 };
 $('#bulk-image-import').onclick=openBulkImageImport;
 $('#card-manager-clear').onclick=()=>{
  cardManagerShowAll=true;cardManagerDuplicateOnly=false;cardManagerPage=0;
- $('#card-manager-search').value='';$('#card-manager-type').value='all';$('#card-manager-level').value='';$('#card-manager-race').value='';$('#card-manager-rarity').value='';$('#card-manager-effect').value='';$('#card-manager-image').value='all';$('#card-manager-sort').value='newest';
- renderCards();
+ $('#card-manager-search').value='';$('#card-manager-type').value='all';$('#card-manager-custom-type').value='';$('#card-manager-level').value='';$('#card-manager-race').value='';$('#card-manager-rarity').value='';$('#card-manager-effect').value='';$('#card-manager-image').value='all';$('#card-manager-sort').value='newest';
+ syncManagerCustomTypeSearch();renderCards();
 };
 
 
@@ -3764,6 +3960,10 @@ function renderCollectionAlbumFilter(){
  const value=sel.value||'all';
  sel.innerHTML='<option value="all">すべて</option><option value="none">アルバム未所属</option>'+collectionData.albums.map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('');
  sel.value=[...sel.options].some(x=>x.value===value)?value:'all';
+}
+function syncCollectionCustomTypeSearch(){
+ const show=$('#collection-search-type')?.value==='other',wrap=$('#collection-custom-type-wrap');
+ if(wrap)wrap.hidden=!show;
 }
 function collectionFilterCount(){
  let n=0;
@@ -3792,6 +3992,7 @@ function collectionBaseRows(){
 function collectionFilteredCards(){
  const nameQ=($('#collection-search-name')?.value||'').trim().toLocaleLowerCase();
  const type=$('#collection-search-type')?.value||'all';
+ const customTypeQ=type==='other'?($('#collection-search-custom-type')?.value||''):'';
  const raceQ=($('#collection-search-race')?.value||'').trim();
  const rarityQ=($('#collection-search-rarity')?.value||'').trim().toLocaleLowerCase();
  const imageQ=$('#collection-search-image')?.value||'all';
@@ -3801,7 +4002,7 @@ function collectionFilteredCards(){
  let rows=collectionBaseRows();
  if(collectionHasActiveFilter())rows=rows.filter(x=>x.c);
  if(nameQ)rows=rows.filter(x=>String(x.c?.name||'').toLocaleLowerCase().includes(nameQ));
- if(type!=='all')rows=rows.filter(x=>x.c?.type===type);
+ if(type!=='all')rows=rows.filter(x=>x.c&&cardTypeMatches(x.c.type,type,customTypeQ));
  if(raceQ)rows=rows.filter(x=>multiTokenIncludes(x.c?.race,raceQ));
  if(rarityQ)rows=rows.filter(x=>String(x.c?.rarity||'').toLocaleLowerCase().includes(rarityQ));
  if(imageQ==='with')rows=rows.filter(x=>x.c&&!!getCachedImageLink(x.c.id));
@@ -3890,7 +4091,8 @@ function sourceMemberCount(){
 }
 function renderAlbumShelf(){
  const root=$('#collection-grid'),pagination=$('#collection-pagination'),pageInfo=$('#collection-page-info');
- $('#collection-filter-panel').style.display='none';$('#collection-display-settings').style.display='none';
+ $('#collection-filter-panel').style.display='none';$('#collection-display-settings').style.display='none';$('#collection-zoom-controls').style.display='none';
+ const shell=$('.collection-book-shell');if(shell){shell.className=shell.className.replace(/\btheme-[\w-]+\b/g,'').replace(/\s+/g,' ').trim();shell.classList.add('theme-real-binder')}
  $('#collection-source-title').textContent='アルバム';
  $('#collection-result-count').textContent=`${collectionData.albums.length}冊`;
  $('#collection-view-status').textContent='本棚';
@@ -3899,7 +4101,7 @@ function renderAlbumShelf(){
  root.innerHTML=collectionData.albums.length?collectionData.albums.map(a=>{
    const cover=a.coverCardId&&cards.find(c=>c.id===a.coverCardId),count=albumMemberIds(a).length;
    return `<div class="album-book-card" data-open-album="${a.id}">
-     <div class="album-book-cover ${cover?'has-card-cover':''}" ${cover?`data-collection-art="${cover.id}"`:''}>
+     <div class="album-book-cover theme-${normalizeCollectionThemeId(a.themeId)} ${cover?'has-card-cover':''}" ${cover?`data-collection-art="${cover.id}"`:''}>
        <div class="album-cover-ornament">◇</div>
        <div class="album-cover-title">${esc(a.name)}</div>
        ${a.subtitle?`<div class="album-cover-subtitle">${esc(a.subtitle)}</div>`:''}
@@ -3922,7 +4124,8 @@ function renderCollection(){
  $$('[data-collection-source]').forEach(b=>b.classList.toggle('primary',b.dataset.collectionSource===(kind==='album'?'albums':kind)));
  $('#collection-stats').textContent=`全カード ${cards.length} / 画像あり ${cards.filter(c=>!!getCachedImageLink(c.id)).length} / お気に入り ${collectionData.favorites.length} / アルバム ${collectionData.albums.length}`;
  if(kind==='albums'){renderAlbumShelf();return}
- $('#collection-filter-panel').style.display='';$('#collection-display-settings').style.display='';
+ $('#collection-filter-panel').style.display='';$('#collection-display-settings').style.display='';$('#collection-zoom-controls').style.display='flex';
+ applyCollectionBookTheme();
  const view=currentCollectionView(),rows=collectionFilteredCards(),size=view.pageSize,max=Math.max(0,Math.ceil(rows.length/size)-1),album=currentAlbum(),manual=album?.orderMode==='manual'&&!collectionHasActiveFilter();
  if(collectionPage>max)collectionPage=max;
  const start=collectionPage*size,pageRows=rows.slice(start,start+size);
@@ -3930,6 +4133,7 @@ function renderCollection(){
  const memberCount=sourceMemberCount();
  $('#collection-result-count').textContent=album&&manual?`${memberCount}枚 / ${rows.length}枠${rows.length?` / ${collectionPage+1}ページ目`:''}`:`${rows.filter(x=>x.c).length}枚${rows.length?` / ${collectionPage+1}ページ目`:''}`;
  $('#collection-view-status').textContent=`${view.viewMode==='gallery'?'ギャラリー':'一覧'} / ${size}枚 / ${view.showNames?'カード名あり':'カード名なし'}${album?` / ${album.orderMode==='manual'?'手動':'自動'}`:''}`;
+ $('#collection-zoom-value').textContent=`${view.zoom}%`;$('#collection-zoom-out').disabled=view.zoom<=50;$('#collection-zoom-reset').disabled=view.zoom>=100;
  const fc=collectionFilterCount();$('#collection-filter-count').textContent=`${fc}条件`;
  $('#collection-sort').value=view.sort;$('#collection-sort').disabled=!!album&&album.orderMode==='manual'&&!collectionHasActiveFilter();
  const actions=$('#collection-album-actions');
@@ -3944,10 +4148,10 @@ function renderCollection(){
    $('#collection-special-cover-settings').onclick=()=>openSpecialBookEditor(kind);
  }
  if(view.viewMode==='gallery'){
-   root.className=`collection-grid gallery ${view.spread?'collection-spread-ready':''}`;root.dataset.pageSize=String(size);root.style.setProperty('--collection-cols',String(collectionGridColumns(size)));
+   root.className=`collection-grid gallery ${view.spread?'collection-spread-ready':''}`;root.dataset.pageSize=String(size);root.style.setProperty('--collection-cols',String(collectionGridColumns(size)));root.style.setProperty('--collection-zoom',String(view.zoom/100));
    root.innerHTML=pageRows.length?pageRows.map(x=>x.c?collectionCardGalleryHtml(x.c,view.showNames):collectionEmptyGalleryHtml(x.slotIndex)).join(''):`<div class="collection-empty">${kind==='favorites'?'お気に入りカードはまだありません。':album?'このアルバムにはカードがありません。':'該当するカードがありません。'}</div>`;
  }else{
-   root.className=`collection-grid list-mode ${view.spread?'collection-spread-ready':''}`;root.dataset.pageSize=String(size);root.style.removeProperty('--collection-cols');
+   root.className=`collection-grid list-mode ${view.spread?'collection-spread-ready':''}`;root.dataset.pageSize=String(size);root.style.removeProperty('--collection-cols');root.style.setProperty('--collection-zoom',String(view.zoom/100));
    root.innerHTML=pageRows.length?pageRows.map(x=>x.c?collectionCardListHtml(x.c):collectionEmptyListHtml(x.slotIndex)).join(''):`<div class="collection-empty">${kind==='favorites'?'お気に入りカードはまだありません。':album?'このアルバムにはカードがありません。':'該当するカードがありません。'}</div>`;
  }
  bindCollectionImages();
@@ -4030,13 +4234,13 @@ function openCollectionCover(){
  const book=currentCollectionBook(),kind=collectionSourceKind();if(!book||kind==='albums')return;
  const title=collectionBookTitle(),coverId=book.coverCardId,coverCard=coverId?cards.find(c=>c.id===coverId):null,count=sourceMemberCount();
  openModal(`<div class="modal-head"><h3>アルバム表紙</h3><button class="btn" id="collection-cover-close">閉じる</button></div>
- <div class="collection-cover-page">
+ <div class="collection-cover-page theme-${normalizeCollectionThemeId(book.themeId)}">
    <div class="collection-cover-book">
      <div class="collection-cover-art" id="collection-cover-art" ${coverCard?`data-collection-art="${coverCard.id}"`:''}><div class="collection-cover-emblem">◇</div></div>
      <h1>${esc(title)}</h1>
      ${book.subtitle?`<div class="collection-cover-page-subtitle">${esc(book.subtitle)}</div>`:''}
      ${book.description?`<div class="collection-cover-description">${esc(book.description)}</div>`:''}
-     <div class="collection-cover-meta">${count}枚 / ${currentCollectionView().pageSize}枚ずつ表示</div>
+     <div class="collection-cover-meta">${count}枚 / ${currentCollectionView().pageSize}枚ずつ表示 / ${esc(collectionThemeName(book.themeId))}</div>
      <button class="btn primary" id="collection-cover-open">このアルバムを開く</button>
    </div>
  </div>`);
@@ -4046,16 +4250,20 @@ function openCollectionCover(){
 function openSpecialBookEditor(kind){
  if(!['all','favorites'].includes(kind))return;
  const book=collectionData.special[kind],title=kind==='favorites'?'お気に入り':'全カード',candidates=kind==='favorites'?cards.filter(c=>isCollectionFavorite(c.id)):cards;
- openModal(`<div class="modal-head"><h3>${title} / 表紙設定</h3><button class="btn" id="special-book-close">閉じる</button></div>
+ openModal(`<div class="modal-head"><h3>${title} / 表紙・バインダー設定</h3><button class="btn" id="special-book-close">閉じる</button></div>
  <div class="form-grid">
    <label class="wide">副題<input id="special-book-subtitle" value="${esc(book.subtitle)}"></label>
    <label class="wide">説明<textarea id="special-book-description">${esc(book.description)}</textarea></label>
    <label class="wide">表紙カード<select id="special-book-cover"><option value="">自動表紙</option>${candidates.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></label>
    <label class="wide board-follow-row"><input id="special-book-show-cover" type="checkbox" ${book.showCoverOnOpen?'checked':''}>アルバムを開いたら表紙を表示</label>
+   <div class="wide"><div class="muted collection-theme-label">本・バインダーテーマ</div>${collectionThemePickerHtml(book.themeId)}</div>
    <div class="wide actions"><button class="btn primary" id="special-book-save">保存</button></div>
  </div>`);
- $('#special-book-cover').value=book.coverCardId||'';$('#special-book-close').onclick=closeModal;
- $('#special-book-save').onclick=()=>{book.subtitle=$('#special-book-subtitle').value;book.description=$('#special-book-description').value;book.coverCardId=$('#special-book-cover').value;book.showCoverOnOpen=$('#special-book-show-cover').checked;saveCollectionData();closeModal();renderCollection();toast('表紙設定を保存しました')};
+ $('#special-book-cover').value=book.coverCardId||'';$('#special-book-close').onclick=closeModal;bindCollectionThemePicker();
+ $('#special-book-save').onclick=()=>{
+   book.subtitle=$('#special-book-subtitle').value;book.description=$('#special-book-description').value;book.coverCardId=$('#special-book-cover').value;book.showCoverOnOpen=$('#special-book-show-cover').checked;book.themeId=selectedCollectionThemeId();
+   saveCollectionData();closeModal();renderCollection();toast('表紙・バインダー設定を保存しました');
+ };
 }
 function openAlbumEditor(albumId=''){
  const existing=albumId?albumById(albumId):null,base=existing?JSON.parse(JSON.stringify(existing)):normalizeAlbum({id:uid('album'),name:'',cards:[],orderMode:'auto'},new Set(cards.map(c=>c.id)));
@@ -4068,18 +4276,15 @@ function openAlbumEditor(albumId=''){
    <label>並び方<select id="album-editor-order"><option value="auto">自動並び</option><option value="manual">手動配置</option></select></label>
    <label>表紙カード<select id="album-editor-cover"><option value="">自動表紙</option>${coverCandidates.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></label>
    <label class="wide board-follow-row"><input id="album-editor-show-cover" type="checkbox" ${base.showCoverOnOpen?'checked':''}>アルバムを開いたら表紙を表示</label>
-   <div class="wide muted">バインダーテーマは次回の更新で追加します。今回作ったアルバム設定とカード配置はそのまま引き継がれます。</div>
+   <div class="wide"><div class="muted collection-theme-label">本・バインダーテーマ</div>${collectionThemePickerHtml(base.themeId)}</div>
    <div class="wide actions"><button class="btn primary" id="album-editor-save">${existing?'設定を保存':'アルバムを作成'}</button>${existing?'<button class="btn danger" id="album-editor-delete">アルバムを削除</button>':''}</div>
  </div>`);
- $('#album-editor-order').value=base.orderMode;$('#album-editor-cover').value=base.coverCardId||'';$('#album-editor-close').onclick=closeModal;
+ $('#album-editor-order').value=base.orderMode;$('#album-editor-cover').value=base.coverCardId||'';$('#album-editor-close').onclick=closeModal;bindCollectionThemePicker();
  $('#album-editor-save').onclick=()=>{
    const name=$('#album-editor-name').value.trim();if(!name){toast('アルバム名を入力してください');return}
    const nextMode=$('#album-editor-order').value==='manual'?'manual':'auto';
-   if(base.orderMode!==nextMode){
-     base.cards=nextMode==='manual'?albumMemberIds(base):albumMemberIds(base);
-     base.orderMode=nextMode;
-   }
-   base.name=name;base.subtitle=$('#album-editor-subtitle').value;base.description=$('#album-editor-description').value;base.showCoverOnOpen=$('#album-editor-show-cover').checked;base.coverCardId=$('#album-editor-cover').value;
+   if(base.orderMode!==nextMode){base.cards=albumMemberIds(base);base.orderMode=nextMode}
+   base.name=name;base.subtitle=$('#album-editor-subtitle').value;base.description=$('#album-editor-description').value;base.showCoverOnOpen=$('#album-editor-show-cover').checked;base.coverCardId=$('#album-editor-cover').value;base.themeId=selectedCollectionThemeId();
    const normalized=normalizeAlbum(base,new Set(cards.map(c=>c.id)));
    if(existing){const i=collectionData.albums.findIndex(a=>a.id===existing.id);collectionData.albums[i]=normalized}
    else collectionData.albums.push(normalized);
@@ -4140,9 +4345,14 @@ function openAlbumShelfReorder(){
 $$('[data-collection-source]').forEach(b=>b.onclick=()=>openCollectionSource(b.dataset.collectionSource,b.dataset.collectionSource!=='albums'));
 $('#collection-display-settings').onclick=openCollectionDisplaySettings;
 ['collection-search-name','collection-search-race','collection-search-rarity'].forEach(id=>$('#'+id).oninput=()=>{collectionPage=0;renderCollection()});
-['collection-search-type','collection-search-image','collection-search-favorite','collection-search-album'].forEach(id=>$('#'+id).onchange=()=>{collectionPage=0;renderCollection()});
+$('#collection-search-type').onchange=()=>{syncCollectionCustomTypeSearch();collectionPage=0;renderCollection()};
+$('#collection-search-custom-type').oninput=()=>{collectionPage=0;renderCollection()};
+['collection-search-image','collection-search-favorite','collection-search-album'].forEach(id=>$('#'+id).onchange=()=>{collectionPage=0;renderCollection()});
 $('#collection-sort').onchange=()=>{currentCollectionView().sort=$('#collection-sort').value;collectionPage=0;saveCollectionData();renderCollection()};
-$('#collection-filter-clear').onclick=()=>{['collection-search-name','collection-search-race','collection-search-rarity'].forEach(id=>$('#'+id).value='');$('#collection-search-type').value='all';$('#collection-search-image').value='all';$('#collection-search-favorite').value='all';$('#collection-search-album').value='all';collectionPage=0;renderCollection()};
+$('#collection-filter-clear').onclick=()=>{['collection-search-name','collection-search-race','collection-search-rarity','collection-search-custom-type'].forEach(id=>$('#'+id).value='');$('#collection-search-type').value='all';$('#collection-search-image').value='all';$('#collection-search-favorite').value='all';$('#collection-search-album').value='all';syncCollectionCustomTypeSearch();collectionPage=0;renderCollection()};
+$('#collection-zoom-out').onclick=()=>{const view=currentCollectionView();view.zoom=Math.max(50,(Number(view.zoom)||100)-10);saveCollectionData();renderCollection()};
+$('#collection-zoom-reset').onclick=()=>{const view=currentCollectionView();view.zoom=100;saveCollectionData();renderCollection()};
+syncCollectionCustomTypeSearch();
 
 // Deck editor
 
@@ -4158,7 +4368,7 @@ function renderDecks(){
 }
 function filteredDeckPoolCards(){
  const f=$('#deck-type-filter').value,q=($('#deck-card-search')?.value||'').trim().toLowerCase(),raceQ=($('#deck-race-search')?.value||'').trim().toLowerCase(),levelQ=($('#deck-level-search')?.value||'').trim(),sort=$('#deck-level-sort')?.value||'default';
- let arr=cards.filter(c=>(f==='all'||c.type===f)&&(!q||String(c.name||'').toLowerCase().includes(q))&&(!raceQ||String(c.race||'').toLowerCase().includes(raceQ))&&(!levelQ||String(c.level??'').trim()===levelQ));
+ let arr=cards.filter(c=>cardTypeMatches(c.type,f)&&(!q||String(c.name||'').toLowerCase().includes(q))&&(!raceQ||String(c.race||'').toLowerCase().includes(raceQ))&&(!levelQ||String(c.level??'').trim()===levelQ));
  if(sort!=='default'){
    arr=arr.slice().sort((a,b)=>{
      const ah=a.level!==''&&a.level!=null&&Number.isFinite(Number(a.level)),bh=b.level!==''&&b.level!=null&&Number.isFinite(Number(b.level));
@@ -4884,7 +5094,7 @@ function flattenDeckForBrowse(pi,z){
 function browseCardMatches(c,s){
  if(!s)return true;
  const field=s.field||'name';
- if(field==='type')return !s.typeValue||String(c.type||'キャラクター')===s.typeValue;
+ if(field==='type')return !s.typeValue||cardTypeMatches(c.type,s.typeValue);
  const q=String(s.query||'').trim();
  if(!q)return true;
  if(field==='level')return String(c.level??'').trim()===q;
@@ -4907,7 +5117,7 @@ function renderBrowseSearchControl(){
  if(!s||!host)return;
  $('#browse-search-field').value=s.field;
  if(s.field==='type'){
-   host.innerHTML=`<select id="browse-search-input" aria-label="種類"><option value="">すべて</option><option value="キャラクター">キャラクター</option><option value="ルーム">ルーム</option><option value="ロール">ロール</option><option value="ルールプラス">ルールプラス</option></select>`;
+   host.innerHTML=`<select id="browse-search-input" aria-label="種類"><option value="">すべて</option><option value="キャラクター">キャラクター</option><option value="ルーム">ルーム</option><option value="ロール">ロール</option><option value="ルールプラス">ルールプラス</option><option value="アナザーゲート">アナザーゲート</option><option value="other">その他</option></select>`;
    $('#browse-search-input').value=s.typeValue||'';
    $('#browse-search-input').onchange=()=>{s.typeValue=$('#browse-search-input').value;renderBrowseResults()};
  }else{
