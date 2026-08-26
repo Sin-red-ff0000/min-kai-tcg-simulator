@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v10.9 r3 r2</title>
+<title>みん会TCG Simulator v11.50</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -15443,10 +15443,14 @@ body.album-direct-dragging *{cursor:grabbing!important}
  background-size:100% 100%;
  opacity:0;
  transition:opacity .12s ease;
- transform:translateZ(0);
+ transform:translate3d(0,0,0);
+ transform-origin:center center;
  backface-visibility:hidden;
 }
-.card-frame-overlay.frame-loaded{opacity:1}
+.card-frame-overlay.frame-loaded{opacity:var(--frame-opacity,1)}
+.card-frame-overlay.frame-fx-synced{transition:filter .22s ease,opacity .18s ease}
+.card-frame-layer-1{z-index:4}
+.card-frame-layer-2{z-index:5}
 .collection-detail-art.has-image>.card-frame-overlay,.collection-viewer-art.has-image>.card-frame-overlay{display:block!important}
 .pile>.card-frame-overlay{z-index:3}
 .pile>.card-fx-stack{z-index:2}
@@ -15456,12 +15460,96 @@ body.album-direct-dragging *{cursor:grabbing!important}
 .collection-detail-art>.card-frame-overlay,
 .collection-viewer-art>.card-frame-overlay,
 .board-detail-image>.card-frame-overlay{z-index:4}
+.collection-card-art>.card-frame-layer-2,
+.collection-list-art>.card-frame-layer-2,
+.collection-detail-art>.card-frame-layer-2,
+.collection-viewer-art>.card-frame-layer-2,
+.board-detail-image>.card-frame-layer-2,
+.pile>.card-frame-layer-2{z-index:5}
 .collection-favorite{z-index:7}
 .collection-placeholder-name,.collection-viewer-art>span{position:relative;z-index:6}
 .board-detail-image>.card-fx-stack{z-index:3}
 .board-detail-image>.card-frame-overlay{z-index:4}
 .fx-editor-preview-card>.card-frame-overlay{z-index:4}
 .fx-editor-preview-card>.fx-editor-preview-name,.fx-editor-preview-card>.fx-editor-preview-status{position:relative;z-index:6}
+
+/* ==========================================================
+   v11.10 Frame motion / animated frame finish
+   Each frame layer animates its own generated highlight only.
+   The PNG itself stays geometrically stable.
+   ========================================================== */
+
+.card-frame-overlay::before{
+ content:"";
+ position:absolute;
+ inset:0;
+ border-radius:inherit;
+ pointer-events:none;
+ box-sizing:border-box;
+ opacity:1;
+ background-image:var(--frame-partial-glow-bg,none),var(--frame-finish-bg,none);
+ background-repeat:no-repeat;
+ background-size:100% 100%,220% 100%;
+ background-position:center,120% 0;
+ mix-blend-mode:screen;
+ filter:saturate(1.05);
+}
+.card-frame-overlay[data-frame-partial-glow="none"][data-frame-finish="none"]::before{display:none}
+.card-frame-overlay[data-frame-finish="foil"]::before,
+.card-frame-overlay[data-frame-finish="metallic"]::before,
+.card-frame-overlay[data-frame-finish="polarized"]::before,
+.card-frame-overlay[data-frame-finish="rainbow"]::before{
+ animation:frameFinishSweep calc(6.4s / var(--frame-motion-speed,1)) ease-in-out infinite;
+}
+.card-frame-overlay[data-frame-finish="glitter"]::before{animation:frameGlitter 2.8s steps(2,end) infinite}
+.card-frame-overlay[data-frame-finish="pearl"]::before{animation:framePearl 7.2s ease-in-out infinite}
+@keyframes frameFinishSweep{0%,12%{background-position:center,150% 0}52%{background-position:center,48% 0}88%,100%{background-position:center,-60% 0}}
+@keyframes frameGlitter{0%,100%{filter:brightness(.92) saturate(1.05)}50%{filter:brightness(1.28) saturate(1.18)}}
+@keyframes framePearl{0%,100%{filter:hue-rotate(-8deg) saturate(1.02)}50%{filter:hue-rotate(16deg) saturate(1.2) brightness(1.08)}}
+.pile>.card-frame-overlay::before{opacity:.66}
+@media(max-width:700px){
+ .pile>.card-frame-overlay::before{opacity:.52}
+ .card-frame-overlay[data-frame-finish="glitter"]::before{animation-duration:4.2s}
+}
+
+.card-frame-overlay::after{
+ content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;
+ background-repeat:no-repeat;box-sizing:border-box;mix-blend-mode:screen;
+ transform:translateZ(0);will-change:opacity,background-position,filter,transform;
+}
+.card-frame-overlay.frame-motion-enabled::after{opacity:.72}
+.card-frame-overlay[data-frame-motion="edge-light"]::after{
+ inset:1.2%;border:2px solid rgba(255,255,255,.22);
+ background:linear-gradient(115deg,transparent 0 39%,rgba(255,255,255,.08) 43%,rgba(255,255,255,.92) 49%,rgba(170,220,255,.42) 54%,transparent 60% 100%);
+ background-size:260% 100%;filter:drop-shadow(0 0 5px rgba(170,220,255,.48));
+}
+.card-frame-overlay.frame-motion-enabled[data-frame-motion="edge-light"]::after{animation:frameEdgeLight calc(3.6s / var(--frame-motion-speed,1)) linear infinite}
+@keyframes frameEdgeLight{0%{background-position:180% 0;opacity:.15}15%{opacity:.78}52%{opacity:.62}100%{background-position:-90% 0;opacity:.12}}
+.card-frame-overlay[data-frame-motion="corner-pulse"]::after{
+ background:radial-gradient(circle at 7% 6%,rgba(255,255,255,.96),rgba(170,215,255,.34) 6%,transparent 15%),radial-gradient(circle at 93% 6%,rgba(255,255,255,.96),rgba(215,180,255,.30) 6%,transparent 15%),radial-gradient(circle at 7% 94%,rgba(255,255,255,.96),rgba(180,225,255,.30) 6%,transparent 15%),radial-gradient(circle at 93% 94%,rgba(255,255,255,.96),rgba(220,185,255,.30) 6%,transparent 15%);
+}
+.card-frame-overlay.frame-motion-enabled[data-frame-motion="corner-pulse"]::after{animation:frameCornerPulse calc(2.4s / var(--frame-motion-speed,1)) ease-in-out infinite}
+@keyframes frameCornerPulse{0%,100%{opacity:.18;filter:blur(.1px)}48%{opacity:.88;filter:drop-shadow(0 0 7px rgba(210,225,255,.72))}}
+.card-frame-overlay[data-frame-motion="metal-sweep"]::after{
+ background:linear-gradient(108deg,transparent 0 38%,rgba(255,255,255,.05) 43%,rgba(255,255,255,.88) 49%,rgba(255,245,205,.34) 53%,transparent 60% 100%);background-size:300% 100%;
+}
+.card-frame-overlay.frame-motion-enabled[data-frame-motion="metal-sweep"]::after{animation:frameMetalSweep calc(4.8s / var(--frame-motion-speed,1)) cubic-bezier(.4,0,.2,1) infinite}
+@keyframes frameMetalSweep{0%,15%{background-position:170% 0;opacity:.08}42%{opacity:.68}68%,100%{background-position:-85% 0;opacity:.08}}
+.card-frame-overlay[data-frame-motion="gem-blink"]::after{
+ background:radial-gradient(circle at 50% 3.2%,rgba(255,255,255,1) 0 1.2%,rgba(255,215,95,.62) 1.8%,transparent 5.5%),radial-gradient(circle at 5% 7%,rgba(255,255,255,.95) 0 1%,rgba(220,180,255,.45) 2%,transparent 6%),radial-gradient(circle at 95% 93%,rgba(255,255,255,.95) 0 1%,rgba(130,220,255,.45) 2%,transparent 6%);
+}
+.card-frame-overlay.frame-motion-enabled[data-frame-motion="gem-blink"]::after{animation:frameGemBlink calc(3.2s / var(--frame-motion-speed,1)) steps(1,end) infinite}
+@keyframes frameGemBlink{0%,18%,42%,66%,100%{opacity:.16}8%,35%,58%{opacity:.95;filter:drop-shadow(0 0 8px rgba(255,240,180,.8))}}
+.card-frame-overlay[data-frame-motion="rune-sequence"]::after{
+ inset:1.5%;border:2px solid transparent;
+ background:repeating-conic-gradient(from 0deg,rgba(170,220,255,0) 0 6deg,rgba(180,135,255,.72) 7deg 8.5deg,rgba(170,220,255,0) 9deg 18deg) border-box;
+ -webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+}
+.card-frame-overlay.frame-motion-enabled[data-frame-motion="rune-sequence"]::after{animation:frameRuneSequence calc(5.6s / var(--frame-motion-speed,1)) linear infinite}
+@keyframes frameRuneSequence{0%{transform:rotate(0deg);opacity:.18;filter:hue-rotate(0deg)}45%{opacity:.72}100%{transform:rotate(360deg);opacity:.18;filter:hue-rotate(42deg)}}
+/* Board keeps frame motion modest; large collection/viewer surfaces retain full finish. */
+.pile>.card-frame-overlay.frame-motion-enabled::after{opacity:.48}
+@media(max-width:700px){.pile>.card-frame-overlay.frame-motion-enabled::after{opacity:.38}.card-frame-overlay[data-frame-motion="rune-sequence"]::after{border-width:1px}}
 
 /* v10.4 r3: collection detail / viewer frame placement fix */
 .collection-detail-art>.card-frame-overlay,
@@ -15477,6 +15565,584 @@ body.album-direct-dragging *{cursor:grabbing!important}
  z-index:4!important;
  display:block!important;
  background-size:100% 100%!important;
+}
+
+
+/* ==========================================================
+   v11.13 Showcase-quality rendering
+   Collection detail / viewer only. Board rendering remains unchanged.
+   ========================================================== */
+.visual-quality-high{
+ isolation:isolate;
+}
+.visual-quality-high>.card-fx-stack{
+ --fx-sheen-scale:1.16;
+ filter:saturate(1.08) contrast(1.025);
+}
+.visual-quality-high>.card-fx-stack .card-fx-layer{
+ filter:saturate(1.07) brightness(1.025);
+}
+.visual-quality-high>.card-fx-stack .fx-deco-a{
+ opacity:1;
+}
+.visual-quality-high>.card-fx-stack .fx-deco-b{
+ filter:saturate(1.12) brightness(1.08);
+}
+.visual-quality-high>.card-fx-stack .fx-deco-c{
+ opacity:.72;
+ filter:saturate(1.10);
+}
+
+/* Particle families gain depth only on showcase surfaces. */
+.visual-quality-high .fx-stardust>.fx-deco-b,
+.visual-quality-high .fx-light-particles>.fx-deco-b,
+.visual-quality-high .fx-butterfly-light>.fx-deco-b,
+.visual-quality-high .fx-sakura>.fx-deco-b,
+.visual-quality-high .fx-snow>.fx-deco-b,
+.visual-quality-high .fx-bubbles>.fx-deco-b,
+.visual-quality-high .fx-feathers>.fx-deco-b,
+.visual-quality-high .fx-petals>.fx-deco-b,
+.visual-quality-high .fx-sand>.fx-deco-b{
+ opacity:.92;
+ filter:blur(.15px) saturate(1.12) brightness(1.08);
+}
+.visual-quality-high .fx-stardust>.fx-deco-c,
+.visual-quality-high .fx-light-particles>.fx-deco-c,
+.visual-quality-high .fx-butterfly-light>.fx-deco-c,
+.visual-quality-high .fx-sakura>.fx-deco-c,
+.visual-quality-high .fx-snow>.fx-deco-c,
+.visual-quality-high .fx-bubbles>.fx-deco-c,
+.visual-quality-high .fx-feathers>.fx-deco-c,
+.visual-quality-high .fx-petals>.fx-deco-c{
+ opacity:.80;
+ transform:scale(1.035);
+}
+
+/* Atmospheric/attribute finishes receive a little more depth without whitening the art. */
+.visual-quality-high .fx-fog::before{filter:blur(3.4px)}
+.visual-quality-high .fx-dark-aura::before{filter:blur(1.8px) saturate(1.08)}
+.visual-quality-high .fx-ink::before{filter:blur(.55px) contrast(1.08)}
+.visual-quality-high .fx-fire>.fx-deco-b{filter:blur(.3px) saturate(1.14) brightness(1.06)}
+.visual-quality-high .fx-ice-crystal>.fx-deco-b{filter:drop-shadow(0 0 4px rgba(190,230,255,.34))}
+.visual-quality-high .fx-lightning>.fx-deco-b{filter:drop-shadow(0 0 5px rgba(205,230,255,.42))}
+.visual-quality-high .fx-water>.fx-deco-b{filter:saturate(1.10) brightness(1.05)}
+
+/* Optical / magic / SF surfaces get crisper local highlights. */
+.visual-quality-high .fx-hologram,
+.visual-quality-high .fx-prism,
+.visual-quality-high .fx-aurora,
+.visual-quality-high .fx-rainbow,
+.visual-quality-high .fx-gold-foil,
+.visual-quality-high .fx-silver-foil,
+.visual-quality-high .fx-shatter-light{
+ filter:saturate(1.11) contrast(1.04);
+}
+.visual-quality-high .fx-magic-circle>.fx-deco-b,
+.visual-quality-high .fx-runes>.fx-deco-b,
+.visual-quality-high .fx-holy-light>.fx-deco-b,
+.visual-quality-high .fx-cosmos>.fx-deco-b,
+.visual-quality-high .fx-glitch>.fx-deco-b,
+.visual-quality-high .fx-gears>.fx-deco-b,
+.visual-quality-high .fx-digital-code>.fx-deco-b{
+ opacity:.88;
+ filter:saturate(1.12) brightness(1.06);
+}
+
+/* Frame finish: stronger but localized glow for collection detail / viewer. */
+.visual-quality-high>.card-frame-overlay.frame-loaded{
+ filter:var(--frame-user-filter,none) drop-shadow(0 0 2px rgba(255,255,255,.10));
+}
+.visual-quality-high>.card-frame-overlay.frame-motion-enabled::after{
+ opacity:.88;
+}
+.visual-quality-high>.card-frame-overlay.frame-motion-enabled[data-frame-motion="edge-light"]::after{
+ filter:drop-shadow(0 0 7px rgba(175,220,255,.62));
+}
+.visual-quality-high>.card-frame-overlay.frame-motion-enabled[data-frame-motion="corner-pulse"]::after{
+ filter:drop-shadow(0 0 8px rgba(210,225,255,.56));
+}
+.visual-quality-high>.card-frame-overlay.frame-motion-enabled[data-frame-motion="metal-sweep"]::after{
+ mix-blend-mode:screen;
+}
+.visual-quality-high>.card-frame-overlay.frame-motion-enabled[data-frame-motion="gem-blink"]::after{
+ filter:drop-shadow(0 0 9px rgba(255,235,175,.66));
+}
+.visual-quality-high>.card-frame-overlay.frame-motion-enabled[data-frame-motion="rune-sequence"]::after{
+ filter:drop-shadow(0 0 6px rgba(180,150,255,.52));
+}
+
+/* A very subtle lens finish, limited to viewer/detail and placed below UI labels. */
+.visual-quality-high::after{
+ content:"";
+ position:absolute;
+ inset:0;
+ pointer-events:none;
+ border-radius:inherit;
+ z-index:5;
+ opacity:.24;
+ background:
+   linear-gradient(118deg,transparent 0 34%,rgba(255,255,255,.035) 43%,rgba(255,255,255,.13) 49%,rgba(255,255,255,.025) 56%,transparent 66% 100%),
+   radial-gradient(circle at 50% 9%,rgba(255,255,255,.055),transparent 34%);
+ mix-blend-mode:screen;
+}
+.collection-viewer-art.visual-quality-high::after{opacity:.31}
+.collection-detail-art.visual-quality-high::after{opacity:.22}
+
+@media(max-width:700px){
+ .visual-quality-high>.card-fx-stack{--fx-sheen-scale:1.08}
+ .visual-quality-high>.card-fx-stack .fx-deco-c{opacity:.62}
+ .visual-quality-high .fx-fog::before{filter:blur(2.5px)}
+ .collection-viewer-art.visual-quality-high::after{opacity:.25}
+}
+
+
+/* ==========================================================
+   v11.14 Rendering quality / effect masks / preview tools
+   ========================================================== */
+.card-fx-stack.fx-quality-light .fx-deco-c{display:none!important}
+.card-fx-stack.fx-quality-light .fx-deco-b{opacity:.72!important}
+.card-fx-stack.fx-quality-light .card-fx-layer{
+ opacity:calc(var(--fx-o,.7) * .82);
+ filter:saturate(.90) brightness(.98);
+}
+.card-fx-stack.fx-quality-light.fx-animate .card-fx-layer{
+ animation-timing-function:linear!important;
+}
+.card-fx-stack.fx-quality-high .fx-deco-b{filter:saturate(1.10) brightness(1.04)}
+.card-fx-stack.fx-quality-high .fx-deco-c{opacity:.82}
+.card-fx-stack.fx-quality-high .card-fx-layer{filter:saturate(1.06) brightness(1.02)}
+
+/* Layer display masks. */
+.card-fx-layer.fx-mask-full{clip-path:none;-webkit-mask-image:none;mask-image:none}
+.card-fx-layer.fx-mask-center{clip-path:inset(17% 15% 17% 15% round 10%)}
+.card-fx-layer.fx-mask-top{clip-path:inset(0 0 52% 0)}
+.card-fx-layer.fx-mask-bottom{clip-path:inset(52% 0 0 0)}
+.card-fx-layer.fx-mask-corners{
+ -webkit-mask-image:
+   radial-gradient(circle at 0 0,#000 0 23%,transparent 25%),
+   radial-gradient(circle at 100% 0,#000 0 23%,transparent 25%),
+   radial-gradient(circle at 0 100%,#000 0 23%,transparent 25%),
+   radial-gradient(circle at 100% 100%,#000 0 23%,transparent 25%);
+ mask-image:
+   radial-gradient(circle at 0 0,#000 0 23%,transparent 25%),
+   radial-gradient(circle at 100% 0,#000 0 23%,transparent 25%),
+   radial-gradient(circle at 0 100%,#000 0 23%,transparent 25%),
+   radial-gradient(circle at 100% 100%,#000 0 23%,transparent 25%);
+}
+.card-fx-layer.fx-mask-outer{
+ -webkit-mask-image:
+   linear-gradient(to right,#000 0 14%,transparent 15% 85%,#000 86%),
+   linear-gradient(to bottom,#000 0 14%,transparent 15% 85%,#000 86%);
+ mask-image:
+   linear-gradient(to right,#000 0 14%,transparent 15% 85%,#000 86%),
+   linear-gradient(to bottom,#000 0 14%,transparent 15% 85%,#000 86%);
+}
+
+/* Preview comparison surface. */
+.fx-preview-toolbar-v2{align-items:end;justify-content:flex-start}
+.fx-preview-toolbar-v2>label{min-width:110px;margin:0}
+.fx-preview-toolbar-v2 input[type="range"]{min-width:120px}
+#fx-editor-preview{
+ padding:12px;
+ border-radius:12px;
+ transition:background .15s ease;
+}
+#fx-editor-preview[data-preview-bg="dark"]{background:#07090d}
+#fx-editor-preview[data-preview-bg="gray"]{background:#6c7078}
+#fx-editor-preview[data-preview-bg="white"]{background:#f2f2f0}
+#fx-editor-preview[data-preview-bg="checker"]{
+ background-color:#d6d6d6;
+ background-image:
+   linear-gradient(45deg,#aaa 25%,transparent 25%),
+   linear-gradient(-45deg,#aaa 25%,transparent 25%),
+   linear-gradient(45deg,transparent 75%,#aaa 75%),
+   linear-gradient(-45deg,transparent 75%,#aaa 75%);
+ background-size:20px 20px;
+ background-position:0 0,0 10px,10px -10px,-10px 0;
+}
+.fx-editor-preview-card.fx-preview-image-hidden{
+ background-image:var(--card-bg-image)!important;
+ background-size:cover!important;
+ background-position:center!important;
+}
+.fx-editor-preview-card.fx-preview-image-hidden::before{
+ content:"";
+ position:absolute;inset:0;z-index:1;
+ background:rgba(8,11,16,.64);
+ pointer-events:none;
+}
+@media(max-width:650px){
+ .fx-preview-toolbar-v2{display:grid;grid-template-columns:1fr 1fr}
+ .fx-preview-toolbar-v2>label{min-width:0}
+ .fx-preview-toolbar-v2 .btn{grid-column:1/-1}
+}
+
+
+/* ==========================================================
+   v11.20 Integration / performance / consistency
+   ========================================================== */
+.card-fx-stack,
+.card-frame-overlay{
+ contain:layout paint style;
+ backface-visibility:hidden;
+ -webkit-backface-visibility:hidden;
+ transform-style:flat;
+}
+.pile{
+ isolation:isolate;
+}
+.pile>.card-fx-stack,
+.pile>.card-frame-overlay{
+ pointer-events:none;
+}
+.card-fx-stack{
+ overflow:hidden;
+ border-radius:inherit;
+}
+.card-frame-overlay{
+ overflow:hidden;
+}
+
+/* Offscreen card visuals keep their state but stop animation work. */
+.visual-offscreen.fx-animate .card-fx-layer,
+.visual-offscreen.frame-motion-enabled::after,
+.visual-offscreen[data-frame-finish="foil"]::before,
+.visual-offscreen[data-frame-finish="metallic"]::before,
+.visual-offscreen[data-frame-finish="polarized"]::before,
+.visual-offscreen[data-frame-finish="rainbow"]::before,
+.visual-offscreen[data-frame-finish="glitter"]::before,
+.visual-offscreen[data-frame-finish="pearl"]::before{
+ animation-play-state:paused!important;
+}
+.visual-page-hidden .fx-animate .card-fx-layer,
+.visual-page-hidden .frame-motion-enabled::after,
+.visual-page-hidden .card-frame-overlay::before{
+ animation-play-state:paused!important;
+}
+
+/* Automatic safety net for low-power mobile devices / Save-Data. */
+.visual-low-power .card-fx-stack.fx-quality-high{
+ filter:saturate(1.02)!important;
+}
+.visual-low-power .card-fx-stack.fx-quality-high .fx-deco-c{
+ display:none!important;
+}
+.visual-low-power .card-frame-overlay::before{
+ filter:none!important;
+}
+.visual-low-power .pile>.card-frame-overlay::before{
+ opacity:.42!important;
+}
+.visual-low-power .pile>.card-frame-overlay.frame-motion-enabled::after{
+ opacity:.48!important;
+}
+
+/* Keep preview, collection detail and viewer layering consistent. */
+.collection-detail-art,
+.collection-viewer-art,
+.fx-editor-preview-card,
+.board-detail-image{
+ isolation:isolate;
+}
+.collection-detail-art>.card-fx-stack,
+.collection-viewer-art>.card-fx-stack,
+.fx-editor-preview-card>.card-fx-stack,
+.board-detail-image>.card-fx-stack{
+ z-index:3;
+}
+.collection-detail-art>.card-frame-overlay,
+.collection-viewer-art>.card-frame-overlay,
+.fx-editor-preview-card>.card-frame-overlay,
+.board-detail-image>.card-frame-overlay{
+ z-index:4;
+}
+.collection-detail-art>.collection-detail-placeholder,
+.collection-viewer-art>.collection-viewer-placeholder,
+.fx-editor-preview-card>.fx-editor-preview-name,
+.fx-editor-preview-card>.fx-editor-preview-status{
+ z-index:6;
+}
+
+/* Prevent large moving layers from affecting card layout. */
+.card-fx-layer,
+.card-fx-layer::before,
+.card-fx-layer::after,
+.card-fx-layer>.fx-deco{
+ will-change:transform,opacity,filter;
+}
+.visual-offscreen .card-fx-layer,
+.visual-low-power .pile .card-fx-layer{
+ will-change:auto;
+}
+
+/* Blend-mode safety: never blend with neighboring cards/background. */
+.card-fx-stack,
+.card-frame-overlay{
+ isolation:isolate;
+}
+.card-fx-layer{
+ mix-blend-mode:var(--fx-blend,normal);
+}
+
+/* Cap visual intensity when 3-4 layers are active on board. */
+.pile .fx-count-3 .card-fx-layer{opacity:calc(var(--fx-o,.7) * .88)}
+.pile .fx-count-4 .card-fx-layer{opacity:calc(var(--fx-o,.7) * .76)}
+.pile .fx-count-4 .fx-deco-c{display:none}
+
+/* Mobile board trims the most expensive blur/glow paths without changing settings. */
+@media(max-width:700px){
+ .pile .fx-fog::before{filter:blur(1.7px)!important}
+ .pile .fx-dark-aura::before{filter:blur(1.15px)!important}
+ .pile .fx-lightning>.fx-deco-b{filter:drop-shadow(0 0 2px rgba(205,230,255,.28))!important}
+ .pile .card-frame-overlay{filter:saturate(.98) brightness(1)!important}
+}
+
+
+/* ==========================================================
+   v11.30 Card Effect Generation 2 - final polish
+   ========================================================== */
+
+/* Intensity now changes presence as well as opacity. */
+.fx-intensity-weak{--fx-gen2-density:.72;--fx-gen2-glow:.72}
+.fx-intensity-standard{--fx-gen2-density:1;--fx-gen2-glow:1}
+.fx-intensity-strong{--fx-gen2-density:1.28;--fx-gen2-glow:1.32}
+
+/* Optical family: each finish gets a distinct direction / highlight character. */
+.fx-hologram{
+ background-image:
+   linear-gradient(112deg,transparent 0 31%,rgba(120,235,255,.10) 38%,rgba(255,145,235,.18) 47%,rgba(255,255,255,.30) 51%,rgba(130,255,210,.13) 57%,transparent 68%),
+   repeating-linear-gradient(26deg,rgba(255,255,255,.035) 0 1px,transparent 1px 8px);
+}
+.fx-prism{
+ background-image:
+   conic-gradient(from 208deg at 50% 50%,rgba(255,90,120,.08),rgba(255,235,90,.16),rgba(90,235,180,.16),rgba(80,150,255,.18),rgba(210,95,255,.16),rgba(255,90,120,.08)),
+   linear-gradient(145deg,transparent 28%,rgba(255,255,255,.24) 50%,transparent 67%);
+}
+.fx-aurora{
+ background-image:
+   radial-gradient(ellipse at 18% 22%,rgba(70,255,190,.18),transparent 38%),
+   radial-gradient(ellipse at 82% 60%,rgba(120,125,255,.20),transparent 42%),
+   radial-gradient(ellipse at 45% 92%,rgba(225,100,255,.15),transparent 37%);
+}
+.fx-rainbow{
+ background-image:linear-gradient(126deg,rgba(255,75,95,.13),rgba(255,200,65,.14),rgba(90,235,150,.13),rgba(80,165,255,.14),rgba(185,90,255,.14),rgba(255,90,155,.12));
+}
+.fx-gold-foil{
+ background-image:
+   linear-gradient(112deg,rgba(65,35,5,.12),rgba(255,212,85,.24) 30%,rgba(255,250,190,.44) 49%,rgba(190,116,20,.20) 62%,rgba(255,215,95,.17)),
+   repeating-linear-gradient(92deg,rgba(255,250,200,.035) 0 1px,transparent 1px 5px);
+}
+.fx-silver-foil{
+ background-image:
+   linear-gradient(112deg,rgba(40,55,75,.12),rgba(190,215,235,.24) 31%,rgba(255,255,255,.42) 49%,rgba(120,145,175,.20) 64%,rgba(225,240,255,.18)),
+   repeating-linear-gradient(88deg,rgba(255,255,255,.04) 0 1px,transparent 1px 4px);
+}
+.fx-shatter-light{
+ background-image:
+   linear-gradient(63deg,transparent 46%,rgba(255,255,255,.28) 47% 48%,transparent 49%),
+   linear-gradient(117deg,transparent 34%,rgba(180,225,255,.22) 35% 36%,transparent 37%),
+   linear-gradient(26deg,transparent 61%,rgba(255,220,245,.18) 62% 63%,transparent 64%);
+}
+
+/* Particle family: silhouettes and movement direction are deliberately separated. */
+.fx-stardust>.fx-deco-a{
+ background-image:
+   radial-gradient(circle at 18% 22%,rgba(255,255,255,.95) 0 1.2px,transparent 2.6px),
+   radial-gradient(circle at 68% 31%,rgba(195,225,255,.88) 0 1px,transparent 2.2px),
+   radial-gradient(circle at 38% 73%,rgba(255,235,180,.80) 0 1.1px,transparent 2.4px);
+ background-size:29px 33px,41px 38px,53px 47px;
+}
+.fx-light-particles>.fx-deco-a{
+ background-image:
+   radial-gradient(circle,rgba(255,255,230,.60) 0 2px,rgba(255,245,190,.18) 3px,transparent 6px);
+ background-size:34px 42px;
+}
+.fx-butterfly-light>.fx-deco-a{
+ background-image:
+   radial-gradient(ellipse at 43% 50%,rgba(255,205,245,.62) 0 3px,transparent 4px),
+   radial-gradient(ellipse at 57% 50%,rgba(195,220,255,.62) 0 3px,transparent 4px);
+ background-size:54px 63px;
+}
+.fx-sakura>.fx-deco-a,.fx-petals>.fx-deco-a{
+ background-size:46px 58px,63px 72px;
+}
+.fx-snow>.fx-deco-a{background-size:38px 44px,57px 63px}
+.fx-bubbles>.fx-deco-a{background-size:46px 52px,71px 76px}
+.fx-feathers>.fx-deco-a{background-size:73px 86px,101px 112px}
+.fx-sand>.fx-deco-a{background-size:21px 17px,33px 29px}
+
+/* Magic / SF family: reinforce structural identity. */
+.fx-magic-circle>.fx-deco-a{
+ border:1px solid rgba(145,205,255,.42);
+ border-radius:50%;
+ inset:15%;
+ box-shadow:inset 0 0 0 8px rgba(135,100,255,.055),0 0 10px rgba(110,175,255,.16);
+}
+.fx-magic-circle>.fx-deco-b{
+ inset:29%;
+ border:1px dashed rgba(220,185,255,.46);
+ border-radius:50%;
+}
+.fx-runes>.fx-deco-a{
+ inset:5%;
+ border:1px dashed rgba(195,170,255,.34);
+ border-radius:13%;
+ box-shadow:inset 0 0 12px rgba(120,80,255,.12);
+}
+.fx-holy-light{
+ background-image:
+   linear-gradient(90deg,transparent 39%,rgba(255,250,215,.10) 43%,rgba(255,255,245,.32) 50%,rgba(255,250,215,.10) 57%,transparent 61%);
+}
+.fx-cosmos{
+ background-image:
+   radial-gradient(circle at 22% 30%,rgba(120,95,255,.18),transparent 28%),
+   radial-gradient(circle at 74% 65%,rgba(40,180,255,.15),transparent 31%),
+   radial-gradient(circle at 48% 82%,rgba(230,100,255,.10),transparent 27%),
+   radial-gradient(circle,rgba(255,255,255,.55) 0 1px,transparent 1.7px);
+ background-size:auto,auto,auto,31px 37px;
+}
+.fx-glitch{
+ background-image:
+   repeating-linear-gradient(0deg,transparent 0 10px,rgba(80,230,255,.08) 11px 12px,transparent 13px 19px),
+   linear-gradient(90deg,rgba(255,40,120,.08),transparent 24%,transparent 76%,rgba(50,210,255,.08));
+}
+.fx-gears>.fx-deco-a{
+ inset:10%;
+ border:3px dotted rgba(205,220,235,.28);
+ border-radius:50%;
+}
+.fx-gears>.fx-deco-b{
+ inset:34%;
+ border:2px dashed rgba(160,185,210,.36);
+ border-radius:50%;
+}
+.fx-digital-code{
+ background-image:
+   repeating-linear-gradient(90deg,rgba(80,225,190,.08) 0 1px,transparent 1px 18px),
+   linear-gradient(180deg,transparent 0 70%,rgba(85,235,205,.13) 76%,transparent 84%);
+}
+
+/* Attribute family: keep each effect anchored to a different part of the card. */
+.fx-fire{
+ background-image:
+   radial-gradient(ellipse at 18% 104%,rgba(255,85,20,.34),transparent 42%),
+   radial-gradient(ellipse at 55% 112%,rgba(255,170,40,.30),transparent 48%),
+   radial-gradient(ellipse at 88% 106%,rgba(255,60,15,.26),transparent 37%);
+}
+.fx-ice-crystal{
+ background-image:
+   linear-gradient(60deg,transparent 46%,rgba(190,235,255,.22) 47% 48%,transparent 49%),
+   linear-gradient(120deg,transparent 54%,rgba(215,245,255,.18) 55% 56%,transparent 57%),
+   radial-gradient(circle at 50% 50%,rgba(175,230,255,.08),transparent 62%);
+}
+.fx-lightning{
+ background-image:
+   linear-gradient(104deg,transparent 39%,rgba(215,235,255,.60) 40% 41%,transparent 42% 46%,rgba(110,175,255,.28) 47% 48%,transparent 49%),
+   linear-gradient(76deg,transparent 59%,rgba(240,245,255,.42) 60% 61%,transparent 62%);
+}
+.fx-water{
+ background-image:
+   repeating-radial-gradient(ellipse at 50% 66%,transparent 0 18px,rgba(100,205,255,.11) 20px 21px,transparent 23px 36px);
+}
+.fx-fog{
+ background-image:
+   radial-gradient(ellipse at 25% 45%,rgba(220,230,240,.16),transparent 48%),
+   radial-gradient(ellipse at 78% 62%,rgba(210,220,235,.13),transparent 52%);
+}
+.fx-dark-aura{
+ background-image:
+   radial-gradient(ellipse at center,transparent 38%,rgba(55,10,85,.18) 67%,rgba(15,0,25,.38) 100%);
+}
+.fx-ink{
+ background-image:
+   radial-gradient(circle at 16% 83%,rgba(10,8,18,.40),transparent 23%),
+   radial-gradient(circle at 74% 18%,rgba(15,8,28,.30),transparent 19%),
+   radial-gradient(circle at 87% 72%,rgba(8,6,15,.26),transparent 18%);
+}
+
+/* Distinct animation cadence. */
+.fx-animate .fx-hologram{animation-duration:6.8s}
+.fx-animate .fx-prism{animation-duration:8.6s}
+.fx-animate .fx-aurora{animation-duration:12.5s}
+.fx-animate .fx-rainbow{animation-duration:10.8s}
+.fx-animate .fx-gold-foil,.fx-animate .fx-silver-foil{animation-duration:7.7s}
+.fx-animate .fx-shatter-light{animation-duration:9.4s}
+.fx-animate .fx-stardust>.fx-deco-a{animation-duration:13.2s}
+.fx-animate .fx-light-particles>.fx-deco-a{animation-duration:9.8s}
+.fx-animate .fx-butterfly-light>.fx-deco-a{animation-duration:15.6s}
+.fx-animate .fx-sakura>.fx-deco-a{animation-duration:14.2s}
+.fx-animate .fx-snow>.fx-deco-a{animation-duration:17.5s}
+.fx-animate .fx-bubbles>.fx-deco-a{animation-duration:12.8s}
+.fx-animate .fx-feathers>.fx-deco-a{animation-duration:18.6s}
+.fx-animate .fx-petals>.fx-deco-a{animation-duration:13.8s}
+.fx-animate .fx-sand>.fx-deco-a{animation-duration:8.4s}
+.fx-animate .fx-magic-circle>.fx-deco-a{animation-duration:18s}
+.fx-animate .fx-magic-circle>.fx-deco-b{animation-duration:12s;animation-direction:reverse}
+.fx-animate .fx-runes>.fx-deco-a{animation-duration:10.5s}
+.fx-animate .fx-cosmos>.fx-deco-a{animation-duration:22s}
+.fx-animate .fx-gears>.fx-deco-a{animation-duration:16s}
+.fx-animate .fx-gears>.fx-deco-b{animation-duration:9.5s;animation-direction:reverse}
+.fx-animate .fx-digital-code{animation-duration:7.4s}
+
+/* Strong/weak variants alter detail density, not just alpha. */
+.fx-intensity-weak>.fx-deco-c{opacity:.38!important}
+.fx-intensity-strong>.fx-deco-b{filter:brightness(1.10) saturate(1.10)}
+.fx-intensity-strong>.fx-deco-c{opacity:.92}
+.fx-intensity-strong.fx-stardust>.fx-deco-a,
+.fx-intensity-strong.fx-light-particles>.fx-deco-a,
+.fx-intensity-strong.fx-sand>.fx-deco-a{background-size:calc(29px / var(--fx-gen2-density)) calc(33px / var(--fx-gen2-density))}
+
+/* Viewer quality can retain complexity; board light mode remains capped by v11.20. */
+.visual-quality-high .card-fx-layer{contrast:1.02}
+.pile .fx-quality-light .fx-intensity-strong>.fx-deco-c{display:none!important}
+
+
+/* ==========================================================
+   v11.50 Appearance editor UI final layout
+   ========================================================== */
+.appearance-mode-switch{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ flex-wrap:wrap;
+ margin:8px 0 10px;
+}
+[data-appearance-advanced][hidden]{display:none!important}
+.appearance-editor-tabs{
+ display:flex;
+ gap:6px;
+ flex-wrap:wrap;
+ margin:8px 0;
+}
+.appearance-editor-tabs .btn.active{
+ box-shadow:0 0 0 2px rgba(255,255,255,.12) inset;
+}
+.fx-layer-detail-grid,
+.frame-adjust-grid{
+ align-items:start;
+}
+.fx-layer-detail-grid label,
+.frame-adjust-grid label{
+ min-width:0;
+}
+@media(max-width:700px){
+ .appearance-mode-switch{
+  position:sticky;
+  top:0;
+  z-index:12;
+  padding:6px 0;
+  background:linear-gradient(180deg,rgba(13,16,22,.96),rgba(13,16,22,.82));
+  backdrop-filter:blur(8px);
+ }
+ .fx-layer-detail-grid,
+ .frame-adjust-grid{
+  grid-template-columns:1fr!important;
+ }
+ .fx-preview-toolbar-v2{
+  position:sticky;
+  top:0;
+  z-index:10;
+ }
 }
 
 /* Frame editor */
@@ -15552,6 +16218,16 @@ body.album-direct-dragging *{cursor:grabbing!important}
  .frame-library-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
  .frame-editor-preview{width:min(100%,260px)}
 }
+.frame-adjust-details{margin:10px 0 14px;border:1px solid var(--line);border-radius:10px;background:#10151c}
+.frame-adjust-details>summary{cursor:pointer;padding:10px 12px;font-weight:800;user-select:none}
+.frame-adjust-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:0 12px 12px}
+.frame-adjust-grid label{margin:0}
+.frame-adjust-grid .frame-wide{grid-column:1/-1}
+.frame-adjust-grid input[type=range]{width:100%}
+.frame-adjust-inline{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.frame-adjust-inline .pill{min-width:48px;justify-content:center}
+.frame-adjust-checks{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+@media(max-width:560px){.frame-adjust-grid{grid-template-columns:1fr}}
 
 
 /* ==========================================================
@@ -15586,7 +16262,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
    ========================================================== */
 .frame-usage-badge{font-size:8px;padding:1px 4px;margin-left:3px}
 .card-frame-overlay.frame-loaded{
- opacity:1;
+ opacity:var(--frame-opacity,1);
  mix-blend-mode:normal!important;
  filter:drop-shadow(0 0 .45px rgba(255,255,255,.16));
  image-rendering:auto;
@@ -16269,6 +16945,713 @@ body.album-direct-dragging *{cursor:grabbing!important}
 .random-pick-result{margin-top:9px;padding:9px;border:1px solid #58708c;border-radius:9px;background:#0d151f}
 @media(max-width:520px){.board-random-card-actions{grid-template-columns:1fr}.board-random-card-actions .wide{grid-column:auto}.random-card-candidate{grid-template-columns:auto minmax(0,1fr)}}
 
+
+
+/* ==========================================================
+   v11.0 Optical FX refinement
+   Hologram / Prism / Aurora / Rainbow / Gold foil / Silver foil / Shatter light
+   Goal: richer local reflections without whitening the whole artwork.
+   ========================================================== */
+.card-fx-layer.fx-hologram,
+.card-fx-layer.fx-prism,
+.card-fx-layer.fx-aurora,
+.card-fx-layer.fx-rainbow,
+.card-fx-layer.fx-gold-foil,
+.card-fx-layer.fx-silver-foil,
+.card-fx-layer.fx-shatter-light{
+  --fx11-glint:rgba(255,255,255,.62);
+  --fx11-cold:rgba(152,231,255,.35);
+  --fx11-warm:rgba(255,219,127,.34);
+  background-color:transparent;
+  filter:saturate(calc(.92 + var(--fx-detail,.95)*.08)) contrast(1.03);
+  backface-visibility:hidden;
+  transform:translateZ(0);
+}
+
+/* Hologram: restrained diffraction film with micro-louver texture. */
+.card-fx-layer.fx-hologram{
+  background:
+    repeating-linear-gradient(102deg,
+      transparent 0 7.8%,rgba(255,255,255,.022) 8.2% 8.8%,transparent 9.2% 16.5%),
+    linear-gradient(116deg,
+      transparent 4%,rgba(52,214,255,.08) 20%,rgba(242,72,210,.25) 34%,
+      rgba(255,215,92,.24) 45%,rgba(80,231,192,.20) 57%,rgba(101,121,255,.16) 70%,transparent 86%);
+  mix-blend-mode:screen;
+  opacity:.92;
+}
+.card-fx-layer.fx-hologram::before{
+  inset:0;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 14px,rgba(176,232,255,.045) 15px,transparent 16px 30px),
+    repeating-linear-gradient(90deg,transparent 0 18px,rgba(255,194,236,.035) 19px,transparent 20px 38px);
+  opacity:.78;
+  mix-blend-mode:screen;
+}
+.card-fx-layer.fx-hologram::after{
+  inset:-36%;
+  background:
+    linear-gradient(103deg,
+      transparent 39%,rgba(255,255,255,.06) 44%,rgba(255,255,255,.58) 49%,
+      rgba(151,234,255,.34) 51.5%,rgba(255,197,239,.18) 54%,transparent 60%);
+  mix-blend-mode:screen;
+  transform:translateX(-46%) rotate(1.2deg);
+  opacity:.82;
+}
+
+/* Prism: multiple transparent facets instead of a flat rainbow wash. */
+.card-fx-layer.fx-prism{
+  background:
+    linear-gradient(31deg,transparent 0 34%,rgba(255,88,150,.13) 34.5% 49%,transparent 49.5% 100%),
+    linear-gradient(147deg,transparent 0 44%,rgba(72,207,255,.14) 44.5% 61%,transparent 61.5% 100%),
+    linear-gradient(76deg,transparent 0 56%,rgba(255,225,115,.12) 56.5% 70%,transparent 70.5% 100%),
+    conic-gradient(from 14deg at 53% 48%,rgba(255,85,147,.08),rgba(255,213,80,.06),rgba(66,224,190,.08),rgba(77,159,255,.10),rgba(154,94,255,.09),rgba(255,85,147,.08));
+  mix-blend-mode:screen;
+  opacity:.9;
+}
+.card-fx-layer.fx-prism::before{
+  inset:-7%;
+  background:
+    linear-gradient(33deg,transparent 0 27%,rgba(255,255,255,.20) 27.5% 28.4%,transparent 29% 100%),
+    linear-gradient(151deg,transparent 0 39%,rgba(174,230,255,.17) 39.4% 40.3%,transparent 41% 100%),
+    linear-gradient(83deg,transparent 0 60%,rgba(255,236,178,.12) 60.5% 61.5%,transparent 62% 100%);
+  clip-path:polygon(2% 10%,57% 0,98% 20%,88% 93%,30% 100%,0 67%);
+  opacity:.9;
+}
+.card-fx-layer.fx-prism::after{
+  inset:-16%;
+  background:conic-gradient(from 7deg at 50% 51%,
+    transparent 0 16deg,rgba(255,255,255,.10) 17deg 18deg,transparent 19deg 47deg,
+    rgba(151,218,255,.10) 48deg 49deg,transparent 50deg 83deg);
+  opacity:.62;
+}
+
+/* Aurora: broad translucent ribbons, darker center, soft edge glow. */
+.card-fx-layer.fx-aurora{
+  background:
+    radial-gradient(ellipse at 15% 34%,rgba(76,255,190,.17),transparent 35%),
+    radial-gradient(ellipse at 76% 60%,rgba(153,88,255,.18),transparent 40%),
+    radial-gradient(ellipse at 46% 8%,rgba(69,190,255,.13),transparent 32%);
+  mix-blend-mode:screen;
+  opacity:.92;
+}
+.card-fx-layer.fx-aurora::before{
+  inset:-24% -34%;
+  background:repeating-linear-gradient(111deg,
+    transparent 0 9%,rgba(65,248,188,.09) 12% 19%,rgba(76,181,255,.11) 23% 30%,
+    rgba(174,96,255,.10) 34% 41%,transparent 45% 56%);
+  filter:blur(9px) saturate(1.1);
+  transform:translateX(-4%) skewX(-7deg);
+  opacity:.78;
+}
+.card-fx-layer.fx-aurora::after{
+  inset:-7%;
+  background:radial-gradient(ellipse at 50% 52%,transparent 0 42%,rgba(214,244,255,.08) 56%,transparent 72%);
+  opacity:.72;
+}
+
+/* Rainbow: thin interference bands plus a separate white highlight. */
+.card-fx-layer.fx-rainbow{
+  background:linear-gradient(105deg,
+    rgba(255,49,92,.11),rgba(255,143,47,.105),rgba(255,221,62,.10),
+    rgba(57,215,145,.10),rgba(47,157,255,.11),rgba(130,88,255,.105),rgba(237,79,207,.10));
+  mix-blend-mode:screen;
+  opacity:.92;
+}
+.card-fx-layer.fx-rainbow::before{
+  inset:-18%;
+  background:repeating-linear-gradient(112deg,
+    transparent 0 15%,rgba(255,255,255,.065) 15.5% 16.4%,transparent 17% 31%);
+  opacity:.75;
+}
+.card-fx-layer.fx-rainbow::after{
+  inset:-34%;
+  background:linear-gradient(104deg,transparent 43%,rgba(255,255,255,.44) 49%,rgba(183,235,255,.14) 52%,transparent 58%);
+  transform:translateX(-44%);
+  opacity:.78;
+}
+
+/* Gold foil: warm metal with fine brushed grain and sparse flakes. */
+.card-fx-layer.fx-gold-foil{
+  background:
+    linear-gradient(111deg,rgba(83,47,7,.055),rgba(255,217,103,.10),rgba(154,91,13,.06)),
+    repeating-linear-gradient(118deg,transparent 0 12%,rgba(255,235,157,.14) 12.5% 14%,rgba(215,147,38,.065) 14.5% 16%,transparent 16.5% 30%);
+  mix-blend-mode:screen;
+  opacity:.94;
+}
+.card-fx-layer.fx-gold-foil::before{
+  inset:0;
+  background:
+    radial-gradient(circle at 18% 20%,rgba(255,238,157,.48) 0 .45%,transparent .8%),
+    radial-gradient(circle at 74% 31%,rgba(255,194,69,.36) 0 .38%,transparent .72%),
+    radial-gradient(circle at 39% 73%,rgba(255,224,121,.35) 0 .42%,transparent .76%),
+    radial-gradient(circle at 82% 83%,rgba(242,174,51,.30) 0 .34%,transparent .67%);
+  background-size:41px 39px,53px 49px,47px 45px,61px 55px;
+  opacity:.82;
+}
+.card-fx-layer.fx-gold-foil::after{
+  inset:-31%;
+  background:linear-gradient(108deg,transparent 44%,rgba(255,250,218,.51) 49%,rgba(255,203,81,.20) 52%,transparent 58%);
+  transform:translateX(-43%);
+  opacity:.83;
+}
+
+/* Silver foil: cool metal, sharper highlight, less global brightness. */
+.card-fx-layer.fx-silver-foil{
+  background:
+    linear-gradient(111deg,rgba(67,88,105,.05),rgba(237,248,255,.105),rgba(99,131,154,.06)),
+    repeating-linear-gradient(118deg,transparent 0 12%,rgba(242,251,255,.15) 12.5% 14%,rgba(142,178,203,.07) 14.5% 16%,transparent 16.5% 30%);
+  mix-blend-mode:screen;
+  opacity:.94;
+}
+.card-fx-layer.fx-silver-foil::before{
+  inset:0;
+  background:
+    radial-gradient(circle at 16% 19%,rgba(255,255,255,.55) 0 .43%,transparent .78%),
+    radial-gradient(circle at 73% 30%,rgba(190,230,255,.39) 0 .39%,transparent .72%),
+    radial-gradient(circle at 41% 74%,rgba(245,252,255,.42) 0 .42%,transparent .76%);
+  background-size:39px 39px,51px 47px,57px 53px;
+  opacity:.84;
+}
+.card-fx-layer.fx-silver-foil::after{
+  inset:-31%;
+  background:linear-gradient(108deg,transparent 44%,rgba(255,255,255,.55) 49%,rgba(181,224,249,.21) 52%,transparent 58%);
+  transform:translateX(-43%);
+  opacity:.86;
+}
+
+/* Shatter light: localized fracture network with restrained central bloom. */
+.card-fx-layer.fx-shatter-light{
+  background:
+    radial-gradient(circle at 50% 50%,rgba(255,255,255,.105),transparent 14%),
+    conic-gradient(from 8deg at 50% 50%,transparent 0 11deg,rgba(189,234,255,.08) 11.5deg 16deg,transparent 16.5deg 47deg);
+  mix-blend-mode:screen;
+  opacity:.92;
+}
+.card-fx-layer.fx-shatter-light::before{
+  inset:-5%;
+  background:
+    linear-gradient(27deg,transparent 0 49%,rgba(211,244,255,.26) 49.4% 50%,transparent 50.6%),
+    linear-gradient(74deg,transparent 0 49%,rgba(255,255,255,.20) 49.4% 50%,transparent 50.6%),
+    linear-gradient(134deg,transparent 0 49%,rgba(169,218,255,.21) 49.4% 50%,transparent 50.6%),
+    linear-gradient(166deg,transparent 0 49%,rgba(234,250,255,.14) 49.4% 50%,transparent 50.6%);
+  opacity:.82;
+}
+.card-fx-layer.fx-shatter-light::after{
+  inset:7%;
+  background:conic-gradient(from 18deg at 50% 50%,rgba(255,255,255,.075) 0 10deg,transparent 11deg 34deg,rgba(149,213,255,.085) 35deg 49deg,transparent 50deg 80deg);
+  clip-path:polygon(50% 0,60% 37%,100% 29%,68% 53%,91% 100%,55% 66%,26% 100%,40% 59%,0 45%,42% 42%);
+  opacity:.76;
+}
+
+/* v11.0 motion: movement is mostly internal so the artwork stays visually stable. */
+.fx-animate .card-fx-layer.fx-hologram::after{animation:fx11Specular 4.2s cubic-bezier(.45,0,.35,1) infinite}
+.fx-animate .card-fx-layer.fx-hologram::before{animation:fx11MicroShift 8.5s ease-in-out infinite alternate}
+.fx-animate .card-fx-layer.fx-prism::before{animation:fx11FacetDrift 7.8s ease-in-out infinite alternate}
+.fx-animate .card-fx-layer.fx-prism::after{animation:fx11FacetSpin 15s linear infinite}
+.fx-animate .card-fx-layer.fx-aurora::before{animation:fx11Aurora 7.4s ease-in-out infinite alternate}
+.fx-animate .card-fx-layer.fx-rainbow::after{animation:fx11Specular 5.2s ease-in-out infinite}
+.fx-animate .card-fx-layer.fx-rainbow::before{animation:fx11MicroShift 9.5s ease-in-out infinite alternate}
+.fx-animate .card-fx-layer.fx-gold-foil::after{animation:fx11Specular 4.4s ease-in-out infinite}
+.fx-animate .card-fx-layer.fx-gold-foil::before{animation:fx11FoilSparkle 6.2s steps(2,end) infinite}
+.fx-animate .card-fx-layer.fx-silver-foil::after{animation:fx11SpecularReverse 4.0s ease-in-out infinite}
+.fx-animate .card-fx-layer.fx-silver-foil::before{animation:fx11FoilSparkle 5.7s steps(2,end) infinite reverse}
+.fx-animate .card-fx-layer.fx-shatter-light::after{animation:fx11ShardPulse 5.6s ease-in-out infinite}
+.fx-animate .card-fx-layer.fx-shatter-light::before{animation:fx11FractureGlint 8.5s ease-in-out infinite}
+
+@keyframes fx11Specular{
+  0%,14%{transform:translateX(-46%) rotate(1.2deg);opacity:.18}
+  48%,56%{transform:translateX(36%) rotate(1.2deg);opacity:.92}
+  86%,100%{transform:translateX(48%) rotate(1.2deg);opacity:.16}
+}
+@keyframes fx11SpecularReverse{
+  0%,14%{transform:translateX(46%);opacity:.18}
+  48%,56%{transform:translateX(-36%);opacity:.94}
+  86%,100%{transform:translateX(-48%);opacity:.16}
+}
+@keyframes fx11MicroShift{
+  from{background-position:0 0,0 0;filter:hue-rotate(-8deg)}
+  to{background-position:18px -10px,-11px 16px;filter:hue-rotate(14deg)}
+}
+@keyframes fx11FacetDrift{
+  0%{transform:translate(-1.4%,1%) rotate(-.5deg);filter:hue-rotate(-8deg)}
+  100%{transform:translate(2.2%,-1.5%) rotate(1.1deg);filter:hue-rotate(32deg)}
+}
+@keyframes fx11FacetSpin{to{transform:rotate(360deg)}}
+@keyframes fx11Aurora{
+  0%{transform:translateX(-4%) skewX(-7deg) scaleY(.97);opacity:.58;filter:blur(9px) hue-rotate(-8deg)}
+  100%{transform:translateX(5%) skewX(-3deg) scaleY(1.06);opacity:.92;filter:blur(10px) hue-rotate(18deg)}
+}
+@keyframes fx11FoilSparkle{
+  0%,100%{opacity:.68;filter:brightness(.95)}
+  45%{opacity:.96;filter:brightness(1.16)}
+  72%{opacity:.76;filter:brightness(1.02)}
+}
+@keyframes fx11ShardPulse{
+  0%,100%{opacity:.46;filter:brightness(.96)}
+  48%{opacity:.88;filter:brightness(1.22)}
+}
+@keyframes fx11FractureGlint{
+  0%,100%{opacity:.55;filter:brightness(.96)}
+  35%{opacity:.82;filter:brightness(1.12)}
+  58%{opacity:.64;filter:brightness(1.03)}
+}
+
+
+/* ==========================================================
+   v11.1 Particle FX refinement
+   星屑 / 光粒子 / 蝶光 / 桜吹雪 / 雪華 / 泡沫 / 羽根 / 花吹雪 / 砂塵
+   粒子の均一感を崩し、奥行き・速度差・局所発光を強化。
+   ========================================================== */
+.fx-stardust{
+ background:
+  radial-gradient(circle at 12% 18%,rgba(255,255,255,.52) 0 .7px,transparent 1.5px),
+  radial-gradient(circle at 67% 31%,rgba(190,221,255,.38) 0 .55px,transparent 1.35px),
+  radial-gradient(circle at 84% 73%,rgba(255,230,184,.32) 0 .45px,transparent 1.15px),
+  radial-gradient(circle,rgba(236,245,255,.20) 0 .3px,transparent .95px) 0 0/17px 23px,
+  radial-gradient(circle,rgba(171,207,255,.13) 0 .24px,transparent .78px) 7px 11px/31px 37px,
+  linear-gradient(115deg,rgba(110,150,220,.018),rgba(245,249,255,.06) 48%,rgba(135,179,241,.025));
+ mix-blend-mode:screen;
+}
+.fx-stardust::before{
+ inset:-6%;
+ background:
+  radial-gradient(circle,rgba(255,255,255,.25) 0 .42px,transparent 1.18px) 3px 2px/23px 29px,
+  radial-gradient(circle,rgba(210,229,255,.17) 0 .31px,transparent .92px) 13px 17px/41px 47px,
+  radial-gradient(circle,rgba(255,235,196,.12) 0 .26px,transparent .78px) 5px 9px/53px 61px;
+ opacity:.74;
+ filter:drop-shadow(0 0 1px rgba(226,241,255,.28));
+}
+.fx-stardust::after{
+ display:block;inset:-16%;
+ background:linear-gradient(108deg,transparent 38%,rgba(222,238,255,.02) 43%,rgba(255,255,255,.17) 49%,rgba(182,214,255,.055) 53%,transparent 61%);
+ mix-blend-mode:screen;opacity:calc(var(--fx-motion-alpha) * .58);
+ transform:translateX(var(--fx-motion-x)) rotate(.4deg);
+}
+.fx-stardust>.fx-deco-a{background:radial-gradient(circle at 24% 34%,rgba(255,255,255,.28),transparent 1.2%),radial-gradient(circle at 76% 64%,rgba(205,227,255,.20),transparent 1.1%);opacity:.66}
+
+.fx-light-particles{
+ background:
+  radial-gradient(circle at 22% 24%,rgba(255,250,219,.34),transparent 2.2%),
+  radial-gradient(circle at 72% 36%,rgba(214,244,255,.28),transparent 2.8%),
+  radial-gradient(circle at 47% 78%,rgba(239,220,255,.24),transparent 2.4%),
+  radial-gradient(circle,rgba(255,251,228,.20) 0 .42px,transparent 1.1px) 0 0/22px 29px,
+  radial-gradient(circle,rgba(210,237,255,.13) 0 .32px,transparent .92px) 11px 7px/37px 43px,
+  linear-gradient(110deg,rgba(255,234,181,.02),rgba(240,250,255,.065) 50%,rgba(220,197,255,.025));
+ mix-blend-mode:screen;
+}
+.fx-light-particles::before{inset:-8%;background:radial-gradient(circle,rgba(255,255,245,.18) 0 .34px,transparent .98px) 4px 8px/31px 37px,radial-gradient(circle,rgba(218,239,255,.12) 0 .28px,transparent .83px) 18px 3px/47px 53px;opacity:.70;filter:blur(.08px)}
+.fx-light-particles::after{display:block;inset:-17%;background:linear-gradient(104deg,transparent 39%,rgba(255,247,211,.025) 44%,rgba(255,255,255,.15) 49%,rgba(207,235,255,.05) 54%,transparent 61%);opacity:calc(var(--fx-motion-alpha) * .52);transform:translateX(var(--fx-motion-x))}
+
+.fx-butterfly-light{
+ background:
+  radial-gradient(ellipse at 19% 22%,rgba(160,224,255,.22),transparent 3.2%),
+  radial-gradient(ellipse at 78% 68%,rgba(239,180,255,.20),transparent 3.6%),
+  repeating-linear-gradient(31deg,transparent 0 10px,rgba(177,226,255,.022) 11px 12px,transparent 13px 24px),
+  repeating-linear-gradient(-31deg,transparent 0 15px,rgba(234,195,255,.019) 16px 17px,transparent 18px 31px),
+  linear-gradient(112deg,rgba(149,218,246,.025),rgba(203,172,255,.066) 34%,rgba(169,232,255,.074) 49%,rgba(240,189,246,.057) 64%,rgba(136,206,238,.02));
+ mix-blend-mode:screen;
+}
+.fx-butterfly-light::before{inset:-5%;background:radial-gradient(ellipse,rgba(224,244,255,.16) 0 .45px,transparent 1.15px) 1px 4px/29px 41px,radial-gradient(ellipse,rgba(239,215,255,.13) 0 .36px,transparent .98px) 17px 12px/43px 57px;opacity:.72;filter:drop-shadow(0 0 1px rgba(188,225,255,.22))}
+.fx-butterfly-light>.fx-deco-a{background:repeating-radial-gradient(ellipse at 50% 50%,transparent 0 10%,rgba(223,211,255,.023) 10.5% 11.2%,transparent 11.8% 20%);opacity:.50}
+
+.fx-sakura{
+ background:
+  radial-gradient(ellipse at 14% 18%,rgba(255,192,218,.28) 0 .75px,transparent 1.65px),
+  radial-gradient(ellipse at 73% 29%,rgba(255,222,236,.22) 0 .65px,transparent 1.5px),
+  radial-gradient(ellipse at 86% 76%,rgba(241,143,185,.18) 0 .58px,transparent 1.35px),
+  radial-gradient(ellipse,rgba(255,182,211,.16) 0 .45px,transparent 1.2px) 0 0/21px 27px,
+  radial-gradient(ellipse,rgba(255,224,237,.11) 0 .34px,transparent .98px) 9px 13px/37px 43px,
+  linear-gradient(113deg,rgba(255,159,202,.012),rgba(255,223,235,.05) 34%,rgba(255,247,250,.06) 48%,rgba(255,180,213,.038) 66%,transparent 86%);
+ mix-blend-mode:screen;
+}
+.fx-sakura::before{inset:-9%;background:radial-gradient(ellipse,rgba(255,235,243,.15) 0 .38px,transparent 1.06px) 2px 5px/33px 41px,radial-gradient(ellipse,rgba(247,163,200,.11) 0 .31px,transparent .92px) 19px 7px/49px 61px;opacity:.68}
+
+.fx-snow{
+ background:
+  radial-gradient(circle at 17% 20%,rgba(255,255,255,.38) 0 .7px,transparent 1.55px),
+  radial-gradient(circle at 71% 34%,rgba(205,239,253,.30) 0 .58px,transparent 1.4px),
+  radial-gradient(circle at 83% 77%,rgba(243,253,255,.26) 0 .46px,transparent 1.18px),
+  radial-gradient(circle,rgba(249,255,255,.21) 0 .31px,transparent .92px) 0 0/15px 19px,
+  radial-gradient(circle,rgba(187,228,247,.13) 0 .25px,transparent .78px) 7px 9px/29px 37px,
+  linear-gradient(112deg,rgba(155,213,240,.016),rgba(242,253,255,.072) 37%,rgba(255,255,255,.09) 49%,rgba(171,225,247,.043) 64%,rgba(119,184,219,.015));
+ mix-blend-mode:screen;
+}
+.fx-snow::before{inset:-7%;background:radial-gradient(circle,rgba(249,255,255,.17) 0 .38px,transparent 1.03px) 4px 3px/27px 35px,radial-gradient(circle,rgba(192,231,249,.11) 0 .30px,transparent .88px) 15px 17px/47px 59px;opacity:.70;filter:drop-shadow(0 0 1px rgba(217,244,255,.22))}
+
+.fx-bubbles{
+ background:
+  radial-gradient(circle at 16% 23%,transparent 0 2.2px,rgba(225,249,255,.13) 2.5px 3.3px,transparent 3.8px),
+  radial-gradient(circle at 76% 37%,transparent 0 3.1px,rgba(188,232,252,.10) 3.4px 4.2px,transparent 4.7px),
+  radial-gradient(circle at 61% 79%,transparent 0 1.45px,rgba(247,255,255,.12) 1.7px 2.25px,transparent 2.7px),
+  radial-gradient(circle,transparent 0 1.55px,rgba(207,242,255,.052) 1.9px 2.55px,transparent 3px) 0 0/31px 37px,
+  linear-gradient(112deg,rgba(80,183,237,.015),rgba(220,248,255,.055) 37%,rgba(250,255,255,.075) 49%,rgba(106,198,240,.034) 64%,transparent 85%);
+ mix-blend-mode:screen;
+}
+.fx-bubbles::before{inset:-8%;background:radial-gradient(circle,transparent 0 1px,rgba(245,255,255,.085) 1.25px 1.7px,transparent 2.1px) 5px 7px/37px 47px,radial-gradient(circle,rgba(255,255,255,.10) 0 .28px,transparent .72px) 13px 19px/53px 61px;opacity:.67}
+
+.fx-feathers{
+ background:
+  repeating-linear-gradient(27deg,transparent 0 8px,rgba(230,243,255,.022) 9px 10px,transparent 11px 20px),
+  repeating-linear-gradient(153deg,transparent 0 16px,rgba(180,208,235,.017) 17px 18px,transparent 19px 31px),
+  radial-gradient(ellipse at 24% 28%,rgba(246,252,255,.12),transparent 4.5%),
+  radial-gradient(ellipse at 75% 72%,rgba(205,225,244,.10),transparent 5%),
+  linear-gradient(112deg,rgba(239,247,255,.015),rgba(205,225,243,.052) 36%,rgba(252,255,255,.066) 49%,rgba(188,211,237,.035) 64%,transparent 85%);
+ mix-blend-mode:screen;
+}
+.fx-feathers::before{inset:-8%;background:repeating-linear-gradient(62deg,transparent 0 25px,rgba(244,250,255,.019) 26px 27px,transparent 28px 47px),radial-gradient(ellipse,rgba(250,253,255,.09) 0 .4px,transparent 1.1px) 5px 9px/41px 53px;opacity:.64}
+
+.fx-petals{
+ background:
+  radial-gradient(ellipse at 16% 21%,rgba(255,119,169,.22) 0 .7px,transparent 1.6px),
+  radial-gradient(ellipse at 70% 29%,rgba(224,148,255,.20) 0 .62px,transparent 1.5px),
+  radial-gradient(ellipse at 84% 72%,rgba(255,194,119,.18) 0 .58px,transparent 1.35px),
+  radial-gradient(ellipse at 43% 82%,rgba(132,220,255,.14) 0 .47px,transparent 1.15px),
+  radial-gradient(ellipse,rgba(255,143,187,.13) 0 .38px,transparent 1.04px) 0 0/23px 29px,
+  linear-gradient(112deg,rgba(255,129,170,.011),rgba(249,217,239,.042) 32%,rgba(255,247,233,.055) 48%,rgba(218,193,255,.035) 66%,transparent 86%);
+ mix-blend-mode:screen;
+}
+.fx-petals::before{inset:-9%;background:radial-gradient(ellipse,rgba(255,230,241,.13) 0 .34px,transparent .95px) 4px 7px/35px 43px,radial-gradient(ellipse,rgba(231,214,255,.11) 0 .30px,transparent .88px) 17px 15px/51px 59px;opacity:.66}
+
+.fx-sand{
+ background:
+  radial-gradient(circle at 18% 22%,rgba(245,215,163,.24) 0 .55px,transparent 1.25px),
+  radial-gradient(circle at 74% 33%,rgba(159,104,54,.20) 0 .43px,transparent 1.08px),
+  radial-gradient(circle at 82% 77%,rgba(229,181,111,.18) 0 .37px,transparent .98px),
+  radial-gradient(circle,rgba(224,180,113,.18) 0 .24px,transparent .72px) 0 0/9px 12px,
+  radial-gradient(circle,rgba(150,101,54,.11) 0 .20px,transparent .61px) 4px 6px/17px 23px,
+  linear-gradient(112deg,rgba(139,91,42,.024),rgba(204,158,91,.056) 30%,rgba(240,207,151,.067) 48%,rgba(174,125,65,.046) 66%,rgba(118,74,35,.021));
+ mix-blend-mode:soft-light;
+}
+.fx-sand::before{inset:-7%;background:radial-gradient(circle,rgba(247,217,166,.10) 0 .18px,transparent .52px) 0 0/11px 15px,radial-gradient(circle,rgba(135,88,46,.07) 0 .16px,transparent .48px) 7px 9px/23px 31px;opacity:.68}
+
+.fx-animate .fx-stardust::before{animation:v111FloatFine 8.2s ease-in-out infinite!important}
+.fx-animate .fx-light-particles::before{animation:v111FloatSoft 9.7s ease-in-out infinite!important}
+.fx-animate .fx-butterfly-light::before{animation:v111ButterflyDrift 10.8s ease-in-out infinite!important}
+.fx-animate .fx-sakura::before{animation:v111PetalDrift 9.8s ease-in-out infinite!important}
+.fx-animate .fx-snow::before{animation:v111SnowDrift 11.6s linear infinite!important}
+.fx-animate .fx-bubbles::before{animation:v111BubbleRise 10.4s ease-in-out infinite!important}
+.fx-animate .fx-feathers::before{animation:v111FeatherDrift 13.2s ease-in-out infinite!important}
+.fx-animate .fx-petals::before{animation:v111PetalDrift2 10.7s ease-in-out infinite!important}
+.fx-animate .fx-sand::before{animation:v111SandDrift 12.8s ease-in-out infinite!important}
+@keyframes v111FloatFine{0%,100%{transform:translate3d(-1%,1%,0);opacity:.55}50%{transform:translate3d(1.4%,-1.1%,0);opacity:.86}}
+@keyframes v111FloatSoft{0%,100%{transform:translate3d(-.5%,1.2%,0) scale(.99);opacity:.54}50%{transform:translate3d(.8%,-1.4%,0) scale(1.012);opacity:.82}}
+@keyframes v111ButterflyDrift{0%,100%{transform:translate3d(-1.3%,.8%,0) skewX(-.3deg);opacity:.55}50%{transform:translate3d(1.2%,-1.1%,0) skewX(.5deg);opacity:.82}}
+@keyframes v111PetalDrift{0%{transform:translate3d(-1%,-1%,0)}50%{transform:translate3d(1.4%,1.2%,0)}100%{transform:translate3d(-1%,2.4%,0)}}
+@keyframes v111SnowDrift{0%{transform:translate3d(-.7%,-2%,0)}50%{transform:translate3d(.9%,1%,0)}100%{transform:translate3d(-.4%,3%,0)}}
+@keyframes v111BubbleRise{0%,100%{transform:translate3d(-.5%,2%,0) scale(.99);opacity:.55}50%{transform:translate3d(.6%,-2%,0) scale(1.014);opacity:.80}}
+@keyframes v111FeatherDrift{0%,100%{transform:translate3d(-1.2%,-.4%,0) rotate(-.35deg);opacity:.50}50%{transform:translate3d(1.2%,1.2%,0) rotate(.45deg);opacity:.75}}
+@keyframes v111PetalDrift2{0%{transform:translate3d(-1.3%,-1.2%,0)}50%{transform:translate3d(1.1%,1.4%,0)}100%{transform:translate3d(-.5%,2.6%,0)}}
+@keyframes v111SandDrift{0%,100%{transform:translate3d(-.8%,0,0);opacity:.55}50%{transform:translate3d(1.1%,.5%,0);opacity:.78}}
+
+/* ==========================================================
+   v11.2 Attribute FX refinement
+   炎 / 氷晶 / 雷光 / 水面 / 霧 / 闇のオーラ / 墨染
+   ========================================================== */
+.fx-fire{background:radial-gradient(ellipse at 18% 108%,rgba(255,52,10,.24),transparent 37%),radial-gradient(ellipse at 52% 112%,rgba(255,174,45,.22),transparent 42%),radial-gradient(ellipse at 82% 108%,rgba(255,74,18,.18),transparent 35%),linear-gradient(to top,rgba(132,18,5,.16),rgba(255,102,17,.10) 22%,transparent 58%);mix-blend-mode:screen}
+.fx-fire::before{inset:-8% -5% -12%;background:radial-gradient(ellipse at 18% 100%,rgba(255,219,120,.34) 0 3%,rgba(255,92,14,.14) 8%,transparent 22%),radial-gradient(ellipse at 47% 103%,rgba(255,235,160,.28) 0 2%,rgba(255,120,24,.16) 7%,transparent 24%),radial-gradient(ellipse at 76% 102%,rgba(255,207,90,.30) 0 3%,rgba(224,56,10,.13) 9%,transparent 23%);filter:blur(.7px);opacity:.88}
+.fx-fire::after{display:block;inset:-18%;background:linear-gradient(106deg,transparent 39%,rgba(255,118,29,.03) 43%,rgba(255,246,194,.25) 49%,rgba(255,149,43,.10) 53%,transparent 60%);opacity:calc(var(--fx-motion-alpha)*.72);mix-blend-mode:screen}
+.fx-fire>.fx-deco-c{background:radial-gradient(circle,rgba(255,214,115,.35) 0 .45px,transparent 1.2px) 0 0/17px 23px,radial-gradient(circle,rgba(255,96,25,.20) 0 .35px,transparent 1px) 7px 11px/29px 37px;opacity:.48}
+
+.fx-ice-crystal{background:linear-gradient(125deg,rgba(108,192,236,.035),transparent 26%,rgba(225,250,255,.11) 47%,transparent 62%,rgba(124,202,239,.04)),repeating-linear-gradient(60deg,transparent 0 19px,rgba(214,246,255,.038) 20px 21px,transparent 22px 39px),repeating-linear-gradient(120deg,transparent 0 27px,rgba(164,220,246,.028) 28px 29px,transparent 30px 49px);mix-blend-mode:screen}
+.fx-ice-crystal::before{inset:4%;border:1px solid rgba(221,249,255,.13);background:conic-gradient(from 15deg at 52% 49%,transparent 0 12deg,rgba(239,253,255,.12) 13deg 14deg,transparent 15deg 48deg,rgba(175,229,251,.07) 49deg 50deg,transparent 51deg 92deg);clip-path:polygon(50% 0,63% 32%,100% 20%,70% 50%,100% 82%,63% 66%,50% 100%,38% 67%,0 82%,30% 50%,0 20%,38% 32%);box-shadow:inset 0 0 18px rgba(190,235,253,.08);opacity:.78}
+.fx-ice-crystal::after{display:block;inset:-20%;background:linear-gradient(111deg,transparent 40%,rgba(244,255,255,.30) 49%,rgba(167,224,250,.09) 53%,transparent 61%);opacity:calc(var(--fx-motion-alpha)*.68)}
+
+.fx-lightning{background:linear-gradient(115deg,rgba(37,82,204,.04),transparent 28%,rgba(164,225,255,.09) 47%,transparent 60%,rgba(91,92,255,.05)),repeating-linear-gradient(116deg,transparent 0 31px,rgba(157,221,255,.027) 32px 33px,transparent 34px 53px);mix-blend-mode:screen}
+.fx-lightning::before{inset:0;background:linear-gradient(112deg,transparent 12%,rgba(225,250,255,.22) 12.7% 13.3%,transparent 14% 37%,rgba(119,199,255,.16) 37.5% 38.2%,transparent 39% 65%,rgba(240,254,255,.18) 65.5% 66.2%,transparent 67%);clip-path:polygon(47% 0,58% 30%,50% 30%,65% 51%,54% 49%,62% 100%,40% 62%,50% 63%,35% 43%,45% 45%);filter:drop-shadow(0 0 4px rgba(119,207,255,.28));opacity:.78}
+.fx-lightning::after{display:block;inset:-18%;background:linear-gradient(108deg,transparent 41%,rgba(239,253,255,.34) 49%,rgba(104,188,255,.11) 53%,transparent 60%);opacity:calc(var(--fx-motion-alpha)*.72)}
+
+.fx-water{background:radial-gradient(ellipse at 50% 35%,transparent 0 18%,rgba(185,236,255,.045) 19% 20%,transparent 21% 35%),radial-gradient(ellipse at 40% 78%,transparent 0 13%,rgba(218,248,255,.06) 14% 15%,transparent 16% 29%),linear-gradient(112deg,rgba(51,153,220,.025),rgba(223,248,255,.09) 47%,rgba(60,163,227,.035));mix-blend-mode:screen}
+.fx-water::before{inset:7% -8%;background:repeating-radial-gradient(ellipse at 50% 55%,transparent 0 11%,rgba(216,249,255,.085) 12% 13%,transparent 14% 22%);transform:scaleY(.45);filter:blur(.2px);opacity:.78}
+.fx-water::after{display:block;inset:-19%;background:linear-gradient(109deg,transparent 40%,rgba(247,255,255,.25) 49%,rgba(150,227,255,.10) 54%,transparent 62%);opacity:calc(var(--fx-motion-alpha)*.64)}
+
+.fx-fog{background:radial-gradient(ellipse at 25% 45%,rgba(230,238,244,.12),transparent 38%),radial-gradient(ellipse at 78% 65%,rgba(202,217,228,.10),transparent 40%),linear-gradient(112deg,rgba(205,220,230,.025),rgba(245,249,251,.08) 48%,rgba(187,204,217,.035));mix-blend-mode:screen}
+.fx-fog::before{inset:-10%;background:linear-gradient(100deg,transparent 8%,rgba(232,239,244,.13) 24%,transparent 43%,rgba(207,221,231,.11) 62%,transparent 82%);filter:blur(7px);opacity:.70}
+.fx-fog::after{display:block;inset:-12%;background:linear-gradient(92deg,transparent 15%,rgba(246,249,251,.07) 42%,transparent 66%);filter:blur(10px);opacity:.55}
+
+.fx-dark-aura{background:radial-gradient(ellipse at 50% 50%,transparent 0 43%,rgba(103,28,147,.09) 67%,rgba(17,5,27,.18) 100%),linear-gradient(118deg,rgba(141,54,180,.035),transparent 34%,rgba(62,15,96,.075) 52%,transparent 72%);mix-blend-mode:multiply}
+.fx-dark-aura::before{inset:1%;border:1px solid rgba(151,75,191,.08);box-shadow:inset 0 0 24px rgba(91,27,132,.11),inset 0 0 52px rgba(12,3,20,.10),0 0 10px rgba(101,30,145,.06);background:radial-gradient(circle at 50% 50%,transparent 0 50%,rgba(125,45,166,.05) 70%,transparent 88%);filter:none;opacity:.82}
+.fx-dark-aura::after{display:block;inset:-16%;background:conic-gradient(from 0deg at 50% 50%,transparent,rgba(126,41,171,.055),transparent 22%,rgba(58,11,94,.045),transparent 48%,rgba(140,48,178,.05),transparent 73%);opacity:.48}
+
+.fx-ink{background:radial-gradient(ellipse at 18% 23%,rgba(8,8,12,.17),transparent 24%),radial-gradient(ellipse at 79% 68%,rgba(13,11,18,.16),transparent 29%),radial-gradient(ellipse at 44% 54%,rgba(5,6,9,.10),transparent 35%),linear-gradient(145deg,rgba(3,4,6,.03),transparent 42%,rgba(16,13,20,.06));mix-blend-mode:multiply}
+.fx-ink::before{inset:-3%;background:radial-gradient(ellipse at 28% 40%,transparent 0 20%,rgba(5,5,8,.09) 21% 24%,transparent 25%),radial-gradient(ellipse at 68% 58%,transparent 0 17%,rgba(9,8,12,.08) 18% 21%,transparent 22%);filter:blur(1.1px);opacity:.78}
+.fx-ink::after{display:block;inset:0;background:repeating-linear-gradient(171deg,transparent 0 31px,rgba(3,4,6,.022) 32px 35px,transparent 36px 59px);opacity:.62}
+
+.fx-animate .fx-fire::before{animation:fx112Flame 3.4s ease-in-out infinite!important}
+.fx-animate .fx-ice-crystal::before{animation:fx112Ice 7.5s ease-in-out infinite!important}
+.fx-animate .fx-lightning::before{animation:fx112Bolt 2.3s steps(1,end) infinite!important}
+.fx-animate .fx-water::before{animation:fx112Water 6.2s ease-in-out infinite!important}
+.fx-animate .fx-fog::before{animation:fx112Fog 12s ease-in-out infinite!important}
+.fx-animate .fx-dark-aura::after{animation:fx112Aura 18s linear infinite!important}
+.fx-animate .fx-ink::before{animation:fx112Ink 10s ease-in-out infinite!important}
+@keyframes fx112Flame{0%,100%{transform:translateY(1%) scaleX(.98);opacity:.62}50%{transform:translateY(-2%) scaleX(1.04);opacity:.94}}
+@keyframes fx112Ice{0%,100%{transform:scale(.985) rotate(-.25deg);filter:brightness(.96)}50%{transform:scale(1.012) rotate(.35deg);filter:brightness(1.16)}}
+@keyframes fx112Bolt{0%,74%,100%{opacity:.28;filter:brightness(.9)}75%{opacity:1;filter:brightness(1.7)}78%{opacity:.38}82%{opacity:.88;filter:brightness(1.45)}84%{opacity:.3}}
+@keyframes fx112Water{0%,100%{transform:scaleY(.44) translateY(1%);opacity:.58}50%{transform:scaleY(.52) translateY(-1.2%);opacity:.88}}
+@keyframes fx112Fog{0%,100%{transform:translateX(-4%);opacity:.46}50%{transform:translateX(5%);opacity:.78}}
+@keyframes fx112Aura{to{transform:rotate(360deg)}}
+@keyframes fx112Ink{0%,100%{transform:scale(1);opacity:.55}50%{transform:scale(1.035);opacity:.82}}
+@media(max-width:700px){.fx-fire>.fx-deco-c{opacity:.28}.fx-fog::before{filter:blur(5px)}.fx-dark-aura::after{opacity:.34}}
+
+
+/* ==========================================================
+   v11.4 Magic / SF FX refinement
+   魔法陣 / ルーン / 聖光 / 宇宙 / グリッチ / 歯車 / デジタルコード
+   ========================================================== */
+
+/* 魔法陣：大きな1枚円ではなく、内外リング・刻印・中心核を分離 */
+.fx-magic-circle{
+ background:
+  radial-gradient(circle at 50% 50%,rgba(101,181,255,.055) 0 7%,transparent 8% 25%,rgba(133,202,255,.038) 26% 27%,transparent 28% 100%),
+  linear-gradient(125deg,rgba(86,153,255,.018),transparent 32%,rgba(200,234,255,.055) 49%,transparent 68%);
+ mix-blend-mode:screen;
+}
+.fx-magic-circle::before{
+ inset:11%;width:auto;aspect-ratio:auto;border-radius:50%;
+ border:1px solid rgba(169,218,255,.33);
+ box-shadow:0 0 9px rgba(99,180,255,.20),inset 0 0 0 7px rgba(110,184,255,.035),inset 0 0 13px rgba(137,207,255,.07);
+ background:
+  repeating-conic-gradient(from 4deg,rgba(191,230,255,.30) 0 1deg,transparent 1.5deg 14deg),
+  radial-gradient(circle,transparent 0 39%,rgba(158,215,255,.16) 40% 41%,transparent 42% 60%,rgba(122,192,255,.10) 61% 62%,transparent 63%);
+ opacity:.86;
+}
+.fx-magic-circle::after{
+ display:block;inset:23%;border-radius:50%;
+ border:1px solid rgba(213,240,255,.22);
+ background:conic-gradient(from 22deg,transparent 0 16deg,rgba(213,241,255,.18) 17deg 18deg,transparent 19deg 42deg,rgba(128,198,255,.13) 43deg 44deg,transparent 45deg 360deg);
+ box-shadow:0 0 12px rgba(111,188,255,.10);
+ opacity:.76;
+}
+.fx-magic-circle>.fx-deco-a{inset:37%;border-radius:50%;border:1px solid rgba(225,247,255,.22);box-shadow:0 0 11px rgba(114,199,255,.13);background:radial-gradient(circle,rgba(235,250,255,.18),transparent 58%)}
+
+/* ルーン：文字列を強く見せすぎず、外周刻印が順番に点灯する印象 */
+.fx-runes{
+ background:
+  radial-gradient(circle at 50% 50%,transparent 0 38%,rgba(110,184,255,.055) 39% 40%,transparent 41% 58%,rgba(91,158,235,.035) 59% 60%,transparent 61%),
+  linear-gradient(118deg,rgba(83,143,224,.018),rgba(188,224,255,.045) 49%,rgba(82,132,210,.018));
+ mix-blend-mode:screen;
+}
+.fx-runes::before{
+ content:"ᚠ  ·  ᚱ  ·  ᚢ  ·  ᚾ  ·  ᛟ  ·  ᛞ  ·  ᛇ  ·  ᚲ  ·  ᛉ";
+ inset:10% 7%;display:flex;align-items:center;justify-content:center;
+ font-size:12px;line-height:1.9;letter-spacing:.18em;text-align:center;
+ color:rgba(205,232,255,.58);
+ text-shadow:0 0 4px rgba(88,170,255,.36),0 0 10px rgba(95,168,255,.14);
+ opacity:.82;
+}
+.fx-runes::after{
+ display:block;inset:19%;border-radius:50%;
+ border:1px dashed rgba(164,213,255,.16);
+ box-shadow:inset 0 0 14px rgba(105,179,255,.06);
+ opacity:.72;
+}
+.fx-runes>.fx-deco-a{inset:31%;border-radius:50%;background:conic-gradient(from 15deg,transparent 0 32deg,rgba(217,242,255,.15) 33deg 34deg,transparent 35deg 95deg);opacity:.65}
+
+/* 聖光：一様な白被せを抑え、上から差す複数の細い光柱＋柔らかな中心光 */
+.fx-holy-light{
+ background:
+  radial-gradient(ellipse at 50% 8%,rgba(255,252,218,.19),transparent 34%),
+  linear-gradient(to bottom,rgba(255,246,187,.075),transparent 55%);
+ mix-blend-mode:screen;
+}
+.fx-holy-light::before{
+ inset:-16% -10% 5%;
+ background:
+  linear-gradient(166deg,transparent 0 31%,rgba(255,252,223,.18) 32% 35%,transparent 36% 100%),
+  linear-gradient(188deg,transparent 0 43%,rgba(241,249,255,.13) 44% 47%,transparent 48% 100%),
+  linear-gradient(174deg,transparent 0 58%,rgba(255,235,165,.11) 59% 61%,transparent 62% 100%);
+ filter:blur(.35px);opacity:.82;
+}
+.fx-holy-light::after{
+ display:block;inset:2%;
+ background:radial-gradient(ellipse at 50% 37%,rgba(255,255,239,.14),transparent 38%),radial-gradient(circle at 50% 17%,rgba(255,249,206,.24) 0 1.2%,transparent 2.7%);
+ opacity:.70;
+}
+.fx-holy-light>.fx-deco-a{inset:0;background:radial-gradient(circle,rgba(255,252,220,.26) 0 .35px,transparent .9px) 0 0/31px 37px;opacity:.36}
+
+/* 宇宙：星・星雲・微かな軌道を別レイヤーに分離 */
+.fx-cosmos{
+ background:
+  radial-gradient(ellipse at 68% 38%,rgba(123,79,225,.16),transparent 33%),
+  radial-gradient(ellipse at 30% 68%,rgba(50,156,229,.14),transparent 31%),
+  radial-gradient(ellipse at 48% 53%,rgba(205,112,210,.08),transparent 40%),
+  linear-gradient(132deg,rgba(24,20,61,.08),rgba(6,18,42,.035) 50%,rgba(46,20,72,.07));
+ mix-blend-mode:screen;
+}
+.fx-cosmos::before{
+ inset:-4%;
+ background:
+  radial-gradient(circle at 18% 22%,rgba(255,255,255,.80) 0 .45px,transparent 1px),
+  radial-gradient(circle at 72% 18%,rgba(189,226,255,.62) 0 .38px,transparent .9px),
+  radial-gradient(circle at 83% 71%,rgba(235,214,255,.58) 0 .42px,transparent .94px),
+  radial-gradient(circle at 39% 78%,rgba(255,245,208,.50) 0 .34px,transparent .86px),
+  radial-gradient(circle,rgba(218,235,255,.27) 0 .24px,transparent .68px) 0 0/23px 31px;
+ opacity:.70;
+}
+.fx-cosmos::after{
+ display:block;inset:15%;border-radius:50%;
+ border:1px solid rgba(173,207,255,.07);
+ box-shadow:0 0 0 11px rgba(140,97,224,.018),0 0 0 25px rgba(54,148,221,.014);
+ transform:rotate(-17deg) scaleY(.58);opacity:.72;
+}
+.fx-cosmos>.fx-deco-a{inset:-9%;background:linear-gradient(113deg,transparent 39%,rgba(226,238,255,.07) 48%,transparent 58%);opacity:.54}
+
+/* グリッチ：カード全体の位置を揺らさず、内部のRGB分離・走査帯だけを動かす */
+.fx-glitch{
+ background:
+  repeating-linear-gradient(0deg,transparent 0 7px,rgba(117,220,255,.035) 8px 8.7px,transparent 9px 15px),
+  linear-gradient(90deg,rgba(255,35,100,.045),transparent 31%,rgba(40,230,255,.048) 69%,transparent);
+ mix-blend-mode:screen;
+}
+.fx-glitch::before{
+ inset:3%;
+ background:
+  linear-gradient(90deg,transparent 0 12%,rgba(255,65,128,.17) 13% 24%,transparent 25% 57%,rgba(59,229,255,.16) 58% 70%,transparent 71%),
+  repeating-linear-gradient(0deg,transparent 0 22px,rgba(230,248,255,.06) 23px 24px,transparent 25px 43px);
+ clip-path:polygon(0 8%,100% 8%,100% 18%,0 18%,0 43%,100% 43%,100% 49%,0 49%,0 73%,100% 73%,100% 82%,0 82%);
+ opacity:.66;
+}
+.fx-glitch::after{
+ display:block;inset:0;
+ background:linear-gradient(90deg,rgba(255,55,110,.07),transparent 5% 95%,rgba(50,223,255,.07));
+ opacity:.56;
+}
+
+/* 歯車：Unicode依存を減らし、複数径の機械リングとして構成 */
+.fx-gears{
+ background:radial-gradient(circle at 29% 32%,transparent 0 13%,rgba(181,202,220,.07) 14% 15%,transparent 16% 28%),radial-gradient(circle at 72% 67%,transparent 0 18%,rgba(142,170,193,.065) 19% 20%,transparent 21% 34%);
+ mix-blend-mode:screen;
+}
+.fx-gears::before{
+ content:"";inset:7% 43% 48% 3%;border-radius:50%;
+ border:2px dotted rgba(194,216,231,.21);
+ box-shadow:inset 0 0 0 5px rgba(150,177,199,.055),0 0 8px rgba(120,173,205,.06);
+ background:radial-gradient(circle,transparent 0 22%,rgba(177,204,224,.12) 23% 28%,transparent 29%);
+ opacity:.83;
+}
+.fx-gears::after{
+ display:block;inset:46% 2% 4% 48%;border-radius:50%;
+ border:2px dashed rgba(156,184,205,.18);
+ box-shadow:inset 0 0 0 7px rgba(128,158,181,.045);
+ background:radial-gradient(circle,transparent 0 20%,rgba(179,204,220,.10) 21% 26%,transparent 27%);
+ opacity:.76;
+}
+.fx-gears>.fx-deco-a{inset:30% 28%;border-radius:50%;border:1px dotted rgba(206,225,237,.13);opacity:.58}
+
+/* デジタルコード：文字の塊ではなく、奥行きのある列・走査光・ノード */
+.fx-digital-code{
+ background:
+  repeating-linear-gradient(90deg,transparent 0 10%,rgba(52,224,197,.025) 10.5% 11%,transparent 11.5% 21%),
+  linear-gradient(180deg,rgba(38,203,184,.025),transparent 35%,rgba(66,225,204,.035) 62%,transparent);
+ mix-blend-mode:screen;
+}
+.fx-digital-code::before{
+ content:"01  101  0011  10   0110  1   110  001   1010  011  00  1101";
+ inset:-12% 7%;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+ font-size:9px;line-height:3.05;letter-spacing:.16em;word-spacing:.75em;
+ color:rgba(84,242,214,.38);
+ text-shadow:0 0 5px rgba(60,232,211,.16);
+ opacity:.72;
+}
+.fx-digital-code::after{
+ display:block;inset:-12% 0;
+ background:linear-gradient(to bottom,transparent 42%,rgba(132,255,234,.12) 49%,rgba(225,255,250,.13) 50%,rgba(92,244,218,.08) 52%,transparent 59%);
+ opacity:.64;
+}
+.fx-digital-code>.fx-deco-a{inset:0;background:radial-gradient(circle,rgba(102,249,219,.18) 0 .35px,transparent .85px) 0 0/29px 31px;opacity:.48}
+
+/* v11.4 motion — separate internal components instead of moving the whole card layer */
+.fx-animate .fx-magic-circle{animation:none!important}
+.fx-animate .fx-magic-circle::before{animation:fx113MagicOuter 18s linear infinite!important}
+.fx-animate .fx-magic-circle::after{animation:fx113MagicInner 11s linear infinite reverse!important}
+.fx-animate .fx-runes{animation:none!important}
+.fx-animate .fx-runes::before{animation:fx113RunePulse 5.6s ease-in-out infinite!important}
+.fx-animate .fx-runes::after{animation:fx113RuneOrbit 14s linear infinite!important}
+.fx-animate .fx-holy-light{animation:none!important}
+.fx-animate .fx-holy-light::before{animation:fx113HolySweep 7.8s ease-in-out infinite!important}
+.fx-animate .fx-holy-light::after{animation:fx113HolyPulse 5.4s ease-in-out infinite!important}
+.fx-animate .fx-cosmos{animation:none!important}
+.fx-animate .fx-cosmos::before{animation:fx113StarDrift 16s ease-in-out infinite alternate!important}
+.fx-animate .fx-cosmos::after{animation:fx113Orbit 20s linear infinite!important}
+.fx-animate .fx-glitch{animation:none!important}
+.fx-animate .fx-glitch::before{animation:fx113GlitchBands 2.1s steps(1,end) infinite!important}
+.fx-animate .fx-glitch::after{animation:fx113Scan 3.2s linear infinite!important}
+.fx-animate .fx-gears{animation:none!important}
+.fx-animate .fx-gears::before{animation:fx113GearA 15s linear infinite!important}
+.fx-animate .fx-gears::after{animation:fx113GearB 19s linear infinite reverse!important}
+.fx-animate .fx-digital-code{animation:none!important}
+.fx-animate .fx-digital-code::before{animation:fx113CodeFall 10.5s linear infinite!important}
+.fx-animate .fx-digital-code::after{animation:fx113CodeScan 4.2s ease-in-out infinite!important}
+
+@keyframes fx113MagicOuter{to{transform:rotate(360deg)}}
+@keyframes fx113MagicInner{to{transform:rotate(360deg)}}
+@keyframes fx113RunePulse{0%,100%{opacity:.42;filter:brightness(.88)}35%{opacity:.86;filter:brightness(1.18)}62%{opacity:.58;filter:brightness(1)}}
+@keyframes fx113RuneOrbit{to{transform:rotate(360deg)}}
+@keyframes fx113HolySweep{0%,100%{transform:translateX(-2.5%) skewX(-1deg);opacity:.48}50%{transform:translateX(3%) skewX(1deg);opacity:.88}}
+@keyframes fx113HolyPulse{0%,100%{opacity:.43;transform:scale(.99)}50%{opacity:.78;transform:scale(1.018)}}
+@keyframes fx113StarDrift{0%{transform:translate3d(-1.2%,1%,0);opacity:.54}100%{transform:translate3d(1.5%,-1.3%,0);opacity:.82}}
+@keyframes fx113Orbit{to{transform:rotate(343deg) scaleY(.58)}}
+@keyframes fx113GlitchBands{0%,76%,100%{transform:none;opacity:.46;clip-path:polygon(0 8%,100% 8%,100% 18%,0 18%,0 43%,100% 43%,100% 49%,0 49%,0 73%,100% 73%,100% 82%,0 82%)}78%{transform:translateX(2.2%);opacity:.90}82%{transform:translateX(-1.6%);opacity:.68}86%{transform:translateY(.8%);opacity:.84}}
+@keyframes fx113Scan{0%,100%{opacity:.28;filter:hue-rotate(0deg)}50%{opacity:.62;filter:hue-rotate(18deg)}}
+@keyframes fx113GearA{to{transform:rotate(360deg)}}
+@keyframes fx113GearB{to{transform:rotate(360deg)}}
+@keyframes fx113CodeFall{0%{transform:translateY(-5%);opacity:.42}50%{opacity:.76}100%{transform:translateY(7%);opacity:.48}}
+@keyframes fx113CodeScan{0%,100%{transform:translateY(-12%);opacity:.34}50%{transform:translateY(11%);opacity:.72}}
+
+@media(max-width:700px){
+ .fx-magic-circle::before{inset:14%}.fx-magic-circle::after{inset:26%}
+ .fx-runes::before{font-size:10px;letter-spacing:.12em}
+ .fx-holy-light>.fx-deco-a{opacity:.24}
+ .fx-cosmos::before{opacity:.56}.fx-cosmos::after{opacity:.54}
+ .fx-glitch::before{opacity:.52}
+ .fx-gears::before,.fx-gears::after{opacity:.64}
+ .fx-digital-code::before{font-size:8px;opacity:.58}
+}
+
+
+/* v11.4 FX detailed tuning */
+.fx-editor-row>.fx-layer-detail{grid-column:1/-1;margin-top:2px;border-top:1px solid rgba(120,167,255,.16);padding-top:6px}
+.fx-layer-detail>summary{cursor:pointer;color:var(--muted);font-weight:700;user-select:none;padding:5px 2px}
+.fx-layer-detail[open]>summary{color:var(--text)}
+.fx-layer-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:9px;padding:9px 0 2px}
+.fx-layer-detail-grid label{display:flex;flex-direction:column;gap:4px;padding:7px 8px;border:1px solid rgba(120,167,255,.12);border-radius:8px;background:rgba(0,0,0,.09)}
+.fx-layer-detail-grid input[type=range]{width:100%}
+.fx-layer-detail-actions{grid-column:1/-1}
+.card-fx-layer{inset:var(--fx-size-inset,-10%);filter:hue-rotate(var(--fx-hue,0deg)) saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1))}
+.fx-animate .card-fx-layer{animation-duration:var(--fx-duration)!important;animation-direction:var(--fx-direction,normal)}
+.fx-animate .fx-magic-circle::before,.fx-animate .fx-gears::before{animation-direction:var(--fx-rotation-direction,var(--fx-direction,normal))}
+.fx-stardust,.fx-light-particles,.fx-bubbles,.fx-feathers,.fx-sand{background-size:calc(100% * var(--fx-density-scale,1)) calc(100% * var(--fx-density-scale,1))}
+.fx-sakura::before,.fx-snow::before,.fx-petals::before,.fx-butterfly-light::before,.fx-runes::before,.fx-digital-code::before{letter-spacing:calc((var(--fx-density-scale,1) - 1) * 2px)}
+@media(max-width:760px){.fx-layer-detail-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.fx-layer-detail-grid{grid-template-columns:1fr}}
+
+/* ==========================================================
+   v11.5 FX blend / compositing
+   ========================================================== */
+/* Keep compositing local to each card. Effects sit above artwork and below frames/UI. */
+.card-art,.collection-card-art,.collection-detail-art,.collection-viewer-art,.board-detail-image,.fx-editor-preview-card{isolation:isolate}
+.card-fx-stack{z-index:3}
+.card-frame-overlay{z-index:4}
+.fx-layer-detail-grid select[id^="fx-detail-blend-"]{min-width:0}
+
+/* ==========================================================
+   v11.6 Frame transform / fit controls
+   ========================================================== */
+
+/* v11.11 appearance presets */
+.appearance-preset-create{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;margin-bottom:12px}
+.appearance-preset-create label{margin:0}
+.appearance-preset-list{display:grid;gap:8px;max-height:min(56vh,560px);overflow:auto;padding-right:3px}
+.appearance-preset-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;background:rgba(14,20,28,.78)}
+.appearance-preset-copy{min-width:0}.appearance-preset-copy b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.appearance-preset-copy .muted{font-size:11px;margin-top:3px}
+.appearance-preset-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media(max-width:700px){.appearance-preset-create{grid-template-columns:1fr}.appearance-preset-row{grid-template-columns:1fr}.appearance-preset-actions{justify-content:flex-start}}
+
+/* v11.12 preset linkage / individual overrides */
+.appearance-preset-status{margin:10px 0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(12,18,25,.72)}
+.appearance-preset-status .status-line{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.appearance-preset-status .status-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.appearance-preset-row.is-linked{outline:1px solid rgba(120,167,255,.48);box-shadow:0 0 0 1px rgba(120,167,255,.12) inset}
+.appearance-preset-badge{font-size:10px;padding:2px 6px;border-radius:999px;border:1px solid rgba(120,167,255,.45);color:#cfe0ff;background:rgba(80,120,190,.14);margin-left:6px}
 </style>
 </head>
 <body>
@@ -16277,7 +17660,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v10.9 r3 r2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v11.50 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -16884,6 +18267,17 @@ body.album-direct-dragging *{cursor:grabbing!important}
               <h4>盤面</h4>
               <label class="board-follow-row"><input id="card-fx-board-visible" type="checkbox">静止エフェクトを表示</label>
               <label class="board-follow-row fx-animation-row"><input id="card-fx-board-animation" type="checkbox">アニメーションを再生 <span id="card-fx-board-animation-state" class="pill">OFF</span></label>
+              <label>PC描画品質
+                <select id="card-fx-board-quality-desktop"><option value="high">高品質</option><option value="standard">標準</option><option value="light">軽量</option></select>
+              </label>
+              <label>スマホ描画品質
+                <select id="card-fx-board-quality-mobile"><option value="high">高品質</option><option value="standard">標準</option><option value="light">軽量</option></select>
+              </label>
+              <div class="muted">省データ通信や低負荷端末では、画面外アニメーション停止などの自動負荷軽減も併用されます。</div>
+              <label>外観編集UI
+                <select id="appearance-editor-mode"><option value="simple">簡単設定</option><option value="advanced">詳細設定</option></select>
+              </label>
+              <div class="muted">簡単設定では普段よく使う項目だけ表示し、詳細設定では全調整項目を表示します。</div>
             </div>
           </div>
           <div class="actions" style="margin-top:10px">
@@ -17179,16 +18573,21 @@ function moveBoardToolPreset(kind,index,step){
  saveBoardToolPrefs();
 }
 
-function defaultCardFxPrefs(){return {maxLayers:2,collectionVisible:true,collectionAnimation:false,boardVisible:true,boardAnimation:false,motionEngine:3}}
+function defaultCardFxPrefs(){return {maxLayers:2,collectionVisible:true,collectionAnimation:false,boardVisible:true,boardAnimation:false,boardQualityDesktop:'standard',boardQualityMobile:'standard',appearanceEditorMode:'simple',motionEngine:3,effectGeneration:2}}
 function normalizeCardFxPrefs(raw={}){
  const motionV=Number(raw.motionEngine)||0,legacyMotion=motionV<3;
+ const quality=v=>['high','standard','light'].includes(String(v||''))?String(v):'standard';
  return {
    maxLayers:[1,2,3,4].includes(Number(raw.maxLayers))?Number(raw.maxLayers):2,
    collectionVisible:raw.collectionVisible!==false,
    collectionAnimation:legacyMotion?false:raw.collectionAnimation===true,
    boardVisible:raw.boardVisible!==false,
    boardAnimation:legacyMotion?false:raw.boardAnimation===true,
-   motionEngine:3
+   boardQualityDesktop:quality(raw.boardQualityDesktop),
+   boardQualityMobile:quality(raw.boardQualityMobile),
+   appearanceEditorMode:['simple','advanced'].includes(String(raw.appearanceEditorMode||''))?String(raw.appearanceEditorMode):'simple',
+   motionEngine:3,
+   effectGeneration:2
  };
 }
 function normalizeCardVisualEffects(raw){
@@ -17198,12 +18597,24 @@ function normalizeCardVisualEffects(raw){
    const requested=Number(x.slot),slot=[1,2,3,4].includes(requested)?requested:i+1;
    if(slot<1||slot>4||used.has(slot))continue;
    used.add(slot);
+   const num=(v,fallback,min,max)=>{const n=Number(v);return Number.isFinite(n)?Math.max(min,Math.min(max,n)):fallback};
    out.push({
      slot,
      type:String(x.type),
      intensity:['weak','standard','strong'].includes(x.intensity)?x.intensity:'standard',
      opacity:Math.max(20,Math.min(100,Number(x.opacity)||70)),
-     enabled:x.enabled!==false
+     enabled:x.enabled!==false,
+     speed:num(x.speed,100,25,200),
+     size:num(x.size,100,70,160),
+     direction:['default','forward','reverse'].includes(x.direction)?x.direction:'default',
+     rotationDirection:['default','forward','reverse'].includes(x.rotationDirection)?x.rotationDirection:'default',
+     hue:num(x.hue,0,-180,180),
+     saturation:num(x.saturation,100,30,200),
+     brightness:num(x.brightness,100,40,180),
+     density:num(x.density,100,50,180),
+     motion:num(x.motion,100,25,180),
+     blendMode:['effect','normal','screen','add','overlay','soft-light'].includes(x.blendMode)?x.blendMode:'effect',
+     mask:['full','center','outer','corners','top','bottom'].includes(x.mask)?x.mask:'full'
    });
  }
  return out.sort((a,b)=>a.slot-b.slot);
@@ -17608,24 +19019,45 @@ function fxIntensityVars(v){
  if(v==='strong')return {sat:1.28,bright:1.08};
  return {sat:1,bright:1};
 }
+const FX_BASE_DURATIONS={
+ 'hologram':3.8,'prism':7.5,'aurora':5.6,'rainbow':5.2,'gold-foil':4.1,'silver-foil':3.7,'shatter-light':5.8,
+ 'stardust':2.6,'light-particles':4.2,'magic-circle':9,'runes':3.2,'holy-light':4.8,'cosmos':8,'butterfly-light':5.6,
+ 'fire':1.8,'ice-crystal':4.6,'lightning':2.2,'water':4.8,'sakura':6.4,'snow':7.4,'bubbles':6.2,'feathers':5.7,'petals':5.8,'sand':4.9,'fog':6.8,'dark-aura':3.6,'ink':5.4,
+ 'glitch':1.6,'gears':8.5,'digital-code':5.8
+};
+function fxLayerStyle(x,v,power){
+ const sat=v.sat*(x.saturation/100),bright=v.bright*(x.brightness/100),base=FX_BASE_DURATIONS[x.type]||5.5,duration=Math.max(.35,base/(x.speed/100));
+ const sizeInset=-10-((x.size-100)*.34),densityScale=Math.max(.56,Math.min(1.55,100/x.density));
+ const dir=x.direction==='reverse'?'reverse':x.direction==='forward'?'normal':'';
+ const rot=x.rotationDirection==='reverse'?'reverse':x.rotationDirection==='forward'?'normal':'';
+ const blendMap={normal:'normal',screen:'screen',add:'plus-lighter',overlay:'overlay','soft-light':'soft-light'};
+ const blend=blendMap[x.blendMode]||'';
+ return `--fx-o:${x.opacity/100};--fx-sat:${sat.toFixed(3)};--fx-bright:${bright.toFixed(3)};--fx-power:${power};--fx-slot:${x.slot};--fx-hue:${x.hue}deg;--fx-size-inset:${sizeInset.toFixed(2)}%;--fx-density-scale:${densityScale.toFixed(3)};--fx-motion:${(x.motion/100).toFixed(3)};--fx-duration:${duration.toFixed(3)}s;${dir?`--fx-direction:${dir};`:''}${rot?`--fx-rotation-direction:${rot};`:''}${blend?`mix-blend-mode:${blend};`:''}`;
+}
 function cardFxStackHtmlFromLayers(layers,opt={}){
  const max=Math.max(1,Math.min(4,Number(opt.maxLayers)||4)),animate=opt.animate===true,visible=opt.visible!==false;
  if(!visible)return '';
  const rows=normalizeCardVisualEffects(layers).filter(x=>x.enabled&&x.slot<=max);
  if(!rows.length)return '';
  const count=Math.max(1,Math.min(4,rows.length));
- return `<div class="card-fx-stack fx-count-${count} ${animate?'fx-animate':''}" data-fx-count="${count}" aria-hidden="true">${rows.map(x=>{
-   const v=fxIntensityVars(x.intensity),power=x.intensity==='weak'?.78:x.intensity==='strong'?1.28:1,customId=customFxIdFromType(x.type);
-   if(customId)return `<span class="card-fx-layer fx-custom fx-intensity-${x.intensity}" data-fx-type="${esc(x.type)}" data-custom-fx="${esc(customId)}" data-fx-slot="${x.slot}" style="--fx-o:${x.opacity/100};--fx-sat:${v.sat};--fx-bright:${v.bright};--fx-power:${power};--fx-slot:${x.slot}"></span>`;
-   return `<span class="card-fx-layer fx-${x.type} fx-intensity-${x.intensity}" data-fx-type="${x.type}" data-fx-slot="${x.slot}" style="--fx-o:${x.opacity/100};--fx-sat:${v.sat};--fx-bright:${v.bright};--fx-power:${power};--fx-slot:${x.slot}"><i class="fx-deco fx-deco-a"></i><i class="fx-deco fx-deco-b"></i><i class="fx-deco fx-deco-c"></i></span>`;
+ const quality=['high','standard','light'].includes(opt.quality)?opt.quality:'standard';
+ return `<div class="card-fx-stack visual-perf-node fx-count-${count} ${animate?'fx-animate':''} fx-quality-${quality}" data-fx-count="${count}" data-fx-quality="${quality}" aria-hidden="true">${rows.map(x=>{
+   const v=fxIntensityVars(x.intensity),power=x.intensity==='weak'?.78:x.intensity==='strong'?1.28:1,customId=customFxIdFromType(x.type),style=fxLayerStyle(x,v,power),mask=`fx-mask-${x.mask||'full'}`;
+   if(customId)return `<span class="card-fx-layer fx-custom fx-intensity-${x.intensity} ${mask}" data-fx-type="${esc(x.type)}" data-custom-fx="${esc(customId)}" data-fx-slot="${x.slot}" style="${style}"></span>`;
+   return `<span class="card-fx-layer fx-${x.type} fx-intensity-${x.intensity} ${mask}" data-fx-type="${x.type}" data-fx-slot="${x.slot}" style="${style}"><i class="fx-deco fx-deco-a"></i><i class="fx-deco fx-deco-b"></i><i class="fx-deco fx-deco-c"></i></span>`;
  }).join('')}</div>`;
+}
+function currentBoardFxQuality(){
+ const mobile=matchMedia('(max-width:900px)').matches;
+ return mobile?cardFxPrefs.boardQualityMobile:cardFxPrefs.boardQualityDesktop;
 }
 function cardFxHtml(card,surface='collection'){
  const layers=cardFxLayersFor(card),boardSurface=surface==='board';
  return cardFxStackHtmlFromLayers(layers,{
    maxLayers:cardFxPrefs.maxLayers,
    visible:boardSurface?cardFxPrefs.boardVisible:cardFxPrefs.collectionVisible,
-   animate:boardSurface?cardFxPrefs.boardAnimation:cardFxPrefs.collectionAnimation
+   animate:boardSurface?cardFxPrefs.boardAnimation:cardFxPrefs.collectionAnimation,
+   quality:boardSurface?currentBoardFxQuality():'standard'
  });
 }
 function saveCardFxPrefs(){
@@ -18283,6 +19715,17 @@ const BUILTIN_CARD_FRAMES=[
  {id:'builtin_sakura_lacquer',name:'サンプル：桜ラッカー',originalName:'sample-sakura-lacquer.png',width:1000,height:1400,builtin:true,path:'./frames/sample-sakura-lacquer.png'},
  {id:'builtin_arcane_halo',name:'サンプル：アーケイン・ハロ',originalName:'sample-arcane-halo.png',width:1000,height:1400,builtin:true,path:'./frames/sample-arcane-halo.png'},
  {id:'builtin_cyber_circuit',name:'サンプル：サイバー・サーキット',originalName:'sample-cyber-circuit.png',width:1000,height:1400,builtin:true,path:'./frames/sample-cyber-circuit.png'}
+,
+   {id:'builtin:gen2-01',name:'和風・神社',path:'frames/second-japanese-shrine.png'},
+   {id:'builtin:gen2-02',name:'神話・星座',path:'frames/second-mythic-constellation.png'},
+   {id:'builtin:gen2-03',name:'ゴシックホラー',path:'frames/second-gothic-horror.png'},
+   {id:'builtin:gen2-04',name:'機械・リアクター',path:'frames/second-mechanical-reactor.png'},
+   {id:'builtin:gen2-05',name:'宇宙・星雲',path:'frames/second-cosmic-nebula.png'},
+   {id:'builtin:gen2-06',name:'自然・翠緑',path:'frames/second-verdant-nature.png'},
+   {id:'builtin:gen2-07',name:'王族・クラウン',path:'frames/second-royal-crown.png'},
+   {id:'builtin:gen2-08',name:'魔法少女・クリスタル',path:'frames/second-magical-crystal.png'},
+   {id:'builtin:gen2-09',name:'ダーク・アビス',path:'frames/second-dark-abyss.png'},
+   {id:'builtin:gen2-10',name:'聖属性・カテドラル',path:'frames/second-sacred-cathedral.png'}
 ];
 function builtinFrameById(frameId){return BUILTIN_CARD_FRAMES.find(x=>x.id===String(frameId||''))||null}
 function isBuiltinFrameId(frameId){return !!builtinFrameById(frameId)}
@@ -18301,16 +19744,16 @@ async function getFrameUsageMap(){
  const links=await imageDbGetAll('frameLinks'),validCards=new Set(cards.map(c=>String(c.id)));
  const map=new Map();
  for(const raw of links){
-   const cardId=String(raw?.cardId||''),frameId=String(raw?.frameId||'');
-   if(!cardId||!frameId||!validCards.has(cardId))continue;
-   map.set(frameId,(map.get(frameId)||0)+1);
+   const cardId=String(raw?.cardId||'');if(!cardId||!validCards.has(cardId))continue;
+   const ids=[String(raw?.frameId||''),String(raw?.layer2?.frameId||'')].filter(Boolean);
+   for(const frameId of new Set(ids))map.set(frameId,(map.get(frameId)||0)+1);
  }
  return map;
 }
 async function frameUsageCards(frameId){
  await awaitFrameSystemReady();
  const id=String(frameId||''),links=await imageDbGetAll('frameLinks');
- const linked=new Set(links.filter(x=>String(x?.frameId||'')===id).map(x=>String(x?.cardId||'')));
+ const linked=new Set(links.filter(x=>String(x?.frameId||'')===id||String(x?.layer2?.frameId||'')===id).map(x=>String(x?.cardId||'')));
  return cards.filter(c=>linked.has(String(c.id)));
 }
 async function renameFrameAsset(frameId,newName){
@@ -18327,8 +19770,117 @@ async function renameFrameAsset(frameId,newName){
  return next;
 }
 
+const FRAME_LINK_DEFAULTS={scale:100,x:0,y:0,opacity:100,fit:'stretch',flipX:false,flipY:false,rotate:0,motion:'none',motionEnabled:false,motionSpeed:100,fxSyncEnabled:false,fxSyncStrength:70,hue:0,saturation:100,brightness:100,glowColor:'#ffffff',glowStrength:0,partialGlow:'none',partialGlowStrength:60,finish:'none',finishStrength:55};
+const FRAME_MOTION_TYPES=new Set(['none','edge-light','corner-pulse','metal-sweep','gem-blink','rune-sequence']);
+function normalizeFrameVisual(raw={}){
+ const clamp=(v,min,max,def)=>{v=Number(v);return Number.isFinite(v)?Math.max(min,Math.min(max,v)):def};
+ const fit=['stretch','contain','cover'].includes(String(raw.fit||''))?String(raw.fit):FRAME_LINK_DEFAULTS.fit;
+ return {
+   frameId:String(raw?.frameId||''),
+   scale:clamp(raw.scale,60,180,100),x:clamp(raw.x,-40,40,0),y:clamp(raw.y,-40,40,0),
+   opacity:clamp(raw.opacity,0,100,100),fit,flipX:!!raw.flipX,flipY:!!raw.flipY,rotate:clamp(raw.rotate,-180,180,0),
+   motion:FRAME_MOTION_TYPES.has(String(raw.motion||''))?String(raw.motion):'none',
+   motionEnabled:raw.motionEnabled===true,
+   motionSpeed:clamp(raw.motionSpeed,50,180,100),
+   fxSyncEnabled:raw.fxSyncEnabled===true,
+   fxSyncStrength:clamp(raw.fxSyncStrength,0,100,70),
+   hue:clamp(raw.hue,-180,180,0),
+   saturation:clamp(raw.saturation,0,220,100),
+   brightness:clamp(raw.brightness,40,180,100),
+   glowColor:/^#[0-9a-f]{6}$/i.test(String(raw.glowColor||''))?String(raw.glowColor):'#ffffff',
+   glowStrength:clamp(raw.glowStrength,0,100,0),
+   partialGlow:['none','outer','corners','gems','pattern'].includes(String(raw.partialGlow||''))?String(raw.partialGlow):'none',
+   partialGlowStrength:clamp(raw.partialGlowStrength,0,100,60),
+   finish:['none','foil','rainbow','polarized','glitter','pearl','metallic'].includes(String(raw.finish||''))?String(raw.finish):'none',
+   finishStrength:clamp(raw.finishStrength,0,100,55)
+ };
+}
 function normalizeFrameLink(raw,cardId=raw?.cardId||''){
- return {cardId:String(cardId||''),frameId:String(raw?.frameId||'')};
+ raw=raw||{};
+ const primary=normalizeFrameVisual(raw);
+ const layer2=normalizeFrameVisual(raw.layer2||{});
+ return {cardId:String(cardId||''),...primary,layer2};
+}
+function frameLayerConfig(link,layer=1){
+ if(!link)return null;
+ return layer===2?normalizeFrameVisual(link.layer2||{}):normalizeFrameVisual(link);
+}
+const FX_FRAME_SYNC_HUES={
+ 'hologram':195,'prism':285,'aurora':155,'rainbow':315,'gold-foil':42,'silver-foil':205,'shatter-light':205,
+ 'stardust':225,'light-particles':48,'magic-circle':275,'runes':268,'holy-light':48,'cosmos':245,'butterfly-light':315,
+ 'fire':12,'ice-crystal':195,'lightning':215,'water':198,'sakura':338,'snow':205,'bubbles':188,'feathers':42,'petals':325,'sand':34,'fog':205,'dark-aura':275,'ink':255,
+ 'glitch':315,'gears':34,'digital-code':175
+};
+function frameFxSyncProfile(card){
+ const rows=cardFxLayersFor(card).filter(x=>x.enabled);
+ if(!rows.length)return null;
+ const fx=rows[0],base=FX_FRAME_SYNC_HUES[fx.type]??210;
+ const hue=((base+(Number(fx.hue)||0)+540)%360)-180;
+ const sat=Math.max(.85,Math.min(1.65,(Number(fx.saturation)||100)/100));
+ const bright=Math.max(.92,Math.min(1.22,(Number(fx.brightness)||100)/100));
+ return {hue,sat,bright,type:fx.type};
+}
+function cardForFrameSync(cardId,fallbackId=''){
+ const ids=[String(cardId||''),String(fallbackId||'')].filter(Boolean);
+ for(const id of ids){const c=cards.find(x=>String(x.id)===id);if(c)return c}
+ return null;
+}
+function hexToRgbFrame(hex){
+ const m=/^#([0-9a-f]{6})$/i.exec(String(hex||''));if(!m)return {r:255,g:255,b:255};
+ const n=parseInt(m[1],16);return {r:(n>>16)&255,g:(n>>8)&255,b:n&255};
+}
+function framePartialGlowBackground(kind,color,alpha){
+ const c=`rgba(${color.r},${color.g},${color.b},${alpha})`;
+ if(kind==='outer')return `linear-gradient(to right,${c} 0 3%,transparent 6% 94%,${c} 97% 100%),linear-gradient(to bottom,${c} 0 3%,transparent 6% 94%,${c} 97% 100%)`;
+ if(kind==='corners')return `radial-gradient(circle at 4% 4%,${c},transparent 13%),radial-gradient(circle at 96% 4%,${c},transparent 13%),radial-gradient(circle at 4% 96%,${c},transparent 13%),radial-gradient(circle at 96% 96%,${c},transparent 13%)`;
+ if(kind==='gems')return `radial-gradient(circle at 50% 3%,${c} 0 1.4%,transparent 5%),radial-gradient(circle at 5% 7%,${c} 0 1.2%,transparent 5%),radial-gradient(circle at 95% 93%,${c} 0 1.2%,transparent 5%)`;
+ if(kind==='pattern')return `repeating-conic-gradient(from 0deg,transparent 0 9deg,${c} 10deg 11.5deg,transparent 12deg 22deg)`;
+ return 'none';
+}
+function frameFinishBackground(kind,strength){
+ const a=Math.max(0,Math.min(1,strength/100));
+ if(kind==='foil')return `linear-gradient(115deg,transparent 0 35%,rgba(255,255,255,${(.08*a).toFixed(3)}) 42%,rgba(255,246,205,${(.55*a).toFixed(3)}) 49%,rgba(255,255,255,${(.10*a).toFixed(3)}) 56%,transparent 64% 100%)`;
+ if(kind==='rainbow')return `linear-gradient(120deg,rgba(255,90,120,${(.28*a).toFixed(3)}),rgba(255,220,80,${(.22*a).toFixed(3)}),rgba(70,235,180,${(.22*a).toFixed(3)}),rgba(80,160,255,${(.25*a).toFixed(3)}),rgba(210,90,255,${(.26*a).toFixed(3)}))`;
+ if(kind==='polarized')return `linear-gradient(135deg,rgba(80,220,255,${(.28*a).toFixed(3)}),transparent 34%,rgba(215,110,255,${(.30*a).toFixed(3)}) 58%,transparent 76%,rgba(110,255,195,${(.18*a).toFixed(3)}))`;
+ if(kind==='glitter')return `radial-gradient(circle at 18% 21%,rgba(255,255,255,${(.85*a).toFixed(3)}) 0 1px,transparent 2px),radial-gradient(circle at 72% 33%,rgba(255,240,190,${(.70*a).toFixed(3)}) 0 1px,transparent 2px),radial-gradient(circle at 42% 78%,rgba(210,235,255,${(.75*a).toFixed(3)}) 0 1px,transparent 2px),radial-gradient(circle at 88% 72%,rgba(255,255,255,${(.75*a).toFixed(3)}) 0 1px,transparent 2px)`;
+ if(kind==='pearl')return `linear-gradient(145deg,rgba(255,245,250,${(.20*a).toFixed(3)}),rgba(185,225,255,${(.18*a).toFixed(3)}) 35%,rgba(255,220,245,${(.20*a).toFixed(3)}) 67%,rgba(245,255,220,${(.16*a).toFixed(3)}))`;
+ if(kind==='metallic')return `linear-gradient(110deg,rgba(255,255,255,${(.08*a).toFixed(3)}) 0 18%,rgba(255,255,255,${(.48*a).toFixed(3)}) 32%,rgba(80,90,110,${(.16*a).toFixed(3)}) 48%,rgba(255,255,255,${(.42*a).toFixed(3)}) 63%,rgba(255,255,255,${(.06*a).toFixed(3)}) 82% 100%)`;
+ return 'none';
+}
+function applyFrameLinkVisual(el,raw,syncProfile=null){
+ if(!el)return;const link=normalizeFrameVisual(raw||{});
+ el.style.setProperty('--frame-opacity',String(link.opacity/100));
+ el.style.setProperty('--frame-motion-speed',String(Math.max(.5,Math.min(1.8,link.motionSpeed/100))));
+ el.style.backgroundSize=link.fit==='contain'?'contain':link.fit==='cover'?'cover':'100% 100%';
+ el.style.backgroundPosition='center';
+ const sx=link.flipX?-1:1,sy=link.flipY?-1:1;
+ el.style.transform=`translate3d(${link.x}%,${link.y}%,0) scale(${link.scale/100}) rotate(${link.rotate}deg) scale(${sx},${sy})`;
+
+ let hue=link.hue,sat=link.saturation/100,bright=link.brightness/100;
+ let syncGlow='';
+ if(link.fxSyncEnabled&&syncProfile){
+   const k=Math.max(0,Math.min(1,link.fxSyncStrength/100));
+   hue+=syncProfile.hue*k;
+   sat*=1+(syncProfile.sat-1)*k;
+   bright*=1+(syncProfile.bright-1)*k;
+   syncGlow=` drop-shadow(0 0 ${(4+8*k).toFixed(1)}px hsla(${((syncProfile.hue+360)%360).toFixed(0)},90%,65%,${(.12+.28*k).toFixed(2)}))`;
+   el.classList.add('frame-fx-synced');
+ }else el.classList.remove('frame-fx-synced');
+
+ const gc=hexToRgbFrame(link.glowColor),gk=link.glowStrength/100;
+ const manualGlow=gk>0?` drop-shadow(0 0 ${(2+12*gk).toFixed(1)}px rgba(${gc.r},${gc.g},${gc.b},${(.12+.58*gk).toFixed(2)}))`:'';
+ el.style.filter=`hue-rotate(${hue.toFixed(1)}deg) saturate(${sat.toFixed(3)}) brightness(${bright.toFixed(3)})${manualGlow}${syncGlow}`;
+
+ el.dataset.frameMotion=link.motion||'none';
+ el.classList.toggle('frame-motion-enabled',!!link.motionEnabled&&link.motion!=='none');
+
+ el.dataset.framePartialGlow=link.partialGlow||'none';
+ el.style.setProperty('--frame-partial-glow-bg',framePartialGlowBackground(link.partialGlow,gc,(link.partialGlowStrength/100)*.82));
+ el.style.setProperty('--frame-partial-glow-opacity',String(link.partialGlow==='none'?0:Math.max(.05,link.partialGlowStrength/100)));
+
+ el.dataset.frameFinish=link.finish||'none';
+ el.style.setProperty('--frame-finish-bg',frameFinishBackground(link.finish,link.finishStrength));
+ el.style.setProperty('--frame-finish-opacity',String(link.finish==='none'?0:Math.max(.05,link.finishStrength/100)));
 }
 function cardFrameSourceId(c){
  return String(c?.frameSourceCardId||c?.imageSourceCardId||c?.id||'');
@@ -18368,8 +19920,11 @@ async function getCardFrameLink(cardId){
  if(link.frameId)frameLinkCache.set(key,link);
  return link.frameId?link:null;
 }
-async function putCardFrameLink(cardId,frameId){
- const link=normalizeFrameLink({cardId,frameId},cardId);
+async function putCardFrameLink(cardId,frameId,settings=null){
+ const key=String(cardId||'');
+ const prev=getCachedFrameLink(key)||await getCardFrameLink(key);
+ const raw=(frameId&&typeof frameId==='object')?{...frameId,cardId:key}:{...(prev||{}),...(settings||{}),cardId:key,frameId:String(frameId||'')};
+ const link=normalizeFrameLink(raw,key);
  if(!link.cardId||!link.frameId)throw new Error('フレームリンクが不正です');
  await imageDbPut('frameLinks',link);
  frameLinkCache.set(link.cardId,link);
@@ -18384,7 +19939,7 @@ async function deleteCardFrameLink(cardId){
 async function cloneCardFrameLink(sourceCardId,targetCardId){
  await frameReadyPromise;
  const old=await getCardFrameLink(sourceCardId);if(!old)return null;
- return putCardFrameLink(targetCardId,old.frameId);
+ return putCardFrameLink(targetCardId,{...old,cardId:targetCardId});
 }
 async function reconcileFrameLinksWithCards(){
  const valid=new Set(cards.map(c=>c.id)),links=await imageDbGetAll('frameLinks');
@@ -18522,7 +20077,8 @@ async function hydrateCustomFxLayer(el){
  el.dataset.customFxReady='loading';
  try{await customFxReadyPromise;const rec=await getCustomFxAsset(id),url=await getCustomFxObjectUrl(id);if(!el.isConnected)return;if(url){el.style.backgroundImage=`url("${url}")`;el.classList.add('custom-fx-loaded');el.classList.toggle('custom-motion-animated',rec?.motion==='animated')}el.dataset.customFxReady='1'}catch(err){console.warn('自作エフェクト読込失敗',err);if(el.isConnected)el.dataset.customFxReady='1'}
 }
-function hydrateAllCustomFx(root=document){root.querySelectorAll?.('[data-custom-fx]').forEach(el=>{if(el.dataset.customFxReady!=='1'&&el.dataset.customFxReady!=='loading')hydrateCustomFxLayer(el)})}
+function hydrateAllCustomFx(root=document){
+ root?.querySelectorAll?.('.visual-perf-node').forEach(observeVisualNode);root.querySelectorAll?.('[data-custom-fx]').forEach(el=>{if(el.dataset.customFxReady!=='1'&&el.dataset.customFxReady!=='loading')hydrateCustomFxLayer(el)})}
 let customFxHydrationObserver=null;
 function initCustomFxHydrationObserver(){if(customFxHydrationObserver)return;customFxHydrationObserver=new MutationObserver(records=>{for(const rec of records)for(const node of rec.addedNodes){if(node?.nodeType!==1)continue;if(node.matches?.('[data-custom-fx]'))hydrateCustomFxLayer(node);node.querySelectorAll?.('[data-custom-fx]').forEach(hydrateCustomFxLayer)}});customFxHydrationObserver.observe(document.body,{childList:true,subtree:true});hydrateAllCustomFx()}
 
@@ -18532,25 +20088,34 @@ function cardFrameHtml(card){
  const primaryId=cardId||sourceId;
  if(!primaryId)return '';
  const fallbackId=sourceId&&sourceId!==primaryId?sourceId:'';
- return `<span class="card-frame-overlay" data-card-frame="${esc(primaryId)}"${fallbackId?` data-card-frame-fallback="${esc(fallbackId)}"`:''} aria-hidden="true"></span>`;
+ const attrs=`data-card-frame="${esc(primaryId)}"${fallbackId?` data-card-frame-fallback="${esc(fallbackId)}"`:''}`;
+ return `<span class="card-frame-overlay visual-perf-node card-frame-layer-1" ${attrs} data-frame-layer="1" aria-hidden="true"></span><span class="card-frame-overlay card-frame-layer-2" ${attrs} data-frame-layer="2" aria-hidden="true"></span>`;
 }
 async function hydrateCardFrame(el){
  if(!el?.isConnected||el.dataset.frameReady==='1')return;
+ observeVisualNode(el);
  const cardId=String(el.dataset.cardFrame||'');if(!cardId)return;
  const fallbackId=String(el.dataset.cardFrameFallback||'');
+ const layerNo=Number(el.dataset.frameLayer||1)===2?2:1;
  el.dataset.frameReady='loading';
  try{
    await frameReadyPromise;
    if(!el.isConnected)return;
    let link=getCachedFrameLink(cardId)||await getCardFrameLink(cardId);
-   if(!link&&fallbackId&&fallbackId!==cardId)link=getCachedFrameLink(fallbackId)||await getCardFrameLink(fallbackId);
-   if(!link){el.dataset.frameReady='1';return}
-   const url=await getFrameObjectUrl(link.frameId);
+   let cfg=frameLayerConfig(link,layerNo);
+   if((!cfg?.frameId)&&fallbackId&&fallbackId!==cardId){
+     link=getCachedFrameLink(fallbackId)||await getCardFrameLink(fallbackId);
+     cfg=frameLayerConfig(link,layerNo);
+   }
+   if(!cfg?.frameId){el.dataset.frameReady='1';return}
+   const url=await getFrameObjectUrl(cfg.frameId);
    if(!el.isConnected)return;
    if(!url){el.dataset.frameReady='1';return}
    el.style.backgroundImage=`url("${url}")`;
+   const syncCard=cardForFrameSync(cardId,fallbackId),syncProfile=syncCard?frameFxSyncProfile(syncCard):null;
+   applyFrameLinkVisual(el,cfg,syncProfile);
    el.classList.add('frame-loaded');
-   el.dataset.frameId=link.frameId;
+   el.dataset.frameId=cfg.frameId;
    el.dataset.frameReady='1';
  }catch(err){
    console.warn('カードフレーム読込失敗',err);
@@ -19387,12 +20952,12 @@ $('#home-two-player').onclick=()=>{nav('setup');$('#mode-select').value='2';sync
 // Import / export helpers
 const SIM_FORMAT='min-kai-tcg-simulator';
 let textPreviewCards=[];
-function cardToPortable(c){return {id:c.id||undefined,name:c.name||'',type:c.type||'キャラクター',level:c.level===''||c.level==null?null:Number.isFinite(Number(c.level))?Number(c.level):c.level,power:c.power===''||c.power==null?null:Number.isFinite(Number(c.power))?Number(c.power):c.power,races:String(c.race||'').split(/[\/／]/).map(x=>x.trim()).filter(Boolean),rarity:String(c.rarity||''),effect:c.effect||'',flavor:String(c.flavor||''),visualEffects:normalizeCardVisualEffects(c.visualEffects),cardLinks:cardLinksFor(c).map(x=>({targetId:x.targetId,targetName:cards.find(t=>t.id===x.targetId)?.name||'',label:x.label,bidirectional:x.bidirectional}))}}
+function cardToPortable(c){return {id:c.id||undefined,name:c.name||'',type:c.type||'キャラクター',level:c.level===''||c.level==null?null:Number.isFinite(Number(c.level))?Number(c.level):c.level,power:c.power===''||c.power==null?null:Number.isFinite(Number(c.power))?Number(c.power):c.power,races:String(c.race||'').split(/[\/／]/).map(x=>x.trim()).filter(Boolean),rarity:String(c.rarity||''),effect:c.effect||'',flavor:String(c.flavor||''),visualEffects:normalizeCardVisualEffects(c.visualEffects),appearancePresetMeta:appearancePresetMetaPortable(c.appearancePresetMeta),cardLinks:cardLinksFor(c).map(x=>({targetId:x.targetId,targetName:cards.find(t=>t.id===x.targetId)?.name||'',label:x.label,bidirectional:x.bidirectional}))}}
 function normalizeImportedCard(raw){
   if(!raw||typeof raw!=='object')return null;
   const type=normalizeCardType(raw.type);
   const races=Array.isArray(raw.races)?raw.races.join(' / '):(raw.race??'');
-  return {sourceId:raw.id||null,name:String(raw.name??'').trim(),type,level:raw.level==null?'':String(raw.level),power:raw.power==null?'':String(raw.power),race:String(races),rarity:String(raw.rarity??''),effect:String(raw.effect??''),flavor:String(raw.flavor??''),visualEffects:normalizeCardVisualEffects(raw.visualEffects),importLinks:Array.isArray(raw.cardLinks)?raw.cardLinks:[]};
+  return {sourceId:raw.id||null,name:String(raw.name??'').trim(),type,level:raw.level==null?'':String(raw.level),power:raw.power==null?'':String(raw.power),race:String(races),rarity:String(raw.rarity??''),effect:String(raw.effect??''),flavor:String(raw.flavor??''),visualEffects:normalizeCardVisualEffects(raw.visualEffects),appearancePresetMeta:normalizeAppearancePresetMeta(raw.appearancePresetMeta),importLinks:Array.isArray(raw.cardLinks)?raw.cardLinks:[]};
 }
 function splitCardText(src){
   src=String(src||'').replace(/\r\n?/g,'\n').trim();
@@ -19499,7 +21064,7 @@ async function copyText(txt){
 }
 function downloadJson(obj,filename){const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function exportCardsObject(){return {format:'min-kai-tcg-cards',version:4,cards:cards.map(cardToPortable)}}
-function exportAllObject(){return {format:SIM_FORMAT,version:6,cardFxPrefs:normalizeCardFxPrefs(cardFxPrefs),cards:cards.map(cardToPortable),decks:decks.map(d=>({id:d.id,name:d.name,...deckSettingsFrom(d),cards:Object.entries(d.entries).filter(([,n])=>n>0).map(([cardId,count])=>({cardId,cardName:cards.find(c=>c.id===cardId)?.name||'',count}))}))}}
+function exportAllObject(){return {format:SIM_FORMAT,version:6,cardFxPrefs:normalizeCardFxPrefs(cardFxPrefs),appearancePresets:normalizeAppearancePresetStore(appearancePresetStore),cards:cards.map(cardToPortable),decks:decks.map(d=>({id:d.id,name:d.name,...deckSettingsFrom(d),cards:Object.entries(d.entries).filter(([,n])=>n>0).map(([cardId,count])=>({cardId,cardName:cards.find(c=>c.id===cardId)?.name||'',count}))}))}}
 
 // v2.4 Full backup ZIP (store method: images are already compressed)
 const FULL_BACKUP_FORMAT='min-kai-tcg-full-backup',FULL_BACKUP_VERSION=5;
@@ -19654,7 +21219,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'10.9-r2',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'11.50',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -19800,12 +21365,13 @@ function exportBackupObject(){
    format:'min-kai-tcg-backup',
    version:9,
    createdAt:new Date().toISOString(),
-   cards:cards.map(c=>({id:c.id,name:c.name,type:c.type,level:c.level,power:c.power,race:c.race,rarity:String(c.rarity||''),effect:c.effect,flavor:String(c.flavor||''),visualEffects:normalizeCardVisualEffects(c.visualEffects),cardLinks:cardLinksFor(c)})),
+   cards:cards.map(c=>({id:c.id,name:c.name,type:c.type,level:c.level,power:c.power,race:c.race,rarity:String(c.rarity||''),effect:c.effect,flavor:String(c.flavor||''),visualEffects:normalizeCardVisualEffects(c.visualEffects),appearancePresetMeta:appearancePresetMetaPortable(c.appearancePresetMeta),cardLinks:cardLinksFor(c)})),
    decks:decks.map(d=>({id:d.id,name:d.name,entries:{...d.entries},...deckSettingsFrom(d)})),
    recentCardIds:[...recentCardIds],
    registeredRecentCardIds:[...registeredRecentCardIds],
    collection:normalizeCollectionData(collectionData,new Set(cards.map(c=>c.id))),
    cardFxPrefs:normalizeCardFxPrefs(cardFxPrefs),
+   appearancePresets:normalizeAppearancePresetStore(appearancePresetStore),
    boardToolPrefs:normalizeBoardToolPrefs(boardToolPrefs),
    boardSession:board?boardSessionRecordFrom():loadStoredBoardSession(),
    boardSnapshots:loadBoardSnapshots()
@@ -19833,6 +21399,7 @@ function restoreBackupObject(data,opt={}){
      effect:String(raw.effect||''),
      flavor:String(raw.flavor||''),
      visualEffects:normalizeCardVisualEffects(raw.visualEffects),
+     appearancePresetMeta:normalizeAppearancePresetMeta(raw.appearancePresetMeta),
      cardLinks:backupVersion>=7?normalizeCardLinks(raw.cardLinks,id):[]
    });
  }
@@ -19853,7 +21420,7 @@ function restoreBackupObject(data,opt={}){
    restoredDecks.push({id,name:String(raw.name||'名称未設定デッキ'),entries,...deckSettingsFrom(raw)});
  }
  cards=restoredCards;decks=restoredDecks;
- cardFxPrefs=backupVersion>=6?normalizeCardFxPrefs(data.cardFxPrefs||{}):defaultCardFxPrefs();save(LS_CARD_FX,cardFxPrefs);
+ cardFxPrefs=backupVersion>=6?normalizeCardFxPrefs(data.cardFxPrefs||{}):defaultCardFxPrefs();save(LS_CARD_FX,cardFxPrefs);appearancePresetStore=normalizeAppearancePresetStore(data.appearancePresets||defaultAppearancePresetStore());saveAppearancePresetStore();
  boardToolPrefs=backupVersion>=8?normalizeBoardToolPrefs(data.boardToolPrefs||{}):defaultBoardToolPrefs();save(LS_BOARD_TOOLS,boardToolPrefs);
  const restoredBoardSession=backupVersion>=9?normalizeStoredBoardSession(data.boardSession):null;
  const restoredBoardSnapshots=backupVersion>=9&&Array.isArray(data.boardSnapshots)?data.boardSnapshots.map(x=>x&&x.session?{name:String(x.name||''),savedAt:String(x.savedAt||''),session:normalizeStoredBoardSession(x.session)}:null).map(x=>x?.session?x:null):[];
@@ -19886,11 +21453,11 @@ function importPayload(data,conflict){
     else if(existingIndex>=0&&conflict==='overwrite'){
       localId=cards[existingIndex].id;
       const oldLinks=cardLinksFor(cards[existingIndex]);
-      cards[existingIndex]={id:localId,name:n.name,type:n.type,level:n.level,power:n.power,race:n.race,rarity:n.rarity,effect:n.effect,flavor:n.flavor,visualEffects:normalizeCardVisualEffects(n.visualEffects),cardLinks:n.importLinks.length?[]:oldLinks};
+      cards[existingIndex]={id:localId,name:n.name,type:n.type,level:n.level,power:n.power,race:n.race,rarity:n.rarity,effect:n.effect,flavor:n.flavor,visualEffects:normalizeCardVisualEffects(n.visualEffects),appearancePresetMeta:appearancePresetMetaPortable(n.appearancePresetMeta),cardLinks:n.importLinks.length?[]:oldLinks};
       touchedIds.push(localId);updated++;
     }else{
       localId=uid('card');
-      cards.push({id:localId,name:n.name,type:n.type,level:n.level,power:n.power,race:n.race,rarity:n.rarity,effect:n.effect,flavor:n.flavor,visualEffects:normalizeCardVisualEffects(n.visualEffects),cardLinks:[]});
+      cards.push({id:localId,name:n.name,type:n.type,level:n.level,power:n.power,race:n.race,rarity:n.rarity,effect:n.effect,flavor:n.flavor,visualEffects:normalizeCardVisualEffects(n.visualEffects),appearancePresetMeta:appearancePresetMetaPortable(n.appearancePresetMeta),cardLinks:[]});
       touchedIds.push(localId);registeredIds.push(localId);added++;
     }
     if(n.sourceId)idMap.set(String(n.sourceId),localId);
@@ -20485,11 +22052,144 @@ function openManagerAppearanceCopy(sourceId){
    const copyImage=$('#manager-copy-image-view').checked,copyFrame=$('#manager-copy-frame').checked,copyFx=$('#manager-copy-fx').checked;if(!copyImage&&!copyFrame&&!copyFx){toast('コピーする項目を選択してください');return}
    let imageCopied=0,imageSkipped=0;
    if(copyImage){const srcLink=await getCardImageLink(sourceId);if(srcLink){for(const id of ids){const dst=await getCardImageLink(id);if(!dst){imageSkipped++;continue}await putCardImageLink(normalizeImageLink({...dst,landscape:srcLink.landscape,portrait:srcLink.portrait},id));imageCopied++}}else imageSkipped=ids.length}
-   if(copyFrame){const fl=await getCardFrameLink(sourceId);for(const id of ids){if(fl)await putCardFrameLink(id,fl.frameId);else await deleteCardFrameLink(id)}}
+   if(copyFrame){const fl=await getCardFrameLink(sourceId);for(const id of ids){if(fl)await putCardFrameLink(id,{...fl,cardId:id});else await deleteCardFrameLink(id)}}
    if(copyFx){for(const id of ids){const c=cards.find(x=>String(x.id)===String(id));if(c)c.visualEffects=normalizeCardVisualEffects(source.visualEffects).map(x=>({...x}))}save(LS_CARDS,cards)}
    renderCards();renderCollection();if(board)renderBoard();hydrateAllCardFrames();toast(`外観設定を${ids.length}枚へコピーしました${copyImage&&imageSkipped?`（画像位置：${imageCopied}枚、画像なし${imageSkipped}枚）`:''}`);openCardManagerDetail(sourceId,{keepContext:true});
  };
  render();
+}
+
+
+
+function deepAppearanceClone(v){return v==null?v:JSON.parse(JSON.stringify(v))}
+function normalizeAppearanceSnapshot(raw={}){
+ const frame=raw?.frameLink&&typeof raw.frameLink==='object'?normalizeFrameLink(raw.frameLink,''):null;
+ return {visualEffects:normalizeCardVisualEffects(raw?.visualEffects).map(x=>({...x})),frameLink:frame&&(frame.frameId||frame.layer2?.frameId)?{...deepAppearanceClone(frame),cardId:''}:null};
+}
+function normalizeAppearancePresetMeta(raw){
+ if(!raw||typeof raw!=='object'||!raw.presetId)return null;
+ return {presetId:String(raw.presetId),appliedAt:String(raw.appliedAt||''),baseSnapshot:normalizeAppearanceSnapshot(raw.baseSnapshot||{})};
+}
+function appearancePresetMetaPortable(raw){const m=normalizeAppearancePresetMeta(raw);return m?deepAppearanceClone(m):null}
+function appearanceSnapshotFromPreset(preset){return normalizeAppearanceSnapshot({visualEffects:preset?.visualEffects,frameLink:preset?.frameLink})}
+async function appearanceSnapshotFromCard(cardId){
+ const card=cards.find(c=>String(c.id)===String(cardId));if(!card)return normalizeAppearanceSnapshot({});
+ const frame=await getCardFrameLink(cardId);
+ return normalizeAppearanceSnapshot({visualEffects:card.visualEffects,frameLink:frame});
+}
+function appearanceDiffList(base,current,path=[],out=[]){
+ if(JSON.stringify(base)===JSON.stringify(current))return out;
+ const ba=Array.isArray(base),ca=Array.isArray(current),bo=base&&typeof base==='object'&&!ba,co=current&&typeof current==='object'&&!ca;
+ if(ba&&ca){const n=Math.max(base.length,current.length);for(let i=0;i<n;i++)appearanceDiffList(base[i],current[i],path.concat(i),out);return out}
+ if(bo&&co){const keys=new Set([...Object.keys(base),...Object.keys(current)]);for(const k of keys)appearanceDiffList(base[k],current[k],path.concat(k),out);return out}
+ out.push({path:[...path],value:deepAppearanceClone(current)});return out;
+}
+function applyAppearanceDiff(snapshot,diffs=[]){
+ let out=deepAppearanceClone(normalizeAppearanceSnapshot(snapshot));
+ for(const d of diffs){
+   const path=Array.isArray(d?.path)?d.path:[];
+   if(!path.length){out=deepAppearanceClone(d.value);continue}
+   let cur=out;
+   for(let i=0;i<path.length-1;i++){
+     const k=path[i],next=path[i+1];
+     if(cur[k]==null||typeof cur[k]!=='object')cur[k]=typeof next==='number'?[]:{};
+     cur=cur[k];
+   }
+   cur[path[path.length-1]]=deepAppearanceClone(d.value);
+ }
+ return normalizeAppearanceSnapshot(out);
+}
+async function writeAppearanceSnapshotToCard(cardId,snapshot){
+ const card=cards.find(c=>String(c.id)===String(cardId));if(!card)throw new Error('カードが見つかりません');
+ const snap=normalizeAppearanceSnapshot(snapshot);
+ card.visualEffects=snap.visualEffects.map(x=>({...x}));
+ if(snap.frameLink&&(snap.frameLink.frameId||snap.frameLink.layer2?.frameId))await putCardFrameLink(cardId,{...deepAppearanceClone(snap.frameLink),cardId:String(cardId)});else await deleteCardFrameLink(cardId);
+ return snap;
+}
+async function appearancePresetLinkState(cardId){
+ const card=cards.find(c=>String(c.id)===String(cardId)),meta=normalizeAppearancePresetMeta(card?.appearancePresetMeta);
+ if(!card||!meta)return {meta:null,preset:null,overrides:[]};
+ const preset=appearancePresetStore?.presets?.find(x=>String(x.id)===meta.presetId)||null;
+ const current=await appearanceSnapshotFromCard(cardId);
+ const overrides=appearanceDiffList(meta.baseSnapshot,current);
+ return {meta,preset,current,overrides};
+}
+function detachAppearancePreset(cardId){
+ const card=cards.find(c=>String(c.id)===String(cardId));if(!card)return false;
+ delete card.appearancePresetMeta;save(LS_CARDS,cards);return true;
+}
+
+const LS_APPEARANCE_PRESETS='minkaiAppearancePresetsV1';
+function defaultAppearancePresetStore(){return {version:1,presets:[]}}
+function normalizeAppearancePresetStore(raw={}){
+ const src=Array.isArray(raw?.presets)?raw.presets:[],out=[],seen=new Set();
+ for(const x of src){
+   if(!x||typeof x!=='object')continue;
+   const id=String(x.id||uid('appearancePreset')),name=String(x.name||'外観プリセット').trim().slice(0,60)||'外観プリセット';
+   if(seen.has(id))continue;seen.add(id);
+   const frame=x.frameLink&&typeof x.frameLink==='object'?normalizeFrameLink(x.frameLink,'preset'):null;
+   out.push({id,name,createdAt:String(x.createdAt||new Date().toISOString()),updatedAt:String(x.updatedAt||x.createdAt||new Date().toISOString()),visualEffects:normalizeCardVisualEffects(x.visualEffects),frameLink:frame&&(frame.frameId||frame.layer2?.frameId)?{...frame,cardId:''}:null});
+ }
+ return {version:1,presets:out.slice(0,50)};
+}
+let appearancePresetStore=normalizeAppearancePresetStore(load(LS_APPEARANCE_PRESETS,defaultAppearancePresetStore()));
+function saveAppearancePresetStore(){appearancePresetStore=normalizeAppearancePresetStore(appearancePresetStore);save(LS_APPEARANCE_PRESETS,appearancePresetStore)}
+function appearancePresetSummary(preset){
+ const fx=normalizeCardVisualEffects(preset?.visualEffects).filter(x=>x.enabled).length,fl=preset?.frameLink;
+ const frames=fl?.frameId?(fl?.layer2?.frameId?2:1):0;
+ const animated=[fl?.motionEnabled&&fl?.motion!=='none',fl?.layer2?.motionEnabled&&fl?.layer2?.motion!=='none'].filter(Boolean).length;
+ return `エフェクト ${fx}層 / フレーム ${frames}層${animated?` / フレーム演出 ${animated}`:''}`;
+}
+async function captureAppearancePreset(cardId,name){
+ const card=cards.find(c=>String(c.id)===String(cardId));if(!card)throw new Error('カードが見つかりません');
+ const clean=String(name||'').trim().slice(0,60);if(!clean)throw new Error('プリセット名を入力してください');
+ const frame=await getCardFrameLink(cardId);
+ const now=new Date().toISOString();
+ const rec={id:uid('appearancePreset'),name:clean,createdAt:now,updatedAt:now,visualEffects:normalizeCardVisualEffects(card.visualEffects).map(x=>({...x})),frameLink:frame?JSON.parse(JSON.stringify({...frame,cardId:''})):null};
+ const same=appearancePresetStore.presets.findIndex(x=>x.name===clean);
+ if(same>=0){if(!confirm(`「${clean}」を現在の外観設定で上書きしますか？`))return false;const prev=appearancePresetStore.presets[same];rec.id=prev.id;rec.createdAt=prev.createdAt||now;appearancePresetStore.presets.splice(same,1,rec)}
+ else{if(appearancePresetStore.presets.length>=50)throw new Error('外観プリセットは最大50件です');appearancePresetStore.presets.unshift(rec)}
+ saveAppearancePresetStore();return true;
+}
+async function applyAppearancePresetToCard(cardId,presetId,mode='replace'){
+ const card=cards.find(c=>String(c.id)===String(cardId)),preset=appearancePresetStore.presets.find(x=>String(x.id)===String(presetId));
+ if(!card||!preset)throw new Error('プリセットを読み込めませんでした');
+ const targetBase=appearanceSnapshotFromPreset(preset);
+ let target=targetBase,kept=0;
+ if(mode==='preserve'){
+   const oldMeta=normalizeAppearancePresetMeta(card.appearancePresetMeta);
+   if(oldMeta){
+     const current=await appearanceSnapshotFromCard(cardId),overrides=appearanceDiffList(oldMeta.baseSnapshot,current);
+     target=applyAppearanceDiff(targetBase,overrides);kept=overrides.length;
+   }
+ }
+ await writeAppearanceSnapshotToCard(cardId,target);
+ card.appearancePresetMeta={presetId:String(preset.id),appliedAt:new Date().toISOString(),baseSnapshot:deepAppearanceClone(targetBase)};
+ save(LS_CARDS,cards);
+ renderCards();renderCollection();renderDecks();if(board)renderBoard();hydrateAllCardFrames();
+ return {kept};
+}
+function deleteAppearancePreset(presetId){
+ const i=appearancePresetStore.presets.findIndex(x=>String(x.id)===String(presetId));if(i<0)return false;
+ appearancePresetStore.presets.splice(i,1);for(const c of cards){const m=normalizeAppearancePresetMeta(c.appearancePresetMeta);if(m?.presetId===String(presetId))delete c.appearancePresetMeta}save(LS_CARDS,cards);saveAppearancePresetStore();return true;
+}
+async function openAppearancePresetManager(cardId,returnTo='manager'){
+ const card=cards.find(c=>String(c.id)===String(cardId));if(!card)return;
+ const back=()=>returnTo==='collection'?openCollectionDetail(cardId):openCardManagerDetail(cardId,{keepContext:true});
+ const rows=appearancePresetStore.presets,state=await appearancePresetLinkState(cardId),linkedId=state.meta?.presetId||'',linkedName=state.preset?.name||'';
+ const linkedText=state.meta?(state.preset?`使用中：${esc(linkedName)} / 個別上書き ${state.overrides.length}項目`:`参照先プリセットが見つかりません / 個別上書き ${state.overrides.length}項目`):'このカードはプリセットへリンクされていません。';
+ openModal(`<div class="modal-head"><h3>${esc(card.name)} / 外観プリセット</h3><button class="btn" id="appearance-preset-back">${returnTo==='collection'?'コレクションへ戻る':'カード詳細へ戻る'}</button></div>
+ <p class="muted">プリセット適用後もカードごとの変更は個別上書きとして保持できます。プリセットを更新した後は「上書きを残して適用」で、変更していない部分だけ最新プリセットへ追従できます。</p>
+ <div class="appearance-preset-status"><div class="status-line"><b>プリセット状態</b><span class="pill">${linkedText}</span></div>${state.meta?`<div class="status-actions"><button class="btn small" id="appearance-preset-detach">リンク解除（現在の見た目を維持）</button>${state.preset&&state.overrides.length?`<button class="btn small danger" id="appearance-preset-reset-overrides">個別上書きを破棄して再適用</button>`:''}</div>`:''}</div>
+ <div class="appearance-preset-create"><label>プリセット名<input id="appearance-preset-name" maxlength="60" placeholder="例：最高レア / 闇属性 / 神聖"></label><button class="btn primary" id="appearance-preset-save">現在の外観を保存</button></div>
+ <div class="appearance-preset-list">${rows.length?rows.map(x=>`<div class="appearance-preset-row ${String(x.id)===linkedId?'is-linked':''}"><div class="appearance-preset-copy"><b>${esc(x.name)}${String(x.id)===linkedId?'<span class="appearance-preset-badge">使用中</span>':''}</b><div class="muted">${esc(appearancePresetSummary(x))}</div></div><div class="appearance-preset-actions"><button class="btn small primary" data-appearance-preset-apply="${esc(x.id)}">完全適用</button>${state.meta?`<button class="btn small" data-appearance-preset-preserve="${esc(x.id)}">上書きを残して適用</button>`:''}<button class="btn small danger" data-appearance-preset-delete="${esc(x.id)}">削除</button></div></div>`).join(''):'<div class="muted">保存済みの外観プリセットはありません。</div>'}</div>`);
+ $('#appearance-preset-back').onclick=back;
+ $('#appearance-preset-save').onclick=async()=>{try{if(await captureAppearancePreset(cardId,$('#appearance-preset-name').value)){toast('外観プリセットを保存しました');openAppearancePresetManager(cardId,returnTo)}}catch(err){console.error(err);toast(err?.message||'プリセットを保存できませんでした')}};
+ if($('#appearance-preset-detach'))$('#appearance-preset-detach').onclick=()=>{detachAppearancePreset(cardId);toast('プリセットとのリンクを解除しました');openAppearancePresetManager(cardId,returnTo)};
+ if($('#appearance-preset-reset-overrides'))$('#appearance-preset-reset-overrides').onclick=async()=>{if(!state.preset||!confirm('個別上書きを破棄して、現在のプリセット設定へ完全に戻しますか？'))return;try{await applyAppearancePresetToCard(cardId,state.preset.id,'replace');toast('個別上書きを破棄しました');openAppearancePresetManager(cardId,returnTo)}catch(err){console.error(err);toast(err?.message||'再適用できませんでした')}};
+ $$('[data-appearance-preset-apply]').forEach(b=>b.onclick=async()=>{try{await applyAppearancePresetToCard(cardId,b.dataset.appearancePresetApply,'replace');toast('外観プリセットを完全適用しました');back()}catch(err){console.error(err);toast(err?.message||'プリセットを適用できませんでした')}});
+ $$('[data-appearance-preset-preserve]').forEach(b=>b.onclick=async()=>{try{const r=await applyAppearancePresetToCard(cardId,b.dataset.appearancePresetPreserve,'preserve');toast(r.kept?`個別上書き ${r.kept}項目を残して適用しました`:'個別上書きなしで適用しました');back()}catch(err){console.error(err);toast(err?.message||'プリセットを適用できませんでした')}});
+ $$('[data-appearance-preset-delete]').forEach(b=>b.onclick=()=>{const p=appearancePresetStore.presets.find(x=>String(x.id)===String(b.dataset.appearancePresetDelete));if(!p||!confirm(`「${p.name}」を削除しますか？\nこのプリセットを使用中のカードは現在の見た目を維持したままリンク解除されます。`))return;deleteAppearancePreset(p.id);openAppearancePresetManager(cardId,returnTo)});
 }
 
 function managerCardSummary(c){
@@ -20696,8 +22396,8 @@ async function openCardImageEditor(cardId,returnTo='manager'){
 
 async function openFrameFloatingPreview(cardId){
  const card=cards.find(c=>c.id===cardId);if(!card)return;
- openFloatingPreview('フレームプレビュー',`modal:frame:${cardId}`,`<div id="frame-editor-preview" class="frame-editor-preview floating-frame-preview"><span class="frame-editor-fallback">${esc(card.name)}</span>${cardFxHtml(card,'collection')}<span id="frame-editor-overlay" class="card-frame-overlay" data-card-frame="${esc(cardId)}" aria-hidden="true"></span></div><div class="muted floating-preview-caption">カード画像 → エフェクト → フレームの順で表示</div>`);
- const preview=$('#frame-editor-preview');await hydrateCardArtBackground(preview,cardId,'full',true);if(preview?.classList.contains('has-image'))preview.querySelector('.frame-editor-fallback')?.setAttribute('hidden','');const overlay=$('#frame-editor-overlay');if(overlay){overlay.dataset.frameReady='';hydrateCardFrame(overlay)}hydrateAllCustomFx(preview);
+ openFloatingPreview('フレームプレビュー',`modal:frame:${cardId}`,`<div id="frame-editor-preview" class="frame-editor-preview floating-frame-preview"><span class="frame-editor-fallback">${esc(card.name)}</span>${cardFxHtml(card,'collection')}${cardFrameHtml(card)}</div><div class="muted floating-preview-caption">カード画像 → エフェクト → 第1フレーム → 第2フレームの順で表示</div>`);
+ const preview=$('#frame-editor-preview');await hydrateCardArtBackground(preview,cardId,'full',true);if(preview?.classList.contains('has-image'))preview.querySelector('.frame-editor-fallback')?.setAttribute('hidden','');hydrateAllCardFrames(preview);hydrateAllCustomFx(preview);
 }
 
 async function openCardFrameEditor(cardId,returnTo='manager'){
@@ -20720,6 +22420,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
    const frames=[...BUILTIN_CARD_FRAMES,...customFrames];
    const usageMap=await getFrameUsageMap();
    const current=await getCardFrameLink(cardId);
+   const frameConfig=normalizeFrameLink(current||{cardId,frameId:''},cardId);
    const currentIsBuiltin=!!current&&isBuiltinFrameId(current.frameId);
 
    openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-back">${returnTo==='viewer'?'鑑賞モードへ戻る':returnTo==='collection'?'コレクションへ戻る':'カード詳細へ戻る'}</button></div>
@@ -20727,6 +22428,51 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
        <section class="frame-library-section">
          <div class="frame-editor-top-actions"><button class="btn primary" id="frame-preview-open">プレビューを開く</button><button class="btn" id="frame-upload">新しいPNGを登録して設定</button><input id="frame-file-input" type="file" accept="image/png,.png" hidden><button class="btn" id="frame-remove-card" ${current?'':'disabled'}>このカードから外す</button><button class="btn danger" id="frame-delete-current" ${(!current||currentIsBuiltin)?'disabled':''}>${currentIsBuiltin?'サンプルは削除不可':'現在のフレームをライブラリから削除'}</button></div>
          <div class="muted frame-editor-help">プレビューはドラッグ可能な小窓で開きます。カード画像 → エフェクト → フレームの順で重ねます。</div>
+         <details class="frame-adjust-details" ${current?'':'hidden'}><summary>フレーム詳細設定 ${appearanceEditorToggleHtml()}</summary><div class="frame-adjust-grid">
+           <label>拡大率<div class="frame-adjust-inline"><input id="frame-adjust-scale" type="range" min="60" max="180" step="1" value="${frameConfig.scale}"><span id="frame-adjust-scale-v" class="pill">${frameConfig.scale}%</span></div></label>
+           <label>透明度<div class="frame-adjust-inline"><input id="frame-adjust-opacity" type="range" min="0" max="100" step="1" value="${frameConfig.opacity}"><span id="frame-adjust-opacity-v" class="pill">${frameConfig.opacity}%</span></div></label>
+           <label>横位置<div class="frame-adjust-inline"><input id="frame-adjust-x" type="range" min="-40" max="40" step="1" value="${frameConfig.x}"><span id="frame-adjust-x-v" class="pill">${frameConfig.x}</span></div></label>
+           <label>縦位置<div class="frame-adjust-inline"><input id="frame-adjust-y" type="range" min="-40" max="40" step="1" value="${frameConfig.y}"><span id="frame-adjust-y-v" class="pill">${frameConfig.y}</span></div></label>
+           <label>回転<div class="frame-adjust-inline"><input id="frame-adjust-rotate" type="range" min="-180" max="180" step="1" value="${frameConfig.rotate}"><span id="frame-adjust-rotate-v" class="pill">${frameConfig.rotate}°</span></div></label>
+           <label>フィット<select id="frame-adjust-fit"><option value="stretch" ${frameConfig.fit==='stretch'?'selected':''}>縦横いっぱい</option><option value="contain" ${frameConfig.fit==='contain'?'selected':''}>全体を収める</option><option value="cover" ${frameConfig.fit==='cover'?'selected':''}>外周まで覆う</option></select></label>
+           <label>フレーム演出<select id="frame-adjust-motion"><option value="none" ${frameConfig.motion==='none'?'selected':''}>なし</option><option value="edge-light" ${frameConfig.motion==='edge-light'?'selected':''}>枠を走る光</option><option value="corner-pulse" ${frameConfig.motion==='corner-pulse'?'selected':''}>四隅の脈動</option><option value="metal-sweep" ${frameConfig.motion==='metal-sweep'?'selected':''}>金属反射</option><option value="gem-blink" ${frameConfig.motion==='gem-blink'?'selected':''}>宝石の点滅</option><option value="rune-sequence" ${frameConfig.motion==='rune-sequence'?'selected':''}>ルーン点灯</option></select></label>
+           <label>演出速度<div class="frame-adjust-inline"><input id="frame-adjust-motion-speed" type="range" min="50" max="180" step="5" value="${frameConfig.motionSpeed??100}"><span id="frame-adjust-motion-speed-v" class="pill">${frameConfig.motionSpeed??100}%</span></div></label>
+           <label>エフェクト連動強度<div class="frame-adjust-inline"><input id="frame-adjust-sync-strength" type="range" min="0" max="100" step="5" value="${frameConfig.fxSyncStrength??70}"><span id="frame-adjust-sync-strength-v" class="pill">${frameConfig.fxSyncStrength??70}%</span></div></label>
+           <label data-appearance-advanced>色相<div class="frame-adjust-inline"><input id="frame-adjust-hue" type="range" min="-180" max="180" step="1" value="${frameConfig.hue??0}"><span id="frame-adjust-hue-v" class="pill">${frameConfig.hue??0}°</span></div></label>
+           <label data-appearance-advanced>彩度<div class="frame-adjust-inline"><input id="frame-adjust-saturation" type="range" min="0" max="220" step="5" value="${frameConfig.saturation??100}"><span id="frame-adjust-saturation-v" class="pill">${frameConfig.saturation??100}%</span></div></label>
+           <label data-appearance-advanced>明るさ<div class="frame-adjust-inline"><input id="frame-adjust-brightness" type="range" min="40" max="180" step="5" value="${frameConfig.brightness??100}"><span id="frame-adjust-brightness-v" class="pill">${frameConfig.brightness??100}%</span></div></label>
+           <label data-appearance-advanced>発光色<input id="frame-adjust-glow-color" type="color" value="${frameConfig.glowColor??'#ffffff'}"></label>
+           <label data-appearance-advanced>発光強度<div class="frame-adjust-inline"><input id="frame-adjust-glow-strength" type="range" min="0" max="100" step="5" value="${frameConfig.glowStrength??0}"><span id="frame-adjust-glow-strength-v" class="pill">${frameConfig.glowStrength??0}%</span></div></label>
+           <label data-appearance-advanced>部分発光<select id="frame-adjust-partial-glow"><option value="none" ${frameConfig.partialGlow==='none'?'selected':''}>なし</option><option value="outer" ${frameConfig.partialGlow==='outer'?'selected':''}>外周</option><option value="corners" ${frameConfig.partialGlow==='corners'?'selected':''}>四隅</option><option value="gems" ${frameConfig.partialGlow==='gems'?'selected':''}>宝石位置</option><option value="pattern" ${frameConfig.partialGlow==='pattern'?'selected':''}>模様</option></select></label>
+           <label data-appearance-advanced>部分発光強度<div class="frame-adjust-inline"><input id="frame-adjust-partial-strength" type="range" min="0" max="100" step="5" value="${frameConfig.partialGlowStrength??60}"><span id="frame-adjust-partial-strength-v" class="pill">${frameConfig.partialGlowStrength??60}%</span></div></label>
+           <label data-appearance-advanced>特殊仕上げ<select id="frame-adjust-finish"><option value="none" ${frameConfig.finish==='none'?'selected':''}>なし</option><option value="foil" ${frameConfig.finish==='foil'?'selected':''}>箔押し</option><option value="rainbow" ${frameConfig.finish==='rainbow'?'selected':''}>虹箔</option><option value="polarized" ${frameConfig.finish==='polarized'?'selected':''}>偏光</option><option value="glitter" ${frameConfig.finish==='glitter'?'selected':''}>ラメ</option><option value="pearl" ${frameConfig.finish==='pearl'?'selected':''}>パール</option><option value="metallic" ${frameConfig.finish==='metallic'?'selected':''}>メタリック</option></select></label>
+           <label data-appearance-advanced>仕上げ強度<div class="frame-adjust-inline"><input id="frame-adjust-finish-strength" type="range" min="0" max="100" step="5" value="${frameConfig.finishStrength??55}"><span id="frame-adjust-finish-strength-v" class="pill">${frameConfig.finishStrength??55}%</span></div></label>
+           <div class="frame-wide frame-adjust-checks"><label class="board-follow-row"><input id="frame-adjust-fx-sync" type="checkbox" ${frameConfig.fxSyncEnabled?'checked':''}>エフェクトの色・発光と連動</label><label class="board-follow-row"><input id="frame-adjust-motion-enabled" type="checkbox" ${frameConfig.motionEnabled?'checked':''}>フレームアニメーションを再生</label><label class="board-follow-row"><input id="frame-adjust-flip-x" type="checkbox" ${frameConfig.flipX?'checked':''}>左右反転</label><label class="board-follow-row"><input id="frame-adjust-flip-y" type="checkbox" ${frameConfig.flipY?'checked':''}>上下反転</label><button class="btn small" type="button" id="frame-adjust-reset">標準に戻す</button></div>
+         </div></details>
+         <details class="frame-adjust-details" id="frame-layer2-details"><summary>第2フレームレイヤー</summary>
+           <div class="frame-adjust-grid">
+             <label class="frame-wide">フレーム<select id="frame2-pick"><option value="">なし</option>${frames.map(f=>`<option value="${esc(f.id)}" ${frameConfig.layer2?.frameId===f.id?'selected':''}>${esc(f.name||f.originalName||'カスタムフレーム')}</option>`).join('')}</select></label>
+             <label>拡大率<div class="frame-adjust-inline"><input id="frame2-scale" type="range" min="60" max="180" step="1" value="${frameConfig.layer2?.scale??100}"><span id="frame2-scale-v" class="pill">${frameConfig.layer2?.scale??100}%</span></div></label>
+             <label>透明度<div class="frame-adjust-inline"><input id="frame2-opacity" type="range" min="0" max="100" step="1" value="${frameConfig.layer2?.opacity??100}"><span id="frame2-opacity-v" class="pill">${frameConfig.layer2?.opacity??100}%</span></div></label>
+             <label>横位置<div class="frame-adjust-inline"><input id="frame2-x" type="range" min="-40" max="40" step="1" value="${frameConfig.layer2?.x??0}"><span id="frame2-x-v" class="pill">${frameConfig.layer2?.x??0}</span></div></label>
+             <label>縦位置<div class="frame-adjust-inline"><input id="frame2-y" type="range" min="-40" max="40" step="1" value="${frameConfig.layer2?.y??0}"><span id="frame2-y-v" class="pill">${frameConfig.layer2?.y??0}</span></div></label>
+             <label>回転<div class="frame-adjust-inline"><input id="frame2-rotate" type="range" min="-180" max="180" step="1" value="${frameConfig.layer2?.rotate??0}"><span id="frame2-rotate-v" class="pill">${frameConfig.layer2?.rotate??0}°</span></div></label>
+             <label>フィット<select id="frame2-fit"><option value="stretch" ${frameConfig.layer2?.fit==='stretch'?'selected':''}>縦横いっぱい</option><option value="contain" ${frameConfig.layer2?.fit==='contain'?'selected':''}>全体を収める</option><option value="cover" ${frameConfig.layer2?.fit==='cover'?'selected':''}>外周まで覆う</option></select></label>
+             <label>フレーム演出<select id="frame2-motion"><option value="none" ${frameConfig.layer2?.motion==='none'?'selected':''}>なし</option><option value="edge-light" ${frameConfig.layer2?.motion==='edge-light'?'selected':''}>枠を走る光</option><option value="corner-pulse" ${frameConfig.layer2?.motion==='corner-pulse'?'selected':''}>四隅の脈動</option><option value="metal-sweep" ${frameConfig.layer2?.motion==='metal-sweep'?'selected':''}>金属反射</option><option value="gem-blink" ${frameConfig.layer2?.motion==='gem-blink'?'selected':''}>宝石の点滅</option><option value="rune-sequence" ${frameConfig.layer2?.motion==='rune-sequence'?'selected':''}>ルーン点灯</option></select></label>
+             <label>演出速度<div class="frame-adjust-inline"><input id="frame2-motion-speed" type="range" min="50" max="180" step="5" value="${frameConfig.layer2?.motionSpeed??100}"><span id="frame2-motion-speed-v" class="pill">${frameConfig.layer2?.motionSpeed??100}%</span></div></label>
+             <label>エフェクト連動強度<div class="frame-adjust-inline"><input id="frame2-sync-strength" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.fxSyncStrength??70}"><span id="frame2-sync-strength-v" class="pill">${frameConfig.layer2?.fxSyncStrength??70}%</span></div></label>
+             <label data-appearance-advanced>色相<div class="frame-adjust-inline"><input id="frame2-hue" type="range" min="-180" max="180" step="1" value="${frameConfig.layer2?.hue??0}"><span id="frame2-hue-v" class="pill">${frameConfig.layer2?.hue??0}°</span></div></label>
+             <label data-appearance-advanced>彩度<div class="frame-adjust-inline"><input id="frame2-saturation" type="range" min="0" max="220" step="5" value="${frameConfig.layer2?.saturation??100}"><span id="frame2-saturation-v" class="pill">${frameConfig.layer2?.saturation??100}%</span></div></label>
+             <label data-appearance-advanced>明るさ<div class="frame-adjust-inline"><input id="frame2-brightness" type="range" min="40" max="180" step="5" value="${frameConfig.layer2?.brightness??100}"><span id="frame2-brightness-v" class="pill">${frameConfig.layer2?.brightness??100}%</span></div></label>
+             <label data-appearance-advanced>発光色<input id="frame2-glow-color" type="color" value="${frameConfig.layer2?.glowColor??'#ffffff'}"></label>
+             <label data-appearance-advanced>発光強度<div class="frame-adjust-inline"><input id="frame2-glow-strength" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.glowStrength??0}"><span id="frame2-glow-strength-v" class="pill">${frameConfig.layer2?.glowStrength??0}%</span></div></label>
+             <label data-appearance-advanced>部分発光<select id="frame2-partial-glow"><option value="none" ${frameConfig.layer2?.partialGlow==='none'?'selected':''}>なし</option><option value="outer" ${frameConfig.layer2?.partialGlow==='outer'?'selected':''}>外周</option><option value="corners" ${frameConfig.layer2?.partialGlow==='corners'?'selected':''}>四隅</option><option value="gems" ${frameConfig.layer2?.partialGlow==='gems'?'selected':''}>宝石位置</option><option value="pattern" ${frameConfig.layer2?.partialGlow==='pattern'?'selected':''}>模様</option></select></label>
+             <label data-appearance-advanced>部分発光強度<div class="frame-adjust-inline"><input id="frame2-partial-strength" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.partialGlowStrength??60}"><span id="frame2-partial-strength-v" class="pill">${frameConfig.layer2?.partialGlowStrength??60}%</span></div></label>
+             <label data-appearance-advanced>特殊仕上げ<select id="frame2-finish"><option value="none" ${frameConfig.layer2?.finish==='none'?'selected':''}>なし</option><option value="foil" ${frameConfig.layer2?.finish==='foil'?'selected':''}>箔押し</option><option value="rainbow" ${frameConfig.layer2?.finish==='rainbow'?'selected':''}>虹箔</option><option value="polarized" ${frameConfig.layer2?.finish==='polarized'?'selected':''}>偏光</option><option value="glitter" ${frameConfig.layer2?.finish==='glitter'?'selected':''}>ラメ</option><option value="pearl" ${frameConfig.layer2?.finish==='pearl'?'selected':''}>パール</option><option value="metallic" ${frameConfig.layer2?.finish==='metallic'?'selected':''}>メタリック</option></select></label>
+             <label data-appearance-advanced>仕上げ強度<div class="frame-adjust-inline"><input id="frame2-finish-strength" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.finishStrength??55}"><span id="frame2-finish-strength-v" class="pill">${frameConfig.layer2?.finishStrength??55}%</span></div></label>
+             <div class="frame-wide frame-adjust-checks"><label class="board-follow-row"><input id="frame2-fx-sync" type="checkbox" ${frameConfig.layer2?.fxSyncEnabled?'checked':''}>エフェクトの色・発光と連動</label><label class="board-follow-row"><input id="frame2-motion-enabled" type="checkbox" ${frameConfig.layer2?.motionEnabled?'checked':''}>フレームアニメーションを再生</label><label class="board-follow-row"><input id="frame2-flip-x" type="checkbox" ${frameConfig.layer2?.flipX?'checked':''}>左右反転</label><label class="board-follow-row"><input id="frame2-flip-y" type="checkbox" ${frameConfig.layer2?.flipY?'checked':''}>上下反転</label><button class="btn small" type="button" id="frame2-reset">第2レイヤーを標準に戻す</button></div>
+           </div>
+         </details>
          <div class="section-head"><h3>フレームライブラリ</h3><div class="actions"><span class="pill">サンプル5種 + カスタム${customFrames.length}個</span><button class="btn small" type="button" id="frame-open-library-manager">ライブラリ管理</button></div></div>
          <div class="muted">実物TCGのオーバースリーブでよくある「外周・角を飾って中央イラストを見せる」方向を参考にしたオリジナルサンプルです。</div>
          <div id="frame-library-grid" class="frame-library-grid">
@@ -20742,6 +22488,54 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
    $('#frame-editor-back').onclick=back;
    $('#frame-open-library-manager').onclick=()=>openFrameLibraryManager(()=>openCardFrameEditor(cardId,returnTo));
    $('#frame-preview-open').onclick=()=>openFrameFloatingPreview(cardId);
+   if(current){
+     let workingFrame={...frameConfig,frameId:current.frameId,cardId};
+     let saveTimer=0;
+     const applyPreview=async()=>{
+       const el=$('#frame-editor-preview .card-frame-layer-1');if(!el)return;
+       const url=await getFrameObjectUrl(workingFrame.frameId);if(url&&el.isConnected){el.style.backgroundImage=`url("${url}")`;applyFrameLinkVisual(el,workingFrame,frameFxSyncProfile(card));el.classList.add('frame-loaded')}
+     };
+     const commitFrame=()=>{clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{try{await putCardFrameLink(cardId,workingFrame);renderCollection();if(board)renderBoard();hydrateAllCardFrames()}catch(err){console.error(err);toast('フレーム詳細設定を保存できませんでした')}},100)};
+     const bindRange=(id,key,valueId,suffix='')=>{const el=$(id),out=$(valueId);if(!el)return;el.oninput=()=>{workingFrame[key]=Number(el.value);if(out)out.textContent=`${el.value}${suffix}`;applyPreview();commitFrame()}};
+     bindRange('#frame-adjust-scale','scale','#frame-adjust-scale-v','%');bindRange('#frame-adjust-opacity','opacity','#frame-adjust-opacity-v','%');bindRange('#frame-adjust-x','x','#frame-adjust-x-v');bindRange('#frame-adjust-y','y','#frame-adjust-y-v');bindRange('#frame-adjust-rotate','rotate','#frame-adjust-rotate-v','°');
+     const fit=$('#frame-adjust-fit');if(fit)fit.onchange=()=>{workingFrame.fit=fit.value;applyPreview();commitFrame()};
+     const motion=$('#frame-adjust-motion'),motionOn=$('#frame-adjust-motion-enabled');
+     if(motion)motion.onchange=()=>{workingFrame.motion=motion.value;if(motion.value==='none'){workingFrame.motionEnabled=false;if(motionOn)motionOn.checked=false}else if(motionOn?.checked)workingFrame.motionEnabled=true;applyPreview();commitFrame()};
+     if(motionOn)motionOn.onchange=()=>{workingFrame.motionEnabled=motionOn.checked;if(motionOn.checked&&workingFrame.motion==='none'){workingFrame.motion='edge-light';if(motion)motion.value='edge-light'}applyPreview();commitFrame()};
+     bindRange('#frame-adjust-motion-speed','motionSpeed','#frame-adjust-motion-speed-v','%');
+     bindRange('#frame-adjust-sync-strength','fxSyncStrength','#frame-adjust-sync-strength-v','%');
+     bindRange('#frame-adjust-hue','hue','#frame-adjust-hue-v','°');bindRange('#frame-adjust-saturation','saturation','#frame-adjust-saturation-v','%');bindRange('#frame-adjust-brightness','brightness','#frame-adjust-brightness-v','%');bindRange('#frame-adjust-glow-strength','glowStrength','#frame-adjust-glow-strength-v','%');bindRange('#frame-adjust-partial-strength','partialGlowStrength','#frame-adjust-partial-strength-v','%');bindRange('#frame-adjust-finish-strength','finishStrength','#frame-adjust-finish-strength-v','%');
+     const glowColor=$('#frame-adjust-glow-color');if(glowColor)glowColor.oninput=()=>{workingFrame.glowColor=glowColor.value;applyPreview();commitFrame()};
+     const partial=$('#frame-adjust-partial-glow');if(partial)partial.onchange=()=>{workingFrame.partialGlow=partial.value;applyPreview();commitFrame()};
+     const finish=$('#frame-adjust-finish');if(finish)finish.onchange=()=>{workingFrame.finish=finish.value;applyPreview();commitFrame()};
+     const sync=$('#frame-adjust-fx-sync');if(sync)sync.onchange=()=>{workingFrame.fxSyncEnabled=sync.checked;applyPreview();commitFrame()};
+     const fx=$('#frame-adjust-flip-x'),fy=$('#frame-adjust-flip-y');if(fx)fx.onchange=()=>{workingFrame.flipX=fx.checked;applyPreview();commitFrame()};if(fy)fy.onchange=()=>{workingFrame.flipY=fy.checked;applyPreview();commitFrame()};
+     const reset=$('#frame-adjust-reset');if(reset)reset.onclick=async()=>{workingFrame={...FRAME_LINK_DEFAULTS,cardId,frameId:current.frameId};await putCardFrameLink(cardId,workingFrame);toast('フレーム詳細設定を標準に戻しました');openCardFrameEditor(cardId,returnTo);if(floatingPreviewOpen&&floatingPreviewOwner===`modal:frame:${cardId}`)openFrameFloatingPreview(cardId)};
+   }
+   {
+     let working2=normalizeFrameVisual(frameConfig.layer2||{});
+     let saveTimer2=0;
+     const commit2=()=>{clearTimeout(saveTimer2);saveTimer2=setTimeout(async()=>{try{
+       const latest=normalizeFrameLink((await getCardFrameLink(cardId))||frameConfig,cardId);
+       latest.layer2=normalizeFrameVisual(working2);
+       if(latest.frameId)await putCardFrameLink(cardId,latest);
+       renderCollection();if(board)renderBoard();hydrateAllCardFrames();
+     }catch(err){console.error(err);toast('第2フレーム設定を保存できませんでした')}},100)};
+     const applyPreview2=async()=>{const el=$('#frame-editor-preview .card-frame-layer-2');if(!el)return;if(!working2.frameId){el.classList.remove('frame-loaded','frame-motion-enabled');el.style.backgroundImage='';return}const url=await getFrameObjectUrl(working2.frameId);if(url&&el.isConnected){el.style.backgroundImage=`url("${url}")`;applyFrameLinkVisual(el,working2,frameFxSyncProfile(card));el.classList.add('frame-loaded')}};
+     const pick=$('#frame2-pick');if(pick)pick.onchange=()=>{working2.frameId=pick.value;applyPreview2();commit2()};
+     const bind2=(id,key,outId,suffix='')=>{const el=$(id),out=$(outId);if(!el)return;el.oninput=()=>{working2[key]=Number(el.value);if(out)out.textContent=`${el.value}${suffix}`;applyPreview2();commit2()}};
+     bind2('#frame2-scale','scale','#frame2-scale-v','%');bind2('#frame2-opacity','opacity','#frame2-opacity-v','%');bind2('#frame2-x','x','#frame2-x-v');bind2('#frame2-y','y','#frame2-y-v');bind2('#frame2-rotate','rotate','#frame2-rotate-v','°');bind2('#frame2-motion-speed','motionSpeed','#frame2-motion-speed-v','%');bind2('#frame2-sync-strength','fxSyncStrength','#frame2-sync-strength-v','%');
+     bind2('#frame2-hue','hue','#frame2-hue-v','°');bind2('#frame2-saturation','saturation','#frame2-saturation-v','%');bind2('#frame2-brightness','brightness','#frame2-brightness-v','%');bind2('#frame2-glow-strength','glowStrength','#frame2-glow-strength-v','%');bind2('#frame2-partial-strength','partialGlowStrength','#frame2-partial-strength-v','%');bind2('#frame2-finish-strength','finishStrength','#frame2-finish-strength-v','%');
+     const glow2=$('#frame2-glow-color');if(glow2)glow2.oninput=()=>{working2.glowColor=glow2.value;applyPreview2();commit2()};
+     const partial2=$('#frame2-partial-glow');if(partial2)partial2.onchange=()=>{working2.partialGlow=partial2.value;applyPreview2();commit2()};
+     const finish2=$('#frame2-finish');if(finish2)finish2.onchange=()=>{working2.finish=finish2.value;applyPreview2();commit2()};
+     const sync2=$('#frame2-fx-sync');if(sync2)sync2.onchange=()=>{working2.fxSyncEnabled=sync2.checked;applyPreview2();commit2()};
+     const fit2=$('#frame2-fit');if(fit2)fit2.onchange=()=>{working2.fit=fit2.value;applyPreview2();commit2()};
+     const motion2=$('#frame2-motion'),motionOn2=$('#frame2-motion-enabled');if(motion2)motion2.onchange=()=>{working2.motion=motion2.value;if(motion2.value==='none'){working2.motionEnabled=false;if(motionOn2)motionOn2.checked=false}else if(motionOn2?.checked)working2.motionEnabled=true;applyPreview2();commit2()};if(motionOn2)motionOn2.onchange=()=>{working2.motionEnabled=motionOn2.checked;if(motionOn2.checked&&working2.motion==='none'){working2.motion='edge-light';if(motion2)motion2.value='edge-light'}applyPreview2();commit2()};
+     const fx2=$('#frame2-flip-x'),fy2=$('#frame2-flip-y');if(fx2)fx2.onchange=()=>{working2.flipX=fx2.checked;applyPreview2();commit2()};if(fy2)fy2.onchange=()=>{working2.flipY=fy2.checked;applyPreview2();commit2()};
+     const reset2=$('#frame2-reset');if(reset2)reset2.onclick=()=>{working2={...FRAME_LINK_DEFAULTS,frameId:working2.frameId};if(pick)pick.value=working2.frameId;['scale','opacity','x','y','rotate'].forEach(k=>{});commit2();openCardFrameEditor(cardId,returnTo)};
+   }
+
    const thumbs=$$('[data-frame-thumb]');
    for(const el of thumbs){
      const url=await getFrameObjectUrl(el.dataset.frameThumb);
@@ -20755,8 +22549,10 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
        $$('[data-frame-pick]').forEach(x=>x.classList.toggle('selected',x===b));
        $('#frame-remove-card').disabled=false;
        const del=$('#frame-delete-current');if(del){const builtin=isBuiltinFrameId(b.dataset.framePick);del.disabled=builtin;del.textContent=builtin?'サンプルは削除不可':'現在のフレームをライブラリから削除'}
-       if(floatingPreviewOpen&&floatingPreviewOwner===`modal:frame:${cardId}`)openFrameFloatingPreview(cardId);
+       const reopenPreview=floatingPreviewOpen&&floatingPreviewOwner===`modal:frame:${cardId}`;
        toast('フレームを設定しました');
+       await openCardFrameEditor(cardId,returnTo);
+       if(reopenPreview)openFrameFloatingPreview(cardId);
      }catch(err){console.error(err);toast(err?.message||'フレームを設定できませんでした')}
    });
 
@@ -20932,7 +22728,18 @@ function readFxEditorLayers(card){
      slot,type,
      intensity:$(`#fx-edit-intensity-${slot}`)?.value||'standard',
      opacity:Number($(`#fx-edit-opacity-${slot}`)?.value)||70,
-     enabled:$(`#fx-edit-enabled-${slot}`)?.checked!==false
+     enabled:$(`#fx-edit-enabled-${slot}`)?.checked!==false,
+     speed:Number($(`#fx-detail-speed-${slot}`)?.value)||100,
+     size:Number($(`#fx-detail-size-${slot}`)?.value)||100,
+     direction:$(`#fx-detail-direction-${slot}`)?.value||'default',
+     rotationDirection:$(`#fx-detail-rotation-${slot}`)?.value||'default',
+     hue:Number($(`#fx-detail-hue-${slot}`)?.value)||0,
+     saturation:Number($(`#fx-detail-saturation-${slot}`)?.value)||100,
+     brightness:Number($(`#fx-detail-brightness-${slot}`)?.value)||100,
+     density:Number($(`#fx-detail-density-${slot}`)?.value)||100,
+     motion:Number($(`#fx-detail-motion-${slot}`)?.value)||100,
+     blendMode:$(`#fx-detail-blend-${slot}`)?.value||'effect',
+     mask:$(`#fx-detail-mask-${slot}`)?.value||'full'
    });
  }
  return normalizeCardVisualEffects(result);
@@ -21008,26 +22815,50 @@ async function hydrateFxEditorPreviewImage(cardId,force=false){
    }
  }
 }
+function applyFxPreviewControls(card){
+ const art=$('#fx-editor-preview-art'),host=$('#fx-editor-preview');if(!art||!host)return;
+ const bg=$('#fx-preview-background')?.value||'dark',zoom=Number($('#fx-preview-zoom')?.value)||100;
+ host.dataset.previewBg=bg;
+ art.style.width=`${Math.round(270*zoom/100)}px`;
+ art.style.maxWidth='100%';
+ art.style.minWidth='150px';
+ art.classList.toggle('fx-preview-image-hidden',$('#fx-preview-show-image')?.checked===false);
+ const effects=$('#fx-editor-preview-effects');if(effects)effects.hidden=$('#fx-preview-show-effects')?.checked===false;
+ art.querySelectorAll('[data-card-frame]').forEach(el=>el.hidden=$('#fx-preview-show-frame')?.checked===false);
+ const fallback=$('#fx-editor-preview-fallback');if(fallback&&$('#fx-preview-show-image')?.checked===false)fallback.hidden=false;
+}
 function renderFxEditorPreview(card,{forceImage=false}={}){
  if(!(floatingPreviewOpen&&floatingPreviewOwner===`modal:fx:${card.id}`))return;
  const art=ensureFxEditorPreviewShell(card);if(!art)return;
  const layers=readFxEditorLayers(card),animate=$('#fx-preview-animate')?.checked===true,effects=$('#fx-editor-preview-effects');
- if(effects){effects.innerHTML=cardFxStackHtmlFromLayers(layers,{maxLayers:cardFxPrefs.maxLayers,visible:true,animate});hydrateAllCustomFx(effects)}
- const frame=art.querySelector('[data-card-frame]');if(frame){frame.dataset.frameReady='';hydrateCardFrame(frame)}
+ if(effects){effects.innerHTML=cardFxStackHtmlFromLayers(layers,{maxLayers:cardFxPrefs.maxLayers,visible:true,animate,quality:'high'});hydrateAllCustomFx(effects)}
+ art.querySelectorAll('[data-card-frame]').forEach(frame=>{frame.dataset.frameReady='';hydrateCardFrame(frame)});
+ applyFxPreviewControls(card);
  requestAnimationFrame(()=>{
    if(!art.isConnected)return;
    const box=art.getBoundingClientRect();
    if(box.width<100||box.height<140){
      art.style.width='270px';
      art.style.maxWidth='100%';
-     art.style.minWidth='180px';
+     art.style.minWidth='150px';
    }
  });
- if(forceImage||art.dataset.imageReady!=='1')hydrateFxEditorPreviewImage(card.id,forceImage);
+ if(forceImage||art.dataset.imageReady!=='1')hydrateFxEditorPreviewImage(card.id,forceImage).then(()=>applyFxPreviewControls(card));
 }
 function openFxFloatingPreview(card){
- openFloatingPreview('エフェクトプレビュー',`modal:fx:${card.id}`,`<div class="fx-preview-toolbar"><label class="board-follow-row fx-preview-animation-toggle"><input id="fx-preview-animate" type="checkbox">アニメーションで確認</label><button class="btn small" type="button" id="fx-preview-reload-image">画像を再読込</button></div><div id="fx-editor-preview"></div><div class="muted floating-preview-caption">静止設定の自作エフェクトは、アニメーション確認をONにしても動きません。</div>`);
- $('#fx-preview-animate').onchange=()=>renderFxEditorPreview(card);$('#fx-preview-reload-image').onclick=()=>renderFxEditorPreview(card,{forceImage:true});renderFxEditorPreview(card,{forceImage:true});
+ openFloatingPreview('エフェクトプレビュー',`modal:fx:${card.id}`,`<div class="fx-preview-toolbar fx-preview-toolbar-v2">
+   <label class="board-follow-row fx-preview-animation-toggle"><input id="fx-preview-animate" type="checkbox">アニメーション</label>
+   <label class="board-follow-row"><input id="fx-preview-show-image" type="checkbox" checked>カード画像</label>
+   <label class="board-follow-row"><input id="fx-preview-show-effects" type="checkbox" checked>エフェクト</label>
+   <label class="board-follow-row"><input id="fx-preview-show-frame" type="checkbox" checked>フレーム</label>
+   <label>背景<select id="fx-preview-background"><option value="dark">黒</option><option value="gray">グレー</option><option value="white">白</option><option value="checker">透過確認</option></select></label>
+   <label>拡大 <span id="fx-preview-zoom-label" class="pill">100%</span><input id="fx-preview-zoom" type="range" min="70" max="150" step="5" value="100"></label>
+   <button class="btn small" type="button" id="fx-preview-reload-image">画像を再読込</button>
+ </div><div id="fx-editor-preview"></div><div class="muted floating-preview-caption">表示項目を個別に切り替えて、エフェクトだけ／フレームだけでも確認できます。</div>`);
+ ['fx-preview-animate','fx-preview-show-image','fx-preview-show-effects','fx-preview-show-frame','fx-preview-background'].forEach(id=>$('#'+id)?.addEventListener('change',()=>renderFxEditorPreview(card)));
+ $('#fx-preview-zoom').oninput=e=>{const out=$('#fx-preview-zoom-label');if(out)out.textContent=e.target.value+'%';applyFxPreviewControls(card)};
+ $('#fx-preview-reload-image').onclick=()=>applyAppearanceEditorMode(document);bindAppearanceEditorToggle(document);renderFxEditorPreview(card,{forceImage:true});
+ renderFxEditorPreview(card,{forceImage:true});
 }
 async function hydrateCustomFxManagerThumbs(){for(const el of $$('[data-custom-fx-thumb]')){const url=await getCustomFxObjectUrl(el.dataset.customFxThumb);if(url&&el.isConnected)el.style.backgroundImage=`url("${url}")`}}
 async function openCustomFxManager(cardId,returnTo='manager'){
@@ -21050,6 +22881,23 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      <label>強さ<select id="fx-edit-intensity-${slot}" ${dormant?'disabled':''}><option value="weak">弱</option><option value="standard">標準</option><option value="strong">強</option></select></label>
      <label>不透明度 <span id="fx-edit-opacity-label-${slot}">${Number(x.opacity)||70}%</span><input id="fx-edit-opacity-${slot}" type="range" min="20" max="100" step="5" value="${Number(x.opacity)||70}" ${dormant?'disabled':''}></label>
      <label class="board-follow-row fx-editor-enabled"><input id="fx-edit-enabled-${slot}" type="checkbox" ${x.enabled===false?'':'checked'} ${dormant?'disabled':''}>表示ON</label>
+     <details class="fx-layer-detail" ${dormant?'':'data-fx-detail-active="1"'}>
+       <summary>詳細設定</summary>
+       <div class="fx-layer-detail-grid" data-appearance-advanced>
+         <label>速度 <span id="fx-detail-speed-label-${slot}">${Number(x.speed)||100}%</span><input id="fx-detail-speed-${slot}" type="range" min="25" max="200" step="5" value="${Number(x.speed)||100}" ${dormant?'disabled':''}></label>
+         <label>サイズ <span id="fx-detail-size-label-${slot}">${Number(x.size)||100}%</span><input id="fx-detail-size-${slot}" type="range" min="70" max="160" step="5" value="${Number(x.size)||100}" ${dormant?'disabled':''}></label>
+         <label>移動方向<select id="fx-detail-direction-${slot}" ${dormant?'disabled':''}><option value="default">エフェクト標準</option><option value="forward">順方向</option><option value="reverse">逆方向</option></select></label>
+         <label>回転方向<select id="fx-detail-rotation-${slot}" ${dormant?'disabled':''}><option value="default">エフェクト標準</option><option value="forward">順回転</option><option value="reverse">逆回転</option></select></label>
+         <label>色相 <span id="fx-detail-hue-label-${slot}">${Number(x.hue)||0}°</span><input id="fx-detail-hue-${slot}" type="range" min="-180" max="180" step="5" value="${Number(x.hue)||0}" ${dormant?'disabled':''}></label>
+         <label>彩度 <span id="fx-detail-saturation-label-${slot}">${Number(x.saturation)||100}%</span><input id="fx-detail-saturation-${slot}" type="range" min="30" max="200" step="5" value="${Number(x.saturation)||100}" ${dormant?'disabled':''}></label>
+         <label>明るさ <span id="fx-detail-brightness-label-${slot}">${Number(x.brightness)||100}%</span><input id="fx-detail-brightness-${slot}" type="range" min="40" max="180" step="5" value="${Number(x.brightness)||100}" ${dormant?'disabled':''}></label>
+         <label>粒子密度 <span id="fx-detail-density-label-${slot}">${Number(x.density)||100}%</span><input id="fx-detail-density-${slot}" type="range" min="50" max="180" step="5" value="${Number(x.density)||100}" ${dormant?'disabled':''}></label>
+         <label>動きの強さ <span id="fx-detail-motion-label-${slot}">${Number(x.motion)||100}%</span><input id="fx-detail-motion-${slot}" type="range" min="25" max="180" step="5" value="${Number(x.motion)||100}" ${dormant?'disabled':''}></label>
+         <label>ブレンド方式<select id="fx-detail-blend-${slot}" ${dormant?'disabled':''}><option value="effect">エフェクト標準</option><option value="normal">通常</option><option value="screen">スクリーン</option><option value="add">加算</option><option value="overlay">オーバーレイ</option><option value="soft-light">ソフトライト</option></select></label>
+         <label>表示範囲<select id="fx-detail-mask-${slot}" ${dormant?'disabled':''}><option value="full">全面</option><option value="center">中央</option><option value="outer">外周</option><option value="corners">四隅</option><option value="top">上部</option><option value="bottom">下部</option></select></label>
+         <div class="actions fx-layer-detail-actions"><button class="btn small" type="button" data-fx-detail-reset="${slot}" ${dormant?'disabled':''}>このレイヤーを標準に戻す</button></div>
+       </div>
+     </details>
    </div>`;
  };
  const primaryRows=[1,2].map(rowHtml).join('');
@@ -21072,10 +22920,24 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
  $('#modal').classList.add('fx-editor-modal');
  for(let slot=1;slot<=4;slot++){
    const x=existing.find(y=>y.slot===slot);
-   if(x)$(`#fx-edit-intensity-${slot}`).value=x.intensity;
-   [`fx-edit-type-${slot}`,`fx-edit-intensity-${slot}`,`fx-edit-enabled-${slot}`].forEach(id=>$('#'+id)?.addEventListener('change',()=>renderFxEditorPreview(card)));
+   if(x){
+     $(`#fx-edit-intensity-${slot}`).value=x.intensity;
+     $(`#fx-detail-direction-${slot}`).value=x.direction||'default';
+     $(`#fx-detail-rotation-${slot}`).value=x.rotationDirection||'default';
+     $(`#fx-detail-blend-${slot}`).value=x.blendMode||'effect';
+     $(`#fx-detail-mask-${slot}`).value=x.mask||'full';
+   }
+   [`fx-edit-type-${slot}`,`fx-edit-intensity-${slot}`,`fx-edit-enabled-${slot}`,`fx-detail-direction-${slot}`,`fx-detail-rotation-${slot}`,`fx-detail-blend-${slot}`,`fx-detail-mask-${slot}`].forEach(id=>$('#'+id)?.addEventListener('change',()=>renderFxEditorPreview(card)));
    $(`#fx-edit-opacity-${slot}`)?.addEventListener('input',e=>{$(`#fx-edit-opacity-label-${slot}`).textContent=e.target.value+'%';renderFxEditorPreview(card)});
+   [['speed','%'],['size','%'],['hue','°'],['saturation','%'],['brightness','%'],['density','%'],['motion','%']].forEach(([key,suffix])=>{
+     $(`#fx-detail-${key}-${slot}`)?.addEventListener('input',e=>{$(`#fx-detail-${key}-label-${slot}`).textContent=e.target.value+suffix;renderFxEditorPreview(card)});
+   });
  }
+ $$('[data-fx-detail-reset]').forEach(b=>b.onclick=()=>{
+   const slot=Number(b.dataset.fxDetailReset),vals={speed:100,size:100,hue:0,saturation:100,brightness:100,density:100,motion:100};
+   Object.entries(vals).forEach(([k,v])=>{const el=$(`#fx-detail-${k}-${slot}`);if(el){el.value=String(v);el.dispatchEvent(new Event('input',{bubbles:true}))}});
+   const d=$(`#fx-detail-direction-${slot}`),r=$(`#fx-detail-rotation-${slot}`),bm=$(`#fx-detail-blend-${slot}`),mk=$(`#fx-detail-mask-${slot}`);if(d)d.value='default';if(r)r.value='default';if(bm)bm.value='effect';if(mk)mk.value='full';renderFxEditorPreview(card);
+ });
  $('#fx-preview-open').onclick=()=>openFxFloatingPreview(card);
  $('#fx-custom-manage').onclick=()=>openCustomFxManager(cardId,returnTo);
  const back=()=>returnTo==='collection'?openCollectionDetail(cardId):openCardManagerDetail(cardId);
@@ -21103,14 +22965,14 @@ function openCardManagerDetail(id,opt={}){
    </div>`:''}
  </div>
  <div class="manager-text-export"><div class="muted manager-text-export-title">テキスト出力</div><div class="actions"><button class="btn" id="manager-copy-jelly">ゼリー君式でコピー</button><button class="btn" id="manager-copy-bake">化けさん式でコピー</button></div></div>
- <div class="actions"><button class="btn primary" id="manager-edit-card">編集</button><button class="btn" id="manager-card-fx">エフェクト設定</button><button class="btn" id="manager-card-frame">フレーム設定</button><button class="btn" id="manager-copy-appearance">外観設定コピー</button><button class="btn" id="manager-clone-card">複製</button></div>
+ <div class="actions"><button class="btn primary" id="manager-edit-card">編集</button><button class="btn" id="manager-card-fx">エフェクト設定</button><button class="btn" id="manager-card-frame">フレーム設定</button><button class="btn" id="manager-copy-appearance">外観設定コピー</button><button class="btn" id="manager-appearance-presets">外観プリセット</button><button class="btn" id="manager-clone-card">複製</button></div>
  <div class="manager-danger-zone"><button class="btn danger" id="manager-delete-card">削除</button></div>`);
  $('#manager-detail-close').onclick=managerDetailClose;
  $('#manager-detail-prev').onclick=()=>managerDetailMove(id,-1,{imageExpanded});$('#manager-detail-next').onclick=()=>managerDetailMove(id,1,{imageExpanded});
  $('#manager-image-toggle').onclick=()=>openCardManagerDetail(id,{imageExpanded:!imageExpanded,keepContext:true});
  if(imageExpanded){$('#manager-image-settings').onclick=()=>openCardImageEditor(id);$('#manager-image-enlarge').onclick=()=>openCardImageViewer(id)}
  hydrateManagerCardImage(id);bindCardLinksBlock(id,'manager');$('#manager-copy-jelly').onclick=()=>copyManagerCardText(c,'jelly');$('#manager-copy-bake').onclick=()=>copyManagerCardText(c,'bake');
- $('#manager-edit-card').onclick=()=>openCardManagerEdit(id);$('#manager-card-fx').onclick=()=>openCardEffectEditor(id,'manager');$('#manager-card-frame').onclick=()=>openCardFrameEditor(id);$('#manager-copy-appearance').onclick=()=>openManagerAppearanceCopy(id);$('#manager-clone-card').onclick=()=>cloneCard(id);$('#manager-delete-card').onclick=()=>deleteCard(id);
+ $('#manager-edit-card').onclick=()=>openCardManagerEdit(id);$('#manager-card-fx').onclick=()=>openCardEffectEditor(id,'manager');$('#manager-card-frame').onclick=()=>openCardFrameEditor(id);$('#manager-copy-appearance').onclick=()=>openManagerAppearanceCopy(id);$('#manager-appearance-presets').onclick=()=>openAppearancePresetManager(id,'manager');$('#manager-clone-card').onclick=()=>cloneCard(id);$('#manager-delete-card').onclick=()=>deleteCard(id);
 }
 function openCardManagerEdit(id){
  const c=cards.find(x=>x.id===id);if(!c)return;
@@ -21138,13 +23000,13 @@ function openCardManagerEdit(id){
    const name=$('#manager-edit-name').value.trim();if(!name)return;
    let type=$('#manager-edit-type').value;
    if(type==='__custom__'){type=buildCustomCardType($('#manager-edit-custom-left').value,$('#manager-edit-custom-right').value);if(!type){toast('自由種類は左右どちらも入力してください。「:」は入力欄の中では使用できません。');return}}
-   cards[i]={id,name,type:normalizeCardType(type),level:$('#manager-edit-level').value.trim(),power:$('#manager-edit-power').value.trim(),race:$('#manager-edit-race').value.trim(),rarity:$('#manager-edit-rarity').value.trim(),effect:$('#manager-edit-effect').value,flavor:$('#manager-edit-flavor').value,visualEffects:normalizeCardVisualEffects(c.visualEffects),cardLinks:cardLinksFor(c)};
+   cards[i]={id,name,type:normalizeCardType(type),level:$('#manager-edit-level').value.trim(),power:$('#manager-edit-power').value.trim(),race:$('#manager-edit-race').value.trim(),rarity:$('#manager-edit-rarity').value.trim(),effect:$('#manager-edit-effect').value,flavor:$('#manager-edit-flavor').value,visualEffects:normalizeCardVisualEffects(c.visualEffects),appearancePresetMeta:appearancePresetMetaPortable(c.appearancePresetMeta),cardLinks:cardLinksFor(c)};
    save(LS_CARDS,cards);touchRecentCards(id);renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();openCardManagerDetail(id,{keepContext:true});toast('カードを更新しました');
  };
 }
 async function cloneCard(id){
  const c=cards.find(x=>x.id===id);if(!c)return;
- const clone={...c,id:uid('card'),name:c.name+'（複製）',visualEffects:normalizeCardVisualEffects(c.visualEffects).map(x=>({...x})),cardLinks:[]};
+ const clone={...c,id:uid('card'),name:c.name+'（複製）',visualEffects:normalizeCardVisualEffects(c.visualEffects).map(x=>({...x})),appearancePresetMeta:appearancePresetMetaPortable(c.appearancePresetMeta),cardLinks:[]};
  cards.push(clone);
  save(LS_CARDS,cards);
  try{await cloneCardImageLink(id,clone.id)}catch(err){console.warn('画像リンクの複製に失敗',err)}
@@ -21214,6 +23076,9 @@ function syncCardFxSettingsUI(){
  ca.checked=cardFxPrefs.collectionAnimation;
  $('#card-fx-board-visible').checked=cardFxPrefs.boardVisible;
  ba.checked=cardFxPrefs.boardAnimation;
+ const qd=$('#card-fx-board-quality-desktop'),qm=$('#card-fx-board-quality-mobile');
+ if(qd)qd.value=cardFxPrefs.boardQualityDesktop;if(qm)qm.value=cardFxPrefs.boardQualityMobile;
+ const aem=$('#appearance-editor-mode');if(aem)aem.value=cardFxPrefs.appearanceEditorMode||'simple';
  const cas=$('#card-fx-collection-animation-state'),bas=$('#card-fx-board-animation-state');
  if(cas)cas.textContent=ca.checked?'ON':'OFF';if(bas)bas.textContent=ba.checked?'ON':'OFF';
  $('#card-fx-layer-warning').hidden=cardFxPrefs.maxLayers<=2;
@@ -21225,13 +23090,16 @@ function commitCardFxSettings(){
    collectionAnimation:$('#card-fx-collection-animation').checked,
    boardVisible:$('#card-fx-board-visible').checked,
    boardAnimation:$('#card-fx-board-animation').checked,
+   boardQualityDesktop:$('#card-fx-board-quality-desktop')?.value||'standard',
+   boardQualityMobile:$('#card-fx-board-quality-mobile')?.value||'standard',
+   appearanceEditorMode:$('#appearance-editor-mode')?.value||'simple',
    motionEngine:3
  });
  saveCardFxPrefs();syncCardFxSettingsUI();if(currentScreenName==='collection')renderCollection();if(board)renderBoard();
  // ON直後に描画済み/再描画されたスタックを確実に動かす。
  requestAnimationFrame(()=>{stopCardFxMotionEngine();kickCardFxMotionEngine()});
 }
-['card-fx-max-layers','card-fx-collection-visible','card-fx-board-visible'].forEach(id=>$('#'+id)?.addEventListener('change',commitCardFxSettings));
+['card-fx-max-layers','card-fx-collection-visible','card-fx-board-visible','card-fx-board-quality-desktop','card-fx-board-quality-mobile','appearance-editor-mode'].forEach(id=>$('#'+id)?.addEventListener('change',commitCardFxSettings));
 [['card-fx-collection-animation','card-fx-collection-visible'],['card-fx-board-animation','card-fx-board-visible']].forEach(([animId,visibleId])=>{
  const anim=$('#'+animId),visible=$('#'+visibleId);if(!anim)return;
  anim.disabled=false;
@@ -23227,7 +25095,7 @@ function openCollectionViewer(id){
    </div>
    <div class="collection-viewer-center">
      <button class="collection-viewer-arrow viewer-controls" id="collection-viewer-prev" ${idx<=0?'disabled':''} aria-label="前のカード">‹</button>
-     <div id="collection-viewer-art" class="collection-viewer-art"><span class="collection-placeholder-name">${esc(card.name)}</span>${cardFxHtml(card,'collection')}${cardFrameHtml(card)}</div>
+     <div id="collection-viewer-art" class="collection-viewer-art visual-quality-high"><span class="collection-placeholder-name">${esc(card.name)}</span>${cardFxHtml(card,'collection')}${cardFrameHtml(card)}</div>
      <button class="collection-viewer-arrow viewer-controls" id="collection-viewer-next" ${idx>=ids.length-1?'disabled':''} aria-label="次のカード">›</button>
    </div>
    <div class="collection-viewer-bottom viewer-controls">
@@ -23265,7 +25133,7 @@ function openCollectionDetail(id){
  const navIds=collectionFilteredCards().filter(x=>x.c).map(x=>x.c.id),idx=navIds.indexOf(id),flavor=displayFlavorText(c),fav=isCollectionFavorite(id);
  openModal(`<div class="modal-head"><h3>コレクション</h3><button class="btn" id="collection-detail-close">閉じる</button></div>
  <div class="collection-detail">
-   <div id="collection-detail-art" class="collection-detail-art"><span class="collection-placeholder-name">${esc(c.name)}</span>${cardFxHtml(c,'collection')}${cardFrameHtml(c)}</div>
+   <div id="collection-detail-art" class="collection-detail-art visual-quality-high"><span class="collection-placeholder-name">${esc(c.name)}</span>${cardFxHtml(c,'collection')}${cardFrameHtml(c)}</div>
    <div class="collection-detail-main">
      <h2>${esc(c.name)}</h2>${c.rarity?`<div class="collection-detail-rarity">${esc(c.rarity)}</div>`:''}${flavor?`<div class="collection-detail-flavor">${esc(flavor)}</div>`:''}
      <div class="actions collection-detail-actions">
@@ -23275,6 +25143,7 @@ function openCollectionDetail(id){
        <button class="btn" id="collection-detail-image">画像設定</button>
        <button class="btn" id="collection-detail-fx">エフェクト設定</button>
        <button class="btn" id="collection-detail-frame">フレーム設定</button>
+       <button class="btn" id="collection-detail-presets">外観プリセット</button>
        <button class="btn" id="collection-detail-manager">カード管理で開く</button>
      </div>
      <details class="collection-game-info"><summary>ゲーム情報を表示</summary><div class="collection-game-info-body"><div class="muted">${esc(c.type||'')} / Lv ${esc(c.level||'－')} / POWER ${esc(c.power||'－')}</div><div class="muted">種族：${esc(c.race||'－')}</div><div class="collection-game-effect">${esc(c.effect||'効果なし')}</div></div></details>
@@ -23286,6 +25155,7 @@ function openCollectionDetail(id){
  $('#collection-detail-favorite').onclick=()=>{setCollectionFavorite(id,!isCollectionFavorite(id));renderCollection();openCollectionDetail(id)};
  $('#collection-detail-albums').onclick=()=>openCardAlbumMembership(id);$('#collection-detail-viewer').onclick=()=>openCollectionViewer(id);$('#collection-detail-image').onclick=()=>openCardImageEditor(id,'collection');$('#collection-detail-fx').onclick=()=>openCardEffectEditor(id,'collection');
  $('#collection-detail-frame').onclick=()=>openCardFrameEditor(id,'collection');
+ $('#collection-detail-presets').onclick=()=>openAppearancePresetManager(id,'collection');
  $('#collection-detail-manager').onclick=()=>{closeModal();nav('card-manager');openCardManagerDetail(id)};
  if(idx>0)$('#collection-detail-prev').onclick=()=>openCollectionDetail(navIds[idx-1]);if(idx>=0&&idx<navIds.length-1)$('#collection-detail-next').onclick=()=>openCollectionDetail(navIds[idx+1]);
  bindCardLinksBlock(id,'collection');
@@ -25866,6 +27736,75 @@ backgroundReadyPromise=initBackgroundSystem().then(async ok=>{await applyThemePr
     });
   }
 })();
+
+/* ==========================================================
+   v11.20 Visual performance manager
+   ========================================================== */
+const visualPerfState={
+  observer:null,
+  hidden:false,
+  lowPower:false
+};
+function ensureVisualPerfObserver(){
+  if(visualPerfState.observer||typeof IntersectionObserver==='undefined')return;
+  visualPerfState.observer=new IntersectionObserver(entries=>{
+    for(const e of entries){
+      const el=e.target;
+      el.classList.toggle('visual-offscreen',!e.isIntersecting);
+    }
+  },{root:null,rootMargin:'160px 0px',threshold:0.01});
+}
+function observeVisualNode(el){
+  if(!el)return;
+  ensureVisualPerfObserver();
+  try{visualPerfState.observer?.observe(el)}catch(_){}
+}
+function refreshVisualPerfMode(){
+  const mobile=matchMedia('(max-width:900px)').matches;
+  const saveData=!!navigator.connection?.saveData;
+  const weakCpu=(navigator.hardwareConcurrency||8)<=4;
+  visualPerfState.lowPower=saveData||(mobile&&weakCpu);
+  document.documentElement.classList.toggle('visual-low-power',visualPerfState.lowPower);
+}
+function pauseVisualAnimationsForVisibility(){
+  visualPerfState.hidden=document.hidden;
+  document.documentElement.classList.toggle('visual-page-hidden',document.hidden);
+}
+document.addEventListener('visibilitychange',pauseVisualAnimationsForVisibility);
+window.addEventListener('resize',()=>{refreshVisualPerfMode()},{passive:true});
+refreshVisualPerfMode();
+pauseVisualAnimationsForVisibility();
+
+
+function applyAppearanceEditorMode(root=document){
+ const mode=cardFxPrefs.appearanceEditorMode||'simple';
+ root.querySelectorAll?.('[data-appearance-advanced]').forEach(el=>{
+   el.hidden=mode!=='advanced';
+ });
+ root.querySelectorAll?.('[data-appearance-simple]').forEach(el=>{
+   el.hidden=false;
+ });
+ root.querySelectorAll?.('[data-appearance-mode-label]').forEach(el=>{
+   el.textContent=mode==='advanced'?'詳細設定':'簡単設定';
+ });
+}
+function appearanceEditorToggleHtml(){
+ const mode=cardFxPrefs.appearanceEditorMode||'simple';
+ return `<div class="appearance-mode-switch">
+   <span class="pill" data-appearance-mode-label>${mode==='advanced'?'詳細設定':'簡単設定'}</span>
+   <button class="btn small appearance-mode-toggle" type="button">${mode==='advanced'?'簡単設定へ':'詳細設定へ'}</button>
+ </div>`;
+}
+function bindAppearanceEditorToggle(root=document){
+ root.querySelectorAll?.('.appearance-mode-toggle').forEach(btn=>{
+   btn.onclick=()=>{
+     cardFxPrefs=normalizeCardFxPrefs({...cardFxPrefs,appearanceEditorMode:cardFxPrefs.appearanceEditorMode==='advanced'?'simple':'advanced'});
+     saveJson(KEY_CARD_FX_PREFS,cardFxPrefs);
+     renderApp();
+   };
+ });
+}
+
 </script>
 
 </body>
