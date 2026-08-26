@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v10.9</title>
+<title>みん会TCG Simulator v10.9 r2</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -860,6 +860,8 @@ body.ui-text-large .appbar button{font-size:14px}
 #card-fx-settings-panel input[type="checkbox"]{pointer-events:auto!important;position:relative;z-index:2}
 #card-fx-settings-panel .fx-animation-row{border-radius:8px;padding:8px 7px}
 #card-fx-settings-panel .fx-animation-row:hover{background:rgba(120,167,255,.08)}
+#card-fx-settings-panel .fx-animation-row{touch-action:manipulation}
+#card-fx-settings-panel .fx-animation-row input{accent-color:var(--accent)}
 
 .fx-hologram{background:linear-gradient(115deg,transparent 15%,rgba(81,233,255,.05) 27%,rgba(255,91,215,.48) 42%,rgba(255,239,113,.48) 52%,rgba(95,224,255,.42) 63%,transparent 78%);mix-blend-mode:screen}
 .fx-prism{background:conic-gradient(from 25deg at 55% 45%,rgba(255,90,160,.36),rgba(96,222,255,.36),rgba(255,237,101,.35),rgba(125,97,255,.35),rgba(255,90,160,.36));mix-blend-mode:color-dodge;clip-path:polygon(0 0,100% 6%,90% 100%,8% 92%)}
@@ -16275,7 +16277,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v10.9 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v10.9 r2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19652,7 +19654,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'10.9',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'10.9-r2',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -21225,12 +21227,23 @@ function commitCardFxSettings(){
    boardAnimation:$('#card-fx-board-animation').checked
  });
  saveCardFxPrefs();syncCardFxSettingsUI();if(currentScreenName==='collection')renderCollection();if(board)renderBoard();
+ // ON直後に描画済み/再描画されたスタックを確実に動かす。
+ requestAnimationFrame(()=>{stopCardFxMotionEngine();kickCardFxMotionEngine()});
 }
 ['card-fx-max-layers','card-fx-collection-visible','card-fx-board-visible'].forEach(id=>$('#'+id)?.addEventListener('change',commitCardFxSettings));
 [['card-fx-collection-animation','card-fx-collection-visible'],['card-fx-board-animation','card-fx-board-visible']].forEach(([animId,visibleId])=>{
  const anim=$('#'+animId),visible=$('#'+visibleId);if(!anim)return;
  anim.disabled=false;
  anim.addEventListener('change',()=>{if(anim.checked&&visible&&!visible.checked)visible.checked=true;commitCardFxSettings()});
+ const row=anim.closest('.fx-animation-row');
+ if(row)row.addEventListener('click',e=>{
+   // checkbox自体はブラウザ標準changeを使う。文字・余白を押した時は手動で確実に反転する。
+   if(e.target===anim)return;
+   e.preventDefault();e.stopPropagation();
+   anim.checked=!anim.checked;
+   if(anim.checked&&visible&&!visible.checked)visible.checked=true;
+   commitCardFxSettings();
+ });
 });
 $('#card-fx-showcase-open')?.addEventListener('click',openCardFxShowcase);
 syncCardFxSettingsUI();
@@ -24683,7 +24696,11 @@ function initMobileBoardToolButton(){
 }
 
 let boardCardContextMenuEl=null,boardCardClickTimer=0,boardTouchTapTimer=0,boardLastTouchTap={src:'',at:0},boardDesktopCardDragSrc='';
-function closeBoardCardContextMenu(){if(boardCardContextMenuEl){boardCardContextMenuEl.remove();boardCardContextMenuEl=null}}
+let boardCardContextOutsideHandler=null;
+function closeBoardCardContextMenu(){
+ if(boardCardContextOutsideHandler){document.removeEventListener('pointerdown',boardCardContextOutsideHandler,true);boardCardContextOutsideHandler=null}
+ if(boardCardContextMenuEl){boardCardContextMenuEl.remove();boardCardContextMenuEl=null}
+}
 function pileContextFromKey(key){const [pi,z,index]=String(key||'').split('|');const pile=getPile(Number(pi),z,Number(index));return pile?{pi:Number(pi),z,index:Number(index),pile,c:topCard(pile)}:null}
 function togglePileRestByKey(key){const x=pileContextFromKey(key);if(!x?.c)return;x.c.rested=!x.c.rested;closeBoardCardContextMenu();renderBoard();toast(x.c.rested?'レストしました':'アクティブに戻しました')}
 function togglePileFaceByKey(key){const x=pileContextFromKey(key);if(!x?.c)return;x.c.faceDown=!x.c.faceDown;closeBoardCardContextMenu();renderBoard();toast(x.c.faceDown?'裏向きにしました':'表向きにしました')}
@@ -24702,7 +24719,13 @@ function openBoardCardContextMenu(key,x,y){
  const r=el.getBoundingClientRect(),pad=8;el.style.left=`${Math.max(pad,Math.min(innerWidth-r.width-pad,x))}px`;el.style.top=`${Math.max(pad,Math.min(innerHeight-r.height-pad,y))}px`;
  el.querySelectorAll('[data-ctx-action]').forEach(b=>b.onclick=e=>{e.stopPropagation();const a=b.dataset.ctxAction;if(a==='detail'||a==='counter'){closeBoardCardContextMenu();openDetail(ctx.pi,ctx.z,ctx.index,0)}else if(a==='rest')togglePileRestByKey(key);else if(a==='face')togglePileFaceByKey(key)});
  el.querySelectorAll('[data-ctx-move]').forEach(b=>b.onclick=e=>{e.stopPropagation();quickMovePileTopByKey(key,b.dataset.ctxMove)});
- setTimeout(()=>document.addEventListener('pointerdown',closeBoardCardContextMenu,{once:true,capture:true}),0);
+ // メニュー内のpointerdownでは閉じない。外側を触った時だけ閉じる。
+ boardCardContextOutsideHandler=e=>{
+   if(!boardCardContextMenuEl)return;
+   if(boardCardContextMenuEl.contains(e.target))return;
+   closeBoardCardContextMenu();
+ };
+ setTimeout(()=>{if(boardCardContextOutsideHandler)document.addEventListener('pointerdown',boardCardContextOutsideHandler,true)},0);
 }
 function scheduleTouchLongPress(s){cancelTouchLongPress(s);s.longPressTimer=setTimeout(()=>{if(!touchDragState||touchDragState!==s||s.moved||s.gesture==='scroll')return;if(s.mode==='hand-scroll'){s.gesture='drag';s.moved=true;s.longPressDrag=true;touchClickBlockUntil=Date.now()+500;makeTouchDragGhost(s);updateTouchDragVisual(s);if(navigator.vibrate)navigator.vibrate(18);return}s.contextOpened=true;touchClickBlockUntil=Date.now()+500;openBoardCardContextMenu(s.src,s.x+8,s.y+8);if(navigator.vibrate)navigator.vibrate(20)},520)}
 function cancelTouchLongPress(s){if(s?.longPressTimer){clearTimeout(s.longPressTimer);s.longPressTimer=0}}
