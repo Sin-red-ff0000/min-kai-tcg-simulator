@@ -16141,6 +16141,47 @@ body.album-direct-dragging *{cursor:grabbing!important}
 .custom-fx-register{display:grid;grid-template-columns:minmax(120px,1fr) 150px auto;gap:7px;align-items:end;border:1px solid var(--line);border-radius:10px;padding:9px;background:#0e141b}.custom-fx-file-label{margin:0;text-align:center}.custom-fx-register-run{grid-column:1/-1}.custom-fx-help{margin:7px 0 10px;font-size:8.5px}.custom-fx-manager-list{display:grid;gap:7px}.custom-fx-manager-row{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:7px;background:#0d131a}.custom-fx-manager-thumb{width:72px;aspect-ratio:5/7;border:1px solid #455264;border-radius:7px;background-color:#111820;background-size:contain;background-position:center;background-repeat:no-repeat}.custom-fx-manager-copy{display:grid;gap:5px;min-width:0}.custom-fx-manager-copy input,.custom-fx-manager-copy select{min-width:0;padding:6px;font-size:9px}
 @media(max-width:600px){.floating-preview-window{width:min(300px,calc(100vw - 12px));max-height:68dvh}.floating-preview-content{max-height:calc(68dvh - 44px)}.custom-fx-register{grid-template-columns:1fr 1fr}.custom-fx-file-label{grid-column:1/-1}.custom-fx-manager-row{grid-template-columns:58px minmax(0,1fr)}.custom-fx-manager-thumb{width:58px}.custom-fx-manager-row>.danger{grid-column:1/-1}}
 
+
+
+/* ==========================================================
+   v10.4 r4 — board FX compositor isolation fix
+   Keep animated card effects strictly inside each board card.
+   ========================================================== */
+.board-main .pile{
+  overflow:hidden;
+  isolation:isolate;
+  contain:paint;
+}
+.board-main .pile>.card-fx-stack{
+  position:absolute!important;
+  inset:0!important;
+  overflow:hidden!important;
+  border-radius:inherit!important;
+  clip-path:inset(0 round 9px);
+  contain:strict;
+  isolation:isolate;
+  pointer-events:none!important;
+}
+.board-main .pile>.card-fx-stack .card-fx-layer{
+  pointer-events:none!important;
+  max-width:none!important;
+  max-height:none!important;
+}
+/* Fixed board zones can also contain scaled/rotated cards. Paint containment
+   prevents one animated compositor layer from invalidating neighboring cards. */
+.board-main .slot,
+.board-main .dropzone,
+.board-main .zone-body.fixed{
+  isolation:isolate;
+}
+/* Do not let custom or built-in FX create a backdrop blending group outside
+   the owning card on the battle board. */
+.board-main .pile>.card-fx-stack .card-fx-layer,
+.board-main .pile>.card-fx-stack .card-fx-layer::before,
+.board-main .pile>.card-fx-stack .card-fx-layer::after,
+.board-main .pile>.card-fx-stack .card-fx-layer>.fx-deco{
+  backface-visibility:hidden;
+}
 </style>
 </head>
 <body>
