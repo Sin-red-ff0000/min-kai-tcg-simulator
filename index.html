@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v10.4</title>
+<title>みん会TCG Simulator v10.5</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -15805,6 +15805,12 @@ body.album-direct-dragging *{cursor:grabbing!important}
 .card-link-editor-main .pill{margin-left:5px;font-size:8px}
 .card-link-editor-main .muted{margin-top:3px}
 #card-link-target{min-height:160px}
+.card-link-search-box{border:1px solid var(--line);border-radius:9px;background:#0c1219;padding:8px;margin:6px 0 8px}
+.card-link-search-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.card-link-search-grid label{font-size:9px}
+.card-link-search-grid .wide{grid-column:1/-1}
+.card-link-search-meta{display:flex;justify-content:space-between;gap:6px;align-items:center;margin-top:6px}
+@media(max-width:560px){.card-link-search-grid{grid-template-columns:1fr}.card-link-search-grid .wide{grid-column:auto}}
 @media(max-width:760px){
  .card-links-display-list{grid-template-columns:1fr}
  .card-link-editor{grid-template-columns:1fr}
@@ -16144,13 +16150,12 @@ body.album-direct-dragging *{cursor:grabbing!important}
 
 
 /* ==========================================================
-   v10.4 r4 — board FX compositor isolation fix
-   Keep animated card effects strictly inside each board card.
+   v10.5 — rested card / board FX compositor fix
+   Clip FX to the card without paint containment on the rotated card itself.
    ========================================================== */
 .board-main .pile{
   overflow:hidden;
   isolation:isolate;
-  contain:paint;
 }
 .board-main .pile>.card-fx-stack{
   position:absolute!important;
@@ -16158,7 +16163,6 @@ body.album-direct-dragging *{cursor:grabbing!important}
   overflow:hidden!important;
   border-radius:inherit!important;
   clip-path:inset(0 round 9px);
-  contain:strict;
   isolation:isolate;
   pointer-events:none!important;
 }
@@ -16167,20 +16171,25 @@ body.album-direct-dragging *{cursor:grabbing!important}
   max-width:none!important;
   max-height:none!important;
 }
-/* Fixed board zones can also contain scaled/rotated cards. Paint containment
-   prevents one animated compositor layer from invalidating neighboring cards. */
 .board-main .slot,
 .board-main .dropzone,
 .board-main .zone-body.fixed{
   isolation:isolate;
 }
-/* Do not let custom or built-in FX create a backdrop blending group outside
-   the owning card on the battle board. */
 .board-main .pile>.card-fx-stack .card-fx-layer,
 .board-main .pile>.card-fx-stack .card-fx-layer::before,
 .board-main .pile>.card-fx-stack .card-fx-layer::after,
 .board-main .pile>.card-fx-stack .card-fx-layer>.fx-deco{
   backface-visibility:hidden;
+}
+/* A transformed parent + independently transformed blended descendants can
+   produce stale compositor surfaces in some Chromium builds.  While rested,
+   keep the effect visible but suspend its transform animation. */
+.board-main .pile.rested>.card-fx-stack.fx-animate .card-fx-layer,
+.board-main .pile.rested>.card-fx-stack.fx-animate .card-fx-layer::before,
+.board-main .pile.rested>.card-fx-stack.fx-animate .card-fx-layer::after,
+.board-main .pile.rested>.card-fx-stack.fx-animate .card-fx-layer>.fx-deco{
+  animation-play-state:paused!important;
 }
 </style>
 </head>
@@ -16190,7 +16199,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v10.4 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v10.5 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -17224,8 +17233,18 @@ function openCardLinkEditor(cardId,returnTo='manager'){
        <h3>リンクを追加</h3>
        <div class="form-grid">
          <label>リンク名<input id="card-link-new-label" maxlength="30" value="関連カード" placeholder="例：生成トークン / コンボ"></label>
-         <label>対象カード検索<input id="card-link-target-search" type="search" placeholder="カード名で検索" autocomplete="off"></label>
-         <label class="wide">対象カード<select id="card-link-target" size="7"></select></label>
+         <div class="wide card-link-search-box">
+           <div class="card-link-search-grid">
+             <label>カード名<input id="card-link-target-search" type="search" placeholder="部分一致" autocomplete="off"></label>
+             <label>種類<input id="card-link-target-type" type="search" placeholder="部分一致" autocomplete="off"></label>
+             <label>Lv<input id="card-link-target-level" inputmode="numeric" placeholder="完全一致"></label>
+             <label>レアリティ<input id="card-link-target-rarity" type="search" placeholder="部分一致"></label>
+             <label class="wide">種族（複数語AND）<input id="card-link-target-race" type="search" placeholder="例：伝承 神秘"></label>
+             <label class="wide">効果内テキスト<input id="card-link-target-effect" type="search" placeholder="部分一致"></label>
+           </div>
+           <div class="card-link-search-meta"><button class="btn small" type="button" id="card-link-search-clear">検索条件クリア</button><span class="pill" id="card-link-search-count">0件</span></div>
+         </div>
+         <label class="wide">対象カード<select id="card-link-target" size="9"></select></label>
          <label class="wide board-follow-row"><input id="card-link-bidirectional" type="checkbox" checked>双方向リンクとして登録</label>
        </div>
        <div class="muted">双方向なら相手カード側にも同じリンクを作成します。片方向ならこのカードからだけ参照します。</div>
@@ -17246,14 +17265,29 @@ function openCardLinkEditor(cardId,returnTo='manager'){
      </section>
    </div>`);
  $('#card-link-editor-back').onclick=back;
- const targetSearch=$('#card-link-target-search'),targetSelect=$('#card-link-target');
+ const targetSearch=$('#card-link-target-search'),targetType=$('#card-link-target-type'),targetLevel=$('#card-link-target-level'),targetRarity=$('#card-link-target-rarity'),targetRace=$('#card-link-target-race'),targetEffect=$('#card-link-target-effect'),targetSelect=$('#card-link-target');
+ const linkNorm=v=>String(v||'').trim().toLocaleLowerCase();
  const renderTargets=()=>{
-   const q=(targetSearch.value||'').trim().toLocaleLowerCase();
-   const rows=cards.filter(c=>c.id!==cardId&&(!q||String(c.name||'').toLocaleLowerCase().includes(q))).slice(0,120);
-   targetSelect.innerHTML=rows.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}${c.type?` / ${esc(c.type)}`:''}</option>`).join('');
+   const q=linkNorm(targetSearch.value),typeQ=linkNorm(targetType.value),lv=String(targetLevel.value||'').trim(),rarityQ=linkNorm(targetRarity.value),effectQ=linkNorm(targetEffect.value);
+   const raceTerms=linkNorm(targetRace.value).split(/\s+/).filter(Boolean);
+   const matched=cards.filter(c=>{
+     if(c.id===cardId)return false;
+     if(q&&!linkNorm(c.name).includes(q))return false;
+     if(typeQ&&!linkNorm(c.type).includes(typeQ))return false;
+     if(lv&&String(c.level??'').trim()!==lv)return false;
+     if(rarityQ&&!linkNorm(c.rarity).includes(rarityQ))return false;
+     const race=linkNorm(c.race);if(raceTerms.length&&!raceTerms.every(t=>race.includes(t)))return false;
+     if(effectQ&&!linkNorm(c.effect).includes(effectQ))return false;
+     return true;
+   });
+   const rows=matched.slice(0,200);
+   targetSelect.innerHTML=rows.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}${c.type?` / ${esc(c.type)}`:''}${c.level!==''&&c.level!=null?` / Lv${esc(c.level)}`:''}</option>`).join('');
+   const count=$('#card-link-search-count');if(count)count.textContent=`${matched.length}件${matched.length>200?'（先頭200件）':''}`;
    $('#card-link-add').disabled=!rows.length;
  };
- targetSearch.oninput=renderTargets;renderTargets();
+ [targetSearch,targetType,targetLevel,targetRarity,targetRace,targetEffect].forEach(el=>el.oninput=renderTargets);
+ $('#card-link-search-clear').onclick=()=>{[targetSearch,targetType,targetLevel,targetRarity,targetRace,targetEffect].forEach(el=>el.value='');renderTargets();targetSearch.focus()};
+ renderTargets();
  $('#card-link-add').onclick=()=>{
    const targetId=targetSelect.value,label=$('#card-link-new-label').value,bidir=$('#card-link-bidirectional').checked;
    const r=addCardLink(cardId,targetId,label,bidir);
@@ -19535,7 +19569,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'10.4',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'10.5',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -20344,7 +20378,7 @@ function imagePointCoords(point){
    'bottom-left':[0,100],bottom:[50,100],'bottom-right':[100,100]
  })[point]||[50,50];
 }
-async function openCardImageEditor(cardId){
+async function openCardImageEditor(cardId,returnTo='manager'){
  const c=cards.find(x=>x.id===cardId);if(!c)return;
  if(!imageSystemAvailable){toast('このブラウザでは画像保存を利用できません');return}
  await imageReadyPromise;
@@ -20355,7 +20389,8 @@ async function openCardImageEditor(cardId){
  let editOrientation=boardDisplayPrefs.orientation==='portrait'?'portrait':'landscape';
  let dragging=null;
 
- openModal(`<div class="modal-head"><h3>${esc(c.name)} / 画像設定</h3><button class="btn" id="image-editor-back">カード詳細へ戻る</button></div>
+ const imageEditorBack=()=>returnTo==='collection'?openCollectionDetail(cardId):openCardManagerDetail(cardId,{imageExpanded:true});
+ openModal(`<div class="modal-head"><h3>${esc(c.name)} / 画像設定</h3><button class="btn" id="image-editor-back">${returnTo==='collection'?'コレクションへ戻る':'カード詳細へ戻る'}</button></div>
  <div class="image-editor-layout">
    <div class="image-editor-preview-area">
      <div id="image-editor-card" class="image-editor-card"><div id="image-editor-art" class="image-editor-art"></div><div class="image-editor-name">${esc(c.name)}</div><div id="image-editor-empty" class="image-editor-empty">画像を選択してください</div></div>
@@ -20449,7 +20484,7 @@ async function openCardImageEditor(cardId){
  art.onpointerup=endDrag;art.onpointercancel=endDrag;
 
  $('#image-change').onclick=()=>fileInput.click();
- $('#image-editor-back').onclick=()=>{cleanupImageEditorTemp();openCardManagerDetail(cardId,{imageExpanded:true})};
+ $('#image-editor-back').onclick=()=>{cleanupImageEditorTemp();imageEditorBack()};
  $('#image-save').onclick=async()=>{
    if(!pendingFile&&!working.imageId){toast('先に画像を選択してください');return}
    const btn=$('#image-save');btn.disabled=true;btn.textContent='保存中…';
@@ -20468,7 +20503,7 @@ async function openCardImageEditor(cardId){
      cleanupImageEditorTemp();
      if(board)renderBoard();
      renderCards();updateImageStorageStatus();
-     openCardManagerDetail(cardId,{imageExpanded:true});
+     renderCollection();imageEditorBack();
      toast('カード画像を保存しました');
    }catch(err){
      if(createdImageId){
@@ -20481,7 +20516,7 @@ async function openCardImageEditor(cardId){
  if($('#image-delete'))$('#image-delete').onclick=async()=>{
    if(!confirm('このカードの画像設定を削除しますか？'))return;
    try{
-     await deleteCardImageLink(cardId);cleanupImageEditorTemp();if(board)renderBoard();renderCards();updateImageStorageStatus();openCardManagerDetail(cardId,{imageExpanded:true});toast('カード画像を削除しました');
+     await deleteCardImageLink(cardId);cleanupImageEditorTemp();if(board)renderBoard();renderCards();renderCollection();updateImageStorageStatus();imageEditorBack();toast('カード画像を削除しました');
    }catch(err){console.error(err);toast('画像を削除できませんでした')}
  };
  refresh();
@@ -23055,6 +23090,7 @@ function openCollectionDetail(id){
        <button class="btn ${fav?'primary':''}" id="collection-detail-favorite">${fav?'★ お気に入り':'☆ お気に入り'}</button>
        <button class="btn" id="collection-detail-albums">アルバムへ追加</button>
        <button class="btn primary" id="collection-detail-viewer">鑑賞モード</button>
+       <button class="btn" id="collection-detail-image">画像設定</button>
        <button class="btn" id="collection-detail-fx">エフェクト設定</button>
        <button class="btn" id="collection-detail-frame">フレーム設定</button>
        <button class="btn" id="collection-detail-manager">カード管理で開く</button>
@@ -23066,7 +23102,7 @@ function openCollectionDetail(id){
  <div class="collection-detail-nav"><button class="btn" id="collection-detail-prev" ${idx<=0?'disabled':''}>← 前のカード</button><span class="muted">${idx>=0?`${idx+1} / ${navIds.length}`:''}</span><button class="btn" id="collection-detail-next" ${idx<0||idx>=navIds.length-1?'disabled':''}>次のカード →</button></div>`);
  $('#collection-detail-close').onclick=closeModal;
  $('#collection-detail-favorite').onclick=()=>{setCollectionFavorite(id,!isCollectionFavorite(id));renderCollection();openCollectionDetail(id)};
- $('#collection-detail-albums').onclick=()=>openCardAlbumMembership(id);$('#collection-detail-viewer').onclick=()=>openCollectionViewer(id);$('#collection-detail-fx').onclick=()=>openCardEffectEditor(id,'collection');
+ $('#collection-detail-albums').onclick=()=>openCardAlbumMembership(id);$('#collection-detail-viewer').onclick=()=>openCollectionViewer(id);$('#collection-detail-image').onclick=()=>openCardImageEditor(id,'collection');$('#collection-detail-fx').onclick=()=>openCardEffectEditor(id,'collection');
  $('#collection-detail-frame').onclick=()=>openCardFrameEditor(id,'collection');
  $('#collection-detail-manager').onclick=()=>{closeModal();nav('card-manager');openCardManagerDetail(id)};
  if(idx>0)$('#collection-detail-prev').onclick=()=>openCollectionDetail(navIds[idx-1]);if(idx>=0&&idx<navIds.length-1)$('#collection-detail-next').onclick=()=>openCollectionDetail(navIds[idx+1]);
