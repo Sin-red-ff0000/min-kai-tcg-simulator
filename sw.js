@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minkai-tcg-simulator-v12-0-r4-surfacefx';
+const CACHE_NAME = 'minkai-tcg-simulator-v12-0-r5-surface-textures';
 const APP_SHELL = [
   './',
   './index.html',
@@ -10,7 +10,7 @@ const APP_SHELL = [
   './frames/sample-silver-prism.png',
   './frames/sample-sakura-lacquer.png',
   './frames/sample-arcane-halo.png',
-  './frames/sample-cyber-circuit.png'
+  './frames/sample-cyber-circuit.png',
   './frames/second-japanese-shrine.png',
   './frames/second-mythic-constellation.png',
   './frames/second-gothic-horror.png',
@@ -27,6 +27,14 @@ const APP_SHELL = [
   './frames/second-ancient-forest-temple.png',
   './frames/second-luxury-cyber.png',
   './frames/second-void-fracture.png',
+  './effects/prism-cut.png',
+  './effects/diamond-glitter.png',
+  './effects/sandblast.png',
+  './effects/metallic-brush.png',
+  './effects/mirror-reflection.png',
+  './effects/opal-shimmer.png',
+  './effects/pearl-shell.png',
+  './effects/frost-ice.png',
 ];
 
 self.addEventListener('install', event => {

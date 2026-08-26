@@ -16286,6 +16286,68 @@ body.album-direct-dragging *{cursor:grabbing!important}
 .fx-animate .fx-frost-ice{animation:fxSurfaceGlitter var(--fx-duration,9s) ease-in-out infinite}
 
 
+
+/* ==========================================================
+   v12.0-r5 Surface texture rebuild
+   画像案に合わせ、8種を透過テクスチャ素材で再実装。
+   テクスチャには文字・ロゴ・外枠を含まない。
+   ========================================================== */
+.fx-prism-cut,
+.fx-diamond-glitter,
+.fx-sandblast,
+.fx-metallic-brush,
+.fx-mirror-reflection,
+.fx-opal-shimmer,
+.fx-pearl-shell,
+.fx-frost-ice{
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+}
+.fx-prism-cut{background-image:url('effects/prism-cut.png')!important;mix-blend-mode:screen}
+.fx-diamond-glitter{background-image:url('effects/diamond-glitter.png')!important;mix-blend-mode:screen}
+.fx-sandblast{background-image:url('effects/sandblast.png')!important;mix-blend-mode:soft-light}
+.fx-metallic-brush{background-image:url('effects/metallic-brush.png')!important;mix-blend-mode:soft-light}
+.fx-mirror-reflection{background-image:url('effects/mirror-reflection.png')!important;mix-blend-mode:screen}
+.fx-opal-shimmer{background-image:url('effects/opal-shimmer.png')!important;mix-blend-mode:screen}
+.fx-pearl-shell{background-image:url('effects/pearl-shell.png')!important;mix-blend-mode:screen}
+.fx-frost-ice{background-image:url('effects/frost-ice.png')!important;mix-blend-mode:screen}
+
+/* r4の幾何学CSS装飾を無効化し、素材そのものの質感を使う */
+.fx-prism-cut>.fx-deco,
+.fx-diamond-glitter>.fx-deco,
+.fx-sandblast>.fx-deco,
+.fx-metallic-brush>.fx-deco,
+.fx-mirror-reflection>.fx-deco,
+.fx-opal-shimmer>.fx-deco,
+.fx-pearl-shell>.fx-deco,
+.fx-frost-ice>.fx-deco{display:none!important}
+
+@keyframes fxSurfaceTextureDrift{
+  0%{background-position:48% 50%}
+  50%{background-position:52% 49%}
+  100%{background-position:48% 50%}
+}
+@keyframes fxSurfaceTextureSheen{
+  0%,100%{opacity:calc(var(--fx-o,.7)*.82)}
+  50%{opacity:var(--fx-o,.7)}
+}
+.fx-animate .fx-prism-cut,
+.fx-animate .fx-mirror-reflection,
+.fx-animate .fx-opal-shimmer,
+.fx-animate .fx-pearl-shell{
+  animation:fxSurfaceTextureDrift var(--fx-duration,8s) ease-in-out infinite!important;
+}
+.fx-animate .fx-diamond-glitter,
+.fx-animate .fx-frost-ice{
+  animation:fxSurfaceTextureSheen var(--fx-duration,7s) ease-in-out infinite!important;
+}
+.fx-animate .fx-sandblast,
+.fx-animate .fx-metallic-brush{
+  animation:fxSurfaceTextureDrift var(--fx-duration,11s) ease-in-out infinite!important;
+}
+
+
 /* ==========================================================
    v11.80 Smartphone appearance editor redesign
    ========================================================== */
@@ -21804,7 +21866,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.0-r3',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.0-r5',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
