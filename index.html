@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v10.1</title>
+<title>みん会TCG Simulator v10.2</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -16082,6 +16082,31 @@ body.album-direct-dragging *{cursor:grabbing!important}
 @media (pointer:coarse) and (max-width:900px), (pointer:coarse) and (orientation:landscape) and (max-height:650px){#screen-board.active .board-tools{display:none!important}.mobile-board-tool-root.mobile-visible{display:block}.mobile-board-tool-root.mobile-visible .mobile-board-tool-button{display:flex}#screen-board.active .board-wrap{display:block!important}}
 @media (max-width:420px){.mobile-board-tool-window{width:min(310px,calc(100vw - 14px));padding:7px}.mobile-board-tool-menu{grid-template-columns:1fr}.mobile-board-tool-menu-item{padding:7px}.mobile-power-tool .home-power-actions{grid-template-columns:auto minmax(58px,1fr) auto}.mobile-power-tool .home-power-actions [data-home-power-apply]{grid-column:1/-1}}
 
+
+/* ==========================================================
+   v10.2 Home POWER: persistent / current-only separated
+   ========================================================== */
+.home-power-row{gap:7px}
+.home-power-player{display:flex;align-items:center;gap:6px}
+.home-power-mode-block{
+ display:grid;gap:5px;padding:7px;border:1px solid #354252;border-radius:8px;background:#0d141c
+}
+.home-power-current-block{background:#101720}
+.home-power-mode-head{display:flex;align-items:center;justify-content:space-between;gap:7px}
+.home-power-mode-head b{font-size:10px}
+.home-power-mode-label{font-size:8px;line-height:1.4;margin:0}
+.home-power-value-row{
+ display:grid;grid-template-columns:auto minmax(72px,1fr) auto;gap:5px;align-items:center
+}
+.home-power-value-row input{min-width:0;text-align:center;padding:6px}
+.home-power-mode-button{width:100%}
+.mobile-power-tool .home-power-row{gap:6px}
+.mobile-power-tool .home-power-mode-block{padding:6px}
+.mobile-power-tool .home-power-value-row{grid-template-columns:auto minmax(62px,1fr) auto}
+@media(max-width:420px){
+ .mobile-power-tool .home-power-value-row{grid-template-columns:auto minmax(56px,1fr) auto}
+}
+
 </style>
 </head>
 <body>
@@ -16090,7 +16115,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v10.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v10.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19348,7 +19373,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    });
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'10.1',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'10.2',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -23536,7 +23561,7 @@ function cloneInstance(c){return {...c,visualEffects:normalizeCardVisualEffects(
 function makeDeckPiles(deckId){const d=decks.find(x=>x.id===deckId),phys=[];if(d)Object.entries(d.entries).forEach(([id,n])=>{const c=cards.find(x=>x.id===id);if(c)for(let i=0;i<n;i++)phys.push({id:uid('pile'),cards:[cloneInstance(c)]})});return phys}
 function shufflePileArray(arr){for(let i=arr.length-1;i>0;i--){const j=boardRandomInt(i+1);[arr[i],arr[j]]=[arr[j],arr[i]]}}
 function makePlayer(deckId,index,favoriteCardId='',otherDeckId=''){const phys=makeDeckPiles(deckId),other=makeDeckPiles(otherDeckId);const player={name:'プレイヤー'+(index+1),homePowerMod:0,freeCounters:[],character:Array(5).fill(null),pain:Array(5).fill(null),room:Array(5).fill(null),rulePlus:Array(1).fill(null),hand:[],handMode:'scroll',deck:phys,otherDeck:other,grave:[],banish:[],collapsed:{pain:false,room:false,rulePlus:false}};if(favoriteCardId){const i=player.deck.findIndex(p=>p.cards[0]?.id===favoriteCardId);if(i>=0){const [pile]=player.deck.splice(i,1);player.hand.push(pile)}}shufflePileArray(player.deck);return player}
-$('#start-board').onclick=()=>{const mode=Number($('#mode-select').value);if(!$('#setup-deck-1').value){alert(decks.length?'メインデッキとして盤面開始に表示されているデッキがありません。デッキ設定を確認してください。':'デッキを1つ以上作成してください。');return}const setup={mode,deck1:$('#setup-deck-1').value,otherDeck1:$('#setup-other-deck-1').value,favorite1:$('#setup-favorite-1').value,deck2:$('#setup-deck-2').value||$('#setup-deck-1').value,otherDeck2:$('#setup-other-deck-2').value,favorite2:$('#setup-favorite-2').value};handScrollPositions=[0,0];zoneScrollPositions={};pendingHandFollow.clear();board={mode,setup,players:[makePlayer(setup.deck1,0,setup.favorite1,setup.otherDeck1)],note:'',turn:1,ui:{panelCollapsed:{operations:false,tray:true,power:false,note:false},trayCounterName:'カウンター',trayCustomMarker:'',diceExpression:'1d6',randomHistory:[],boardSearchQuery:'',linkJumpHistory:[]}};if(mode===2)board.players.push(makePlayer(setup.deck2,1,setup.favorite2,setup.otherDeck2));boardZoom=1;resetBoardHistory();renderBoard();nav('board');saveBoardSessionNow(false)};
+$('#start-board').onclick=()=>{const mode=Number($('#mode-select').value);if(!$('#setup-deck-1').value){alert(decks.length?'メインデッキとして盤面開始に表示されているデッキがありません。デッキ設定を確認してください。':'デッキを1つ以上作成してください。');return}const setup={mode,deck1:$('#setup-deck-1').value,otherDeck1:$('#setup-other-deck-1').value,favorite1:$('#setup-favorite-1').value,deck2:$('#setup-deck-2').value||$('#setup-deck-1').value,otherDeck2:$('#setup-other-deck-2').value,favorite2:$('#setup-favorite-2').value};handScrollPositions=[0,0];zoneScrollPositions={};pendingHandFollow.clear();board={mode,setup,players:[makePlayer(setup.deck1,0,setup.favorite1,setup.otherDeck1)],note:'',turn:1,ui:{panelCollapsed:{operations:false,tray:true,power:false,note:false},trayCounterName:'カウンター',trayCustomMarker:'',diceExpression:'1d6',randomHistory:[],boardSearchQuery:'',linkJumpHistory:[],homePowerApplyDraft:{0:0,1:0}}};if(mode===2)board.players.push(makePlayer(setup.deck2,1,setup.favorite2,setup.otherDeck2));boardZoom=1;resetBoardHistory();renderBoard();nav('board');saveBoardSessionNow(false)};
 
 // Board rendering
 function currentNamePosition(){
@@ -23627,6 +23652,11 @@ function ensureBoardUiState(){
  for(const pi of [0,1])for(const z of ['deck','otherDeck']){
    const key=`${pi}|${z}`;
    if(typeof board.ui.deckExtraOpen[key]!=='boolean')board.ui.deckExtraOpen[key]=false;
+ }
+ if(!board.ui.homePowerApplyDraft||typeof board.ui.homePowerApplyDraft!=='object')board.ui.homePowerApplyDraft={};
+ for(const pi of [0,1]){
+   if(!Number.isFinite(Number(board.ui.homePowerApplyDraft[pi])))board.ui.homePowerApplyDraft[pi]=0;
+   else board.ui.homePowerApplyDraft[pi]=Number(board.ui.homePowerApplyDraft[pi])||0;
  }
  return board.ui;
 }
@@ -23865,35 +23895,97 @@ function cardPowerParts(c,pi,z){
 }
 function homePowerControlsHtml(){
  if(!board)return '<div class="muted">盤面開始後に使用できます。</div>';
+ const ui=ensureBoardUiState();
  return board.players.map((p,pi)=>{
-   const mod=Number(p.homePowerMod)||0;
+   const persistent=Number(p.homePowerMod)||0;
+   const current=Number(ui.homePowerApplyDraft?.[pi])||0;
    return `<div class="home-power-row">
-     <div class="home-power-player"><b>${esc(p.name)}</b><span class="pill ${mod?'active-mod':''}">${signedNumber(mod)}</span></div>
-     <div class="muted home-power-mode-label">常時修正：ホームにいる間、後から出るキャラクターにも適用</div>
-     <div class="home-power-actions">
-       <button class="btn small" data-home-power-step="${pi}|-1000">−1000</button>
-       <input data-home-power-input="${pi}" type="number" inputmode="numeric" step="1000" value="${mod}" aria-label="${esc(p.name)} ホームPOWER常時修正">
-       <button class="btn small" data-home-power-step="${pi}|1000">＋1000</button>
-       <button class="btn small primary" data-home-power-apply="${pi}">反映</button>
+     <div class="home-power-player"><b>${esc(p.name)}</b></div>
+     <div class="home-power-mode-block">
+       <div class="home-power-mode-head"><b>常時修正</b><span class="pill ${persistent?'active-mod':''}">${signedNumber(persistent)}</span></div>
+       <div class="muted home-power-mode-label">ホームにいる間は常に加算され、後から出るキャラクターにも適用されます。</div>
+       <div class="home-power-value-row">
+         <button class="btn small" data-home-power-persistent-step="${pi}|-1000">−1000</button>
+         <input data-home-power-persistent-input="${pi}" type="number" inputmode="numeric" step="1000" value="${persistent}" aria-label="${esc(p.name)} ホームPOWER常時修正">
+         <button class="btn small" data-home-power-persistent-step="${pi}|1000">＋1000</button>
+       </div>
+       <button class="btn small home-power-mode-button" data-home-power-persistent-reset="${pi}" ${persistent===0?'disabled':''}>常時修正を0に戻す</button>
      </div>
-     <div class="muted home-power-apply-help">反映すると、現在ホームにいるキャラクターの個別POWER補正へこの値を加算し、常時修正を0にします。後から出るキャラクターには付きません。</div>
+     <div class="home-power-mode-block home-power-current-block">
+       <div class="home-power-mode-head"><b>現在のホームに反映</b><span class="pill ${current?'active-mod':''}">${signedNumber(current)}</span></div>
+       <div class="muted home-power-mode-label">反映を押した時点でホームにいるキャラクターだけの個別POWER補正へ加算します。常時修正は変更しません。</div>
+       <div class="home-power-value-row">
+         <button class="btn small" data-home-power-current-step="${pi}|-1000">−1000</button>
+         <input data-home-power-current-input="${pi}" type="number" inputmode="numeric" step="1000" value="${current}" aria-label="${esc(p.name)} 現在のホームへのPOWER反映値">
+         <button class="btn small" data-home-power-current-step="${pi}|1000">＋1000</button>
+       </div>
+       <button class="btn small primary home-power-mode-button" data-home-power-current-apply="${pi}" ${current===0?'disabled':''}>現在のキャラクターに反映</button>
+     </div>
    </div>`;
  }).join('');
 }
+function refreshHomePowerSurfaces(){
+ renderHomePowerControls();
+ if(typeof mobileBoardToolWindowOpen!=='undefined'&&mobileBoardToolWindowOpen&&mobileBoardToolSection==='power'){
+   renderMobileBoardToolWindow('power');
+ }
+}
+function setHomePowerApplyDraft(pi,value){
+ if(!board)return;
+ const ui=ensureBoardUiState();
+ ui.homePowerApplyDraft[Number(pi)]=Number(value)||0;
+ scheduleBoardAutosave();
+ refreshHomePowerSurfaces();
+}
 function applyHomePowerToCurrentCharacters(pi){
- const p=board?.players?.[Number(pi)];if(!p)return false;
- const delta=Number(p.homePowerMod)||0;if(!delta){toast('反映するPOWER修正が0です');return false}
+ const p=board?.players?.[Number(pi)],ui=ensureBoardUiState();if(!p||!ui)return false;
+ const delta=Number(ui.homePowerApplyDraft?.[Number(pi)])||0;
+ if(!delta){toast('現在のホームへ反映するPOWER修正が0です');return false}
  let count=0;
- (p.character||[]).forEach(pile=>{if(!pile)return;pile.cards.forEach(c=>{if(!c)return;c.powerMod=(Number(c.powerMod)||0)+delta;count++})});
- if(!count){toast('現在ホームにキャラクターがいません');return false}
- p.homePowerMod=0;renderBoard();toast(`${count}枚へ ${signedNumber(delta)} を個別反映しました`);return true;
+ (p.character||[]).forEach(pile=>{
+   if(!pile)return;
+   pile.cards.forEach(c=>{
+     if(!c||c.power===''||c.power==null||!Number.isFinite(Number(c.power)))return;
+     c.powerMod=(Number(c.powerMod)||0)+delta;
+     count++;
+   });
+ });
+ if(!count){toast('現在ホームにPOWERを持つキャラクターがいません');return false}
+ ui.homePowerApplyDraft[Number(pi)]=0;
+ renderBoard();
+ toast(`${count}枚へ ${signedNumber(delta)} を個別反映しました`);
+ return true;
 }
 function bindHomePowerControls(root=document){
- root.querySelectorAll?.('[data-home-power-step]').forEach(b=>b.onclick=()=>{const [pi,step]=b.dataset.homePowerStep.split('|'),p=board.players[Number(pi)];if(!p)return;p.homePowerMod=(Number(p.homePowerMod)||0)+Number(step);renderBoard()});
- root.querySelectorAll?.('[data-home-power-input]').forEach(inp=>inp.onchange=()=>{const p=board.players[Number(inp.dataset.homePowerInput)];if(!p)return;p.homePowerMod=Number(inp.value)||0;renderBoard()});
- root.querySelectorAll?.('[data-home-power-apply]').forEach(b=>b.onclick=()=>applyHomePowerToCurrentCharacters(Number(b.dataset.homePowerApply)));
+ root.querySelectorAll?.('[data-home-power-persistent-step]').forEach(b=>b.onclick=()=>{
+   const [pi,step]=b.dataset.homePowerPersistentStep.split('|'),p=board.players[Number(pi)];if(!p)return;
+   p.homePowerMod=(Number(p.homePowerMod)||0)+Number(step);
+   renderBoard();
+ });
+ root.querySelectorAll?.('[data-home-power-persistent-input]').forEach(inp=>inp.onchange=()=>{
+   const p=board.players[Number(inp.dataset.homePowerPersistentInput)];if(!p)return;
+   p.homePowerMod=Number(inp.value)||0;
+   renderBoard();
+ });
+ root.querySelectorAll?.('[data-home-power-persistent-reset]').forEach(b=>b.onclick=()=>{
+   const p=board.players[Number(b.dataset.homePowerPersistentReset)];if(!p)return;
+   p.homePowerMod=0;
+   renderBoard();
+ });
+ root.querySelectorAll?.('[data-home-power-current-step]').forEach(b=>b.onclick=()=>{
+   const [pi,step]=b.dataset.homePowerCurrentStep.split('|'),ui=ensureBoardUiState();if(!ui)return;
+   setHomePowerApplyDraft(Number(pi),(Number(ui.homePowerApplyDraft?.[Number(pi)])||0)+Number(step));
+ });
+ root.querySelectorAll?.('[data-home-power-current-input]').forEach(inp=>inp.onchange=()=>{
+   setHomePowerApplyDraft(Number(inp.dataset.homePowerCurrentInput),Number(inp.value)||0);
+ });
+ root.querySelectorAll?.('[data-home-power-current-apply]').forEach(b=>b.onclick=()=>applyHomePowerToCurrentCharacters(Number(b.dataset.homePowerCurrentApply)));
 }
-function renderHomePowerControls(){const root=$('#home-power-controls');if(!root)return;root.innerHTML=homePowerControlsHtml();bindHomePowerControls(root)}
+function renderHomePowerControls(){
+ const root=$('#home-power-controls');if(!root)return;
+ root.innerHTML=homePowerControlsHtml();
+ bindHomePowerControls(root);
+}
 
 function ensurePlayerFreeCounters(p){
  if(!p)return [];
@@ -25162,7 +25254,7 @@ document.addEventListener('keydown',e=>{
  else if(key==='y'||(key==='z'&&e.shiftKey)){e.preventDefault();redoBoard()}
 });
 
-$('#reset-board').onclick=()=>{if(!board)return;const s=board.setup;if(!s){board=null;detailCtx=null;inspectSession=null;localStorage.removeItem(LS_BOARD_SESSION);resetBoardHistory();nav('setup');return}const collapsedState=board.players.map(p=>({pain:!!p.collapsed?.pain,room:!!p.collapsed?.room,rulePlus:!!p.collapsed?.rulePlus})),oldUi=ensureBoardUiState()?JSON.parse(JSON.stringify(board.ui)):null;if(oldUi){oldUi.randomHistory=[];oldUi.linkJumpHistory=[];oldUi.boardSearchQuery=''}handScrollPositions=[0,0];zoneScrollPositions={};pendingHandFollow.clear();board={mode:s.mode,setup:{...s},players:[makePlayer(s.deck1,0,s.favorite1,s.otherDeck1)],note:'',turn:1,ui:oldUi||{panelCollapsed:{operations:false,tray:true,power:false,note:false},trayCounterName:'カウンター',trayCustomMarker:'',diceExpression:'1d6',randomHistory:[],boardSearchQuery:'',linkJumpHistory:[]}};if(s.mode===2)board.players.push(makePlayer(s.deck2,1,s.favorite2,s.otherDeck2));board.players.forEach((p,i)=>{if(collapsedState[i])p.collapsed={...collapsedState[i]}});detailCtx=null;inspectSession=null;$('#modal-layer').classList.remove('open');renderBoard();toast('盤面を初期状態に戻しました')};
+$('#reset-board').onclick=()=>{if(!board)return;const s=board.setup;if(!s){board=null;detailCtx=null;inspectSession=null;localStorage.removeItem(LS_BOARD_SESSION);resetBoardHistory();nav('setup');return}const collapsedState=board.players.map(p=>({pain:!!p.collapsed?.pain,room:!!p.collapsed?.room,rulePlus:!!p.collapsed?.rulePlus})),oldUi=ensureBoardUiState()?JSON.parse(JSON.stringify(board.ui)):null;if(oldUi){oldUi.randomHistory=[];oldUi.linkJumpHistory=[];oldUi.boardSearchQuery='';oldUi.homePowerApplyDraft={0:0,1:0}}handScrollPositions=[0,0];zoneScrollPositions={};pendingHandFollow.clear();board={mode:s.mode,setup:{...s},players:[makePlayer(s.deck1,0,s.favorite1,s.otherDeck1)],note:'',turn:1,ui:oldUi||{panelCollapsed:{operations:false,tray:true,power:false,note:false},trayCounterName:'カウンター',trayCustomMarker:'',diceExpression:'1d6',randomHistory:[],boardSearchQuery:'',linkJumpHistory:[],homePowerApplyDraft:{0:0,1:0}}};if(s.mode===2)board.players.push(makePlayer(s.deck2,1,s.favorite2,s.otherDeck2));board.players.forEach((p,i)=>{if(collapsedState[i])p.collapsed={...collapsedState[i]}});detailCtx=null;inspectSession=null;$('#modal-layer').classList.remove('open');renderBoard();toast('盤面を初期状態に戻しました')};
 
 
 $$('[data-settings-tab]').forEach(b=>b.onclick=()=>setSettingsTab(b.dataset.settingsTab));
