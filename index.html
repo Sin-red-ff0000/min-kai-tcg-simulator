@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v10.0</title>
+<title>みん会TCG Simulator v10.1</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -16090,7 +16090,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v10.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v10.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19079,7 +19079,6 @@ function initMobileEdgeBackGesture(){
  window.addEventListener('resize',()=>{if(!mobileEdgeBackAvailable())reset()},{passive:true});
 }
 initMobileEdgeBackGesture();
-initMobileBoardToolButton();
 $$('[data-nav]').forEach(b=>b.onclick=()=>nav(b.dataset.nav));
 $('#home-two-player').onclick=()=>{nav('setup');$('#mode-select').value='2';syncSetupMode()};
 
@@ -19349,7 +19348,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    });
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'10.0',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'10.1',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -25221,6 +25220,7 @@ $('#image-storage-cleanup').onclick=async()=>{
 };
 
 // initialize
+initMobileBoardToolButton();
 renderRegisterHistory();renderCards();renderDecks();renderSetup();
 imageReadyPromise=initImageSystem().then(ok=>{renderCards();renderCollection();updateImageStorageStatus();if(board)renderBoard();return ok}).catch(err=>{imageSystemAvailable=false;renderCards();updateImageStorageStatus();console.warn('カード画像機能を初期化できませんでした',err);return false});
 frameReadyPromise=initFrameSystem().then(async ok=>{await reconcileFrameLinksWithCards();initFrameHydrationObserver();renderCollection();if(board)renderBoard();hydrateAllCardFrames();updateImageStorageStatus();return ok}).catch(err=>{console.warn('カードフレーム機能を初期化できませんでした',err);return false});
