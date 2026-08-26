@@ -15454,6 +15454,22 @@ body.album-direct-dragging *{cursor:grabbing!important}
 .fx-editor-preview-card>.card-frame-overlay{z-index:4}
 .fx-editor-preview-card>.fx-editor-preview-name,.fx-editor-preview-card>.fx-editor-preview-status{position:relative;z-index:6}
 
+/* v10.4 r3: collection detail / viewer frame placement fix */
+.collection-detail-art>.card-frame-overlay,
+.collection-viewer-art>.card-frame-overlay{
+ position:absolute!important;
+ inset:0!important;
+ left:0!important;
+ right:0!important;
+ top:0!important;
+ bottom:0!important;
+ width:100%!important;
+ height:100%!important;
+ z-index:4!important;
+ display:block!important;
+ background-size:100% 100%!important;
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}

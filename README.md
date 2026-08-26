@@ -1,1 +1,3 @@
-# min-kai-tcg-simulator
+# みん会TCG Simulator
+
+PWA版シミュレーターです。
