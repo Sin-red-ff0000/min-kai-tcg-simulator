@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v9.9</title>
+<title>みん会TCG Simulator v10.0</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -16065,6 +16065,23 @@ body.album-direct-dragging *{cursor:grabbing!important}
 .deck-compact-actions[open]>summary{color:#d2dce7}
 .deck-card-order-details[open]>summary{color:#d2dce7}
 
+
+/* ==========================================================
+   v10.0 Smartphone floating board tools
+   ========================================================== */
+.home-power-mode-label{font-size:8.5px;line-height:1.35;margin:-1px 0 1px}
+.home-power-apply-help{font-size:8px;line-height:1.4;margin-top:1px}
+.home-power-actions [data-home-power-apply]{white-space:nowrap}
+.mobile-board-tool-root{display:none}
+.mobile-board-tool-button{position:fixed;left:88vw;top:68vh;transform:translate(-50%,-50%);z-index:82;width:56px;height:56px;border-radius:50%;border:1px solid #73849b;background:rgba(15,21,30,.96);color:#edf3f9;box-shadow:0 8px 22px rgba(0,0,0,.42);touch-action:none;user-select:none;-webkit-user-select:none;align-items:center;justify-content:center;flex-direction:column;gap:0;padding:0}
+.mobile-board-tool-button span{font-size:20px;line-height:1}.mobile-board-tool-button small{font-size:8px;line-height:1.1;font-weight:850;margin-top:2px}
+.mobile-board-tool-window{position:fixed;z-index:81;width:min(330px,calc(100vw - 18px));max-height:min(68dvh,560px);overflow:hidden;background:rgba(19,24,32,.985);border:1px solid #59697d;border-radius:13px;box-shadow:0 12px 30px rgba(0,0,0,.48);padding:8px}
+.mobile-board-tool-window[hidden]{display:none!important}.mobile-board-tool-head{display:flex;align-items:center;gap:5px;border-bottom:1px solid #35404d;padding-bottom:6px;margin-bottom:7px}.mobile-board-tool-head b{font-size:12px;margin-right:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mobile-board-tool-content{max-height:calc(min(68dvh,560px) - 48px);overflow:auto;overscroll-behavior:contain;padding:1px}
+.mobile-board-tool-menu{display:grid;grid-template-columns:1fr 1fr;gap:6px}.mobile-board-tool-menu-item{appearance:none;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;gap:1px 5px;align-items:center;text-align:left;min-width:0;padding:8px;border:1px solid #414e5f;border-radius:9px;background:#101720;color:var(--text)}.mobile-board-tool-menu-item b{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mobile-board-tool-menu-item small{font-size:7.5px;color:#99a7b6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mobile-board-tool-menu-item span{grid-column:2;grid-row:1/3;font-size:18px;color:#879db5}.mobile-board-tool-menu-footer{display:flex;align-items:center;gap:7px;margin-top:8px;padding-top:7px;border-top:1px solid #333e4b}.mobile-board-tool-menu-footer .muted{font-size:7.5px;line-height:1.35;margin-right:auto}
+.mobile-tool-section{min-width:0}.mobile-tool-section .home-power-row{padding:7px 0}.mobile-operation-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.mobile-operation-grid .btn{margin:0}.mobile-operation-wide{grid-column:1/-1}.mobile-saved-presets{max-height:116px;overflow:auto;padding:1px}.mobile-tool-compact-details{margin-top:8px;border-top:1px solid #333e4b;padding-top:6px}.mobile-tool-compact-details>summary{cursor:pointer;font-size:9px;font-weight:800;color:#b9c5d1}.mobile-tool-drag-hint{font-size:8px;margin-top:7px;line-height:1.4}.mobile-board-note{min-height:180px;max-height:48dvh}.mobile-power-tool .home-power-actions{grid-template-columns:auto minmax(64px,1fr) auto auto}.mobile-power-tool .home-power-actions [data-home-power-apply]{grid-column:auto}.mobile-board-tool-window .board-random-history{max-height:155px;overflow:auto}
+@media (pointer:coarse) and (max-width:900px), (pointer:coarse) and (orientation:landscape) and (max-height:650px){#screen-board.active .board-tools{display:none!important}.mobile-board-tool-root.mobile-visible{display:block}.mobile-board-tool-root.mobile-visible .mobile-board-tool-button{display:flex}#screen-board.active .board-wrap{display:block!important}}
+@media (max-width:420px){.mobile-board-tool-window{width:min(310px,calc(100vw - 14px));padding:7px}.mobile-board-tool-menu{grid-template-columns:1fr}.mobile-board-tool-menu-item{padding:7px}.mobile-power-tool .home-power-actions{grid-template-columns:auto minmax(58px,1fr) auto}.mobile-power-tool .home-power-actions [data-home-power-apply]{grid-column:1/-1}}
+
 </style>
 </head>
 <body>
@@ -16073,7 +16090,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v9.9 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v10.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -16804,6 +16821,20 @@ body.album-direct-dragging *{cursor:grabbing!important}
   </section>
 </main>
 
+<div id="mobile-board-tool-root" class="mobile-board-tool-root" aria-hidden="true">
+  <button id="mobile-board-tool-button" class="mobile-board-tool-button" type="button" aria-label="盤面ツール。タップで開く、スワイプで移動">
+    <span>☰</span><small>操作</small>
+  </button>
+  <section id="mobile-board-tool-window" class="mobile-board-tool-window" hidden>
+    <div class="mobile-board-tool-head">
+      <button id="mobile-board-tool-back" class="btn small" type="button" hidden>‹ 戻る</button>
+      <b id="mobile-board-tool-title">盤面ツール</b>
+      <button id="mobile-board-tool-close" class="btn small" type="button">閉じる</button>
+    </div>
+    <div id="mobile-board-tool-content" class="mobile-board-tool-content"></div>
+  </section>
+</div>
+
 <div id="modal-layer" class="modal-layer"><div id="modal" class="modal"></div></div>
 <div id="mobile-edge-back-zone" class="mobile-edge-back-zone" aria-hidden="true">
   <div id="mobile-edge-back-indicator" class="mobile-edge-back-indicator"><span>‹</span><small>戻る</small></div>
@@ -16813,7 +16844,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
 <script>
 (() => {
 'use strict';
-const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01', LS_CARD_REGISTER_RECENT='minkai_tcg_card_register_recent_v16', LS_HAND_FOLLOW='minkai_tcg_hand_follow_v11', LS_BOARD_DISPLAY='minkai_tcg_board_display_v20', LS_THEME='minkai_tcg_theme_v27', LS_COLLECTION='minkai_tcg_collection_v32', LS_CARD_FX='minkai_tcg_card_fx_v36', LS_BOARD_TOOLS='minkai_tcg_board_tools_v01', LS_BOARD_SESSION='minkai_tcg_board_session_v01', LS_BOARD_SNAPSHOTS='minkai_tcg_board_snapshots_v01';
+const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01', LS_CARD_REGISTER_RECENT='minkai_tcg_card_register_recent_v16', LS_HAND_FOLLOW='minkai_tcg_hand_follow_v11', LS_BOARD_DISPLAY='minkai_tcg_board_display_v20', LS_THEME='minkai_tcg_theme_v27', LS_COLLECTION='minkai_tcg_collection_v32', LS_CARD_FX='minkai_tcg_card_fx_v36', LS_BOARD_TOOLS='minkai_tcg_board_tools_v01', LS_BOARD_SESSION='minkai_tcg_board_session_v01', LS_BOARD_SNAPSHOTS='minkai_tcg_board_snapshots_v01', LS_MOBILE_BOARD_TOOL='minkai_tcg_mobile_board_tool_v01';
 const ZONE_LABELS={character:'キャラクター',pain:'ペインカウント',room:'ルーム',rulePlus:'ルールプラス',hand:'手札',deck:'デッキ',otherDeck:'その他デッキ',grave:'墓地',banish:'消失領域'};
 
 const CARD_FIXED_TYPES=['キャラクター','ルーム','ロール','ルールプラス','アナザーゲート'];
@@ -16894,6 +16925,11 @@ const CARD_VISUAL_EFFECTS=[
  {id:'digital-code',name:'デジタルコード',category:'機械・デジタル'}
 ];
 const CARD_FX_IDS=new Set(CARD_VISUAL_EFFECTS.map(x=>x.id));
+function defaultMobileBoardToolPrefs(){return {x:.88,y:.68}}
+function normalizeMobileBoardToolPrefs(raw={}){
+ return {x:Math.max(.06,Math.min(.94,Number(raw.x)||.88)),y:Math.max(.10,Math.min(.90,Number(raw.y)||.68))};
+}
+function saveMobileBoardToolPrefs(){mobileBoardToolPrefs=normalizeMobileBoardToolPrefs(mobileBoardToolPrefs);save(LS_MOBILE_BOARD_TOOL,mobileBoardToolPrefs)}
 function defaultBoardToolPrefs(){return {markerPresets:[],counterPresets:[]}}
 function normalizeBoardToolPresetList(raw,maxLen){
  const out=[],seen=new Set();
@@ -17397,6 +17433,7 @@ reconcileCardLinks();
 save(LS_CARDS,cards);
 let cardFxPrefs=normalizeCardFxPrefs(load(LS_CARD_FX,defaultCardFxPrefs()));save(LS_CARD_FX,cardFxPrefs);
 let boardToolPrefs=normalizeBoardToolPrefs(load(LS_BOARD_TOOLS,defaultBoardToolPrefs()));save(LS_BOARD_TOOLS,boardToolPrefs);
+let mobileBoardToolPrefs=normalizeMobileBoardToolPrefs(load(LS_MOBILE_BOARD_TOOL,defaultMobileBoardToolPrefs()));save(LS_MOBILE_BOARD_TOOL,mobileBoardToolPrefs);
 let handFollowPrefs=load(LS_HAND_FOLLOW,[true,true]);
 if(!Array.isArray(handFollowPrefs))handFollowPrefs=[true,true];
 handFollowPrefs=[handFollowPrefs[0]!==false,handFollowPrefs[1]!==false];
@@ -18979,6 +19016,7 @@ function nav(name,opt={}){
    if(name==='setup')renderSetup();
    if(name==='settings'){ensureThemeDraft();renderThemeSettings()}
  }catch(err){reportUiRuntimeError(`${THEME_SCREEN_LABELS[name]||name}の表示`,err)}
+ syncMobileBoardToolsVisibility();
  window.scrollTo(0,0);
 }
 function performAppScreenBack(){
@@ -19041,6 +19079,7 @@ function initMobileEdgeBackGesture(){
  window.addEventListener('resize',()=>{if(!mobileEdgeBackAvailable())reset()},{passive:true});
 }
 initMobileEdgeBackGesture();
+initMobileBoardToolButton();
 $$('[data-nav]').forEach(b=>b.onclick=()=>nav(b.dataset.nav));
 $('#home-two-player').onclick=()=>{nav('setup');$('#mode-select').value='2';syncSetupMode()};
 
@@ -19310,7 +19349,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    });
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'9.9',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'10.0',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -23617,6 +23656,7 @@ function renderBoardToolPresets(){
    counter.innerHTML=boardToolPrefs.counterPresets.length?boardToolPrefs.counterPresets.map((name,i)=>`<span class="saved-counter-pair"><button class="board-drag-tool saved-preset-tool counter-plus" type="button" draggable="true" data-board-tool="counterSaved|1" data-board-preset-label="${esc(name)}" title="${esc(name)} +1">${esc(name)} +1</button><button class="board-drag-tool saved-preset-tool counter-minus" type="button" draggable="true" data-board-tool="counterSaved|-1" data-board-preset-label="${esc(name)}" title="${esc(name)} -1">−1</button></span>`).join(''):'<span class="muted board-preset-empty">保存済みなし</span>';
  }
  bindBoardToolTray();
+ if(mobileBoardToolWindowOpen&&['marker','counter'].includes(mobileBoardToolSection))refreshMobileBoardToolWindow();
 }
 function openBoardPresetManager(){
  openModal(`<div class="modal-head"><h3>盤面ツール・プリセット</h3><button class="btn" id="board-preset-manager-close">閉じる</button></div>
@@ -23808,7 +23848,7 @@ function syncBoardRandomTools(){
  }
 }
 
-function renderBoard(){if(!board)return;ensureBoardUiState();captureHandScroll();captureFixedZoneScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardDisplaySettings();applyBoardZoom();renderHomePowerControls();renderBoardPanelState();syncBoardTrayFields();renderBoardToolPresets();syncBoardRandomTools();hydratePlayerBoardBackgrounds();restoreBoardScroll();commitBoardHistory();scheduleBoardAutosave()}
+function renderBoard(){if(!board)return;ensureBoardUiState();captureHandScroll();captureFixedZoneScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardDisplaySettings();applyBoardZoom();renderHomePowerControls();renderBoardPanelState();syncBoardTrayFields();renderBoardToolPresets();syncBoardRandomTools();hydratePlayerBoardBackgrounds();restoreBoardScroll();refreshMobileBoardToolWindow();syncMobileBoardToolsVisibility();commitBoardHistory();scheduleBoardAutosave()}
 function zoneHeader(pi,z){const p=board.players[pi], n=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button><button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;else if(['hand','grave','banish'].includes(z))controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll';controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button></span>`}return `<div class="zone-head"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
 
 function signedNumber(n){
@@ -23824,34 +23864,37 @@ function cardPowerParts(c,pi,z){
  const home=z==='character'?(Number(board?.players?.[pi]?.homePowerMod)||0):0;
  return {has:true,base,individual,home,total:base+individual+home};
 }
-function renderHomePowerControls(){
- const root=$('#home-power-controls');if(!root)return;
- if(!board){root.innerHTML='<div class="muted">盤面開始後に使用できます。</div>';return}
- root.innerHTML=board.players.map((p,pi)=>{
+function homePowerControlsHtml(){
+ if(!board)return '<div class="muted">盤面開始後に使用できます。</div>';
+ return board.players.map((p,pi)=>{
    const mod=Number(p.homePowerMod)||0;
    return `<div class="home-power-row">
      <div class="home-power-player"><b>${esc(p.name)}</b><span class="pill ${mod?'active-mod':''}">${signedNumber(mod)}</span></div>
+     <div class="muted home-power-mode-label">常時修正：ホームにいる間、後から出るキャラクターにも適用</div>
      <div class="home-power-actions">
        <button class="btn small" data-home-power-step="${pi}|-1000">−1000</button>
-       <input data-home-power-input="${pi}" type="number" inputmode="numeric" step="1000" value="${mod}" aria-label="${esc(p.name)} ホームPOWER修正">
+       <input data-home-power-input="${pi}" type="number" inputmode="numeric" step="1000" value="${mod}" aria-label="${esc(p.name)} ホームPOWER常時修正">
        <button class="btn small" data-home-power-step="${pi}|1000">＋1000</button>
-       <button class="btn small" data-home-power-reset="${pi}">0に戻す</button>
+       <button class="btn small primary" data-home-power-apply="${pi}">反映</button>
      </div>
+     <div class="muted home-power-apply-help">反映すると、現在ホームにいるキャラクターの個別POWER補正へこの値を加算し、常時修正を0にします。後から出るキャラクターには付きません。</div>
    </div>`;
  }).join('');
- $$('[data-home-power-step]').forEach(b=>b.onclick=()=>{
-   const [pi,step]=b.dataset.homePowerStep.split('|'),p=board.players[Number(pi)];if(!p)return;
-   p.homePowerMod=(Number(p.homePowerMod)||0)+Number(step);renderBoard();
- });
- $$('[data-home-power-input]').forEach(inp=>inp.onchange=()=>{
-   const p=board.players[Number(inp.dataset.homePowerInput)];if(!p)return;
-   p.homePowerMod=Number(inp.value)||0;renderBoard();
- });
- $$('[data-home-power-reset]').forEach(b=>b.onclick=()=>{
-   const p=board.players[Number(b.dataset.homePowerReset)];if(!p)return;
-   p.homePowerMod=0;renderBoard();
- });
 }
+function applyHomePowerToCurrentCharacters(pi){
+ const p=board?.players?.[Number(pi)];if(!p)return false;
+ const delta=Number(p.homePowerMod)||0;if(!delta){toast('反映するPOWER修正が0です');return false}
+ let count=0;
+ (p.character||[]).forEach(pile=>{if(!pile)return;pile.cards.forEach(c=>{if(!c)return;c.powerMod=(Number(c.powerMod)||0)+delta;count++})});
+ if(!count){toast('現在ホームにキャラクターがいません');return false}
+ p.homePowerMod=0;renderBoard();toast(`${count}枚へ ${signedNumber(delta)} を個別反映しました`);return true;
+}
+function bindHomePowerControls(root=document){
+ root.querySelectorAll?.('[data-home-power-step]').forEach(b=>b.onclick=()=>{const [pi,step]=b.dataset.homePowerStep.split('|'),p=board.players[Number(pi)];if(!p)return;p.homePowerMod=(Number(p.homePowerMod)||0)+Number(step);renderBoard()});
+ root.querySelectorAll?.('[data-home-power-input]').forEach(inp=>inp.onchange=()=>{const p=board.players[Number(inp.dataset.homePowerInput)];if(!p)return;p.homePowerMod=Number(inp.value)||0;renderBoard()});
+ root.querySelectorAll?.('[data-home-power-apply]').forEach(b=>b.onclick=()=>applyHomePowerToCurrentCharacters(Number(b.dataset.homePowerApply)));
+}
+function renderHomePowerControls(){const root=$('#home-power-controls');if(!root)return;root.innerHTML=homePowerControlsHtml();bindHomePowerControls(root)}
 
 function ensurePlayerFreeCounters(p){
  if(!p)return [];
@@ -24007,6 +24050,7 @@ function endBoardToolTouch(e){
  if(!s.moved||!target){if(s.moved)toast('カードの上へドロップしてください');return}
  applyBoardToolToPile(s.tool,target.dataset.pile);
 }
+function cancelBoardToolTouch(e){const s=boardToolTouchState;if(!s)return;if(e)e.preventDefault();boardToolTouchState=null;if(s.ghost)s.ghost.remove();clearBoardToolDropHighlight()}
 function bindBoardToolTray(){
  $$('[data-board-tool]').forEach(el=>{
    if(el.dataset.boardToolBound==='1')return;
@@ -24027,8 +24071,90 @@ function bindBoardToolTray(){
    el.addEventListener('touchstart',e=>beginBoardToolTouch(e,el),{passive:false});
    el.addEventListener('touchmove',moveBoardToolTouch,{passive:false});
    el.addEventListener('touchend',endBoardToolTouch,{passive:false});
-   el.addEventListener('touchcancel',endBoardToolTouch,{passive:false});
+   el.addEventListener('touchcancel',cancelBoardToolTouch,{passive:false});
  });
+}
+
+let mobileBoardToolWindowOpen=false,mobileBoardToolSection='menu',mobileBoardToolButtonDrag=null;
+
+function mobileBoardToolAvailable(){
+ const touch=(window.matchMedia?.('(pointer: coarse)').matches||navigator.maxTouchPoints>0);
+ const portraitLike=window.innerWidth<=900;
+ const phoneLandscape=window.matchMedia?.('(orientation: landscape)').matches&&window.innerHeight<=650;
+ return !!touch&&(portraitLike||phoneLandscape);
+}
+function syncMobileBoardToolsVisibility(){
+ const root=$('#mobile-board-tool-root');if(!root)return;
+ const visible=currentScreenName==='board'&&!!board&&mobileBoardToolAvailable();
+ root.classList.toggle('mobile-visible',visible);root.setAttribute('aria-hidden',visible?'false':'true');
+ if(!visible)closeMobileBoardTools();else requestAnimationFrame(()=>applyMobileBoardToolPosition());
+}
+function mobileToolClampCenter(x,y){
+ const btn=$('#mobile-board-tool-button'),r=btn?.getBoundingClientRect(),halfW=Math.max(27,(r?.width||54)/2),halfH=Math.max(27,(r?.height||54)/2);
+ const minX=halfW+8,maxX=Math.max(minX,window.innerWidth-halfW-8),minY=halfH+8,maxY=Math.max(minY,window.innerHeight-halfH-12);
+ return {x:Math.max(minX,Math.min(maxX,x)),y:Math.max(minY,Math.min(maxY,y))};
+}
+function applyMobileBoardToolPosition(){
+ const btn=$('#mobile-board-tool-button');if(!btn||!mobileBoardToolAvailable())return;
+ const target=mobileToolClampCenter(window.innerWidth*mobileBoardToolPrefs.x,window.innerHeight*mobileBoardToolPrefs.y);
+ btn.style.left=`${target.x}px`;btn.style.top=`${target.y}px`;if(mobileBoardToolWindowOpen)requestAnimationFrame(positionMobileBoardToolWindow);
+}
+function positionMobileBoardToolWindow(){
+ const btn=$('#mobile-board-tool-button'),win=$('#mobile-board-tool-window');if(!btn||!win||win.hidden)return;
+ const br=btn.getBoundingClientRect(),wr=win.getBoundingClientRect(),gap=8,pad=8;
+ let left=br.left+br.width/2>window.innerWidth/2?br.left-wr.width-gap:br.right+gap;
+ left=Math.max(pad,Math.min(window.innerWidth-wr.width-pad,left));
+ let top=br.top;if(top+wr.height>window.innerHeight-pad)top=br.bottom-wr.height;
+ top=Math.max(pad,Math.min(window.innerHeight-wr.height-pad,top));win.style.left=`${left}px`;win.style.top=`${top}px`;
+}
+function closeMobileBoardTools(){mobileBoardToolWindowOpen=false;const win=$('#mobile-board-tool-window');if(win)win.hidden=true}
+function mobileToolMenuHtml(){
+ const entries=[['operations','盤面操作','設定・検索・保存など'],['marker','マーカー','一時マーカー'],['counter','カウンター','カードへ±'],['random','サイコロ・コイン','乱数・コイントス'],['power','ホームPOWER修正','常時 / 現在のみ'],['note','盤面メモ','ターン中の記録']];
+ return `<div class="mobile-board-tool-menu">${entries.map(([key,label,desc])=>`<button class="mobile-board-tool-menu-item" type="button" data-mobile-tool-section="${key}"><b>${label}</b><small>${desc}</small><span>›</span></button>`).join('')}</div><div class="mobile-board-tool-menu-footer"><span class="muted">丸い操作ボタンはスワイプで好きな位置へ移動できます。</span><button class="btn small" type="button" id="mobile-tool-position-reset">位置を初期化</button></div>`;
+}
+function mobileMarkerToolHtml(){
+ return `<div class="mobile-tool-section"><div class="board-tool-grid"><button class="board-drag-tool marker-used" type="button" draggable="true" data-board-tool="marker|used">効果使用済</button><button class="board-drag-tool marker-attack" type="button" draggable="true" data-board-tool="marker|attack">攻撃済</button><button class="board-drag-tool marker-target" type="button" draggable="true" data-board-tool="marker|target">対象</button><button class="board-drag-tool marker-negate" type="button" draggable="true" data-board-tool="marker|negate">無効</button><button class="board-drag-tool marker-turn" type="button" draggable="true" data-board-tool="marker|turn">ターン終了時まで</button></div><label class="board-tool-input">カスタムマーカー<input data-mobile-custom-marker maxlength="18" value="${esc(ensureBoardUiState()?.trayCustomMarker||'')}" placeholder="例：効果処理待ち"></label><div class="board-tool-inline-actions"><button class="board-drag-tool marker-custom" type="button" draggable="true" data-board-tool="marker|custom">カスタムをドラッグ</button><button class="btn small" type="button" data-mobile-save-marker>保存</button></div><div class="board-saved-presets mobile-saved-presets">${boardToolPrefs.markerPresets.length?boardToolPrefs.markerPresets.map((name,i)=>`<button class="board-drag-tool saved-preset-tool" type="button" draggable="true" data-board-tool="markerSaved|${i}" data-board-preset-label="${esc(name)}">${esc(name)}</button>`).join(''):'<span class="muted">保存済みなし</span>'}</div><details class="mobile-tool-compact-details"><summary>マーカー整理</summary><div class="actions"><button class="btn small" type="button" data-mobile-preset-manager>プリセット整理</button><button class="btn small danger" type="button" data-mobile-bulk-marker>一括解除</button></div></details><div class="muted mobile-tool-drag-hint">マーカーをカードへ指でドラッグして乗せます。</div></div>`;
+}
+function mobileCounterToolHtml(){
+ const ui=ensureBoardUiState(),name=(ui?.trayCounterName||'カウンター').trim()||'カウンター';
+ return `<div class="mobile-tool-section"><label class="board-tool-input">カウンター名<input data-mobile-counter-name maxlength="20" value="${esc(name)}"></label><div class="board-tool-grid board-counter-tools"><button class="board-drag-tool counter-plus" type="button" draggable="true" data-board-tool="counter|1"><span data-mobile-counter-plus>${esc(name)} +1</span></button><button class="board-drag-tool counter-minus" type="button" draggable="true" data-board-tool="counter|-1"><span data-mobile-counter-minus>${esc(name)} −1</span></button></div><div class="actions"><button class="btn small" type="button" data-mobile-save-counter>現在の名前を保存</button><button class="btn small" type="button" data-mobile-preset-manager>プリセット整理</button></div><div class="board-saved-presets mobile-saved-presets">${boardToolPrefs.counterPresets.length?boardToolPrefs.counterPresets.map((preset,i)=>`<span class="saved-counter-pair"><button class="board-drag-tool saved-preset-tool counter-plus" type="button" draggable="true" data-board-tool="counterSaved|1" data-board-preset-label="${esc(preset)}">${esc(preset)} +1</button><button class="board-drag-tool saved-preset-tool counter-minus" type="button" draggable="true" data-board-tool="counterSaved|-1" data-board-preset-label="${esc(preset)}">−1</button></span>`).join(''):'<span class="muted">保存済みなし</span>'}</div><div class="muted mobile-tool-drag-hint">＋1 / −1をカードへ指でドラッグします。</div></div>`;
+}
+function mobileRandomToolHtml(){
+ const ui=ensureBoardUiState(),rows=ui?.randomHistory||[],last=rows[0];
+ return `<div class="mobile-tool-section"><div class="board-dice-presets"><button class="btn small" type="button" data-mobile-dice="1d6">1d6</button><button class="btn small" type="button" data-mobile-dice="2d6">2d6</button><button class="btn small" type="button" data-mobile-dice="1d20">1d20</button><button class="btn small" type="button" data-mobile-dice="1d100">1d100</button></div><div class="board-random-inline"><input data-mobile-dice-input type="text" inputmode="text" maxlength="6" value="${esc(ui?.diceExpression||'1d6')}" placeholder="例 3d12"><button class="btn primary small" type="button" data-mobile-dice-roll>振る</button></div><div class="muted board-random-rule">1〜10個 / d2〜d100。最大10d100。</div><div class="board-coin-row"><span class="muted">コイン</span>${[1,2,5,10].map(n=>`<button class="btn small" type="button" data-mobile-coin="${n}">${n}回</button>`).join('')}</div><div class="board-random-last">${last?`<b>${esc(last.label)}</b><span>${esc(last.detail)}</span>${last.totalText?`<strong>${esc(last.totalText)}</strong>`:''}`:'<span class="muted">まだ結果はありません。</span>'}</div><details class="mobile-tool-compact-details"><summary>直近の履歴 ${rows.length?`(${rows.length})`:''}</summary><div class="board-random-history">${rows.length?rows.map(x=>`<div class="board-random-history-row"><span>${esc(x.at||'')}</span><b>${esc(x.label)}</b><span>${esc(x.detail)}</span>${x.totalText?`<strong>${esc(x.totalText)}</strong>`:''}</div>`).join(''):'<div class="muted">履歴なし</div>'}</div>${rows.length?'<button class="btn small" type="button" data-mobile-random-clear>履歴を消す</button>':''}</details></div>`;
+}
+function mobileOperationsToolHtml(){return `<div class="mobile-tool-section"><div class="mobile-operation-grid"><button class="btn" type="button" data-mobile-operation="settings">設定</button><button class="btn" type="button" data-mobile-operation="search">カード検索</button><button class="btn" type="button" data-mobile-operation="save">保存・再開</button><button class="btn" type="button" data-mobile-operation="token">トークン作成</button><button class="btn" type="button" data-mobile-operation="undo" ${!boardHistoryUndo.length?'disabled':''}>↶ 元に戻す</button><button class="btn" type="button" data-mobile-operation="redo" ${!boardHistoryRedo.length?'disabled':''}>↷ やり直す</button><button class="btn danger mobile-operation-wide" type="button" data-mobile-operation="reset">盤面リセット</button></div></div>`}
+function mobilePowerToolHtml(){return `<div class="mobile-tool-section mobile-power-tool">${homePowerControlsHtml()}</div>`}
+function mobileNoteToolHtml(){return `<div class="mobile-tool-section"><textarea class="board-note mobile-board-note" data-mobile-board-note placeholder="召喚権使用済み、ターン中の記録など">${esc(board?.note||'')}</textarea></div>`}
+function renderMobileBoardToolWindow(section=mobileBoardToolSection){
+ const win=$('#mobile-board-tool-window'),content=$('#mobile-board-tool-content'),title=$('#mobile-board-tool-title'),back=$('#mobile-board-tool-back');if(!win||!content||!board)return;
+ mobileBoardToolSection=section||'menu';const titles={menu:'盤面ツール',operations:'盤面操作',marker:'マーカー',counter:'カウンター',random:'サイコロ・コイン',power:'ホームPOWER修正',note:'盤面メモ'};title.textContent=titles[mobileBoardToolSection]||'盤面ツール';back.hidden=mobileBoardToolSection==='menu';
+ if(mobileBoardToolSection==='operations')content.innerHTML=mobileOperationsToolHtml();else if(mobileBoardToolSection==='marker')content.innerHTML=mobileMarkerToolHtml();else if(mobileBoardToolSection==='counter')content.innerHTML=mobileCounterToolHtml();else if(mobileBoardToolSection==='random')content.innerHTML=mobileRandomToolHtml();else if(mobileBoardToolSection==='power')content.innerHTML=mobilePowerToolHtml();else if(mobileBoardToolSection==='note')content.innerHTML=mobileNoteToolHtml();else content.innerHTML=mobileToolMenuHtml();bindMobileBoardToolContent();requestAnimationFrame(positionMobileBoardToolWindow);
+}
+function refreshMobileBoardToolWindow(){if(!mobileBoardToolWindowOpen||!mobileBoardToolAvailable()||!board)return;renderMobileBoardToolWindow(mobileBoardToolSection)}
+function openMobileBoardTools(section='menu'){if(!board||!mobileBoardToolAvailable())return;mobileBoardToolWindowOpen=true;const win=$('#mobile-board-tool-window');if(!win)return;win.hidden=false;renderMobileBoardToolWindow(section)}
+function bindMobileBoardToolContent(){
+ const content=$('#mobile-board-tool-content');if(!content)return;
+ content.querySelectorAll('[data-mobile-tool-section]').forEach(b=>b.onclick=()=>renderMobileBoardToolWindow(b.dataset.mobileToolSection));
+ const posReset=content.querySelector('#mobile-tool-position-reset');if(posReset)posReset.onclick=()=>{mobileBoardToolPrefs=defaultMobileBoardToolPrefs();saveMobileBoardToolPrefs();applyMobileBoardToolPosition();requestAnimationFrame(positionMobileBoardToolWindow);toast('操作ボタンの位置を初期化しました')};
+ const markerInput=content.querySelector('[data-mobile-custom-marker]');if(markerInput)markerInput.oninput=e=>{ensureBoardUiState().trayCustomMarker=e.target.value.slice(0,18);syncBoardTrayFields();scheduleBoardAutosave()};
+ const counterInput=content.querySelector('[data-mobile-counter-name]');if(counterInput)counterInput.oninput=e=>{const value=e.target.value.slice(0,20);ensureBoardUiState().trayCounterName=value;syncBoardTrayFields();scheduleBoardAutosave();const name=value.trim()||'カウンター',plus=content.querySelector('[data-mobile-counter-plus]'),minus=content.querySelector('[data-mobile-counter-minus]');if(plus)plus.textContent=`${name} +1`;if(minus)minus.textContent=`${name} −1`};
+ const saveMarker=content.querySelector('[data-mobile-save-marker]');if(saveMarker)saveMarker.onclick=()=>addBoardToolPreset('marker',ensureBoardUiState().trayCustomMarker);
+ const saveCounter=content.querySelector('[data-mobile-save-counter]');if(saveCounter)saveCounter.onclick=()=>addBoardToolPreset('counter',ensureBoardUiState().trayCounterName);
+ content.querySelectorAll('[data-mobile-preset-manager]').forEach(b=>b.onclick=()=>{closeMobileBoardTools();openBoardPresetManager()});content.querySelectorAll('[data-mobile-bulk-marker]').forEach(b=>b.onclick=()=>{closeMobileBoardTools();openBulkMarkerManager('all')});
+ content.querySelectorAll('[data-mobile-dice]').forEach(b=>b.onclick=()=>{ensureBoardUiState().diceExpression=b.dataset.mobileDice;rollBoardDice(b.dataset.mobileDice);refreshMobileBoardToolWindow()});
+ const diceInput=content.querySelector('[data-mobile-dice-input]');if(diceInput){diceInput.oninput=e=>{ensureBoardUiState().diceExpression=e.target.value.slice(0,6);scheduleBoardAutosave()};diceInput.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();rollBoardDice(e.currentTarget.value);refreshMobileBoardToolWindow()}}}
+ const diceRoll=content.querySelector('[data-mobile-dice-roll]');if(diceRoll)diceRoll.onclick=()=>{rollBoardDice(content.querySelector('[data-mobile-dice-input]')?.value||'1d6');refreshMobileBoardToolWindow()};
+ content.querySelectorAll('[data-mobile-coin]').forEach(b=>b.onclick=()=>{flipBoardCoins(Number(b.dataset.mobileCoin));refreshMobileBoardToolWindow()});const clearRandom=content.querySelector('[data-mobile-random-clear]');if(clearRandom)clearRandom.onclick=()=>{ensureBoardUiState().randomHistory=[];syncBoardRandomTools();scheduleBoardAutosave();renderMobileBoardToolWindow('random');toast('サイコロ・コイン履歴を消しました')};
+ content.querySelectorAll('[data-mobile-operation]').forEach(b=>b.onclick=()=>{const action=b.dataset.mobileOperation;if(action==='undo'){undoBoard();refreshMobileBoardToolWindow();return}if(action==='redo'){redoBoard();refreshMobileBoardToolWindow();return}closeMobileBoardTools();if(action==='settings')openBoardSettings();else if(action==='search')openBoardCardSearch();else if(action==='save')openBoardSaveManager();else if(action==='token')openTokenCreator(null,0);else if(action==='reset')$('#reset-board')?.click()});
+ if(mobileBoardToolSection==='power')bindHomePowerControls(content);const note=content.querySelector('[data-mobile-board-note]');if(note){note.oninput=e=>{board.note=e.target.value;const desktop=$('#board-note');if(desktop&&document.activeElement!==desktop)desktop.value=board.note;scheduleBoardAutosave()};note.onchange=()=>commitBoardHistory()};bindBoardToolTray();
+}
+function initMobileBoardToolButton(){
+ const root=$('#mobile-board-tool-root'),btn=$('#mobile-board-tool-button'),win=$('#mobile-board-tool-window'),close=$('#mobile-board-tool-close'),back=$('#mobile-board-tool-back');if(!root||!btn||!win)return;close.onclick=closeMobileBoardTools;back.onclick=()=>renderMobileBoardToolWindow('menu');
+ btn.onpointerdown=e=>{if(!mobileBoardToolAvailable()||e.button>0)return;const r=btn.getBoundingClientRect();mobileBoardToolButtonDrag={id:e.pointerId,startX:e.clientX,startY:e.clientY,offsetX:e.clientX-(r.left+r.width/2),offsetY:e.clientY-(r.top+r.height/2),moved:false};btn.setPointerCapture?.(e.pointerId);e.preventDefault()};
+ btn.onpointermove=e=>{const s=mobileBoardToolButtonDrag;if(!s||s.id!==e.pointerId)return;if(!s.moved&&Math.hypot(e.clientX-s.startX,e.clientY-s.startY)>=6)s.moved=true;if(!s.moved)return;const pos=mobileToolClampCenter(e.clientX-s.offsetX,e.clientY-s.offsetY);btn.style.left=`${pos.x}px`;btn.style.top=`${pos.y}px`;if(mobileBoardToolWindowOpen)positionMobileBoardToolWindow();e.preventDefault()};
+ const finish=e=>{const s=mobileBoardToolButtonDrag;if(!s||s.id!==e.pointerId)return;mobileBoardToolButtonDrag=null;if(s.moved){const r=btn.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;mobileBoardToolPrefs.x=cx/window.innerWidth;mobileBoardToolPrefs.y=cy/window.innerHeight;saveMobileBoardToolPrefs();if(mobileBoardToolWindowOpen)positionMobileBoardToolWindow()}else{if(mobileBoardToolWindowOpen)closeMobileBoardTools();else openMobileBoardTools('menu')}e.preventDefault()};
+ btn.onpointerup=finish;btn.onpointercancel=e=>{if(mobileBoardToolButtonDrag?.id===e.pointerId)mobileBoardToolButtonDrag=null};window.addEventListener('resize',()=>{syncMobileBoardToolsVisibility();applyMobileBoardToolPosition()});window.addEventListener('orientationchange',()=>setTimeout(()=>{syncMobileBoardToolsVisibility();applyMobileBoardToolPosition()},80));syncMobileBoardToolsVisibility();
 }
 
 let touchDragState=null,touchClickBlockUntil=0;
@@ -24520,7 +24646,7 @@ function openDetail(pi,z,index,cardIndex=0,navIds){const pile=getPile(pi,z,index
  const helperOpen=(Number(c.powerMod)||0)!==0||c.counters.length||c.markers.length;
  const stackOpen=pile.cards.length>1;
  const relatedHtml=renderBoardRelatedLinks(c);
- openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div><h3>${esc(c.name)}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(c.level||'-')}</span><span class="pill">POWER ${pow===null?'-':pow}</span></div>${powerBreakdown}<div class="muted">${esc(c.race||'種族なし')}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${esc(c.effect||'効果テキストなし')}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><details class="board-detail-fold board-helper-fold" ${helperOpen?'open':''}><summary>補助情報 <span class="pill">${(Number(c.powerMod)||0)!==0?'PW':''}${c.counters.length?`${(Number(c.powerMod)||0)!==0?' / ':''}C${c.counters.length}`:''}${c.markers.length?`${((Number(c.powerMod)||0)!==0||c.counters.length)?' / ':''}M${c.markers.length}`:''}${!helperOpen?'なし':''}</span></summary><div class="board-detail-fold-body"><label>POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h4>カウンター</h4><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button><h4>一時マーカー</h4><div id="detail-marker-list">${renderDetailMarkers(c)}</div>${Array.isArray(c.markers)&&c.markers.length?'<button class="btn small" id="clear-temp-markers">すべて外す</button>':''}</div></details><details class="board-detail-fold" ${stackOpen?'open':''}><summary>重なり <span class="pill">${pile.cards.length}</span></summary><div class="board-detail-fold-body">${pile.cards.length>1?`<div class="actions stack-quick-actions"><button class="btn small" id="stack-move-top">一番上だけ移動</button><button class="btn small" id="stack-move-bottom">一番下だけ移動</button><button class="btn small" id="stack-move-all">全部まとめて移動</button><button class="btn small danger" id="stack-split-all">ばらす</button></div>`:''}<div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item stack-item-rich ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span class="stack-order">${i+1}</span><div class="stack-mini-art">${boardMiniArtHtml(x)}</div><div class="stack-item-copy"><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}${x.faceDown?' / 裏向き':''}${x.rested?' / レスト':''}</div></div><div class="stack-item-actions"><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div></div></details>${relatedHtml}</div></div>`);
+ openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div><h3>${esc(c.name)}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(c.level||'-')}</span><span class="pill">POWER ${pow===null?'-':pow}</span></div>${powerBreakdown}<div class="muted">${esc(c.race||'種族なし')}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${esc(c.effect||'効果テキストなし')}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="reset-card-power" ${(Number(c.powerMod)||0)===0?'disabled':''}>個別POWER補正をリセット</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><details class="board-detail-fold board-helper-fold" ${helperOpen?'open':''}><summary>補助情報 <span class="pill">${(Number(c.powerMod)||0)!==0?'PW':''}${c.counters.length?`${(Number(c.powerMod)||0)!==0?' / ':''}C${c.counters.length}`:''}${c.markers.length?`${((Number(c.powerMod)||0)!==0||c.counters.length)?' / ':''}M${c.markers.length}`:''}${!helperOpen?'なし':''}</span></summary><div class="board-detail-fold-body"><label>POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h4>カウンター</h4><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button><h4>一時マーカー</h4><div id="detail-marker-list">${renderDetailMarkers(c)}</div>${Array.isArray(c.markers)&&c.markers.length?'<button class="btn small" id="clear-temp-markers">すべて外す</button>':''}</div></details><details class="board-detail-fold" ${stackOpen?'open':''}><summary>重なり <span class="pill">${pile.cards.length}</span></summary><div class="board-detail-fold-body">${pile.cards.length>1?`<div class="actions stack-quick-actions"><button class="btn small" id="stack-move-top">一番上だけ移動</button><button class="btn small" id="stack-move-bottom">一番下だけ移動</button><button class="btn small" id="stack-move-all">全部まとめて移動</button><button class="btn small danger" id="stack-split-all">ばらす</button></div>`:''}<div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item stack-item-rich ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span class="stack-order">${i+1}</span><div class="stack-mini-art">${boardMiniArtHtml(x)}</div><div class="stack-item-copy"><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}${x.faceDown?' / 裏向き':''}${x.rested?' / レスト':''}</div></div><div class="stack-item-actions"><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div></div></details>${relatedHtml}</div></div>`);
  hydrateBoardDetailImage(cardImageSourceId(c));
  hydrateBoardMiniListImages($('#modal'));
  bindBoardRelatedLinks(c);
@@ -24528,7 +24654,7 @@ function openDetail(pi,z,index,cardIndex=0,navIds){const pile=getPile(pi,z,index
  const moveDetailNav=step=>{if(!detailNav)return;const pos=detailNav.ids.indexOf(c.instanceId),id=detailNav.ids[pos+step];if(!id)return;const loc=findCardInstance(detailNav.pi,detailNav.z,id);if(loc)openDetail(detailNav.pi,detailNav.z,loc.index,loc.cardIndex,detailNav.ids)};
  if($('#detail-prev'))$('#detail-prev').onclick=()=>moveDetailNav(-1);
  if($('#detail-next'))$('#detail-next').onclick=()=>moveDetailNav(1);
- $('#detail-memo').oninput=e=>{c.memo=e.target.value;renderBoard()};$('#toggle-face').onclick=()=>{c.faceDown=!c.faceDown;openDetail(pi,z,index,cardIndex);renderBoard()};$('#toggle-rest').onclick=()=>{c.rested=!c.rested;openDetail(pi,z,index,cardIndex);renderBoard()};$('#power-mod').onchange=e=>{c.powerMod=Number(e.target.value)||0;renderBoard();const loc=findCardInstance(pi,z,c.instanceId);if(loc)openDetail(pi,z,loc.index,loc.cardIndex,detailNav?.ids)};$('#move-card').onclick=()=>openMoveDialog();$('#stack-card').onclick=()=>openStackDialog();$('#token-from-card').onclick=()=>openTokenCreator(c,pi);$$('[data-quick-move]').forEach(b=>b.onclick=()=>quickMoveFromDetail(b.dataset.quickMove));$('#add-counter').onclick=()=>{c.counters.push({name:'新規',value:1});openDetail(pi,z,index,cardIndex);renderBoard()};
+ $('#detail-memo').oninput=e=>{c.memo=e.target.value;renderBoard()};$('#toggle-face').onclick=()=>{c.faceDown=!c.faceDown;openDetail(pi,z,index,cardIndex);renderBoard()};$('#toggle-rest').onclick=()=>{c.rested=!c.rested;openDetail(pi,z,index,cardIndex);renderBoard()};$('#power-mod').onchange=e=>{c.powerMod=Number(e.target.value)||0;renderBoard();const loc=findCardInstance(pi,z,c.instanceId);if(loc)openDetail(pi,z,loc.index,loc.cardIndex,detailNav?.ids)};const resetCardPower=$('#reset-card-power');if(resetCardPower)resetCardPower.onclick=()=>{c.powerMod=0;renderBoard();const loc=findCardInstance(pi,z,c.instanceId);if(loc)openDetail(pi,z,loc.index,loc.cardIndex,detailNav?.ids);toast('このカードの個別POWER補正を0に戻しました')};$('#move-card').onclick=()=>openMoveDialog();$('#stack-card').onclick=()=>openStackDialog();$('#token-from-card').onclick=()=>openTokenCreator(c,pi);$$('[data-quick-move]').forEach(b=>b.onclick=()=>quickMoveFromDetail(b.dataset.quickMove));$('#add-counter').onclick=()=>{c.counters.push({name:'新規',value:1});openDetail(pi,z,index,cardIndex);renderBoard()};
  $$('[data-detail-marker-remove]').forEach(b=>b.onclick=()=>{const i=c.markers.findIndex(m=>String(m.id)===String(b.dataset.detailMarkerRemove));if(i>=0)c.markers.splice(i,1);openDetail(pi,z,index,cardIndex);renderBoard()});const clearMarkers=$('#clear-temp-markers');if(clearMarkers)clearMarkers.onclick=()=>{c.markers=[];openDetail(pi,z,index,cardIndex);renderBoard()};
  const stackTop=$('#stack-move-top'),stackBottom=$('#stack-move-bottom'),stackAll=$('#stack-move-all'),stackSplit=$('#stack-split-all');
  if(stackTop)stackTop.onclick=()=>openMoveDialog({pi,z,index,cardIndex:0});
