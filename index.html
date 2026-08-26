@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v10.2</title>
+<title>みん会TCG Simulator v10.3</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -16107,6 +16107,21 @@ body.album-direct-dragging *{cursor:grabbing!important}
  .mobile-power-tool .home-power-value-row{grid-template-columns:auto minmax(56px,1fr) auto}
 }
 
+
+/* ==========================================================
+   v10.3 Floating visual previews / custom FX
+   ========================================================== */
+.floating-preview-root{position:fixed;inset:0;z-index:130;pointer-events:none}
+.floating-preview-root[hidden]{display:none!important}
+.floating-preview-window{position:fixed;width:min(330px,calc(100vw - 16px));max-height:min(72vh,620px);overflow:hidden;border:1px solid #66788f;border-radius:13px;background:rgba(18,24,32,.985);box-shadow:0 16px 38px rgba(0,0,0,.5);pointer-events:auto}
+.floating-preview-handle{display:flex;align-items:center;gap:7px;padding:7px 8px;border-bottom:1px solid #394654;background:#111923;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.floating-preview-handle:active{cursor:grabbing}.floating-preview-handle b{font-size:11px}.floating-preview-drag-note{font-size:7px;margin-right:auto}.floating-preview-content{max-height:calc(min(72vh,620px) - 44px);overflow:auto;padding:8px;overscroll-behavior:contain}.floating-preview-caption{font-size:8px;line-height:1.4;margin-top:6px}
+.register-image-field input{margin-top:5px}.register-image-tools{display:flex;align-items:center;justify-content:space-between;gap:8px}.register-floating-card{position:relative;width:min(100%,270px);aspect-ratio:5/7;margin:0 auto;border:1px solid #536174;border-radius:11px;overflow:hidden;background:linear-gradient(135deg,#1b2531,#0b1016);background-size:cover;background-position:center;box-shadow:0 10px 25px rgba(0,0,0,.35)}.register-floating-card-shade{position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(2,4,8,.88))}.register-floating-card-info{position:absolute;z-index:2;left:7%;right:7%;bottom:6%;display:grid;gap:3px;text-shadow:0 2px 5px #000}.register-floating-card-info b{font-size:13px}.register-floating-card-info span,.register-floating-card-info small{font-size:8px}.register-floating-effect{margin-top:7px;padding:7px;border:1px solid #34404e;border-radius:8px;background:#0c1219;font-size:9px}.register-floating-effect div{white-space:pre-wrap;line-height:1.45;margin-top:4px;max-height:110px;overflow:auto}
+.frame-editor-layout-floating{grid-template-columns:1fr}.frame-editor-top-actions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.floating-frame-preview{width:min(100%,270px)}
+.fx-editor-preview-actions{margin-top:8px}.fx-custom{inset:0!important;background-position:center;background-size:100% 100%;background-repeat:no-repeat}.fx-custom.custom-fx-loaded{opacity:var(--fx-o,.7)}@keyframes customFxFloat{0%{transform:scale(1.015) translate3d(-1.2%,-.8%,0) rotate(-.25deg)}50%{transform:scale(1.035) translate3d(1%,.6%,0) rotate(.2deg)}100%{transform:scale(1.02) translate3d(-.5%,1.1%,0) rotate(-.1deg)}}.fx-animate .fx-custom.custom-motion-animated{animation:customFxFloat 5.6s ease-in-out infinite alternate}
+.custom-fx-register{display:grid;grid-template-columns:minmax(120px,1fr) 150px auto;gap:7px;align-items:end;border:1px solid var(--line);border-radius:10px;padding:9px;background:#0e141b}.custom-fx-file-label{margin:0;text-align:center}.custom-fx-register-run{grid-column:1/-1}.custom-fx-help{margin:7px 0 10px;font-size:8.5px}.custom-fx-manager-list{display:grid;gap:7px}.custom-fx-manager-row{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:7px;background:#0d131a}.custom-fx-manager-thumb{width:72px;aspect-ratio:5/7;border:1px solid #455264;border-radius:7px;background-color:#111820;background-size:contain;background-position:center;background-repeat:no-repeat}.custom-fx-manager-copy{display:grid;gap:5px;min-width:0}.custom-fx-manager-copy input,.custom-fx-manager-copy select{min-width:0;padding:6px;font-size:9px}
+@media(max-width:600px){.floating-preview-window{width:min(300px,calc(100vw - 12px));max-height:68dvh}.floating-preview-content{max-height:calc(68dvh - 44px)}.custom-fx-register{grid-template-columns:1fr 1fr}.custom-fx-file-label{grid-column:1/-1}.custom-fx-manager-row{grid-template-columns:58px minmax(0,1fr)}.custom-fx-manager-thumb{width:58px}.custom-fx-manager-row>.danger{grid-column:1/-1}}
+
 </style>
 </head>
 <body>
@@ -16115,7 +16130,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v10.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v10.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -16198,8 +16213,10 @@ body.album-direct-dragging *{cursor:grabbing!important}
           <label>レアリティ<input id="card-rarity" placeholder="自由入力" list="rarity-suggestions" /></label>
           <label class="wide">効果<textarea id="card-effect"></textarea></label>
           <label class="wide">フレーバーテキスト<textarea id="card-flavor" placeholder="任意入力"></textarea></label>
+          <label class="wide register-image-field">カード画像<input id="card-register-image" type="file" accept="image/*"></label>
+          <div class="wide register-image-tools"><span id="card-register-image-status" class="muted">画像未選択</span><button class="btn small" type="button" id="card-register-preview-open">プレビューを開く</button></div>
           <datalist id="rarity-suggestions"></datalist>
-          <div class="wide actions"><button class="btn primary" type="submit">登録</button><button class="btn" type="button" id="card-clear">入力をクリア</button></div>
+          <div class="wide actions"><button class="btn primary" type="submit" id="card-register-submit">カードと画像を登録</button><button class="btn" type="button" id="card-clear">入力をクリア</button></div>
         </form>
         <div class="register-history">
           <div class="section-head" style="margin-top:14px"><h2 style="font-size:16px">最近登録したカード</h2><span class="muted">最大5枚</span></div>
@@ -16846,6 +16863,17 @@ body.album-direct-dragging *{cursor:grabbing!important}
   </section>
 </main>
 
+<div id="floating-preview-root" class="floating-preview-root" hidden aria-hidden="true">
+  <section id="floating-preview-window" class="floating-preview-window">
+    <div id="floating-preview-handle" class="floating-preview-handle">
+      <b id="floating-preview-title">プレビュー</b>
+      <span class="muted floating-preview-drag-note">ドラッグで移動</span>
+      <button id="floating-preview-close" class="btn small" type="button">閉じる</button>
+    </div>
+    <div id="floating-preview-content" class="floating-preview-content"></div>
+  </section>
+</div>
+
 <div id="mobile-board-tool-root" class="mobile-board-tool-root" aria-hidden="true">
   <button id="mobile-board-tool-button" class="mobile-board-tool-button" type="button" aria-label="盤面ツール。タップで開く、スワイプで移動">
     <span>☰</span><small>操作</small>
@@ -16869,7 +16897,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
 <script>
 (() => {
 'use strict';
-const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01', LS_CARD_REGISTER_RECENT='minkai_tcg_card_register_recent_v16', LS_HAND_FOLLOW='minkai_tcg_hand_follow_v11', LS_BOARD_DISPLAY='minkai_tcg_board_display_v20', LS_THEME='minkai_tcg_theme_v27', LS_COLLECTION='minkai_tcg_collection_v32', LS_CARD_FX='minkai_tcg_card_fx_v36', LS_BOARD_TOOLS='minkai_tcg_board_tools_v01', LS_BOARD_SESSION='minkai_tcg_board_session_v01', LS_BOARD_SNAPSHOTS='minkai_tcg_board_snapshots_v01', LS_MOBILE_BOARD_TOOL='minkai_tcg_mobile_board_tool_v01';
+const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01', LS_CARD_REGISTER_RECENT='minkai_tcg_card_register_recent_v16', LS_HAND_FOLLOW='minkai_tcg_hand_follow_v11', LS_BOARD_DISPLAY='minkai_tcg_board_display_v20', LS_THEME='minkai_tcg_theme_v27', LS_COLLECTION='minkai_tcg_collection_v32', LS_CARD_FX='minkai_tcg_card_fx_v36', LS_BOARD_TOOLS='minkai_tcg_board_tools_v01', LS_BOARD_SESSION='minkai_tcg_board_session_v01', LS_BOARD_SNAPSHOTS='minkai_tcg_board_snapshots_v01', LS_MOBILE_BOARD_TOOL='minkai_tcg_mobile_board_tool_v01', LS_FLOATING_PREVIEW='minkai_tcg_floating_preview_v01';
 const ZONE_LABELS={character:'キャラクター',pain:'ペインカウント',room:'ルーム',rulePlus:'ルールプラス',hand:'手札',deck:'デッキ',otherDeck:'その他デッキ',grave:'墓地',banish:'消失領域'};
 
 const CARD_FIXED_TYPES=['キャラクター','ルーム','ロール','ルールプラス','アナザーゲート'];
@@ -16950,6 +16978,9 @@ const CARD_VISUAL_EFFECTS=[
  {id:'digital-code',name:'デジタルコード',category:'機械・デジタル'}
 ];
 const CARD_FX_IDS=new Set(CARD_VISUAL_EFFECTS.map(x=>x.id));
+function customFxIdFromType(type=''){const s=String(type||'');return s.startsWith('custom:')?s.slice(7):''}
+function isCustomFxType(type=''){return !!customFxIdFromType(type)}
+function isValidCardFxType(type=''){const s=String(type||'');return CARD_FX_IDS.has(s)||isCustomFxType(s)}
 function defaultMobileBoardToolPrefs(){return {x:.88,y:.68}}
 function normalizeMobileBoardToolPrefs(raw={}){
  return {x:Math.max(.06,Math.min(.94,Number(raw.x)||.88)),y:Math.max(.10,Math.min(.90,Number(raw.y)||.68))};
@@ -17012,7 +17043,7 @@ function normalizeCardFxPrefs(raw={}){
 function normalizeCardVisualEffects(raw){
  const source=Array.isArray(raw)?raw:[],out=[],used=new Set();
  for(let i=0;i<source.length;i++){
-   const x=source[i];if(!x||typeof x!=='object'||!CARD_FX_IDS.has(String(x.type||'')))continue;
+   const x=source[i];if(!x||typeof x!=='object'||!isValidCardFxType(String(x.type||'')))continue;
    const requested=Number(x.slot),slot=[1,2,3,4].includes(requested)?requested:i+1;
    if(slot<1||slot>4||used.has(slot))continue;
    used.add(slot);
@@ -17390,7 +17421,11 @@ function cardFxLayersFor(card){
 function fxTypeOptionsHtml(selected=''){
  const groups={};
  CARD_VISUAL_EFFECTS.forEach(x=>(groups[x.category]||(groups[x.category]=[])).push(x));
- return '<option value="">なし</option>'+Object.entries(groups).map(([cat,rows])=>`<optgroup label="${cat}">${rows.map(x=>`<option value="${x.id}"${x.id===selected?' selected':''}>${x.name}</option>`).join('')}</optgroup>`).join('');
+ let html='<option value="">なし</option>'+Object.entries(groups).map(([cat,rows])=>`<optgroup label="${cat}">${rows.map(x=>`<option value="${x.id}"${x.id===selected?' selected':''}>${x.name}</option>`).join('')}</optgroup>`).join('');
+ const custom=[...customFxAssetCache.values()].sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'ja'));
+ if(custom.length)html+=`<optgroup label="自作エフェクト">${custom.map(x=>{const v=`custom:${x.id}`;return `<option value="${esc(v)}"${v===selected?' selected':''}>${esc(x.name||'自作エフェクト')}［${x.motion==='animated'?'アニメ':'静止'}］</option>`}).join('')}</optgroup>`;
+ if(isCustomFxType(selected)&&!customFxAssetCache.has(customFxIdFromType(selected)))html+=`<option value="${esc(selected)}" selected>自作エフェクト（データ未登録）</option>`;
+ return html;
 }
 function fxIntensityVars(v){
  if(v==='weak')return {sat:.82,bright:.95};
@@ -17404,7 +17439,8 @@ function cardFxStackHtmlFromLayers(layers,opt={}){
  if(!rows.length)return '';
  const count=Math.max(1,Math.min(4,rows.length));
  return `<div class="card-fx-stack fx-count-${count} ${animate?'fx-animate':''}" data-fx-count="${count}" aria-hidden="true">${rows.map(x=>{
-   const v=fxIntensityVars(x.intensity),power=x.intensity==='weak'?.78:x.intensity==='strong'?1.28:1;
+   const v=fxIntensityVars(x.intensity),power=x.intensity==='weak'?.78:x.intensity==='strong'?1.28:1,customId=customFxIdFromType(x.type);
+   if(customId)return `<span class="card-fx-layer fx-custom fx-intensity-${x.intensity}" data-fx-type="${esc(x.type)}" data-custom-fx="${esc(customId)}" data-fx-slot="${x.slot}" style="--fx-o:${x.opacity/100};--fx-sat:${v.sat};--fx-bright:${v.bright};--fx-power:${power};--fx-slot:${x.slot}"></span>`;
    return `<span class="card-fx-layer fx-${x.type} fx-intensity-${x.intensity}" data-fx-type="${x.type}" data-fx-slot="${x.slot}" style="--fx-o:${x.opacity/100};--fx-sat:${v.sat};--fx-bright:${v.bright};--fx-power:${power};--fx-slot:${x.slot}"><i class="fx-deco fx-deco-a"></i><i class="fx-deco fx-deco-b"></i><i class="fx-deco fx-deco-c"></i></span>`;
  }).join('')}</div>`;
 }
@@ -17865,10 +17901,11 @@ function load(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{retur
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
 
 // v2.2 Card image system
-const IMAGE_DB_NAME='minkai_tcg_images_v22',IMAGE_DB_VERSION=3;
-let imageDbPromise=null,imageReadyPromise=Promise.resolve(),backgroundReadyPromise=Promise.resolve(),frameReadyPromise=Promise.resolve(),imageSystemAvailable='indexedDB' in window;
+const IMAGE_DB_NAME='minkai_tcg_images_v22',IMAGE_DB_VERSION=4;
+let imageDbPromise=null,imageReadyPromise=Promise.resolve(),backgroundReadyPromise=Promise.resolve(),frameReadyPromise=Promise.resolve(),customFxReadyPromise=Promise.resolve(),imageSystemAvailable='indexedDB' in window;
 const imageLinkCache=new Map(),imageUrlCache=new Map(),backgroundAssetCache=new Map(),backgroundUrlCache=new Map();
 const frameAssetCache=new Map(),frameLinkCache=new Map(),frameUrlCache=new Map();
+const customFxAssetCache=new Map(),customFxUrlCache=new Map();
 
 function normalizeImageView(v={}){
  const pointMap={
@@ -17907,6 +17944,7 @@ function openImageDb(){
      if(!db.objectStoreNames.contains('backgrounds'))db.createObjectStore('backgrounds',{keyPath:'id'});
      if(!db.objectStoreNames.contains('frames'))db.createObjectStore('frames',{keyPath:'id'});
      if(!db.objectStoreNames.contains('frameLinks'))db.createObjectStore('frameLinks',{keyPath:'cardId'});
+     if(!db.objectStoreNames.contains('customFx'))db.createObjectStore('customFx',{keyPath:'id'});
    };
    req.onsuccess=()=>resolve(req.result);
    req.onerror=()=>reject(req.error||new Error('画像データベースを開けませんでした'));
@@ -18259,6 +18297,56 @@ async function replaceFrameDatabase(frames=[],links=[]){
    tx.onabort=()=>reject(tx.error||new Error('フレームデータベースの復元が中断されました'));
  });
 }
+function resetCustomFxRuntimeCache(){
+ for(const url of customFxUrlCache.values()){try{URL.revokeObjectURL(url)}catch{}}
+ customFxUrlCache.clear();customFxAssetCache.clear();
+}
+async function initCustomFxSystem(){
+ if(!imageSystemAvailable)return false;
+ const rows=await imageDbGetAll('customFx');customFxAssetCache.clear();
+ rows.forEach(x=>{if(x?.id&&x?.blob)customFxAssetCache.set(String(x.id),x)});return true;
+}
+async function getCustomFxAsset(id){
+ const key=String(id||'');if(!key)return null;
+ if(customFxAssetCache.has(key))return customFxAssetCache.get(key);
+ const rec=await imageDbGet('customFx',key);if(rec?.id)customFxAssetCache.set(key,rec);return rec||null;
+}
+async function getCustomFxObjectUrl(id){
+ const key=String(id||'');if(!key)return '';
+ if(customFxUrlCache.has(key))return customFxUrlCache.get(key);
+ const rec=await getCustomFxAsset(key);if(!rec?.blob)return '';
+ const url=URL.createObjectURL(rec.blob);customFxUrlCache.set(key,url);return url;
+}
+async function createCustomFxAssetRecord(file,name='',motion='static'){
+ if(!file)throw new Error('自作エフェクト画像を選択してください');
+ const mime=String(file.type||'').toLowerCase();
+ if(!['image/png','image/webp'].includes(mime))throw new Error('自作エフェクトはPNGまたはWebPを使用してください');
+ if(Number(file.size)>12*1024*1024)throw new Error('自作エフェクト画像は12MB以下にしてください');
+ const dim=await imageDimensionsFromBlob(file);if(!dim.width||!dim.height)throw new Error('画像サイズを確認できません');
+ const fallback=String(file.name||'自作エフェクト').replace(/\.(png|webp)$/i,'')||'自作エフェクト';
+ return {id:uid('customfx'),name:String(name||fallback).trim().slice(0,60)||fallback,originalName:String(file.name||''),width:dim.width,height:dim.height,motion:motion==='animated'?'animated':'static',createdAt:new Date().toISOString(),blob:file};
+}
+async function saveCustomFxAsset(rec){if(!rec?.id||!rec?.blob)throw new Error('自作エフェクトデータが不正です');await imageDbPut('customFx',rec);customFxAssetCache.set(String(rec.id),rec);return rec}
+function customFxUsageCount(id){const type=`custom:${id}`;return cards.reduce((n,c)=>n+(normalizeCardVisualEffects(c.visualEffects).some(x=>x.type===type)?1:0),0)}
+async function deleteCustomFxAsset(id){
+ const key=String(id||'');if(!key)return;
+ cards.forEach(c=>{c.visualEffects=normalizeCardVisualEffects(c.visualEffects).filter(x=>x.type!==`custom:${key}`)});save(LS_CARDS,cards);
+ await imageDbDelete('customFx',key);customFxAssetCache.delete(key);
+ if(customFxUrlCache.has(key)){try{URL.revokeObjectURL(customFxUrlCache.get(key))}catch{}customFxUrlCache.delete(key)}
+ renderCollection();if(board)renderBoard();
+}
+async function replaceCustomFxDatabase(records=[]){
+ const db=await openImageDb();return new Promise((resolve,reject)=>{const tx=db.transaction(['customFx'],'readwrite'),s=tx.objectStore('customFx');s.clear();for(const rec of records)if(rec?.id&&rec?.blob)s.put(rec);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error||new Error('自作エフェクトの復元に失敗しました'));tx.onabort=()=>reject(tx.error||new Error('自作エフェクトの復元が中断されました'))})
+}
+async function hydrateCustomFxLayer(el){
+ if(!el?.isConnected||el.dataset.customFxReady==='1')return;const id=String(el.dataset.customFx||'');if(!id)return;
+ el.dataset.customFxReady='loading';
+ try{await customFxReadyPromise;const rec=await getCustomFxAsset(id),url=await getCustomFxObjectUrl(id);if(!el.isConnected)return;if(url){el.style.backgroundImage=`url("${url}")`;el.classList.add('custom-fx-loaded');el.classList.toggle('custom-motion-animated',rec?.motion==='animated')}el.dataset.customFxReady='1'}catch(err){console.warn('自作エフェクト読込失敗',err);if(el.isConnected)el.dataset.customFxReady='1'}
+}
+function hydrateAllCustomFx(root=document){root.querySelectorAll?.('[data-custom-fx]').forEach(el=>{if(el.dataset.customFxReady!=='1'&&el.dataset.customFxReady!=='loading')hydrateCustomFxLayer(el)})}
+let customFxHydrationObserver=null;
+function initCustomFxHydrationObserver(){if(customFxHydrationObserver)return;customFxHydrationObserver=new MutationObserver(records=>{for(const rec of records)for(const node of rec.addedNodes){if(node?.nodeType!==1)continue;if(node.matches?.('[data-custom-fx]'))hydrateCustomFxLayer(node);node.querySelectorAll?.('[data-custom-fx]').forEach(hydrateCustomFxLayer)}});customFxHydrationObserver.observe(document.body,{childList:true,subtree:true});hydrateAllCustomFx()}
+
 function cardFrameHtml(card){
  const sourceId=typeof card==='string'?String(card):cardFrameSourceId(card);
  if(!sourceId)return '';
@@ -18316,10 +18404,10 @@ function formatBytes(bytes){
 async function getImageStorageStats(){
  if(!imageSystemAvailable)return {available:false};
  await imageReadyPromise;
- const [images,links,backgrounds,frames,frameLinks]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links'),imageDbGetAll('backgrounds'),imageDbGetAll('frames'),imageDbGetAll('frameLinks')]);
+ const [images,links,backgrounds,frames,frameLinks,customFx]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links'),imageDbGetAll('backgrounds'),imageDbGetAll('frames'),imageDbGetAll('frameLinks'),imageDbGetAll('customFx')]);
  const validLinks=links.filter(x=>cards.some(c=>c.id===x.cardId)&&x.imageId);
  const usedImageIds=new Set(validLinks.map(x=>x.imageId));
- let imageBytes=0,backgroundBytes=0,frameBytes=0;
+ let imageBytes=0,backgroundBytes=0,frameBytes=0,customFxBytes=0;
  images.forEach(rec=>{
    imageBytes+=(Number(rec.fullBlob?.size)||0)+(Number(rec.thumbBlob?.size)||0);
  });
@@ -18327,6 +18415,7 @@ async function getImageStorageStats(){
    backgroundBytes+=(Number(rec.fullBlob?.size)||0)+(Number(rec.thumbBlob?.size)||0);
  });
  frames.forEach(rec=>{frameBytes+=Number(rec.blob?.size)||0});
+ customFx.forEach(rec=>{customFxBytes+=Number(rec.blob?.size)||0});
  const validFrameLinks=frameLinks.filter(x=>cards.some(c=>c.id===x.cardId)&&x.frameId);
  let estimate=null;
  try{if(navigator.storage?.estimate)estimate=await navigator.storage.estimate()}catch{}
@@ -18341,6 +18430,8 @@ async function getImageStorageStats(){
    frameCount:frames.length,
    frameLinkedCards:validFrameLinks.length,
    frameBytes,
+   customFxCount:customFx.length,
+   customFxBytes,
    originUsage:Number(estimate?.usage)||0,
    originQuota:Number(estimate?.quota)||0
  };
@@ -18381,6 +18472,7 @@ async function updateImageStorageStatus(){
        <div class="image-storage-stat"><b>${formatBytes(s.backgroundBytes)}</b><span>背景画像データの概算容量</span></div>
        <div class="image-storage-stat"><b>5種 + ${s.frameCount}個</b><span>標準サンプル + カスタムフレーム / ${s.frameLinkedCards}枚に設定</span></div>
        <div class="image-storage-stat"><b>${formatBytes(s.frameBytes)}</b><span>フレームPNGの概算容量</span></div>
+       <div class="image-storage-stat"><b>${s.customFxCount}個 / ${formatBytes(s.customFxBytes)}</b><span>自作エフェクトライブラリ</span></div>
        <div class="image-storage-stat"><b>${quota}</b><span>このサイト全体の保存領域 使用量 / 上限</span></div>
      </div>`;
    }
@@ -19025,6 +19117,7 @@ function pushAppScreenHistory(name){
 function nav(name,opt={}){
  const screen=$('#screen-'+name);if(!screen)return;
  const previous=currentScreenName;
+ if(floatingPreviewOpen&&floatingPreviewOwner.startsWith('screen:')&&floatingPreviewOwner!==`screen:${name}`)closeFloatingPreview();
  if(name!==previous){
    if(name==='home')appScreenHistory.length=0;
    else if(!opt.fromHistory&&previous)pushAppScreenHistory(previous);
@@ -19225,7 +19318,7 @@ function exportCardsObject(){return {format:'min-kai-tcg-cards',version:4,cards:
 function exportAllObject(){return {format:SIM_FORMAT,version:6,cardFxPrefs:normalizeCardFxPrefs(cardFxPrefs),cards:cards.map(cardToPortable),decks:decks.map(d=>({id:d.id,name:d.name,...deckSettingsFrom(d),cards:Object.entries(d.entries).filter(([,n])=>n>0).map(([cardId,count])=>({cardId,cardName:cards.find(c=>c.id===cardId)?.name||'',count}))}))}}
 
 // v2.4 Full backup ZIP (store method: images are already compressed)
-const FULL_BACKUP_FORMAT='min-kai-tcg-full-backup',FULL_BACKUP_VERSION=4;
+const FULL_BACKUP_FORMAT='min-kai-tcg-full-backup',FULL_BACKUP_VERSION=5;
 const zipEncoder=new TextEncoder(),zipDecoder=new TextDecoder();
 let crc32Table=null;
 function getCrc32Table(){
@@ -19321,9 +19414,9 @@ function downloadBlob(blob,filename){
 }
 async function buildFullBackupZip(onProgress=()=>{}){
  if(!imageSystemAvailable)throw new Error('このブラウザでは画像ストレージを利用できません。');
- await Promise.all([imageReadyPromise,backgroundReadyPromise,frameReadyPromise]);
+ await Promise.all([imageReadyPromise,backgroundReadyPromise,frameReadyPromise,customFxReadyPromise]);
  onProgress('バックアップ対象を確認中…');
- const [allImages,allLinks,allBackgrounds,allFrames,allFrameLinks]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links'),imageDbGetAll('backgrounds'),imageDbGetAll('frames'),imageDbGetAll('frameLinks')]);
+ const [allImages,allLinks,allBackgrounds,allFrames,allFrameLinks,allCustomFx]=await Promise.all([imageDbGetAll('images'),imageDbGetAll('links'),imageDbGetAll('backgrounds'),imageDbGetAll('frames'),imageDbGetAll('frameLinks'),imageDbGetAll('customFx')]);
  const validCardIds=new Set(cards.map(c=>c.id));
  const validLinks=allLinks.map(x=>normalizeImageLink(x,x.cardId)).filter(x=>validCardIds.has(x.cardId)&&x.imageId);
  const usedImageIds=new Set(validLinks.map(x=>x.imageId)),images=allImages.filter(x=>usedImageIds.has(x.id));
@@ -19372,15 +19465,20 @@ async function buildFullBackupZip(onProgress=()=>{}){
      file:{path,mime:rec.blob.type||'image/png',size:bytes.length}
    });
  }
+ const customFxMeta=[];
+ for(let i=0;i<allCustomFx.length;i++){
+   const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
+ }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'10.2',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'10.3',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
      collectionVersion:Number(collectionData?.version||0),
      themeVersion:Number(themePrefs?.version||0),
      cardEffectSettings:true,
-     cardFrames:true
+     cardFrames:true,
+     customFx:true
    },
    settings:{
      boardDisplay:{...boardDisplayPrefs},
@@ -19391,7 +19489,8 @@ async function buildFullBackupZip(onProgress=()=>{}){
    images:imageMeta,
    backgrounds:backgroundMeta,
    frameLinks,
-   frames:frameMeta
+   frames:frameMeta,
+   customFx:customFxMeta
  };
  entries.unshift({name:'manifest.json',data:zipEncoder.encode(JSON.stringify(manifest,null,2))});
  onProgress('ZIPを組み立て中…');
@@ -19417,9 +19516,9 @@ function parseFullBackupZip(bytes){
  if(!manifestBytes)throw new Error('manifest.json が見つかりません。');
  let manifest;try{manifest=JSON.parse(zipDecoder.decode(manifestBytes))}catch{throw new Error('manifest.json を読み取れません。')}
  const backupVersion=Number(manifest?.version);
- if(!manifest||manifest.format!==FULL_BACKUP_FORMAT||![1,2,3,4].includes(backupVersion))throw new Error('対応している完全バックアップZIPではありません。');
+ if(!manifest||manifest.format!==FULL_BACKUP_FORMAT||![1,2,3,4,5].includes(backupVersion))throw new Error('対応している完全バックアップZIPではありません。');
  if(!manifest.data||manifest.data.format!=='min-kai-tcg-backup'||!Array.isArray(manifest.data.cards)||!Array.isArray(manifest.data.decks))throw new Error('完全バックアップ内のカード・デッキ情報が不正です。');
- const innerVersion=Number(manifest.data.version);if(![1,2,3,4,5,6].includes(innerVersion))throw new Error('完全バックアップ内の通常バックアップ形式に対応していません。');
+ const innerVersion=Number(manifest.data.version);if(![1,2,3,4,5,6,7,8,9].includes(innerVersion))throw new Error('完全バックアップ内の通常バックアップ形式に対応していません。');
  const cardIds=new Set(manifest.data.cards.map(c=>String(c.id||'')).filter(Boolean)),imageRecords=[],imageIds=new Set();
  for(const meta of Array.isArray(manifest.images)?manifest.images:[]){
    if(!meta||!meta.id||!meta.full?.path||!meta.thumb?.path)throw new Error('完全バックアップ内の画像情報が不正です。');
@@ -19474,16 +19573,20 @@ function parseFullBackupZip(bytes){
  const frameLinks=backupVersion>=4?(Array.isArray(manifest.frameLinks)?manifest.frameLinks:[])
    .map(x=>normalizeFrameLink(x,x?.cardId))
    .filter(x=>cardIds.has(x.cardId)&&frameIds.has(x.frameId)):[];
- return {manifest,backupVersion,imageRecords,links,backgroundRecords,frameRecords,frameLinks,theme,settings:normalizeFullBackupSettings(manifest.settings||{})};
+ const customFxRecords=[];
+ if(backupVersion>=5){for(const meta of Array.isArray(manifest.customFx)?manifest.customFx:[]){if(!meta||!meta.id||!meta.file?.path)throw new Error('完全バックアップ内の自作エフェクト情報が不正です。');const raw=files.get(meta.file.path);if(!raw)throw new Error(`自作エフェクト画像が不足しています：${meta.id}`);customFxRecords.push({id:String(meta.id),name:String(meta.name||'自作エフェクト'),originalName:String(meta.originalName||''),width:Number(meta.width)||0,height:Number(meta.height)||0,motion:meta.motion==='animated'?'animated':'static',createdAt:String(meta.createdAt||''),blob:new Blob([raw],{type:String(meta.file.mime||'image/png')})})}}
+ return {manifest,backupVersion,imageRecords,links,backgroundRecords,frameRecords,frameLinks,customFxRecords,theme,settings:normalizeFullBackupSettings(manifest.settings||{})};
 }
 async function restoreFullBackupZip(parsed){
  if(!imageSystemAvailable)throw new Error('このブラウザでは画像ストレージを利用できません。');
- await Promise.all([imageReadyPromise,backgroundReadyPromise,frameReadyPromise]);
+ await Promise.all([imageReadyPromise,backgroundReadyPromise,frameReadyPromise,customFxReadyPromise]);
  const restoresTheme=parsed.backupVersion>=2&&!!parsed.theme;
  await replaceImageDatabase(parsed.imageRecords,parsed.links,restoresTheme?parsed.backgroundRecords:null);
  await replaceFrameDatabase(parsed.frameRecords||[],parsed.frameLinks||[]);
+ await replaceCustomFxDatabase(parsed.customFxRecords||[]);
  resetImageRuntimeCache();
  resetFrameRuntimeCache();
+ resetCustomFxRuntimeCache();
  if(restoresTheme)resetBackgroundRuntimeCache();
  const r=restoreBackupObject(parsed.manifest.data,{skipImageReconcile:true});
  boardDisplayPrefs=parsed.settings.boardDisplay;handFollowPrefs=parsed.settings.handFollow;
@@ -19491,6 +19594,7 @@ async function restoreFullBackupZip(parsed){
  imageLinkCache.clear();for(const raw of parsed.links){const link=normalizeImageLink(raw,raw.cardId);imageLinkCache.set(link.cardId,link)}
  frameAssetCache.clear();for(const rec of parsed.frameRecords||[]){if(rec?.id)frameAssetCache.set(String(rec.id),rec)}
  frameLinkCache.clear();for(const raw of parsed.frameLinks||[]){const link=normalizeFrameLink(raw,raw.cardId);if(link.cardId&&link.frameId)frameLinkCache.set(link.cardId,link)}
+ customFxAssetCache.clear();for(const rec of parsed.customFxRecords||[]){if(rec?.id)customFxAssetCache.set(String(rec.id),rec)}
  if(restoresTheme){
    parsed.backgroundRecords.forEach(rec=>backgroundAssetCache.set(rec.id,rec));
    themePrefs=normalizeThemePrefs(parsed.theme);
@@ -19500,7 +19604,7 @@ async function restoreFullBackupZip(parsed){
  renderCards();renderDecks();renderSetup(true);renderCollection();updateImageStorageStatus();applyBoardDisplaySettings();hydrateAllCardFrames();
  await applyThemePrefs(themePrefs);
  if($('#screen-settings')?.classList.contains('active'))renderThemeSettings();
- return {cards:r.cards,decks:r.decks,favorites:r.favorites,albums:collectionData.albums.length,images:parsed.imageRecords.length,linkedCards:parsed.links.length,frames:(parsed.frameRecords||[]).length,framedCards:(parsed.frameLinks||[]).length,backgrounds:restoresTheme?parsed.backgroundRecords.length:null,themeRestored:restoresTheme};
+ return {cards:r.cards,decks:r.decks,favorites:r.favorites,albums:collectionData.albums.length,images:parsed.imageRecords.length,linkedCards:parsed.links.length,frames:(parsed.frameRecords||[]).length,framedCards:(parsed.frameLinks||[]).length,customFx:(parsed.customFxRecords||[]).length,backgrounds:restoresTheme?parsed.backgroundRecords.length:null,themeRestored:restoresTheme};
 }
 function exportBackupObject(){
  return {
@@ -19641,7 +19745,7 @@ function importPayload(data,conflict){
   reconcileCardLinks();normalizeDeckSettings();save(LS_CARDS,cards);save(LS_DECKS,decks);if(touchedIds.length)touchRecentCards(touchedIds);if(registeredIds.length)touchRegisteredCards(registeredIds);renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup(true);
   return {added,updated,skipped,deckAdded};
 }
-$$('[data-tool-tab]').forEach(btn=>btn.onclick=()=>{$$('[data-tool-tab]').forEach(b=>b.classList.remove('primary'));btn.classList.add('primary');$$('#screen-cards .tool-pane').forEach(p=>p.classList.remove('active'));$('#tool-pane-'+btn.dataset.toolTab)?.classList.add('active');if(btn.dataset.toolTab==='manual')renderRegisterHistory()});
+$$('[data-tool-tab]').forEach(btn=>btn.onclick=()=>{$$('[data-tool-tab]').forEach(b=>b.classList.remove('primary'));btn.classList.add('primary');$$('#screen-cards .tool-pane').forEach(p=>p.classList.remove('active'));$('#tool-pane-'+btn.dataset.toolTab)?.classList.add('active');if(btn.dataset.toolTab==='manual'){renderRegisterHistory();openRegisterFloatingPreview()}else if(floatingPreviewOwner==='screen:cards')closeFloatingPreview()});
 $('#parse-text-cards').onclick=()=>{textPreviewCards=parseCardText($('#text-import-source').value);$('#text-import-status').textContent=textPreviewCards.length?`${textPreviewCards.length}枚のカードを検出しました。内容を確認してから登録してください。`:'カードを検出できませんでした。';renderTextPreview()};
 $('#clear-text-import').onclick=()=>{$('#text-import-source').value='';$('#text-import-status').textContent='';textPreviewCards=[];renderTextPreview()};
 $('#register-preview-cards').onclick=()=>{if(!textPreviewCards.length)return;let n=0,addedIds=[];for(const c of textPreviewCards){if(!c.name.trim())continue;const id=uid('card');cards.push({id,name:c.name.trim(),type:c.type||'キャラクター',level:String(c.level||'').trim(),power:String(c.power||'').trim(),race:String(c.race||'').trim(),rarity:String(c.rarity||'').trim(),effect:c.effect||'',flavor:c.flavor||'',visualEffects:[],cardLinks:[]});addedIds.push(id);n++}save(LS_CARDS,cards);touchRecentCards(addedIds);touchRegisteredCards(addedIds);$('#text-import-source').value='';$('#text-import-status').textContent=n?`${n}枚を登録しました。入力欄をクリアしました。`:'';textPreviewCards=[];renderTextPreview();renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();toast(`${n}枚を登録しました`)};
@@ -19758,26 +19862,43 @@ function syncManualCustomTypeFields(){
  const left=$('#card-custom-type-left')?.value||'',right=$('#card-custom-type-right')?.value||'',preview=$('#card-custom-type-preview');
  if(preview)preview.textContent=(left.trim()||'左側')+':'+(right.trim()||'右側');
 }
+let registerPreviewFile=null,registerPreviewUrl='';
+function cleanupRegisterPreviewFile(){if(registerPreviewUrl){try{URL.revokeObjectURL(registerPreviewUrl)}catch{}registerPreviewUrl=''}registerPreviewFile=null;const input=$('#card-register-image');if(input)input.value='';const status=$('#card-register-image-status');if(status)status.textContent='画像未選択'}
+function manualRegisterDraft(){
+ let type=$('#card-type')?.value||'キャラクター';if(type==='__custom__')type=buildCustomCardType($('#card-custom-type-left')?.value,$('#card-custom-type-right')?.value)||'その他';
+ return {name:$('#card-name')?.value.trim()||'カード名',type:normalizeCardType(type),level:$('#card-level')?.value.trim()||'',power:$('#card-power')?.value.trim()||'',race:$('#card-race')?.value.trim()||'',rarity:$('#card-rarity')?.value.trim()||'',effect:$('#card-effect')?.value||'',flavor:$('#card-flavor')?.value||''};
+}
+function registerPreviewHtml(){const c=manualRegisterDraft(),stats=[c.type,c.level?`Lv ${esc(c.level)}`:'',c.power?`POWER ${esc(c.power)}`:''].filter(Boolean).join(' / ');return `<div class="register-floating-card ${registerPreviewUrl?'has-image':''}" style="${registerPreviewUrl?`background-image:url(&quot;${esc(registerPreviewUrl)}&quot;)`:''}"><div class="register-floating-card-shade"></div><div class="register-floating-card-info"><b>${esc(c.name)}</b><span>${stats||'カード情報'}</span>${c.race?`<small>${esc(c.race)}</small>`:''}</div></div><div class="register-floating-effect"><b>効果</b><div>${esc(c.effect||'効果テキストなし')}</div></div>`}
+function openRegisterFloatingPreview(){openFloatingPreview('カード登録プレビュー','screen:cards',registerPreviewHtml())}
+function refreshRegisterFloatingPreview(){if(floatingPreviewOpen&&floatingPreviewOwner==='screen:cards')openRegisterFloatingPreview()}
 function clearCardForm(){
  ['card-name','card-level','card-power','card-race','card-rarity','card-effect','card-flavor','card-custom-type-left','card-custom-type-right'].forEach(id=>{const el=$('#'+id);if(el)el.value=''});
- if($('#card-type'))$('#card-type').value='キャラクター';syncManualCustomTypeFields();
+ if($('#card-type'))$('#card-type').value='キャラクター';cleanupRegisterPreviewFile();syncManualCustomTypeFields();refreshRegisterFloatingPreview();
 }
-$('#card-type').onchange=syncManualCustomTypeFields;
-$('#card-custom-type-left').oninput=syncManualCustomTypeFields;
-$('#card-custom-type-right').oninput=syncManualCustomTypeFields;
+$('#card-type').onchange=()=>{syncManualCustomTypeFields();refreshRegisterFloatingPreview()};
+$('#card-custom-type-left').oninput=()=>{syncManualCustomTypeFields();refreshRegisterFloatingPreview()};
+$('#card-custom-type-right').oninput=()=>{syncManualCustomTypeFields();refreshRegisterFloatingPreview()};
+['card-name','card-level','card-power','card-race','card-rarity','card-effect','card-flavor'].forEach(id=>$('#'+id)?.addEventListener('input',refreshRegisterFloatingPreview));
 syncManualCustomTypeFields();
+$('#card-register-image').onchange=e=>{const file=e.target.files?.[0];if(!file){cleanupRegisterPreviewFile();refreshRegisterFloatingPreview();return}if(!String(file.type||'').startsWith('image/')){toast('画像ファイルを選択してください');cleanupRegisterPreviewFile();return}if(registerPreviewUrl){try{URL.revokeObjectURL(registerPreviewUrl)}catch{}}registerPreviewFile=file;registerPreviewUrl=URL.createObjectURL(file);$('#card-register-image-status').textContent=`選択中：${file.name}`;openRegisterFloatingPreview()};
+$('#card-register-preview-open').onclick=openRegisterFloatingPreview;
 $('#card-clear').onclick=clearCardForm;
-$('#card-form').onsubmit=e=>{
- e.preventDefault();
+$('#card-form').onsubmit=async e=>{
+ e.preventDefault();const submit=$('#card-register-submit');if(submit?.disabled)return;
  let type=$('#card-type').value;
- if(type==='__custom__'){
-   type=buildCustomCardType($('#card-custom-type-left').value,$('#card-custom-type-right').value);
-   if(!type){toast('自由種類は左右どちらも入力してください。「:」は入力欄の中では使用できません。');return}
- }
+ if(type==='__custom__'){type=buildCustomCardType($('#card-custom-type-left').value,$('#card-custom-type-right').value);if(!type){toast('自由種類は左右どちらも入力してください。「:」は入力欄の中では使用できません。');return}}
  const obj={id:uid('card'),name:$('#card-name').value.trim(),type:normalizeCardType(type),level:$('#card-level').value.trim(),power:$('#card-power').value.trim(),race:$('#card-race').value.trim(),rarity:$('#card-rarity').value.trim(),effect:$('#card-effect').value,flavor:$('#card-flavor').value,visualEffects:[],cardLinks:[]};
  if(!obj.name)return;
- cards.push(obj);save(LS_CARDS,cards);touchRecentCards(obj.id);touchRegisteredCards(obj.id);clearCardForm();
- renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();toast('カードを登録しました');
+ if(registerPreviewFile&&!imageSystemAvailable){toast('このブラウザでは画像保存を利用できません');return}
+ if(submit){submit.disabled=true;submit.textContent='登録中…'}
+ let rec=null,cardAdded=false,imageLinked=false;
+ try{
+   if(registerPreviewFile){await imageReadyPromise;rec=await createOptimizedImageRecord(registerPreviewFile);await imageDbPut('images',rec)}
+   cards.push(obj);cardAdded=true;save(LS_CARDS,cards);
+   if(rec){await putCardImageLink(defaultImageLink(obj.id,rec.id));imageLinked=true}
+   touchRecentCards(obj.id);touchRegisteredCards(obj.id);clearCardForm();renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();await updateImageStorageStatus();toast(rec?'カードと画像を登録しました':'カードを登録しました');
+ }catch(err){console.error(err);if(imageLinked){try{await deleteCardImageLink(obj.id)}catch{}}if(cardAdded){const i=cards.findIndex(c=>c.id===obj.id);if(i>=0)cards.splice(i,1);save(LS_CARDS,cards)}if(rec?.id){try{await imageDbDelete('images',rec.id);revokeImageUrls(rec.id)}catch{}}toast(err?.message||'カード登録に失敗しました')}
+ finally{if(submit?.isConnected){submit.disabled=false;submit.textContent='カードと画像を登録'}}
 };
 
 function deckUsageCount(cardId){
@@ -20303,6 +20424,12 @@ async function openCardImageEditor(cardId){
 
 
 
+async function openFrameFloatingPreview(cardId){
+ const card=cards.find(c=>c.id===cardId);if(!card)return;
+ openFloatingPreview('フレームプレビュー',`modal:frame:${cardId}`,`<div id="frame-editor-preview" class="frame-editor-preview floating-frame-preview"><span class="frame-editor-fallback">${esc(card.name)}</span>${cardFxHtml(card,'collection')}<span id="frame-editor-overlay" class="card-frame-overlay" data-card-frame="${esc(cardId)}" aria-hidden="true"></span></div><div class="muted floating-preview-caption">カード画像 → エフェクト → フレームの順で表示</div>`);
+ const preview=$('#frame-editor-preview');await hydrateCardArtBackground(preview,cardId,'full',true);if(preview?.classList.contains('has-image'))preview.querySelector('.frame-editor-fallback')?.setAttribute('hidden','');const overlay=$('#frame-editor-overlay');if(overlay){overlay.dataset.frameReady='';hydrateCardFrame(overlay)}hydrateAllCustomFx(preview);
+}
+
 async function openCardFrameEditor(cardId,returnTo='manager'){
  const card=cards.find(c=>c.id===cardId);if(!card)return;
  if(!imageSystemAvailable){toast('このブラウザではフレーム保存を利用できません');return}
@@ -20326,22 +20453,10 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
    const currentIsBuiltin=!!current&&isBuiltinFrameId(current.frameId);
 
    openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-back">${returnTo==='viewer'?'鑑賞モードへ戻る':returnTo==='collection'?'コレクションへ戻る':'カード詳細へ戻る'}</button></div>
-     <div class="frame-editor-layout">
-       <section class="frame-editor-preview-section">
-         <div id="frame-editor-preview" class="frame-editor-preview">
-           <span class="frame-editor-fallback">${esc(card.name)}</span>
-           ${cardFxHtml(card,'collection')}
-           <span id="frame-editor-overlay" class="card-frame-overlay" data-card-frame="${esc(cardId)}" aria-hidden="true"></span>
-         </div>
-         <div class="muted frame-editor-help">カード画像 → エフェクト → フレームの順で重ねます。サンプル5種はすぐ使え、透明PNGの追加登録もできます。元画像は変更しません。</div>
-         <div class="actions">
-           <button class="btn primary" id="frame-upload">新しいPNGを登録して設定</button>
-           <input id="frame-file-input" type="file" accept="image/png,.png" hidden>
-           <button class="btn" id="frame-remove-card" ${current?'':'disabled'}>このカードから外す</button>
-           <button class="btn danger" id="frame-delete-current" ${(!current||currentIsBuiltin)?'disabled':''}>${currentIsBuiltin?'サンプルは削除不可':'現在のフレームをライブラリから削除'}</button>
-         </div>
-       </section>
+     <div class="frame-editor-layout frame-editor-layout-floating">
        <section class="frame-library-section">
+         <div class="frame-editor-top-actions"><button class="btn primary" id="frame-preview-open">プレビューを開く</button><button class="btn" id="frame-upload">新しいPNGを登録して設定</button><input id="frame-file-input" type="file" accept="image/png,.png" hidden><button class="btn" id="frame-remove-card" ${current?'':'disabled'}>このカードから外す</button><button class="btn danger" id="frame-delete-current" ${(!current||currentIsBuiltin)?'disabled':''}>${currentIsBuiltin?'サンプルは削除不可':'現在のフレームをライブラリから削除'}</button></div>
+         <div class="muted frame-editor-help">プレビューはドラッグ可能な小窓で開きます。カード画像 → エフェクト → フレームの順で重ねます。</div>
          <div class="section-head"><h3>フレームライブラリ</h3><div class="actions"><span class="pill">サンプル5種 + カスタム${customFrames.length}個</span><button class="btn small" type="button" id="frame-open-library-manager">ライブラリ管理</button></div></div>
          <div class="muted">実物TCGのオーバースリーブでよくある「外周・角を飾って中央イラストを見せる」方向を参考にしたオリジナルサンプルです。</div>
          <div id="frame-library-grid" class="frame-library-grid">
@@ -20356,12 +20471,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
 
    $('#frame-editor-back').onclick=back;
    $('#frame-open-library-manager').onclick=()=>openFrameLibraryManager(()=>openCardFrameEditor(cardId,returnTo));
-   const preview=$('#frame-editor-preview');
-   await hydrateCardArtBackground(preview,cardId,'full',true);
-   if(preview.classList.contains('has-image'))preview.querySelector('.frame-editor-fallback')?.setAttribute('hidden','');
-   const overlay=$('#frame-editor-overlay');
-   if(overlay){overlay.dataset.frameReady='';hydrateCardFrame(overlay)}
-
+   $('#frame-preview-open').onclick=()=>openFrameFloatingPreview(cardId);
    const thumbs=$$('[data-frame-thumb]');
    for(const el of thumbs){
      const url=await getFrameObjectUrl(el.dataset.frameThumb);
@@ -20372,8 +20482,11 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
      try{
        await putCardFrameLink(cardId,b.dataset.framePick);
        renderCollection();if(board)renderBoard();hydrateAllCardFrames();
+       $$('[data-frame-pick]').forEach(x=>x.classList.toggle('selected',x===b));
+       $('#frame-remove-card').disabled=false;
+       const del=$('#frame-delete-current');if(del){const builtin=isBuiltinFrameId(b.dataset.framePick);del.disabled=builtin;del.textContent=builtin?'サンプルは削除不可':'現在のフレームをライブラリから削除'}
+       if(floatingPreviewOpen&&floatingPreviewOwner===`modal:frame:${cardId}`)openFrameFloatingPreview(cardId);
        toast('フレームを設定しました');
-       openCardFrameEditor(cardId,returnTo);
      }catch(err){console.error(err);toast(err?.message||'フレームを設定できませんでした')}
    });
 
@@ -20396,7 +20509,8 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
    };
 
    $('#frame-remove-card').onclick=async()=>{
-     if(!current)return;
+     const latest=await getCardFrameLink(cardId);
+     if(!latest)return;
      await deleteCardFrameLink(cardId);
      renderCollection();if(board)renderBoard();hydrateAllCardFrames();
      toast('このカードからフレームを外しました');
@@ -20404,12 +20518,13 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
    };
 
    $('#frame-delete-current').onclick=async()=>{
-     if(!current)return;
-     if(isBuiltinFrameId(current.frameId)){toast('サンプルフレームは削除できません');return}
-     const asset=await getFrameAsset(current.frameId),name=asset?.name||'このフレーム';
-     const links=await imageDbGetAll('frameLinks'),used=links.filter(x=>String(x.frameId||'')===String(current.frameId)).length;
+     const latest=await getCardFrameLink(cardId);
+     if(!latest)return;
+     if(isBuiltinFrameId(latest.frameId)){toast('サンプルフレームは削除できません');return}
+     const asset=await getFrameAsset(latest.frameId),name=asset?.name||'このフレーム';
+     const links=await imageDbGetAll('frameLinks'),used=links.filter(x=>String(x.frameId||'')===String(latest.frameId)).length;
      if(!confirm(`${name} をフレームライブラリから削除しますか？\nこのフレームを使用中のカード ${used}枚からも解除されます。`))return;
-     await deleteFrameAsset(current.frameId);
+     await deleteFrameAsset(latest.frameId);
      renderCollection();if(board)renderBoard();updateImageStorageStatus();hydrateAllCardFrames();
      toast('フレームをライブラリから削除しました');
      openCardFrameEditor(cardId,returnTo);
@@ -20542,7 +20657,7 @@ function readFxEditorLayers(card){
    const oldLayer=old.find(x=>x.slot===slot)||null;
    if(slot>cardFxPrefs.maxLayers){if(oldLayer)result.push(oldLayer);continue}
    const type=$(`#fx-edit-type-${slot}`)?.value||'';
-   if(!type||!CARD_FX_IDS.has(type))continue;
+   if(!type||!isValidCardFxType(type))continue;
    result.push({
      slot,type,
      intensity:$(`#fx-edit-intensity-${slot}`)?.value||'standard',
@@ -20604,7 +20719,7 @@ function ensureFxEditorPreviewShell(card){
 }
 async function hydrateFxEditorPreviewImage(cardId,force=false){
  const card=cards.find(c=>c.id===cardId);if(!card)return;
- const details=$('#fx-preview-details');if(!details?.open)return;
+ if(!(floatingPreviewOpen&&floatingPreviewOwner===`modal:fx:${cardId}`))return;
  const art=ensureFxEditorPreviewShell(card),fallback=$('#fx-editor-preview-fallback'),status=$('#fx-editor-preview-status');
  if(!art)return;
  if(status)status.textContent='画像を確認中…';
@@ -20623,10 +20738,10 @@ async function hydrateFxEditorPreviewImage(cardId,force=false){
  }
 }
 function renderFxEditorPreview(card,{forceImage=false}={}){
- const details=$('#fx-preview-details');if(!details?.open)return;
+ if(!(floatingPreviewOpen&&floatingPreviewOwner===`modal:fx:${card.id}`))return;
  const art=ensureFxEditorPreviewShell(card);if(!art)return;
  const layers=readFxEditorLayers(card),animate=$('#fx-preview-animate')?.checked===true,effects=$('#fx-editor-preview-effects');
- if(effects)effects.innerHTML=cardFxStackHtmlFromLayers(layers,{maxLayers:cardFxPrefs.maxLayers,visible:true,animate});
+ if(effects){effects.innerHTML=cardFxStackHtmlFromLayers(layers,{maxLayers:cardFxPrefs.maxLayers,visible:true,animate});hydrateAllCustomFx(effects)}
  requestAnimationFrame(()=>{
    if(!art.isConnected)return;
    const box=art.getBoundingClientRect();
@@ -20638,8 +20753,22 @@ function renderFxEditorPreview(card,{forceImage=false}={}){
  });
  if(forceImage||art.dataset.imageReady!=='1')hydrateFxEditorPreviewImage(card.id,forceImage);
 }
-function openCardEffectEditor(cardId,returnTo='manager'){
- const card=cards.find(c=>c.id===cardId);if(!card)return;
+function openFxFloatingPreview(card){
+ openFloatingPreview('エフェクトプレビュー',`modal:fx:${card.id}`,`<div class="fx-preview-toolbar"><label class="board-follow-row fx-preview-animation-toggle"><input id="fx-preview-animate" type="checkbox">アニメーションで確認</label><button class="btn small" type="button" id="fx-preview-reload-image">画像を再読込</button></div><div id="fx-editor-preview"></div><div class="muted floating-preview-caption">静止設定の自作エフェクトは、アニメーション確認をONにしても動きません。</div>`);
+ $('#fx-preview-animate').onchange=()=>renderFxEditorPreview(card);$('#fx-preview-reload-image').onclick=()=>renderFxEditorPreview(card,{forceImage:true});renderFxEditorPreview(card,{forceImage:true});
+}
+async function hydrateCustomFxManagerThumbs(){for(const el of $$('[data-custom-fx-thumb]')){const url=await getCustomFxObjectUrl(el.dataset.customFxThumb);if(url&&el.isConnected)el.style.backgroundImage=`url("${url}")`}}
+async function openCustomFxManager(cardId,returnTo='manager'){
+ await customFxReadyPromise;const back=()=>openCardEffectEditor(cardId,returnTo),rows=[...customFxAssetCache.values()].sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'ja'));
+ openModal(`<div class="modal-head"><h3>自作エフェクト</h3><button class="btn" id="custom-fx-back">エフェクト設定へ戻る</button></div><div class="custom-fx-register"><label>名前<input id="custom-fx-new-name" maxlength="60" placeholder="未入力ならファイル名"></label><label>表示<select id="custom-fx-new-motion"><option value="static">アニメーション無し</option><option value="animated">アニメーション</option></select></label><label class="btn custom-fx-file-label">PNG / WebPを選択<input id="custom-fx-file" type="file" accept="image/png,image/webp,.png,.webp" hidden></label><span id="custom-fx-file-name" class="muted">未選択</span><button class="btn primary" id="custom-fx-register-run" disabled>ライブラリへ登録</button></div><div class="muted custom-fx-help">透明背景のPNG / WebP推奨。アニメーションを選ぶと、通常のエフェクトアニメーションがONの時に小さく漂う演出を加えます。</div><div class="custom-fx-manager-list">${rows.length?rows.map(x=>`<div class="custom-fx-manager-row"><div class="custom-fx-manager-thumb" data-custom-fx-thumb="${esc(x.id)}"></div><div class="custom-fx-manager-copy"><input data-custom-fx-name="${esc(x.id)}" maxlength="60" value="${esc(x.name||'自作エフェクト')}"><div class="muted">${x.width||'?'} × ${x.height||'?'} / 使用 ${customFxUsageCount(x.id)}枚</div><select data-custom-fx-motion="${esc(x.id)}"><option value="static" ${x.motion==='animated'?'':'selected'}>アニメーション無し</option><option value="animated" ${x.motion==='animated'?'selected':''}>アニメーション</option></select></div><button class="btn small danger" data-custom-fx-delete="${esc(x.id)}">削除</button></div>`).join(''):'<div class="collection-empty">自作エフェクトはまだありません。</div>'}</div>`);
+ $('#custom-fx-back').onclick=back;let file=null;const input=$('#custom-fx-file'),run=$('#custom-fx-register-run');input.onchange=()=>{file=input.files?.[0]||null;$('#custom-fx-file-name').textContent=file?file.name:'未選択';run.disabled=!file;if(file&&!$('#custom-fx-new-name').value)$('#custom-fx-new-name').value=String(file.name||'').replace(/\.(png|webp)$/i,'')};run.onclick=async()=>{if(!file)return;run.disabled=true;run.textContent='登録中…';try{const rec=await createCustomFxAssetRecord(file,$('#custom-fx-new-name').value,$('#custom-fx-new-motion').value);await saveCustomFxAsset(rec);toast('自作エフェクトを登録しました');openCustomFxManager(cardId,returnTo)}catch(err){console.error(err);toast(err?.message||'自作エフェクトを登録できませんでした');if(run.isConnected){run.disabled=false;run.textContent='ライブラリへ登録'}}};
+ $$('[data-custom-fx-name]').forEach(inp=>inp.onchange=async()=>{const rec=await getCustomFxAsset(inp.dataset.customFxName);if(!rec)return;rec.name=String(inp.value||'自作エフェクト').trim().slice(0,60)||'自作エフェクト';await saveCustomFxAsset(rec);toast('名前を変更しました')});
+ $$('[data-custom-fx-motion]').forEach(sel=>sel.onchange=async()=>{const rec=await getCustomFxAsset(sel.dataset.customFxMotion);if(!rec)return;rec.motion=sel.value==='animated'?'animated':'static';await saveCustomFxAsset(rec);hydrateAllCustomFx();toast('アニメーション設定を変更しました')});
+ $$('[data-custom-fx-delete]').forEach(b=>b.onclick=async()=>{const rec=await getCustomFxAsset(b.dataset.customFxDelete);if(!rec)return;const usage=customFxUsageCount(rec.id);if(!confirm(`${rec.name} を削除しますか？${usage?`\nこのエフェクトを使用中の${usage}枚からも設定を外します。`:''}`))return;await deleteCustomFxAsset(rec.id);toast('自作エフェクトを削除しました');openCustomFxManager(cardId,returnTo)});hydrateCustomFxManagerThumbs();
+}
+
+async function openCardEffectEditor(cardId,returnTo='manager'){
+ const card=cards.find(c=>c.id===cardId);if(!card)return;await customFxReadyPromise;
  const existing=normalizeCardVisualEffects(card.visualEffects);
  const rowHtml=slot=>{
    const x=existing.find(y=>y.slot===slot)||{},dormant=slot>cardFxPrefs.maxLayers;
@@ -20665,17 +20794,7 @@ function openCardEffectEditor(cardId,returnTo='manager'){
      </details>
    </div>
    ${cardFxPrefs.maxLayers>2?'<div class="fx-setting-warning">3～4レイヤーは端末によって動作が重くなる場合があります。</div>':''}
-   <details class="fx-preview-details" id="fx-preview-details">
-     <summary>プレビューを開く（開いた時に読み込み）</summary>
-     <div class="fx-editor-preview-panel">
-       <div class="fx-preview-toolbar">
-         <label class="board-follow-row fx-preview-animation-toggle"><input id="fx-preview-animate" type="checkbox">アニメーションで確認</label>
-         <button class="btn small" type="button" id="fx-preview-reload-image">画像を再読込</button>
-       </div>
-       <div id="fx-editor-preview"></div>
-       <div class="muted">プレビューは確認用です。通常は閉じたまま個別レイヤーを編集できます。</div>
-     </div>
-   </details>
+   <div class="actions fx-editor-preview-actions"><button class="btn" id="fx-preview-open">プレビューを開く</button><button class="btn" id="fx-custom-manage">自作エフェクト</button></div>
    <div class="actions" style="margin-top:12px"><button class="btn primary" id="fx-editor-save">保存</button><button class="btn" id="fx-editor-global-settings">全体設定を開く</button></div>
  </div>`);
  $('#modal').classList.add('fx-editor-modal');
@@ -20685,10 +20804,8 @@ function openCardEffectEditor(cardId,returnTo='manager'){
    [`fx-edit-type-${slot}`,`fx-edit-intensity-${slot}`,`fx-edit-enabled-${slot}`].forEach(id=>$('#'+id)?.addEventListener('change',()=>renderFxEditorPreview(card)));
    $(`#fx-edit-opacity-${slot}`)?.addEventListener('input',e=>{$(`#fx-edit-opacity-label-${slot}`).textContent=e.target.value+'%';renderFxEditorPreview(card)});
  }
- const previewDetails=$('#fx-preview-details');
- previewDetails?.addEventListener('toggle',()=>{if(previewDetails.open)renderFxEditorPreview(card,{forceImage:true})});
- $('#fx-preview-animate')?.addEventListener('change',()=>renderFxEditorPreview(card));
- $('#fx-preview-reload-image')?.addEventListener('click',()=>renderFxEditorPreview(card,{forceImage:true}));
+ $('#fx-preview-open').onclick=()=>openFxFloatingPreview(card);
+ $('#fx-custom-manage').onclick=()=>openCustomFxManager(cardId,returnTo);
  const back=()=>returnTo==='collection'?openCollectionDetail(cardId):openCardManagerDetail(cardId);
  $('#fx-editor-close').onclick=back;
  $('#fx-editor-save').onclick=()=>{
@@ -22852,7 +22969,7 @@ function openCollectionViewer(id){
  let swipe=null;
  art.onpointerdown=e=>{if(e.pointerType==='mouse'&&e.button!==0)return;swipe={id:e.pointerId,x:e.clientX,y:e.clientY};art.setPointerCapture?.(e.pointerId)};
  art.onpointerup=e=>{if(!swipe||swipe.id!==e.pointerId)return;const dx=e.clientX-swipe.x,dy=e.clientY-swipe.y;swipe=null;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){if(dx<0&&idx<ids.length-1)openCollectionViewer(ids[idx+1]);else if(dx>0&&idx>0)openCollectionViewer(ids[idx-1])}};
- hydrateCollectionViewerArt(id);
+ hydrateCollectionViewerArt(id);hydrateAllCardFrames($('#collection-viewer-art'));hydrateAllCustomFx($('#collection-viewer-art'));
 }
 
 async function hydrateCollectionDetailArt(cardId){
@@ -22887,7 +23004,7 @@ function openCollectionDetail(id){
  $('#collection-detail-manager').onclick=()=>{closeModal();nav('card-manager');openCardManagerDetail(id)};
  if(idx>0)$('#collection-detail-prev').onclick=()=>openCollectionDetail(navIds[idx-1]);if(idx>=0&&idx<navIds.length-1)$('#collection-detail-next').onclick=()=>openCollectionDetail(navIds[idx+1]);
  bindCardLinksBlock(id,'collection');
- hydrateCollectionDetailArt(id);
+ hydrateCollectionDetailArt(id);hydrateAllCardFrames($('#collection-detail-art'));hydrateAllCustomFx($('#collection-detail-art'));
 }
 function coverCandidatesForSource(){
  const kind=collectionSourceKind(),album=currentAlbum();
@@ -24166,6 +24283,17 @@ function bindBoardToolTray(){
  });
 }
 
+function defaultFloatingPreviewPrefs(){return {x:.78,y:.22}}
+function normalizeFloatingPreviewPrefs(raw={}){return {x:Math.max(.08,Math.min(.92,Number(raw.x)||.78)),y:Math.max(.10,Math.min(.90,Number(raw.y)||.22))}}
+let floatingPreviewPrefs=normalizeFloatingPreviewPrefs(load(LS_FLOATING_PREVIEW,defaultFloatingPreviewPrefs()));
+let floatingPreviewOpen=false,floatingPreviewOwner='',floatingPreviewDrag=null;
+function saveFloatingPreviewPrefs(){floatingPreviewPrefs=normalizeFloatingPreviewPrefs(floatingPreviewPrefs);save(LS_FLOATING_PREVIEW,floatingPreviewPrefs)}
+function clampFloatingPreview(left,top){const win=$('#floating-preview-window');if(!win)return {left,top};const r=win.getBoundingClientRect(),pad=8;return {left:Math.max(pad,Math.min(window.innerWidth-r.width-pad,left)),top:Math.max(pad,Math.min(window.innerHeight-r.height-pad,top))}}
+function applyFloatingPreviewPosition(){const win=$('#floating-preview-window');if(!win||!floatingPreviewOpen)return;const r=win.getBoundingClientRect(),target=clampFloatingPreview(window.innerWidth*floatingPreviewPrefs.x-r.width/2,window.innerHeight*floatingPreviewPrefs.y-r.height/2);win.style.left=`${target.left}px`;win.style.top=`${target.top}px`}
+function openFloatingPreview(title,owner,contentHtml){const root=$('#floating-preview-root'),content=$('#floating-preview-content');if(!root||!content)return;floatingPreviewOpen=true;floatingPreviewOwner=String(owner||'');$('#floating-preview-title').textContent=String(title||'プレビュー');content.innerHTML=contentHtml;root.hidden=false;root.setAttribute('aria-hidden','false');requestAnimationFrame(applyFloatingPreviewPosition)}
+function closeFloatingPreview(){floatingPreviewOpen=false;floatingPreviewOwner='';const root=$('#floating-preview-root');if(root){root.hidden=true;root.setAttribute('aria-hidden','true')}const content=$('#floating-preview-content');if(content)content.innerHTML=''}
+function initFloatingPreviewWindow(){const handle=$('#floating-preview-handle'),win=$('#floating-preview-window'),close=$('#floating-preview-close');if(!handle||!win)return;close.onclick=closeFloatingPreview;handle.onpointerdown=e=>{if(e.target.closest('button')||e.button>0)return;const r=win.getBoundingClientRect();floatingPreviewDrag={id:e.pointerId,dx:e.clientX-r.left,dy:e.clientY-r.top};handle.setPointerCapture?.(e.pointerId);e.preventDefault()};handle.onpointermove=e=>{const s=floatingPreviewDrag;if(!s||s.id!==e.pointerId)return;const pos=clampFloatingPreview(e.clientX-s.dx,e.clientY-s.dy);win.style.left=`${pos.left}px`;win.style.top=`${pos.top}px`;e.preventDefault()};const end=e=>{const s=floatingPreviewDrag;if(!s||s.id!==e.pointerId)return;floatingPreviewDrag=null;const r=win.getBoundingClientRect();floatingPreviewPrefs.x=(r.left+r.width/2)/window.innerWidth;floatingPreviewPrefs.y=(r.top+r.height/2)/window.innerHeight;saveFloatingPreviewPrefs();e.preventDefault()};handle.onpointerup=end;handle.onpointercancel=e=>{if(floatingPreviewDrag?.id===e.pointerId)floatingPreviewDrag=null};window.addEventListener('resize',()=>requestAnimationFrame(applyFloatingPreviewPosition));}
+
 let mobileBoardToolWindowOpen=false,mobileBoardToolSection='menu',mobileBoardToolButtonDrag=null;
 
 function mobileBoardToolAvailable(){
@@ -24724,8 +24852,8 @@ function findCardInstance(pi,z,instanceId){
  }
  return null;
 }
-function openModal(html,closable=true){if(collectionViewerKeyHandler){document.removeEventListener('keydown',collectionViewerKeyHandler);collectionViewerKeyHandler=null}$('#modal').classList.remove('collection-viewer-modal','fx-editor-modal');$('#modal').innerHTML=html;$('#modal-layer').classList.add('open');$('#modal-layer').dataset.closable=closable?'1':'0'}
-function closeModal(){if($('#modal-layer').dataset.closable==='0')return;if(collectionViewerKeyHandler){document.removeEventListener('keydown',collectionViewerKeyHandler);collectionViewerKeyHandler=null}cleanupImageEditorTemp();$('#modal-layer').classList.remove('open');$('#modal').classList.remove('collection-viewer-modal','fx-editor-modal');detailCtx=null;detailNav=null;browseSession=null}
+function openModal(html,closable=true){if(floatingPreviewOpen&&floatingPreviewOwner.startsWith('modal:'))closeFloatingPreview();if(collectionViewerKeyHandler){document.removeEventListener('keydown',collectionViewerKeyHandler);collectionViewerKeyHandler=null}$('#modal').classList.remove('collection-viewer-modal','fx-editor-modal');$('#modal').innerHTML=html;$('#modal-layer').classList.add('open');$('#modal-layer').dataset.closable=closable?'1':'0'}
+function closeModal(){if($('#modal-layer').dataset.closable==='0')return;if(floatingPreviewOpen&&floatingPreviewOwner.startsWith('modal:'))closeFloatingPreview();if(collectionViewerKeyHandler){document.removeEventListener('keydown',collectionViewerKeyHandler);collectionViewerKeyHandler=null}cleanupImageEditorTemp();$('#modal-layer').classList.remove('open');$('#modal').classList.remove('collection-viewer-modal','fx-editor-modal');detailCtx=null;detailNav=null;browseSession=null}
 $('#modal-layer').onclick=e=>{if(e.target===$('#modal-layer'))closeModal()};
 function openDetail(pi,z,index,cardIndex=0,navIds){const pile=getPile(pi,z,index);if(!pile)return;cardIndex=Math.min(cardIndex,pile.cards.length-1);detailCtx={pi,z,index,cardIndex};const c=pile.cards[cardIndex];ensureInstanceBoardExtras(c);
  if(Array.isArray(navIds))detailNav={pi,z,ids:navIds.filter(id=>findCardInstance(pi,z,id))};
@@ -25313,9 +25441,11 @@ $('#image-storage-cleanup').onclick=async()=>{
 
 // initialize
 initMobileBoardToolButton();
+initFloatingPreviewWindow();
 renderRegisterHistory();renderCards();renderDecks();renderSetup();
 imageReadyPromise=initImageSystem().then(ok=>{renderCards();renderCollection();updateImageStorageStatus();if(board)renderBoard();return ok}).catch(err=>{imageSystemAvailable=false;renderCards();updateImageStorageStatus();console.warn('カード画像機能を初期化できませんでした',err);return false});
 frameReadyPromise=initFrameSystem().then(async ok=>{await reconcileFrameLinksWithCards();initFrameHydrationObserver();renderCollection();if(board)renderBoard();hydrateAllCardFrames();updateImageStorageStatus();return ok}).catch(err=>{console.warn('カードフレーム機能を初期化できませんでした',err);return false});
+customFxReadyPromise=initCustomFxSystem().then(ok=>{initCustomFxHydrationObserver();renderCollection();if(board)renderBoard();hydrateAllCustomFx();updateImageStorageStatus();return ok}).catch(err=>{console.warn('自作エフェクト機能を初期化できませんでした',err);return false});
 backgroundReadyPromise=initBackgroundSystem().then(async ok=>{await applyThemePrefs(themePrefs);return ok}).catch(err=>{console.warn('背景ライブラリを初期化できませんでした',err);applyThemePrefs(themePrefs);return false});
 })();
 </script>
