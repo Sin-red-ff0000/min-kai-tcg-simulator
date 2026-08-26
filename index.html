@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v10.3</title>
+<title>みん会TCG Simulator v10.4</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -15450,6 +15450,8 @@ body.album-direct-dragging *{cursor:grabbing!important}
 .collection-placeholder-name,.collection-viewer-art>span{position:relative;z-index:6}
 .board-detail-image>.card-fx-stack{z-index:3}
 .board-detail-image>.card-frame-overlay{z-index:4}
+.fx-editor-preview-card>.card-frame-overlay{z-index:4}
+.fx-editor-preview-card>.fx-editor-preview-name,.fx-editor-preview-card>.fx-editor-preview-status{position:relative;z-index:6}
 
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
@@ -16130,7 +16132,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v10.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v10.4 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -18348,18 +18350,23 @@ let customFxHydrationObserver=null;
 function initCustomFxHydrationObserver(){if(customFxHydrationObserver)return;customFxHydrationObserver=new MutationObserver(records=>{for(const rec of records)for(const node of rec.addedNodes){if(node?.nodeType!==1)continue;if(node.matches?.('[data-custom-fx]'))hydrateCustomFxLayer(node);node.querySelectorAll?.('[data-custom-fx]').forEach(hydrateCustomFxLayer)}});customFxHydrationObserver.observe(document.body,{childList:true,subtree:true});hydrateAllCustomFx()}
 
 function cardFrameHtml(card){
- const sourceId=typeof card==='string'?String(card):cardFrameSourceId(card);
- if(!sourceId)return '';
- return `<span class="card-frame-overlay" data-card-frame="${esc(sourceId)}" aria-hidden="true"></span>`;
+ const cardId=typeof card==='string'?String(card):String(card?.id||'');
+ const sourceId=typeof card==='string'?'':cardFrameSourceId(card);
+ const primaryId=cardId||sourceId;
+ if(!primaryId)return '';
+ const fallbackId=sourceId&&sourceId!==primaryId?sourceId:'';
+ return `<span class="card-frame-overlay" data-card-frame="${esc(primaryId)}"${fallbackId?` data-card-frame-fallback="${esc(fallbackId)}"`:''} aria-hidden="true"></span>`;
 }
 async function hydrateCardFrame(el){
  if(!el?.isConnected||el.dataset.frameReady==='1')return;
  const cardId=String(el.dataset.cardFrame||'');if(!cardId)return;
+ const fallbackId=String(el.dataset.cardFrameFallback||'');
  el.dataset.frameReady='loading';
  try{
    await frameReadyPromise;
    if(!el.isConnected)return;
-   const link=getCachedFrameLink(cardId)||await getCardFrameLink(cardId);
+   let link=getCachedFrameLink(cardId)||await getCardFrameLink(cardId);
+   if(!link&&fallbackId&&fallbackId!==cardId)link=getCachedFrameLink(fallbackId)||await getCardFrameLink(fallbackId);
    if(!link){el.dataset.frameReady='1';return}
    const url=await getFrameObjectUrl(link.frameId);
    if(!el.isConnected)return;
@@ -19470,7 +19477,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'10.3',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'10.4',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -20710,6 +20717,7 @@ function ensureFxEditorPreviewShell(card){
    host.innerHTML=`<div id="fx-editor-preview-art" data-card-id="${esc(cardId)}" class="fx-editor-preview-card">
      <span id="fx-editor-preview-fallback" class="fx-editor-preview-fallback">${esc(card.name)}</span>
      <div id="fx-editor-preview-effects"></div>
+     ${cardFrameHtml(card)}
      <div class="fx-editor-preview-name">${esc(card.name)}</div>
      <div id="fx-editor-preview-status" class="fx-editor-preview-status pill">プレビュー準備中</div>
    </div>`;
@@ -20742,6 +20750,7 @@ function renderFxEditorPreview(card,{forceImage=false}={}){
  const art=ensureFxEditorPreviewShell(card);if(!art)return;
  const layers=readFxEditorLayers(card),animate=$('#fx-preview-animate')?.checked===true,effects=$('#fx-editor-preview-effects');
  if(effects){effects.innerHTML=cardFxStackHtmlFromLayers(layers,{maxLayers:cardFxPrefs.maxLayers,visible:true,animate});hydrateAllCustomFx(effects)}
+ const frame=art.querySelector('[data-card-frame]');if(frame){frame.dataset.frameReady='';hydrateCardFrame(frame)}
  requestAnimationFrame(()=>{
    if(!art.isConnected)return;
    const box=art.getBoundingClientRect();
