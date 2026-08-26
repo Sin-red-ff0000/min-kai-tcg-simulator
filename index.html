@@ -16477,6 +16477,64 @@ html{--visual-generation:"12.0"}
    calc(91px / var(--fx-runtime-density,1)) calc(97px / var(--fx-runtime-density,1))!important;
 }
 
+
+/* ==========================================================
+   v12.0-r3 Frame preview isolation hotfix
+   エフェクト詳細設定とフレーム描画のCSS干渉を遮断する。
+   ========================================================== */
+.frame-preview-card,
+.frame-editor-preview-card,
+.frame-preview-stage,
+.frame-editor-stage{
+  isolation:isolate;
+}
+
+/* フレームPNGはカード全面にのみ重ねる。部分矩形・背景色を持たせない。 */
+.frame-preview-card .card-frame-layer,
+.frame-editor-preview-card .card-frame-layer,
+.frame-preview-stage .card-frame-layer,
+.frame-editor-stage .card-frame-layer,
+.frame-preview-card [data-frame-layer],
+.frame-editor-preview-card [data-frame-layer]{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  max-width:none !important;
+  max-height:none !important;
+  background-color:transparent !important;
+  overflow:visible !important;
+  clip-path:none !important;
+  border-radius:inherit;
+  pointer-events:none;
+}
+
+/* フレーム特殊仕上げは全面レイヤーに限定。
+   mask/gradientが途中で切れた矩形として露出するのを防ぐ。 */
+.frame-preview-card .frame-finish-layer,
+.frame-editor-preview-card .frame-finish-layer,
+.frame-preview-stage .frame-finish-layer,
+.frame-editor-stage .frame-finish-layer,
+.frame-preview-card [data-frame-finish],
+.frame-editor-preview-card [data-frame-finish]{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  box-sizing:border-box !important;
+  background-color:transparent !important;
+  pointer-events:none;
+}
+
+/* エフェクトの詳細設定はcard-fx-stack内部だけに作用させる。
+   frame側の同名カスタムプロパティへ漏らさない。 */
+.card-fx-stack > .card-fx-layer{
+  --frame-opacity:initial;
+  --frame-hue:initial;
+  --frame-sat:initial;
+  --frame-bright:initial;
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -21571,7 +21629,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.0-r2',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.0-r3',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
