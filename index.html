@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v11.90</title>
+<title>みん会TCG Simulator v12.0</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -16416,6 +16416,67 @@ body.album-direct-dragging *{cursor:grabbing!important}
  }
 }
 
+
+/* ==========================================================
+   v12.0 Frame & Effect generation - completion release
+   ========================================================== */
+html{--visual-generation:"12.0"}
+.frame-editor-recovery-note .muted{line-height:1.55}
+
+
+/* ==========================================================
+   v12.0-r2 Detailed effect setting reflection
+   ========================================================== */
+.card-fx-layer{
+ filter:hue-rotate(var(--fx-hue,0deg)) saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1))!important;
+}
+.card-fx-stack>.card-fx-layer{
+ inset:var(--fx-size-inset,-10%)!important;
+}
+.fx-animate .card-fx-layer>.fx-deco-b,
+.fx-animate .card-fx-layer>.fx-deco-c{
+ opacity:calc(var(--fx-motion-detail-opacity,1) * .82)!important;
+}
+.fx-animate .fx-intensity-weak>.fx-deco-c{
+ opacity:calc(var(--fx-motion-detail-opacity,1) * .38)!important;
+}
+.fx-animate .fx-intensity-strong>.fx-deco-c{
+ opacity:calc(var(--fx-motion-detail-opacity,1) * .92)!important;
+}
+
+/* Density support for particle / decorative effects */
+.fx-stardust>.fx-deco-a,
+.fx-light-particles>.fx-deco-a,
+.fx-butterfly-light>.fx-deco-a,
+.fx-sakura>.fx-deco-a,
+.fx-snow>.fx-deco-a,
+.fx-bubbles>.fx-deco-a,
+.fx-feathers>.fx-deco-a,
+.fx-petals>.fx-deco-a,
+.fx-sand>.fx-deco-a{
+ background-size:
+   calc(46px / var(--fx-runtime-density,1))
+   calc(52px / var(--fx-runtime-density,1))!important;
+}
+.fx-ember-ash{
+ background-size:
+   calc(33px / var(--fx-runtime-density,1)) calc(41px / var(--fx-runtime-density,1)),
+   calc(47px / var(--fx-runtime-density,1)) calc(53px / var(--fx-runtime-density,1)),
+   calc(56px / var(--fx-runtime-density,1)) calc(61px / var(--fx-runtime-density,1))!important;
+}
+.fx-crystal-dust{
+ background-size:
+   calc(29px / var(--fx-runtime-density,1))
+   calc(31px / var(--fx-runtime-density,1)),auto!important;
+}
+.fx-luxury-sparkle{
+ background-size:
+   calc(47px / var(--fx-runtime-density,1)) calc(53px / var(--fx-runtime-density,1)),
+   calc(63px / var(--fx-runtime-density,1)) calc(69px / var(--fx-runtime-density,1)),
+   calc(79px / var(--fx-runtime-density,1)) calc(83px / var(--fx-runtime-density,1)),
+   calc(91px / var(--fx-runtime-density,1)) calc(97px / var(--fx-runtime-density,1))!important;
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -17931,7 +17992,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v11.90 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v12.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19324,8 +19385,9 @@ function cardFxStackHtmlFromLayers(layers,opt={}){
  const quality=['high','standard','light'].includes(opt.quality)?opt.quality:'standard';
  return `<div class="card-fx-stack visual-perf-node fx-count-${count} ${animate?'fx-animate':''} fx-quality-${quality}" data-fx-count="${count}" data-fx-quality="${quality}" aria-hidden="true">${rows.map(x=>{
    const v=fxIntensityVars(x.intensity),power=x.intensity==='weak'?.78:x.intensity==='strong'?1.28:1,customId=customFxIdFromType(x.type),style=fxLayerStyle(x,v,power),mask=`fx-mask-${x.mask||'full'}`;
-   if(customId)return `<span class="card-fx-layer fx-custom fx-intensity-${x.intensity} ${mask}" data-fx-type="${esc(x.type)}" data-custom-fx="${esc(customId)}" data-fx-slot="${x.slot}" style="${style}"></span>`;
-   return `<span class="card-fx-layer fx-${x.type} fx-intensity-${x.intensity} ${mask}" data-fx-type="${x.type}" data-fx-slot="${x.slot}" style="${style}"><i class="fx-deco fx-deco-a"></i><i class="fx-deco fx-deco-b"></i><i class="fx-deco fx-deco-c"></i></span>`;
+   const tune=`data-fx-speed="${x.speed}" data-fx-direction="${x.direction}" data-fx-rotation="${x.rotationDirection}" data-fx-motion="${x.motion}" data-fx-density="${x.density}"`;
+   if(customId)return `<span class="card-fx-layer fx-custom fx-intensity-${x.intensity} ${mask}" data-fx-type="${esc(x.type)}" data-custom-fx="${esc(customId)}" data-fx-slot="${x.slot}" ${tune} style="${style}"></span>`;
+   return `<span class="card-fx-layer fx-${x.type} fx-intensity-${x.intensity} ${mask}" data-fx-type="${x.type}" data-fx-slot="${x.slot}" ${tune} style="${style}"><i class="fx-deco fx-deco-a"></i><i class="fx-deco fx-deco-b"></i><i class="fx-deco fx-deco-c"></i></span>`;
  }).join('')}</div>`;
 }
 function currentBoardFxQuality(){
@@ -20362,12 +20424,15 @@ async function replaceCustomFxDatabase(records=[]){
 async function hydrateCustomFxLayer(el){
  if(!el?.isConnected||el.dataset.customFxReady==='1')return;const id=String(el.dataset.customFx||'');if(!id)return;
  el.dataset.customFxReady='loading';
- try{await customFxReadyPromise;const rec=await getCustomFxAsset(id),url=await getCustomFxObjectUrl(id);if(!el.isConnected)return;if(url){el.style.backgroundImage=`url("${url}")`;el.classList.add('custom-fx-loaded');el.classList.toggle('custom-motion-animated',rec?.motion==='animated')}el.dataset.customFxReady='1'}catch(err){console.warn('自作エフェクト読込失敗',err);if(el.isConnected)el.dataset.customFxReady='1'}
+ try{await customFxReadyPromise;const rec=await getCustomFxAsset(id),url=await getCustomFxObjectUrl(id);if(!el.isConnected)return;if(url){el.style.backgroundImage=`url("${url}")`;el.classList.add('custom-fx-loaded');el.classList.toggle('custom-motion-animated',rec?.motion==='animated')}el.dataset.customFxReady='1';applyFxLayerRuntimeTuning(el)}catch(err){console.warn('自作エフェクト読込失敗',err);if(el.isConnected)el.dataset.customFxReady='1'}
 }
 function hydrateAllCustomFx(root=document){
- root?.querySelectorAll?.('.visual-perf-node').forEach(observeVisualNode);root.querySelectorAll?.('[data-custom-fx]').forEach(el=>{if(el.dataset.customFxReady!=='1'&&el.dataset.customFxReady!=='loading')hydrateCustomFxLayer(el)})}
+ root?.querySelectorAll?.('.visual-perf-node').forEach(observeVisualNode);
+ applyFxRuntimeTuning(root);
+ root.querySelectorAll?.('[data-custom-fx]').forEach(el=>{if(el.dataset.customFxReady!=='1'&&el.dataset.customFxReady!=='loading')hydrateCustomFxLayer(el)})
+}
 let customFxHydrationObserver=null;
-function initCustomFxHydrationObserver(){if(customFxHydrationObserver)return;customFxHydrationObserver=new MutationObserver(records=>{for(const rec of records)for(const node of rec.addedNodes){if(node?.nodeType!==1)continue;if(node.matches?.('[data-custom-fx]'))hydrateCustomFxLayer(node);node.querySelectorAll?.('[data-custom-fx]').forEach(hydrateCustomFxLayer)}});customFxHydrationObserver.observe(document.body,{childList:true,subtree:true});hydrateAllCustomFx()}
+function initCustomFxHydrationObserver(){if(customFxHydrationObserver)return;customFxHydrationObserver=new MutationObserver(records=>{for(const rec of records)for(const node of rec.addedNodes){if(node?.nodeType!==1)continue;applyFxRuntimeTuning(node);if(node.matches?.('[data-custom-fx]'))hydrateCustomFxLayer(node);node.querySelectorAll?.('[data-custom-fx]').forEach(hydrateCustomFxLayer)}});customFxHydrationObserver.observe(document.body,{childList:true,subtree:true});hydrateAllCustomFx()}
 
 function cardFrameHtml(card){
  const cardId=typeof card==='string'?String(card):String(card?.id||'');
@@ -21506,7 +21571,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'11.90',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.0-r2',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -28056,6 +28121,102 @@ imageReadyPromise=initImageSystem().then(ok=>{renderCards();renderCollection();u
 frameReadyPromise=initFrameSystem().then(async ok=>{await reconcileFrameLinksWithCards();initFrameHydrationObserver();renderCollection();if(board)renderBoard();hydrateAllCardFrames();updateImageStorageStatus();return ok}).catch(err=>{console.warn('カードフレーム機能を初期化できませんでした',err);return false});
 customFxReadyPromise=initCustomFxSystem().then(ok=>{initCustomFxHydrationObserver();renderCollection();if(board)renderBoard();hydrateAllCustomFx();updateImageStorageStatus();return ok}).catch(err=>{console.warn('自作エフェクト機能を初期化できませんでした',err);return false});
 backgroundReadyPromise=initBackgroundSystem().then(async ok=>{await applyThemePrefs(themePrefs);return ok}).catch(err=>{console.warn('背景ライブラリを初期化できませんでした',err);applyThemePrefs(themePrefs);return false});
+
+/* ==========================================================
+   v12.0 Appearance editor shared helpers
+   These must live inside the main app IIFE because cardFxPrefs
+   and the storage helpers are lexical variables of this scope.
+   ========================================================== */
+function applyAppearanceEditorMode(root=document){
+ const mode=cardFxPrefs?.appearanceEditorMode||'simple';
+ root.querySelectorAll?.('[data-appearance-advanced]').forEach(el=>{
+   el.hidden=mode!=='advanced';
+ });
+ root.querySelectorAll?.('[data-appearance-simple]').forEach(el=>{
+   el.hidden=false;
+ });
+ root.querySelectorAll?.('[data-appearance-mode-label]').forEach(el=>{
+   el.textContent=mode==='advanced'?'詳細設定':'簡単設定';
+ });
+ root.querySelectorAll?.('.appearance-mode-toggle').forEach(btn=>{
+   btn.textContent=mode==='advanced'?'簡単設定へ':'詳細設定へ';
+ });
+}
+function appearanceEditorToggleHtml(){
+ const mode=cardFxPrefs?.appearanceEditorMode||'simple';
+ return `<div class="appearance-mode-switch">
+   <span class="pill" data-appearance-mode-label>${mode==='advanced'?'詳細設定':'簡単設定'}</span>
+   <button class="btn small appearance-mode-toggle" type="button">${mode==='advanced'?'簡単設定へ':'詳細設定へ'}</button>
+ </div>`;
+}
+function bindAppearanceEditorToggle(root=document){
+ root.querySelectorAll?.('.appearance-mode-toggle').forEach(btn=>{
+   btn.onclick=()=>{
+     cardFxPrefs=normalizeCardFxPrefs({
+       ...cardFxPrefs,
+       appearanceEditorMode:(cardFxPrefs?.appearanceEditorMode||'simple')==='advanced'?'simple':'advanced'
+     });
+     saveCardFxPrefs();
+     try{syncCardFxSettingsUI()}catch(_){}
+     applyAppearanceEditorMode(root);
+   };
+ });
+}
+async function frameSystemSelfCheck(){
+ const result={
+   indexedDb:!!imageSystemAvailable,
+   builtinFrames:Array.isArray(BUILTIN_CARD_FRAMES)?BUILTIN_CARD_FRAMES.length:0,
+   customFrames:0,
+   frameLinks:0,
+   ok:true,
+   errors:[]
+ };
+ try{
+   await awaitFrameSystemReady(2500);
+ }catch(err){
+   result.ok=false;
+   result.errors.push('init:'+String(err?.message||err));
+   return result;
+ }
+ try{result.customFrames=(await imageDbGetAll('frames')).length}
+ catch(err){result.ok=false;result.errors.push('frames:'+String(err?.message||err))}
+ try{result.frameLinks=(await imageDbGetAll('frameLinks')).length}
+ catch(err){result.ok=false;result.errors.push('links:'+String(err?.message||err))}
+ return result;
+}
+
+
+/* v12.0-r2: detailed effect settings runtime tuning */
+const FX_ROTATIONAL_TYPES=new Set(['magic-circle','gears','ritual-seal','oil-slick']);
+function applyFxLayerRuntimeTuning(layer){
+ if(!layer?.matches?.('.card-fx-layer'))return;
+ const speed=Math.max(.25,Math.min(2,Number(layer.dataset.fxSpeed||100)/100));
+ const moveDir=layer.dataset.fxDirection||'default';
+ const rotDir=layer.dataset.fxRotation||'default';
+ const motion=Math.max(.25,Math.min(1.8,Number(layer.dataset.fxMotion||100)/100));
+ const density=Math.max(.5,Math.min(1.8,Number(layer.dataset.fxDensity||100)/100));
+ layer.style.setProperty('--fx-runtime-density',String(density));
+ layer.style.setProperty('--fx-motion-detail-opacity',String(Math.max(.35,Math.min(1.35,.55+.45*motion))));
+ requestAnimationFrame(()=>{
+   if(!layer.isConnected)return;
+   let animations=[];
+   try{animations=layer.getAnimations({subtree:true})||[]}catch(_){}
+   for(const anim of animations){
+     let rate=speed;
+     const isRot=FX_ROTATIONAL_TYPES.has(layer.dataset.fxType||'')&&anim.effect?.target!==layer;
+     if(isRot&&rotDir==='reverse')rate=-Math.abs(rate);
+     else if(isRot&&rotDir==='forward')rate=Math.abs(rate);
+     else if(moveDir==='reverse')rate=-Math.abs(rate);
+     else rate=Math.abs(rate);
+     try{anim.updatePlaybackRate(rate)}catch(_){try{anim.playbackRate=rate}catch(__){}}
+   }
+ });
+}
+function applyFxRuntimeTuning(root=document){
+ if(root?.matches?.('.card-fx-layer'))applyFxLayerRuntimeTuning(root);
+ root?.querySelectorAll?.('.card-fx-layer').forEach(applyFxLayerRuntimeTuning);
+}
+
 })();
 </script>
 
@@ -28113,43 +28274,8 @@ refreshVisualPerfMode();
 pauseVisualAnimationsForVisibility();
 
 
-function applyAppearanceEditorMode(root=document){
- const mode=cardFxPrefs.appearanceEditorMode||'simple';
- root.querySelectorAll?.('[data-appearance-advanced]').forEach(el=>{
-   el.hidden=mode!=='advanced';
- });
- root.querySelectorAll?.('[data-appearance-simple]').forEach(el=>{
-   el.hidden=false;
- });
- root.querySelectorAll?.('[data-appearance-mode-label]').forEach(el=>{
-   el.textContent=mode==='advanced'?'詳細設定':'簡単設定';
- });
-}
-function appearanceEditorToggleHtml(){
- const mode=cardFxPrefs.appearanceEditorMode||'simple';
- return `<div class="appearance-mode-switch">
-   <span class="pill" data-appearance-mode-label>${mode==='advanced'?'詳細設定':'簡単設定'}</span>
-   <button class="btn small appearance-mode-toggle" type="button">${mode==='advanced'?'簡単設定へ':'詳細設定へ'}</button>
- </div>`;
-}
-function bindAppearanceEditorToggle(root=document){
- root.querySelectorAll?.('.appearance-mode-toggle').forEach(btn=>{
-   btn.onclick=()=>{
-     cardFxPrefs=normalizeCardFxPrefs({...cardFxPrefs,appearanceEditorMode:cardFxPrefs.appearanceEditorMode==='advanced'?'simple':'advanced'});
-     saveJson(KEY_CARD_FX_PREFS,cardFxPrefs);
-     renderApp();
-   };
- });
-}
 
 
-async function frameSystemSelfCheck(){
- const result={indexedDb:imageSystemAvailable,builtinFrames:BUILTIN_CARD_FRAMES.length,customFrames:0,frameLinks:0,ok:true,errors:[]};
- try{await awaitFrameSystemReady(2500)}catch(err){result.ok=false;result.errors.push('init:'+String(err?.message||err));return result}
- try{result.customFrames=(await imageDbGetAll('frames')).length}catch(err){result.ok=false;result.errors.push('frames:'+String(err?.message||err))}
- try{result.frameLinks=(await imageDbGetAll('frameLinks')).length}catch(err){result.ok=false;result.errors.push('links:'+String(err?.message||err))}
- return result;
-}
 
 </script>
 
