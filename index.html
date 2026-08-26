@@ -16535,6 +16535,30 @@ html{--visual-generation:"12.0"}
   --frame-bright:initial;
 }
 
+
+/* ==========================================================
+   v12.0-r3 Frame alpha-mask definitive fix
+   フレーム用の特殊仕上げ・アニメーションは、
+   フレームPNGの不透明部分にだけ表示する。
+   ========================================================== */
+.card-frame-overlay::before,
+.card-frame-overlay::after{
+  -webkit-mask-image:var(--frame-mask-image,none);
+  mask-image:var(--frame-mask-image,none);
+  -webkit-mask-repeat:no-repeat;
+  mask-repeat:no-repeat;
+  -webkit-mask-position:center;
+  mask-position:center;
+  -webkit-mask-size:var(--frame-mask-size,100% 100%);
+  mask-size:var(--frame-mask-size,100% 100%);
+}
+
+/* フレーム画像が未読込なら加工レイヤーも出さない */
+.card-frame-overlay:not(.frame-loaded)::before,
+.card-frame-overlay:not(.frame-loaded)::after{
+  display:none!important;
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -20258,8 +20282,10 @@ function applyFrameLinkVisual(el,raw,syncProfile=null){
  if(!el)return;const link=normalizeFrameVisual(raw||{});
  el.style.setProperty('--frame-opacity',String(link.opacity/100));
  el.style.setProperty('--frame-motion-speed',String(Math.max(.5,Math.min(1.8,link.motionSpeed/100))));
- el.style.backgroundSize=link.fit==='contain'?'contain':link.fit==='cover'?'cover':'100% 100%';
+ const frameFitSize=link.fit==='contain'?'contain':link.fit==='cover'?'cover':'100% 100%';
+ el.style.backgroundSize=frameFitSize;
  el.style.backgroundPosition='center';
+ el.style.setProperty('--frame-mask-size',frameFitSize);
  const sx=link.flipX?-1:1,sy=link.flipY?-1:1;
  el.style.transform=`translate3d(${link.x}%,${link.y}%,0) scale(${link.scale/100}) rotate(${link.rotate}deg) scale(${sx},${sy})`;
 
@@ -20517,11 +20543,12 @@ async function hydrateCardFrame(el){
      link=getCachedFrameLink(fallbackId)||await getCardFrameLink(fallbackId);
      cfg=frameLayerConfig(link,layerNo);
    }
-   if(!cfg?.frameId){el.dataset.frameReady='1';return}
+   if(!cfg?.frameId){el.style.removeProperty('--frame-mask-image');el.classList.remove('frame-loaded','frame-motion-enabled');el.dataset.frameReady='1';return}
    const url=await getFrameObjectUrl(cfg.frameId);
    if(!el.isConnected)return;
    if(!url){el.dataset.frameReady='1';return}
    el.style.backgroundImage=`url("${url}")`;
+   el.style.setProperty('--frame-mask-image',`url("${url}")`);
    const syncCard=cardForFrameSync(cardId,fallbackId),syncProfile=syncCard?frameFxSyncProfile(syncCard):null;
    applyFrameLinkVisual(el,cfg,syncProfile);
    el.classList.add('frame-loaded');
@@ -22923,7 +22950,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
      let saveTimer=0;
      const applyPreview=async()=>{
        const el=$('#frame-editor-preview .card-frame-layer-1');if(!el)return;
-       const url=await getFrameObjectUrl(workingFrame.frameId);if(url&&el.isConnected){el.style.backgroundImage=`url("${url}")`;applyFrameLinkVisual(el,workingFrame,frameFxSyncProfile(card));el.classList.add('frame-loaded')}
+       const url=await getFrameObjectUrl(workingFrame.frameId);if(url&&el.isConnected){el.style.backgroundImage=`url("${url}")`;el.style.setProperty('--frame-mask-image',`url("${url}")`);applyFrameLinkVisual(el,workingFrame,frameFxSyncProfile(card));el.classList.add('frame-loaded')}
      };
      const commitFrame=()=>{clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{try{await putCardFrameLink(cardId,workingFrame);renderCollection();if(board)renderBoard();hydrateAllCardFrames()}catch(err){console.error(err);toast('フレーム詳細設定を保存できませんでした')}},100)};
      const bindRange=(id,key,valueId,suffix='')=>{const el=$(id),out=$(valueId);if(!el)return;el.oninput=()=>{workingFrame[key]=Number(el.value);if(out)out.textContent=`${el.value}${suffix}`;applyPreview();commitFrame()}};
@@ -22951,7 +22978,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
        if(latest.frameId)await putCardFrameLink(cardId,latest);
        renderCollection();if(board)renderBoard();hydrateAllCardFrames();
      }catch(err){console.error(err);toast('第2フレーム設定を保存できませんでした')}},100)};
-     const applyPreview2=async()=>{const el=$('#frame-editor-preview .card-frame-layer-2');if(!el)return;if(!working2.frameId){el.classList.remove('frame-loaded','frame-motion-enabled');el.style.backgroundImage='';return}const url=await getFrameObjectUrl(working2.frameId);if(url&&el.isConnected){el.style.backgroundImage=`url("${url}")`;applyFrameLinkVisual(el,working2,frameFxSyncProfile(card));el.classList.add('frame-loaded')}};
+     const applyPreview2=async()=>{const el=$('#frame-editor-preview .card-frame-layer-2');if(!el)return;if(!working2.frameId){el.classList.remove('frame-loaded','frame-motion-enabled');el.style.backgroundImage='';el.style.removeProperty('--frame-mask-image');return}const url=await getFrameObjectUrl(working2.frameId);if(url&&el.isConnected){el.style.backgroundImage=`url("${url}")`;el.style.setProperty('--frame-mask-image',`url("${url}")`);applyFrameLinkVisual(el,working2,frameFxSyncProfile(card));el.classList.add('frame-loaded')}};
      const pick=$('#frame2-pick');if(pick)pick.onchange=()=>{working2.frameId=pick.value;applyPreview2();commit2()};
      const bind2=(id,key,outId,suffix='')=>{const el=$(id),out=$(outId);if(!el)return;el.oninput=()=>{working2[key]=Number(el.value);if(out)out.textContent=`${el.value}${suffix}`;applyPreview2();commit2()}};
      bind2('#frame2-scale','scale','#frame2-scale-v','%');bind2('#frame2-opacity','opacity','#frame2-opacity-v','%');bind2('#frame2-x','x','#frame2-x-v');bind2('#frame2-y','y','#frame2-y-v');bind2('#frame2-rotate','rotate','#frame2-rotate-v','°');bind2('#frame2-motion-speed','motionSpeed','#frame2-motion-speed-v','%');bind2('#frame2-sync-strength','fxSyncStrength','#frame2-sync-strength-v','%');
