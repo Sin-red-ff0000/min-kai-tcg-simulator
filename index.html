@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v11.50</title>
+<title>みん会TCG Simulator v11.90</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -16145,6 +16145,277 @@ body.album-direct-dragging *{cursor:grabbing!important}
  }
 }
 
+
+/* ==========================================================
+   v11.70 New effect set
+   ========================================================== */
+.fx-ritual-seal{
+ background:
+  radial-gradient(circle at 50% 50%,transparent 0 26%,rgba(215,80,90,.18) 27% 28%,transparent 29% 39%,rgba(235,170,105,.13) 40% 41%,transparent 42%),
+  conic-gradient(from 0deg,transparent 0 8deg,rgba(255,195,120,.12) 9deg 11deg,transparent 12deg 44deg);
+}
+.fx-ritual-seal>.fx-deco-a{inset:18%;border:1px dashed rgba(255,165,115,.38);border-radius:50%}
+.fx-ritual-seal>.fx-deco-b{inset:33%;border:1px solid rgba(220,75,85,.34);border-radius:50%}
+.fx-curse-miasma{
+ background:radial-gradient(ellipse at 20% 80%,rgba(92,30,118,.24),transparent 42%),radial-gradient(ellipse at 82% 22%,rgba(48,86,42,.18),transparent 40%),radial-gradient(ellipse at 60% 65%,rgba(35,18,54,.18),transparent 52%);
+}
+.fx-curse-miasma>.fx-deco-a{filter:blur(5px);opacity:.72}
+.fx-moonlight{background:radial-gradient(circle at 78% 13%,rgba(235,245,255,.34),rgba(170,210,255,.13) 16%,transparent 35%),linear-gradient(145deg,rgba(195,220,255,.14),transparent 45%)}
+.fx-moonlight>.fx-deco-a{background:linear-gradient(120deg,transparent 36%,rgba(225,240,255,.20) 49%,transparent 62%)}
+.fx-solar-flare{background:radial-gradient(circle at 50% 108%,rgba(255,232,120,.35),rgba(255,135,35,.20) 30%,transparent 58%),linear-gradient(90deg,transparent 34%,rgba(255,248,205,.18) 50%,transparent 66%)}
+.fx-solar-flare>.fx-deco-a{filter:blur(2px)}
+.fx-rain-streak{background:repeating-linear-gradient(104deg,transparent 0 18px,rgba(175,220,255,.16) 19px 20px,transparent 21px 42px)}
+.fx-rain-streak>.fx-deco-a{background:repeating-linear-gradient(104deg,transparent 0 33px,rgba(220,240,255,.22) 34px 35px,transparent 36px 61px)}
+.fx-ember-ash{
+ background:radial-gradient(circle at 22% 78%,rgba(255,105,35,.34) 0 1px,transparent 3px),radial-gradient(circle at 62% 88%,rgba(255,180,75,.28) 0 1px,transparent 3px),radial-gradient(circle at 82% 62%,rgba(120,110,105,.22) 0 2px,transparent 4px);
+ background-size:33px 41px,47px 53px,56px 61px;
+}
+.fx-crystal-dust{background:radial-gradient(circle,rgba(220,245,255,.55) 0 1px,transparent 2px),linear-gradient(62deg,transparent 48%,rgba(175,225,255,.16) 49% 50%,transparent 51%);background-size:29px 31px,auto}
+.fx-spectral-chain{background:repeating-linear-gradient(135deg,transparent 0 34px,rgba(180,175,255,.13) 35px 39px,transparent 40px 72px)}
+.fx-spectral-chain>.fx-deco-a{border:2px dashed rgba(180,170,255,.28);inset:12%;border-radius:38%}
+.fx-oil-slick{background:conic-gradient(from 40deg at 55% 42%,rgba(255,80,145,.12),rgba(90,220,255,.14),rgba(115,255,175,.12),rgba(245,220,90,.12),rgba(180,90,255,.13),rgba(255,80,145,.12));mix-blend-mode:screen}
+.fx-luxury-sparkle{
+ background:radial-gradient(circle at 18% 16%,rgba(255,255,255,.72) 0 1px,transparent 3px),radial-gradient(circle at 72% 26%,rgba(255,228,145,.60) 0 1px,transparent 3px),radial-gradient(circle at 38% 76%,rgba(205,230,255,.55) 0 1px,transparent 3px),radial-gradient(circle at 84% 82%,rgba(255,210,235,.55) 0 1px,transparent 3px);
+ background-size:47px 53px,63px 69px,79px 83px,91px 97px;
+}
+@keyframes fxV1170Rotate{to{transform:rotate(360deg)}}
+@keyframes fxV1170Drift{0%,100%{transform:translate3d(-3%,3%,0);opacity:.72}50%{transform:translate3d(4%,-3%,0);opacity:1}}
+@keyframes fxV1170Sweep{0%{background-position:0 0}100%{background-position:120px 220px}}
+@keyframes fxV1170Pulse{0%,100%{filter:brightness(.9) saturate(.95)}50%{filter:brightness(1.25) saturate(1.18)}}
+.fx-animate .fx-ritual-seal>.fx-deco-a{animation:fxV1170Rotate 16s linear infinite}
+.fx-animate .fx-ritual-seal>.fx-deco-b{animation:fxV1170Rotate 10s linear infinite reverse}
+.fx-animate .fx-curse-miasma{animation:fxV1170Drift 14s ease-in-out infinite}
+.fx-animate .fx-moonlight>.fx-deco-a{animation:fxV1170Drift 11s ease-in-out infinite}
+.fx-animate .fx-solar-flare{animation:fxV1170Pulse 8.5s ease-in-out infinite}
+.fx-animate .fx-rain-streak{animation:fxV1170Sweep 6s linear infinite}
+.fx-animate .fx-ember-ash{animation:fxV1170Sweep 12s linear infinite reverse}
+.fx-animate .fx-crystal-dust{animation:fxV1170Sweep 10s linear infinite}
+.fx-animate .fx-spectral-chain>.fx-deco-a{animation:fxV1170Rotate 18s linear infinite}
+.fx-animate .fx-oil-slick{animation:fxV1170Rotate 13s linear infinite}
+.fx-animate .fx-luxury-sparkle{animation:fxV1170Pulse 9s ease-in-out infinite}
+
+
+/* ==========================================================
+   v11.80 Smartphone appearance editor redesign
+   ========================================================== */
+.appearance-mobile-nav,
+.appearance-mobile-actionbar,
+.appearance-mobile-framebar{display:none}
+
+@media(max-width:700px){
+ #modal.fx-editor-modal{
+  padding-bottom:76px;
+ }
+ #modal.fx-editor-modal .modal-head{
+  position:sticky;
+  top:0;
+  z-index:24;
+  background:rgba(13,16,22,.96);
+  backdrop-filter:blur(9px);
+  margin:-2px -2px 8px;
+  padding:8px 2px;
+ }
+ .appearance-mobile-nav{
+  display:flex;
+  position:sticky;
+  top:54px;
+  z-index:22;
+  gap:5px;
+  align-items:center;
+  overflow-x:auto;
+  padding:6px 0;
+  margin-bottom:7px;
+  background:linear-gradient(180deg,rgba(13,16,22,.96),rgba(13,16,22,.86));
+  backdrop-filter:blur(8px);
+  scrollbar-width:none;
+ }
+ .appearance-mobile-nav::-webkit-scrollbar{display:none}
+ .appearance-mobile-nav .btn{
+  flex:0 0 auto;
+  min-width:42px;
+  min-height:38px;
+ }
+ .appearance-mobile-actionbar{
+  display:grid;
+  grid-template-columns:.8fr 1fr 1.1fr;
+  gap:7px;
+  position:fixed;
+  z-index:126;
+  left:max(8px,env(safe-area-inset-left));
+  right:max(8px,env(safe-area-inset-right));
+  bottom:max(8px,env(safe-area-inset-bottom));
+  padding:7px;
+  border:1px solid #566678;
+  border-radius:13px;
+  background:rgba(15,21,29,.96);
+  box-shadow:0 8px 26px rgba(0,0,0,.46);
+  backdrop-filter:blur(10px);
+ }
+ .appearance-mobile-actionbar .btn{min-height:44px}
+ .fx-editor-desktop-actions{display:none!important}
+ .fx-editor-row{
+  scroll-margin-top:110px;
+  padding:9px 8px;
+ }
+ .fx-editor-row>label,
+ .fx-layer-detail-grid>label{
+  font-size:12px;
+ }
+ .fx-editor-row select,
+ .fx-editor-row input[type="range"],
+ .fx-layer-detail-grid select,
+ .fx-layer-detail-grid input[type="range"]{
+  width:100%;
+ }
+ .fx-editor-advanced>summary{
+  min-height:44px;
+ }
+ .appearance-mode-switch{
+  top:100px!important;
+ }
+
+ /* Frame editor: keep the important controls in reach. */
+ .frame-editor-top-actions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr;
+  gap:7px!important;
+ }
+ .frame-editor-top-actions .btn{
+  min-height:42px;
+  white-space:normal;
+ }
+ .appearance-mobile-framebar{
+  display:flex;
+  position:sticky;
+  top:0;
+  z-index:23;
+  gap:5px;
+  overflow-x:auto;
+  padding:7px 0;
+  margin:5px 0 8px;
+  background:rgba(13,16,22,.94);
+  backdrop-filter:blur(8px);
+  scrollbar-width:none;
+ }
+ .appearance-mobile-framebar::-webkit-scrollbar{display:none}
+ .appearance-mobile-framebar .btn{
+  flex:0 0 auto;
+  min-height:40px;
+ }
+ .frame-adjust-details,
+ .frame-layer2-details{
+  scroll-margin-top:58px;
+ }
+ .frame-library-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:7px!important;
+ }
+ .frame-library-card{
+  min-width:0;
+ }
+ .frame-library-thumb{
+  min-height:128px;
+ }
+
+ /* Floating preview is intentionally smaller on phones so settings remain visible. */
+ .floating-preview-window{
+  width:min(46vw,190px)!important;
+  min-width:150px;
+  max-height:56dvh!important;
+  border-radius:11px;
+ }
+ .floating-preview-content{
+  max-height:calc(56dvh - 42px)!important;
+  padding:5px!important;
+ }
+ .floating-preview-handle{
+  min-height:38px;
+  padding:5px 6px!important;
+ }
+ .floating-preview-handle b{
+  font-size:10px!important;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+ }
+ .floating-preview-drag-note{display:none}
+ #fx-editor-preview{
+  padding:5px!important;
+  min-height:0!important;
+ }
+ .fx-editor-preview-card{
+  min-width:0!important;
+  width:100%!important;
+  margin:3px auto!important;
+ }
+ .fx-preview-toolbar-v2{
+  position:static!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:4px!important;
+ }
+ .fx-preview-toolbar-v2>label{
+  font-size:9px;
+  min-width:0!important;
+ }
+ .fx-preview-toolbar-v2 input[type="range"]{min-width:0!important}
+ .fx-preview-toolbar-v2 .btn{min-height:32px}
+ .floating-preview-caption{font-size:7px!important}
+
+ /* Larger touch areas without permanently expanding the layout. */
+ .frame-adjust-grid input[type="range"],
+ .fx-layer-detail-grid input[type="range"]{
+  min-height:28px;
+ }
+ .frame-adjust-grid select,
+ .fx-layer-detail-grid select,
+ .fx-editor-row select{
+  min-height:40px;
+ }
+}
+
+@media(max-width:420px){
+ .floating-preview-window{
+  width:min(44vw,172px)!important;
+  min-width:142px;
+ }
+ .frame-library-grid{grid-template-columns:1fr 1fr!important}
+}
+
+
+/* ==========================================================
+   v11.90 Final stability / compatibility pass
+   ========================================================== */
+.frame-editor-recovery-note{
+ margin:8px 0;
+ border-style:dashed;
+}
+@media(prefers-reduced-motion:reduce){
+ .card-fx-stack.fx-animate .card-fx-layer,
+ .card-frame-overlay.frame-motion-enabled::after,
+ .card-frame-overlay::before{
+  animation:none!important;
+ }
+ .fx-editor-preview-card,
+ .floating-preview-window{
+  scroll-behavior:auto!important;
+  transition:none!important;
+ }
+}
+@media(max-width:700px){
+ .frame-library-item,
+ .frame-editor-top-actions .btn,
+ .appearance-mobile-framebar .btn{
+  touch-action:manipulation;
+ }
+ .frame-adjust-details>summary,
+ .frame-layer2-details>summary{
+  min-height:44px;
+  display:flex;
+  align-items:center;
+ }
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -17660,7 +17931,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v11.50 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v11.90 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -18520,7 +18791,17 @@ const CARD_VISUAL_EFFECTS=[
  {id:'ink',name:'墨染',category:'ダーク・特殊'},
  {id:'glitch',name:'グリッチ',category:'機械・デジタル'},
  {id:'gears',name:'歯車',category:'機械・デジタル'},
- {id:'digital-code',name:'デジタルコード',category:'機械・デジタル'}
+ {id:'digital-code',name:'デジタルコード',category:'機械・デジタル'},
+ {id:'ritual-seal',name:'儀式紋',category:'光・魔法'},
+ {id:'curse-miasma',name:'呪瘴',category:'ダーク・特殊'},
+ {id:'moonlight',name:'月光',category:'光・魔法'},
+ {id:'solar-flare',name:'日輪',category:'属性・自然'},
+ {id:'rain-streak',name:'降雨',category:'属性・自然'},
+ {id:'ember-ash',name:'灰燼',category:'属性・自然'},
+ {id:'crystal-dust',name:'晶塵',category:'属性・自然'},
+ {id:'spectral-chain',name:'霊鎖',category:'ダーク・特殊'},
+ {id:'oil-slick',name:'偏光油膜',category:'ホロ・加工'},
+ {id:'luxury-sparkle',name:'宝飾煌めき',category:'ホロ・加工'}
 ];
 const CARD_FX_IDS=new Set(CARD_VISUAL_EFFECTS.map(x=>x.id));
 function customFxIdFromType(type=''){const s=String(type||'');return s.startsWith('custom:')?s.slice(7):''}
@@ -19725,7 +20006,13 @@ const BUILTIN_CARD_FRAMES=[
    {id:'builtin:gen2-07',name:'王族・クラウン',path:'frames/second-royal-crown.png'},
    {id:'builtin:gen2-08',name:'魔法少女・クリスタル',path:'frames/second-magical-crystal.png'},
    {id:'builtin:gen2-09',name:'ダーク・アビス',path:'frames/second-dark-abyss.png'},
-   {id:'builtin:gen2-10',name:'聖属性・カテドラル',path:'frames/second-sacred-cathedral.png'}
+   {id:'builtin:gen2-10',name:'聖属性・カテドラル',path:'frames/second-sacred-cathedral.png'},
+ {id:'builtin:gen2-16',name:'妖怪・灯火',path:'frames/second-yokai-lantern.png'},
+ {id:'builtin:gen2-17',name:'海洋・深淵',path:'frames/second-ocean-abyss.png'},
+ {id:'builtin:gen2-18',name:'地獄・魔印',path:'frames/second-infernal-sigil.png'},
+ {id:'builtin:gen2-19',name:'古森・神殿',path:'frames/second-ancient-forest-temple.png'},
+ {id:'builtin:gen2-20',name:'高級サイバー',path:'frames/second-luxury-cyber.png'},
+ {id:'builtin:gen2-21',name:'虚無・断裂',path:'frames/second-void-fracture.png'}
 ];
 function builtinFrameById(frameId){return BUILTIN_CARD_FRAMES.find(x=>x.id===String(frameId||''))||null}
 function isBuiltinFrameId(frameId){return !!builtinFrameById(frameId)}
@@ -21219,7 +21506,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'11.50',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'11.90',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -22415,11 +22702,18 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
  $('#frame-editor-loading-back').onclick=back;
 
  try{
-   await awaitFrameSystemReady();
-   const customFrames=await imageDbGetAll('frames');
+   /* v11.90: フレーム画面はライブラリ補助情報の失敗で全体を止めない */
+   let frameSystemReady=true;
+   try{await awaitFrameSystemReady(3500)}catch(err){frameSystemReady=false;console.warn('フレーム保存機能の初期化を簡易モードで継続します',err)}
+   let customFrames=[],usageMap=new Map(),current=null;
+   if(frameSystemReady){
+     try{customFrames=await imageDbGetAll('frames')}catch(err){console.warn('カスタムフレーム一覧を取得できませんでした',err);customFrames=[]}
+     try{usageMap=await getFrameUsageMap()}catch(err){console.warn('フレーム使用数を取得できませんでした',err);usageMap=new Map()}
+     try{current=await getCardFrameLink(cardId)}catch(err){console.warn('現在のフレーム設定を取得できませんでした',err);current=null}
+   }else{
+     try{current=await getCardFrameLink(cardId)}catch(_){}
+   }
    const frames=[...BUILTIN_CARD_FRAMES,...customFrames];
-   const usageMap=await getFrameUsageMap();
-   const current=await getCardFrameLink(cardId);
    const frameConfig=normalizeFrameLink(current||{cardId,frameId:''},cardId);
    const currentIsBuiltin=!!current&&isBuiltinFrameId(current.frameId);
 
@@ -22427,7 +22721,14 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
      <div class="frame-editor-layout frame-editor-layout-floating">
        <section class="frame-library-section">
          <div class="frame-editor-top-actions"><button class="btn primary" id="frame-preview-open">プレビューを開く</button><button class="btn" id="frame-upload">新しいPNGを登録して設定</button><input id="frame-file-input" type="file" accept="image/png,.png" hidden><button class="btn" id="frame-remove-card" ${current?'':'disabled'}>このカードから外す</button><button class="btn danger" id="frame-delete-current" ${(!current||currentIsBuiltin)?'disabled':''}>${currentIsBuiltin?'サンプルは削除不可':'現在のフレームをライブラリから削除'}</button></div>
+         <div class="appearance-mobile-framebar">
+           <button class="btn small primary" type="button" id="frame-mobile-preview">プレビュー</button>
+           <button class="btn small" type="button" id="frame-mobile-detail">詳細設定</button>
+           <button class="btn small" type="button" id="frame-mobile-layer2">第2フレーム</button>
+           <button class="btn small" type="button" id="frame-mobile-back">戻る</button>
+         </div>
          <div class="muted frame-editor-help">プレビューはドラッグ可能な小窓で開きます。カード画像 → エフェクト → フレームの順で重ねます。</div>
+         ${frameSystemReady?'':`<div class="panel frame-editor-recovery-note"><b>簡易モードで開いています</b><div class="muted">保存機能の初期化が完了していないため、内蔵フレームを中心に表示しています。再読込するとカスタムフレームも復帰します。</div></div>`}
          <details class="frame-adjust-details" ${current?'':'hidden'}><summary>フレーム詳細設定 ${appearanceEditorToggleHtml()}</summary><div class="frame-adjust-grid">
            <label>拡大率<div class="frame-adjust-inline"><input id="frame-adjust-scale" type="range" min="60" max="180" step="1" value="${frameConfig.scale}"><span id="frame-adjust-scale-v" class="pill">${frameConfig.scale}%</span></div></label>
            <label>透明度<div class="frame-adjust-inline"><input id="frame-adjust-opacity" type="range" min="0" max="100" step="1" value="${frameConfig.opacity}"><span id="frame-adjust-opacity-v" class="pill">${frameConfig.opacity}%</span></div></label>
@@ -22485,9 +22786,15 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
        </section>
      </div>`);
 
+   applyAppearanceEditorMode(document);
+   bindAppearanceEditorToggle(document);
    $('#frame-editor-back').onclick=back;
    $('#frame-open-library-manager').onclick=()=>openFrameLibraryManager(()=>openCardFrameEditor(cardId,returnTo));
    $('#frame-preview-open').onclick=()=>openFrameFloatingPreview(cardId);
+     $('#frame-mobile-preview').onclick=()=>openFrameFloatingPreview(cardId);
+     $('#frame-mobile-detail').onclick=()=>$('.frame-adjust-details')?.scrollIntoView({behavior:'smooth',block:'start'});
+     $('#frame-mobile-layer2').onclick=()=>$('.frame-layer2-details')?.scrollIntoView({behavior:'smooth',block:'start'});
+     $('#frame-mobile-back')?.addEventListener('click',back);
    if(current){
      let workingFrame={...frameConfig,frameId:current.frameId,cardId};
      let saveTimer=0;
@@ -22857,7 +23164,7 @@ function openFxFloatingPreview(card){
  </div><div id="fx-editor-preview"></div><div class="muted floating-preview-caption">表示項目を個別に切り替えて、エフェクトだけ／フレームだけでも確認できます。</div>`);
  ['fx-preview-animate','fx-preview-show-image','fx-preview-show-effects','fx-preview-show-frame','fx-preview-background'].forEach(id=>$('#'+id)?.addEventListener('change',()=>renderFxEditorPreview(card)));
  $('#fx-preview-zoom').oninput=e=>{const out=$('#fx-preview-zoom-label');if(out)out.textContent=e.target.value+'%';applyFxPreviewControls(card)};
- $('#fx-preview-reload-image').onclick=()=>applyAppearanceEditorMode(document);bindAppearanceEditorToggle(document);renderFxEditorPreview(card,{forceImage:true});
+ $('#fx-preview-reload-image').onclick=()=>{applyAppearanceEditorMode(document);bindAppearanceEditorToggle(document);renderFxEditorPreview(card,{forceImage:true})};
  renderFxEditorPreview(card,{forceImage:true});
 }
 async function hydrateCustomFxManagerThumbs(){for(const el of $$('[data-custom-fx-thumb]')){const url=await getCustomFxObjectUrl(el.dataset.customFxThumb);if(url&&el.isConnected)el.style.backgroundImage=`url("${url}")`}}
@@ -22875,7 +23182,7 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
  const existing=normalizeCardVisualEffects(card.visualEffects);
  const rowHtml=slot=>{
    const x=existing.find(y=>y.slot===slot)||{},dormant=slot>cardFxPrefs.maxLayers;
-   return `<div class="fx-editor-row ${dormant?'dormant':''}">
+   return `<div class="fx-editor-row ${dormant?'dormant':''}" id="fx-editor-layer-${slot}" data-fx-editor-layer="${slot}">
      <div class="fx-editor-slot"><b>レイヤー${slot}</b>${dormant?'<span class="pill">休止中</span>':''}</div>
      <label>種類<select id="fx-edit-type-${slot}" ${dormant?'disabled':''}>${fxTypeOptionsHtml(x.type||'')}</select></label>
      <label>強さ<select id="fx-edit-intensity-${slot}" ${dormant?'disabled':''}><option value="weak">弱</option><option value="standard">標準</option><option value="strong">強</option></select></label>
@@ -22905,6 +23212,13 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
  const advancedConfigured=existing.some(x=>x.slot>=3);
  openModal(`<div class="modal-head"><h3>${esc(card.name)} / カードエフェクト</h3><button class="btn" id="fx-editor-close">閉じる</button></div>
  <div class="fx-editor-layout">
+   <div class="appearance-mobile-nav" aria-label="スマホ外観編集ナビ">
+     <button class="btn small" type="button" data-mobile-fx-jump="1">L1</button>
+     <button class="btn small" type="button" data-mobile-fx-jump="2">L2</button>
+     <button class="btn small" type="button" data-mobile-fx-jump="3">L3</button>
+     <button class="btn small" type="button" data-mobile-fx-jump="4">L4</button>
+     <button class="btn small" type="button" id="fx-mobile-preview">プレビュー</button>
+   </div>
    <div class="muted">最大 ${cardFxPrefs.maxLayers}レイヤー${cardFxPrefs.maxLayers>2?' / 高負荷設定':''}</div>
    <div class="fx-editor-list">
      ${primaryRows}
@@ -22915,7 +23229,12 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
    </div>
    ${cardFxPrefs.maxLayers>2?'<div class="fx-setting-warning">3～4レイヤーは端末によって動作が重くなる場合があります。</div>':''}
    <div class="actions fx-editor-preview-actions"><button class="btn" id="fx-preview-open">プレビューを開く</button><button class="btn" id="fx-custom-manage">自作エフェクト</button></div>
-   <div class="actions" style="margin-top:12px"><button class="btn primary" id="fx-editor-save">保存</button><button class="btn" id="fx-editor-global-settings">全体設定を開く</button></div>
+   <div class="actions fx-editor-desktop-actions" style="margin-top:12px"><button class="btn primary" id="fx-editor-save">保存</button><button class="btn" id="fx-editor-global-settings">全体設定を開く</button></div>
+   <div class="appearance-mobile-actionbar">
+     <button class="btn" type="button" id="fx-mobile-close">戻る</button>
+     <button class="btn" type="button" id="fx-mobile-preview-bottom">プレビュー</button>
+     <button class="btn primary" type="button" id="fx-mobile-save">保存</button>
+   </div>
  </div>`);
  $('#modal').classList.add('fx-editor-modal');
  for(let slot=1;slot<=4;slot++){
@@ -22939,12 +23258,18 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
    const d=$(`#fx-detail-direction-${slot}`),r=$(`#fx-detail-rotation-${slot}`),bm=$(`#fx-detail-blend-${slot}`),mk=$(`#fx-detail-mask-${slot}`);if(d)d.value='default';if(r)r.value='default';if(bm)bm.value='effect';if(mk)mk.value='full';renderFxEditorPreview(card);
  });
  $('#fx-preview-open').onclick=()=>openFxFloatingPreview(card);
+ $('#fx-mobile-preview').onclick=()=>openFxFloatingPreview(card);
+ $('#fx-mobile-preview-bottom').onclick=()=>openFxFloatingPreview(card);
+ $$('[data-mobile-fx-jump]').forEach(b=>b.onclick=()=>$('#fx-editor-layer-'+b.dataset.mobileFxJump)?.scrollIntoView({behavior:'smooth',block:'start'}));
  $('#fx-custom-manage').onclick=()=>openCustomFxManager(cardId,returnTo);
  const back=()=>returnTo==='collection'?openCollectionDetail(cardId):openCardManagerDetail(cardId);
  $('#fx-editor-close').onclick=back;
- $('#fx-editor-save').onclick=()=>{
+ $('#fx-mobile-close').onclick=back;
+ const saveFxEditor=()=>{
    card.visualEffects=readFxEditorLayers(card);save(LS_CARDS,cards);renderCollection();if(board)renderBoard();toast('カードエフェクトを保存しました');back();
  };
+ $('#fx-editor-save').onclick=saveFxEditor;
+ $('#fx-mobile-save').onclick=saveFxEditor;
  $('#fx-editor-global-settings').onclick=()=>{closeModal();nav('settings');setSettingsTab('controls');setTimeout(()=>$('#card-fx-settings-panel')?.scrollIntoView({behavior:'smooth',block:'start'}),80)};
 }
 function openCardManagerDetail(id,opt={}){
@@ -26477,10 +26802,22 @@ let floatingPreviewPrefs=normalizeFloatingPreviewPrefs(load(LS_FLOATING_PREVIEW,
 let floatingPreviewOpen=false,floatingPreviewOwner='',floatingPreviewDrag=null;
 function saveFloatingPreviewPrefs(){floatingPreviewPrefs=normalizeFloatingPreviewPrefs(floatingPreviewPrefs);save(LS_FLOATING_PREVIEW,floatingPreviewPrefs)}
 function clampFloatingPreview(left,top){const win=$('#floating-preview-window');if(!win)return {left,top};const r=win.getBoundingClientRect(),pad=8;return {left:Math.max(pad,Math.min(window.innerWidth-r.width-pad,left)),top:Math.max(pad,Math.min(window.innerHeight-r.height-pad,top))}}
-function applyFloatingPreviewPosition(){const win=$('#floating-preview-window');if(!win||!floatingPreviewOpen)return;const r=win.getBoundingClientRect(),target=clampFloatingPreview(window.innerWidth*floatingPreviewPrefs.x-r.width/2,window.innerHeight*floatingPreviewPrefs.y-r.height/2);win.style.left=`${target.left}px`;win.style.top=`${target.top}px`}
+function applyFloatingPreviewPosition(){
+ const win=$('#floating-preview-window');if(!win||!floatingPreviewOpen)return;
+ const vv=window.visualViewport,viewW=vv?.width||window.innerWidth,viewH=vv?.height||window.innerHeight,offX=vv?.offsetLeft||0,offY=vv?.offsetTop||0;
+ const r=win.getBoundingClientRect();
+ let left=offX+viewW*floatingPreviewPrefs.x-r.width/2,top=offY+viewH*floatingPreviewPrefs.y-r.height/2;
+ if(matchMedia('(max-width:600px)').matches&&floatingPreviewOwner.startsWith('modal:')){
+   const unset=!floatingPreviewPrefs.mobileAppearancePlaced;
+   if(unset){left=offX+viewW-r.width-8;top=offY+48}
+ }
+ const maxLeft=offX+viewW-r.width-6,maxTop=offY+viewH-r.height-6;
+ left=Math.max(offX+6,Math.min(maxLeft,left));top=Math.max(offY+6,Math.min(maxTop,top));
+ win.style.left=`${left}px`;win.style.top=`${top}px`
+}
 function openFloatingPreview(title,owner,contentHtml){const root=$('#floating-preview-root'),content=$('#floating-preview-content');if(!root||!content)return;floatingPreviewOpen=true;floatingPreviewOwner=String(owner||'');$('#floating-preview-title').textContent=String(title||'プレビュー');content.innerHTML=contentHtml;root.hidden=false;root.setAttribute('aria-hidden','false');requestAnimationFrame(applyFloatingPreviewPosition)}
 function closeFloatingPreview(){floatingPreviewOpen=false;floatingPreviewOwner='';const root=$('#floating-preview-root');if(root){root.hidden=true;root.setAttribute('aria-hidden','true')}const content=$('#floating-preview-content');if(content)content.innerHTML=''}
-function initFloatingPreviewWindow(){const handle=$('#floating-preview-handle'),win=$('#floating-preview-window'),close=$('#floating-preview-close');if(!handle||!win)return;close.onclick=closeFloatingPreview;handle.onpointerdown=e=>{if(e.target.closest('button')||e.button>0)return;const r=win.getBoundingClientRect();floatingPreviewDrag={id:e.pointerId,dx:e.clientX-r.left,dy:e.clientY-r.top};handle.setPointerCapture?.(e.pointerId);e.preventDefault()};handle.onpointermove=e=>{const s=floatingPreviewDrag;if(!s||s.id!==e.pointerId)return;const pos=clampFloatingPreview(e.clientX-s.dx,e.clientY-s.dy);win.style.left=`${pos.left}px`;win.style.top=`${pos.top}px`;e.preventDefault()};const end=e=>{const s=floatingPreviewDrag;if(!s||s.id!==e.pointerId)return;floatingPreviewDrag=null;const r=win.getBoundingClientRect();floatingPreviewPrefs.x=(r.left+r.width/2)/window.innerWidth;floatingPreviewPrefs.y=(r.top+r.height/2)/window.innerHeight;saveFloatingPreviewPrefs();e.preventDefault()};handle.onpointerup=end;handle.onpointercancel=e=>{if(floatingPreviewDrag?.id===e.pointerId)floatingPreviewDrag=null};window.addEventListener('resize',()=>requestAnimationFrame(applyFloatingPreviewPosition));}
+function initFloatingPreviewWindow(){const handle=$('#floating-preview-handle'),win=$('#floating-preview-window'),close=$('#floating-preview-close');if(!handle||!win)return;close.onclick=closeFloatingPreview;handle.onpointerdown=e=>{if(e.target.closest('button')||e.button>0)return;const r=win.getBoundingClientRect();floatingPreviewDrag={id:e.pointerId,dx:e.clientX-r.left,dy:e.clientY-r.top};handle.setPointerCapture?.(e.pointerId);e.preventDefault()};handle.onpointermove=e=>{const s=floatingPreviewDrag;if(!s||s.id!==e.pointerId)return;const pos=clampFloatingPreview(e.clientX-s.dx,e.clientY-s.dy);win.style.left=`${pos.left}px`;win.style.top=`${pos.top}px`;e.preventDefault()};const end=e=>{const s=floatingPreviewDrag;if(!s||s.id!==e.pointerId)return;floatingPreviewDrag=null;const r=win.getBoundingClientRect();floatingPreviewPrefs.x=(r.left+r.width/2)/window.innerWidth;floatingPreviewPrefs.y=(r.top+r.height/2)/window.innerHeight;if(matchMedia('(max-width:600px)').matches&&floatingPreviewOwner.startsWith('modal:'))floatingPreviewPrefs.mobileAppearancePlaced=true;saveFloatingPreviewPrefs();e.preventDefault()};handle.onpointerup=end;handle.onpointercancel=e=>{if(floatingPreviewDrag?.id===e.pointerId)floatingPreviewDrag=null};window.addEventListener('resize',()=>requestAnimationFrame(applyFloatingPreviewPosition));window.visualViewport?.addEventListener('resize',()=>requestAnimationFrame(applyFloatingPreviewPosition));window.visualViewport?.addEventListener('scroll',()=>requestAnimationFrame(applyFloatingPreviewPosition));}
 
 let mobileBoardToolWindowOpen=false,mobileBoardToolSection='menu',mobileBoardToolButtonDrag=null;
 
@@ -27803,6 +28140,15 @@ function bindAppearanceEditorToggle(root=document){
      renderApp();
    };
  });
+}
+
+
+async function frameSystemSelfCheck(){
+ const result={indexedDb:imageSystemAvailable,builtinFrames:BUILTIN_CARD_FRAMES.length,customFrames:0,frameLinks:0,ok:true,errors:[]};
+ try{await awaitFrameSystemReady(2500)}catch(err){result.ok=false;result.errors.push('init:'+String(err?.message||err));return result}
+ try{result.customFrames=(await imageDbGetAll('frames')).length}catch(err){result.ok=false;result.errors.push('frames:'+String(err?.message||err))}
+ try{result.frameLinks=(await imageDbGetAll('frameLinks')).length}catch(err){result.ok=false;result.errors.push('links:'+String(err?.message||err))}
+ return result;
 }
 
 </script>

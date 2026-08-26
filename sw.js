@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minkai-tcg-simulator-v11-50';
+const CACHE_NAME = 'minkai-tcg-simulator-v11-90';
 const APP_SHELL = [
   './',
   './index.html',
@@ -21,6 +21,12 @@ const APP_SHELL = [
   './frames/second-magical-crystal.png',
   './frames/second-dark-abyss.png',
   './frames/second-sacred-cathedral.png',
+  './frames/second-yokai-lantern.png',
+  './frames/second-ocean-abyss.png',
+  './frames/second-infernal-sigil.png',
+  './frames/second-ancient-forest-temple.png',
+  './frames/second-luxury-cyber.png',
+  './frames/second-void-fracture.png',
 ];
 
 self.addEventListener('install', event => {
