@@ -16191,6 +16191,30 @@ body.album-direct-dragging *{cursor:grabbing!important}
 .board-main .pile.rested>.card-fx-stack.fx-animate .card-fx-layer>.fx-deco{
   animation-play-state:paused!important;
 }
+
+
+/* ==========================================================
+   v10.5 r2 — rested card visual box fix
+   A rested card uses the full card art area regardless of the normal
+   bottom-name-bar crop.  Only the readable labels are counter-rotated.
+   ========================================================== */
+.board-main .pile.rested:not(.face-down)>.card-art{
+  inset:0!important;
+  top:0!important;right:0!important;bottom:0!important;left:0!important;
+  width:auto!important;height:auto!important;
+  border-radius:9px!important;
+}
+.board-main .pile.rested:not(.face-down)>.card-frame-overlay,
+.board-main .pile.rested:not(.face-down)>.card-fx-stack{
+  inset:0!important;
+  top:0!important;right:0!important;bottom:0!important;left:0!important;
+  width:auto!important;height:auto!important;
+  border-radius:9px!important;
+}
+.board-main .pile.rested:not(.face-down)>.stats,
+.board-main .pile.rested:not(.face-down)>.flags{
+  display:none!important;
+}
 </style>
 </head>
 <body>
