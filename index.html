@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v10.9 r2</title>
+<title>みん会TCG Simulator v10.9 r3 r2</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -16277,7 +16277,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v10.9 r2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v10.9 r3 r2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -21224,7 +21224,8 @@ function commitCardFxSettings(){
    collectionVisible:$('#card-fx-collection-visible').checked,
    collectionAnimation:$('#card-fx-collection-animation').checked,
    boardVisible:$('#card-fx-board-visible').checked,
-   boardAnimation:$('#card-fx-board-animation').checked
+   boardAnimation:$('#card-fx-board-animation').checked,
+   motionEngine:3
  });
  saveCardFxPrefs();syncCardFxSettingsUI();if(currentScreenName==='collection')renderCollection();if(board)renderBoard();
  // ON直後に描画済み/再描画されたスタックを確実に動かす。
