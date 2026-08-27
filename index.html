@@ -16836,6 +16836,27 @@ html{--visual-generation:"12.0"}
  animation:fxGenSurfaceDrift var(--fx-duration,11s) ease-in-out infinite!important;
 }
 
+
+/* generated clean overlay test: source PNG is used as-is */
+.fx-generated-clean-overlay-test{
+  background-image:url('effects/generated-clean-overlay-test.png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  mix-blend-mode:screen;
+}
+.fx-generated-clean-overlay-test>.fx-deco{display:none!important}
+@keyframes fxGeneratedCleanOverlayDrift{
+  0%,100%{background-position:49% 50%}
+  50%{background-position:51% 49%}
+}
+.fx-animate .fx-generated-clean-overlay-test{
+  animation:fxGeneratedCleanOverlayDrift var(--fx-duration,9s) ease-in-out infinite!important;
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -19287,7 +19308,8 @@ const CARD_VISUAL_EFFECTS=[
  {id:'mirror-reflection',name:'ミラーリフレクション',category:'表面加工'},
  {id:'opal-shimmer',name:'オパールシマー',category:'表面加工'},
  {id:'pearl-shell',name:'パールシェル',category:'表面加工'},
- {id:'frost-ice',name:'フロストアイス',category:'表面加工'}
+ {id:'frost-ice',name:'フロストアイス',category:'表面加工'},
+ {id:'generated-clean-overlay-test',name:'生成透過加工テスト',category:'表面加工'}
 ];
 const CARD_FX_IDS=new Set(CARD_VISUAL_EFFECTS.map(x=>x.id));
 function customFxIdFromType(type=''){const s=String(type||'');return s.startsWith('custom:')?s.slice(7):''}
