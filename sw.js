@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minkai-tcg-simulator-v12-11-fx-cleanup';
+const CACHE_NAME = 'minkai-tcg-simulator-v12-12-material-pack';
 const APP_SHELL = [
   './',
   './index.html',
@@ -27,6 +27,14 @@ const APP_SHELL = [
   './frames/second-ancient-forest-temple.png',
   './frames/second-luxury-cyber.png',
   './frames/second-void-fracture.png',  './effects/frost-ice.png',  './effects/holographic-film-soft.png',
+  './effects/surface-diamond-cut.png',
+  './effects/surface-satin-foil.png',
+  './effects/surface-liquid-chrome.png',
+  './effects/surface-anodized-metal.png',
+  './effects/surface-glass-laminate.png',
+  './effects/surface-mother-pearl.png',
+  './effects/surface-carbon-iridescent.png',
+  './effects/surface-velvet-matte.png',
 ];
 
 self.addEventListener('install', event => {

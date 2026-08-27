@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v12.11</title>
+<title>みん会TCG Simulator v12.12</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -16921,6 +16921,104 @@ html{--visual-generation:"12.0"}
 /* 汎用deco-bを全エフェクトへ上書きする旧処理は使用しない。
    個別エフェクトが持つdeco-bだけをそのまま表示する。 */
 
+/* ==========================================================
+   v12.12 Surface Material Pack
+   全面材質・反射・光沢のみ。粒子・装飾・記号は使用しない。
+   ========================================================== */
+.fx-diamond-cut{
+  background-image:url('effects/surface-diamond-cut.png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+  mix-blend-mode:screen;
+  border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-diamond-cut>.fx-deco{display:none!important}
+.fx-satin-foil{
+  background-image:url('effects/surface-satin-foil.png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+  mix-blend-mode:soft-light;
+  border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-satin-foil>.fx-deco{display:none!important}
+.fx-liquid-chrome{
+  background-image:url('effects/surface-liquid-chrome.png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+  mix-blend-mode:screen;
+  border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-liquid-chrome>.fx-deco{display:none!important}
+.fx-anodized-metal{
+  background-image:url('effects/surface-anodized-metal.png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+  mix-blend-mode:color-dodge;
+  border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-anodized-metal>.fx-deco{display:none!important}
+.fx-glass-laminate{
+  background-image:url('effects/surface-glass-laminate.png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+  mix-blend-mode:screen;
+  border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-glass-laminate>.fx-deco{display:none!important}
+.fx-mother-pearl{
+  background-image:url('effects/surface-mother-pearl.png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+  mix-blend-mode:screen;
+  border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-mother-pearl>.fx-deco{display:none!important}
+.fx-carbon-iridescent{
+  background-image:url('effects/surface-carbon-iridescent.png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+  mix-blend-mode:soft-light;
+  border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-carbon-iridescent>.fx-deco{display:none!important}
+.fx-velvet-matte{
+  background-image:url('effects/surface-velvet-matte.png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+  mix-blend-mode:multiply;
+  border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-velvet-matte>.fx-deco{display:none!important}
+
+@keyframes fxMaterialDrift{
+  0%,100%{background-position:48% 50%;transform:scale(1.01)}
+  50%{background-position:52% 50%;transform:scale(1.025)}
+}
+@keyframes fxMaterialPulse{
+  0%,100%{opacity:calc(var(--fx-o,.68)*.82)}
+  50%{opacity:var(--fx-o,.68)}
+}
+.fx-animate .fx-diamond-cut,
+.fx-animate .fx-liquid-chrome,
+.fx-animate .fx-anodized-metal,
+.fx-animate .fx-glass-laminate,
+.fx-animate .fx-mother-pearl{
+  animation:fxMaterialDrift var(--fx-duration,10s) ease-in-out infinite!important;
+}
+.fx-animate .fx-satin-foil,
+.fx-animate .fx-carbon-iridescent,
+.fx-animate .fx-velvet-matte{
+  animation:fxMaterialPulse var(--fx-duration,9s) ease-in-out infinite!important;
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -18436,7 +18534,7 @@ html{--visual-generation:"12.0"}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v12.11 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v12.12 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19339,7 +19437,15 @@ const CARD_VISUAL_EFFECTS=[
  {id:'solar-flare',name:'日輪',category:'属性・自然'},
  {id:'rain-streak',name:'降雨',category:'属性・自然'},
  {id:'oil-slick',name:'偏光油膜',category:'ホロ・加工'},
- {id:'holographic-film-soft',name:'ホログラフィックフィルム',category:'ホロ・加工'}
+ {id:'holographic-film-soft',name:'ホログラフィックフィルム',category:'ホロ・加工'},
+ {id:'diamond-cut',name:'ダイヤモンドカット',category:'表面加工'},
+ {id:'satin-foil',name:'サテンフォイル',category:'表面加工'},
+ {id:'liquid-chrome',name:'リキッドクローム',category:'表面加工'},
+ {id:'anodized-metal',name:'アノダイズドメタル',category:'表面加工'},
+ {id:'glass-laminate',name:'グラスラミネート',category:'表面加工'},
+ {id:'mother-pearl',name:'マザーオブパール',category:'表面加工'},
+ {id:'carbon-iridescent',name:'イリデセントカーボン',category:'表面加工'},
+ {id:'velvet-matte',name:'ベルベットマット',category:'表面加工'}
 ];
 const CARD_FX_IDS=new Set(CARD_VISUAL_EFFECTS.map(x=>x.id));
 function customFxIdFromType(type=''){const s=String(type||'');return s.startsWith('custom:')?s.slice(7):''}
@@ -22066,7 +22172,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.11',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.12',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
