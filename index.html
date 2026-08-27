@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.10</title>
+<title>みん会TCG Simulator v13.11</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -19142,7 +19142,7 @@ html[data-home-play-mode="online"] #board-resume-panel{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.10 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.11 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19215,6 +19215,10 @@ html[data-home-play-mode="online"] #board-resume-panel{
       <div id="online-player-setup" class="online-player-setup">
         <label>使用デッキ
           <select id="online-deck-select"><option value="">デッキを選択</option></select>
+        </label>
+
+        <label>その他デッキ
+          <select id="online-other-deck-select"><option value="">その他デッキなし</option></select>
         </label>
 
         <label>最推し
@@ -23043,7 +23047,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.10',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.11',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -30012,7 +30016,7 @@ async function onlineCreateRoom(){
     code,
     createdAt:now,
     updatedAt:now,
-    p1:{clientId,name:'P1',lastSeen:now,ready:false,deckLocked:false,deckId:'',deckName:'',deckTotal:0,oshiiCardId:'',deckHash:''},
+    p1:{clientId,name:'P1',lastSeen:now,ready:false,deckLocked:false,deckId:'',deckName:'',deckTotal:0,otherDeckId:'',otherDeckName:'',otherDeckTotal:0,oshiiCardId:'',deckHash:'',otherDeckHash:''},
     p2:null,
     spectators:[],
     match:{status:'lobby',startedAt:0,startedBy:'',turnPlayer:1},
@@ -30055,7 +30059,7 @@ async function onlineJoinRoom(code,role='guest'){
     if(room.p2&&now-Number(room.p2.lastSeen||0)<=45000){
       toast('このルームはP2参加済みです');return false
     }
-    room.p2={clientId,name:'P2',lastSeen:now,ready:false,deckLocked:false,deckId:'',deckName:'',deckTotal:0,oshiiCardId:'',deckHash:''};
+    room.p2={clientId,name:'P2',lastSeen:now,ready:false,deckLocked:false,deckId:'',deckName:'',deckTotal:0,otherDeckId:'',otherDeckName:'',otherDeckTotal:0,oshiiCardId:'',deckHash:'',otherDeckHash:''};
   }else{
     room.spectators=Array.isArray(room.spectators)?room.spectators:[];
     room.spectators.push({clientId,name:`観戦${room.spectators.length+1}`,lastSeen:now});
@@ -30115,22 +30119,47 @@ async function onlineHashText(text){
   for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}
   return (h>>>0).toString(16).padStart(8,'0');
 }
-async function onlineDeckLockPayload(deck,oshiiCardId){
+async function onlineDeckLockPayload(deck,oshiiCardId,otherDeck=null){
   const snap=onlineDeckSnapshot(deck);
-  const raw=JSON.stringify(snap);
+  const otherSnap=otherDeck?onlineDeckSnapshot(otherDeck):null;
   return {
     deckId:snap.deckId,
     deckName:snap.deckName,
     deckTotal:snap.total,
     oshiiCardId:String(oshiiCardId||''),
-    deckHash:await onlineHashText(raw),
+    deckHash:await onlineHashText(JSON.stringify(snap)),
+    otherDeckId:String(otherSnap?.deckId||''),
+    otherDeckName:String(otherSnap?.deckName||''),
+    otherDeckTotal:Number(otherSnap?.total||0),
+    otherDeckHash:otherSnap?await onlineHashText(JSON.stringify(otherSnap)):'',
     lockedAt:Date.now()
   };
 }
+
+function onlineOtherDeckCandidates(){
+  return (decks||[]).filter(d=>deckSettingsFrom(d).otherEnabled);
+}
+function onlineFillOtherDeckOptions(){
+  const sel=$('#online-other-deck-select');if(!sel)return;
+  const prev=sel.value;
+  const rows=onlineOtherDeckCandidates();
+  sel.innerHTML='<option value="">その他デッキなし</option>'+rows.map(d=>{
+    const count=Object.values(d.entries||{}).reduce((a,n)=>a+(Number(n)||0),0);
+    const star=deckSettingsFrom(d).otherFavorite?'★ ':'';
+    return `<option value="${esc(d.id)}">${star}${esc(d.name||'名称未設定')} (${count}枚)</option>`;
+  }).join('');
+  if([...sel.options].some(o=>o.value===prev))sel.value=prev;
+}
+
 function onlineFillDeckOptions(){
   const sel=$('#online-deck-select');if(!sel)return;
   const prev=sel.value;
-  sel.innerHTML='<option value="">デッキを選択</option>'+(decks||[]).map(d=>`<option value="${esc(d.id)}">${esc(d.name||'名称未設定')} (${Object.values(d.entries||{}).reduce((a,n)=>a+(Number(n)||0),0)}枚)</option>`).join('');
+  const rows=(decks||[]).filter(d=>deckSettingsFrom(d).mainEnabled);
+  sel.innerHTML='<option value="">デッキを選択</option>'+rows.map(d=>{
+    const count=Object.values(d.entries||{}).reduce((a,n)=>a+(Number(n)||0),0);
+    const star=deckSettingsFrom(d).mainFavorite?'★ ':'';
+    return `<option value="${esc(d.id)}">${star}${esc(d.name||'名称未設定')} (${count}枚)</option>`;
+  }).join('');
   if([...sel.options].some(o=>o.value===prev))sel.value=prev;
 }
 function onlineFillOshiiOptions(deckId,preferDefault=true){
@@ -30180,7 +30209,9 @@ async function onlineToggleReady(){
     member.ready=false;
     member.deckLocked=false;
     member.deckHash='';
+    member.otherDeckHash='';
     member.lockedDeck=null;
+    member.lockedOtherDeck=null;
     onlineSessionState.ready=false;
     onlineSessionState.deckLocked=false;
   }else{
@@ -30188,13 +30219,19 @@ async function onlineToggleReady(){
     const deck=onlineDeckById(deckId);
     if(!deck){toast('使用デッキを選択してください');return}
     const oshii=$('#online-oshii-select')?.value||'';
-    const lock=await onlineDeckLockPayload(deck,oshii);
+    const otherDeck=onlineDeckById($('#online-other-deck-select')?.value||'');
+    const lock=await onlineDeckLockPayload(deck,oshii,otherDeck);
     member.deckId=lock.deckId;
     member.deckName=lock.deckName;
     member.deckTotal=lock.deckTotal;
     member.oshiiCardId=lock.oshiiCardId;
     member.deckHash=lock.deckHash;
+    member.otherDeckId=lock.otherDeckId;
+    member.otherDeckName=lock.otherDeckName;
+    member.otherDeckTotal=lock.otherDeckTotal;
+    member.otherDeckHash=lock.otherDeckHash;
     member.lockedDeck=onlineDeckSnapshot(deck);
+    member.lockedOtherDeck=otherDeck?onlineDeckSnapshot(otherDeck):null;
     member.deckLocked=true;
     member.ready=true;
     member.readyAt=Date.now();
@@ -30212,7 +30249,12 @@ async function onlineToggleReady(){
         deckTotal:Number(member.deckTotal||0),
         oshiiCardId:String(member.oshiiCardId||''),
         deckHash:String(member.deckHash||''),
-        lockedDeck:member.ready?member.lockedDeck:null
+        otherDeckId:String(member.otherDeckId||''),
+        otherDeckName:String(member.otherDeckName||''),
+        otherDeckTotal:Number(member.otherDeckTotal||0),
+        otherDeckHash:String(member.otherDeckHash||''),
+        lockedDeck:member.ready?member.lockedDeck:null,
+        lockedOtherDeck:member.ready?member.lockedOtherDeck:null
       });
       if(remoteData)onlineApplyRemoteRoomSnapshot(remoteData);
     }catch(err){
@@ -30237,9 +30279,13 @@ function onlineUpdateDeckSelection(){
   const member=onlineOwnRoomMember(room);
   if(!member||member.ready)return;
   const deck=onlineDeckById($('#online-deck-select')?.value||'');
+  const otherDeck=onlineDeckById($('#online-other-deck-select')?.value||'');
   member.deckId=String(deck?.id||'');
   member.deckName=String(deck?.name||'');
   member.deckTotal=deck?onlineDeckSnapshot(deck).total:0;
+  member.otherDeckId=String(otherDeck?.id||'');
+  member.otherDeckName=String(otherDeck?.name||'');
+  member.otherDeckTotal=otherDeck?onlineDeckSnapshot(otherDeck).total:0;
   member.oshiiCardId=$('#online-oshii-select')?.value||'';
   room.updatedAt=Date.now();
   rooms[code]=room;
@@ -30266,12 +30312,17 @@ function onlineApplySetupUI(room){
   if(isSpectator)return;
 
   onlineFillDeckOptions();
+  onlineFillOtherDeckOptions();
   const own=onlineOwnRoomMember(room);
-  const deckSel=$('#online-deck-select'),oshiiSel=$('#online-oshii-select'),readyBtn=$('#online-ready-toggle');
+  const deckSel=$('#online-deck-select'),otherDeckSel=$('#online-other-deck-select'),oshiiSel=$('#online-oshii-select'),readyBtn=$('#online-ready-toggle');
 
   if(deckSel){
     if(own?.deckId&&[...deckSel.options].some(o=>o.value===String(own.deckId)))deckSel.value=String(own.deckId);
     deckSel.disabled=!!own?.ready;
+  }
+  if(otherDeckSel){
+    if(own?.otherDeckId&&[...otherDeckSel.options].some(o=>o.value===String(own.otherDeckId)))otherDeckSel.value=String(own.otherDeckId);
+    otherDeckSel.disabled=!!own?.ready;
   }
   onlineFillOshiiOptions(deckSel?.value||own?.deckId||'',false);
   if(oshiiSel){
@@ -30285,8 +30336,8 @@ function onlineApplySetupUI(room){
   }
   const lockNote=$('#online-deck-lock-note');
   if(lockNote)lockNote.textContent=own?.ready
-    ?`デッキロック済み${own.deckHash?` / HASH ${String(own.deckHash).slice(0,10)}…`:''}`
-    :'準備完了するとこのルーム内ではデッキ内容がロックされます。';
+    ?`デッキロック済み${own.deckHash?` / MAIN ${String(own.deckHash).slice(0,8)}…`:''}${own.otherDeckHash?` / OTHER ${String(own.otherDeckHash).slice(0,8)}…`:''}`
+    :'準備完了するとメインデッキ・その他デッキの内容がこのルーム内でロックされます。';
 }
 
 
@@ -30765,21 +30816,56 @@ function onlineAuditPublicView(room,role){
 function onlineRemoteProviderReady(){
   return ONLINE_REMOTE_CONFIG.enabled&&/^https?:\/\//.test(ONLINE_REMOTE_CONFIG.endpoint);
 }
+function onlineProviderErrorMessage(code,status=0){
+  const map={
+    'room-not-found':'ルームが見つかりません',
+    'p2-already-joined':'このルームにはすでにP2が参加しています',
+    'unauthorized':'セッション認証に失敗しました',
+    'forbidden':'この操作を行う権限がありません',
+    'room-mismatch':'ルーム情報が一致しません',
+    'host-only':'この操作はホストのみ行えます',
+    'both-not-ready':'P1・P2両方の準備完了が必要です',
+    'wrong-slot':'自分側ではない領域は操作できません',
+    'could-not-generate-room':'ルームコードを生成できませんでした',
+    'unknown-action':'サーバーがこの操作に対応していません',
+    'POST only':'通信方式が正しくありません'
+  };
+  if(map[code])return map[code];
+  if(status===404)return '通信先またはルームが見つかりません';
+  if(status===401)return '認証に失敗しました';
+  if(status===403)return '操作権限がありません';
+  if(status===409)return 'ルームの状態が競合しています';
+  if(status>=500)return 'サーバー側でエラーが発生しました';
+  return String(code||`通信エラー (${status})`);
+}
 async function onlineProviderRequest(action,payload={}){
-  if(onlineSessionState.provider!==ONLINE_PROVIDER_TYPES.REMOTE)throw new Error('remote provider is not active');
-  if(!onlineRemoteProviderReady())throw new Error('remote provider is not configured');
+  if(onlineSessionState.provider!==ONLINE_PROVIDER_TYPES.REMOTE)throw new Error('リモート通信が選択されていません');
+  if(!onlineRemoteProviderReady())throw new Error('Supabase接続設定が完了していません');
   const sessionToken=onlineSessionToken();
-  const res=await fetch(ONLINE_REMOTE_CONFIG.endpoint,{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      ...(ONLINE_REMOTE_CONFIG.publishableKey?{'apikey':ONLINE_REMOTE_CONFIG.publishableKey}:{}),
-      ...(sessionToken?{'X-Minkai-Session':sessionToken}:{})
-    },
-    body:JSON.stringify({action,payload:onlineRemoteRequestPayload(payload),projectId:ONLINE_REMOTE_CONFIG.projectId})
-  });
-  if(!res.ok)throw new Error(`provider http ${res.status}`);
-  return await res.json();
+  let res;
+  try{
+    res=await fetch(ONLINE_REMOTE_CONFIG.endpoint,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        ...(ONLINE_REMOTE_CONFIG.publishableKey?{'apikey':ONLINE_REMOTE_CONFIG.publishableKey}:{}),
+        ...(sessionToken?{'X-Minkai-Session':sessionToken}:{})
+      },
+      body:JSON.stringify({action,payload:onlineRemoteRequestPayload(payload),projectId:ONLINE_REMOTE_CONFIG.projectId})
+    });
+  }catch(err){
+    throw new Error(`サーバーへ接続できません：${String(err?.message||err)}`);
+  }
+
+  const text=await res.text();
+  let data={};
+  try{data=text?JSON.parse(text):{}}catch(_){data={raw:text}}
+
+  if(!res.ok){
+    const code=String(data?.error||data?.message||'');
+    throw new Error(onlineProviderErrorMessage(code,res.status));
+  }
+  return data;
 }
 async function onlineServerShuffle(cardIds){
   const ids=[...(cardIds||[])].map(String);
@@ -31314,6 +31400,7 @@ function initOnlineModeFoundation(){
   $('#online-room-code-input')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();onlineJoinRoom(e.currentTarget.value,onlineRoomRoleIntent)}});
   $('#online-copy-room-code')?.addEventListener('click',onlineCopyRoomCode);
   $('#online-deck-select')?.addEventListener('change',e=>{onlineFillOshiiOptions(e.currentTarget.value,true);onlineUpdateDeckSelection()});
+  $('#online-other-deck-select')?.addEventListener('change',onlineUpdateDeckSelection);
   $('#online-oshii-select')?.addEventListener('change',onlineUpdateDeckSelection);
   $('#online-ready-toggle')?.addEventListener('click',onlineToggleReady);
   $('#online-start-match')?.addEventListener('click',onlineStartMatch);
