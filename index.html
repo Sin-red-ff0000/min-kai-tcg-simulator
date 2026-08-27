@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.13</title>
+<title>みん会TCG Simulator v13.14</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17604,6 +17604,19 @@ html[data-home-play-mode="online"] #board-resume-panel{
   .online-turn-grid{grid-template-columns:1fr}
 }
 
+
+/* v13.14 reconnect / session resume */
+.online-reconnect-bar{
+  margin:8px 0 10px;
+  padding:9px;
+  border:1px solid rgba(110,155,205,.32);
+  border-radius:9px;
+  background:rgba(75,120,175,.08);
+}
+.online-reconnect-bar .actions{
+  margin-top:7px;
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -19172,7 +19185,7 @@ html[data-home-play-mode="online"] #board-resume-panel{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.13 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.14 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19190,6 +19203,13 @@ html[data-home-play-mode="online"] #board-resume-panel{
   <div class="section-head"><h2>オンライン対戦</h2><span class="pill">Ver13.1</span></div>
   <p class="muted">オンライン対戦モード。ルーム作成・参加・観戦へ進めます。</p>
 <div id="online-bootstrap-status" class="online-bootstrap-status muted">オンラインUI準備中</div>
+  <div id="online-reconnect-bar" class="online-reconnect-bar" hidden>
+    <span id="online-reconnect-text" class="muted">前回のオンラインセッションがあります。</span>
+    <div class="actions">
+      <button class="btn small primary" id="online-reconnect-now" type="button">再接続</button>
+      <button class="btn small" id="online-reconnect-forget" type="button">破棄</button>
+    </div>
+  </div>
 
   <div id="online-room-entry" class="online-room-entry">
     <div class="online-home-actions">
@@ -23099,7 +23119,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.13',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.14',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -30003,6 +30023,7 @@ function syncHomePlayModeUI(){
     ?'現在のSimulatorをそのまま使う1人回しモードです。'
     :'オンライン専用の状態・画面を使用します。1人回しの盤面状態とは分離されています。';
   document.documentElement.dataset.homePlayMode=homePlayMode;
+  if(homePlayMode==='online')onlineShowResumeOffer();
 }
 function onlineShowEntry(){
   $('#online-room-entry').hidden=false;
@@ -31258,6 +31279,100 @@ function onlineUsingRemoteProvider(){
   return onlineSessionState.provider===ONLINE_PROVIDER_TYPES.REMOTE;
 }
 
+
+const LS_ONLINE_RESUME_SESSION='minkai-online-resume-session-v1';
+let onlineHeartbeatFailures=0;
+let onlineReconnectInProgress=false;
+
+function onlinePersistResumeSession(){
+  if(!onlineUsingRemoteProvider()||!onlineSessionState.joinCode||!onlineSessionToken())return;
+  const data={
+    provider:ONLINE_PROVIDER_TYPES.REMOTE,
+    role:onlineSessionState.role,
+    roomId:onlineSessionState.roomId,
+    joinCode:onlineSessionState.joinCode,
+    playerSlot:onlineSessionState.playerSlot,
+    clientId:onlineSessionState.clientId,
+    displayName:onlineSessionState.displayName,
+    sessionToken:onlineSessionToken(),
+    savedAt:Date.now()
+  };
+  try{localStorage.setItem(LS_ONLINE_RESUME_SESSION,JSON.stringify(data))}catch(_){}
+}
+function onlineLoadResumeSession(){
+  try{
+    const data=JSON.parse(localStorage.getItem(LS_ONLINE_RESUME_SESSION)||'null');
+    if(!data||data.provider!==ONLINE_PROVIDER_TYPES.REMOTE)return null;
+    if(!data.joinCode||!data.sessionToken)return null;
+    if(Date.now()-Number(data.savedAt||0)>1000*60*60*6)return null;
+    return data;
+  }catch(_){return null}
+}
+function onlineForgetResumeSession(){
+  try{localStorage.removeItem(LS_ONLINE_RESUME_SESSION)}catch(_){}
+  const bar=$('#online-reconnect-bar');if(bar)bar.hidden=true;
+}
+function onlineShowResumeOffer(){
+  const data=onlineLoadResumeSession();
+  const bar=$('#online-reconnect-bar');
+  if(!bar)return;
+  if(!data||onlineSessionState.joinCode){bar.hidden=true;return}
+  bar.hidden=false;
+  const text=$('#online-reconnect-text');
+  if(text)text.textContent=`前回のルーム ${data.joinCode} に再接続できます。`;
+}
+async function onlineResumePreviousSession(){
+  if(onlineReconnectInProgress)return false;
+  const saved=onlineLoadResumeSession();
+  if(!saved){toast('復帰できるセッションがありません');return false}
+  onlineReconnectInProgress=true;
+  const text=$('#online-reconnect-text');
+  if(text)text.textContent='Supabaseへ再接続しています…';
+  try{
+    resetOnlineSessionState();
+    onlineSessionState={
+      ...onlineSessionState,
+      version:ONLINE_MODE_VERSION,
+      provider:ONLINE_PROVIDER_TYPES.REMOTE,
+      role:saved.role,
+      roomId:saved.roomId||'',
+      joinCode:saved.joinCode,
+      connection:'reconnecting',
+      playerSlot:saved.playerSlot??null,
+      clientId:saved.clientId||'',
+      displayName:saved.displayName||'',
+      sessionToken:saved.sessionToken
+    };
+    const room=await onlineRemoteGetRoom();
+    if(!room)throw new Error('ルーム情報を取得できません');
+    onlineSessionState.connection='connected';
+    onlineHeartbeatFailures=0;
+    onlinePersistResumeSession();
+    onlineOpenChannel(saved.joinCode);
+    onlineStartHeartbeat();
+    onlineStartRemotePolling();
+    setHomePlayMode('online');
+    if(onlineMatchStarted(room))onlineShowMatchBoard();
+    else onlineShowLobby();
+    const bar=$('#online-reconnect-bar');if(bar)bar.hidden=true;
+    onlineUpdateRemoteSessionStatus();
+    toast('オンライン対戦へ復帰しました');
+    return true;
+  }catch(err){
+    console.error('resume session failed',err);
+    onlineSessionState.connection='offline';
+    if(text)text.textContent=`再接続失敗：${String(err?.message||err)}`;
+    return false;
+  }finally{
+    onlineReconnectInProgress=false;
+  }
+}
+function onlineMarkConnectionProblem(message='通信が不安定です'){
+  onlineSessionState.connection='unstable';
+  const boot=$('#online-bootstrap-status');
+  if(boot)boot.textContent=message;
+}
+
 function onlineRemoteSessionValid(){
   return !onlineUsingRemoteProvider()||!!onlineSessionToken();
 }
@@ -31266,6 +31381,10 @@ function onlineUpdateRemoteSessionStatus(){
   if(!el||!onlineUsingRemoteProvider())return;
   if(!onlineSessionState.joinCode){
     el.textContent='Supabase接続準備完了';
+  }else if(onlineSessionState.connection==='reconnecting'){
+    el.textContent='Supabaseへ再接続中';
+  }else if(onlineSessionState.connection==='unstable'){
+    el.textContent='通信が不安定です';
   }else if(onlineRemoteSessionValid()){
     el.textContent='Supabaseセッション認証済み';
   }else{
@@ -31322,6 +31441,7 @@ async function onlineRemoteCreateRoom(){
     onlineOpenChannel(room.code);
     onlineStartHeartbeat();
     onlineStartRemotePolling();
+    onlinePersistResumeSession();
     onlineUpdateRemoteSessionStatus();
     onlineShowLobby();
     toast(`ルームを作成しました：${room.code}`);
@@ -31363,6 +31483,7 @@ async function onlineRemoteJoinRoom(code,role='guest'){
     onlineOpenChannel(room.code||code);
     onlineStartHeartbeat();
     onlineStartRemotePolling();
+    onlinePersistResumeSession();
     onlineUpdateRemoteSessionStatus();
     onlineShowLobby();
     toast(role==='spectator'?'観戦参加しました':'ルームに参加しました');
@@ -31381,11 +31502,22 @@ async function onlineRemoteHeartbeat(){
       clientId:onlineSessionState.clientId,
       role:onlineSessionState.role
     });
+    onlineHeartbeatFailures=0;
+    onlineSessionState.connection='connected';
+    onlinePersistResumeSession();
     const room=onlineApplyRemoteRoomSnapshot(data);
     if(room)onlineRefreshLobby();
   }catch(err){
+    onlineHeartbeatFailures++;
     onlineSessionState.lastError=String(err?.message||err);
+    onlineMarkConnectionProblem(`通信再試行中 (${onlineHeartbeatFailures})`);
     console.warn('remote heartbeat failed',err);
+    if(onlineHeartbeatFailures>=3){
+      const saved=onlineLoadResumeSession();
+      if(saved&&!onlineReconnectInProgress){
+        setTimeout(()=>onlineResumePreviousSession(),1200);
+      }
+    }
   }
 }
 async function onlineRemoteGetRoom(){
@@ -31398,6 +31530,7 @@ async function onlineRemoteGetRoom(){
     });
     return onlineApplyRemoteRoomSnapshot(data);
   }catch(err){
+    onlineMarkConnectionProblem('ルーム状態の取得に失敗しました');
     console.warn('remote get-room failed',err);
     return null;
   }
@@ -31504,6 +31637,7 @@ function onlineShowLobby(){
   onlineRefreshLobby();
 }
 async function onlineRefreshLobby(){
+  if(onlineSessionState.connection==='connected')onlinePersistResumeSession();
   onlineUpdateRemoteSessionStatus();
   const code=onlineSessionState.joinCode;
   if(onlineUsingRemoteProvider())await onlineRemoteGetRoom();
@@ -31531,6 +31665,7 @@ async function onlineRefreshLobby(){
 async function onlineLeaveRoom(broadcast=true){
   onlineStopRemotePolling();
   onlineStopBoardMutationWatch();
+  if(broadcast)onlineForgetResumeSession();
   const code=onlineSessionState.joinCode,clientId=onlineSessionState.clientId,role=onlineSessionState.role;
   if(onlineUsingRemoteProvider())await onlineRemoteLeaveRoom();
   if(code&&clientId){
@@ -31591,7 +31726,10 @@ function initOnlineModeFoundation(){
   $('#online-tool-shuffle')?.addEventListener('click',onlineToolShuffle);
   $('#online-tool-random-hand')?.addEventListener('click',onlineToolRandomHand);
   $('#online-end-turn')?.addEventListener('click',onlineEndTurn);
+  $('#online-reconnect-now')?.addEventListener('click',onlineResumePreviousSession);
+  $('#online-reconnect-forget')?.addEventListener('click',onlineForgetResumeSession);
   onlineApplySavedProviderConfig();
+  onlineShowResumeOffer();
   window.addEventListener('storage',e=>{if(e.key===LS_ONLINE_ROOMS&&onlineSessionState.joinCode)onlineRefreshLobby()});
   window.addEventListener('beforeunload',()=>{try{onlineHeartbeat()}catch(_){}});
   syncHomePlayModeUI();
