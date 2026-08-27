@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v12.14</title>
+<title>みん会TCG Simulator v12.15</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17062,6 +17062,64 @@ html{--visual-generation:"12.0"}
   mix-blend-mode:var(--fx-blend,screen);
 }
 .fx-diamond-cut-aurora>.fx-deco{display:none!important}
+/* ==========================================================
+   v12.15 Surface Material Pack II
+   物体・粒子・装飾を置かず、カード全面の材質を変える。
+   ========================================================== */
+.fx-diamond-cut-black{
+ background-image:url('effects/surface-diamond-cut-black.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-diamond-cut-black>.fx-deco{display:none!important}
+.fx-dichroic-glass{
+ background-image:url('effects/surface-dichroic-glass.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-dichroic-glass>.fx-deco{display:none!important}
+.fx-black-chrome{
+ background-image:url('effects/surface-black-chrome.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-black-chrome>.fx-deco{display:none!important}
+.fx-heat-titanium{
+ background-image:url('effects/surface-heat-titanium.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center;
+ background-size:cover!important;
+ mix-blend-mode:overlay;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-heat-titanium>.fx-deco{display:none!important}
+.fx-clear-resin{
+ background-image:url('effects/surface-clear-resin.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-clear-resin>.fx-deco{display:none!important}
+.fx-ceramic-gloss{
+ background-image:url('effects/surface-ceramic-gloss.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center;
+ background-size:cover!important;
+ mix-blend-mode:soft-light;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-ceramic-gloss>.fx-deco{display:none!important}
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -18602,6 +18660,13 @@ html{--visual-generation:"12.0"}
   }
 }
 
+
+/* v12.15 runtime-driven fallback animation */
+.card-fx-stack.fx-animate .card-fx-layer[data-fx-runtime-animated="1"]{
+ opacity:calc(var(--fx-o,.7) * var(--fx-live-opacity,1))!important;
+ animation-play-state:running!important;
+}
+
 </style>
 </head>
 <body>
@@ -18610,7 +18675,7 @@ html{--visual-generation:"12.0"}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v12.14 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v12.15 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19520,7 +19585,13 @@ const CARD_VISUAL_EFFECTS=[
  {id:'velvet-matte',name:'ベルベットマット',category:'表面加工'},
  {id:'diamond-cut-fine',name:'ダイヤモンドカット・ファイン',category:'表面加工'},
  {id:'diamond-cut-deep',name:'ダイヤモンドカット・ディープ',category:'表面加工'},
- {id:'diamond-cut-aurora',name:'ダイヤモンドカット・オーロラ',category:'表面加工'}
+ {id:'diamond-cut-aurora',name:'ダイヤモンドカット・オーロラ',category:'表面加工'},
+ {id:'diamond-cut-black',name:'ダイヤモンドカット・ブラック',category:'表面加工'},
+ {id:'dichroic-glass',name:'ダイクロイックガラス',category:'表面加工'},
+ {id:'black-chrome',name:'ブラッククローム',category:'表面加工'},
+ {id:'heat-titanium',name:'ヒートチタン',category:'表面加工'},
+ {id:'clear-resin',name:'クリアレジン',category:'表面加工'},
+ {id:'ceramic-gloss',name:'セラミックグロス',category:'表面加工'}
 ];
 const CARD_FX_IDS=new Set(CARD_VISUAL_EFFECTS.map(x=>x.id));
 function customFxIdFromType(type=''){const s=String(type||'');return s.startsWith('custom:')?s.slice(7):''}
@@ -22247,7 +22318,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.14',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.15',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -23897,7 +23968,7 @@ function renderFxEditorPreview(card,{forceImage=false}={}){
  if(!(floatingPreviewOpen&&floatingPreviewOwner===`modal:fx:${card.id}`))return;
  const art=ensureFxEditorPreviewShell(card);if(!art)return;
  const layers=readFxEditorLayers(card),animate=$('#fx-preview-animate')?.checked===true,effects=$('#fx-editor-preview-effects');
- if(effects){effects.innerHTML=cardFxStackHtmlFromLayers(layers,{maxLayers:cardFxPrefs.maxLayers,visible:true,animate,forceAnimation:animate,quality:'high'});hydrateAllCustomFx(effects)}
+ if(effects){effects.innerHTML=cardFxStackHtmlFromLayers(layers,{maxLayers:cardFxPrefs.maxLayers,visible:true,animate,forceAnimation:animate,quality:'high'});hydrateAllCustomFx(effects);if(animate)requestAnimationFrame(()=>{stopCardFxMotionEngine();kickCardFxMotionEngine()})}
  art.querySelectorAll('[data-card-frame]').forEach(frame=>{frame.dataset.frameReady='';hydrateCardFrame(frame)});
  applyFxPreviewControls(card);
  requestAnimationFrame(()=>{
@@ -24005,7 +24076,8 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      $(`#fx-detail-blend-${slot}`).value=x.blendMode||'effect';
      $(`#fx-detail-mask-${slot}`).value=x.mask||'full';
    }
-   [`fx-edit-type-${slot}`,`fx-edit-intensity-${slot}`,`fx-edit-enabled-${slot}`,`fx-detail-direction-${slot}`,`fx-detail-rotation-${slot}`,`fx-detail-blend-${slot}`,`fx-detail-mask-${slot}`].forEach(id=>$('#'+id)?.addEventListener('change',()=>renderFxEditorPreview(card)));
+   [`fx-edit-type-${slot}`,`fx-edit-intensity-${slot}`,`fx-edit-enabled-${slot}`,`fx-detail-direction-${slot}`,`fx-detail-rotation-${slot}`,`fx-detail-mask-${slot}`].forEach(id=>$('#'+id)?.addEventListener('change',()=>renderFxEditorPreview(card)));
+   $(`#fx-detail-blend-${slot}`)?.addEventListener('change',()=>{renderFxEditorPreview(card);requestAnimationFrame(()=>$('#fx-editor-preview-effects')?.querySelectorAll('.card-fx-layer').forEach(applyFxBlendModeDirect))});
    $(`#fx-edit-opacity-${slot}`)?.addEventListener('input',e=>{$(`#fx-edit-opacity-label-${slot}`).textContent=e.target.value+'%';renderFxEditorPreview(card)});
    [['speed','%'],['size','%'],['hue','°'],['saturation','%'],['brightness','%'],['density','%'],['motion','%']].forEach(([key,suffix])=>{
      $(`#fx-detail-${key}-${slot}`)?.addEventListener('input',e=>{$(`#fx-detail-${key}-label-${slot}`).textContent=e.target.value+suffix;renderFxEditorPreview(card)});
@@ -24245,6 +24317,19 @@ function cardFxMotionTick(now){
    stack.style.setProperty('--fx-motion-phase',phase);
    stack.style.setProperty('--fx-motion-bg-x',bgx);
    stack.style.setProperty('--fx-motion-bg-y',bgy);
+   const layers=stack.querySelectorAll('.card-fx-layer[data-fx-runtime-animated="1"]');
+   for(const layer of layers){
+     const speed=Math.max(.25,Math.min(2,Number(layer.dataset.fxSpeed||100)/100));
+     const local=(now*speed)%6000/6000;
+     const wave=(Math.sin(local*Math.PI*2)+1)/2;
+     const reverse=layer.dataset.fxDirection==='reverse'?-1:1;
+     const dx=(48+reverse*(wave-.5)*7).toFixed(2);
+     const dy=(50+Math.sin(local*Math.PI*4)*1.8).toFixed(2);
+     layer.style.backgroundPosition=`${dx}% ${dy}%`;
+     /* Fallback animation stays inside the overlay and does not move the card itself. */
+     layer.style.setProperty('--fx-live-opacity',String(.84+wave*.16));
+     applyFxBlendModeDirect(layer);
+   }
  }
  if(active)cardFxMotionRaf=requestAnimationFrame(cardFxMotionTick);
 }
@@ -28976,13 +29061,27 @@ async function frameSystemSelfCheck(){
 
 /* v12.0-r2: detailed effect settings runtime tuning */
 const FX_ROTATIONAL_TYPES=new Set(['magic-circle','gears','ritual-seal','oil-slick']);
+
+function applyFxBlendModeDirect(layer){
+ if(!layer?.matches?.('.card-fx-layer'))return;
+ const mode=String(layer.dataset.fxBlend||'effect');
+ const map={normal:'normal',screen:'screen',add:'plus-lighter',overlay:'overlay','soft-light':'soft-light'};
+ if(mode==='effect'){
+   layer.style.removeProperty('mix-blend-mode');
+ }else{
+   layer.style.setProperty('mix-blend-mode',map[mode]||'normal','important');
+ }
+}
+
 function applyFxLayerRuntimeTuning(layer){
  if(!layer?.matches?.('.card-fx-layer'))return;
+ applyFxBlendModeDirect(layer);
  const speed=Math.max(.25,Math.min(2,Number(layer.dataset.fxSpeed||100)/100));
  const moveDir=layer.dataset.fxDirection||'default';
  const rotDir=layer.dataset.fxRotation||'default';
  const motion=Math.max(.25,Math.min(1.8,Number(layer.dataset.fxMotion||100)/100));
  const density=Math.max(.5,Math.min(1.8,Number(layer.dataset.fxDensity||100)/100));
+ layer.dataset.fxRuntimeAnimated=layer.closest('.card-fx-stack.fx-animate')?'1':'0';
  layer.style.setProperty('--fx-runtime-density',String(density));
  layer.style.setProperty('--fx-motion-detail-opacity',String(Math.max(.35,Math.min(1.35,.55+.45*motion))));
  requestAnimationFrame(()=>{

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minkai-tcg-simulator-v12-14';
+const CACHE_NAME = 'minkai-tcg-simulator-v12-15';
 const APP_SHELL = [
   './',
   './index.html',
@@ -32,6 +32,12 @@ const APP_SHELL = [
   './effects/surface-diamond-cut-fine.png',
   './effects/surface-diamond-cut-deep.png',
   './effects/surface-diamond-cut-aurora.png',
+  './effects/surface-diamond-cut-black.png',
+  './effects/surface-dichroic-glass.png',
+  './effects/surface-black-chrome.png',
+  './effects/surface-heat-titanium.png',
+  './effects/surface-clear-resin.png',
+  './effects/surface-ceramic-gloss.png',
 ];
 
 self.addEventListener('install', event => {
