@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v12.12</title>
+<title>みん会TCG Simulator v12.13</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17006,19 +17006,71 @@ html{--visual-generation:"12.0"}
   0%,100%{opacity:calc(var(--fx-o,.68)*.82)}
   50%{opacity:var(--fx-o,.68)}
 }
-.fx-animate .fx-diamond-cut,
-.fx-animate .fx-liquid-chrome,
-.fx-animate .fx-anodized-metal,
-.fx-animate .fx-glass-laminate,
-.fx-animate .fx-mother-pearl{
-  animation:fxMaterialDrift var(--fx-duration,10s) ease-in-out infinite!important;
-}
-.fx-animate .fx-satin-foil,
-.fx-animate .fx-carbon-iridescent,
-.fx-animate .fx-velvet-matte{
-  animation:fxMaterialPulse var(--fx-duration,9s) ease-in-out infinite!important;
+/* v12.13: detailed blend mode must override effect defaults */
+.card-fx-layer{
+  mix-blend-mode:var(--fx-blend,normal)!important;
 }
 
+
+/* ==========================================================
+   v12.13 Material animation fix
+   ========================================================== */
+@keyframes fxMatSurfaceShift{
+  0%{background-position:46% 49%;transform:scale(1.01)}
+  50%{background-position:54% 51%;transform:scale(1.035)}
+  100%{background-position:46% 49%;transform:scale(1.01)}
+}
+@keyframes fxMatSurfacePulse{
+  0%,100%{opacity:calc(var(--fx-o,.7)*.76)}
+  50%{opacity:var(--fx-o,.7)}
+}
+.fx-animate .fx-diamond-cut,
+.fx-animate .fx-diamond-cut-fine,
+.fx-animate .fx-diamond-cut-deep,
+.fx-animate .fx-diamond-cut-aurora,
+.fx-animate .fx-anodized-metal,
+.fx-animate .fx-carbon-iridescent,
+.fx-animate .fx-velvet-matte{
+  animation-name:fxMatSurfaceShift;
+  animation-duration:var(--fx-duration,9s);
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
+  animation-direction:alternate;
+  animation-fill-mode:both;
+}
+.fx-animate .fx-diamond-cut-deep,
+.fx-animate .fx-velvet-matte{
+  animation-name:fxMatSurfacePulse;
+}
+
+/* v12.13 Diamond Cut evolution pack */
+.fx-diamond-cut-fine{
+  background-image:url('effects/surface-diamond-cut-fine.png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center;
+  background-size:cover!important;
+  border:none!important;outline:none!important;box-shadow:none!important;
+  mix-blend-mode:var(--fx-blend,screen);
+}
+.fx-diamond-cut-fine>.fx-deco{display:none!important}
+.fx-diamond-cut-deep{
+  background-image:url('effects/surface-diamond-cut-deep.png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center;
+  background-size:cover!important;
+  border:none!important;outline:none!important;box-shadow:none!important;
+  mix-blend-mode:var(--fx-blend,screen);
+}
+.fx-diamond-cut-deep>.fx-deco{display:none!important}
+.fx-diamond-cut-aurora{
+  background-image:url('effects/surface-diamond-cut-aurora.png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center;
+  background-size:cover!important;
+  border:none!important;outline:none!important;box-shadow:none!important;
+  mix-blend-mode:var(--fx-blend,screen);
+}
+.fx-diamond-cut-aurora>.fx-deco{display:none!important}
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -18534,7 +18586,7 @@ html{--visual-generation:"12.0"}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v12.12 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v12.13 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19439,13 +19491,12 @@ const CARD_VISUAL_EFFECTS=[
  {id:'oil-slick',name:'偏光油膜',category:'ホロ・加工'},
  {id:'holographic-film-soft',name:'ホログラフィックフィルム',category:'ホロ・加工'},
  {id:'diamond-cut',name:'ダイヤモンドカット',category:'表面加工'},
- {id:'satin-foil',name:'サテンフォイル',category:'表面加工'},
- {id:'liquid-chrome',name:'リキッドクローム',category:'表面加工'},
  {id:'anodized-metal',name:'アノダイズドメタル',category:'表面加工'},
- {id:'glass-laminate',name:'グラスラミネート',category:'表面加工'},
- {id:'mother-pearl',name:'マザーオブパール',category:'表面加工'},
  {id:'carbon-iridescent',name:'イリデセントカーボン',category:'表面加工'},
- {id:'velvet-matte',name:'ベルベットマット',category:'表面加工'}
+ {id:'velvet-matte',name:'ベルベットマット',category:'表面加工'},
+ {id:'diamond-cut-fine',name:'ダイヤモンドカット・ファイン',category:'表面加工'},
+ {id:'diamond-cut-deep',name:'ダイヤモンドカット・ディープ',category:'表面加工'},
+ {id:'diamond-cut-aurora',name:'ダイヤモンドカット・オーロラ',category:'表面加工'}
 ];
 const CARD_FX_IDS=new Set(CARD_VISUAL_EFFECTS.map(x=>x.id));
 function customFxIdFromType(type=''){const s=String(type||'');return s.startsWith('custom:')?s.slice(7):''}
@@ -22172,7 +22223,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.12',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.13',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
