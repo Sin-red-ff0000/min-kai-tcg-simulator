@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v12.15</title>
+<title>みん会TCG Simulator v12.16</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -13459,14 +13459,14 @@ body.album-direct-dragging *{cursor:grabbing!important}
 }
 
 /* Processing effects should visibly move whenever fx-animate is present. */
-.card-fx-stack.fx-animate .card-fx-layer::before,
-.card-fx-stack.fx-animate .card-fx-layer::after,
-.card-fx-stack.fx-animate .card-fx-layer>.fx-deco{
+.card-fx-stack.fx-animate:not(.fx-force-animation) .card-fx-layer::before,
+.card-fx-stack.fx-animate:not(.fx-force-animation) .card-fx-layer::after,
+.card-fx-stack.fx-animate:not(.fx-force-animation) .card-fx-layer>.fx-deco{
  animation-play-state:running;
 }
 
 /* Editor/showcase movement is intentionally easy to notice. */
-.fx-editor-preview-card .card-fx-stack.fx-animate .card-fx-layer,
+.fx-editor-preview-card .card-fx-stack.fx-animate:not(.fx-force-animation) .card-fx-layer,
 .fx-showcase-card .card-fx-stack.fx-animate .card-fx-layer{
  --fx-o:min(1,var(--fx-o,.7));
 }
@@ -17845,10 +17845,10 @@ html{--visual-generation:"12.0"}
 /* A transformed parent + independently transformed blended descendants can
    produce stale compositor surfaces in some Chromium builds.  While rested,
    keep the effect visible but suspend its transform animation. */
-.board-main .pile.rested>.card-fx-stack.fx-animate .card-fx-layer,
-.board-main .pile.rested>.card-fx-stack.fx-animate .card-fx-layer::before,
-.board-main .pile.rested>.card-fx-stack.fx-animate .card-fx-layer::after,
-.board-main .pile.rested>.card-fx-stack.fx-animate .card-fx-layer>.fx-deco{
+.board-main .pile.rested>.card-fx-stack.fx-animate:not(.fx-force-animation) .card-fx-layer,
+.board-main .pile.rested>.card-fx-stack.fx-animate:not(.fx-force-animation) .card-fx-layer::before,
+.board-main .pile.rested>.card-fx-stack.fx-animate:not(.fx-force-animation) .card-fx-layer::after,
+.board-main .pile.rested>.card-fx-stack.fx-animate:not(.fx-force-animation) .card-fx-layer>.fx-deco{
   animation-play-state:paused!important;
 }
 
@@ -18667,6 +18667,33 @@ html{--visual-generation:"12.0"}
  animation-play-state:running!important;
 }
 
+
+/* ==========================================================
+   v12.16 Blend pipeline fix
+   FX wrapper is no longer an isolated stacking context.
+   Individual layers blend against the actual card artwork.
+   ========================================================== */
+.card-fx-stack{
+  isolation:auto!important;
+  z-index:auto!important;
+}
+.card-fx-stack>.card-fx-layer{
+  z-index:3;
+}
+.card-fx-layer[data-fx-blend="normal"]{mix-blend-mode:normal!important}
+.card-fx-layer[data-fx-blend="screen"]{mix-blend-mode:screen!important}
+.card-fx-layer[data-fx-blend="add"]{mix-blend-mode:plus-lighter!important}
+.card-fx-layer[data-fx-blend="overlay"]{mix-blend-mode:overlay!important}
+.card-fx-layer[data-fx-blend="soft-light"]{mix-blend-mode:soft-light!important}
+
+
+/* v12.16 runtime transform is the guaranteed animation path.
+   Existing native CSS animations may continue in parallel. */
+.card-fx-stack.fx-animate>.card-fx-layer[data-fx-runtime-animated="1"]{
+  transform-origin:center center!important;
+  will-change:transform,opacity,filter;
+}
+
 </style>
 </head>
 <body>
@@ -18675,7 +18702,7 @@ html{--visual-generation:"12.0"}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v12.15 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v12.16 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22318,7 +22345,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.15',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.16',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -23992,7 +24019,8 @@ function openFxFloatingPreview(card){
    <label>拡大 <span id="fx-preview-zoom-label" class="pill">100%</span><input id="fx-preview-zoom" type="range" min="70" max="150" step="5" value="100"></label>
    <button class="btn small" type="button" id="fx-preview-reload-image">画像を再読込</button>
  </div><div id="fx-editor-preview"></div><div class="muted floating-preview-caption">表示項目を個別に切り替えて、エフェクトだけ／フレームだけでも確認できます。</div>`);
- ['fx-preview-animate','fx-preview-show-image','fx-preview-show-effects','fx-preview-show-frame','fx-preview-background'].forEach(id=>$('#'+id)?.addEventListener('change',()=>renderFxEditorPreview(card)));
+ ['fx-preview-show-image','fx-preview-show-effects','fx-preview-show-frame','fx-preview-background'].forEach(id=>$('#'+id)?.addEventListener('change',()=>renderFxEditorPreview(card)));
+ $('#fx-preview-animate')?.addEventListener('change',()=>{renderFxEditorPreview(card);requestAnimationFrame(()=>{stopCardFxMotionEngine();applyFxRuntimeTuning($('#fx-editor-preview-effects'));if($('#fx-preview-animate')?.checked)kickCardFxMotionEngine()})});
  $('#fx-preview-zoom').oninput=e=>{const out=$('#fx-preview-zoom-label');if(out)out.textContent=e.target.value+'%';applyFxPreviewControls(card)};
  $('#fx-preview-reload-image').onclick=()=>{applyAppearanceEditorMode(document);bindAppearanceEditorToggle(document);renderFxEditorPreview(card,{forceImage:true})};
  renderFxEditorPreview(card,{forceImage:true});
@@ -24323,11 +24351,17 @@ function cardFxMotionTick(now){
      const local=(now*speed)%6000/6000;
      const wave=(Math.sin(local*Math.PI*2)+1)/2;
      const reverse=layer.dataset.fxDirection==='reverse'?-1:1;
-     const dx=(48+reverse*(wave-.5)*7).toFixed(2);
-     const dy=(50+Math.sin(local*Math.PI*4)*1.8).toFixed(2);
-     layer.style.backgroundPosition=`${dx}% ${dy}%`;
-     /* Fallback animation stays inside the overlay and does not move the card itself. */
-     layer.style.setProperty('--fx-live-opacity',String(.84+wave*.16));
+     const dx=reverse*(wave-.5)*4.8;
+     const dy=Math.sin(local*Math.PI*4)*2.2;
+     const motion=Math.max(.25,Math.min(1.8,Number(layer.dataset.fxMotion||100)/100));
+     const scale=1.012+wave*.025*motion;
+     const type=String(layer.dataset.fxType||'');
+     /* Fire / sakura keep their strong native animation.
+        Other effects receive a guaranteed material-reflection drift. */
+     if(type!=='fire'&&type!=='sakura'){
+       layer.style.setProperty('transform',`translate3d(${(dx*motion).toFixed(2)}%,${(dy*motion).toFixed(2)}%,0) scale(${scale.toFixed(4)})`,'important');
+       layer.style.setProperty('--fx-live-opacity',String(.78+wave*.22));
+     }
      applyFxBlendModeDirect(layer);
    }
  }
@@ -29073,6 +29107,14 @@ function applyFxBlendModeDirect(layer){
  }
 }
 
+
+function resetFxRuntimeAnimation(layer){
+ if(!layer?.matches?.('.card-fx-layer'))return;
+ layer.style.removeProperty('transform');
+ layer.style.removeProperty('--fx-live-opacity');
+ layer.dataset.fxRuntimeAnimated='0';
+}
+
 function applyFxLayerRuntimeTuning(layer){
  if(!layer?.matches?.('.card-fx-layer'))return;
  applyFxBlendModeDirect(layer);
@@ -29081,7 +29123,9 @@ function applyFxLayerRuntimeTuning(layer){
  const rotDir=layer.dataset.fxRotation||'default';
  const motion=Math.max(.25,Math.min(1.8,Number(layer.dataset.fxMotion||100)/100));
  const density=Math.max(.5,Math.min(1.8,Number(layer.dataset.fxDensity||100)/100));
- layer.dataset.fxRuntimeAnimated=layer.closest('.card-fx-stack.fx-animate')?'1':'0';
+ const runtimeAnimated=!!layer.closest('.card-fx-stack.fx-animate');
+ layer.dataset.fxRuntimeAnimated=runtimeAnimated?'1':'0';
+ if(!runtimeAnimated)resetFxRuntimeAnimation(layer);
  layer.style.setProperty('--fx-runtime-density',String(density));
  layer.style.setProperty('--fx-motion-detail-opacity',String(Math.max(.35,Math.min(1.35,.55+.45*motion))));
  requestAnimationFrame(()=>{
