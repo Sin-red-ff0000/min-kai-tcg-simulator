@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.5</title>
+<title>みん会TCG Simulator v13.7</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17487,6 +17487,67 @@ html[data-home-play-mode="online"] #board-resume-panel{
 }
 .online-audit-row:last-child{border-bottom:0}
 
+
+/* ==========================================================
+   v13.6 Provider settings / server vault
+   ========================================================== */
+.online-provider-note{
+  display:grid;
+  gap:8px;
+}
+.online-provider-note label,
+.online-remote-config label{
+  display:grid;
+  gap:4px;
+}
+.online-remote-config{
+  display:grid;
+  gap:8px;
+  padding:10px;
+  border:1px solid rgba(100,135,175,.28);
+  border-radius:9px;
+  background:rgba(0,0,0,.14);
+}
+.online-remote-config input,
+.online-provider-note select{
+  width:100%;
+}
+
+
+/* ==========================================================
+   v13.7 Online mode button / bootstrap hotfix
+   ========================================================== */
+#home-mode-solo,
+#home-mode-online{
+  pointer-events:auto!important;
+  position:relative;
+  z-index:2;
+  cursor:pointer;
+}
+.home-mode-tabs{
+  position:relative;
+  z-index:2;
+}
+.online-bootstrap-status{
+  margin:6px 0 10px;
+  padding:6px 8px;
+  border-radius:7px;
+  background:rgba(80,130,190,.08);
+}
+.online-provider-details{
+  margin-top:12px;
+  border-top:1px solid rgba(120,150,180,.24);
+  padding-top:8px;
+}
+.online-provider-details>summary{
+  cursor:pointer;
+  font-weight:700;
+  padding:6px 0;
+}
+.online-provider-details[open]>summary{
+  margin-bottom:6px;
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -19055,7 +19116,7 @@ html[data-home-play-mode="online"] #board-resume-panel{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.5 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19069,8 +19130,8 @@ html[data-home-play-mode="online"] #board-resume-panel{
 <section id="home-mode-switcher" class="home-mode-switcher">
   <div class="section-head"><h2>プレイモード</h2></div>
   <div class="home-mode-tabs" role="tablist" aria-label="プレイモード">
-    <button class="btn home-mode-tab active" id="home-mode-solo" type="button" data-home-mode="solo">1人回し</button>
-    <button class="btn home-mode-tab" id="home-mode-online" type="button" data-home-mode="online">オンライン対戦</button>
+    <button class="btn home-mode-tab active" id="home-mode-solo" type="button" data-home-mode="solo" onclick="window.minkaiEmergencyModeSwitch&&window.minkaiEmergencyModeSwitch('solo');window.minkaiSetHomePlayMode&&window.minkaiSetHomePlayMode('solo')">1人回し</button>
+    <button class="btn home-mode-tab" id="home-mode-online" type="button" data-home-mode="online" onclick="window.minkaiEmergencyModeSwitch&&window.minkaiEmergencyModeSwitch('online');window.minkaiSetHomePlayMode&&window.minkaiSetHomePlayMode('online')">オンライン対戦</button>
   </div>
   <div class="muted home-mode-note" id="home-mode-note">現在のSimulatorをそのまま使う1人回しモードです。</div>
 </section>
@@ -19078,7 +19139,8 @@ html[data-home-play-mode="online"] #board-resume-panel{
 
 <section id="online-home-panel" class="online-home-panel" hidden>
   <div class="section-head"><h2>オンライン対戦</h2><span class="pill">Ver13.1</span></div>
-  <p class="muted">13.1ではルーム作成・参加・観戦と、同一ブラウザ内での実同期テストに対応します。</p>
+  <p class="muted">オンライン対戦モード。ルーム作成・参加・観戦へ進めます。</p>
+<div id="online-bootstrap-status" class="online-bootstrap-status muted">オンラインUI準備中</div>
 
   <div id="online-room-entry" class="online-room-entry">
     <div class="online-home-actions">
@@ -19167,17 +19229,41 @@ html[data-home-play-mode="online"] #board-resume-panel{
     </div>
   </div>
 
+  <details class="online-provider-details">
+  <summary>通信設定</summary>
   <div class="online-provider-note">
-    <div class="muted">通信方式</div>
-    <b id="online-provider-label">ローカル通信テスト</b>
-    <div class="muted">同じブラウザの別タブ同士で同期できます。</div>
-    <div class="online-provider-capabilities">
-      <span class="pill">監査ログ基盤</span>
-      <span class="pill">サーバーシャッフルI/F</span>
-      <span class="pill">サーバーランダムI/F</span>
+    <div class="section-head"><h3>通信設定</h3><span id="online-provider-state" class="pill">local</span></div>
+    <label>通信方式
+      <select id="online-provider-select">
+        <option value="local-broadcast">ローカル通信テスト</option>
+        <option value="remote-api">リモートAPI</option>
+      </select>
+    </label>
+
+    <div id="online-remote-config" class="online-remote-config" hidden>
+      <label>API Endpoint
+        <input id="online-remote-endpoint" type="url" placeholder="https://example.com/api/tcg">
+      </label>
+      <label>Project ID
+        <input id="online-remote-project" type="text" placeholder="minkai-tcg">
+      </label>
+      <div class="actions">
+        <button class="btn small" id="online-remote-save" type="button">設定を保存</button>
+        <button class="btn small" id="online-remote-test" type="button">接続テスト</button>
+      </div>
+      <div id="online-remote-test-result" class="muted">未テスト</div>
     </div>
-    <div class="muted">インターネット越しの通信はremote-apiへ差し替える設計です。13.5では接続先はまだ無効です。</div>
+
+    <div class="online-provider-capabilities">
+      <span class="pill">監査ログ</span>
+      <span class="pill">シャッフル</span>
+      <span class="pill">ランダム</span>
+      <span class="pill">ドロー</span>
+      <span class="pill">server-only vault</span>
+    </div>
+    <div class="muted">リモートAPIを使う場合、ルーム・非公開情報・乱数処理を外部サーバーへ移せる構造です。</div>
   </div>
+</details>
 </section>
 
 <section id="online-match-board-panel" class="online-match-board-panel" hidden>
@@ -19226,7 +19312,13 @@ html[data-home-play-mode="online"] #board-resume-panel{
   </div>
 
   <div class="online-audit-panel">
-    <div class="section-head"><h3>操作ログ</h3><span id="online-audit-count" class="pill">0件</span></div>
+    <div class="section-head">
+      <h3>操作ログ</h3>
+      <div class="actions">
+        <span id="online-audit-integrity" class="pill">未検証</span>
+        <span id="online-audit-count" class="pill">0件</span>
+      </div>
+    </div>
     <div id="online-audit-list" class="online-audit-list muted">操作ログなし</div>
   </div>
 
@@ -22906,7 +22998,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.5',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.7',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -30183,7 +30275,7 @@ function onlineEnsureMatchState(room){
   onlineRoomPublicState(room);
   return room.match;
 }
-function onlineStartMatch(){
+async function onlineStartMatch(){
   if(onlineSessionState.role!=='host'){toast('対戦開始はホストのみ操作できます');return}
   const code=onlineSessionState.joinCode,rooms=onlineLoadRooms(),room=rooms[code];
   if(!room){toast('ルームが見つかりません');return}
@@ -30201,6 +30293,17 @@ function onlineStartMatch(){
   };
   onlineEnsurePrivacyState(room);
   onlineUpdateOwnPrivateState(room);
+
+  /* Initialize both hidden deck orders through provider before match begins. */
+  await onlineInitializeServerDeck(room,1);
+  await onlineInitializeServerDeck(room,2);
+
+  /* No deck order is kept inside normal room state from this point onward. */
+  if(room.serverOnlyState){
+    room.serverOnlyState.p1={deckStoredInProvider:true};
+    room.serverOnlyState.p2={deckStoredInProvider:true};
+  }
+
   room.updatedAt=Date.now();
   onlineAuditPush(room,'match-started',{startedAt:room.match.startedAt},'public');
   rooms[code]=room;
@@ -30277,7 +30380,7 @@ function onlineAuditLabel(type){
   })[type]||type;
 }
 function onlineRenderAudit(room){
-  const list=$('#online-audit-list'),count=$('#online-audit-count');
+  const list=$('#online-audit-list'),count=$('#online-audit-count'),integrity=$('#online-audit-integrity');
   if(!list||!count)return;
   const rows=onlineAuditPublicView(room,onlineSessionState.role).slice(-30).reverse();
   count.textContent=`${rows.length}件`;
@@ -30285,6 +30388,17 @@ function onlineRenderAudit(room){
     const time=new Date(Number(row.at||Date.now())).toLocaleTimeString();
     return `<div class="online-audit-row"><span class="muted">${esc(time)}</span><b>${esc(onlineAuditLabel(row.type))}</b></div>`;
   }).join(''):'操作ログなし';
+
+  if(room.auditDirty||!room.auditHead){
+    onlineRebuildAuditChain(room).then(()=>{
+      room.auditDirty=false;
+      const rooms=onlineLoadRooms();
+      if(rooms[room.code]){rooms[room.code]=room;onlineSaveRooms(rooms)}
+      if(integrity)integrity.textContent='HASH更新';
+    }).catch(()=>{if(integrity)integrity.textContent='HASH失敗'});
+  }else{
+    onlineVerifyAuditChain(room).then(ok=>{if(integrity)integrity.textContent=ok?'改変なし':'改変検知'}).catch(()=>{if(integrity)integrity.textContent='検証失敗'});
+  }
 }
 
 function onlineRenderMatchBoard(){
@@ -30422,7 +30536,9 @@ function onlineUpdateOwnPrivateState(room){
   if(!slot)return;
   onlineEnsurePrivacyState(room);
   room.privateState[`p${slot}`]=onlineBuildPrivateStateForOwner(slot);
-  room.serverOnlyState[`p${slot}`]=onlineBuildServerOnlyState(slot);
+  /* deck order is intentionally not written to room state */
+  if(!room.serverOnlyState)room.serverOnlyState={p1:null,p2:null};
+  room.serverOnlyState[`p${slot}`]={deckStoredInProvider:true};
 }
 function onlinePublicSnapshotString(slot){
   try{return JSON.stringify(onlineExtractPublicBoardFromSolo(slot))}catch(_){return ''}
@@ -30523,6 +30639,7 @@ function onlineAuditPush(room,type,detail={},visibility='public'){
     detail:JSON.parse(JSON.stringify(detail||{}))
   });
   if(log.length>ONLINE_AUDIT_MAX)log.splice(0,log.length-ONLINE_AUDIT_MAX);
+  room.auditDirty=true;
 }
 function onlineAuditPublicView(room,role){
   const ownSlot=role==='host'?1:role==='guest'?2:null;
@@ -30578,6 +30695,180 @@ function onlineRecordRoomAction(type,detail={},visibility='public'){
   rooms[code]=room;
   onlineSaveRooms(rooms);
   onlineBroadcast('audit-update',{type});
+}
+
+
+const LS_ONLINE_PROVIDER_CONFIG='minkai-online-provider-config-v1';
+const LS_ONLINE_SERVER_VAULT='minkai-online-server-vault-v1';
+
+function onlineLoadProviderConfig(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(LS_ONLINE_PROVIDER_CONFIG)||'{}');
+    return {
+      provider:raw.provider===ONLINE_PROVIDER_TYPES.REMOTE?ONLINE_PROVIDER_TYPES.REMOTE:ONLINE_PROVIDER_TYPES.LOCAL,
+      endpoint:String(raw.endpoint||''),
+      projectId:String(raw.projectId||'minkai-tcg')
+    };
+  }catch(_){
+    return {provider:ONLINE_PROVIDER_TYPES.LOCAL,endpoint:'',projectId:'minkai-tcg'};
+  }
+}
+function onlineSaveProviderConfig(){
+  const cfg={
+    provider:$('#online-provider-select')?.value===ONLINE_PROVIDER_TYPES.REMOTE?ONLINE_PROVIDER_TYPES.REMOTE:ONLINE_PROVIDER_TYPES.LOCAL,
+    endpoint:String($('#online-remote-endpoint')?.value||'').trim(),
+    projectId:String($('#online-remote-project')?.value||'minkai-tcg').trim()||'minkai-tcg'
+  };
+  localStorage.setItem(LS_ONLINE_PROVIDER_CONFIG,JSON.stringify(cfg));
+  ONLINE_REMOTE_CONFIG.endpoint=cfg.endpoint;
+  ONLINE_REMOTE_CONFIG.projectId=cfg.projectId;
+  ONLINE_REMOTE_CONFIG.enabled=cfg.provider===ONLINE_PROVIDER_TYPES.REMOTE&&/^https?:\/\//.test(cfg.endpoint);
+  onlineSessionState.provider=cfg.provider;
+  onlineSyncProviderUI();
+  toast('通信設定を保存しました');
+}
+function onlineApplySavedProviderConfig(){
+  const cfg=onlineLoadProviderConfig();
+  onlineSessionState.provider=cfg.provider;
+  ONLINE_REMOTE_CONFIG.endpoint=cfg.endpoint;
+  ONLINE_REMOTE_CONFIG.projectId=cfg.projectId;
+  ONLINE_REMOTE_CONFIG.enabled=cfg.provider===ONLINE_PROVIDER_TYPES.REMOTE&&/^https?:\/\//.test(cfg.endpoint);
+  const p=$('#online-provider-select'),e=$('#online-remote-endpoint'),id=$('#online-remote-project');
+  if(p)p.value=cfg.provider;
+  if(e)e.value=cfg.endpoint;
+  if(id)id.value=cfg.projectId;
+  onlineSyncProviderUI();
+}
+function onlineSyncProviderUI(){
+  const provider=$('#online-provider-select')?.value||onlineSessionState.provider||ONLINE_PROVIDER_TYPES.LOCAL;
+  const remote=provider===ONLINE_PROVIDER_TYPES.REMOTE;
+  const box=$('#online-remote-config');if(box)box.hidden=!remote;
+  const state=$('#online-provider-state');
+  if(state)state.textContent=remote?(onlineRemoteProviderReady()?'remote ready':'remote未設定'):'local';
+}
+async function onlineTestRemoteProvider(){
+  const result=$('#online-remote-test-result');
+  if(result)result.textContent='接続テスト中…';
+  onlineSaveProviderConfig();
+  if(!onlineRemoteProviderReady()){
+    if(result)result.textContent='Endpointを設定してください。';
+    return;
+  }
+  try{
+    const data=await onlineProviderRequest('ping',{at:Date.now()});
+    if(result)result.textContent=`接続成功${data?.version?` / ${data.version}`:''}`;
+  }catch(err){
+    if(result)result.textContent=`接続失敗：${String(err?.message||err)}`;
+  }
+}
+
+/* local server-vault emulation.
+   In remote mode this data must live only on the external server. */
+function onlineLoadServerVault(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(LS_ONLINE_SERVER_VAULT)||'{}');
+    return raw&&typeof raw==='object'?raw:{};
+  }catch(_){return {}}
+}
+function onlineSaveServerVault(vault){
+  localStorage.setItem(LS_ONLINE_SERVER_VAULT,JSON.stringify(vault||{}));
+}
+function onlineVaultRoom(code,create=true){
+  const vault=onlineLoadServerVault();
+  if(!vault[code]&&create)vault[code]={p1:null,p2:null,updatedAt:Date.now()};
+  return {vault,room:vault[code]||null};
+}
+function onlineVaultSetDeckOrder(code,slot,cardIds){
+  const {vault,room}=onlineVaultRoom(code,true);
+  room[`p${slot}`]={deckOrder:[...(cardIds||[])].map(String),updatedAt:Date.now()};
+  room.updatedAt=Date.now();
+  onlineSaveServerVault(vault);
+}
+function onlineVaultGetDeckOrder(code,slot){
+  return [...(onlineVaultRoom(code,false).room?.[`p${slot}`]?.deckOrder||[])];
+}
+function onlineVaultDeleteRoom(code){
+  const vault=onlineLoadServerVault();
+  if(vault[code]){delete vault[code];onlineSaveServerVault(vault)}
+}
+function onlineExpandDeckSnapshot(snapshot){
+  const ids=[];
+  for(const row of snapshot?.entries||[]){
+    for(let i=0;i<Number(row.count||0);i++)ids.push(String(row.cardId));
+  }
+  return ids;
+}
+async function onlineInitializeServerDeck(room,slot){
+  const member=slot===1?room?.p1:room?.p2;
+  if(!member?.lockedDeck)return false;
+  const ids=onlineExpandDeckSnapshot(member.lockedDeck);
+  const shuffled=await onlineServerShuffle(ids);
+  const order=shuffled.cardIds||[];
+  if(onlineSessionState.provider===ONLINE_PROVIDER_TYPES.REMOTE){
+    await onlineProviderRequest('set-deck-order',{
+      roomCode:onlineSessionState.joinCode,
+      slot,
+      cardIds:order
+    });
+  }else{
+    onlineVaultSetDeckOrder(onlineSessionState.joinCode,slot,order);
+  }
+  return true;
+}
+async function onlineServerDraw(slot,count=1){
+  count=Math.max(1,Math.min(20,Number(count)||1));
+  if(onlineSessionState.provider===ONLINE_PROVIDER_TYPES.REMOTE){
+    return await onlineProviderRequest('draw',{
+      roomCode:onlineSessionState.joinCode,
+      slot,
+      count
+    });
+  }
+  const code=onlineSessionState.joinCode;
+  const order=onlineVaultGetDeckOrder(code,slot);
+  const drawn=order.splice(0,count);
+  onlineVaultSetDeckOrder(code,slot,order);
+  return {drawn,remaining:order.length,provider:'local-test'};
+}
+async function onlineServerPeekCount(slot){
+  if(onlineSessionState.provider===ONLINE_PROVIDER_TYPES.REMOTE){
+    return await onlineProviderRequest('deck-count',{roomCode:onlineSessionState.joinCode,slot});
+  }
+  return {count:onlineVaultGetDeckOrder(onlineSessionState.joinCode,slot).length,provider:'local-test'};
+}
+
+async function onlineAuditHashEntry(prevHash,row){
+  const text=JSON.stringify({
+    prevHash:String(prevHash||''),
+    at:Number(row.at||0),
+    type:String(row.type||''),
+    actorRole:String(row.actorRole||''),
+    actorClientId:String(row.actorClientId||''),
+    visibility:String(row.visibility||''),
+    detail:row.detail||{}
+  });
+  return await onlineHashText(text);
+}
+async function onlineRebuildAuditChain(room){
+  const log=onlineEnsureAudit(room);
+  let prev='';
+  for(const row of log){
+    row.prevHash=prev;
+    row.hash=await onlineAuditHashEntry(prev,row);
+    prev=row.hash;
+  }
+  room.auditHead=prev;
+}
+async function onlineVerifyAuditChain(room){
+  const log=onlineEnsureAudit(room);
+  let prev='';
+  for(const row of log){
+    if(String(row.prevHash||'')!==prev)return false;
+    const hash=await onlineAuditHashEntry(prev,row);
+    if(String(row.hash||'')!==hash)return false;
+    prev=hash;
+  }
+  return String(room.auditHead||'')===prev;
 }
 
 function onlineHeartbeat(){
@@ -30637,6 +30928,7 @@ function onlineLeaveRoom(broadcast=true){
     if(room){
       if(role==='host'){
         if(broadcast)onlineBroadcast('room-close');
+        onlineVaultDeleteRoom(code);
         delete rooms[code];
       }else{
         if(role==='guest'&&room.p2?.clientId===clientId)room.p2=null;
@@ -30657,8 +30949,15 @@ async function onlineCopyRoomCode(){
 }
 function initOnlineModeFoundation(){
   onlineCleanupRooms();
-  $('#home-mode-solo')?.addEventListener('click',()=>setHomePlayMode('solo'));
-  $('#home-mode-online')?.addEventListener('click',()=>setHomePlayMode('online'));
+  const soloModeBtn=$('#home-mode-solo'),onlineModeBtn=$('#home-mode-online');
+  if(soloModeBtn&&!soloModeBtn.dataset.onlineBound){
+    soloModeBtn.dataset.onlineBound='1';
+    soloModeBtn.addEventListener('click',()=>setHomePlayMode('solo'));
+  }
+  if(onlineModeBtn&&!onlineModeBtn.dataset.onlineBound){
+    onlineModeBtn.dataset.onlineBound='1';
+    onlineModeBtn.addEventListener('click',()=>setHomePlayMode('online'));
+  }
   $('#online-create-room')?.addEventListener('click',onlineCreateRoom);
   $('#online-join-room')?.addEventListener('click',()=>onlineShowForm('guest'));
   $('#online-watch-room')?.addEventListener('click',()=>onlineShowForm('spectator'));
@@ -30673,12 +30972,66 @@ function initOnlineModeFoundation(){
   $('#online-open-match-board')?.addEventListener('click',onlineShowMatchBoard);
   $('#online-back-to-lobby')?.addEventListener('click',onlineBackToLobby);
   $('#online-leave-room')?.addEventListener('click',()=>onlineLeaveRoom(true));
+  $('#online-provider-select')?.addEventListener('change',()=>{onlineSyncProviderUI()});
+  $('#online-remote-save')?.addEventListener('click',onlineSaveProviderConfig);
+  $('#online-remote-test')?.addEventListener('click',onlineTestRemoteProvider);
+  onlineApplySavedProviderConfig();
   window.addEventListener('storage',e=>{if(e.key===LS_ONLINE_ROOMS&&onlineSessionState.joinCode)onlineRefreshLobby()});
   window.addEventListener('beforeunload',()=>{try{onlineHeartbeat()}catch(_){}});
   syncHomePlayModeUI();
+  const boot=$('#online-bootstrap-status');if(boot)boot.textContent='オンラインUI準備完了';
   if(onlineSessionState.joinCode)onlineShowLobby();else onlineShowEntry();
 }
 
+
+
+/* ==========================================================
+   v13.7 Online bootstrap fix
+   Keep initialization inside the same IIFE as online functions.
+   ========================================================== */
+window.minkaiSetHomePlayMode=function(mode){
+  try{
+    setHomePlayMode(mode);
+    return true;
+  }catch(err){
+    console.error('home mode switch failed',err);
+    return false;
+  }
+};
+window.minkaiInitOnlineMode=function(){
+  try{
+    initOnlineModeFoundation();
+    return true;
+  }catch(err){
+    console.error('online foundation init failed',err);
+    const note=document.getElementById('home-mode-note');
+    if(note)note.textContent='オンライン機能の初期化に失敗しました。ページを再読み込みしてください。';
+    return false;
+  }
+};
+
+let onlineFoundationInitializedV137=false;
+function bootstrapOnlineFoundationV137(){
+  if(onlineFoundationInitializedV137)return;
+  onlineFoundationInitializedV137=true;
+  const ok=window.minkaiInitOnlineMode();
+  if(!ok)onlineFoundationInitializedV137=false;
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',bootstrapOnlineFoundationV137,{once:true});
+}else{
+  queueMicrotask(bootstrapOnlineFoundationV137);
+}
+
+
+window.minkaiEmergencyModeSwitch=function(mode){
+  const online=mode==='online';
+  document.documentElement.dataset.homePlayMode=online?'online':'solo';
+  const panel=document.getElementById('online-home-panel');
+  if(panel)panel.hidden=!online;
+  document.getElementById('home-mode-solo')?.classList.toggle('active',!online);
+  document.getElementById('home-mode-online')?.classList.toggle('active',online);
+};
 
 })();
 </script>
@@ -30745,33 +31098,6 @@ pauseVisualAnimationsForVisibility();
 
 
 
-<script>
 
-document.addEventListener('click',e=>{
-  const btn=e.target?.closest?.('[data-home-mode]');
-  if(!btn)return;
-  e.preventDefault();
-  try{setHomePlayMode(btn.dataset.homeMode)}catch(err){console.error('home mode switch failed',err)}
-});
-let onlineFoundationInitialized=false;
-function safeInitOnlineModeFoundation(){
-  if(onlineFoundationInitialized)return;
-  onlineFoundationInitialized=true;
-  try{
-    initOnlineModeFoundation();
-  }catch(err){
-    onlineFoundationInitialized=false;
-    console.error('online foundation init failed',err);
-    const note=document.getElementById('home-mode-note');
-    if(note)note.textContent='オンライン機能の初期化に失敗しました。ページを再読み込みしてください。';
-  }
-}
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',safeInitOnlineModeFoundation,{once:true});
-}else{
-  queueMicrotask(safeInitOnlineModeFoundation);
-}
-
-</script>
 </body>
 </html>

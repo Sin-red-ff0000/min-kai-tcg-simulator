@@ -4432,3 +4432,54 @@ v13.5 オンラインボタン修正 / 外部通信・監査基盤
 - remote-api化後は監査ログをサーバー側保存へ移行予定
 - Service Workerキャッシュをv13-5へ更新
 
+v13.6 通信プロバイダ設定 / server-only分離
+- ローカル通信テスト / リモートAPIを画面から切替可能
+- API Endpoint / Project ID設定を追加
+- 通信設定をlocalStorageへ保存
+- リモートAPI接続テストを追加
+- remote-api action：
+  - ping
+  - shuffle
+  - random-pick
+  - set-deck-order
+  - draw
+  - deck-count
+- server-only情報を通常roomデータから分離
+- ローカル検証用にserver vault専用保存領域を追加
+- 対戦開始時にlockedDeckを展開してプロバイダ経由でシャッフル
+- デッキ順は通常room.serverOnlyStateへ保存しない
+- serverOnlyStateには「provider側に保存済み」のフラグだけ保持
+- onlineServerDrawを追加
+- onlineServerPeekCountを追加
+- ホストがルーム終了時にローカルserver vaultも削除
+- 操作ログにハッシュチェーンを追加
+- prevHash / hash / auditHeadでログ改変を検知する基盤を追加
+- オンライン盤面に監査ログの整合性表示を追加
+- Service Workerキャッシュをv13-6へ更新
+
+次：v13.7
+- 実remote-apiのサーバー仕様を確定
+- room create / join / heartbeat / syncもremote-apiへ移行
+- owner-only手札を相手クライアントへ送らない実通信
+- server-side draw / shuffle / randomのオンライン盤面操作へ接続
+
+v13.7 オンライン対戦モード切替の根本修正
+- 「オンライン対戦」を押しても切り替わらない問題を再修正
+- 原因：
+  - v13.5以降のbootstrapスクリプトがメインIIFEの外側にあり
+  - IIFE内のsetHomePlayMode / initOnlineModeFoundationへアクセスできない構造だった
+- bootstrap処理をメインIIFE内部へ移動
+- window.minkaiSetHomePlayModeを公開ブリッジとして追加
+- window.minkaiInitOnlineModeを追加
+- ボタンにonclickの直接フォールバックを追加
+- emergency mode switchを追加
+  - 本体初期化で問題が起きてもオンラインパネル自体は表示可能
+- モードボタンへpointer-events / z-indexを明示
+- 初期化の二重登録を防止
+- オンライン画面に「オンラインUI準備完了」表示を追加
+- 通信設定は通常画面を圧迫しないよう折りたたみ化
+- Service Workerキャッシュをv13-7へ更新
+
+13.7はオンライン入口を確認できることを最優先した修正版。
+remote-apiの本格移行は入口動作確認後に継続。
+
