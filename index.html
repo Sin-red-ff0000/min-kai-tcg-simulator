@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.12</title>
+<title>みん会TCG Simulator v13.13</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -19172,7 +19172,7 @@ html[data-home-play-mode="online"] #board-resume-panel{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.12 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.13 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19323,6 +19323,7 @@ html[data-home-play-mode="online"] #board-resume-panel{
       <span class="pill">server-only vault</span><span class="pill">remote room API</span>
     </div>
     <div class="muted">リモートAPIを使う場合、ルーム・非公開情報・乱数処理を外部サーバーへ移せる構造です。</div>
+    <div class="muted">セッショントークン本体は画面へ表示しません。</div>
   </div>
 </details>
 </section>
@@ -23098,7 +23099,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.12',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.13',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -29982,6 +29983,7 @@ function resetOnlineSessionState(){
     clientId:'',
     displayName:'',
     spectatorIndex:null,
+    sessionToken:'',
     lastError:''
   };
 }
@@ -30241,6 +30243,7 @@ function onlineMemberReadyText(member){
 
 async function onlineRemotePushPlayerSetup(payload){
   if(!onlineUsingRemoteProvider())return null;
+  if(!onlineSessionToken())throw new Error('セッション情報が失われています。ルームへ入り直してください');
   return await onlineProviderRequest('player-setup',{
     roomCode:onlineSessionState.joinCode,
     clientId:onlineSessionState.clientId,
@@ -30311,7 +30314,13 @@ async function onlineToggleReady(){
       if(remoteData)onlineApplyRemoteRoomSnapshot(remoteData);
     }catch(err){
       console.warn('remote player-setup failed',err);
-      toast('準備状態のサーバー同期に失敗しました');
+      member.ready=false;
+      member.deckLocked=false;
+      onlineSessionState.ready=false;
+      onlineSessionState.deckLocked=false;
+      toast(`準備状態の同期失敗：${String(err?.message||err)}`);
+      onlineRefreshLobby();
+      return;
     }
   }
   onlineAuditPush(room,member.ready?'ready-on':'ready-off',{
@@ -31248,6 +31257,22 @@ async function onlineVerifyAuditChain(room){
 function onlineUsingRemoteProvider(){
   return onlineSessionState.provider===ONLINE_PROVIDER_TYPES.REMOTE;
 }
+
+function onlineRemoteSessionValid(){
+  return !onlineUsingRemoteProvider()||!!onlineSessionToken();
+}
+function onlineUpdateRemoteSessionStatus(){
+  const el=$('#online-bootstrap-status');
+  if(!el||!onlineUsingRemoteProvider())return;
+  if(!onlineSessionState.joinCode){
+    el.textContent='Supabase接続準備完了';
+  }else if(onlineRemoteSessionValid()){
+    el.textContent='Supabaseセッション認証済み';
+  }else{
+    el.textContent='Supabaseセッションが失われています。ルームへ入り直してください。';
+  }
+}
+
 function onlineRemoteConfigValid(){
   return onlineRemoteProviderReady();
 }
@@ -31278,7 +31303,7 @@ async function onlineRemoteCreateRoom(){
     });
     const room=onlineApplyRemoteRoomSnapshot(data);
     if(!room)throw new Error('invalid create-room response');
-    onlineSetSessionToken(data.sessionToken||'');
+    const sessionToken=String(data.sessionToken||'');
 
     resetOnlineSessionState();
     onlineSessionState={
@@ -31291,11 +31316,13 @@ async function onlineRemoteCreateRoom(){
       connection:'connected',
       playerSlot:1,
       clientId:String(data.clientId||room.p1?.clientId||onlineRandomId('client')),
-      displayName:'P1'
+      displayName:'P1',
+      sessionToken
     };
     onlineOpenChannel(room.code);
     onlineStartHeartbeat();
     onlineStartRemotePolling();
+    onlineUpdateRemoteSessionStatus();
     onlineShowLobby();
     toast(`ルームを作成しました：${room.code}`);
     return true;
@@ -31317,7 +31344,7 @@ async function onlineRemoteJoinRoom(code,role='guest'){
     });
     const room=onlineApplyRemoteRoomSnapshot(data);
     if(!room)throw new Error('invalid join-room response');
-    onlineSetSessionToken(data.sessionToken||'');
+    const sessionToken=String(data.sessionToken||'');
 
     resetOnlineSessionState();
     onlineSessionState={
@@ -31330,11 +31357,13 @@ async function onlineRemoteJoinRoom(code,role='guest'){
       connection:'connected',
       playerSlot:role==='guest'?2:null,
       clientId:String(data.clientId||onlineRandomId('client')),
-      displayName:role==='guest'?'P2':'観戦者'
+      displayName:role==='guest'?'P2':'観戦者',
+      sessionToken
     };
     onlineOpenChannel(room.code||code);
     onlineStartHeartbeat();
     onlineStartRemotePolling();
+    onlineUpdateRemoteSessionStatus();
     onlineShowLobby();
     toast(role==='spectator'?'観戦参加しました':'ルームに参加しました');
     return true;
@@ -31475,6 +31504,7 @@ function onlineShowLobby(){
   onlineRefreshLobby();
 }
 async function onlineRefreshLobby(){
+  onlineUpdateRemoteSessionStatus();
   const code=onlineSessionState.joinCode;
   if(onlineUsingRemoteProvider())await onlineRemoteGetRoom();
   const rooms=onlineLoadRooms(),room=rooms[code];
