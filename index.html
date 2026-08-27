@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.4</title>
+<title>みん会TCG Simulator v13.5</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17472,6 +17472,21 @@ html[data-home-play-mode="online"] #board-resume-panel{
   .online-privacy-grid{grid-template-columns:1fr}
 }
 
+
+/* ==========================================================
+   v13.5 Provider / audit foundation
+   ========================================================== */
+.online-provider-capabilities{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.online-audit-panel{
+  margin-top:12px;padding:10px;border:1px solid #40536a;border-radius:10px;background:rgba(8,13,20,.30)
+}
+.online-audit-list{display:grid;gap:4px;max-height:220px;overflow:auto}
+.online-audit-row{
+  display:grid;grid-template-columns:80px 1fr;gap:8px;align-items:center;
+  padding:5px 6px;border-bottom:1px solid rgba(255,255,255,.04)
+}
+.online-audit-row:last-child{border-bottom:0}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -19040,7 +19055,7 @@ html[data-home-play-mode="online"] #board-resume-panel{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.4 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.5 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19155,7 +19170,13 @@ html[data-home-play-mode="online"] #board-resume-panel{
   <div class="online-provider-note">
     <div class="muted">通信方式</div>
     <b id="online-provider-label">ローカル通信テスト</b>
-    <div class="muted">同じブラウザの別タブ同士で同期できます。インターネット越しの通信プロバイダは次段階で接続予定です。</div>
+    <div class="muted">同じブラウザの別タブ同士で同期できます。</div>
+    <div class="online-provider-capabilities">
+      <span class="pill">監査ログ基盤</span>
+      <span class="pill">サーバーシャッフルI/F</span>
+      <span class="pill">サーバーランダムI/F</span>
+    </div>
+    <div class="muted">インターネット越しの通信はremote-apiへ差し替える設計です。13.5では接続先はまだ無効です。</div>
   </div>
 </section>
 
@@ -19204,8 +19225,13 @@ html[data-home-play-mode="online"] #board-resume-panel{
     <div id="online-private-summary" class="online-private-summary muted">非公開情報を準備中</div>
   </div>
 
+  <div class="online-audit-panel">
+    <div class="section-head"><h3>操作ログ</h3><span id="online-audit-count" class="pill">0件</span></div>
+    <div id="online-audit-list" class="online-audit-list muted">操作ログなし</div>
+  </div>
+
   <div class="online-sync-note muted">
-    13.4では公開盤面を自動同期します。非公開情報は相手・観戦者へカード内容を送らない構造へ分離します。
+    13.5では監査ログ・サーバー側シャッフル・ランダム処理のインターフェースを追加しています。現在のlocal-broadcastは検証用です。
   </div>
 </section>
 
@@ -22880,7 +22906,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.4',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.5',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -29815,7 +29841,7 @@ function onlineBroadcast(type,payload={}){
 }
 function onlineHandleRoomMessage(msg){
   if(!msg||msg.code!==onlineSessionState.joinCode||msg.from===onlineSessionState.clientId)return;
-  if(['member-change','heartbeat','room-sync','room-close','match-start','public-board-update','private-state-update'].includes(msg.type)){
+  if(['member-change','heartbeat','room-sync','room-close','match-start','public-board-update','private-state-update','audit-update'].includes(msg.type)){
     if(msg.type==='room-close'){
       onlineSessionState.lastError='ホストがルームを終了しました';
       onlineLeaveRoom(false);
@@ -29852,7 +29878,8 @@ function onlineCreateRoom(){
     match:{status:'lobby',startedAt:0,startedBy:'',turnPlayer:1},
     publicState:{p1:onlineEmptyPublicBoard(),p2:onlineEmptyPublicBoard(),revision:0,updatedAt:now},
     privateState:{p1:null,p2:null},
-    serverOnlyState:{p1:null,p2:null}
+    serverOnlyState:{p1:null,p2:null},
+    auditLog:[]
   };
   onlineSaveRooms(rooms);
 
@@ -29870,6 +29897,7 @@ function onlineCreateRoom(){
     displayName:'P1'
   };
   onlineOpenChannel(code);
+  onlineRecordRoomAction('room-created',{code},'public');
   onlineStartHeartbeat();
   onlineShowLobby();
   onlineBroadcast('member-change');
@@ -29907,6 +29935,7 @@ function onlineJoinRoom(code,role='guest'){
     displayName:role==='guest'?'P2':'観戦者'
   };
   onlineOpenChannel(code);
+  onlineRecordRoomAction(role==='spectator'?'spectator-joined':'player-joined',{code,role},'public');
   onlineStartHeartbeat();
   onlineShowLobby();
   onlineBroadcast('member-change');
@@ -30022,6 +30051,11 @@ async function onlineToggleReady(){
   }
 
   room.updatedAt=Date.now();
+  onlineAuditPush(room,member.ready?'ready-on':'ready-off',{
+    deckName:member.deckName||'',
+    deckHash:member.deckHash||'',
+    deckTotal:Number(member.deckTotal||0)
+  },'public');
   rooms[code]=room;
   onlineSaveRooms(rooms);
   onlineBroadcast('member-change');
@@ -30168,6 +30202,7 @@ function onlineStartMatch(){
   onlineEnsurePrivacyState(room);
   onlineUpdateOwnPrivateState(room);
   room.updatedAt=Date.now();
+  onlineAuditPush(room,'match-started',{startedAt:room.match.startedAt},'public');
   rooms[code]=room;
   onlineSaveRooms(rooms);
   onlineBroadcast('match-start');
@@ -30229,6 +30264,29 @@ function onlineRenderPublicSlot(slot,state){
   const badge=$(`#online-board-owner-p${slot}`);
   if(badge)badge.textContent=own?'自分側':'閲覧のみ';
 }
+
+function onlineAuditLabel(type){
+  return ({
+    'room-created':'ルーム作成',
+    'player-joined':'P2参加',
+    'spectator-joined':'観戦参加',
+    'ready-on':'準備完了',
+    'ready-off':'準備解除',
+    'match-started':'対戦開始',
+    'public-board-sync':'公開盤面同期'
+  })[type]||type;
+}
+function onlineRenderAudit(room){
+  const list=$('#online-audit-list'),count=$('#online-audit-count');
+  if(!list||!count)return;
+  const rows=onlineAuditPublicView(room,onlineSessionState.role).slice(-30).reverse();
+  count.textContent=`${rows.length}件`;
+  list.innerHTML=rows.length?rows.map(row=>{
+    const time=new Date(Number(row.at||Date.now())).toLocaleTimeString();
+    return `<div class="online-audit-row"><span class="muted">${esc(time)}</span><b>${esc(onlineAuditLabel(row.type))}</b></div>`;
+  }).join(''):'操作ログなし';
+}
+
 function onlineRenderMatchBoard(){
   const code=onlineSessionState.joinCode,room=onlineLoadRooms()[code];
   if(!room)return;
@@ -30236,6 +30294,7 @@ function onlineRenderMatchBoard(){
   $('#online-match-code').textContent=code||'------';
   $('#online-match-role').textContent=onlineRoleLabel();
   const state=onlineRoomPublicState(room);
+  onlineRenderAudit(room);
   onlineRenderPublicSlot(1,state.p1);
   onlineRenderPublicSlot(2,state.p2);
   const status=$('#online-match-sync-status');
@@ -30386,6 +30445,7 @@ function onlineAutoSyncNow(){
   onlineUpdateOwnPrivateState(room);
   room.publicState=state;
   room.updatedAt=Date.now();
+  onlineAuditPush(room,'public-board-sync',{slot,revision:state.revision},'public');
   rooms[code]=room;
   onlineSaveRooms(rooms);
   onlineBroadcast('public-board-update',{slot,revision:state.revision});
@@ -30432,6 +30492,92 @@ function onlineRenderPrivateSummary(){
   const slot=onlineSessionState.role==='host'?1:2;
   const counts=onlineCountPrivateInfo(slot);
   out.textContent=`自分だけ閲覧：手札 ${counts.handCount}枚 / 両者に非公開：デッキ ${counts.deckCount}枚`;
+}
+
+
+const ONLINE_PROVIDER_TYPES={
+  LOCAL:'local-broadcast',
+  REMOTE:'remote-api'
+};
+const ONLINE_REMOTE_CONFIG={
+  enabled:false,
+  endpoint:'',
+  projectId:'',
+  authMode:'anonymous'
+};
+const ONLINE_AUDIT_MAX=500;
+
+function onlineEnsureAudit(room){
+  if(!Array.isArray(room.auditLog))room.auditLog=[];
+  return room.auditLog;
+}
+function onlineAuditPush(room,type,detail={},visibility='public'){
+  const log=onlineEnsureAudit(room);
+  log.push({
+    id:onlineRandomId('log'),
+    at:Date.now(),
+    type:String(type||'event'),
+    actorRole:onlineSessionState.role||'system',
+    actorClientId:onlineSessionState.clientId||'',
+    visibility,
+    detail:JSON.parse(JSON.stringify(detail||{}))
+  });
+  if(log.length>ONLINE_AUDIT_MAX)log.splice(0,log.length-ONLINE_AUDIT_MAX);
+}
+function onlineAuditPublicView(room,role){
+  const ownSlot=role==='host'?1:role==='guest'?2:null;
+  return onlineEnsureAudit(room).filter(row=>{
+    if(row.visibility==='public')return true;
+    if(row.visibility==='owner-p1')return ownSlot===1;
+    if(row.visibility==='owner-p2')return ownSlot===2;
+    return false;
+  });
+}
+function onlineRemoteProviderReady(){
+  return ONLINE_REMOTE_CONFIG.enabled&&/^https?:\/\//.test(ONLINE_REMOTE_CONFIG.endpoint);
+}
+async function onlineProviderRequest(action,payload={}){
+  if(onlineSessionState.provider!==ONLINE_PROVIDER_TYPES.REMOTE)throw new Error('remote provider is not active');
+  if(!onlineRemoteProviderReady())throw new Error('remote provider is not configured');
+  const res=await fetch(ONLINE_REMOTE_CONFIG.endpoint,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({action,payload,projectId:ONLINE_REMOTE_CONFIG.projectId})
+  });
+  if(!res.ok)throw new Error(`provider http ${res.status}`);
+  return await res.json();
+}
+async function onlineServerShuffle(cardIds){
+  const ids=[...(cardIds||[])].map(String);
+  if(onlineSessionState.provider===ONLINE_PROVIDER_TYPES.REMOTE){
+    return await onlineProviderRequest('shuffle',{cardIds:ids,roomCode:onlineSessionState.joinCode});
+  }
+  const arr=[...ids];
+  for(let i=arr.length-1;i>0;i--){
+    let j;
+    if(globalThis.crypto?.getRandomValues){
+      const b=new Uint32Array(1);crypto.getRandomValues(b);j=b[0]%(i+1);
+    }else j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return {cardIds:arr,provider:'local-test'};
+}
+async function onlineServerRandomPick(candidateIds,count=1){
+  const ids=[...(candidateIds||[])].map(String);
+  if(onlineSessionState.provider===ONLINE_PROVIDER_TYPES.REMOTE){
+    return await onlineProviderRequest('random-pick',{candidateIds:ids,count,roomCode:onlineSessionState.joinCode});
+  }
+  const shuffled=(await onlineServerShuffle(ids)).cardIds;
+  return {picked:shuffled.slice(0,Math.max(1,Number(count)||1)),provider:'local-test'};
+}
+function onlineRecordRoomAction(type,detail={},visibility='public'){
+  const code=onlineSessionState.joinCode;if(!code)return;
+  const rooms=onlineLoadRooms(),room=rooms[code];if(!room)return;
+  onlineAuditPush(room,type,detail,visibility);
+  room.updatedAt=Date.now();
+  rooms[code]=room;
+  onlineSaveRooms(rooms);
+  onlineBroadcast('audit-update',{type});
 }
 
 function onlineHeartbeat(){
@@ -30597,9 +30743,35 @@ pauseVisualAnimationsForVisibility();
 </script>
 
 
-<script>
-window.addEventListener('DOMContentLoaded',()=>{try{initOnlineModeFoundation()}catch(err){console.warn('online foundation init failed',err)}});
-</script>
 
+
+<script>
+
+document.addEventListener('click',e=>{
+  const btn=e.target?.closest?.('[data-home-mode]');
+  if(!btn)return;
+  e.preventDefault();
+  try{setHomePlayMode(btn.dataset.homeMode)}catch(err){console.error('home mode switch failed',err)}
+});
+let onlineFoundationInitialized=false;
+function safeInitOnlineModeFoundation(){
+  if(onlineFoundationInitialized)return;
+  onlineFoundationInitialized=true;
+  try{
+    initOnlineModeFoundation();
+  }catch(err){
+    onlineFoundationInitialized=false;
+    console.error('online foundation init failed',err);
+    const note=document.getElementById('home-mode-note');
+    if(note)note.textContent='オンライン機能の初期化に失敗しました。ページを再読み込みしてください。';
+  }
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',safeInitOnlineModeFoundation,{once:true});
+}else{
+  queueMicrotask(safeInitOnlineModeFoundation);
+}
+
+</script>
 </body>
 </html>
