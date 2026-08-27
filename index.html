@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v12.18</title>
+<title>みん会TCG Simulator v13.0</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17202,6 +17202,64 @@ html{--visual-generation:"12.0"}
 .fx-royal-velvet>.fx-deco{display:none!important}
 .fx-thermal-liquid-crystal{background-image:url('effects/surface-thermal-liquid-crystal.png')!important;background-repeat:no-repeat!important;background-position:center;background-size:cover!important;mix-blend-mode:screen;border:none!important;outline:none!important;box-shadow:none!important}
 .fx-thermal-liquid-crystal>.fx-deco{display:none!important}
+
+/* ==========================================================
+   v13.0 Home mode separation / online foundation
+   ========================================================== */
+.home-mode-switcher{
+  margin:12px 0;
+  padding:12px;
+  border:1px solid #3a4656;
+  border-radius:12px;
+  background:#101720;
+}
+.home-mode-tabs{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.home-mode-tab{
+  min-width:130px;
+}
+.home-mode-tab.active{
+  outline:2px solid rgba(110,170,255,.55);
+}
+.home-mode-note{
+  margin-top:8px;
+}
+.online-home-panel{
+  margin:12px 0 16px;
+  padding:14px;
+  border:1px solid #47617d;
+  border-radius:12px;
+  background:linear-gradient(180deg,rgba(25,37,53,.96),rgba(15,22,31,.96));
+}
+.online-home-actions{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  margin-top:12px;
+}
+.online-home-status{
+  margin-top:10px;
+  padding:9px 10px;
+  border-radius:8px;
+  background:rgba(0,0,0,.18);
+}
+
+/* Online mode gets its own entrance.
+   Keep solo UI in DOM so online development doesn't rewrite it. */
+html[data-home-play-mode="online"] #board-setup,
+html[data-home-play-mode="online"] #board-resume-panel{
+  display:none!important;
+}
+
+@media(max-width:700px){
+  .home-mode-tabs{display:grid;grid-template-columns:1fr 1fr}
+  .home-mode-tab{min-width:0}
+  .online-home-actions{grid-template-columns:1fr}
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -18770,7 +18828,7 @@ html{--visual-generation:"12.0"}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v12.18 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -18780,6 +18838,28 @@ html{--visual-generation:"12.0"}
   <button data-nav="settings" class="settings-nav-button" aria-label="設定">⚙ 設定</button>
 </header>
 <main>
+
+<section id="home-mode-switcher" class="home-mode-switcher">
+  <div class="section-head"><h2>プレイモード</h2></div>
+  <div class="home-mode-tabs" role="tablist" aria-label="プレイモード">
+    <button class="btn home-mode-tab active" id="home-mode-solo" type="button" data-home-mode="solo">1人回し</button>
+    <button class="btn home-mode-tab" id="home-mode-online" type="button" data-home-mode="online">オンライン対戦</button>
+  </div>
+  <div class="muted home-mode-note" id="home-mode-note">現在のSimulatorをそのまま使う1人回しモードです。</div>
+</section>
+
+<section id="online-home-panel" class="online-home-panel" hidden>
+  <div class="section-head"><h2>オンライン対戦</h2><span class="pill">Ver13 基盤</span></div>
+  <p class="muted">通話はDiscordなど外部サービスを前提に、対戦盤面の共有に集中するモードです。</p>
+  <div class="online-home-actions">
+    <button class="btn primary" id="online-create-room" type="button">ルームを作る</button>
+    <button class="btn" id="online-join-room" type="button">ルームに参加</button>
+    <button class="btn" id="online-watch-room" type="button">観戦する</button>
+  </div>
+  <div id="online-home-status" class="online-home-status muted">13.0ではオンライン用の入口と状態管理のみ実装しています。通信接続は13.1以降で追加します。</div>
+</section>
+
+
   <section id="screen-home" class="screen active">
     <div class="hero">
       <h1>みん会TCG Simulator</h1>
@@ -22447,7 +22527,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.18',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.0',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -29237,6 +29317,79 @@ function applyFxRuntimeTuning(root=document){
  root?.querySelectorAll?.('.card-fx-layer').forEach(applyFxLayerRuntimeTuning);
 }
 
+
+/* ==========================================================
+   v13.0 Online mode foundation
+   Online state is intentionally separated from local board state.
+   ========================================================== */
+const LS_HOME_PLAY_MODE='minkai-home-play-mode-v1';
+const ONLINE_MODE_VERSION=1;
+let homePlayMode=localStorage.getItem(LS_HOME_PLAY_MODE)==='online'?'online':'solo';
+let onlineSessionState={
+  version:ONLINE_MODE_VERSION,
+  role:null,          // host | guest | spectator
+  roomId:'',
+  joinCode:'',
+  connection:'offline',
+  ready:false,
+  deckLocked:false,
+  playerSlot:null,
+  lastError:''
+};
+
+function resetOnlineSessionState(){
+  onlineSessionState={
+    version:ONLINE_MODE_VERSION,
+    role:null,
+    roomId:'',
+    joinCode:'',
+    connection:'offline',
+    ready:false,
+    deckLocked:false,
+    playerSlot:null,
+    lastError:''
+  };
+}
+function setHomePlayMode(mode){
+  homePlayMode=mode==='online'?'online':'solo';
+  localStorage.setItem(LS_HOME_PLAY_MODE,homePlayMode);
+  syncHomePlayModeUI();
+}
+function syncHomePlayModeUI(){
+  const solo=homePlayMode==='solo';
+  $('#home-mode-solo')?.classList.toggle('active',solo);
+  $('#home-mode-online')?.classList.toggle('active',!solo);
+  const panel=$('#online-home-panel');
+  if(panel)panel.hidden=solo;
+  const note=$('#home-mode-note');
+  if(note)note.textContent=solo
+    ?'現在のSimulatorをそのまま使う1人回しモードです。'
+    :'オンライン専用の状態・画面を使用します。1人回しの盤面状態とは分離されています。';
+
+  /* Existing solo content remains untouched; only hide common board-start entry points
+     while online home is selected. */
+  document.documentElement.dataset.homePlayMode=homePlayMode;
+}
+function onlineFoundationNotice(kind){
+  const status=$('#online-home-status');
+  const labels={
+    create:'ルーム作成',
+    join:'ルーム参加',
+    watch:'観戦参加'
+  };
+  onlineSessionState.lastError='';
+  if(status)status.textContent=`${labels[kind]||'オンライン機能'}は13.1以降で通信処理を接続します。13.0では画面分離とオンライン専用状態管理まで実装済みです。`;
+  toast(`${labels[kind]||'オンライン機能'}：13.1以降で有効化予定`);
+}
+function initOnlineModeFoundation(){
+  $('#home-mode-solo')?.addEventListener('click',()=>setHomePlayMode('solo'));
+  $('#home-mode-online')?.addEventListener('click',()=>setHomePlayMode('online'));
+  $('#online-create-room')?.addEventListener('click',()=>onlineFoundationNotice('create'));
+  $('#online-join-room')?.addEventListener('click',()=>onlineFoundationNotice('join'));
+  $('#online-watch-room')?.addEventListener('click',()=>onlineFoundationNotice('watch'));
+  syncHomePlayModeUI();
+}
+
 })();
 </script>
 
@@ -29297,6 +29450,11 @@ pauseVisualAnimationsForVisibility();
 
 
 
+</script>
+
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{try{initOnlineModeFoundation()}catch(err){console.warn('online foundation init failed',err)}});
 </script>
 
 </body>
