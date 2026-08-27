@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v12.8</title>
+<title>みん会TCG Simulator v12.9</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -16772,6 +16772,70 @@ html{--visual-generation:"12.0"}
  .deck-current-row .qty{grid-column:1/-1;justify-content:flex-end}
 }
 
+
+/* ==========================================================
+   v12.9 Generated-reference surface finishes
+   8種を承認済み生成画像から個別テクスチャ化。
+   文字・ロゴ・外枠はエフェクトとして実装しない。
+   ========================================================== */
+.fx-prism-cut,
+.fx-diamond-glitter,
+.fx-sandblast,
+.fx-metallic-brush,
+.fx-mirror-reflection,
+.fx-opal-shimmer,
+.fx-pearl-shell,
+.fx-frost-ice{
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ border:none!important;
+ outline:none!important;
+ box-shadow:none!important;
+}
+.fx-prism-cut{background-image:url('effects/prism-cut-gen.png')!important;mix-blend-mode:screen}
+.fx-diamond-glitter{background-image:url('effects/diamond-glitter-gen.png')!important;mix-blend-mode:screen}
+.fx-sandblast{background-image:url('effects/sandblast-gen.png')!important;mix-blend-mode:soft-light}
+.fx-metallic-brush{background-image:url('effects/metallic-brush-gen.png')!important;mix-blend-mode:soft-light}
+.fx-mirror-reflection{background-image:url('effects/mirror-reflection-gen.png')!important;mix-blend-mode:screen}
+.fx-opal-shimmer{background-image:url('effects/opal-shimmer-gen.png')!important;mix-blend-mode:screen}
+.fx-pearl-shell{background-image:url('effects/pearl-shell-gen.png')!important;mix-blend-mode:screen}
+.fx-frost-ice{background-image:url('effects/frost-ice-gen.png')!important;mix-blend-mode:screen}
+
+/* old procedural decorations are disabled for these eight */
+.fx-prism-cut>.fx-deco,
+.fx-diamond-glitter>.fx-deco,
+.fx-sandblast>.fx-deco,
+.fx-metallic-brush>.fx-deco,
+.fx-mirror-reflection>.fx-deco,
+.fx-opal-shimmer>.fx-deco,
+.fx-pearl-shell>.fx-deco,
+.fx-frost-ice>.fx-deco{display:none!important}
+
+@keyframes fxGenSurfaceDrift{
+  0%{background-position:49% 50%}
+  50%{background-position:51% 49%}
+  100%{background-position:49% 50%}
+}
+@keyframes fxGenSurfacePulse{
+  0%,100%{opacity:calc(var(--fx-o,.72)*.82)}
+  50%{opacity:var(--fx-o,.72)}
+}
+.fx-animate .fx-prism-cut,
+.fx-animate .fx-mirror-reflection,
+.fx-animate .fx-opal-shimmer,
+.fx-animate .fx-pearl-shell{
+ animation:fxGenSurfaceDrift var(--fx-duration,8s) ease-in-out infinite!important;
+}
+.fx-animate .fx-diamond-glitter,
+.fx-animate .fx-frost-ice{
+ animation:fxGenSurfacePulse var(--fx-duration,7s) ease-in-out infinite!important;
+}
+.fx-animate .fx-sandblast,
+.fx-animate .fx-metallic-brush{
+ animation:fxGenSurfaceDrift var(--fx-duration,11s) ease-in-out infinite!important;
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -18287,7 +18351,7 @@ html{--visual-generation:"12.0"}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v12.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v12.9 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -21950,7 +22014,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.8',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.9',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,

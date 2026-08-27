@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minkai-tcg-simulator-v12-8';
+const CACHE_NAME = 'minkai-tcg-simulator-v12-9-generated-fx';
 const APP_SHELL = [
   './',
   './index.html',
@@ -35,6 +35,14 @@ const APP_SHELL = [
   './effects/opal-shimmer.png',
   './effects/pearl-shell.png',
   './effects/frost-ice.png',
+  './effects/prism-cut-gen.png',
+  './effects/diamond-glitter-gen.png',
+  './effects/sandblast-gen.png',
+  './effects/metallic-brush-gen.png',
+  './effects/mirror-reflection-gen.png',
+  './effects/opal-shimmer-gen.png',
+  './effects/pearl-shell-gen.png',
+  './effects/frost-ice-gen.png',
 ];
 
 self.addEventListener('install', event => {
