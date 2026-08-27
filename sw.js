@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minkai-tcg-simulator-v12-9-clean-overlay-test';
+const CACHE_NAME = 'minkai-tcg-simulator-v12-10';
 const APP_SHELL = [
   './',
   './index.html',
@@ -26,24 +26,7 @@ const APP_SHELL = [
   './frames/second-infernal-sigil.png',
   './frames/second-ancient-forest-temple.png',
   './frames/second-luxury-cyber.png',
-  './frames/second-void-fracture.png',
-  './effects/prism-cut.png',
-  './effects/diamond-glitter.png',
-  './effects/sandblast.png',
-  './effects/metallic-brush.png',
-  './effects/mirror-reflection.png',
-  './effects/opal-shimmer.png',
-  './effects/pearl-shell.png',
-  './effects/frost-ice.png',
-  './effects/prism-cut-gen.png',
-  './effects/diamond-glitter-gen.png',
-  './effects/sandblast-gen.png',
-  './effects/metallic-brush-gen.png',
-  './effects/mirror-reflection-gen.png',
-  './effects/opal-shimmer-gen.png',
-  './effects/pearl-shell-gen.png',
-  './effects/frost-ice-gen.png',
-  './effects/generated-clean-overlay-test.png',
+  './frames/second-void-fracture.png',  './effects/frost-ice.png',  './effects/holographic-film-soft.png',
 ];
 
 self.addEventListener('install', event => {
