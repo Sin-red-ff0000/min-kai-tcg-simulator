@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.11</title>
+<title>みん会TCG Simulator v13.12</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17574,6 +17574,36 @@ html[data-home-play-mode="online"] #board-resume-panel{
   font-size:12px;
 }
 
+
+/* v13.12 turn / visible hand count */
+.online-turn-panel{
+  margin:10px 0 12px;
+  padding:10px;
+  border:1px solid #42566c;
+  border-radius:10px;
+  background:rgba(10,16,24,.30);
+}
+.online-turn-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:8px;
+}
+.online-turn-card{
+  display:grid;
+  gap:4px;
+  padding:8px;
+  border-radius:8px;
+  background:rgba(255,255,255,.035);
+}
+.online-turn-card span{
+  font-size:12px;
+  color:#9cacbe;
+}
+@media(max-width:700px){
+  .online-turn-grid{grid-template-columns:1fr}
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -19142,7 +19172,7 @@ html[data-home-play-mode="online"] #board-resume-panel{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.11 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.12 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19309,6 +19339,27 @@ html[data-home-play-mode="online"] #board-resume-panel{
   <div class="online-match-statusbar">
     <span id="online-match-code" class="pill">------</span>
     <span id="online-match-sync-status" class="muted">同期待機中</span>
+  </div>
+
+  <div class="online-turn-panel">
+    <div class="section-head">
+      <h3>ターン管理</h3>
+      <span id="online-turn-owner" class="pill">P1 TURN</span>
+    </div>
+    <div class="online-turn-grid">
+      <div class="online-turn-card">
+        <span>P1</span>
+        <b id="online-hand-count-p1">手札 ?枚</b>
+      </div>
+      <div class="online-turn-card">
+        <span>P2</span>
+        <b id="online-hand-count-p2">手札 ?枚</b>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="online-end-turn" type="button">ターン終了</button>
+    </div>
+    <div id="online-turn-note" class="muted">現在のターンプレイヤーだけがターン終了できます。</div>
   </div>
 
   <div class="online-board-grid">
@@ -23047,7 +23098,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.11',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.12',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -30254,7 +30305,8 @@ async function onlineToggleReady(){
         otherDeckTotal:Number(member.otherDeckTotal||0),
         otherDeckHash:String(member.otherDeckHash||''),
         lockedDeck:member.ready?member.lockedDeck:null,
-        lockedOtherDeck:member.ready?member.lockedOtherDeck:null
+        lockedOtherDeck:member.ready?member.lockedOtherDeck:null,
+        handCount:onlineCountPrivateInfo(onlineOwnSlot()||1).handCount
       });
       if(remoteData)onlineApplyRemoteRoomSnapshot(remoteData);
     }catch(err){
@@ -30413,6 +30465,11 @@ async function onlineStartMatch(){
   room.match.status='started';
   room.match.startedAt=Date.now();
   room.match.startedBy=onlineSessionState.clientId;
+  room.match.turnPlayer=1;
+  room.match.turnCount=1;
+  room.match.turnChangedAt=Date.now();
+  onlineUpdateVisibleHandCount(room,1);
+  onlineUpdateVisibleHandCount(room,2);
   room.publicState={
     p1:onlineExtractPublicBoardFromSolo(1),
     p2:onlineExtractPublicBoardFromSolo(2),
@@ -30475,6 +30532,7 @@ function onlinePublishOwnPublicBoard(){
       clientId:onlineSessionState.clientId,
       slot,
       publicBoard:state[`p${slot}`],
+      handCount:onlineCountPrivateInfo(slot).handCount,
       revision:state.revision
     }).then(data=>{if(data)onlineApplyRemoteRoomSnapshot(data)}).catch(err=>console.warn('remote public sync failed',err));
   }
@@ -30532,7 +30590,8 @@ function onlineAuditLabel(type){
     'public-board-sync':'公開盤面同期',
     'server-draw':'ドロー',
     'server-shuffle':'シャッフル',
-    'server-random-hand':'手札ランダム選択'
+    'server-random-hand':'手札ランダム選択',
+    'turn-ended':'ターン終了'
   })[type]||type;
 }
 function onlineRenderAudit(room){
@@ -30557,6 +30616,89 @@ function onlineRenderAudit(room){
   }
 }
 
+
+function onlineCurrentTurnPlayer(room){
+  return Number(room?.match?.turnPlayer||1)===2?2:1;
+}
+function onlineOwnSlot(){
+  if(onlineSessionState.role==='host')return 1;
+  if(onlineSessionState.role==='guest')return 2;
+  return null;
+}
+function onlineCanEndTurn(room){
+  const own=onlineOwnSlot();
+  return !!own&&onlineMatchStarted(room)&&onlineCurrentTurnPlayer(room)===own;
+}
+function onlinePublicHandCount(room,slot){
+  const member=slot===1?room?.p1:room?.p2;
+  const direct=Number(member?.handCount);
+  if(Number.isFinite(direct)&&direct>=0)return direct;
+  const ps=room?.publicState?.[`p${slot}`];
+  const fallback=Number(ps?.meta?.handCount);
+  return Number.isFinite(fallback)&&fallback>=0?fallback:null;
+}
+function onlineUpdateVisibleHandCount(room,slot){
+  const member=slot===1?room?.p1:room?.p2;
+  if(!member)return;
+  member.handCount=onlineCountPrivateInfo(slot).handCount;
+}
+async function onlineEndTurn(){
+  const code=onlineSessionState.joinCode;
+  const rooms=onlineLoadRooms(),room=rooms[code];
+  if(!room||!onlineMatchStarted(room)){toast('対戦が開始されていません');return}
+  if(!onlineCanEndTurn(room)){toast('現在は自分のターンではありません');return}
+
+  const current=onlineCurrentTurnPlayer(room);
+  const next=current===1?2:1;
+  room.match.turnPlayer=next;
+  room.match.turnCount=Number(room.match.turnCount||1)+1;
+  room.match.turnChangedAt=Date.now();
+
+  onlineAuditPush(room,'turn-ended',{from:current,to:next,turnCount:room.match.turnCount},'public');
+  rooms[code]=room;
+  onlineSaveRooms(rooms);
+
+  if(onlineUsingRemoteProvider()){
+    try{
+      const data=await onlineProviderRequest('end-turn',onlineRemoteRequestPayload({
+        roomCode:code,
+        fromSlot:current,
+        toSlot:next
+      }));
+      if(data)onlineApplyRemoteRoomSnapshot(data);
+    }catch(err){
+      console.error('remote end-turn failed',err);
+      toast(`ターン終了失敗：${String(err?.message||err)}`);
+      return;
+    }
+  }
+
+  onlineBroadcast('room-sync',{reason:'turn'});
+  onlineRenderMatchBoard();
+}
+function onlineRenderTurnPanel(room){
+  const turn=onlineCurrentTurnPlayer(room);
+  const owner=$('#online-turn-owner');
+  if(owner)owner.textContent=`P${turn} TURN`;
+
+  const h1=onlinePublicHandCount(room,1),h2=onlinePublicHandCount(room,2);
+  const e1=$('#online-hand-count-p1'),e2=$('#online-hand-count-p2');
+  if(e1)e1.textContent=`手札 ${h1==null?'?':h1}枚`;
+  if(e2)e2.textContent=`手札 ${h2==null?'?':h2}枚`;
+
+  const btn=$('#online-end-turn'),note=$('#online-turn-note');
+  const can=onlineCanEndTurn(room);
+  if(btn){
+    btn.disabled=!can;
+    btn.textContent=can?'ターン終了':`P${turn}のターン`;
+  }
+  if(note){
+    if(onlineSessionState.role==='spectator')note.textContent='観戦者はターン操作できません。';
+    else if(can)note.textContent='自分のターンです。操作終了後にターン終了してください。';
+    else note.textContent=`現在はP${turn}のターンです。`;
+  }
+}
+
 function onlineRenderMatchBoard(){
   const code=onlineSessionState.joinCode,room=onlineLoadRooms()[code];
   if(!room)return;
@@ -30565,6 +30707,7 @@ function onlineRenderMatchBoard(){
   $('#online-match-role').textContent=onlineRoleLabel();
   const state=onlineRoomPublicState(room);
   onlineRenderAudit(room);
+  onlineRenderTurnPanel(room);
   onlineRenderPublicSlot(1,state.p1);
   onlineRenderPublicSlot(2,state.p2);
   const status=$('#online-match-sync-status');
@@ -30715,6 +30858,7 @@ function onlineAutoSyncNow(){
   state.updatedAt=Date.now();
 
   onlineUpdateOwnPrivateState(room);
+  onlineUpdateVisibleHandCount(room,slot);
   room.publicState=state;
   room.updatedAt=Date.now();
   onlineAuditPush(room,'public-board-sync',{slot,revision:state.revision},'public');
@@ -30826,6 +30970,8 @@ function onlineProviderErrorMessage(code,status=0){
     'host-only':'この操作はホストのみ行えます',
     'both-not-ready':'P1・P2両方の準備完了が必要です',
     'wrong-slot':'自分側ではない領域は操作できません',
+    'match-not-started':'対戦が開始されていません',
+    'not-your-turn':'現在は自分のターンではありません',
     'could-not-generate-room':'ルームコードを生成できませんでした',
     'unknown-action':'サーバーがこの操作に対応していません',
     'POST only':'通信方式が正しくありません'
@@ -31414,6 +31560,7 @@ function initOnlineModeFoundation(){
   $('#online-tool-draw')?.addEventListener('click',onlineToolDraw);
   $('#online-tool-shuffle')?.addEventListener('click',onlineToolShuffle);
   $('#online-tool-random-hand')?.addEventListener('click',onlineToolRandomHand);
+  $('#online-end-turn')?.addEventListener('click',onlineEndTurn);
   onlineApplySavedProviderConfig();
   window.addEventListener('storage',e=>{if(e.key===LS_ONLINE_ROOMS&&onlineSessionState.joinCode)onlineRefreshLobby()});
   window.addEventListener('beforeunload',()=>{try{onlineHeartbeat()}catch(_){}});
