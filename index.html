@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.2</title>
+<title>みん会TCG Simulator v13.4</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17370,6 +17370,108 @@ html[data-home-play-mode="online"] #board-resume-panel{
   .online-ready-grid{grid-template-columns:1fr}
 }
 
+
+/* ==========================================================
+   v13.3 Online public board sync
+   ========================================================== */
+.online-match-board-panel{
+  margin:12px 0 18px;
+  padding:12px;
+  border:1px solid #49637f;
+  border-radius:12px;
+  background:#0f1722;
+}
+.online-match-statusbar{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.online-board-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.online-player-board{
+  min-width:0;
+  padding:10px;
+  border:1px solid #3c4f65;
+  border-radius:10px;
+  background:rgba(255,255,255,.025);
+}
+.online-public-zone-list{
+  display:grid;
+  gap:8px;
+}
+.online-public-zone{
+  border:1px solid rgba(110,140,170,.25);
+  border-radius:8px;
+  overflow:hidden;
+}
+.online-public-zone-head{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  align-items:center;
+  padding:7px 8px;
+  background:rgba(90,125,165,.10);
+}
+.online-public-zone-body{
+  padding:8px;
+  line-height:1.5;
+}
+.online-public-pile{
+  padding:4px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.online-public-pile:last-child{border-bottom:0}
+.online-sync-note{
+  margin-top:10px;
+  padding:8px;
+  border-radius:8px;
+  background:rgba(0,0,0,.17);
+}
+@media(max-width:760px){
+  .online-board-grid{grid-template-columns:1fr}
+}
+
+
+/* ==========================================================
+   v13.4 Privacy model / auto sync
+   ========================================================== */
+.online-private-info-panel{
+  margin-top:12px;
+  padding:10px;
+  border:1px solid #42566c;
+  border-radius:10px;
+  background:rgba(9,14,21,.30);
+}
+.online-privacy-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.online-privacy-card{
+  min-width:0;
+  padding:9px;
+  border-radius:8px;
+  background:rgba(255,255,255,.035);
+}
+.online-privacy-card b{
+  display:block;
+  margin-bottom:4px;
+}
+.online-private-summary{
+  margin-top:8px;
+  padding:8px;
+  border-radius:8px;
+  background:rgba(0,0,0,.16);
+}
+@media(max-width:760px){
+  .online-privacy-grid{grid-template-columns:1fr}
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -18938,7 +19040,7 @@ html[data-home-play-mode="online"] #board-resume-panel{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.4 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19038,6 +19140,11 @@ html[data-home-play-mode="online"] #board-resume-panel{
       </div>
 
       <div id="online-match-ready-note" class="online-match-ready-note muted">両プレイヤーの準備完了を待っています。</div>
+
+      <div class="actions online-match-actions">
+        <button class="btn primary" id="online-start-match" type="button" hidden>対戦開始</button>
+        <button class="btn" id="online-open-match-board" type="button" hidden>オンライン盤面を開く</button>
+      </div>
     </div>
 
     <div class="actions">
@@ -19051,6 +19158,58 @@ html[data-home-play-mode="online"] #board-resume-panel{
     <div class="muted">同じブラウザの別タブ同士で同期できます。インターネット越しの通信プロバイダは次段階で接続予定です。</div>
   </div>
 </section>
+
+<section id="online-match-board-panel" class="online-match-board-panel" hidden>
+  <div class="section-head">
+    <h2>オンライン盤面</h2>
+    <div class="actions">
+      <span id="online-match-role" class="pill">未接続</span>
+      <button class="btn small" id="online-back-to-lobby" type="button">ロビーへ戻る</button>
+    </div>
+  </div>
+
+  <div class="online-match-statusbar">
+    <span id="online-match-code" class="pill">------</span>
+    <span id="online-match-sync-status" class="muted">同期待機中</span>
+  </div>
+
+  <div class="online-board-grid">
+    <div class="online-player-board" data-online-slot="1">
+      <div class="section-head"><h3>P1 公開盤面</h3><span id="online-board-owner-p1" class="pill">閲覧のみ</span></div>
+      <div id="online-public-p1" class="online-public-zone-list"></div>
+    </div>
+
+    <div class="online-player-board" data-online-slot="2">
+      <div class="section-head"><h3>P2 公開盤面</h3><span id="online-board-owner-p2" class="pill">閲覧のみ</span></div>
+      <div id="online-public-p2" class="online-public-zone-list"></div>
+    </div>
+  </div>
+
+  <div class="online-private-info-panel">
+    <div class="section-head"><h3>非公開情報</h3><span class="pill">権限分離</span></div>
+    <div class="online-privacy-grid">
+      <div class="online-privacy-card">
+        <b>公開</b>
+        <div class="muted">ホーム / 墓地 / 消失 / ペインカウント / ルーム / ルールプラス</div>
+      </div>
+      <div class="online-privacy-card">
+        <b>相手に非公開</b>
+        <div class="muted">自分の手札 / 自分だけが確認しているカード</div>
+      </div>
+      <div class="online-privacy-card">
+        <b>両者に非公開</b>
+        <div class="muted">デッキ順 / 未公開のデッキトップ / サーバー管理ランダム情報</div>
+      </div>
+    </div>
+    <div id="online-private-summary" class="online-private-summary muted">非公開情報を準備中</div>
+  </div>
+
+  <div class="online-sync-note muted">
+    13.4では公開盤面を自動同期します。非公開情報は相手・観戦者へカード内容を送らない構造へ分離します。
+  </div>
+</section>
+
+
 
 
 
@@ -19728,7 +19887,7 @@ html[data-home-play-mode="online"] #board-resume-panel{
       <div class="board-zoom-controls" aria-label="盤面ズーム">
         <button class="btn small" id="board-zoom-out" title="盤面を10%縮小">−</button>
         <button class="btn small board-zoom-center" id="board-zoom-value" title="100%に戻す">100%</button>
-        <button class="btn small" id="board-zoom-in" title="盤面を10%拡大">＋</button>
+<button class="btn small" id="board-zoom-in" title="盤面を10%拡大">＋</button>
       </div>
       <div class="board-history-controls" aria-label="盤面操作履歴">
         <button class="btn small" id="board-undo" title="元に戻す Ctrl+Z" disabled>↶</button>
@@ -22721,7 +22880,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.2',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.4',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -29656,14 +29815,21 @@ function onlineBroadcast(type,payload={}){
 }
 function onlineHandleRoomMessage(msg){
   if(!msg||msg.code!==onlineSessionState.joinCode||msg.from===onlineSessionState.clientId)return;
-  if(['member-change','heartbeat','room-sync','room-close'].includes(msg.type)){
+  if(['member-change','heartbeat','room-sync','room-close','match-start','public-board-update','private-state-update'].includes(msg.type)){
     if(msg.type==='room-close'){
       onlineSessionState.lastError='ホストがルームを終了しました';
       onlineLeaveRoom(false);
       toast('ホストがルームを終了しました');
       return;
     }
-    onlineRefreshLobby();
+    if(msg.type==='match-start'&&onlineSessionState.joinCode){
+      const room=onlineLoadRooms()[onlineSessionState.joinCode];
+      if(room&&onlineMatchStarted(room))onlineShowMatchBoard();
+    }else if(msg.type==='public-board-update'&&!$('#online-match-board-panel')?.hidden){
+      onlineRenderMatchBoard();
+    }else{
+      onlineRefreshLobby();
+    }
   }
 }
 function onlineCreateRoom(){
@@ -29682,7 +29848,11 @@ function onlineCreateRoom(){
     updatedAt:now,
     p1:{clientId,name:'P1',lastSeen:now,ready:false,deckLocked:false,deckId:'',deckName:'',deckTotal:0,oshiiCardId:'',deckHash:''},
     p2:null,
-    spectators:[]
+    spectators:[],
+    match:{status:'lobby',startedAt:0,startedBy:'',turnPlayer:1},
+    publicState:{p1:onlineEmptyPublicBoard(),p2:onlineEmptyPublicBoard(),revision:0,updatedAt:now},
+    privateState:{p1:null,p2:null},
+    serverOnlyState:{p1:null,p2:null}
   };
   onlineSaveRooms(rooms);
 
@@ -29916,6 +30086,354 @@ function onlineApplySetupUI(room){
     :'準備完了するとこのルーム内ではデッキ内容がロックされます。';
 }
 
+
+const ONLINE_PUBLIC_ZONES=['character','grave','banish','pain','room','rulePlus'];
+
+function onlineEmptyPublicBoard(){
+  return {
+    character:[],
+    grave:[],
+    banish:[],
+    pain:[],
+    room:[],
+    rulePlus:[],
+    meta:{updatedAt:Date.now()}
+  };
+}
+function onlineNormalizePublicPile(pile){
+  if(!pile||typeof pile!=='object')return {cards:[]};
+  const cards=Array.isArray(pile.cards)?pile.cards.map(c=>({
+    id:String(c?.id||''),
+    name:String(c?.name||'名称未設定'),
+    type:String(c?.type||''),
+    level:c?.level??'',
+    power:c?.power??'',
+    rested:!!c?.rested,
+    faceDown:!!c?.faceDown,
+    counters:(c?.counters&&typeof c.counters==='object')?{...c.counters}:{},
+    powerMod:Number(c?.powerMod||0)||0,
+    memo:String(c?.memo||'')
+  })):[];
+  return {cards};
+}
+function onlineExtractPublicBoardFromSolo(slot){
+  const p=board?.players?.[slot-1];
+  if(!p)return onlineEmptyPublicBoard();
+  const out=onlineEmptyPublicBoard();
+  for(const z of ONLINE_PUBLIC_ZONES){
+    out[z]=(Array.isArray(p[z])?p[z]:[]).map(onlineNormalizePublicPile);
+  }
+  out.meta.updatedAt=Date.now();
+  return out;
+}
+function onlineRoomPublicState(room){
+  room.publicState=room.publicState&&typeof room.publicState==='object'
+    ?room.publicState
+    :{p1:onlineEmptyPublicBoard(),p2:onlineEmptyPublicBoard(),revision:0,updatedAt:Date.now()};
+  if(!room.publicState.p1)room.publicState.p1=onlineEmptyPublicBoard();
+  if(!room.publicState.p2)room.publicState.p2=onlineEmptyPublicBoard();
+  return room.publicState;
+}
+function onlineCanEditSlot(slot){
+  if(onlineSessionState.role==='host')return Number(slot)===1;
+  if(onlineSessionState.role==='guest')return Number(slot)===2;
+  return false;
+}
+function onlineMatchStarted(room){
+  return room?.match?.status==='started';
+}
+function onlineEnsureMatchState(room){
+  room.match=room.match&&typeof room.match==='object'
+    ?room.match
+    :{status:'lobby',startedAt:0,startedBy:'',turnPlayer:1};
+  onlineRoomPublicState(room);
+  return room.match;
+}
+function onlineStartMatch(){
+  if(onlineSessionState.role!=='host'){toast('対戦開始はホストのみ操作できます');return}
+  const code=onlineSessionState.joinCode,rooms=onlineLoadRooms(),room=rooms[code];
+  if(!room){toast('ルームが見つかりません');return}
+  if(!(room.p1?.ready&&room.p2?.ready)){toast('P1・P2の準備完了が必要です');return}
+
+  onlineEnsureMatchState(room);
+  room.match.status='started';
+  room.match.startedAt=Date.now();
+  room.match.startedBy=onlineSessionState.clientId;
+  room.publicState={
+    p1:onlineExtractPublicBoardFromSolo(1),
+    p2:onlineExtractPublicBoardFromSolo(2),
+    revision:Number(room.publicState?.revision||0)+1,
+    updatedAt:Date.now()
+  };
+  onlineEnsurePrivacyState(room);
+  onlineUpdateOwnPrivateState(room);
+  room.updatedAt=Date.now();
+  rooms[code]=room;
+  onlineSaveRooms(rooms);
+  onlineBroadcast('match-start');
+  onlineShowMatchBoard();
+  toast('オンライン対戦を開始しました');
+}
+function onlinePublishOwnPublicBoard(){
+  if(!['host','guest'].includes(onlineSessionState.role))return;
+  const code=onlineSessionState.joinCode,rooms=onlineLoadRooms(),room=rooms[code];
+  if(!room||!onlineMatchStarted(room))return;
+  const slot=onlineSessionState.role==='host'?1:2;
+  const state=onlineRoomPublicState(room);
+  state[`p${slot}`]=onlineExtractPublicBoardFromSolo(slot);
+  state.revision=Number(state.revision||0)+1;
+  state.updatedAt=Date.now();
+  room.publicState=state;
+  room.updatedAt=Date.now();
+  rooms[code]=room;
+  onlineSaveRooms(rooms);
+  onlineBroadcast('public-board-update',{slot,revision:state.revision});
+  onlineRenderMatchBoard();
+}
+function onlineZoneLabel(z){
+  return ({
+    character:'ホーム',
+    grave:'墓地',
+    banish:'消失',
+    pain:'ペインカウント',
+    room:'ルーム',
+    rulePlus:'ルールプラス'
+  })[z]||z;
+}
+function onlinePublicPileSummary(pile){
+  const cards=Array.isArray(pile?.cards)?pile.cards:[];
+  if(!cards.length)return '空';
+  return cards.map(c=>{
+    const extra=[
+      c.rested?'REST':'',
+      Number(c.powerMod||0)?`PW${Number(c.powerMod)>0?'+':''}${Number(c.powerMod)}`:'',
+      c.counters&&Object.keys(c.counters).length?`カウンター ${Object.entries(c.counters).map(([k,v])=>`${k}:${v}`).join(' / ')}`:''
+    ].filter(Boolean).join(' / ');
+    return `${esc(c.name||'名称未設定')}${extra?` <small>${esc(extra)}</small>`:''}`;
+  }).join('<br>');
+}
+function onlineRenderPublicSlot(slot,state){
+  const host=$(`#online-public-p${slot}`);if(!host)return;
+  const own=onlineCanEditSlot(slot);
+  host.innerHTML=ONLINE_PUBLIC_ZONES.map(z=>{
+    const piles=Array.isArray(state?.[z])?state[z]:[];
+    const cards=piles.reduce((n,p)=>n+(Array.isArray(p?.cards)?p.cards.length:0),0);
+    return `<div class="online-public-zone">
+      <div class="online-public-zone-head">
+        <b>${esc(onlineZoneLabel(z))}</b>
+        <span class="pill">${cards}枚</span>
+      </div>
+      <div class="online-public-zone-body">${piles.length?piles.map((p,i)=>`<div class="online-public-pile"><span class="muted">#${i+1}</span> ${onlinePublicPileSummary(p)}</div>`).join(''):'<span class="muted">カードなし</span>'}</div>
+    </div>`;
+  }).join('');
+  const badge=$(`#online-board-owner-p${slot}`);
+  if(badge)badge.textContent=own?'自分側':'閲覧のみ';
+}
+function onlineRenderMatchBoard(){
+  const code=onlineSessionState.joinCode,room=onlineLoadRooms()[code];
+  if(!room)return;
+  onlineEnsureMatchState(room);
+  $('#online-match-code').textContent=code||'------';
+  $('#online-match-role').textContent=onlineRoleLabel();
+  const state=onlineRoomPublicState(room);
+  onlineRenderPublicSlot(1,state.p1);
+  onlineRenderPublicSlot(2,state.p2);
+  const status=$('#online-match-sync-status');
+  if(status)status.textContent=`公開盤面同期 Rev.${Number(state.revision||0)} / ${new Date(Number(state.updatedAt||Date.now())).toLocaleTimeString()}`;
+  onlineRenderPrivateSummary();
+}
+function onlineShowMatchBoard(){
+  $('#online-home-panel').hidden=true;
+  $('#online-match-board-panel').hidden=false;
+  onlineRenderMatchBoard();
+  onlineRenderPrivateSummary();
+  onlineStartBoardMutationWatch();
+  onlineScheduleAutoSync();
+}
+function onlineBackToLobby(){
+  onlineStopBoardMutationWatch();
+  $('#online-match-board-panel').hidden=true;
+  $('#online-home-panel').hidden=false;
+  onlineRefreshLobby();
+}
+function onlineApplyMatchUI(room){
+  const both=!!(room?.p1?.ready&&room?.p2?.ready);
+  onlineEnsureMatchState(room);
+  const startBtn=$('#online-start-match');
+  const openBtn=$('#online-open-match-board');
+
+  if(startBtn){
+    startBtn.hidden=!(onlineSessionState.role==='host'&&both&&!onlineMatchStarted(room));
+  }
+  if(openBtn){
+    openBtn.hidden=!onlineMatchStarted(room);
+  }
+
+  const note=$('#online-match-ready-note');
+  if(note&&onlineMatchStarted(room)){
+    note.textContent='対戦開始済みです。オンライン盤面を開けます。';
+  }
+}
+
+
+const ONLINE_PRIVACY={
+  PUBLIC:'public',
+  OWNER_ONLY:'owner-only',
+  SERVER_ONLY:'server-only'
+};
+const ONLINE_AUTO_SYNC_DELAY=180;
+let onlineAutoSyncTimer=0;
+let onlineLastPublicSnapshot='';
+let onlineBoardMutationObserver=null;
+
+function onlineCardPublicView(card){
+  return {
+    id:String(card?.id||''),
+    name:String(card?.name||'名称未設定'),
+    type:String(card?.type||''),
+    level:card?.level??'',
+    power:card?.power??'',
+    rested:!!card?.rested,
+    faceDown:!!card?.faceDown,
+    counters:(card?.counters&&typeof card.counters==='object')?{...card.counters}:{},
+    powerMod:Number(card?.powerMod||0)||0,
+    memo:String(card?.memo||'')
+  };
+}
+function onlineCardOwnerOnlyView(card){
+  return {
+    id:String(card?.id||''),
+    name:String(card?.name||'名称未設定'),
+    type:String(card?.type||''),
+    level:card?.level??'',
+    power:card?.power??'',
+    faceDown:!!card?.faceDown
+  };
+}
+function onlineCountPrivateInfo(slot){
+  const p=board?.players?.[slot-1];
+  if(!p)return {handCount:0,deckCount:0};
+  const handCount=(Array.isArray(p.hand)?p.hand:[]).reduce((n,pile)=>n+(Array.isArray(pile?.cards)?pile.cards.length:0),0);
+  const deckCount=(Array.isArray(p.deck)?p.deck:[]).reduce((n,pile)=>n+(Array.isArray(pile?.cards)?pile.cards.length:0),0);
+  return {handCount,deckCount};
+}
+function onlineBuildPrivateStateForOwner(slot){
+  const p=board?.players?.[slot-1];
+  if(!p)return {hand:[],meta:{handCount:0,deckCount:0}};
+  const hand=(Array.isArray(p.hand)?p.hand:[]).map(pile=>({
+    cards:(Array.isArray(pile?.cards)?pile.cards:[]).map(onlineCardOwnerOnlyView)
+  }));
+  const counts=onlineCountPrivateInfo(slot);
+  return {
+    hand,
+    meta:{...counts,updatedAt:Date.now()}
+  };
+}
+function onlineBuildServerOnlyState(slot){
+  const p=board?.players?.[slot-1];
+  const deck=(Array.isArray(p?.deck)?p.deck:[]).map(pile=>({
+    cards:(Array.isArray(pile?.cards)?pile.cards:[]).map(c=>String(c?.id||''))
+  }));
+  return {
+    deckOrder:deck,
+    updatedAt:Date.now()
+  };
+}
+function onlineSanitizedRoomViewForClient(room,role,clientId){
+  if(!room)return null;
+  const copy=JSON.parse(JSON.stringify(room));
+  const ownSlot=role==='host'?1:role==='guest'?2:null;
+
+  if(copy.privateState){
+    for(const slot of [1,2]){
+      if(slot!==ownSlot)delete copy.privateState[`p${slot}`];
+    }
+  }
+  /* serverOnlyState is never exposed to normal clients */
+  delete copy.serverOnlyState;
+  return copy;
+}
+function onlineEnsurePrivacyState(room){
+  if(!room.privateState)room.privateState={p1:null,p2:null};
+  if(!room.serverOnlyState)room.serverOnlyState={p1:null,p2:null};
+  return room;
+}
+function onlineUpdateOwnPrivateState(room){
+  const slot=onlineSessionState.role==='host'?1:onlineSessionState.role==='guest'?2:null;
+  if(!slot)return;
+  onlineEnsurePrivacyState(room);
+  room.privateState[`p${slot}`]=onlineBuildPrivateStateForOwner(slot);
+  room.serverOnlyState[`p${slot}`]=onlineBuildServerOnlyState(slot);
+}
+function onlinePublicSnapshotString(slot){
+  try{return JSON.stringify(onlineExtractPublicBoardFromSolo(slot))}catch(_){return ''}
+}
+function onlineAutoSyncNow(){
+  if(homePlayMode!=='online'||!['host','guest'].includes(onlineSessionState.role))return;
+  const code=onlineSessionState.joinCode;
+  const rooms=onlineLoadRooms(),room=rooms[code];
+  if(!room||!onlineMatchStarted(room))return;
+  const slot=onlineSessionState.role==='host'?1:2;
+  const snap=onlinePublicSnapshotString(slot);
+  if(snap===onlineLastPublicSnapshot)return;
+  onlineLastPublicSnapshot=snap;
+
+  const state=onlineRoomPublicState(room);
+  state[`p${slot}`]=onlineExtractPublicBoardFromSolo(slot);
+  state.revision=Number(state.revision||0)+1;
+  state.updatedAt=Date.now();
+
+  onlineUpdateOwnPrivateState(room);
+  room.publicState=state;
+  room.updatedAt=Date.now();
+  rooms[code]=room;
+  onlineSaveRooms(rooms);
+  onlineBroadcast('public-board-update',{slot,revision:state.revision});
+  if(!$('#online-match-board-panel')?.hidden)onlineRenderMatchBoard();
+}
+function onlineScheduleAutoSync(){
+  if(onlineAutoSyncTimer)clearTimeout(onlineAutoSyncTimer);
+  onlineAutoSyncTimer=setTimeout(()=>{
+    onlineAutoSyncTimer=0;
+    onlineAutoSyncNow();
+  },ONLINE_AUTO_SYNC_DELAY);
+}
+function onlineStartBoardMutationWatch(){
+  if(onlineBoardMutationObserver){onlineBoardMutationObserver.disconnect();onlineBoardMutationObserver=null}
+  const candidates=['#board-root','#board-area','#board-view','#board'];
+  let target=null;
+  for(const sel of candidates){
+    const el=$(sel);if(el){target=el;break}
+  }
+  if(!target)return;
+  onlineBoardMutationObserver=new MutationObserver(()=>onlineScheduleAutoSync());
+  onlineBoardMutationObserver.observe(target,{
+    subtree:true,
+    childList:true,
+    attributes:true,
+    attributeFilter:['class','style','data-rested','data-face-down','data-power-mod','data-counter']
+  });
+}
+function onlineStopBoardMutationWatch(){
+  if(onlineBoardMutationObserver){onlineBoardMutationObserver.disconnect();onlineBoardMutationObserver=null}
+  if(onlineAutoSyncTimer){clearTimeout(onlineAutoSyncTimer);onlineAutoSyncTimer=0}
+  onlineLastPublicSnapshot='';
+}
+function onlineRenderPrivateSummary(){
+  const out=$('#online-private-summary');if(!out)return;
+  if(onlineSessionState.role==='spectator'){
+    out.textContent='観戦者には公開情報のみ配信されます。手札・デッキ内容は受信しません。';
+    return;
+  }
+  if(!['host','guest'].includes(onlineSessionState.role)){
+    out.textContent='プレイヤー未接続';
+    return;
+  }
+  const slot=onlineSessionState.role==='host'?1:2;
+  const counts=onlineCountPrivateInfo(slot);
+  out.textContent=`自分だけ閲覧：手札 ${counts.handCount}枚 / 両者に非公開：デッキ ${counts.deckCount}枚`;
+}
+
 function onlineHeartbeat(){
   const code=onlineSessionState.joinCode,clientId=onlineSessionState.clientId;
   if(!code||!clientId)return;
@@ -29958,6 +30476,7 @@ function onlineRefreshLobby(){
   $('#online-member-p2').textContent=room.p2?'接続中':'待機中';
   $('#online-member-spectators').textContent=`${Array.isArray(room.spectators)?room.spectators.length:0}人`;
   onlineApplySetupUI(room);
+  onlineApplyMatchUI(room);
   $('#online-room-message').textContent=onlineSessionState.role==='host'
     ?(room.p2?'P2が参加しました。次の更新でデッキ選択・準備完了へ進みます。':'参加コードを相手へ共有してください。')
     :(onlineSessionState.role==='guest'
@@ -29965,6 +30484,7 @@ function onlineRefreshLobby(){
       :'観戦者として接続中です。');
 }
 function onlineLeaveRoom(broadcast=true){
+  onlineStopBoardMutationWatch();
   const code=onlineSessionState.joinCode,clientId=onlineSessionState.clientId,role=onlineSessionState.role;
   if(code&&clientId){
     const rooms=onlineLoadRooms(),room=rooms[code];
@@ -30003,6 +30523,9 @@ function initOnlineModeFoundation(){
   $('#online-deck-select')?.addEventListener('change',e=>{onlineFillOshiiOptions(e.currentTarget.value,true);onlineUpdateDeckSelection()});
   $('#online-oshii-select')?.addEventListener('change',onlineUpdateDeckSelection);
   $('#online-ready-toggle')?.addEventListener('click',onlineToggleReady);
+  $('#online-start-match')?.addEventListener('click',onlineStartMatch);
+  $('#online-open-match-board')?.addEventListener('click',onlineShowMatchBoard);
+  $('#online-back-to-lobby')?.addEventListener('click',onlineBackToLobby);
   $('#online-leave-room')?.addEventListener('click',()=>onlineLeaveRoom(true));
   window.addEventListener('storage',e=>{if(e.key===LS_ONLINE_ROOMS&&onlineSessionState.joinCode)onlineRefreshLobby()});
   window.addEventListener('beforeunload',()=>{try{onlineHeartbeat()}catch(_){}});
