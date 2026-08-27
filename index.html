@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v12.0</title>
+<title>みん会TCG Simulator v12.7</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -18261,7 +18261,7 @@ html{--visual-generation:"12.0"}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v12.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v12.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -18331,7 +18331,7 @@ html{--visual-generation:"12.0"}
       <div id="tool-pane-manual" class="tool-pane">
         <form id="card-form" class="form-grid">
           <label class="wide">カード名<input id="card-name" required /></label>
-          <label>種類<select id="card-type"><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="__custom__">その他（自由入力）</option></select></label>
+          <label>種類<select id="card-type"><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="__custom__">その他（自由入力）</option></select></label>
           <div class="wide custom-type-fields" id="card-custom-type-fields" hidden>
             <label>自由種類・左側<input id="card-custom-type-left" placeholder="自由入力"></label>
             <span class="custom-type-colon">:</span>
@@ -18418,7 +18418,7 @@ html{--visual-generation:"12.0"}
         <div class="collapsible-panel-body">
           <div class="form-grid card-manager-search-grid">
             <label class="wide">カード名<input id="card-manager-search" type="search" placeholder="カード名の一部を入力" autocomplete="off"></label>
-            <label>種類<select id="card-manager-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
+            <label>種類<select id="card-manager-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
             <label id="card-manager-custom-type-wrap" hidden>その他の種類<input id="card-manager-custom-type" placeholder="左側:右側 を部分一致検索" autocomplete="off"></label>
             <label>Lv<input id="card-manager-level" inputmode="numeric" placeholder="完全一致"></label>
             <label>種族<input id="card-manager-race" placeholder="複数語はすべて含むカード" autocomplete="off"></label>
@@ -18490,7 +18490,7 @@ html{--visual-generation:"12.0"}
       <div class="collapsible-panel-body">
         <div class="form-grid collection-filter-grid">
           <label class="wide">カード名<input id="collection-search-name" type="search" placeholder="カード名の一部を入力" autocomplete="off"></label>
-          <label>種類<select id="collection-search-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
+          <label>種類<select id="collection-search-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
           <label id="collection-custom-type-wrap" hidden>その他の種類<input id="collection-search-custom-type" placeholder="左側:右側 を部分一致検索" autocomplete="off"></label>
           <label>種族<input id="collection-search-race" placeholder="例：神秘 伝承（AND検索）" autocomplete="off"></label>
           <label>レアリティ<input id="collection-search-rarity" placeholder="部分一致" autocomplete="off"></label>
@@ -18557,7 +18557,7 @@ html{--visual-generation:"12.0"}
         <div id="deck-io-status" class="muted"></div>
         <div class="section-head" style="margin-top:12px"><h2 style="font-size:17px">カード追加</h2></div>
         <div class="form-grid" style="margin-bottom:8px">
-          <label>種類<select id="deck-type-filter"><option value="all">全種類</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
+          <label>種類<select id="deck-type-filter"><option value="all">全種類</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
           <label>並び順<select id="deck-level-sort"><option value="default">登録順（昇順）</option><option value="registeredDesc">登録順（降順）</option><option value="levelAsc">レベル昇順</option><option value="levelDesc">レベル降順</option></select></label>
           <label class="wide">カード名検索<input id="deck-card-search" placeholder="含まれる文字で検索"></label>
           <label>種族検索<input id="deck-race-search" placeholder="例：神秘 伝承（AND）" autocomplete="off"></label>
@@ -19059,6 +19059,15 @@ function normalizeCardTypeAlias(type=''){
  const s=String(type||'').trim().replace(/[　\s]+/g,'');
  return CARD_TYPE_ALIASES.get(s)||s;
 }
+
+function fixedCardTypeOptionsHtml({includeAll=false,allLabel='すべて',includeOther=false,selected=''}={}){
+ const opts=[];
+ if(includeAll)opts.push({value:'all',label:allLabel});
+ CARD_FIXED_TYPES.forEach(type=>opts.push({value:type,label:type}));
+ if(includeOther)opts.push({value:'other',label:'その他'});
+ return opts.map(o=>`<option value="${esc(o.value)}" ${String(selected)===String(o.value)?'selected':''}>${esc(o.label)}</option>`).join('');
+}
+
 function normalizeCustomTypePart(v=''){return String(v||'').trim()}
 function isValidCustomTypePart(v=''){
  const s=normalizeCustomTypePart(v);
@@ -21878,7 +21887,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.0-r6',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.7',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -26001,7 +26010,7 @@ function openAlbumCardsEditor(albumId){
    <summary>検索・絞り込み <span id="album-card-filter-count" class="pill">0条件</span></summary>
    <div class="album-card-filter-grid">
      <label class="wide">カード名<input id="album-card-name" type="search" placeholder="部分一致" autocomplete="off"></label>
-     <label>種類<select id="album-card-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
+     <label>種類<select id="album-card-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
      <label id="album-card-custom-type-wrap" hidden>その他の種類<input id="album-card-custom-type" placeholder="部分一致" autocomplete="off"></label>
      <label>Lv<input id="album-card-level" inputmode="numeric" placeholder="完全一致"></label>
      <label>種族<input id="album-card-race" placeholder="例：伝承 神秘（AND）" autocomplete="off"></label>
@@ -28015,7 +28024,7 @@ function renderBrowseSearchControl(){
  if(!s||!host)return;
  $('#browse-search-field').value=s.field;
  if(s.field==='type'){
-   host.innerHTML=`<select id="browse-search-input" aria-label="種類"><option value="">すべて</option><option value="キャラクター">キャラクター</option><option value="ルーム">ルーム</option><option value="ロール">ロール</option><option value="ルールプラス">ルールプラス</option><option value="アナザーゲート">アナザーゲート</option><option value="other">その他</option></select>`;
+   host.innerHTML=`<select id="browse-search-input" aria-label="種類"><option value="">すべて</option><option value="キャラクター">キャラクター</option><option value="ルーム">ルーム</option><option value="ロール">ロール</option><option value="トラップロール">トラップロール</option><option value="ルールプラス">ルールプラス</option><option value="アナザーゲート">アナザーゲート</option><option value="other">その他</option></select>`;
    $('#browse-search-input').value=s.typeValue||'';
    $('#browse-search-input').onchange=()=>{s.typeValue=$('#browse-search-input').value;renderBrowseResults()};
  }else{
