@@ -19046,7 +19046,19 @@ html{--visual-generation:"12.0"}
 const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01', LS_CARD_REGISTER_RECENT='minkai_tcg_card_register_recent_v16', LS_HAND_FOLLOW='minkai_tcg_hand_follow_v11', LS_BOARD_DISPLAY='minkai_tcg_board_display_v20', LS_THEME='minkai_tcg_theme_v27', LS_COLLECTION='minkai_tcg_collection_v32', LS_CARD_FX='minkai_tcg_card_fx_v36', LS_BOARD_TOOLS='minkai_tcg_board_tools_v01', LS_BOARD_SESSION='minkai_tcg_board_session_v01', LS_BOARD_SNAPSHOTS='minkai_tcg_board_snapshots_v01', LS_MOBILE_BOARD_TOOL='minkai_tcg_mobile_board_tool_v01', LS_FLOATING_PREVIEW='minkai_tcg_floating_preview_v01';
 const ZONE_LABELS={character:'キャラクター',pain:'ペインカウント',room:'ルーム',rulePlus:'ルールプラス',hand:'手札',deck:'デッキ',otherDeck:'その他デッキ',grave:'墓地',banish:'消失領域'};
 
-const CARD_FIXED_TYPES=['キャラクター','ルーム','ロール','ルールプラス','アナザーゲート'];
+const CARD_FIXED_TYPES=['キャラクター','ルーム','ロール','トラップロール','ルールプラス','アナザーゲート'];
+const CARD_TYPE_ALIASES=new Map([
+ ['キャラクターカード','キャラクター'],
+ ['ルームカード','ルーム'],
+ ['ロールカード','ロール'],
+ ['トラップロールカード','トラップロール'],
+ ['ルールプラスカード','ルールプラス'],
+ ['アナザーゲートカード','アナザーゲート']
+]);
+function normalizeCardTypeAlias(type=''){
+ const s=String(type||'').trim().replace(/[　\s]+/g,'');
+ return CARD_TYPE_ALIASES.get(s)||s;
+}
 function normalizeCustomTypePart(v=''){return String(v||'').trim()}
 function isValidCustomTypePart(v=''){
  const s=normalizeCustomTypePart(v);
@@ -19057,12 +19069,12 @@ function buildCustomCardType(left,right){
  return isValidCustomTypePart(a)&&isValidCustomTypePart(b)?`${a}:${b}`:'';
 }
 function isCustomCardType(type=''){
- const s=String(type||'').trim();
+ const s=normalizeCardTypeAlias(type);
  if(CARD_FIXED_TYPES.includes(s))return false;
  return /^[^:：\r\n]+[:：][^:：\r\n]+$/.test(s);
 }
 function normalizeCardType(type=''){
- const s=String(type||'').trim();
+ const s=normalizeCardTypeAlias(type);
  if(CARD_FIXED_TYPES.includes(s))return s;
  if(isCustomCardType(s)){
    const parts=s.split(/[:：]/);
@@ -19075,7 +19087,7 @@ function splitCustomCardType(type=''){
  return isCustomCardType(s)?s.split(':'):['',''];
 }
 function cardTypeMatches(type,filter='all',customQuery=''){
- const normalized=normalizeCardType(type),f=String(filter||'all');
+ const normalized=normalizeCardType(type),fRaw=String(filter||'all'),f=(fRaw==='all'||fRaw==='other')?fRaw:normalizeCardTypeAlias(fRaw);
  if(f==='all'||!f)return true;
  if(f==='other'){
    if(!isCustomCardType(normalized))return false;
@@ -21866,7 +21878,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.0-r5',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.0-r6',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -26846,14 +26858,52 @@ function pickRandomFromHand(pi){
 }
 function boardRandomSelectablePiles(){
  const zones=['character','hand','grave','banish','pain','room','rulePlus'],out=[];
- (board?.players||[]).forEach((p,pi)=>zones.forEach(z=>(p[z]||[]).forEach((pile,i)=>{const card=topCard(pile);if(card)out.push({key:`${pi}|${z}|${i}`,pi,z,i,card})})));
+ for(const [pi,p] of (board?.players||[]).entries()){
+   if(!p)continue;
+   for(const z of zones){
+     const piles=Array.isArray(p[z])?p[z]:[];
+     piles.forEach((pile,i)=>{
+       const pileCards=Array.isArray(pile?.cards)?pile.cards:[];
+       pileCards.forEach((card,ci)=>{
+         if(!card)return;
+         out.push({key:`${pi}|${z}|${i}|${ci}`,pi,z,i,ci,card});
+       });
+     });
+   }
+ }
  return out;
 }
 function openRandomCardPicker(){
- if(!board)return;const rows=boardRandomSelectablePiles();if(rows.length<2){toast('指定選択に使えるカードが2枚以上ありません');return}
- openModal(`<div class="modal-head"><h3>指定したカードからランダムに1枚</h3><button class="btn" id="random-card-picker-close">閉じる</button></div><p class="muted">候補にしたいカードを2枚以上選んでください。山札 / その他デッキは候補一覧から除外しています。</p><div class="actions"><button class="btn small" id="random-card-picker-all">すべて選択</button><button class="btn small" id="random-card-picker-none">すべて解除</button></div><div id="random-card-picker-list" class="random-card-candidate-list">${rows.map(x=>`<label class="random-card-candidate"><input type="checkbox" data-random-card-key="${esc(x.key)}"><b>${esc(x.card.name)}</b><small>P${x.pi+1} / ${esc(ZONE_LABELS[x.z]||x.z)}</small></label>`).join('')}</div><div class="actions"><button class="btn primary" id="random-card-picker-run">選んだ候補から1枚選ぶ</button></div><div id="random-card-picker-result"></div>`);
- $('#random-card-picker-close').onclick=closeModal;$('#random-card-picker-all').onclick=()=>$$('[data-random-card-key]').forEach(x=>x.checked=true);$('#random-card-picker-none').onclick=()=>$$('[data-random-card-key]').forEach(x=>x.checked=false);
- $('#random-card-picker-run').onclick=()=>{const keys=$$('[data-random-card-key]:checked').map(x=>x.dataset.randomCardKey);if(keys.length<2){toast('候補を2枚以上選んでください');return}const key=keys[boardRandomInt(keys.length)],picked=rows.find(x=>x.key===key);if(!picked)return;recordBoardRandomResult('card-picked','指定カードから1枚',picked.card.name,`候補 ${keys.length}枚`);const result=$('#random-card-picker-result');if(result)result.innerHTML=`<div class="random-pick-result"><div class="muted">選ばれたカード</div><b>${esc(picked.card.name)}</b><div class="muted">P${picked.pi+1} / ${esc(ZONE_LABELS[picked.z]||picked.z)}</div></div>`;toast(`ランダム選択：${picked.card.name}`)};
+ try{
+   if(!board){toast('盤面が開始されていません');return}
+   const rows=boardRandomSelectablePiles();
+   if(rows.length<2){toast('指定選択に使えるカードが2枚以上ありません');return}
+   openModal(`<div class="modal-head"><h3>指定したカードからランダムに1枚</h3><button class="btn" id="random-card-picker-close">閉じる</button></div><p class="muted">候補にしたいカードを2枚以上選んでください。山札 / その他デッキは候補一覧から除外しています。重ねたカードも1枚ずつ候補にできます。</p><div class="actions"><button class="btn small" id="random-card-picker-all">すべて選択</button><button class="btn small" id="random-card-picker-none">すべて解除</button></div><div id="random-card-picker-list" class="random-card-candidate-list">${rows.map(x=>`<label class="random-card-candidate"><input type="checkbox" data-random-card-key="${esc(x.key)}"><b>${esc(x.card?.name||'名称未設定')}</b><small>P${x.pi+1} / ${esc(ZONE_LABELS[x.z]||x.z)}${x.ci>0?` / 重ね ${x.ci+1}枚目`:''}</small></label>`).join('')}</div><div class="actions"><button class="btn primary" id="random-card-picker-run">選んだ候補から1枚選ぶ</button></div><div id="random-card-picker-result"></div>`);
+   $('#random-card-picker-close')?.addEventListener('click',closeModal);
+   $('#random-card-picker-all')?.addEventListener('click',()=>$$('[data-random-card-key]').forEach(x=>x.checked=true));
+   $('#random-card-picker-none')?.addEventListener('click',()=>$$('[data-random-card-key]').forEach(x=>x.checked=false));
+   $('#random-card-picker-run')?.addEventListener('click',()=>{
+     try{
+       const keys=$$('[data-random-card-key]:checked').map(x=>String(x.dataset.randomCardKey||'')).filter(Boolean);
+       if(keys.length<2){toast('候補を2枚以上選んでください');return}
+       const key=keys[boardRandomInt(keys.length)];
+       const picked=rows.find(x=>x.key===key);
+       if(!picked?.card){toast('選択候補を取得できませんでした');return}
+       const cardName=String(picked.card.name||'名称未設定');
+       recordBoardRandomResult('card-picked','指定カードから1枚',cardName,`候補 ${keys.length}枚`);
+       const result=$('#random-card-picker-result');
+       if(result)result.innerHTML=`<div class="random-pick-result"><div class="muted">選ばれたカード</div><b>${esc(cardName)}</b><div class="muted">P${picked.pi+1} / ${esc(ZONE_LABELS[picked.z]||picked.z)}</div></div>`;
+       toast(`ランダム選択：${cardName}`);
+       refreshMobileBoardToolWindow();
+     }catch(err){
+       console.error('random card picker run failed',err);
+       toast('ランダム選択に失敗しました');
+     }
+   });
+ }catch(err){
+   console.error('openRandomCardPicker failed',err);
+   toast('指定カード選択を開けませんでした');
+ }
 }
 function syncBoardRandomTools(){
  if(!board)return;

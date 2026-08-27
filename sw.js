@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minkai-tcg-simulator-v12-0-r5-surface-textures';
+const CACHE_NAME = 'minkai-tcg-simulator-v12-0-r6-cardtypes-randomfix';
 const APP_SHELL = [
   './',
   './index.html',
