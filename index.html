@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v12.10</title>
+<title>みん会TCG Simulator v12.11</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -13498,13 +13498,6 @@ body.album-direct-dragging *{cursor:grabbing!important}
 @media(max-width:650px){.fx-editor-advanced>summary{align-items:flex-start;flex-wrap:wrap}}
 
 .card-fx-stack.fx-animate{--fx-motion-x:-38%;--fx-motion-y:0%;--fx-motion-angle:-2deg;--fx-motion-alpha:.24;--fx-motion-phase:0deg;--fx-motion-bg-x:0px;--fx-motion-bg-y:0px}
-.card-fx-stack.fx-animate .card-fx-layer>.fx-deco-b{
- inset:-34%!important;z-index:8!important;
- background:linear-gradient(108deg,transparent 36%,rgba(255,255,255,.04) 42%,rgba(255,255,255,.30) 48%,rgba(214,240,255,.12) 52%,transparent 60%)!important;
- transform:translateX(var(--fx-motion-x)) translateY(var(--fx-motion-y)) rotate(var(--fx-motion-angle))!important;
- opacity:var(--fx-motion-alpha)!important;mix-blend-mode:screen!important;filter:none!important;animation:none!important;will-change:transform,opacity
-}
-.card-fx-stack.fx-animate .card-fx-layer{background-position:var(--fx-motion-bg-x) var(--fx-motion-bg-y)}
 .card-fx-stack:not(.fx-animate) .card-fx-layer,
 .card-fx-stack:not(.fx-animate) .card-fx-layer::before,
 .card-fx-stack:not(.fx-animate) .card-fx-layer::after,
@@ -16898,6 +16891,36 @@ html{--visual-generation:"12.0"}
     fxHolographicFilmSoftPulse calc(var(--fx-duration,10s)*.7) ease-in-out infinite!important;
 }
 
+
+/* ==========================================================
+   v12.11 FX seam / boundary fix
+   全エフェクトへ強制されていた共通反射帯を廃止。
+   各エフェクト本来の描画を連続した1レイヤーとして扱う。
+   ========================================================== */
+.card-fx-stack{
+  overflow:hidden!important;
+}
+.card-fx-stack>.card-fx-layer{
+  background-repeat:no-repeat;
+  background-origin:border-box;
+  background-clip:border-box;
+}
+/* テクスチャ型・全面加工はカード全体を1枚で覆い、タイル境界を作らない */
+.fx-hologram,
+.fx-prism,
+.fx-aurora,
+.fx-rainbow,
+.fx-gold-foil,
+.fx-silver-foil,
+.fx-moonlight,
+.fx-solar-flare,
+.fx-oil-slick,
+.fx-holographic-film-soft{
+  background-repeat:no-repeat!important;
+}
+/* 汎用deco-bを全エフェクトへ上書きする旧処理は使用しない。
+   個別エフェクトが持つdeco-bだけをそのまま表示する。 */
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -18413,7 +18436,7 @@ html{--visual-generation:"12.0"}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v12.10 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v12.11 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19308,46 +19331,21 @@ const CARD_VISUAL_EFFECTS=[
  {id:'rainbow',name:'レインボー',category:'ホロ・加工'},
  {id:'gold-foil',name:'ゴールドフォイル',category:'ホロ・加工'},
  {id:'silver-foil',name:'シルバーフォイル',category:'ホロ・加工'},
- {id:'shatter-light',name:'砕光',category:'ホロ・加工'},
- {id:'stardust',name:'星屑',category:'光・魔法'},
- {id:'light-particles',name:'光粒子',category:'光・魔法'},
- {id:'magic-circle',name:'魔法陣',category:'光・魔法'},
- {id:'runes',name:'ルーン',category:'光・魔法'},
- {id:'holy-light',name:'聖光',category:'光・魔法'},
- {id:'cosmos',name:'宇宙',category:'光・魔法'},
- {id:'butterfly-light',name:'蝶光',category:'光・魔法'},
  {id:'fire',name:'炎',category:'属性・自然'},
- {id:'ice-crystal',name:'氷晶',category:'属性・自然'},
- {id:'lightning',name:'雷光',category:'属性・自然'},
- {id:'water',name:'水面',category:'属性・自然'},
- {id:'sakura',name:'桜吹雪',category:'属性・自然'},
- {id:'snow',name:'雪華',category:'属性・自然'},
- {id:'bubbles',name:'泡沫',category:'属性・自然'},
- {id:'feathers',name:'羽根',category:'属性・自然'},
  {id:'petals',name:'花吹雪',category:'属性・自然'},
- {id:'sand',name:'砂塵',category:'属性・自然'},
  {id:'fog',name:'霧',category:'属性・自然'},
- {id:'dark-aura',name:'闇のオーラ',category:'ダーク・特殊'},
- {id:'ink',name:'墨染',category:'ダーク・特殊'},
- {id:'glitch',name:'グリッチ',category:'機械・デジタル'},
- {id:'gears',name:'歯車',category:'機械・デジタル'},
  {id:'digital-code',name:'デジタルコード',category:'機械・デジタル'},
- {id:'ritual-seal',name:'儀式紋',category:'光・魔法'},
- {id:'curse-miasma',name:'呪瘴',category:'ダーク・特殊'},
  {id:'moonlight',name:'月光',category:'光・魔法'},
  {id:'solar-flare',name:'日輪',category:'属性・自然'},
  {id:'rain-streak',name:'降雨',category:'属性・自然'},
- {id:'ember-ash',name:'灰燼',category:'属性・自然'},
- {id:'crystal-dust',name:'晶塵',category:'属性・自然'},
- {id:'spectral-chain',name:'霊鎖',category:'ダーク・特殊'},
  {id:'oil-slick',name:'偏光油膜',category:'ホロ・加工'},
- {id:'luxury-sparkle',name:'宝飾煌めき',category:'ホロ・加工'},
  {id:'holographic-film-soft',name:'ホログラフィックフィルム',category:'ホロ・加工'}
 ];
 const CARD_FX_IDS=new Set(CARD_VISUAL_EFFECTS.map(x=>x.id));
 function customFxIdFromType(type=''){const s=String(type||'');return s.startsWith('custom:')?s.slice(7):''}
 function isCustomFxType(type=''){return !!customFxIdFromType(type)}
-function isValidCardFxType(type=''){const s=String(type||'');return CARD_FX_IDS.has(s)||isCustomFxType(s)}
+const REMOVED_CARD_FX_IDS=new Set(['bubbles','butterfly-light','cosmos','crystal-dust','curse-miasma','dark-aura','ember-ash','feathers','gears','glitch','holy-light','ice-crystal','ink','light-particles','lightning','luxury-sparkle','magic-circle','ritual-seal','runes','sakura','sand','shatter-light','snow','spectral-chain','stardust','water']);
+function isValidCardFxType(type=''){const s=String(type||'');return !REMOVED_CARD_FX_IDS.has(s)&&(CARD_FX_IDS.has(s)||isCustomFxType(s))}
 function defaultMobileBoardToolPrefs(){return {x:.88,y:.68,mode:'compact'}}
 function normalizeMobileBoardToolPrefs(raw={}){
  return {x:Math.max(.06,Math.min(.94,Number(raw.x)||.88)),y:Math.max(.10,Math.min(.90,Number(raw.y)||.68)),mode:raw.mode==='bottomsheet'?'bottomsheet':'compact'};
@@ -19842,10 +19840,8 @@ function fxIntensityVars(v){
  return {sat:1,bright:1};
 }
 const FX_BASE_DURATIONS={
- 'hologram':3.8,'prism':7.5,'aurora':5.6,'rainbow':5.2,'gold-foil':4.1,'silver-foil':3.7,'shatter-light':5.8,
- 'stardust':2.6,'light-particles':4.2,'magic-circle':9,'runes':3.2,'holy-light':4.8,'cosmos':8,'butterfly-light':5.6,
- 'fire':1.8,'ice-crystal':4.6,'lightning':2.2,'water':4.8,'sakura':6.4,'snow':7.4,'bubbles':6.2,'feathers':5.7,'petals':5.8,'sand':4.9,'fog':6.8,'dark-aura':3.6,'ink':5.4,
- 'glitch':1.6,'gears':8.5,'digital-code':5.8,
+ 'hologram':3.8,'prism':7.5,'aurora':5.6,'rainbow':5.2,'gold-foil':4.1,'silver-foil':3.7,
+ 'fire':1.8,'petals':5.8,'fog':6.8,'digital-code':5.8,
  'prism-cut':7,'diamond-glitter':5.5,'sandblast':12,'metallic-brush':7.5,
  'mirror-reflection':5.8,'opal-shimmer':9,'pearl-shell':10,'frost-ice':9,
  'holographic-film-soft':10
@@ -22070,7 +22066,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.10',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.11',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
