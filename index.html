@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.7</title>
+<title>みん会TCG Simulator v13.10</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17548,6 +17548,32 @@ html[data-home-play-mode="online"] #board-resume-panel{
   margin-bottom:6px;
 }
 
+
+/* v13.9 compact play mode + online server tools */
+#screen-home .home-mode-switcher.compact{
+  margin:10px 0 0;padding:10px;border:1px solid rgba(100,130,165,.28);
+  border-radius:10px;background:rgba(80,110,145,.05)
+}
+#screen-home .home-mode-switcher.compact .home-mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#screen-home .home-mode-switcher.compact .home-mode-tab{width:100%;min-width:0}
+#screen-home .home-mode-switcher.compact .home-mode-note{margin-top:6px;font-size:12px}
+.online-match-tools{margin-top:12px;padding:10px;border:1px solid #42566d;border-radius:10px;background:rgba(8,13,20,.28)}
+.online-tool-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#online-tool-result{margin-top:8px;padding:7px 8px;border-radius:8px;background:rgba(0,0,0,.15)}
+@media(max-width:700px){.online-tool-grid{grid-template-columns:1fr}}
+
+
+/* v13.10 Supabase preset */
+.online-supabase-preset{
+  padding:7px 8px;
+  border-radius:8px;
+  background:rgba(80,170,125,.08);
+}
+#online-remote-publishable-key{
+  font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+  font-size:12px;
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -19116,7 +19142,7 @@ html[data-home-play-mode="online"] #board-resume-panel{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.10 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19127,14 +19153,7 @@ html[data-home-play-mode="online"] #board-resume-panel{
 </header>
 <main>
 
-<section id="home-mode-switcher" class="home-mode-switcher">
-  <div class="section-head"><h2>プレイモード</h2></div>
-  <div class="home-mode-tabs" role="tablist" aria-label="プレイモード">
-    <button class="btn home-mode-tab active" id="home-mode-solo" type="button" data-home-mode="solo" onclick="window.minkaiEmergencyModeSwitch&&window.minkaiEmergencyModeSwitch('solo');window.minkaiSetHomePlayMode&&window.minkaiSetHomePlayMode('solo')">1人回し</button>
-    <button class="btn home-mode-tab" id="home-mode-online" type="button" data-home-mode="online" onclick="window.minkaiEmergencyModeSwitch&&window.minkaiEmergencyModeSwitch('online');window.minkaiSetHomePlayMode&&window.minkaiSetHomePlayMode('online')">オンライン対戦</button>
-  </div>
-  <div class="muted home-mode-note" id="home-mode-note">現在のSimulatorをそのまま使う1人回しモードです。</div>
-</section>
+
 
 
 <section id="online-home-panel" class="online-home-panel" hidden>
@@ -19247,11 +19266,19 @@ html[data-home-play-mode="online"] #board-resume-panel{
       <label>Project ID
         <input id="online-remote-project" type="text" placeholder="minkai-tcg">
       </label>
+      <label>Supabase Publishable key
+        <input id="online-remote-publishable-key" type="text" autocomplete="off" value="sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_">
+      </label>
+      <div class="online-supabase-preset muted">
+        Supabase接続先：kxwsrzpaewhnvirfgxpz
+      </div>
       <div class="actions">
+        <button class="btn small" id="online-supabase-apply" type="button">Supabase設定を適用</button>
         <button class="btn small" id="online-remote-save" type="button">設定を保存</button>
         <button class="btn small" id="online-remote-test" type="button">接続テスト</button>
       </div>
       <div id="online-remote-test-result" class="muted">未テスト</div>
+      <div class="muted">remote-apiを選択した場合、ルーム作成・参加・観戦・heartbeat・退出・準備・対戦開始・公開盤面同期をAPIへ送信します。</div>
     </div>
 
     <div class="online-provider-capabilities">
@@ -19259,7 +19286,7 @@ html[data-home-play-mode="online"] #board-resume-panel{
       <span class="pill">シャッフル</span>
       <span class="pill">ランダム</span>
       <span class="pill">ドロー</span>
-      <span class="pill">server-only vault</span>
+      <span class="pill">server-only vault</span><span class="pill">remote room API</span>
     </div>
     <div class="muted">リモートAPIを使う場合、ルーム・非公開情報・乱数処理を外部サーバーへ移せる構造です。</div>
   </div>
@@ -19292,7 +19319,18 @@ html[data-home-play-mode="online"] #board-resume-panel{
     </div>
   </div>
 
-  <div class="online-private-info-panel">
+  
+  <div id="online-match-tools" class="online-match-tools">
+    <div class="section-head"><h3>オンライン操作</h3><span class="pill">server action</span></div>
+    <div class="online-tool-grid">
+      <button class="btn small" id="online-tool-draw" type="button">1枚ドロー</button>
+      <button class="btn small" id="online-tool-shuffle" type="button">デッキをシャッフル</button>
+      <button class="btn small" id="online-tool-random-hand" type="button">手札からランダム1枚</button>
+    </div>
+    <div id="online-tool-result" class="muted">オンライン操作待機中</div>
+  </div>
+
+<div class="online-private-info-panel">
     <div class="section-head"><h3>非公開情報</h3><span class="pill">権限分離</span></div>
     <div class="online-privacy-grid">
       <div class="online-privacy-card">
@@ -19343,6 +19381,13 @@ html[data-home-play-mode="online"] #board-resume-panel{
         <button class="btn" data-nav="setup" data-home-shortcut="setup-one">一人用で始める</button>
         <button class="btn" id="home-two-player" data-home-shortcut="setup-two">二人用で始める</button>
       </div>
+<div id="home-mode-switcher" class="home-mode-switcher compact">
+<div class="home-mode-tabs" role="tablist" aria-label="プレイモード">
+    <button class="btn home-mode-tab active" id="home-mode-solo" type="button" data-home-mode="solo" onclick="window.minkaiEmergencyModeSwitch&&window.minkaiEmergencyModeSwitch('solo');window.minkaiSetHomePlayMode&&window.minkaiSetHomePlayMode('solo')">1人回し</button>
+    <button class="btn home-mode-tab" id="home-mode-online" type="button" data-home-mode="online" onclick="window.minkaiEmergencyModeSwitch&&window.minkaiEmergencyModeSwitch('online');window.minkaiSetHomePlayMode&&window.minkaiSetHomePlayMode('online')">オンライン対戦</button>
+  </div>
+  <div class="muted home-mode-note" id="home-mode-note">現在のSimulatorをそのまま使う1人回しモードです。</div>
+</div>
     </div>
     <div class="panel data-tools home-data-tools">
       <details class="home-data-details">
@@ -22998,7 +23043,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.7',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.10',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -29814,6 +29859,7 @@ let onlineSessionState={
   clientId:'',
   displayName:'',
   spectatorIndex:null,
+  sessionToken:'',
   selectedDeckId:'',
   selectedOshiiCardId:'',
   lastError:''
@@ -29865,6 +29911,7 @@ function onlineCleanupRooms(){
   if(changed)onlineSaveRooms(rooms);
 }
 function resetOnlineSessionState(){
+  onlineStopRemotePolling();
   if(onlineRoomHeartbeatTimer){clearInterval(onlineRoomHeartbeatTimer);onlineRoomHeartbeatTimer=0}
   if(onlineRoomChannel){try{onlineRoomChannel.close()}catch(_){} onlineRoomChannel=null}
   onlineSessionState={
@@ -29950,7 +29997,8 @@ function onlineHandleRoomMessage(msg){
     }
   }
 }
-function onlineCreateRoom(){
+async function onlineCreateRoom(){
+  if(onlineUsingRemoteProvider())return await onlineRemoteCreateRoom();
   onlineCleanupRooms();
   const rooms=onlineLoadRooms();
   let code=onlineGenerateCode(),guard=0;
@@ -29995,7 +30043,8 @@ function onlineCreateRoom(){
   onlineBroadcast('member-change');
   toast(`ルームを作成しました：${code}`);
 }
-function onlineJoinRoom(code,role='guest'){
+async function onlineJoinRoom(code,role='guest'){
+  if(onlineUsingRemoteProvider())return await onlineRemoteJoinRoom(code,role);
   onlineCleanupRooms();
   code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8);
   const rooms=onlineLoadRooms(),room=rooms[code];
@@ -30109,6 +30158,17 @@ function onlineMemberReadyText(member){
   if(member.ready)return `準備完了${member.deckName?` / ${member.deckName}`:''}`;
   return member.deckName?`選択中 / ${member.deckName}`:'未準備';
 }
+
+async function onlineRemotePushPlayerSetup(payload){
+  if(!onlineUsingRemoteProvider())return null;
+  return await onlineProviderRequest('player-setup',{
+    roomCode:onlineSessionState.joinCode,
+    clientId:onlineSessionState.clientId,
+    role:onlineSessionState.role,
+    ...payload
+  });
+}
+
 async function onlineToggleReady(){
   if(!['host','guest'].includes(onlineSessionState.role))return;
   const code=onlineSessionState.joinCode,rooms=onlineLoadRooms(),room=rooms[code];
@@ -30143,6 +30203,23 @@ async function onlineToggleReady(){
   }
 
   room.updatedAt=Date.now();
+  if(onlineUsingRemoteProvider()){
+    try{
+      const remoteData=await onlineRemotePushPlayerSetup({
+        ready:!!member.ready,
+        deckId:String(member.deckId||''),
+        deckName:String(member.deckName||''),
+        deckTotal:Number(member.deckTotal||0),
+        oshiiCardId:String(member.oshiiCardId||''),
+        deckHash:String(member.deckHash||''),
+        lockedDeck:member.ready?member.lockedDeck:null
+      });
+      if(remoteData)onlineApplyRemoteRoomSnapshot(remoteData);
+    }catch(err){
+      console.warn('remote player-setup failed',err);
+      toast('準備状態のサーバー同期に失敗しました');
+    }
+  }
   onlineAuditPush(room,member.ready?'ready-on':'ready-off',{
     deckName:member.deckName||'',
     deckHash:member.deckHash||'',
@@ -30294,9 +30371,12 @@ async function onlineStartMatch(){
   onlineEnsurePrivacyState(room);
   onlineUpdateOwnPrivateState(room);
 
-  /* Initialize both hidden deck orders through provider before match begins. */
-  await onlineInitializeServerDeck(room,1);
-  await onlineInitializeServerDeck(room,2);
+  /* Supabase/remote mode initializes both hidden deck orders atomically on the server.
+     Local test mode keeps the legacy local vault initialization. */
+  if(!onlineUsingRemoteProvider()){
+    await onlineInitializeServerDeck(room,1);
+    await onlineInitializeServerDeck(room,2);
+  }
 
   /* No deck order is kept inside normal room state from this point onward. */
   if(room.serverOnlyState){
@@ -30308,6 +30388,19 @@ async function onlineStartMatch(){
   onlineAuditPush(room,'match-started',{startedAt:room.match.startedAt},'public');
   rooms[code]=room;
   onlineSaveRooms(rooms);
+  if(onlineUsingRemoteProvider()){
+    try{
+      const remoteData=await onlineProviderRequest('start-match',{
+        roomCode:code,
+        clientId:onlineSessionState.clientId
+      });
+      if(remoteData)onlineApplyRemoteRoomSnapshot(remoteData);
+    }catch(err){
+      console.error('remote start-match failed',err);
+      toast(`対戦開始同期失敗：${String(err?.message||err)}`);
+      return;
+    }
+  }
   onlineBroadcast('match-start');
   onlineShowMatchBoard();
   toast('オンライン対戦を開始しました');
@@ -30325,6 +30418,15 @@ function onlinePublishOwnPublicBoard(){
   room.updatedAt=Date.now();
   rooms[code]=room;
   onlineSaveRooms(rooms);
+  if(onlineUsingRemoteProvider()){
+    onlineProviderRequest('sync-public-board',{
+      roomCode:code,
+      clientId:onlineSessionState.clientId,
+      slot,
+      publicBoard:state[`p${slot}`],
+      revision:state.revision
+    }).then(data=>{if(data)onlineApplyRemoteRoomSnapshot(data)}).catch(err=>console.warn('remote public sync failed',err));
+  }
   onlineBroadcast('public-board-update',{slot,revision:state.revision});
   onlineRenderMatchBoard();
 }
@@ -30376,7 +30478,10 @@ function onlineAuditLabel(type){
     'ready-on':'準備完了',
     'ready-off':'準備解除',
     'match-started':'対戦開始',
-    'public-board-sync':'公開盤面同期'
+    'public-board-sync':'公開盤面同期',
+    'server-draw':'ドロー',
+    'server-shuffle':'シャッフル',
+    'server-random-hand':'手札ランダム選択'
   })[type]||type;
 }
 function onlineRenderAudit(room){
@@ -30616,10 +30721,17 @@ const ONLINE_PROVIDER_TYPES={
   REMOTE:'remote-api'
 };
 const ONLINE_REMOTE_CONFIG={
-  enabled:false,
-  endpoint:'',
-  projectId:'',
-  authMode:'anonymous'
+  enabled:true,
+  endpoint:'https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-online',
+  projectId:'kxwsrzpaewhnvirfgxpz',
+  publishableKey:'sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_',
+  authMode:'supabase-publishable'
+};
+const ONLINE_SUPABASE_DEFAULTS={
+  projectUrl:'https://kxwsrzpaewhnvirfgxpz.supabase.co',
+  functionUrl:'https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-online',
+  projectId:'kxwsrzpaewhnvirfgxpz',
+  publishableKey:'sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_'
 };
 const ONLINE_AUDIT_MAX=500;
 
@@ -30656,10 +30768,15 @@ function onlineRemoteProviderReady(){
 async function onlineProviderRequest(action,payload={}){
   if(onlineSessionState.provider!==ONLINE_PROVIDER_TYPES.REMOTE)throw new Error('remote provider is not active');
   if(!onlineRemoteProviderReady())throw new Error('remote provider is not configured');
+  const sessionToken=onlineSessionToken();
   const res=await fetch(ONLINE_REMOTE_CONFIG.endpoint,{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action,payload,projectId:ONLINE_REMOTE_CONFIG.projectId})
+    headers:{
+      'Content-Type':'application/json',
+      ...(ONLINE_REMOTE_CONFIG.publishableKey?{'apikey':ONLINE_REMOTE_CONFIG.publishableKey}:{}),
+      ...(sessionToken?{'X-Minkai-Session':sessionToken}:{})
+    },
+    body:JSON.stringify({action,payload:onlineRemoteRequestPayload(payload),projectId:ONLINE_REMOTE_CONFIG.projectId})
   });
   if(!res.ok)throw new Error(`provider http ${res.status}`);
   return await res.json();
@@ -30705,23 +30822,31 @@ function onlineLoadProviderConfig(){
   try{
     const raw=JSON.parse(localStorage.getItem(LS_ONLINE_PROVIDER_CONFIG)||'{}');
     return {
-      provider:raw.provider===ONLINE_PROVIDER_TYPES.REMOTE?ONLINE_PROVIDER_TYPES.REMOTE:ONLINE_PROVIDER_TYPES.LOCAL,
-      endpoint:String(raw.endpoint||''),
-      projectId:String(raw.projectId||'minkai-tcg')
+      provider:raw.provider===ONLINE_PROVIDER_TYPES.LOCAL?ONLINE_PROVIDER_TYPES.LOCAL:ONLINE_PROVIDER_TYPES.REMOTE,
+      endpoint:String(raw.endpoint||ONLINE_SUPABASE_DEFAULTS.functionUrl),
+      projectId:String(raw.projectId||ONLINE_SUPABASE_DEFAULTS.projectId),
+      publishableKey:String(raw.publishableKey||ONLINE_SUPABASE_DEFAULTS.publishableKey)
     };
   }catch(_){
-    return {provider:ONLINE_PROVIDER_TYPES.LOCAL,endpoint:'',projectId:'minkai-tcg'};
+    return {
+      provider:ONLINE_PROVIDER_TYPES.REMOTE,
+      endpoint:ONLINE_SUPABASE_DEFAULTS.functionUrl,
+      projectId:ONLINE_SUPABASE_DEFAULTS.projectId,
+      publishableKey:ONLINE_SUPABASE_DEFAULTS.publishableKey
+    };
   }
 }
 function onlineSaveProviderConfig(){
   const cfg={
     provider:$('#online-provider-select')?.value===ONLINE_PROVIDER_TYPES.REMOTE?ONLINE_PROVIDER_TYPES.REMOTE:ONLINE_PROVIDER_TYPES.LOCAL,
-    endpoint:String($('#online-remote-endpoint')?.value||'').trim(),
-    projectId:String($('#online-remote-project')?.value||'minkai-tcg').trim()||'minkai-tcg'
+    endpoint:String($('#online-remote-endpoint')?.value||ONLINE_SUPABASE_DEFAULTS.functionUrl).trim(),
+    projectId:String($('#online-remote-project')?.value||ONLINE_SUPABASE_DEFAULTS.projectId).trim()||ONLINE_SUPABASE_DEFAULTS.projectId,
+    publishableKey:String($('#online-remote-publishable-key')?.value||ONLINE_SUPABASE_DEFAULTS.publishableKey).trim()
   };
   localStorage.setItem(LS_ONLINE_PROVIDER_CONFIG,JSON.stringify(cfg));
   ONLINE_REMOTE_CONFIG.endpoint=cfg.endpoint;
   ONLINE_REMOTE_CONFIG.projectId=cfg.projectId;
+  ONLINE_REMOTE_CONFIG.publishableKey=cfg.publishableKey;
   ONLINE_REMOTE_CONFIG.enabled=cfg.provider===ONLINE_PROVIDER_TYPES.REMOTE&&/^https?:\/\//.test(cfg.endpoint);
   onlineSessionState.provider=cfg.provider;
   onlineSyncProviderUI();
@@ -30732,11 +30857,13 @@ function onlineApplySavedProviderConfig(){
   onlineSessionState.provider=cfg.provider;
   ONLINE_REMOTE_CONFIG.endpoint=cfg.endpoint;
   ONLINE_REMOTE_CONFIG.projectId=cfg.projectId;
+  ONLINE_REMOTE_CONFIG.publishableKey=cfg.publishableKey;
   ONLINE_REMOTE_CONFIG.enabled=cfg.provider===ONLINE_PROVIDER_TYPES.REMOTE&&/^https?:\/\//.test(cfg.endpoint);
-  const p=$('#online-provider-select'),e=$('#online-remote-endpoint'),id=$('#online-remote-project');
+  const p=$('#online-provider-select'),e=$('#online-remote-endpoint'),id=$('#online-remote-project'),pk=$('#online-remote-publishable-key');
   if(p)p.value=cfg.provider;
   if(e)e.value=cfg.endpoint;
   if(id)id.value=cfg.projectId;
+  if(pk)pk.value=cfg.publishableKey||ONLINE_SUPABASE_DEFAULTS.publishableKey;
   onlineSyncProviderUI();
 }
 function onlineSyncProviderUI(){
@@ -30744,8 +30871,22 @@ function onlineSyncProviderUI(){
   const remote=provider===ONLINE_PROVIDER_TYPES.REMOTE;
   const box=$('#online-remote-config');if(box)box.hidden=!remote;
   const state=$('#online-provider-state');
-  if(state)state.textContent=remote?(onlineRemoteProviderReady()?'remote ready':'remote未設定'):'local';
+  if(state)state.textContent=remote?(onlineRemoteProviderReady()?'Supabase ready':'remote未設定'):'local';
 }
+
+function onlineApplySupabasePreset(){
+  const provider=$('#online-provider-select');
+  const endpoint=$('#online-remote-endpoint');
+  const project=$('#online-remote-project');
+  const key=$('#online-remote-publishable-key');
+  if(provider)provider.value=ONLINE_PROVIDER_TYPES.REMOTE;
+  if(endpoint)endpoint.value=ONLINE_SUPABASE_DEFAULTS.functionUrl;
+  if(project)project.value=ONLINE_SUPABASE_DEFAULTS.projectId;
+  if(key)key.value=ONLINE_SUPABASE_DEFAULTS.publishableKey;
+  onlineSaveProviderConfig();
+  onlineSyncProviderUI();
+}
+
 async function onlineTestRemoteProvider(){
   const result=$('#online-remote-test-result');
   if(result)result.textContent='接続テスト中…';
@@ -30871,7 +31012,211 @@ async function onlineVerifyAuditChain(room){
   return String(room.auditHead||'')===prev;
 }
 
-function onlineHeartbeat(){
+
+function onlineUsingRemoteProvider(){
+  return onlineSessionState.provider===ONLINE_PROVIDER_TYPES.REMOTE;
+}
+function onlineRemoteConfigValid(){
+  return onlineRemoteProviderReady();
+}
+function onlineRequireRemoteConfig(){
+  if(!onlineRemoteConfigValid()){
+    toast('リモートAPIのEndpointを設定してください');
+    const details=document.querySelector('.online-provider-details');
+    if(details)details.open=true;
+    return false;
+  }
+  return true;
+}
+function onlineApplyRemoteRoomSnapshot(snapshot){
+  if(!snapshot||typeof snapshot!=='object')return null;
+  const room=snapshot.room||snapshot;
+  if(!room||!room.code)return null;
+  const rooms=onlineLoadRooms();
+  rooms[room.code]=room;
+  onlineSaveRooms(rooms);
+  return room;
+}
+async function onlineRemoteCreateRoom(){
+  if(!onlineRequireRemoteConfig())return false;
+  try{
+    const data=await onlineProviderRequest('create-room',{
+      clientId:onlineRandomId('client'),
+      requestedRole:'host'
+    });
+    const room=onlineApplyRemoteRoomSnapshot(data);
+    if(!room)throw new Error('invalid create-room response');
+    onlineSetSessionToken(data.sessionToken||'');
+
+    resetOnlineSessionState();
+    onlineSessionState={
+      ...onlineSessionState,
+      version:ONLINE_MODE_VERSION,
+      provider:ONLINE_PROVIDER_TYPES.REMOTE,
+      role:'host',
+      roomId:String(room.roomId||''),
+      joinCode:String(room.code||''),
+      connection:'connected',
+      playerSlot:1,
+      clientId:String(data.clientId||room.p1?.clientId||onlineRandomId('client')),
+      displayName:'P1'
+    };
+    onlineOpenChannel(room.code);
+    onlineStartHeartbeat();
+    onlineStartRemotePolling();
+    onlineShowLobby();
+    toast(`ルームを作成しました：${room.code}`);
+    return true;
+  }catch(err){
+    console.error('remote create-room failed',err);
+    toast(`ルーム作成失敗：${String(err?.message||err)}`);
+    return false;
+  }
+}
+async function onlineRemoteJoinRoom(code,role='guest'){
+  if(!onlineRequireRemoteConfig())return false;
+  code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8);
+  if(!code){toast('参加コードを入力してください');return false}
+  try{
+    const data=await onlineProviderRequest(role==='spectator'?'watch-room':'join-room',{
+      code,
+      role,
+      clientId:onlineRandomId('client')
+    });
+    const room=onlineApplyRemoteRoomSnapshot(data);
+    if(!room)throw new Error('invalid join-room response');
+    onlineSetSessionToken(data.sessionToken||'');
+
+    resetOnlineSessionState();
+    onlineSessionState={
+      ...onlineSessionState,
+      version:ONLINE_MODE_VERSION,
+      provider:ONLINE_PROVIDER_TYPES.REMOTE,
+      role:role==='spectator'?'spectator':'guest',
+      roomId:String(room.roomId||''),
+      joinCode:String(room.code||code),
+      connection:'connected',
+      playerSlot:role==='guest'?2:null,
+      clientId:String(data.clientId||onlineRandomId('client')),
+      displayName:role==='guest'?'P2':'観戦者'
+    };
+    onlineOpenChannel(room.code||code);
+    onlineStartHeartbeat();
+    onlineStartRemotePolling();
+    onlineShowLobby();
+    toast(role==='spectator'?'観戦参加しました':'ルームに参加しました');
+    return true;
+  }catch(err){
+    console.error('remote join-room failed',err);
+    toast(`参加失敗：${String(err?.message||err)}`);
+    return false;
+  }
+}
+async function onlineRemoteHeartbeat(){
+  if(!onlineUsingRemoteProvider()||!onlineSessionState.joinCode||!onlineSessionState.clientId)return;
+  try{
+    const data=await onlineProviderRequest('heartbeat',{
+      roomCode:onlineSessionState.joinCode,
+      clientId:onlineSessionState.clientId,
+      role:onlineSessionState.role
+    });
+    const room=onlineApplyRemoteRoomSnapshot(data);
+    if(room)onlineRefreshLobby();
+  }catch(err){
+    onlineSessionState.lastError=String(err?.message||err);
+    console.warn('remote heartbeat failed',err);
+  }
+}
+async function onlineRemoteGetRoom(){
+  if(!onlineUsingRemoteProvider()||!onlineSessionState.joinCode)return null;
+  try{
+    const data=await onlineProviderRequest('get-room',{
+      roomCode:onlineSessionState.joinCode,
+      clientId:onlineSessionState.clientId,
+      role:onlineSessionState.role
+    });
+    return onlineApplyRemoteRoomSnapshot(data);
+  }catch(err){
+    console.warn('remote get-room failed',err);
+    return null;
+  }
+}
+async function onlineRemoteLeaveRoom(){
+  if(!onlineUsingRemoteProvider()||!onlineSessionState.joinCode)return;
+  try{
+    await onlineProviderRequest('leave-room',{
+      roomCode:onlineSessionState.joinCode,
+      clientId:onlineSessionState.clientId,
+      role:onlineSessionState.role
+    });
+  }catch(err){
+    console.warn('remote leave-room failed',err);
+  }
+}
+
+
+const ONLINE_REMOTE_POLL_MS=2500;
+let onlineRemotePollTimer=0;
+
+function onlineSessionToken(){return String(onlineSessionState.sessionToken||'')}
+function onlineSetSessionToken(token){onlineSessionState.sessionToken=String(token||'')}
+function onlineRemoteRequestPayload(payload={}){return {...payload,sessionToken:onlineSessionToken()}}
+
+function onlineStartRemotePolling(){
+  onlineStopRemotePolling();
+  if(!onlineUsingRemoteProvider()||!onlineSessionState.joinCode)return;
+  onlineRemotePollTimer=setInterval(async()=>{
+    if(document.hidden)return;
+    const room=await onlineRemoteGetRoom();
+    if(room){
+      if(!$('#online-match-board-panel')?.hidden)onlineRenderMatchBoard();
+      else onlineRefreshLobby();
+    }
+  },ONLINE_REMOTE_POLL_MS);
+}
+function onlineStopRemotePolling(){
+  if(onlineRemotePollTimer){clearInterval(onlineRemotePollTimer);onlineRemotePollTimer=0}
+}
+
+async function onlineToolDraw(){
+  if(!['host','guest'].includes(onlineSessionState.role))return;
+  const slot=onlineSessionState.role==='host'?1:2,out=$('#online-tool-result');
+  try{
+    const res=await onlineServerDraw(slot,1),drawn=res?.drawn||[];
+    if(out)out.textContent=drawn.length?`ドロー処理完了：${drawn.length}枚`:'ドローできるカードがありません';
+    onlineRecordRoomAction('server-draw',{slot,count:drawn.length},`owner-p${slot}`);
+  }catch(err){if(out)out.textContent=`ドロー失敗：${String(err?.message||err)}`}
+}
+async function onlineToolShuffle(){
+  if(!['host','guest'].includes(onlineSessionState.role))return;
+  const slot=onlineSessionState.role==='host'?1:2,out=$('#online-tool-result');
+  try{
+    if(onlineUsingRemoteProvider()){
+      await onlineProviderRequest('shuffle-deck',onlineRemoteRequestPayload({roomCode:onlineSessionState.joinCode,slot}));
+    }else{
+      const order=onlineVaultGetDeckOrder(onlineSessionState.joinCode,slot);
+      const shuffled=(await onlineServerShuffle(order)).cardIds||[];
+      onlineVaultSetDeckOrder(onlineSessionState.joinCode,slot,shuffled);
+    }
+    if(out)out.textContent='デッキをシャッフルしました';
+    onlineRecordRoomAction('server-shuffle',{slot},'public');
+  }catch(err){if(out)out.textContent=`シャッフル失敗：${String(err?.message||err)}`}
+}
+async function onlineToolRandomHand(){
+  if(!['host','guest'].includes(onlineSessionState.role))return;
+  const slot=onlineSessionState.role==='host'?1:2,out=$('#online-tool-result');
+  try{
+    const p=board?.players?.[slot-1];
+    const ids=(Array.isArray(p?.hand)?p.hand:[]).flatMap(pile=>(pile?.cards||[]).map(c=>String(c?.id||''))).filter(Boolean);
+    if(!ids.length){if(out)out.textContent='手札がありません';return}
+    await onlineServerRandomPick(ids,1);
+    if(out)out.textContent='手札からランダム選択：1枚選択済み';
+    onlineRecordRoomAction('server-random-hand',{slot,count:ids.length},`owner-p${slot}`);
+  }catch(err){if(out)out.textContent=`ランダム選択失敗：${String(err?.message||err)}`}
+}
+
+async function onlineHeartbeat(){
+  if(onlineUsingRemoteProvider())return await onlineRemoteHeartbeat();
   const code=onlineSessionState.joinCode,clientId=onlineSessionState.clientId;
   if(!code||!clientId)return;
   const rooms=onlineLoadRooms(),room=rooms[code];
@@ -30897,8 +31242,9 @@ function onlineShowLobby(){
   $('#online-room-lobby').hidden=false;
   onlineRefreshLobby();
 }
-function onlineRefreshLobby(){
+async function onlineRefreshLobby(){
   const code=onlineSessionState.joinCode;
+  if(onlineUsingRemoteProvider())await onlineRemoteGetRoom();
   const rooms=onlineLoadRooms(),room=rooms[code];
   $('#online-room-role-badge').textContent=onlineRoleLabel();
   $('#online-room-code-display').textContent=code||'------';
@@ -30920,9 +31266,11 @@ function onlineRefreshLobby(){
       ?'ホストのルームへ参加中です。'
       :'観戦者として接続中です。');
 }
-function onlineLeaveRoom(broadcast=true){
+async function onlineLeaveRoom(broadcast=true){
+  onlineStopRemotePolling();
   onlineStopBoardMutationWatch();
   const code=onlineSessionState.joinCode,clientId=onlineSessionState.clientId,role=onlineSessionState.role;
+  if(onlineUsingRemoteProvider())await onlineRemoteLeaveRoom();
   if(code&&clientId){
     const rooms=onlineLoadRooms(),room=rooms[code];
     if(room){
@@ -30974,7 +31322,11 @@ function initOnlineModeFoundation(){
   $('#online-leave-room')?.addEventListener('click',()=>onlineLeaveRoom(true));
   $('#online-provider-select')?.addEventListener('change',()=>{onlineSyncProviderUI()});
   $('#online-remote-save')?.addEventListener('click',onlineSaveProviderConfig);
+  $('#online-supabase-apply')?.addEventListener('click',onlineApplySupabasePreset);
   $('#online-remote-test')?.addEventListener('click',onlineTestRemoteProvider);
+  $('#online-tool-draw')?.addEventListener('click',onlineToolDraw);
+  $('#online-tool-shuffle')?.addEventListener('click',onlineToolShuffle);
+  $('#online-tool-random-hand')?.addEventListener('click',onlineToolRandomHand);
   onlineApplySavedProviderConfig();
   window.addEventListener('storage',e=>{if(e.key===LS_ONLINE_ROOMS&&onlineSessionState.joinCode)onlineRefreshLobby()});
   window.addEventListener('beforeunload',()=>{try{onlineHeartbeat()}catch(_){}});
