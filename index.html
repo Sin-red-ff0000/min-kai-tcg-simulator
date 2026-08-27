@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.0</title>
+<title>みん会TCG Simulator v13.2</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17260,6 +17260,116 @@ html[data-home-play-mode="online"] #board-resume-panel{
   .online-home-actions{grid-template-columns:1fr}
 }
 
+
+/* ==========================================================
+   v13.1 Online room lobby
+   ========================================================== */
+.online-room-form,
+.online-room-lobby{
+  margin-top:12px;
+  padding:12px;
+  border:1px solid #41536a;
+  border-radius:10px;
+  background:rgba(8,13,20,.35);
+}
+.online-room-form label{
+  display:grid;
+  gap:5px;
+}
+.online-room-form input{
+  width:100%;
+  max-width:260px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:18px;
+}
+.online-room-code-card{
+  display:grid;
+  gap:5px;
+  justify-items:start;
+  margin:8px 0 12px;
+  padding:10px;
+  border:1px solid #435872;
+  border-radius:10px;
+  background:rgba(0,0,0,.18);
+}
+.online-room-code-display{
+  font-size:26px;
+  font-weight:800;
+  letter-spacing:.16em;
+}
+.online-room-members{
+  display:grid;
+  gap:6px;
+  margin:10px 0;
+}
+.online-member-row{
+  display:grid;
+  grid-template-columns:72px 1fr;
+  align-items:center;
+  gap:8px;
+  padding:7px 8px;
+  border-radius:8px;
+  background:rgba(255,255,255,.035);
+}
+.online-room-message{
+  min-height:44px;
+  padding:8px;
+  border-radius:8px;
+  background:rgba(0,0,0,.16);
+}
+.online-provider-note{
+  margin-top:12px;
+  padding-top:10px;
+  border-top:1px solid rgba(120,150,180,.24);
+}
+
+
+/* ==========================================================
+   v13.2 Online deck setup / ready
+   ========================================================== */
+.online-deck-setup{
+  margin-top:12px;
+  padding:12px;
+  border:1px solid #43546a;
+  border-radius:10px;
+  background:rgba(7,12,18,.28);
+}
+.online-player-setup{
+  display:grid;
+  gap:9px;
+}
+.online-player-setup label{
+  display:grid;
+  gap:5px;
+}
+.online-ready-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:12px;
+}
+.online-ready-row{
+  display:grid;
+  gap:4px;
+  padding:9px;
+  border-radius:8px;
+  background:rgba(255,255,255,.04);
+}
+.online-ready-row span{
+  font-size:12px;
+  color:#9cacbe;
+}
+.online-match-ready-note{
+  margin-top:9px;
+  padding:8px;
+  border-radius:8px;
+  background:rgba(0,0,0,.16);
+}
+@media(max-width:700px){
+  .online-ready-grid{grid-template-columns:1fr}
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -18828,7 +18938,7 @@ html[data-home-play-mode="online"] #board-resume-panel{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -18848,16 +18958,100 @@ html[data-home-play-mode="online"] #board-resume-panel{
   <div class="muted home-mode-note" id="home-mode-note">現在のSimulatorをそのまま使う1人回しモードです。</div>
 </section>
 
+
 <section id="online-home-panel" class="online-home-panel" hidden>
-  <div class="section-head"><h2>オンライン対戦</h2><span class="pill">Ver13 基盤</span></div>
-  <p class="muted">通話はDiscordなど外部サービスを前提に、対戦盤面の共有に集中するモードです。</p>
-  <div class="online-home-actions">
-    <button class="btn primary" id="online-create-room" type="button">ルームを作る</button>
-    <button class="btn" id="online-join-room" type="button">ルームに参加</button>
-    <button class="btn" id="online-watch-room" type="button">観戦する</button>
+  <div class="section-head"><h2>オンライン対戦</h2><span class="pill">Ver13.1</span></div>
+  <p class="muted">13.1ではルーム作成・参加・観戦と、同一ブラウザ内での実同期テストに対応します。</p>
+
+  <div id="online-room-entry" class="online-room-entry">
+    <div class="online-home-actions">
+      <button class="btn primary" id="online-create-room" type="button">ルームを作る</button>
+      <button class="btn" id="online-join-room" type="button">ルームに参加</button>
+      <button class="btn" id="online-watch-room" type="button">観戦する</button>
+    </div>
   </div>
-  <div id="online-home-status" class="online-home-status muted">13.0ではオンライン用の入口と状態管理のみ実装しています。通信接続は13.1以降で追加します。</div>
+
+  <div id="online-room-form" class="online-room-form" hidden>
+    <div class="section-head"><h3 id="online-room-form-title">ルームに参加</h3></div>
+    <label>参加コード
+      <input id="online-room-code-input" type="text" maxlength="8" inputmode="text" autocomplete="off" placeholder="6桁コード">
+    </label>
+    <div class="actions">
+      <button class="btn primary" id="online-room-form-submit" type="button">参加</button>
+      <button class="btn" id="online-room-form-cancel" type="button">戻る</button>
+    </div>
+  </div>
+
+  <div id="online-room-lobby" class="online-room-lobby" hidden>
+    <div class="section-head">
+      <h3>対戦ルーム</h3>
+      <span id="online-room-role-badge" class="pill">未接続</span>
+    </div>
+
+    <div class="online-room-code-card">
+      <div class="muted">参加コード</div>
+      <div id="online-room-code-display" class="online-room-code-display">------</div>
+      <button class="btn small" id="online-copy-room-code" type="button">コードをコピー</button>
+    </div>
+
+    <div class="online-room-members">
+      <div class="online-member-row">
+        <span>P1</span>
+        <b id="online-member-p1">待機中</b>
+      </div>
+      <div class="online-member-row">
+        <span>P2</span>
+        <b id="online-member-p2">待機中</b>
+      </div>
+      <div class="online-member-row">
+        <span>観戦</span>
+        <b id="online-member-spectators">0人</b>
+      </div>
+    </div>
+
+    <div id="online-room-message" class="online-room-message muted">ルームに接続しています。</div>
+
+    <div id="online-deck-setup" class="online-deck-setup">
+      <div class="section-head"><h3>対戦準備</h3></div>
+
+      <div id="online-player-setup" class="online-player-setup">
+        <label>使用デッキ
+          <select id="online-deck-select"><option value="">デッキを選択</option></select>
+        </label>
+
+        <label>最推し
+          <select id="online-oshii-select"><option value="">未選択</option></select>
+        </label>
+
+        <div id="online-deck-lock-note" class="muted">準備完了するとこのルーム内ではデッキ内容がロックされます。</div>
+
+        <div class="actions">
+          <button class="btn primary" id="online-ready-toggle" type="button">準備完了</button>
+        </div>
+      </div>
+
+      <div id="online-spectator-setup-note" class="muted" hidden>観戦者はデッキ選択・準備操作を行いません。</div>
+
+      <div class="online-ready-grid">
+        <div class="online-ready-row"><span>P1</span><b id="online-ready-p1">未準備</b></div>
+        <div class="online-ready-row"><span>P2</span><b id="online-ready-p2">未準備</b></div>
+      </div>
+
+      <div id="online-match-ready-note" class="online-match-ready-note muted">両プレイヤーの準備完了を待っています。</div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="online-leave-room" type="button">ルームを退出</button>
+    </div>
+  </div>
+
+  <div class="online-provider-note">
+    <div class="muted">通信方式</div>
+    <b id="online-provider-label">ローカル通信テスト</b>
+    <div class="muted">同じブラウザの別タブ同士で同期できます。インターネット越しの通信プロバイダは次段階で接続予定です。</div>
+  </div>
 </section>
+
 
 
   <section id="screen-home" class="screen active">
@@ -22527,7 +22721,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.0',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.2',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -29318,28 +29512,87 @@ function applyFxRuntimeTuning(root=document){
 }
 
 
+
 /* ==========================================================
-   v13.0 Online mode foundation
-   Online state is intentionally separated from local board state.
+   v13.1 Online room foundation
+   Local provider uses BroadcastChannel + localStorage.
+   Board state remains completely separate from solo mode.
    ========================================================== */
 const LS_HOME_PLAY_MODE='minkai-home-play-mode-v1';
-const ONLINE_MODE_VERSION=1;
+const LS_ONLINE_ROOMS='minkai-online-rooms-v1';
+const ONLINE_MODE_VERSION=2;
+const ONLINE_PROVIDER='local-broadcast';
+
 let homePlayMode=localStorage.getItem(LS_HOME_PLAY_MODE)==='online'?'online':'solo';
 let onlineSessionState={
   version:ONLINE_MODE_VERSION,
-  role:null,          // host | guest | spectator
+  provider:ONLINE_PROVIDER,
+  role:null,
   roomId:'',
   joinCode:'',
   connection:'offline',
   ready:false,
   deckLocked:false,
   playerSlot:null,
+  clientId:'',
+  displayName:'',
+  spectatorIndex:null,
+  selectedDeckId:'',
+  selectedOshiiCardId:'',
   lastError:''
 };
+let onlineRoomChannel=null;
+let onlineRoomHeartbeatTimer=0;
+let onlineRoomRoleIntent='guest';
 
+function onlineRandomId(prefix='id'){
+  const rnd=crypto?.getRandomValues?Array.from(crypto.getRandomValues(new Uint32Array(2))).map(x=>x.toString(36)).join(''):Math.random().toString(36).slice(2);
+  return `${prefix}-${Date.now().toString(36)}-${rnd}`.slice(0,48);
+}
+function onlineGenerateCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code='';
+  if(crypto?.getRandomValues){
+    const a=crypto.getRandomValues(new Uint8Array(6));
+    for(const v of a)code+=chars[v%chars.length];
+  }else{
+    for(let i=0;i<6;i++)code+=chars[Math.floor(Math.random()*chars.length)];
+  }
+  return code;
+}
+function onlineLoadRooms(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(LS_ONLINE_ROOMS)||'{}');
+    return raw&&typeof raw==='object'?raw:{};
+  }catch(_){return {}}
+}
+function onlineSaveRooms(rooms){
+  try{localStorage.setItem(LS_ONLINE_ROOMS,JSON.stringify(rooms))}catch(err){console.warn('online rooms save failed',err)}
+}
+function onlineCleanupRooms(){
+  const now=Date.now(),rooms=onlineLoadRooms();
+  let changed=false;
+  for(const [code,room] of Object.entries(rooms)){
+    if(!room||now-Number(room.updatedAt||0)>1000*60*60*6){
+      delete rooms[code];changed=true;
+      continue;
+    }
+    ['p1','p2'].forEach(slot=>{
+      if(room[slot]&&now-Number(room[slot].lastSeen||0)>1000*45){room[slot]=null;changed=true}
+    });
+    if(Array.isArray(room.spectators)){
+      const next=room.spectators.filter(x=>now-Number(x.lastSeen||0)<=1000*45);
+      if(next.length!==room.spectators.length){room.spectators=next;changed=true}
+    }
+  }
+  if(changed)onlineSaveRooms(rooms);
+}
 function resetOnlineSessionState(){
+  if(onlineRoomHeartbeatTimer){clearInterval(onlineRoomHeartbeatTimer);onlineRoomHeartbeatTimer=0}
+  if(onlineRoomChannel){try{onlineRoomChannel.close()}catch(_){} onlineRoomChannel=null}
   onlineSessionState={
     version:ONLINE_MODE_VERSION,
+    provider:ONLINE_PROVIDER,
     role:null,
     roomId:'',
     joinCode:'',
@@ -29347,6 +29600,9 @@ function resetOnlineSessionState(){
     ready:false,
     deckLocked:false,
     playerSlot:null,
+    clientId:'',
+    displayName:'',
+    spectatorIndex:null,
     lastError:''
   };
 }
@@ -29365,30 +29621,395 @@ function syncHomePlayModeUI(){
   if(note)note.textContent=solo
     ?'現在のSimulatorをそのまま使う1人回しモードです。'
     :'オンライン専用の状態・画面を使用します。1人回しの盤面状態とは分離されています。';
-
-  /* Existing solo content remains untouched; only hide common board-start entry points
-     while online home is selected. */
   document.documentElement.dataset.homePlayMode=homePlayMode;
 }
-function onlineFoundationNotice(kind){
-  const status=$('#online-home-status');
-  const labels={
-    create:'ルーム作成',
-    join:'ルーム参加',
-    watch:'観戦参加'
+function onlineShowEntry(){
+  $('#online-room-entry').hidden=false;
+  $('#online-room-form').hidden=true;
+  $('#online-room-lobby').hidden=true;
+}
+function onlineShowForm(role){
+  onlineRoomRoleIntent=role==='spectator'?'spectator':'guest';
+  $('#online-room-entry').hidden=true;
+  $('#online-room-lobby').hidden=true;
+  $('#online-room-form').hidden=false;
+  $('#online-room-form-title').textContent=onlineRoomRoleIntent==='spectator'?'観戦する':'ルームに参加';
+  $('#online-room-form-submit').textContent=onlineRoomRoleIntent==='spectator'?'観戦参加':'参加';
+  const input=$('#online-room-code-input');if(input){input.value='';setTimeout(()=>input.focus(),0)}
+}
+function onlineRoleLabel(){
+  if(onlineSessionState.role==='host')return 'ホスト / P1';
+  if(onlineSessionState.role==='guest')return '参加者 / P2';
+  if(onlineSessionState.role==='spectator')return '観戦者';
+  return '未接続';
+}
+function onlineOpenChannel(code){
+  if(onlineRoomChannel){try{onlineRoomChannel.close()}catch(_){}}
+  if('BroadcastChannel' in window){
+    onlineRoomChannel=new BroadcastChannel(`minkai-room-${code}`);
+    onlineRoomChannel.onmessage=e=>onlineHandleRoomMessage(e.data);
+  }else onlineRoomChannel=null;
+}
+function onlineBroadcast(type,payload={}){
+  const msg={type,payload,from:onlineSessionState.clientId,at:Date.now(),code:onlineSessionState.joinCode};
+  try{onlineRoomChannel?.postMessage(msg)}catch(err){console.warn('online broadcast failed',err)}
+}
+function onlineHandleRoomMessage(msg){
+  if(!msg||msg.code!==onlineSessionState.joinCode||msg.from===onlineSessionState.clientId)return;
+  if(['member-change','heartbeat','room-sync','room-close'].includes(msg.type)){
+    if(msg.type==='room-close'){
+      onlineSessionState.lastError='ホストがルームを終了しました';
+      onlineLeaveRoom(false);
+      toast('ホストがルームを終了しました');
+      return;
+    }
+    onlineRefreshLobby();
+  }
+}
+function onlineCreateRoom(){
+  onlineCleanupRooms();
+  const rooms=onlineLoadRooms();
+  let code=onlineGenerateCode(),guard=0;
+  while(rooms[code]&&guard++<20)code=onlineGenerateCode();
+
+  const clientId=onlineRandomId('client');
+  const now=Date.now();
+  rooms[code]={
+    version:ONLINE_MODE_VERSION,
+    roomId:onlineRandomId('room'),
+    code,
+    createdAt:now,
+    updatedAt:now,
+    p1:{clientId,name:'P1',lastSeen:now,ready:false,deckLocked:false,deckId:'',deckName:'',deckTotal:0,oshiiCardId:'',deckHash:''},
+    p2:null,
+    spectators:[]
   };
-  onlineSessionState.lastError='';
-  if(status)status.textContent=`${labels[kind]||'オンライン機能'}は13.1以降で通信処理を接続します。13.0では画面分離とオンライン専用状態管理まで実装済みです。`;
-  toast(`${labels[kind]||'オンライン機能'}：13.1以降で有効化予定`);
+  onlineSaveRooms(rooms);
+
+  resetOnlineSessionState();
+  onlineSessionState={
+    ...onlineSessionState,
+    version:ONLINE_MODE_VERSION,
+    provider:ONLINE_PROVIDER,
+    role:'host',
+    roomId:rooms[code].roomId,
+    joinCode:code,
+    connection:'connected',
+    playerSlot:1,
+    clientId,
+    displayName:'P1'
+  };
+  onlineOpenChannel(code);
+  onlineStartHeartbeat();
+  onlineShowLobby();
+  onlineBroadcast('member-change');
+  toast(`ルームを作成しました：${code}`);
+}
+function onlineJoinRoom(code,role='guest'){
+  onlineCleanupRooms();
+  code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8);
+  const rooms=onlineLoadRooms(),room=rooms[code];
+  if(!room){toast('ルームが見つかりません');return false}
+
+  const clientId=onlineRandomId('client'),now=Date.now();
+  if(role==='guest'){
+    if(room.p2&&now-Number(room.p2.lastSeen||0)<=45000){
+      toast('このルームはP2参加済みです');return false
+    }
+    room.p2={clientId,name:'P2',lastSeen:now,ready:false,deckLocked:false,deckId:'',deckName:'',deckTotal:0,oshiiCardId:'',deckHash:''};
+  }else{
+    room.spectators=Array.isArray(room.spectators)?room.spectators:[];
+    room.spectators.push({clientId,name:`観戦${room.spectators.length+1}`,lastSeen:now});
+  }
+  room.updatedAt=now;rooms[code]=room;onlineSaveRooms(rooms);
+
+  resetOnlineSessionState();
+  onlineSessionState={
+    ...onlineSessionState,
+    version:ONLINE_MODE_VERSION,
+    provider:ONLINE_PROVIDER,
+    role:role==='spectator'?'spectator':'guest',
+    roomId:room.roomId,
+    joinCode:code,
+    connection:'connected',
+    playerSlot:role==='guest'?2:null,
+    clientId,
+    displayName:role==='guest'?'P2':'観戦者'
+  };
+  onlineOpenChannel(code);
+  onlineStartHeartbeat();
+  onlineShowLobby();
+  onlineBroadcast('member-change');
+  toast(role==='spectator'?'観戦参加しました':'ルームに参加しました');
+  return true;
+}
+
+function onlineDeckById(deckId){
+  return (decks||[]).find(d=>String(d.id)===String(deckId))||null;
+}
+function onlineDeckEntriesArray(deck){
+  return Object.entries(deck?.entries||{})
+    .filter(([,n])=>Number(n)>0)
+    .map(([cardId,count])=>({cardId:String(cardId),count:Number(count)||0}));
+}
+function onlineDeckSnapshot(deck){
+  const entries=onlineDeckEntriesArray(deck)
+    .sort((a,b)=>a.cardId.localeCompare(b.cardId));
+  return {
+    deckId:String(deck?.id||''),
+    deckName:String(deck?.name||''),
+    entries,
+    defaultOshiiCardId:String(deck?.defaultOshiiCardId||''),
+    total:entries.reduce((a,x)=>a+x.count,0)
+  };
+}
+async function onlineHashText(text){
+  try{
+    if(globalThis.crypto?.subtle){
+      const bytes=new TextEncoder().encode(text);
+      const hash=await crypto.subtle.digest('SHA-256',bytes);
+      return [...new Uint8Array(hash)].map(x=>x.toString(16).padStart(2,'0')).join('');
+    }
+  }catch(_){}
+  let h=2166136261>>>0;
+  for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}
+  return (h>>>0).toString(16).padStart(8,'0');
+}
+async function onlineDeckLockPayload(deck,oshiiCardId){
+  const snap=onlineDeckSnapshot(deck);
+  const raw=JSON.stringify(snap);
+  return {
+    deckId:snap.deckId,
+    deckName:snap.deckName,
+    deckTotal:snap.total,
+    oshiiCardId:String(oshiiCardId||''),
+    deckHash:await onlineHashText(raw),
+    lockedAt:Date.now()
+  };
+}
+function onlineFillDeckOptions(){
+  const sel=$('#online-deck-select');if(!sel)return;
+  const prev=sel.value;
+  sel.innerHTML='<option value="">デッキを選択</option>'+(decks||[]).map(d=>`<option value="${esc(d.id)}">${esc(d.name||'名称未設定')} (${Object.values(d.entries||{}).reduce((a,n)=>a+(Number(n)||0),0)}枚)</option>`).join('');
+  if([...sel.options].some(o=>o.value===prev))sel.value=prev;
+}
+function onlineFillOshiiOptions(deckId,preferDefault=true){
+  const sel=$('#online-oshii-select');if(!sel)return;
+  const deck=onlineDeckById(deckId);
+  const ids=[...new Set(onlineDeckEntriesArray(deck).map(x=>x.cardId))];
+  sel.innerHTML='<option value="">未選択</option>'+ids.map(id=>{
+    const c=cards.find(x=>String(x.id)===String(id));
+    return c?`<option value="${esc(c.id)}">${esc(c.name||'名称未設定')}</option>`:'';
+  }).join('');
+  const preferred=String(deck?.defaultOshiiCardId||'');
+  if(preferDefault&&preferred&&[...sel.options].some(o=>o.value===preferred))sel.value=preferred;
+}
+function onlineOwnRoomMember(room){
+  if(!room)return null;
+  if(onlineSessionState.role==='host')return room.p1||null;
+  if(onlineSessionState.role==='guest')return room.p2||null;
+  return null;
+}
+function onlinePlayerMember(room,slot){
+  return slot===1?room?.p1:room?.p2;
+}
+function onlineMemberReadyText(member){
+  if(!member)return '不在';
+  if(member.ready)return `準備完了${member.deckName?` / ${member.deckName}`:''}`;
+  return member.deckName?`選択中 / ${member.deckName}`:'未準備';
+}
+async function onlineToggleReady(){
+  if(!['host','guest'].includes(onlineSessionState.role))return;
+  const code=onlineSessionState.joinCode,rooms=onlineLoadRooms(),room=rooms[code];
+  if(!room){toast('ルーム情報を取得できません');return}
+  const member=onlineOwnRoomMember(room);
+  if(!member){toast('プレイヤー情報を取得できません');return}
+
+  if(member.ready){
+    member.ready=false;
+    member.deckLocked=false;
+    member.deckHash='';
+    member.lockedDeck=null;
+    onlineSessionState.ready=false;
+    onlineSessionState.deckLocked=false;
+  }else{
+    const deckId=$('#online-deck-select')?.value||'';
+    const deck=onlineDeckById(deckId);
+    if(!deck){toast('使用デッキを選択してください');return}
+    const oshii=$('#online-oshii-select')?.value||'';
+    const lock=await onlineDeckLockPayload(deck,oshii);
+    member.deckId=lock.deckId;
+    member.deckName=lock.deckName;
+    member.deckTotal=lock.deckTotal;
+    member.oshiiCardId=lock.oshiiCardId;
+    member.deckHash=lock.deckHash;
+    member.lockedDeck=onlineDeckSnapshot(deck);
+    member.deckLocked=true;
+    member.ready=true;
+    member.readyAt=Date.now();
+    onlineSessionState.ready=true;
+    onlineSessionState.deckLocked=true;
+  }
+
+  room.updatedAt=Date.now();
+  rooms[code]=room;
+  onlineSaveRooms(rooms);
+  onlineBroadcast('member-change');
+  onlineRefreshLobby();
+}
+function onlineUpdateDeckSelection(){
+  if(!['host','guest'].includes(onlineSessionState.role))return;
+  const code=onlineSessionState.joinCode,rooms=onlineLoadRooms(),room=rooms[code];
+  if(!room)return;
+  const member=onlineOwnRoomMember(room);
+  if(!member||member.ready)return;
+  const deck=onlineDeckById($('#online-deck-select')?.value||'');
+  member.deckId=String(deck?.id||'');
+  member.deckName=String(deck?.name||'');
+  member.deckTotal=deck?onlineDeckSnapshot(deck).total:0;
+  member.oshiiCardId=$('#online-oshii-select')?.value||'';
+  room.updatedAt=Date.now();
+  rooms[code]=room;
+  onlineSaveRooms(rooms);
+  onlineBroadcast('member-change');
+  onlineRefreshLobby();
+}
+function onlineApplySetupUI(room){
+  const isSpectator=onlineSessionState.role==='spectator';
+  const playerSetup=$('#online-player-setup'),spectatorNote=$('#online-spectator-setup-note');
+  if(playerSetup)playerSetup.hidden=isSpectator;
+  if(spectatorNote)spectatorNote.hidden=!isSpectator;
+
+  const p1=onlinePlayerMember(room,1),p2=onlinePlayerMember(room,2);
+  $('#online-ready-p1').textContent=onlineMemberReadyText(p1);
+  $('#online-ready-p2').textContent=onlineMemberReadyText(p2);
+
+  const both=!!(p1?.ready&&p2?.ready);
+  const note=$('#online-match-ready-note');
+  if(note)note.textContent=both
+    ?'P1・P2ともに準備完了しました。次の更新で対戦開始・盤面同期へ進みます。'
+    :'両プレイヤーの準備完了を待っています。';
+
+  if(isSpectator)return;
+
+  onlineFillDeckOptions();
+  const own=onlineOwnRoomMember(room);
+  const deckSel=$('#online-deck-select'),oshiiSel=$('#online-oshii-select'),readyBtn=$('#online-ready-toggle');
+
+  if(deckSel){
+    if(own?.deckId&&[...deckSel.options].some(o=>o.value===String(own.deckId)))deckSel.value=String(own.deckId);
+    deckSel.disabled=!!own?.ready;
+  }
+  onlineFillOshiiOptions(deckSel?.value||own?.deckId||'',false);
+  if(oshiiSel){
+    const preferred=String(own?.oshiiCardId||onlineDeckById(deckSel?.value)?.defaultOshiiCardId||'');
+    if(preferred&&[...oshiiSel.options].some(o=>o.value===preferred))oshiiSel.value=preferred;
+    oshiiSel.disabled=!!own?.ready;
+  }
+  if(readyBtn){
+    readyBtn.textContent=own?.ready?'準備を解除':'準備完了';
+    readyBtn.classList.toggle('danger',!!own?.ready);
+  }
+  const lockNote=$('#online-deck-lock-note');
+  if(lockNote)lockNote.textContent=own?.ready
+    ?`デッキロック済み${own.deckHash?` / HASH ${String(own.deckHash).slice(0,10)}…`:''}`
+    :'準備完了するとこのルーム内ではデッキ内容がロックされます。';
+}
+
+function onlineHeartbeat(){
+  const code=onlineSessionState.joinCode,clientId=onlineSessionState.clientId;
+  if(!code||!clientId)return;
+  const rooms=onlineLoadRooms(),room=rooms[code];
+  if(!room){onlineSessionState.lastError='ルームが見つかりません';onlineLeaveRoom(false);return}
+  const now=Date.now();
+  if(onlineSessionState.role==='host'&&room.p1?.clientId===clientId)room.p1.lastSeen=now;
+  if(onlineSessionState.role==='guest'&&room.p2?.clientId===clientId)room.p2.lastSeen=now;
+  if(onlineSessionState.role==='spectator'&&Array.isArray(room.spectators)){
+    const rec=room.spectators.find(x=>x.clientId===clientId);if(rec)rec.lastSeen=now;
+  }
+  room.updatedAt=now;rooms[code]=room;onlineSaveRooms(rooms);
+  onlineBroadcast('heartbeat');
+  onlineRefreshLobby();
+}
+function onlineStartHeartbeat(){
+  if(onlineRoomHeartbeatTimer)clearInterval(onlineRoomHeartbeatTimer);
+  onlineRoomHeartbeatTimer=setInterval(onlineHeartbeat,12000);
+  onlineHeartbeat();
+}
+function onlineShowLobby(){
+  $('#online-room-entry').hidden=true;
+  $('#online-room-form').hidden=true;
+  $('#online-room-lobby').hidden=false;
+  onlineRefreshLobby();
+}
+function onlineRefreshLobby(){
+  const code=onlineSessionState.joinCode;
+  const rooms=onlineLoadRooms(),room=rooms[code];
+  $('#online-room-role-badge').textContent=onlineRoleLabel();
+  $('#online-room-code-display').textContent=code||'------';
+  if(!room){
+    $('#online-member-p1').textContent='不在';
+    $('#online-member-p2').textContent='不在';
+    $('#online-member-spectators').textContent='0人';
+    $('#online-room-message').textContent=onlineSessionState.lastError||'ルーム情報を取得できません。';
+    return;
+  }
+  $('#online-member-p1').textContent=room.p1?'接続中':'待機中';
+  $('#online-member-p2').textContent=room.p2?'接続中':'待機中';
+  $('#online-member-spectators').textContent=`${Array.isArray(room.spectators)?room.spectators.length:0}人`;
+  onlineApplySetupUI(room);
+  $('#online-room-message').textContent=onlineSessionState.role==='host'
+    ?(room.p2?'P2が参加しました。次の更新でデッキ選択・準備完了へ進みます。':'参加コードを相手へ共有してください。')
+    :(onlineSessionState.role==='guest'
+      ?'ホストのルームへ参加中です。'
+      :'観戦者として接続中です。');
+}
+function onlineLeaveRoom(broadcast=true){
+  const code=onlineSessionState.joinCode,clientId=onlineSessionState.clientId,role=onlineSessionState.role;
+  if(code&&clientId){
+    const rooms=onlineLoadRooms(),room=rooms[code];
+    if(room){
+      if(role==='host'){
+        if(broadcast)onlineBroadcast('room-close');
+        delete rooms[code];
+      }else{
+        if(role==='guest'&&room.p2?.clientId===clientId)room.p2=null;
+        if(role==='spectator'&&Array.isArray(room.spectators))room.spectators=room.spectators.filter(x=>x.clientId!==clientId);
+        room.updatedAt=Date.now();rooms[code]=room;
+      }
+      onlineSaveRooms(rooms);
+      if(role!=='host'&&broadcast)onlineBroadcast('member-change');
+    }
+  }
+  resetOnlineSessionState();
+  onlineShowEntry();
+}
+async function onlineCopyRoomCode(){
+  const code=onlineSessionState.joinCode;if(!code)return;
+  try{await navigator.clipboard.writeText(code);toast('参加コードをコピーしました')}
+  catch(_){toast(`参加コード：${code}`)}
 }
 function initOnlineModeFoundation(){
+  onlineCleanupRooms();
   $('#home-mode-solo')?.addEventListener('click',()=>setHomePlayMode('solo'));
   $('#home-mode-online')?.addEventListener('click',()=>setHomePlayMode('online'));
-  $('#online-create-room')?.addEventListener('click',()=>onlineFoundationNotice('create'));
-  $('#online-join-room')?.addEventListener('click',()=>onlineFoundationNotice('join'));
-  $('#online-watch-room')?.addEventListener('click',()=>onlineFoundationNotice('watch'));
+  $('#online-create-room')?.addEventListener('click',onlineCreateRoom);
+  $('#online-join-room')?.addEventListener('click',()=>onlineShowForm('guest'));
+  $('#online-watch-room')?.addEventListener('click',()=>onlineShowForm('spectator'));
+  $('#online-room-form-cancel')?.addEventListener('click',onlineShowEntry);
+  $('#online-room-form-submit')?.addEventListener('click',()=>onlineJoinRoom($('#online-room-code-input')?.value,onlineRoomRoleIntent));
+  $('#online-room-code-input')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();onlineJoinRoom(e.currentTarget.value,onlineRoomRoleIntent)}});
+  $('#online-copy-room-code')?.addEventListener('click',onlineCopyRoomCode);
+  $('#online-deck-select')?.addEventListener('change',e=>{onlineFillOshiiOptions(e.currentTarget.value,true);onlineUpdateDeckSelection()});
+  $('#online-oshii-select')?.addEventListener('change',onlineUpdateDeckSelection);
+  $('#online-ready-toggle')?.addEventListener('click',onlineToggleReady);
+  $('#online-leave-room')?.addEventListener('click',()=>onlineLeaveRoom(true));
+  window.addEventListener('storage',e=>{if(e.key===LS_ONLINE_ROOMS&&onlineSessionState.joinCode)onlineRefreshLobby()});
+  window.addEventListener('beforeunload',()=>{try{onlineHeartbeat()}catch(_){}});
   syncHomePlayModeUI();
+  if(onlineSessionState.joinCode)onlineShowLobby();else onlineShowEntry();
 }
+
 
 })();
 </script>
