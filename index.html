@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v12.13</title>
+<title>みん会TCG Simulator v12.14</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -12378,10 +12378,10 @@ body.album-direct-dragging *{cursor:grabbing!important}
 
 /* Reduced motion support also helps slower mobile devices. */
 @media(prefers-reduced-motion:reduce){
- .card-fx-stack.fx-animate .card-fx-layer,
- .card-fx-stack.fx-animate .card-fx-layer::before,
- .card-fx-stack.fx-animate .card-fx-layer::after,
- .card-fx-stack.fx-animate .card-fx-layer>.fx-deco{
+ .card-fx-stack.fx-animate:not(.fx-force-animation) .card-fx-layer,
+ .card-fx-stack.fx-animate:not(.fx-force-animation) .card-fx-layer::before,
+ .card-fx-stack.fx-animate:not(.fx-force-animation) .card-fx-layer::after,
+ .card-fx-stack.fx-animate:not(.fx-force-animation) .card-fx-layer>.fx-deco{
    animation:none!important;
  }
 }
@@ -15873,10 +15873,6 @@ body.album-direct-dragging *{cursor:grabbing!important}
 .card-frame-overlay{
  isolation:isolate;
 }
-.card-fx-layer{
- mix-blend-mode:var(--fx-blend,normal);
-}
-
 /* Cap visual intensity when 3-4 layers are active on board. */
 .pile .fx-count-3 .card-fx-layer{opacity:calc(var(--fx-o,.7) * .88)}
 .pile .fx-count-4 .card-fx-layer{opacity:calc(var(--fx-o,.7) * .76)}
@@ -16537,7 +16533,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
  border-style:dashed;
 }
 @media(prefers-reduced-motion:reduce){
- .card-fx-stack.fx-animate .card-fx-layer,
+ .card-fx-stack.fx-animate:not(.fx-force-animation) .card-fx-layer,
  .card-frame-overlay.frame-motion-enabled::after,
  .card-frame-overlay::before{
   animation:none!important;
@@ -17007,11 +17003,6 @@ html{--visual-generation:"12.0"}
   50%{opacity:var(--fx-o,.68)}
 }
 /* v12.13: detailed blend mode must override effect defaults */
-.card-fx-layer{
-  mix-blend-mode:var(--fx-blend,normal)!important;
-}
-
-
 /* ==========================================================
    v12.13 Material animation fix
    ========================================================== */
@@ -18578,6 +18569,39 @@ html{--visual-generation:"12.0"}
 .appearance-preset-status .status-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .appearance-preset-row.is-linked{outline:1px solid rgba(120,167,255,.48);box-shadow:0 0 0 1px rgba(120,167,255,.12) inset}
 .appearance-preset-badge{font-size:10px;padding:2px 6px;border-radius:999px;border:1px solid rgba(120,167,255,.45);color:#cfe0ff;background:rgba(80,120,190,.14);margin-left:6px}
+
+/* ==========================================================
+   v12.14 FX editor functional fixes
+   ========================================================== */
+
+/* v12.14: explicit user blend overrides only when chosen.
+   "エフェクト標準" keeps each effect's own blend mode. */
+.card-fx-layer[data-fx-blend="normal"]{mix-blend-mode:normal!important}
+.card-fx-layer[data-fx-blend="screen"]{mix-blend-mode:screen!important}
+.card-fx-layer[data-fx-blend="add"]{mix-blend-mode:plus-lighter!important}
+.card-fx-layer[data-fx-blend="overlay"]{mix-blend-mode:overlay!important}
+.card-fx-layer[data-fx-blend="soft-light"]{mix-blend-mode:soft-light!important}
+
+/* preview zoom must win over old desktop/mobile !important widths */
+#fx-editor-preview{
+  overflow:auto!important;
+  overscroll-behavior:contain;
+}
+#fx-editor-preview .fx-editor-preview-card{
+  width:var(--fx-preview-width,270px)!important;
+  max-width:none!important;
+  flex:0 0 auto!important;
+}
+/* animation checkbox means play in preview, even if OS reduced-motion is enabled */
+@media(prefers-reduced-motion:reduce){
+  #fx-editor-preview .card-fx-stack.fx-animate.fx-force-animation .card-fx-layer,
+  #fx-editor-preview .card-fx-stack.fx-animate.fx-force-animation .card-fx-layer::before,
+  #fx-editor-preview .card-fx-stack.fx-animate.fx-force-animation .card-fx-layer::after,
+  #fx-editor-preview .card-fx-stack.fx-animate.fx-force-animation .card-fx-layer>.fx-deco{
+    animation-play-state:running!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -18586,7 +18610,7 @@ html{--visual-generation:"12.0"}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v12.13 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v12.14 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -20019,9 +20043,9 @@ function cardFxStackHtmlFromLayers(layers,opt={}){
  if(!rows.length)return '';
  const count=Math.max(1,Math.min(4,rows.length));
  const quality=['high','standard','light'].includes(opt.quality)?opt.quality:'standard';
- return `<div class="card-fx-stack visual-perf-node fx-count-${count} ${animate?'fx-animate':''} fx-quality-${quality}" data-fx-count="${count}" data-fx-quality="${quality}" aria-hidden="true">${rows.map(x=>{
+ return `<div class="card-fx-stack visual-perf-node fx-count-${count} ${animate?'fx-animate':''} ${opt.forceAnimation===true?'fx-force-animation':''} fx-quality-${quality}" data-fx-count="${count}" data-fx-quality="${quality}" aria-hidden="true">${rows.map(x=>{
    const v=fxIntensityVars(x.intensity),power=x.intensity==='weak'?.78:x.intensity==='strong'?1.28:1,customId=customFxIdFromType(x.type),style=fxLayerStyle(x,v,power),mask=`fx-mask-${x.mask||'full'}`;
-   const tune=`data-fx-speed="${x.speed}" data-fx-direction="${x.direction}" data-fx-rotation="${x.rotationDirection}" data-fx-motion="${x.motion}" data-fx-density="${x.density}"`;
+   const tune=`data-fx-speed="${x.speed}" data-fx-direction="${x.direction}" data-fx-rotation="${x.rotationDirection}" data-fx-motion="${x.motion}" data-fx-density="${x.density}" data-fx-blend="${x.blendMode||'effect'}"`;
    if(customId)return `<span class="card-fx-layer fx-custom fx-intensity-${x.intensity} ${mask}" data-fx-type="${esc(x.type)}" data-custom-fx="${esc(customId)}" data-fx-slot="${x.slot}" ${tune} style="${style}"></span>`;
    return `<span class="card-fx-layer fx-${x.type} fx-intensity-${x.intensity} ${mask}" data-fx-type="${x.type}" data-fx-slot="${x.slot}" ${tune} style="${style}"><i class="fx-deco fx-deco-a"></i><i class="fx-deco fx-deco-b"></i><i class="fx-deco fx-deco-c"></i></span>`;
  }).join('')}</div>`;
@@ -22223,7 +22247,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.13',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'12.14',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -23859,8 +23883,10 @@ function applyFxPreviewControls(card){
  const art=$('#fx-editor-preview-art'),host=$('#fx-editor-preview');if(!art||!host)return;
  const bg=$('#fx-preview-background')?.value||'dark',zoom=Number($('#fx-preview-zoom')?.value)||100;
  host.dataset.previewBg=bg;
- art.style.width=`${Math.round(270*zoom/100)}px`;
- art.style.maxWidth='100%';
+ const previewWidth=Math.round(270*zoom/100);
+ art.style.setProperty('--fx-preview-width',`${previewWidth}px`);
+ art.style.width=`${previewWidth}px`;
+ art.style.maxWidth='none';
  art.style.minWidth='150px';
  art.classList.toggle('fx-preview-image-hidden',$('#fx-preview-show-image')?.checked===false);
  const effects=$('#fx-editor-preview-effects');if(effects)effects.hidden=$('#fx-preview-show-effects')?.checked===false;
@@ -23871,7 +23897,7 @@ function renderFxEditorPreview(card,{forceImage=false}={}){
  if(!(floatingPreviewOpen&&floatingPreviewOwner===`modal:fx:${card.id}`))return;
  const art=ensureFxEditorPreviewShell(card);if(!art)return;
  const layers=readFxEditorLayers(card),animate=$('#fx-preview-animate')?.checked===true,effects=$('#fx-editor-preview-effects');
- if(effects){effects.innerHTML=cardFxStackHtmlFromLayers(layers,{maxLayers:cardFxPrefs.maxLayers,visible:true,animate,quality:'high'});hydrateAllCustomFx(effects)}
+ if(effects){effects.innerHTML=cardFxStackHtmlFromLayers(layers,{maxLayers:cardFxPrefs.maxLayers,visible:true,animate,forceAnimation:animate,quality:'high'});hydrateAllCustomFx(effects)}
  art.querySelectorAll('[data-card-frame]').forEach(frame=>{frame.dataset.frameReady='';hydrateCardFrame(frame)});
  applyFxPreviewControls(card);
  requestAnimationFrame(()=>{
