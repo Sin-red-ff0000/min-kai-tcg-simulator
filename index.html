@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.20</title>
+<title>みん会TCG Simulator v13.21</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17795,9 +17795,14 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   font-size:12px;
   opacity:.78;
 }
-.online-duel-opponent button,
+.online-duel-opponent button:not([data-zone-view]),
 .online-duel-opponent [draggable="true"]{
   pointer-events:none!important;
+  opacity:.5;
+}
+.online-duel-opponent [data-zone-view]{
+  pointer-events:auto!important;
+  opacity:1!important;
 }
 @media(max-width:900px){
   .online-duel-wrap{grid-template-columns:1fr}
@@ -17937,6 +17942,53 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   display:block!important;
   font-size:calc(11px * var(--board-name-comp,1));
   line-height:1.05;
+}
+
+
+/* v13.21 records / level correction */
+.level-mod-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin:5px 0 7px;
+}
+#floating-preview-content .player-free-counter-row{
+  display:grid;
+  grid-template-columns:1fr!important;
+  gap:6px;
+  padding:8px;
+}
+.player-free-counter-name-label{
+  display:grid;
+  gap:3px;
+  min-width:0;
+  font-size:9px;
+  color:var(--muted);
+}
+.player-free-counter-name-label input{
+  width:100%;
+  min-width:0;
+  font-size:12px!important;
+}
+.player-free-counter-controls{
+  display:grid;
+  grid-template-columns:36px minmax(72px,1fr) 36px auto;
+  gap:5px;
+  align-items:center;
+}
+.player-free-counter-controls input{
+  width:100%;
+  min-width:0;
+  text-align:center;
+}
+@media(max-width:520px){
+  .player-free-counter-controls{
+    grid-template-columns:34px minmax(64px,1fr) 34px;
+  }
+  .player-free-counter-controls .danger{
+    grid-column:1/-1;
+    width:100%;
+  }
 }
 
 /* Frame editor */
@@ -19507,7 +19559,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.20 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.21 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19843,8 +19895,8 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
             <label>自由種類・右側<input id="card-custom-type-right" placeholder="自由入力"></label>
             <div class="muted custom-type-preview">保存形式：<span id="card-custom-type-preview">左側:右側</span></div>
           </div>
-          <label>Lv<input id="card-level" inputmode="numeric" /></label>
-          <label>パワー<input id="card-power" inputmode="numeric" /></label>
+          <label>Lv<input id="card-level" inputmode="text" placeholder="例：4 / ？ / X" /></label>
+          <label>パワー<input id="card-power" inputmode="text" placeholder="例：5000 / ？ / 1000+" /></label>
           <label>種族<input id="card-race" placeholder="例：神秘 / 伝承" /></label>
           <label>レアリティ<input id="card-rarity" placeholder="自由入力" list="rarity-suggestions" /></label>
           <label class="wide">効果<textarea id="card-effect"></textarea></label>
@@ -19923,7 +19975,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
         <div class="collapsible-panel-body">
           <div class="form-grid card-manager-search-grid">
             <label class="wide">カード名<input id="card-manager-search" type="search" placeholder="カード名の一部を入力" autocomplete="off"></label>
-            <label>種類<select id="card-manager-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
+            <label>種類<select id="card-manager-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option>アームド</option><option value="other">その他</option></select></label>
             <label id="card-manager-custom-type-wrap" hidden>その他の種類<input id="card-manager-custom-type" placeholder="左側:右側 を部分一致検索" autocomplete="off"></label>
             <label>Lv<input id="card-manager-level" inputmode="numeric" placeholder="完全一致"></label>
             <label>種族<input id="card-manager-race" placeholder="複数語はすべて含むカード" autocomplete="off"></label>
@@ -19999,7 +20051,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
       <div class="collapsible-panel-body">
         <div class="form-grid collection-filter-grid">
           <label class="wide">カード名<input id="collection-search-name" type="search" placeholder="カード名の一部を入力" autocomplete="off"></label>
-          <label>種類<select id="collection-search-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
+          <label>種類<select id="collection-search-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option>アームド</option><option value="other">その他</option></select></label>
           <label id="collection-custom-type-wrap" hidden>その他の種類<input id="collection-search-custom-type" placeholder="左側:右側 を部分一致検索" autocomplete="off"></label>
           <label>種族<input id="collection-search-race" placeholder="例：神秘 伝承（AND検索）" autocomplete="off"></label>
           <label>レアリティ<input id="collection-search-rarity" placeholder="部分一致" autocomplete="off"></label>
@@ -20070,7 +20122,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
         <div id="deck-io-status" class="muted"></div>
         <div class="section-head" style="margin-top:12px"><h2 style="font-size:17px">カード追加</h2></div>
         <div class="form-grid" style="margin-bottom:8px">
-          <label>種類<select id="deck-type-filter"><option value="all">全種類</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
+          <label>種類<select id="deck-type-filter"><option value="all">全種類</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option>アームド</option><option value="other">その他</option></select></label>
           <label>並び順<select id="deck-level-sort"><option value="default">登録順（昇順）</option><option value="registeredDesc">登録順（降順）</option><option value="levelAsc">レベル昇順</option><option value="levelDesc">レベル降順</option></select></label>
           <label class="wide">カード名検索<input id="deck-card-search" placeholder="含まれる文字で検索"></label>
           <label>種族検索<input id="deck-race-search" placeholder="例：神秘 伝承（AND）" autocomplete="off"></label>
@@ -20664,18 +20716,25 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
 const LS_CARDS='minkai_tcg_cards_v01', LS_DECKS='minkai_tcg_decks_v01', LS_CARD_RECENT='minkai_tcg_card_recent_v01', LS_CARD_REGISTER_RECENT='minkai_tcg_card_register_recent_v16', LS_HAND_FOLLOW='minkai_tcg_hand_follow_v11', LS_BOARD_DISPLAY='minkai_tcg_board_display_v20', LS_THEME='minkai_tcg_theme_v27', LS_COLLECTION='minkai_tcg_collection_v32', LS_CARD_FX='minkai_tcg_card_fx_v36', LS_BOARD_TOOLS='minkai_tcg_board_tools_v01', LS_BOARD_SESSION='minkai_tcg_board_session_v01', LS_BOARD_SNAPSHOTS='minkai_tcg_board_snapshots_v01', LS_MOBILE_BOARD_TOOL='minkai_tcg_mobile_board_tool_v01', LS_FLOATING_PREVIEW='minkai_tcg_floating_preview_v01';
 const ZONE_LABELS={character:'キャラクター',pain:'ペインカウント',room:'ルーム',rulePlus:'ルールプラス',hand:'手札',deck:'デッキ',otherDeck:'その他デッキ',grave:'墓地',banish:'消失領域'};
 
-const CARD_FIXED_TYPES=['キャラクター','ルーム','ロール','トラップロール','ルールプラス','アナザーゲート'];
+const CARD_FIXED_TYPES=['キャラクター','ルーム','ロール','トラップロール','ルールプラス','アナザーゲート','アームド'];
 const CARD_TYPE_ALIASES=new Map([
  ['キャラクターカード','キャラクター'],
  ['ルームカード','ルーム'],
  ['ロールカード','ロール'],
  ['トラップロールカード','トラップロール'],
  ['ルールプラスカード','ルールプラス'],
- ['アナザーゲートカード','アナザーゲート']
+ ['アナザーゲートカード','アナザーゲート'],
+ ['アームドカード','アームド']
 ]);
 function normalizeCardTypeAlias(type=''){
  const s=String(type||'').trim().replace(/[　\s]+/g,'');
- return CARD_TYPE_ALIASES.get(s)||s;
+ const direct=CARD_TYPE_ALIASES.get(s);
+ if(direct)return direct;
+ if(s.endsWith('カード')){
+   const base=s.slice(0,-3);
+   if(CARD_FIXED_TYPES.includes(base))return base;
+ }
+ return s;
 }
 
 function fixedCardTypeOptionsHtml({includeAll=false,allLabel='すべて',includeOther=false,selected=''}={}){
@@ -23299,8 +23358,8 @@ function parseOneCardText(block){
   let compactStatLineIndex=-1;
   trimmed.forEach((t,index)=>{
     if(!t)return;
-    const lv=t.match(/(?:^|\s)(?:レベル|Lv|LV)\s*[:：]?\s*([0-9０-９,，]+)(?=\s|$|[\/／｜|])/i);
-    const pw=t.match(/(?:^|\s)パワー\s*[:：]?\s*([0-9０-９,，]+)(?=\s|$|[\/／｜|])/i);
+    const lv=t.match(/(?:^|\s)(?:レベル|Lv|LV)\s*[:：]?\s*([^\s\/／｜|]+)(?=\s|$|[\/／｜|])/i);
+    const pw=t.match(/(?:^|\s)パワー\s*[:：]?\s*([^\s\/／｜|]+)(?=\s|$|[\/／｜|])/i);
     if(lv&&!level){level=normalizeCardNumber(lv[1]);ignoredLineIndexes.add(index)}
     if(pw&&!power){power=normalizeCardNumber(pw[1]);ignoredLineIndexes.add(index)}
     if(lv||pw)compactStatLineIndex=index;
@@ -23522,7 +23581,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.20',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.21',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -27673,7 +27732,7 @@ function openAlbumCardsEditor(albumId){
    <summary>検索・絞り込み <span id="album-card-filter-count" class="pill">0条件</span></summary>
    <div class="album-card-filter-grid">
      <label class="wide">カード名<input id="album-card-name" type="search" placeholder="部分一致" autocomplete="off"></label>
-     <label>種類<select id="album-card-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="other">その他</option></select></label>
+     <label>種類<select id="album-card-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option>アームド</option><option value="other">その他</option></select></label>
      <label id="album-card-custom-type-wrap" hidden>その他の種類<input id="album-card-custom-type" placeholder="部分一致" autocomplete="off"></label>
      <label>Lv<input id="album-card-level" inputmode="numeric" placeholder="完全一致"></label>
      <label>種族<input id="album-card-race" placeholder="例：伝承 神秘（AND）" autocomplete="off"></label>
@@ -28040,6 +28099,8 @@ function normalizeBoardCardInstance(c){
  if(!Array.isArray(c.markers))c.markers=[];
  c.markers=c.markers.map(x=>({id:String(x?.id||uid('mark')),key:String(x?.key||'custom'),label:String(x?.label||'マーカー').slice(0,18),tone:String(x?.tone||'custom')}));
  c.memo=String(c.memo||'');c.powerMod=Number(c.powerMod)||0;
+ c.levelModPersistent=Number(c.levelModPersistent)||0;
+ c.levelModTemporary=Number(c.levelModTemporary)||0;
  c.visualEffects=normalizeCardVisualEffects(c.visualEffects);
  return c;
 }
@@ -28269,7 +28330,7 @@ function renderSetup(forceDefaults=false){
 }
 function syncSetupMode(){const two=$('#mode-select').value==='2';$('#setup-p2-label').style.display=two?'flex':'none';$('#setup-p2-other-label').style.display=two?'flex':'none';$('#setup-p2-favorite-label').style.display=two?'flex':'none'}
 $('#mode-select').onchange=syncSetupMode;$('#setup-deck-1').onchange=()=>syncFavoriteOptions(1,true);$('#setup-deck-2').onchange=()=>syncFavoriteOptions(2,true);
-function cloneInstance(c){return {...c,visualEffects:normalizeCardVisualEffects(c.visualEffects).map(x=>({...x})),instanceId:uid('inst'),faceDown:false,rested:false,counters:[],markers:[],memo:'',powerMod:0,token:false}}
+function cloneInstance(c){return {...c,visualEffects:normalizeCardVisualEffects(c.visualEffects).map(x=>({...x})),instanceId:uid('inst'),faceDown:false,rested:false,counters:[],markers:[],memo:'',powerMod:0,levelModPersistent:0,levelModTemporary:0,token:false}}
 function makeDeckPiles(deckId){const d=decks.find(x=>x.id===deckId),phys=[];if(d)Object.entries(d.entries).forEach(([id,n])=>{const c=cards.find(x=>x.id===id);if(c)for(let i=0;i<n;i++)phys.push({id:uid('pile'),cards:[cloneInstance(c)]})});return phys}
 function shufflePileArray(arr){for(let i=arr.length-1;i>0;i--){const j=boardRandomInt(i+1);[arr[i],arr[j]]=[arr[j],arr[i]]}}
 function makePlayer(deckId,index,favoriteCardId='',otherDeckId=''){const phys=makeDeckPiles(deckId),other=makeDeckPiles(otherDeckId);const player={name:'プレイヤー'+(index+1),homePowerMod:0,freeCounters:[],character:Array(5).fill(null),pain:Array(5).fill(null),room:Array(5).fill(null),rulePlus:Array(1).fill(null),hand:[],handMode:'scroll',deck:phys,otherDeck:other,grave:[],banish:[],collapsed:{pain:false,room:false,rulePlus:false}};if(favoriteCardId){const i=player.deck.findIndex(p=>p.cards[0]?.id===favoriteCardId);if(i>=0){const [pile]=player.deck.splice(i,1);player.hand.push(pile)}}shufflePileArray(player.deck);return player}
@@ -28456,6 +28517,9 @@ function ensureInstanceBoardExtras(c){
  if(!c||typeof c!=='object')return;
  if(!Array.isArray(c.counters))c.counters=[];
  if(!Array.isArray(c.markers))c.markers=[];
+ c.powerMod=Number(c.powerMod)||0;
+ c.levelModPersistent=Number(c.levelModPersistent)||0;
+ c.levelModTemporary=Number(c.levelModTemporary)||0;
 }
 function applyBoardToolToPile(tool,pileKey){
  if(!tool||!pileKey||!board)return false;
@@ -28670,12 +28734,26 @@ function signedNumber(n){
 }
 function cardPowerParts(c,pi,z){
  const raw=c?.power;
- if(raw===''||raw==null)return {has:false,base:null,individual:0,home:0,total:null};
- const base=Number(raw);
- if(!Number.isFinite(base))return {has:false,base:null,individual:0,home:0,total:null};
+ if(raw===''||raw==null)return {has:false,numeric:false,base:null,raw:'',individual:0,home:0,total:null};
+ const text=String(raw).trim();
+ const base=Number(text);
  const individual=Number(c?.powerMod)||0;
  const home=z==='character'?(Number(board?.players?.[pi]?.homePowerMod)||0):0;
- return {has:true,base,individual,home,total:base+individual+home};
+ if(!Number.isFinite(base))return {has:true,numeric:false,base:null,raw:text,individual,home,total:text};
+ return {has:true,numeric:true,base,raw:text,individual,home,total:base+individual+home};
+}
+function cardLevelParts(c){
+ const raw=c?.level;
+ const persistent=Number(c?.levelModPersistent)||0;
+ const temporary=Number(c?.levelModTemporary)||0;
+ if(raw===''||raw==null)return {has:false,numeric:false,base:null,raw:'',persistent,temporary,total:null};
+ const text=String(raw).trim(),base=Number(text);
+ if(!Number.isFinite(base))return {has:true,numeric:false,base:null,raw:text,persistent,temporary,total:text};
+ return {has:true,numeric:true,base,raw:text,persistent,temporary,total:base+persistent+temporary};
+}
+function cardLevelDisplay(c){
+ const info=cardLevelParts(c);
+ return info.has?String(info.total):'-';
 }
 function homePowerControlsHtml(){
  if(!board)return '<div class="muted">盤面開始後に使用できます。</div>';
@@ -28789,11 +28867,13 @@ function playerFreeCounterWindowHtml(pi){
  return `<p class="muted player-record-floating-help">カードに付かない自由な数値記録です。破壊回数、特殊召喚回数などのメモ用に使えます。</p>
    <div id="player-free-counter-list" class="player-free-counter-list">
      ${counters.length?counters.map((x,i)=>`<div class="player-free-counter-row">
-       <input data-player-counter-name="${i}" maxlength="20" value="${esc(x.name)}" aria-label="記録名">
-       <button class="btn small" data-player-counter-step="${i}|-1">−</button>
-       <input data-player-counter-value="${i}" type="number" inputmode="numeric" value="${x.value}" aria-label="${esc(x.name)}の値">
-       <button class="btn small" data-player-counter-step="${i}|1">＋</button>
-       <button class="btn small danger" data-player-counter-delete="${i}">削除</button>
+       <label class="player-free-counter-name-label">記録名<input data-player-counter-name="${i}" maxlength="20" value="${esc(x.name)}" aria-label="記録名"></label>
+       <div class="player-free-counter-controls">
+         <button class="btn small" data-player-counter-step="${i}|-1">−</button>
+         <input data-player-counter-value="${i}" type="number" inputmode="numeric" value="${x.value}" aria-label="${esc(x.name)}の値">
+         <button class="btn small" data-player-counter-step="${i}|1">＋</button>
+         <button class="btn small danger" data-player-counter-delete="${i}">削除</button>
+       </div>
      </div>`).join(''):'<div class="muted">記録はまだありません。</div>'}
    </div>
    <button class="btn primary small" type="button" id="player-counter-add" style="margin-top:9px">記録を追加</button>`;
@@ -28851,7 +28931,7 @@ function renderDeckBox(p,pi,z,label){const count=physicalCount(p[z]),empty=count
 function renderUtility(p,pi){return `<div class="utility-grid"><div class="deck-pair">${renderDeckBox(p,pi,'deck','デッキ')}${renderDeckBox(p,pi,'otherDeck','その他デッキ')}</div><div class="grave-banish-pair">${compactZoneBox(p,pi,'grave')}${compactZoneBox(p,pi,'banish')}</div></div>`}
 function physicalCount(arr){return arr.reduce((a,p)=>a+p.cards.length,0)}
 function topCard(pile){return pile.cards[0]}
-function renderPile(pile,pi,z,index){const c=topCard(pile);ensureInstanceBoardExtras(c);const counters=c.counters?.length?c.counters.map(x=>`${esc(x.name)} ${x.value}`).join(' / '):'カウンターなし';const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;const title=`${c.name}${c.memo?'\nメモ: '+c.memo:''}${pile.cards.length>1?'\n重なり: '+pile.cards.map(x=>x.name).join(' → '):''}`;const markers=renderCardMarkers(c);if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${markers}<div class="back-title">裏向きカード</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';return `<div class="pile ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}${cardFxHtml(c,'board')}${cardFrameHtml(c)}${markers}<div class="name">${esc(c.name)}</div><div class="stats"><span>Lv ${esc(c.level||'-')}</span><span>PW ${pow===null?'-':pow}</span></div><div class="counter-line">${counters}</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`}
+function renderPile(pile,pi,z,index){const c=topCard(pile);ensureInstanceBoardExtras(c);const counters=c.counters?.length?c.counters.map(x=>`${esc(x.name)} ${x.value}`).join(' / '):'カウンターなし';const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;const title=`${c.name}${c.memo?'\nメモ: '+c.memo:''}${pile.cards.length>1?'\n重なり: '+pile.cards.map(x=>x.name).join(' → '):''}`;const markers=renderCardMarkers(c);if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${markers}<div class="back-title">裏向きカード</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';return `<div class="pile ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}${cardFxHtml(c,'board')}${cardFrameHtml(c)}${markers}<div class="name">${esc(c.name)}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`}
 
 async function hydrateBoardImages(){
  const root=$('#board-main');
@@ -29612,11 +29692,17 @@ function openDetail(pi,z,index,cardIndex=0,navIds){const pile=getPile(pi,z,index
  if(!detailNav.ids.includes(c.instanceId))detailNav.ids.push(c.instanceId);
  const navPos=detailNav.ids.indexOf(c.instanceId),navTotal=detailNav.ids.length;
  const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;
- const powerBreakdown=powerInfo.has?`<div class="muted power-breakdown">元値 ${powerInfo.base} / 個別 ${signedNumber(powerInfo.individual)}${z==='character'?` / ホーム ${signedNumber(powerInfo.home)}`:''}</div>`:'';
- const helperOpen=(Number(c.powerMod)||0)!==0||c.counters.length||c.markers.length;
+ const levelInfo=cardLevelParts(c),levelNow=levelInfo.has?levelInfo.total:'-';
+ const powerBreakdown=powerInfo.has?(powerInfo.numeric
+   ?`<div class="muted power-breakdown">元値 ${powerInfo.base} / 個別 ${signedNumber(powerInfo.individual)}${z==='character'?` / ホーム ${signedNumber(powerInfo.home)}`:''}</div>`
+   :`<div class="muted power-breakdown">元表記 ${esc(powerInfo.raw)}${powerInfo.individual||powerInfo.home?` / 数値補正は表示のみ：${signedNumber(powerInfo.individual+powerInfo.home)}`:''}</div>`):'';
+ const levelBreakdown=levelInfo.has?(levelInfo.numeric
+   ?`<div class="muted power-breakdown">元Lv ${levelInfo.base} / 常時 ${signedNumber(levelInfo.persistent)} / 一時 ${signedNumber(levelInfo.temporary)}</div>`
+   :`<div class="muted power-breakdown">元Lv ${esc(levelInfo.raw)}${levelInfo.persistent||levelInfo.temporary?` / 数値補正は表示のみ：常時 ${signedNumber(levelInfo.persistent)} / 一時 ${signedNumber(levelInfo.temporary)}`:''}</div>`):'';
+ const helperOpen=(Number(c.powerMod)||0)!==0||(Number(c.levelModPersistent)||0)!==0||(Number(c.levelModTemporary)||0)!==0||c.counters.length||c.markers.length;
  const stackOpen=pile.cards.length>1;
  const relatedHtml=renderBoardRelatedLinks(c);
- openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div><h3>${esc(c.name)}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(c.level||'-')}</span><span class="pill">POWER ${pow===null?'-':pow}</span></div>${powerBreakdown}<div class="muted">${esc(c.race||'種族なし')}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${esc(c.effect||'効果テキストなし')}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="reset-card-power" ${(Number(c.powerMod)||0)===0?'disabled':''}>個別POWER補正をリセット</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><details class="board-detail-fold board-helper-fold" ${helperOpen?'open':''}><summary>補助情報 <span class="pill">${(Number(c.powerMod)||0)!==0?'PW':''}${c.counters.length?`${(Number(c.powerMod)||0)!==0?' / ':''}C${c.counters.length}`:''}${c.markers.length?`${((Number(c.powerMod)||0)!==0||c.counters.length)?' / ':''}M${c.markers.length}`:''}${!helperOpen?'なし':''}</span></summary><div class="board-detail-fold-body"><label>POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h4>カウンター</h4><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button><h4>一時マーカー</h4><div id="detail-marker-list">${renderDetailMarkers(c)}</div>${Array.isArray(c.markers)&&c.markers.length?'<button class="btn small" id="clear-temp-markers">すべて外す</button>':''}</div></details><details class="board-detail-fold" ${stackOpen?'open':''}><summary>重なり <span class="pill">${pile.cards.length}</span></summary><div class="board-detail-fold-body">${pile.cards.length>1?`<div class="actions stack-quick-actions"><button class="btn small" id="stack-move-top">一番上だけ移動</button><button class="btn small" id="stack-move-bottom">一番下だけ移動</button><button class="btn small" id="stack-move-all">全部まとめて移動</button><button class="btn small danger" id="stack-split-all">ばらす</button></div>`:''}<div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item stack-item-rich ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span class="stack-order">${i+1}</span><div class="stack-mini-art">${boardMiniArtHtml(x)}</div><div class="stack-item-copy"><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}${x.faceDown?' / 裏向き':''}${x.rested?' / レスト':''}</div></div><div class="stack-item-actions"><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div></div></details>${relatedHtml}</div></div>`);
+ openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div><h3>${esc(c.name)}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(levelNow)}</span><span class="pill">POWER ${pow===null?'-':esc(pow)}</span></div>${levelBreakdown}${powerBreakdown}<div class="muted">${esc(c.race||'種族なし')}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${esc(c.effect||'効果テキストなし')}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="reset-card-corrections" ${((Number(c.powerMod)||0)===0&&(Number(c.levelModPersistent)||0)===0&&(Number(c.levelModTemporary)||0)===0)?'disabled':''}>POWER/Lv修正をリセット</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><details class="board-detail-fold board-helper-fold" ${helperOpen?'open':''}><summary>補助情報 <span class="pill">${(Number(c.powerMod)||0)!==0?'PW':''}${((Number(c.levelModPersistent)||0)!==0||(Number(c.levelModTemporary)||0)!==0)?`${(Number(c.powerMod)||0)!==0?' / ':''}LV`:''}${c.counters.length?`${(Number(c.powerMod)||0)!==0?' / ':''}C${c.counters.length}`:''}${c.markers.length?`${((Number(c.powerMod)||0)!==0||c.counters.length)?' / ':''}M${c.markers.length}`:''}${!helperOpen?'なし':''}</span></summary><div class="board-detail-fold-body"><label>POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h4>レベル補正</h4><div class="level-mod-grid"><label>常時<input id="level-mod-persistent" type="number" value="${Number(c.levelModPersistent)||0}"></label><label>一時<input id="level-mod-temporary" type="number" value="${Number(c.levelModTemporary)||0}"></label></div><div class="muted">元Lvが数値なら合算して現在Lvとして扱います。？やXなどの場合は補正値だけを別表示します。</div><h4>カウンター</h4><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button><h4>一時マーカー</h4><div id="detail-marker-list">${renderDetailMarkers(c)}</div>${Array.isArray(c.markers)&&c.markers.length?'<button class="btn small" id="clear-temp-markers">すべて外す</button>':''}</div></details><details class="board-detail-fold" ${stackOpen?'open':''}><summary>重なり <span class="pill">${pile.cards.length}</span></summary><div class="board-detail-fold-body">${pile.cards.length>1?`<div class="actions stack-quick-actions"><button class="btn small" id="stack-move-top">一番上だけ移動</button><button class="btn small" id="stack-move-bottom">一番下だけ移動</button><button class="btn small" id="stack-move-all">全部まとめて移動</button><button class="btn small danger" id="stack-split-all">ばらす</button></div>`:''}<div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item stack-item-rich ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span class="stack-order">${i+1}</span><div class="stack-mini-art">${boardMiniArtHtml(x)}</div><div class="stack-item-copy"><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}${x.faceDown?' / 裏向き':''}${x.rested?' / レスト':''}</div></div><div class="stack-item-actions"><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div></div></details>${relatedHtml}</div></div>`);
  hydrateBoardDetailImage(cardImageSourceId(c));
  hydrateBoardMiniListImages($('#modal'));
  bindBoardRelatedLinks(c);
@@ -29624,7 +29710,7 @@ function openDetail(pi,z,index,cardIndex=0,navIds){const pile=getPile(pi,z,index
  const moveDetailNav=step=>{if(!detailNav)return;const pos=detailNav.ids.indexOf(c.instanceId),id=detailNav.ids[pos+step];if(!id)return;const loc=findCardInstance(detailNav.pi,detailNav.z,id);if(loc)openDetail(detailNav.pi,detailNav.z,loc.index,loc.cardIndex,detailNav.ids)};
  if($('#detail-prev'))$('#detail-prev').onclick=()=>moveDetailNav(-1);
  if($('#detail-next'))$('#detail-next').onclick=()=>moveDetailNav(1);
- $('#detail-memo').oninput=e=>{c.memo=e.target.value;renderBoard()};$('#toggle-face').onclick=()=>{c.faceDown=!c.faceDown;openDetail(pi,z,index,cardIndex);renderBoard()};$('#toggle-rest').onclick=()=>{c.rested=!c.rested;openDetail(pi,z,index,cardIndex);renderBoard()};$('#power-mod').onchange=e=>{c.powerMod=Number(e.target.value)||0;renderBoard();const loc=findCardInstance(pi,z,c.instanceId);if(loc)openDetail(pi,z,loc.index,loc.cardIndex,detailNav?.ids)};const resetCardPower=$('#reset-card-power');if(resetCardPower)resetCardPower.onclick=()=>{c.powerMod=0;renderBoard();const loc=findCardInstance(pi,z,c.instanceId);if(loc)openDetail(pi,z,loc.index,loc.cardIndex,detailNav?.ids);toast('このカードの個別POWER補正を0に戻しました')};$('#move-card').onclick=()=>openMoveDialog();$('#stack-card').onclick=()=>openStackDialog();$('#token-from-card').onclick=()=>openTokenCreator(c,pi);$$('[data-quick-move]').forEach(b=>b.onclick=()=>quickMoveFromDetail(b.dataset.quickMove));$('#add-counter').onclick=()=>{c.counters.push({name:'新規',value:1});openDetail(pi,z,index,cardIndex);renderBoard()};
+ $('#detail-memo').oninput=e=>{c.memo=e.target.value;renderBoard()};$('#toggle-face').onclick=()=>{c.faceDown=!c.faceDown;openDetail(pi,z,index,cardIndex);renderBoard()};$('#toggle-rest').onclick=()=>{c.rested=!c.rested;openDetail(pi,z,index,cardIndex);renderBoard()};$('#power-mod').onchange=e=>{c.powerMod=Number(e.target.value)||0;renderBoard();const loc=findCardInstance(pi,z,c.instanceId);if(loc)openDetail(pi,z,loc.index,loc.cardIndex,detailNav?.ids)};$('#level-mod-persistent').onchange=e=>{c.levelModPersistent=Number(e.target.value)||0;renderBoard();const loc=findCardInstance(pi,z,c.instanceId);if(loc)openDetail(pi,z,loc.index,loc.cardIndex,detailNav?.ids)};$('#level-mod-temporary').onchange=e=>{c.levelModTemporary=Number(e.target.value)||0;renderBoard();const loc=findCardInstance(pi,z,c.instanceId);if(loc)openDetail(pi,z,loc.index,loc.cardIndex,detailNav?.ids)};const resetCorrections=$('#reset-card-corrections');if(resetCorrections)resetCorrections.onclick=()=>{c.powerMod=0;c.levelModPersistent=0;c.levelModTemporary=0;renderBoard();const loc=findCardInstance(pi,z,c.instanceId);if(loc)openDetail(pi,z,loc.index,loc.cardIndex,detailNav?.ids);toast('このカードのPOWER/Lv修正をリセットしました')};$('#move-card').onclick=()=>openMoveDialog();$('#stack-card').onclick=()=>openStackDialog();$('#token-from-card').onclick=()=>openTokenCreator(c,pi);$$('[data-quick-move]').forEach(b=>b.onclick=()=>quickMoveFromDetail(b.dataset.quickMove));$('#add-counter').onclick=()=>{c.counters.push({name:'新規',value:1});openDetail(pi,z,index,cardIndex);renderBoard()};
  $$('[data-detail-marker-remove]').forEach(b=>b.onclick=()=>{const i=c.markers.findIndex(m=>String(m.id)===String(b.dataset.detailMarkerRemove));if(i>=0)c.markers.splice(i,1);openDetail(pi,z,index,cardIndex);renderBoard()});const clearMarkers=$('#clear-temp-markers');if(clearMarkers)clearMarkers.onclick=()=>{c.markers=[];openDetail(pi,z,index,cardIndex);renderBoard()};
  const stackTop=$('#stack-move-top'),stackBottom=$('#stack-move-bottom'),stackAll=$('#stack-move-all'),stackSplit=$('#stack-split-all');
  if(stackTop)stackTop.onclick=()=>openMoveDialog({pi,z,index,cardIndex:0});
@@ -29854,6 +29940,7 @@ function renderBrowseResults(){
        </details>
        <div class="actions" style="margin-top:5px">
          <button class="btn small primary" data-browse-move="${k}|hand">手札へ</button>
+         <button class="btn small" data-browse-detail="${esc(c.instanceId)}">詳細</button>
          <button class="btn small" data-browse-general-move="${esc(c.instanceId)}">移動先</button>
          <button class="btn small" data-browse-move="${k}|character">ホームへ</button>
          <button class="btn small" data-browse-move="${k}|grave">墓地へ</button>
@@ -29867,6 +29954,10 @@ function renderBrowseResults(){
    const id=String(d.dataset.browseOrderDetails||''),set=new Set(s.orderOpenIds||[]);
    if(d.open)set.add(id);else set.delete(id);
    s.orderOpenIds=[...set];
+ });
+ $$('[data-browse-detail]').forEach(b=>b.onclick=()=>{
+   const id=String(b.dataset.browseDetail||''),loc=findCardInstance(s.pi,s.z,id);
+   if(loc)openDetail(s.pi,s.z,loc.index,loc.cardIndex,zoneDetailIds(s.pi,s.z));
  });
  $$('[data-browse-general-move]').forEach(b=>b.onclick=()=>openDeckBrowseMove(s.pi,s.z,b.dataset.browseGeneralMove));
  $$('[data-browse-position]').forEach(b=>b.onclick=()=>{
@@ -30508,21 +30599,39 @@ function onlineCreateBlankPlayer(index){
   };
 }
 function onlinePublicCardToInstance(pub){
-  const master=cards.find(c=>String(c.id)===String(pub?.id||''));
+  const master=pub?.id?cards.find(c=>String(c.id)===String(pub.id)):null;
   const base=master?cloneInstance(master):{
     id:String(pub?.id||uid('remote-card')),
     name:String(pub?.name||'公開カード'),
     type:String(pub?.type||'キャラクター'),
     level:pub?.level??'',
     power:pub?.power??'',
+    race:String(pub?.race||''),
+    rarity:String(pub?.rarity||''),
+    effect:String(pub?.effect||''),
+    flavor:String(pub?.flavor||''),
     instanceId:uid('remote-inst'),
-    visualEffects:[],counters:[],markers:[],memo:'',powerMod:0,token:false
+    visualEffects:[],counters:[],markers:[],memo:'',powerMod:0,levelModPersistent:0,levelModTemporary:0,token:false
   };
+  if(!pub?.faceDown){
+    base.name=String(pub?.name||base.name||'公開カード');
+    base.type=String(pub?.type||base.type||'キャラクター');
+    base.level=pub?.level??base.level??'';
+    base.power=pub?.power??base.power??'';
+    base.race=String(pub?.race??base.race??'');
+    base.rarity=String(pub?.rarity??base.rarity??'');
+    base.effect=String(pub?.effect??base.effect??'');
+    base.flavor=String(pub?.flavor??base.flavor??'');
+  }else{
+    base.name='裏向きカード';base.type='';base.level='';base.power='';base.race='';base.rarity='';base.effect='';base.flavor='';
+  }
   base.rested=!!pub?.rested;
   base.faceDown=!!pub?.faceDown;
   base.powerMod=Number(pub?.powerMod||0)||0;
-  base.memo=String(pub?.memo||'');
-  if(pub?.counters&&typeof pub.counters==='object')base.counters={...pub.counters};
+  base.levelModPersistent=Number(pub?.levelModPersistent||0)||0;
+  base.levelModTemporary=Number(pub?.levelModTemporary||0)||0;
+  base.memo='';
+  base.counters=Array.isArray(pub?.counters)?pub.counters.map(x=>({name:String(x?.name||'カウンター'),value:Number(x?.value)||0})):[];
   return base;
 }
 function onlinePublicPileToLocal(pile){
@@ -30880,7 +30989,7 @@ function onlinePlayerActionToolbar(slot,room){
     <button class="btn small" type="button" data-online-slot-action="${slot}|draw" ${can?'':'disabled'}>1枚ドロー</button>
     <button class="btn small" type="button" data-online-slot-action="${slot}|shuffle" ${can?'':'disabled'}>デッキをシャッフル</button>
     <button class="btn small" type="button" data-online-slot-action="${slot}|random" ${can?'':'disabled'}>手札からランダム</button>
-    <button class="btn small primary" type="button" data-online-slot-action="${slot}|end" ${can?'':'disabled'}>ターン終了</button>
+    <button class="btn small primary" type="button" data-online-slot-action="${slot}|end" ${mine?'':'disabled'}>ターン終了</button>
   </div>`;
 }
 function onlineBindDuelConvenienceTools(){ /* v13.19: P1/P2 floating tools handle this */ }
@@ -30904,6 +31013,7 @@ function onlineRenderDuelBoard(){
   </section>`;
 
   host.innerHTML=p2+'<div class="divider">──────── オンライン対戦ライン ────────</div>'+p1;
+  host.querySelectorAll('.online-duel-opponent [data-pile]').forEach(el=>el.setAttribute('draggable','false'));
 
   bindBoard();
   bindBoardToolTray();
@@ -30933,7 +31043,7 @@ function onlineUpdateDuelToolbar(room){
     if(state)state.textContent=mine?(turn?'操作可':'待機'):'閲覧';
     for(const kind of ['draw','shuffle','random','end']){
       const b=$(`#online-duel-p${slot}-${kind}`);
-      if(b)b.disabled=!turn;
+      if(b)b.disabled=(kind==='end')?!mine:!turn;
     }
   }
 
@@ -31408,19 +31518,32 @@ function onlineEmptyPublicBoard(){
 }
 function onlineNormalizePublicPile(pile){
   if(!pile||typeof pile!=='object')return {cards:[]};
-  const cards=Array.isArray(pile.cards)?pile.cards.map(c=>({
-    id:String(c?.id||''),
-    name:String(c?.name||'名称未設定'),
-    type:String(c?.type||''),
-    level:c?.level??'',
-    power:c?.power??'',
-    rested:!!c?.rested,
-    faceDown:!!c?.faceDown,
-    counters:(c?.counters&&typeof c.counters==='object')?{...c.counters}:{},
-    powerMod:Number(c?.powerMod||0)||0,
-    memo:String(c?.memo||'')
-  })):[];
-  return {cards};
+  const publicCards=Array.isArray(pile.cards)?pile.cards.map(c=>{
+    if(c?.faceDown){
+      return {
+        id:'',name:'裏向きカード',type:'',level:'',power:'',race:'',rarity:'',effect:'',flavor:'',
+        rested:!!c?.rested,faceDown:true,counters:{},powerMod:0,levelModPersistent:0,levelModTemporary:0
+      };
+    }
+    return {
+      id:String(c?.id||''),
+      name:String(c?.name||'名称未設定'),
+      type:String(c?.type||''),
+      level:c?.level??'',
+      power:c?.power??'',
+      race:String(c?.race||''),
+      rarity:String(c?.rarity||''),
+      effect:String(c?.effect||''),
+      flavor:String(c?.flavor||''),
+      rested:!!c?.rested,
+      faceDown:false,
+      counters:Array.isArray(c?.counters)?c.counters.map(x=>({name:String(x?.name||'カウンター'),value:Number(x?.value)||0})):[],
+      powerMod:Number(c?.powerMod||0)||0,
+      levelModPersistent:Number(c?.levelModPersistent||0)||0,
+      levelModTemporary:Number(c?.levelModTemporary)||0
+    };
+  }):[];
+  return {cards:publicCards};
 }
 function onlineExtractPublicBoardFromSolo(slot){
   const p=board?.players?.[slot-1];
@@ -31722,39 +31845,53 @@ function onlineUpdateVisibleHandCount(room,slot){
 }
 async function onlineEndTurn(){
   const code=onlineSessionState.joinCode;
-  const rooms=onlineLoadRooms(),room=rooms[code];
+  if(!code){toast('オンラインルームに接続されていません');return}
+  const own=onlineOwnSlot();
+  if(!own){toast('観戦者はターン終了できません');return}
+
+  let room=onlineLoadRooms()[code];
+  if(onlineUsingRemoteProvider()){
+    try{
+      const latest=await onlineRemoteGetRoom();
+      if(latest)room=latest;
+    }catch(err){
+      toast(`ターン状態の確認に失敗しました：${String(err?.message||err)}`);
+      return;
+    }
+  }
   if(!room||!onlineMatchStarted(room)){toast('対戦が開始されていません');return}
-  if(!onlineCanEndTurn(room)){toast('現在は自分のターンではありません');return}
-
   const current=onlineCurrentTurnPlayer(room);
-  const next=current===1?2:1;
-  room.match.turnPlayer=next;
-  room.match.turnCount=Number(room.match.turnCount||1)+1;
-  room.match.turnChangedAt=Date.now();
-
-  onlineAuditPush(room,'turn-ended',{from:current,to:next,turnCount:room.match.turnCount},'public');
-  rooms[code]=room;
-  onlineSaveRooms(rooms);
+  if(current!==own){toast(`現在はP${current}のターンです`);return}
 
   if(onlineUsingRemoteProvider()){
     try{
-      const data=await onlineProviderRequest('end-turn',onlineRemoteRequestPayload({
-        roomCode:code,
-        fromSlot:current,
-        toSlot:next
-      }));
-      if(data)onlineApplyRemoteRoomSnapshot(data);
+      const data=await onlineProviderRequest('end-turn',{roomCode:code});
+      const updated=data?onlineApplyRemoteRoomSnapshot(data):null;
+      if(!updated)throw new Error('ターン更新後のルーム情報を取得できません');
+      room=updated;
     }catch(err){
       console.error('remote end-turn failed',err);
       toast(`ターン終了失敗：${String(err?.message||err)}`);
+      const out=$('#online-duel-tool-result');if(out)out.textContent=`ターン終了失敗：${String(err?.message||err)}`;
       return;
     }
+  }else{
+    const rooms=onlineLoadRooms();
+    const next=current===1?2:1;
+    room.match.turnPlayer=next;
+    room.match.turnCount=Number(room.match.turnCount||1)+1;
+    room.match.turnChangedAt=Date.now();
+    onlineAuditPush(room,'turn-ended',{from:current,to:next,turnCount:room.match.turnCount},'public');
+    rooms[code]=room;onlineSaveRooms(rooms);
   }
 
   onlineBroadcast('room-sync',{reason:'turn'});
   onlineSignalRoomUpdate('turn');
-  onlineRenderMatchBoard();
-  if(onlineDuelActive)onlineUpdateDuelToolbar(onlineLoadRooms()[code]);
+  if(onlineDuelActive){
+    onlineUpdateDuelToolbar(room);
+    onlineRenderDuelBoard();
+  }else onlineRenderMatchBoard();
+  toast(`P${current}のターンを終了しました`);
 }
 function onlineRenderTurnPanel(room){
   const turn=onlineCurrentTurnPlayer(room);
