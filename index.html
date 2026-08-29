@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.25</title>
+<title>みん会TCG Simulator v13.27</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -19596,7 +19596,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.25 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.27 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23618,7 +23618,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.25',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.27',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -29881,8 +29881,51 @@ function openStackDialog(){const ctx={...detailCtx},srcPile=getPile(ctx.pi,ctx.z
 // Deck actions
 function takeTopCard(pi,z='deck'){const d=board.players[pi][z];if(!d.length)return null;const c=d[0].cards.shift();if(!d[0].cards.length)d.shift();return c}
 function shuffleDeck(pi,z='deck'){const d=board.players[pi][z],all=[];d.forEach(p=>p.cards.forEach(c=>all.push(c)));for(let i=all.length-1;i>0;i--){const j=boardRandomInt(i+1);[all[i],all[j]]=[all[j],all[i]]}board.players[pi][z]=all.map(c=>({id:uid('pile'),cards:[c]}))}
+function onlineBrowseManagedDeckContents(pi){
+  if(!onlineServerDeckGuardActive(pi,'deck'))return false;
+  const p=board?.players?.[pi];
+  if(!p)return true;
+  const room=onlineLoadRooms()[onlineSessionState.joinCode];
+  const slot=Number(pi)+1;
+  const serverCount=onlineDeckCountFromRoom(room,slot);
+  const cardsInShadow=(Array.isArray(p.deck)?p.deck:[])
+    .flatMap(pile=>Array.isArray(pile?.cards)?pile.cards:[])
+    .filter(Boolean);
+  const grouped=new Map();
+  cardsInShadow.forEach(c=>{
+    const key=String(c.id||c.name||'');
+    const prev=grouped.get(key);
+    if(prev)prev.count++;
+    else grouped.set(key,{card:c,count:1});
+  });
+  const rows=[...grouped.values()].sort((a,b)=>String(a.card.name||'').localeCompare(String(b.card.name||''),'ja'));
+  openModal(`<div class="modal-head"><h3>メインデッキの内容</h3><button class="btn" id="online-managed-deck-close">閉じる</button></div>
+    <p class="muted">オンライン中のデッキ順はサーバー管理です。ここでは自分の残りカード内容を確認できますが、順番は表示しません。</p>
+    <div class="pill" style="margin-bottom:10px">サーバー上の残り枚数 ${serverCount==null?'?':serverCount}枚</div>
+    <div class="inspect-grid">${rows.length?rows.map(x=>`<div class="board-zone-list-card">
+      ${boardMiniArtHtml(x.card)}
+      <div class="board-zone-list-info">
+        <h4>${esc(x.card.name||'名称未設定')} ${x.count>1?`×${x.count}`:''}</h4>
+        <div class="muted">${esc(x.card.type||'')}${x.card.level!==''&&x.card.level!=null?` / Lv ${esc(x.card.level)}`:''}${x.card.power!==''&&x.card.power!=null?` / PW ${esc(x.card.power)}`:''}</div>
+        ${x.card.race?`<div class="muted">種族：${esc(x.card.race)}</div>`:''}
+        <details class="zone-card-effect-preview"><summary>効果を確認</summary><div class="zone-card-effect-body">${esc(x.card.effect||'効果テキストなし')}</div></details>
+      </div>
+    </div>`).join(''):'<div class="muted">カードなし</div>'}</div>`);
+  $('#online-managed-deck-close').onclick=closeModal;
+  hydrateBoardMiniListImages($('#modal-layer'));
+  return true;
+}
+
 function deckAction(a,pi,z='deck'){
- if(onlineServerDeckMutationBlocked(pi,z))return;
+ if(onlineServerDeckGuardActive(pi,z)){
+   const ownPi=Number(onlineOwnSlot()||0)-1;
+   if(Number(pi)!==ownPi){toast('相手のメインデッキは操作できません');return}
+   if(a==='draw'){onlineToolDraw();return}
+   if(a==='shuffle'){onlineToolShuffle();return}
+   if(a==='browse'){onlineBrowseManagedDeckContents(pi);return}
+   toast('このメインデッキ操作はサーバー連携が必要なため現在は使用できません');
+   return;
+ }
  if(a==='shuffle'){shuffleDeck(pi,z);renderBoard();toast(`${ZONE_LABELS[z]}をシャッフルしました`)}
  else if(a==='draw'){const c=takeTopCard(pi,z);if(c)addAsPile(pi,'hand',c);renderBoard()}
  else if(a==='painFace'||a==='painBack'){const c=takeTopCard(pi,z);if(c){c.faceDown=a==='painBack';addAsPile(pi,'pain',c);toast(a==='painBack'?'PCへ裏向きで1枚追加しました':'PCへ表向きで1枚追加しました')}renderBoard()}
@@ -29893,7 +29936,10 @@ function deckAction(a,pi,z='deck'){
  else if(a==='look')lookTopX(pi,z);
 }
 function browseDeck(pi,z='deck',focusInstanceId=''){
- if(typeof onlineServerDeckMutationBlocked==='function'&&onlineServerDeckMutationBlocked(pi,z))return;
+ if(typeof onlineServerDeckGuardActive==='function'&&onlineServerDeckGuardActive(pi,z)){
+   onlineBrowseManagedDeckContents(pi);
+   return;
+ }
  browseSession={pi,z,field:'name',query:'',typeValue:'',focusInstanceId:String(focusInstanceId||''),orderOpenIds:[]};
  openModal(`<div class="modal-head"><h3>${ZONE_LABELS[z]}の中を見る</h3><button class="btn" id="browse-close">閉じる</button></div>
  <p class="muted">現在のデッキ順を確認しながら検索できます。↑↓や一番上・一番下で順番を入れ替え、カードを手札・ホーム・墓地・消失へ直接移動できます。</p>
@@ -31192,14 +31238,14 @@ function onlinePlayerActionToolbar(slot,room){
   const own=onlineOwnSlot()||0;
   const current=onlineCurrentTurnPlayer(room);
   const mine=own===slot;
-  const can=mine&&current===slot;
+  const ownTurn=mine&&current===slot;
   return `<div class="online-player-toolbar" data-online-toolbar-slot="${slot}">
     <span class="online-player-toolbar-title">P${slot} 操作</span>
-    <span class="pill">${mine?(can?'操作可':'相手ターン'):'閲覧専用'}</span>
+    <span class="pill">${mine?(ownTurn?'自分のターン・操作可':'相手ターン・自分側操作可'):'閲覧専用'}</span>
     <span class="online-player-toolbar-spacer"></span>
-    <button class="btn small" type="button" data-online-slot-action="${slot}|draw" ${can?'':'disabled'}>1枚ドロー</button>
-    <button class="btn small" type="button" data-online-slot-action="${slot}|shuffle" ${can?'':'disabled'}>デッキをシャッフル</button>
-    <button class="btn small" type="button" data-online-slot-action="${slot}|random" ${can?'':'disabled'}>手札からランダム</button>
+    <button class="btn small" type="button" data-online-slot-action="${slot}|draw" ${mine?'':'disabled'}>1枚ドロー</button>
+    <button class="btn small" type="button" data-online-slot-action="${slot}|shuffle" ${mine?'':'disabled'}>デッキをシャッフル</button>
+    <button class="btn small" type="button" data-online-slot-action="${slot}|random" ${mine?'':'disabled'}>手札からランダム</button>
     <button class="btn small primary" type="button" data-online-slot-action="${slot}|end" ${mine?'':'disabled'}>ターン終了</button>
   </div>`;
 }
@@ -31270,10 +31316,19 @@ function onlineRenderDuelBoard(){
   if(ownPi>=0){
     host.querySelectorAll(`[data-deck-action*="|${ownPi}|deck"], [data-deck-action$="|${ownPi}"]`).forEach(btn=>{
       const raw=String(btn.dataset.deckAction||'').split('|');
-      if(Number(raw[1])===ownPi&&(raw[2]||'deck')==='deck'){
-        btn.disabled=true;
-        btn.setAttribute('aria-disabled','true');
-        btn.title='オンライン対戦中のメインデッキはサーバー管理です';
+      const action=raw[0],pi=Number(raw[1]),z=raw[2]||'deck';
+      if(pi===ownPi&&z==='deck'){
+        const supported=['draw','shuffle','browse'].includes(action);
+        btn.disabled=!supported;
+        if(supported){
+          btn.removeAttribute('aria-disabled');
+          btn.title=action==='browse'
+            ?'残りカード内容を確認します（デッキ順はサーバー管理のため非表示）'
+            :'サーバー管理のメインデッキを操作します';
+        }else{
+          btn.setAttribute('aria-disabled','true');
+          btn.title='この操作はサーバー連携対応後に使用できます';
+        }
       }
     });
   }
@@ -31297,16 +31352,18 @@ function onlineUpdateDuelToolbar(room){
   $('#online-duel-room-code').textContent=onlineSessionState.joinCode||'------';
   $('#online-duel-role').textContent=onlineRoleLabel();
   $('#online-duel-turn').textContent=`P${current} TURN / ${Number(room.match?.turnCount||1)}`;
-  $('#online-duel-permission').textContent=own&&current===own?`P${own} 操作ターン`:(own?`P${own} 相手ターン`:'観戦専用');
+  $('#online-duel-permission').textContent=own
+    ?(current===own?`P${own} 自分のターン・自分側操作可`:`P${own} 相手ターン・自分側操作可`)
+    :'観戦専用';
 
   for(const slot of [1,2]){
     const mine=own===slot;
     const turn=mine&&current===slot;
     const state=$(`#online-duel-p${slot}-state`);
-    if(state)state.textContent=mine?(turn?'操作可':'待機'):'閲覧';
+    if(state)state.textContent=mine?(turn?'自分のターン・操作可':'相手ターン・操作可'):'閲覧';
     for(const kind of ['draw','shuffle','random','end']){
       const b=$(`#online-duel-p${slot}-${kind}`);
-      if(b)b.disabled=(kind==='end')?!mine:!turn;
+      if(b)b.disabled=!mine;
     }
   }
 
@@ -32040,7 +32097,11 @@ let onlineRealtimeLastSignal=0;
 function onlineCanOperateCurrentBoard(room){
   const own=onlineOwnSlot();
   if(!own)return false;
-  return onlineMatchStarted(room)&&onlineCurrentTurnPlayer(room)===own;
+  return onlineMatchStarted(room)&&['host','guest'].includes(onlineSessionState.role);
+}
+function onlineIsOwnTurn(room){
+  const own=onlineOwnSlot();
+  return !!own&&onlineMatchStarted(room)&&onlineCurrentTurnPlayer(room)===own;
 }
 function onlineApplyPermissionState(room){
   const own=onlineOwnSlot();
@@ -33149,7 +33210,7 @@ function onlineServerDeckMutationBlocked(pi,z,showToast=true){
 
 async function onlineToolDraw(){
   const room=onlineLoadRooms()[onlineSessionState.joinCode];
-  if(!onlineCanOperateCurrentBoard(room)){toast('現在は自分の操作ターンではありません');return}
+  if(!onlineCanOperateCurrentBoard(room)){toast('オンライン対戦が開始されていません');return}
   if(!['host','guest'].includes(onlineSessionState.role))return;
 
   const slot=onlineSessionState.role==='host'?1:2,out=$('#online-duel-tool-result')||$('#online-tool-result');
@@ -33182,7 +33243,7 @@ async function onlineToolDraw(){
 }
 async function onlineToolShuffle(){
   const room=onlineLoadRooms()[onlineSessionState.joinCode];
-  if(!onlineCanOperateCurrentBoard(room)){toast('現在は自分の操作ターンではありません');return}
+  if(!onlineCanOperateCurrentBoard(room)){toast('オンライン対戦が開始されていません');return}
 
   if(!['host','guest'].includes(onlineSessionState.role))return;
   const slot=onlineSessionState.role==='host'?1:2,out=$('#online-duel-tool-result')||$('#online-tool-result');
@@ -33202,7 +33263,7 @@ async function onlineToolShuffle(){
 }
 async function onlineToolRandomHand(){
   const room=onlineLoadRooms()[onlineSessionState.joinCode];
-  if(!onlineCanOperateCurrentBoard(room)){toast('現在は自分の操作ターンではありません');return}
+  if(!onlineCanOperateCurrentBoard(room)){toast('オンライン対戦が開始されていません');return}
   if(!['host','guest'].includes(onlineSessionState.role))return;
 
   const slot=onlineSessionState.role==='host'?1:2,out=$('#online-duel-tool-result')||$('#online-tool-result');
