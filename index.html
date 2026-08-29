@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.3</title>
+<title>みん会TCG Simulator v16.6</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -19654,6 +19654,30 @@ ruby rt{font-size:.52em;line-height:1;color:inherit;font-weight:600}
 h3 .minkai-ruby{margin-top:.45em}
 .pile .name .minkai-ruby-reading{font-size:.48em}
 .pile .name .minkai-ruby-base{white-space:normal}
+
+/* v16.6 collection ruby */
+.collection-card-name .minkai-ruby,
+.collection-placeholder-name .minkai-ruby,
+.collection-detail-main .minkai-ruby,
+.collection-viewer-modal .minkai-ruby{
+  vertical-align:baseline;
+}
+.collection-card-name .minkai-ruby-reading,
+.collection-placeholder-name .minkai-ruby-reading{
+  font-size:.48em;
+}
+.collection-detail-main h2 .minkai-ruby-reading,
+.collection-viewer-modal h2 .minkai-ruby-reading,
+.collection-viewer-modal h3 .minkai-ruby-reading{
+  font-size:.5em;
+}
+.collection-card-name{
+  line-height:1.55!important;
+  overflow:visible;
+}
+.collection-placeholder-name{
+  line-height:1.45!important;
+}
 </style>
 </head>
 <body>
@@ -19662,7 +19686,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.6 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19999,10 +20023,10 @@ h3 .minkai-ruby{margin-top:.45em}
           <label class="wide">カード名<input id="card-name" required /></label><label class="wide">ルビ設定<input id="card-ruby" placeholder="例：廻る=めぐる;越境者=えっきょうしゃ" /><div class="ruby-help">本文中の語句=よみ を ; または改行で区切って入力。カード名・種族・効果・フレーバーに共通適用します。</div></label><div class="wide" id="card-ruby-preview"></div>
           <label>種類<select id="card-type"><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="__custom__">その他（自由入力）</option></select></label>
           <div class="wide custom-type-fields" id="card-custom-type-fields" hidden>
-            <label>自由種類・左側<input id="card-custom-type-left" placeholder="自由入力"></label>
+            <label>自由種類<input id="card-custom-type-left" placeholder="例：イベント"></label>
             <span class="custom-type-colon">:</span>
-            <label>自由種類・右側<input id="card-custom-type-right" placeholder="自由入力"></label>
-            <div class="muted custom-type-preview">保存形式：<span id="card-custom-type-preview">左側:右側</span></div>
+            <label>右側（任意）<input id="card-custom-type-right" placeholder="例：永続"></label>
+            <div class="muted custom-type-preview">保存形式：<span id="card-custom-type-preview">自由入力</span><br>右側を入れた場合のみ 自由入力:自由入力 の形式になります。</div>
           </div>
           <label>Lv<input id="card-level" inputmode="text" placeholder="例：4 / ？ / X" /></label>
           <label>パワー<input id="card-power" inputmode="text" placeholder="例：5000 / ？ / 1000+" /></label>
@@ -20022,7 +20046,7 @@ h3 .minkai-ruby{margin-top:.45em}
       </div>
 
       <div id="tool-pane-text" class="tool-pane active">
-        <p class="muted">カード文章をそのまま貼り付けて変換できます。【カード名】から始まる化けさん式と、カード名 → 「レベル4 パワー5000」→ 種族 → 効果のゼリー君式に対応しています。「レアリティ:」「フレーバー:」に加え、自由種類は「種類:左側:右側」で読み取れます。複数枚はカードごとに空行を1つ入れてください。変換後は登録前に内容を編集できます。</p>
+        <p class="muted">カード文章をそのまま貼り付けて変換できます。【カード名】から始まる化けさん式と、カード名 → 「レベル4 パワー5000」→ 種族 → 効果のゼリー君式に対応しています。「レアリティ:」「フレーバー:」に加え、自由種類は「種類:イベント」の1項目形式と「種類:イベント:永続」の2項目形式を読み取れます。カード名末尾の「(よみ)」はルビとして自動登録し、最下段の「───フレーバー内容」はフレーバーへ分離します。「パワー:1000」「パワー：1000」の半角/全角コロンにも対応します。複数枚はカードごとに空行を1つ入れてください。変換後は登録前に内容を編集できます。</p>
         <details class="import-format-help">
           <summary>ゼリー君式の例</summary>
           <pre>毒殿の大僧正
@@ -20861,25 +20885,33 @@ function isValidCustomTypePart(v=''){
 }
 function buildCustomCardType(left,right){
  const a=normalizeCustomTypePart(left),b=normalizeCustomTypePart(right);
- return isValidCustomTypePart(a)&&isValidCustomTypePart(b)?`${a}:${b}`:'';
+ if(isValidCustomTypePart(a)&&!b)return a;
+ if(isValidCustomTypePart(a)&&isValidCustomTypePart(b))return `${a}:${b}`;
+ return '';
 }
 function isCustomCardType(type=''){
  const s=normalizeCardTypeAlias(type);
- if(CARD_FIXED_TYPES.includes(s))return false;
- return /^[^:：\r\n]+[:：][^:：\r\n]+$/.test(s);
+ if(!s||CARD_FIXED_TYPES.includes(s))return false;
+ if(/\r|\n/.test(s))return false;
+ if(/[:：]/.test(s))return /^[^:：\r\n]+[:：][^:：\r\n]+$/.test(s);
+ return isValidCustomTypePart(s);
 }
 function normalizeCardType(type=''){
  const s=normalizeCardTypeAlias(type);
  if(CARD_FIXED_TYPES.includes(s))return s;
  if(isCustomCardType(s)){
-   const parts=s.split(/[:：]/);
-   return `${parts[0].trim()}:${parts[1].trim()}`;
+   if(/[:：]/.test(s)){
+     const parts=s.split(/[:：]/);
+     return `${parts[0].trim()}:${parts[1].trim()}`;
+   }
+   return s.trim();
  }
  return 'キャラクター';
 }
 function splitCustomCardType(type=''){
  const s=normalizeCardType(type);
- return isCustomCardType(s)?s.split(':'):['',''];
+ if(!isCustomCardType(s))return ['',''];
+ return /:/.test(s)?s.split(':'):[s,''];
 }
 function cardTypeMatches(type,filter='all',customQuery=''){
  const normalized=normalizeCardType(type),fRaw=String(filter||'all'),f=(fRaw==='all'||fRaw==='other')?fRaw:normalizeCardTypeAlias(fRaw);
@@ -23423,7 +23455,7 @@ $('#home-two-player').onclick=()=>{nav('setup');$('#mode-select').value='2';sync
 // Import / export helpers
 const SIM_FORMAT='min-kai-tcg-simulator';
 let textPreviewCards=[];
-function cardToPortable(c){return {id:c.id||undefined,name:c.name||'',type:c.type||'キャラクター',level:c.level===''||c.level==null?null:Number.isFinite(Number(c.level))?Number(c.level):c.level,power:c.power===''||c.power==null?null:Number.isFinite(Number(c.power))?Number(c.power):c.power,races:String(c.race||'').split(/[\/／]/).map(x=>x.trim()).filter(Boolean),rarity:String(c.rarity||''),effect:c.effect||'',flavor:String(c.flavor||''),visualEffects:normalizeCardVisualEffects(c.visualEffects),appearancePresetMeta:appearancePresetMetaPortable(c.appearancePresetMeta),cardLinks:cardLinksFor(c).map(x=>({targetId:x.targetId,targetName:cards.find(t=>t.id===x.targetId)?.name||'',label:x.label,bidirectional:x.bidirectional}))}}
+function cardToPortable(c){return {id:c.id||undefined,name:c.name||'',ruby:String(c.ruby||''),type:c.type||'キャラクター',level:c.level===''||c.level==null?null:Number.isFinite(Number(c.level))?Number(c.level):c.level,power:c.power===''||c.power==null?null:Number.isFinite(Number(c.power))?Number(c.power):c.power,races:String(c.race||'').split(/[\/／]/).map(x=>x.trim()).filter(Boolean),rarity:String(c.rarity||''),effect:c.effect||'',flavor:String(c.flavor||''),visualEffects:normalizeCardVisualEffects(c.visualEffects),appearancePresetMeta:appearancePresetMetaPortable(c.appearancePresetMeta),cardLinks:cardLinksFor(c).map(x=>({targetId:x.targetId,targetName:cards.find(t=>t.id===x.targetId)?.name||'',label:x.label,bidirectional:x.bidirectional}))}}
 function normalizeImportedCard(raw){
   if(!raw||typeof raw!=='object')return null;
   const type=normalizeCardType(raw.type);
@@ -23453,16 +23485,45 @@ function normalizeRaceText(v=''){
 function isEffectLikeLine(t=''){
  return /^[・●○◆◇■□★☆▶▷►→\-＊*]/.test(String(t).trim());
 }
+function extractInlineRubyFromName(value){
+ const raw=String(value||'').trim();
+ const m=raw.match(/^(.*?)[\(（]([^()（）]+)[\)）]\s*$/);
+ if(!m)return {name:raw,ruby:''};
+ const name=String(m[1]||'').trim(),reading=String(m[2]||'').trim();
+ if(!name||!reading)return {name:raw,ruby:''};
+ return {name,ruby:`${name}=${reading}`};
+}
+function extractBottomFlavor(lines,ignoredLineIndexes){
+ let last=-1;
+ for(let i=lines.length-1;i>=0;i--){if(String(lines[i]||'').trim()){last=i;break}}
+ if(last<0)return '';
+ const t=String(lines[last]||'').trim();
+ const m=t.match(/^─{3,}\s*(.+)$/);
+ if(!m)return '';
+ ignoredLineIndexes.add(last);
+ return String(m[1]||'').trim();
+}
+function normalizeImportLabelColons(text){
+ return String(text||'').replace(
+   /^(\s*(?:レベル|Lv|LV|パワー|種類|種族|レアリティ|フレーバー(?:テキスト)?)\s*)：/gmi,
+   '$1:'
+ );
+}
 function parseOneCardText(block){
-  const lines=block.replace(/\r\n?/g,'\n').split('\n');
+  const normalizedBlock=normalizeImportLabelColons(block);
+  const lines=normalizedBlock.replace(/\r\n?/g,'\n').split('\n');
   const trimmed=lines.map(x=>x.trim());
-  let name='',type='',level='',power='',race='',rarity='',flavor='',nameLineIndex=-1;
+  let name='',ruby='',type='',level='',power='',race='',rarity='',flavor='',nameLineIndex=-1;
   const ignoredLineIndexes=new Set();
 
-  const nameMatch=block.match(/^\s*【([^\n】]+)】\s*$/m);
+  const nameMatch=normalizedBlock.match(/^\s*【([^\n】]+)】\s*$/m);
   if(nameMatch){name=nameMatch[1].trim();nameLineIndex=lines.findIndex(line=>line.trim()===nameMatch[0].trim())}
   if(!name){nameLineIndex=trimmed.findIndex(Boolean);if(nameLineIndex>=0)name=trimmed[nameLineIndex].replace(/^【|】$/g,'').trim()}
   if(nameLineIndex>=0)ignoredLineIndexes.add(nameLineIndex);
+  const inlineRuby=extractInlineRubyFromName(name);
+  name=inlineRuby.name;
+  ruby=inlineRuby.ruby;
+
 
   let compactStatLineIndex=-1;
   trimmed.forEach((t,index)=>{
@@ -23473,10 +23534,10 @@ function parseOneCardText(block){
     if(pw&&!power){power=normalizeCardNumber(pw[1]);ignoredLineIndexes.add(index)}
     if(lv||pw)compactStatLineIndex=index;
   });
-  if(!level){const m=block.match(/^\s*(?:レベル|Lv|LV)\s*[:：]\s*([^\n]+)\s*$/mi);if(m)level=normalizeCardNumber(m[1])}
-  if(!power){const m=block.match(/^\s*パワー\s*[:：]\s*([^\n]+)\s*$/mi);if(m)power=normalizeCardNumber(m[1])}
+  if(!level){const m=normalizedBlock.match(/^\s*(?:レベル|Lv|LV)\s*[:：]\s*([^\n]+)\s*$/mi);if(m)level=normalizeCardNumber(m[1])}
+  if(!power){const m=normalizedBlock.match(/^\s*パワー\s*[:：]\s*([^\n]+)\s*$/mi);if(m)power=normalizeCardNumber(m[1])}
 
-  const explicitType=block.match(/^\s*種類\s*[:：]\s*([^\n]+)\s*$/mi);
+  const explicitType=normalizedBlock.match(/^\s*種類\s*[:：]\s*([^\n]+)\s*$/mi);
   if(explicitType){
     const normalized=normalizeCardType(explicitType[1]);
     if(CARD_FIXED_TYPES.includes(normalized)||isCustomCardType(normalized))type=normalized;
@@ -23487,11 +23548,12 @@ function parseOneCardText(block){
     if(fixedIndex>=0){type=trimmed[fixedIndex];ignoredLineIndexes.add(fixedIndex)}
   }
 
-  const rc=block.match(/^\s*種族\s*[:：]\s*([^\n]+)\s*$/mi);
+  const rc=normalizedBlock.match(/^\s*種族\s*[:：]\s*([^\n]+)\s*$/mi);
   if(rc){race=normalizeRaceText(rc[1]);const idx=trimmed.findIndex(t=>/^種族\s*[:：]/.test(t));if(idx>=0)ignoredLineIndexes.add(idx)}
-  const rr=block.match(/^\s*レアリティ\s*[:：]\s*([^\n]+)\s*$/mi);
+  const rr=normalizedBlock.match(/^\s*レアリティ\s*[:：]\s*([^\n]+)\s*$/mi);
   if(rr){rarity=String(rr[1]||'').trim();const idx=trimmed.findIndex(t=>/^レアリティ\s*[:：]/.test(t));if(idx>=0)ignoredLineIndexes.add(idx)}
 
+  flavor=extractBottomFlavor(lines,ignoredLineIndexes);
   const flavorIndex=trimmed.findIndex(t=>/^フレーバー(?:テキスト)?\s*[:：]/.test(t));
   if(flavorIndex>=0){
     const first=lines[flavorIndex].replace(/^\s*フレーバー(?:テキスト)?\s*[:：]\s*/,'');
@@ -23519,12 +23581,12 @@ function parseOneCardText(block){
     if(CARD_FIXED_TYPES.includes(t))return false;
     return true;
   });
-  return {name,type:normalizeCardType(type),level,power,race,rarity,effect:effectLines.join('\n').trim(),flavor};
+  return {name,ruby,type:normalizeCardType(type),level,power,race,rarity,effect:effectLines.join('\n').trim(),flavor};
 }
 function parseCardText(src){return splitCardText(src).map(parseOneCardText).filter(c=>c.name||c.effect||c.flavor)}
 function renderTextPreview(){
   const root=$('#text-preview'), actions=$('#text-preview-actions');
-  root.innerHTML=textPreviewCards.map((c,i)=>`<div class="preview-card" data-preview-index="${i}"><div class="preview-head"><b>カード ${i+1}</b><span class="pill">${esc(c.type||'未判定')}</span></div><div class="form-grid"><label class="wide">カード名<input data-pv="name" value="${esc(c.name)}"></label><label>種類<select data-pv="type">${cardTypeOptionsHtml(c.type,false)}</select></label><label>Lv<input data-pv="level" value="${esc(c.level)}"></label><label>パワー<input data-pv="power" value="${esc(c.power)}"></label><label>種族<input data-pv="race" value="${esc(c.race)}"></label><label>レアリティ<input data-pv="rarity" value="${esc(c.rarity||'')}"></label><label class="wide">効果<textarea data-pv="effect">${esc(c.effect)}</textarea></label><label class="wide">フレーバーテキスト<textarea data-pv="flavor">${esc(c.flavor||'')}</textarea></label></div></div>`).join('');
+  root.innerHTML=textPreviewCards.map((c,i)=>`<div class="preview-card" data-preview-index="${i}"><div class="preview-head"><b>カード ${i+1}</b><span class="pill">${esc(c.type||'未判定')}</span></div><div class="form-grid"><label class="wide">カード名<input data-pv="name" value="${esc(c.name)}"></label><label class="wide">ルビ<input data-pv="ruby" value="${esc(c.ruby||'')}" placeholder="カード名=よみ"></label><label>種類<select data-pv="type">${cardTypeOptionsHtml(c.type,false)}</select></label><label>Lv<input data-pv="level" value="${esc(c.level)}"></label><label>パワー<input data-pv="power" value="${esc(c.power)}"></label><label>種族<input data-pv="race" value="${esc(c.race)}"></label><label>レアリティ<input data-pv="rarity" value="${esc(c.rarity||'')}"></label><label class="wide">効果<textarea data-pv="effect">${esc(c.effect)}</textarea></label><label class="wide">フレーバーテキスト<textarea data-pv="flavor">${esc(c.flavor||'')}</textarea></label></div></div>`).join('');
   actions.style.display=textPreviewCards.length?'flex':'none';
   root.querySelectorAll('[data-preview-index]').forEach(el=>{const i=Number(el.dataset.previewIndex);el.querySelectorAll('[data-pv]').forEach(inp=>inp.addEventListener('input',()=>{textPreviewCards[i][inp.dataset.pv]=inp.value}))});
 }
@@ -23690,7 +23752,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.3',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.6',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -23975,7 +24037,7 @@ function importPayload(data,conflict){
 $$('[data-tool-tab]').forEach(btn=>btn.onclick=()=>{$$('[data-tool-tab]').forEach(b=>b.classList.remove('primary'));btn.classList.add('primary');$$('#screen-cards .tool-pane').forEach(p=>p.classList.remove('active'));$('#tool-pane-'+btn.dataset.toolTab)?.classList.add('active');if(btn.dataset.toolTab==='manual'){renderRegisterHistory();openRegisterFloatingPreview()}else if(floatingPreviewOwner==='screen:cards')closeFloatingPreview()});
 $('#parse-text-cards').onclick=()=>{textPreviewCards=parseCardText($('#text-import-source').value);$('#text-import-status').textContent=textPreviewCards.length?`${textPreviewCards.length}枚のカードを検出しました。内容を確認してから登録してください。`:'カードを検出できませんでした。';renderTextPreview()};
 $('#clear-text-import').onclick=()=>{$('#text-import-source').value='';$('#text-import-status').textContent='';textPreviewCards=[];renderTextPreview()};
-$('#register-preview-cards').onclick=()=>{if(!textPreviewCards.length)return;let n=0,addedIds=[];for(const c of textPreviewCards){if(!c.name.trim())continue;const id=uid('card');cards.push({id,name:c.name.trim(),type:c.type||'キャラクター',level:String(c.level||'').trim(),power:String(c.power||'').trim(),race:String(c.race||'').trim(),rarity:String(c.rarity||'').trim(),effect:c.effect||'',flavor:c.flavor||'',visualEffects:[],cardLinks:[]});addedIds.push(id);n++}save(LS_CARDS,cards);touchRecentCards(addedIds);touchRegisteredCards(addedIds);$('#text-import-source').value='';$('#text-import-status').textContent=n?`${n}枚を登録しました。入力欄をクリアしました。`:'';textPreviewCards=[];renderTextPreview();renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();toast(`${n}枚を登録しました`)};
+$('#register-preview-cards').onclick=()=>{if(!textPreviewCards.length)return;let n=0,addedIds=[];for(const c of textPreviewCards){if(!c.name.trim())continue;const id=uid('card');cards.push({id,name:c.name.trim(),ruby:String(c.ruby||'').trim(),type:normalizeCardType(c.type||'キャラクター'),level:String(c.level||'').trim(),power:String(c.power||'').trim(),race:String(c.race||'').trim(),rarity:String(c.rarity||'').trim(),effect:c.effect||'',flavor:c.flavor||'',visualEffects:[],cardLinks:[]});addedIds.push(id);n++}save(LS_CARDS,cards);touchRecentCards(addedIds);touchRegisteredCards(addedIds);$('#text-import-source').value='';$('#text-import-status').textContent=n?`${n}枚を登録しました。入力欄をクリアしました。`:'';textPreviewCards=[];renderTextPreview();renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();toast(`${n}枚を登録しました`)};
 $('#copy-preview-json').onclick=async()=>{if(!textPreviewCards.length)return;const ok=await copyText(JSON.stringify(portablePreviewData(),null,2));toast(ok?'JSONをコピーしました':'コピーできませんでした')};
 function runJsonImportText(text){try{const data=JSON.parse(text),r=importPayload(data,$('#import-conflict').value);$('#json-import-source').value='';$('#json-import-status').textContent=`カード追加 ${r.added} / 上書き ${r.updated} / スキップ ${r.skipped} / デッキ追加 ${r.deckAdded}。入力欄をクリアしました。`;toast('インポートしました')}catch(e){$('#json-import-status').textContent='読み込みエラー: '+e.message}}
 $('#import-json-text').onclick=()=>runJsonImportText($('#json-import-source').value);
@@ -24087,7 +24149,10 @@ function syncManualCustomTypeFields(){
  const custom=$('#card-type')?.value==='__custom__',box=$('#card-custom-type-fields');
  if(box)box.hidden=!custom;
  const left=$('#card-custom-type-left')?.value||'',right=$('#card-custom-type-right')?.value||'',preview=$('#card-custom-type-preview');
- if(preview)preview.textContent=(left.trim()||'左側')+':'+(right.trim()||'右側');
+ if(preview){
+   const a=left.trim()||'自由入力',b=right.trim();
+   preview.textContent=b?`${a}:${b}`:a;
+ }
 }
 let registerPreviewFile=null,registerPreviewUrl='';
 function cleanupRegisterPreviewFile(){if(registerPreviewUrl){try{URL.revokeObjectURL(registerPreviewUrl)}catch{}registerPreviewUrl=''}registerPreviewFile=null;const input=$('#card-register-image');if(input)input.value='';const status=$('#card-register-image-status');if(status)status.textContent='画像未選択'}
@@ -24120,7 +24185,7 @@ $('#card-clear').onclick=clearCardForm;
 $('#card-form').onsubmit=async e=>{
  e.preventDefault();const submit=$('#card-register-submit');if(submit?.disabled)return;
  let type=$('#card-type').value;
- if(type==='__custom__'){type=buildCustomCardType($('#card-custom-type-left').value,$('#card-custom-type-right').value);if(!type){toast('自由種類は左右どちらも入力してください。「:」は入力欄の中では使用できません。');return}}
+ if(type==='__custom__'){type=buildCustomCardType($('#card-custom-type-left').value,$('#card-custom-type-right').value);if(!type){toast('自由種類を入力してください。「:」は入力欄の中では使用できません。');return}}
  const obj={id:uid('card'),name:$('#card-name').value.trim(),ruby:$('#card-ruby').value.trim(),type:normalizeCardType(type),level:$('#card-level').value.trim(),power:$('#card-power').value.trim(),race:$('#card-race').value.trim(),rarity:$('#card-rarity').value.trim(),effect:$('#card-effect').value,flavor:$('#card-flavor').value,visualEffects:[],cardLinks:[]};
  if(!obj.name)return;
  if(registerPreviewFile&&!imageSystemAvailable){toast('このブラウザでは画像保存を利用できません');return}
@@ -24878,7 +24943,7 @@ async function openCardImageEditor(cardId,returnTo='manager'){
 
 async function openFrameFloatingPreview(cardId){
  const card=cards.find(c=>c.id===cardId);if(!card)return;
- openFloatingPreview('フレームプレビュー',`modal:frame:${cardId}`,`<div id="frame-editor-preview" class="frame-editor-preview floating-frame-preview"><span class="frame-editor-fallback">${esc(card.name)}</span>${cardFxHtml(card,'collection')}${cardFrameHtml(card)}</div><div class="muted floating-preview-caption">カード画像 → エフェクト → 第1フレーム → 第2フレームの順で表示</div>`);
+ openFloatingPreview('フレームプレビュー',`modal:frame:${cardId}`,`<div id="frame-editor-preview" class="frame-editor-preview floating-frame-preview"><span class="frame-editor-fallback">${rubyTextHtml(card.name,cardRubySpec(card))}</span>${cardFxHtml(card,'collection')}${cardFrameHtml(card)}</div><div class="muted floating-preview-caption">カード画像 → エフェクト → 第1フレーム → 第2フレームの順で表示</div>`);
  const preview=$('#frame-editor-preview');await hydrateCardArtBackground(preview,cardId,'full',true);if(preview?.classList.contains('has-image'))preview.querySelector('.frame-editor-fallback')?.setAttribute('hidden','');hydrateAllCardFrames(preview);hydrateAllCustomFx(preview);
 }
 
@@ -24892,7 +24957,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
  };
 
  /* フレーム初期化に時間が掛かっても無反応に見せない */
- openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-loading-back">${returnTo==='viewer'?'鑑賞モードへ戻る':returnTo==='collection'?'コレクションへ戻る':'カード詳細へ戻る'}</button></div>
+ openModal(`<div class="modal-head"><h3>${rubyTextHtml(card.name,cardRubySpec(card))} / フレーム設定</h3><button class="btn" id="frame-editor-loading-back">${returnTo==='viewer'?'鑑賞モードへ戻る':returnTo==='collection'?'コレクションへ戻る':'カード詳細へ戻る'}</button></div>
    <div class="frame-editor-loading"><span class="pill">読み込み中…</span><div class="muted">フレームライブラリを準備しています。</div></div>`);
  $('#frame-editor-loading-back').onclick=back;
 
@@ -24912,7 +24977,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
    const frameConfig=normalizeFrameLink(current||{cardId,frameId:''},cardId);
    const currentIsBuiltin=!!current&&isBuiltinFrameId(current.frameId);
 
-   openModal(`<div class="modal-head"><h3>${esc(card.name)} / フレーム設定</h3><button class="btn" id="frame-editor-back">${returnTo==='viewer'?'鑑賞モードへ戻る':returnTo==='collection'?'コレクションへ戻る':'カード詳細へ戻る'}</button></div>
+   openModal(`<div class="modal-head"><h3>${rubyTextHtml(card.name,cardRubySpec(card))} / フレーム設定</h3><button class="btn" id="frame-editor-back">${returnTo==='viewer'?'鑑賞モードへ戻る':returnTo==='collection'?'コレクションへ戻る':'カード詳細へ戻る'}</button></div>
      <div class="frame-editor-layout frame-editor-layout-floating">
        <section class="frame-library-section">
          <div class="frame-editor-top-actions"><button class="btn primary" id="frame-preview-open">プレビューを開く</button><button class="btn" id="frame-upload">新しいPNGを登録して設定</button><input id="frame-file-input" type="file" accept="image/png,.png" hidden><button class="btn" id="frame-remove-card" ${current?'':'disabled'}>このカードから外す</button><button class="btn danger" id="frame-delete-current" ${(!current||currentIsBuiltin)?'disabled':''}>${currentIsBuiltin?'サンプルは削除不可':'現在のフレームをライブラリから削除'}</button></div>
@@ -25516,7 +25581,7 @@ function openCardManagerEdit(id){
    <label class="wide">カード名<input id="manager-edit-name" required value="${esc(c.name)}"></label><label class="wide">ルビ設定<input id="manager-edit-ruby" value="${esc(c.ruby||'')}" placeholder="例：廻る=めぐる;越境者=えっきょうしゃ"><div class="ruby-help">語句=よみ を ; または改行で区切ります。</div></label><div class="wide" id="manager-edit-ruby-preview">${rubyPreviewHtml(c.name,c.race,c.effect,c.ruby)}</div>
    <label>種類<select id="manager-edit-type">${cardTypeOptionsHtml(c.type,true)}</select></label>
    <div class="wide custom-type-fields" id="manager-edit-custom-type-fields" ${custom?'':'hidden'}>
-     <label>自由種類・左側<input id="manager-edit-custom-left" value="${esc(parts[0])}" placeholder="自由入力"></label><span class="custom-type-colon">:</span><label>自由種類・右側<input id="manager-edit-custom-right" value="${esc(parts[1])}" placeholder="自由入力"></label>
+     <label>自由種類<input id="manager-edit-custom-left" value="${esc(parts[0])}" placeholder="例：イベント"></label><span class="custom-type-colon">:</span><label>右側（任意）<input id="manager-edit-custom-right" value="${esc(parts[1])}" placeholder="例：永続"></label>
    </div>
    <label>Lv<input id="manager-edit-level" inputmode="numeric" value="${esc(c.level||'')}"></label>
    <label>パワー<input id="manager-edit-power" inputmode="numeric" value="${esc(c.power||'')}"></label>
@@ -25536,7 +25601,7 @@ function openCardManagerEdit(id){
    e.preventDefault();const i=cards.findIndex(x=>x.id===id);if(i<0)return;
    const name=$('#manager-edit-name').value.trim();if(!name)return;
    let type=$('#manager-edit-type').value;
-   if(type==='__custom__'){type=buildCustomCardType($('#manager-edit-custom-left').value,$('#manager-edit-custom-right').value);if(!type){toast('自由種類は左右どちらも入力してください。「:」は入力欄の中では使用できません。');return}}
+   if(type==='__custom__'){type=buildCustomCardType($('#manager-edit-custom-left').value,$('#manager-edit-custom-right').value);if(!type){toast('自由種類を入力してください。「:」は入力欄の中では使用できません。');return}}
    cards[i]={id,name,ruby:$('#manager-edit-ruby').value.trim(),type:normalizeCardType(type),level:$('#manager-edit-level').value.trim(),power:$('#manager-edit-power').value.trim(),race:$('#manager-edit-race').value.trim(),rarity:$('#manager-edit-rarity').value.trim(),effect:$('#manager-edit-effect').value,flavor:$('#manager-edit-flavor').value,visualEffects:normalizeCardVisualEffects(c.visualEffects),appearancePresetMeta:appearancePresetMetaPortable(c.appearancePresetMeta),cardLinks:cardLinksFor(c)};
    save(LS_CARDS,cards);touchRecentCards(id);renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();openCardManagerDetail(id,{keepContext:true});toast('カードを更新しました');
  };
@@ -26973,7 +27038,7 @@ function collectionCardGalleryHtml(c,showNames){
  const fav=isCollectionFavorite(c.id);
  return `<div class="collection-card ${showNames?'':'image-only'}" data-collection-card="${c.id}">
    <div class="collection-card-art" data-collection-art="${c.id}"><span class="collection-placeholder-name">${esc(c.name)}</span>${cardFxHtml(c,'collection')}${cardFrameHtml(c)}<button class="collection-favorite ${fav?'active':''}" type="button" data-collection-favorite="${c.id}" aria-label="お気に入り">${fav?'★':'☆'}</button></div>
-   ${showNames?`<div class="collection-card-name">${esc(c.name)}</div>`:''}
+   ${showNames?`<div class="collection-card-name">${rubyTextHtml(c.name,cardRubySpec(c))}</div>`:''}
  </div>`;
 }
 function collectionEmptyGalleryHtml(slotIndex){
@@ -27702,7 +27767,7 @@ function openCollectionDetail(id){
  <div class="collection-detail">
    <div id="collection-detail-art" class="collection-detail-art visual-quality-high"><span class="collection-placeholder-name">${esc(c.name)}</span>${cardFxHtml(c,'collection')}${cardFrameHtml(c)}</div>
    <div class="collection-detail-main">
-     <h2>${esc(c.name)}</h2>${c.rarity?`<div class="collection-detail-rarity">${esc(c.rarity)}</div>`:''}${flavor?`<div class="collection-detail-flavor">${esc(flavor)}</div>`:''}
+     <h2>${rubyTextHtml(c.name,cardRubySpec(c))}</h2>${c.rarity?`<div class="collection-detail-rarity">${esc(c.rarity)}</div>`:''}${flavor?`<div class="collection-detail-flavor">${esc(flavor)}</div>`:''}
      <div class="actions collection-detail-actions">
        <button class="btn ${fav?'primary':''}" id="collection-detail-favorite">${fav?'★ お気に入り':'☆ お気に入り'}</button>
        <button class="btn" id="collection-detail-albums">アルバムへ追加</button>
