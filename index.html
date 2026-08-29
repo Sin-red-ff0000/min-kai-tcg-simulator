@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.22</title>
+<title>みん会TCG Simulator v13.25</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17795,10 +17795,12 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   font-size:12px;
   opacity:.78;
 }
-.online-duel-opponent button:not([data-zone-view]),
-.online-duel-opponent [draggable="true"]{
+.online-duel-opponent button:not([data-zone-view]){
   pointer-events:none!important;
   opacity:.5;
+}
+.online-duel-opponent [data-pile]{
+  cursor:pointer;
 }
 .online-duel-opponent [data-zone-view]{
   pointer-events:auto!important;
@@ -17999,6 +18001,31 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
 }
 .online-player-toolbar [data-online-slot-action]:active:not(:disabled){
   transform:translateY(1px);
+}
+
+
+/* v13.23 online debug: explicit read-only opponent detail */
+.detail-public-extra{
+  margin-top:10px;
+  padding-top:8px;
+  border-top:1px solid var(--line);
+}
+.online-duel-opponent [data-pile]:hover{
+  outline:1px solid rgba(155,190,225,.55);
+  outline-offset:1px;
+}
+
+
+/* v13.24 second debug pass */
+.online-duel-opponent button:disabled{
+  pointer-events:none!important;
+  cursor:default!important;
+}
+
+
+/* v13.25 online server-managed deck guard */
+#online-duel-main [data-deck-action]:disabled{
+  cursor:not-allowed;
 }
 
 /* Frame editor */
@@ -19569,7 +19596,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.22 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.25 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23591,7 +23618,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.22',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.25',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -25446,6 +25473,13 @@ async function cloneCard(id){
 }
 async function deleteCard(id){
  const c=cards.find(x=>x.id===id);if(!c)return;
+ if(onlineDuelActive&&onlineSessionState.joinCode){
+   const room=onlineLoadRooms()[onlineSessionState.joinCode];
+   if(onlineMatchStarted(room)){
+     toast('オンライン対戦中はカード削除できません。対戦終了後に行ってください');
+     return;
+   }
+ }
  const used=deckUsageCount(id);
  const msg=used>0?`このカードは${used}個の保存デッキで使用されています。削除すると、それらのデッキからもこのカードを取り除きます。削除しますか？`:'このカードを削除しますか？';
  if(!confirm(msg))return;
@@ -29397,10 +29431,25 @@ function endTouchCardDrag(e){
   finishTouchCardMove(s);
 }
 function bindBoard(){
- $$('[data-slot-plus]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,z]=b.dataset.slotPlus.split('|');board.players[pi][z].push(null);renderBoard()});
- $$('[data-slot-minus]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,z]=b.dataset.slotMinus.split('|');const a=board.players[pi][z];if(a.length<=1)return;if(a[a.length-1]){toast('最後の枠にカードがあります');return}a.pop();renderBoard()});
+ $$('[data-slot-plus]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,z]=b.dataset.slotPlus.split('|');if(onlineOpponentReadOnly(Number(pi)))return;board.players[pi][z].push(null);renderBoard()});
+ $$('[data-slot-minus]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,z]=b.dataset.slotMinus.split('|');if(onlineOpponentReadOnly(Number(pi)))return;const a=board.players[pi][z];if(a.length<=1)return;if(a[a.length-1]){toast('最後の枠にカードがあります');return}a.pop();renderBoard()});
  const touchLike=window.matchMedia('(pointer: coarse)').matches||navigator.maxTouchPoints>0;
  $$('[data-pile]').forEach(el=>{
+   const [onlinePiRaw,onlineZRaw,onlineIndexRaw]=String(el.dataset.pile||'').split('|');
+   const onlinePi=Number(onlinePiRaw);
+   if(onlineOpponentReadOnly(onlinePi)){
+     el.draggable=false;
+     el.removeAttribute('draggable');
+     el.onclick=e=>{
+       e.preventDefault();e.stopPropagation();
+       const pile=getPile(onlinePi,onlineZRaw,Number(onlineIndexRaw));
+       if(pile)openOnlineReadOnlyDetail(onlinePi,onlineZRaw,Number(onlineIndexRaw),0,zoneDetailIds(onlinePi,onlineZRaw));
+     };
+     el.ondblclick=null;
+     el.oncontextmenu=e=>{e.preventDefault();e.stopPropagation()};
+     el.ondragstart=null;el.ondragover=null;el.ondragleave=null;el.ondrop=null;
+     return;
+   }
    el.onclick=e=>{if(Date.now()<touchClickBlockUntil||touchLike)return;queueBoardMouseClick(el)};
    el.ondblclick=e=>{if(touchLike)return;e.preventDefault();e.stopPropagation();clearTimeout(boardCardClickTimer);togglePileRestByKey(el.dataset.pile)};
    el.oncontextmenu=e=>{e.preventDefault();e.stopPropagation();if(!touchLike)openBoardCardContextMenu(el.dataset.pile,e.clientX,e.clientY)};
@@ -29441,19 +29490,21 @@ function bindBoard(){
    b.onpointerdown=e=>e.stopPropagation();
    b.ontouchstart=e=>e.stopPropagation();
  });
- $$('[data-zone],[data-slot]').forEach(el=>{el.ondragover=e=>{e.preventDefault();e.stopPropagation();el.classList.add('drag-over')};el.ondragleave=e=>{e.stopPropagation();el.classList.remove('drag-over')};el.ondrop=e=>{e.preventDefault();e.stopPropagation();el.classList.remove('drag-over');const src=e.dataTransfer.getData('text/plain');if(!src||src.startsWith('boardtool|'))return;const s=src.split('|');if(el.dataset.slot){const d=el.dataset.slot.split('|');moveTopByDrag(Number(s[0]),s[1],Number(s[2]),Number(d[0]),d[1],Number(d[2]))}else{const d=el.dataset.zone.split('|');moveTopByDrag(Number(s[0]),s[1],Number(s[2]),Number(d[0]),d[1],null)}}});
+ $$('[data-zone],[data-slot]').forEach(el=>{el.ondragover=e=>{const raw=String(el.dataset.slot||el.dataset.zone||'').split('|');if(raw.length>=2&&onlineServerDeckGuardActive(Number(raw[0]),raw[1]))return;e.preventDefault();e.stopPropagation();el.classList.add('drag-over')};el.ondragleave=e=>{e.stopPropagation();el.classList.remove('drag-over')};el.ondrop=e=>{e.preventDefault();e.stopPropagation();el.classList.remove('drag-over');const destRaw=String(el.dataset.slot||el.dataset.zone||'').split('|');if(destRaw.length>=2&&onlineServerDeckMutationBlocked(Number(destRaw[0]),destRaw[1]))return;const src=e.dataTransfer.getData('text/plain');if(!src||src.startsWith('boardtool|'))return;const s=src.split('|');if(el.dataset.slot){const d=el.dataset.slot.split('|');moveTopByDrag(Number(s[0]),s[1],Number(s[2]),Number(d[0]),d[1],Number(d[2]))}else{const d=el.dataset.zone.split('|');moveTopByDrag(Number(s[0]),s[1],Number(s[2]),Number(d[0]),d[1],null)}}});
  $$('[data-zone-toggle]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,z]=b.dataset.zoneToggle.split('|');const p=board.players[Number(pi)];p.collapsed=p.collapsed||{};p.collapsed[z]=!p.collapsed[z];renderBoard();scheduleBoardAutosave()});
- $$('[data-player-record]').forEach(b=>b.onclick=e=>{e.stopPropagation();openPlayerFreeCounterManager(Number(b.dataset.playerRecord))});
+ $$('[data-player-record]').forEach(b=>b.onclick=e=>{e.stopPropagation();const pi=Number(b.dataset.playerRecord);if(onlineOpponentReadOnly(pi))return;openPlayerFreeCounterManager(pi)});
  $$('[data-deck-extra]').forEach(d=>{
    d.ontoggle=()=>{const[pi,z]=d.dataset.deckExtra.split('|');setDeckExtraOpen(Number(pi),z,d.open)};
  });
  $$('[data-deck-action]').forEach(b=>b.onclick=()=>{
+   const raw=String(b.dataset.deckAction||'').split('|'),actionPi=Number(raw[1]);
+   if(onlineOpponentReadOnly(actionPi))return;
    const details=b.closest('details[data-deck-extra]');
    if(details){const[epi,ez]=details.dataset.deckExtra.split('|');setDeckExtraOpen(Number(epi),ez,details.open)}
    const[a,pi,z='deck']=b.dataset.deckAction.split('|');deckAction(a,Number(pi),z)
  });
  $$('[data-zone-view]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,z]=b.dataset.zoneView.split('|');openZoneViewer(Number(pi),z)});
- $$('[data-hand-mode]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,mode]=b.dataset.handMode.split('|');board.players[Number(pi)].handMode=mode==='operation'?'operation':'scroll';renderBoard();scheduleBoardAutosave()});
+ $$('[data-hand-mode]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,mode]=b.dataset.handMode.split('|');if(onlineOpponentReadOnly(Number(pi)))return;board.players[Number(pi)].handMode=mode==='operation'?'operation':'scroll';renderBoard();scheduleBoardAutosave()});
 }
 
 const moveSourceZones=new WeakMap();
@@ -29537,7 +29588,7 @@ function openMoveWholeStackDialog(ctx){
 }
 function removeCardAt(pi,z,index,cardIndex){const area=board.players[pi][z],pile=area[index];const [card]=pile.cards.splice(cardIndex,1);if(card&&typeof card==='object')moveSourceZones.set(card,z);if(!pile.cards.length){if(FIXED.includes(z))area[index]=null;else area.splice(index,1)}return card}
 function addAsPile(pi,z,card,opt={}){prepareCardForDestination(card,z);const a=board.players[pi][z],pile={id:uid('pile'),cards:[card]};if(FIXED.includes(z)){let slot=opt.slot;if(slot==null)slot=a.findIndex(x=>!x);if(slot<0){a.push(pile)}else if(!a[slot])a[slot]=pile;else{a[slot].cards[opt.stack==='bottom'?'push':'unshift'](card)}}else if(z==='deck'||z==='otherDeck'){if(opt.position==='bottom')a.push(pile);else a.unshift(pile)}else{if(opt.position==='start')a.unshift(pile);else a.push(pile)}if(z==='hand'&&handFollowPrefs[pi]!==false)pendingHandFollow.add(pi)}
-function moveTopByDrag(spi,sz,si,dpi,dz,dslot){if(spi===dpi&&sz===dz&&FIXED.includes(sz)&&dslot!=null){const a=board.players[spi][sz];[a[si],a[dslot]]=[a[dslot],a[si]];renderBoard();return}if(spi===dpi&&sz===dz&&!FIXED.includes(sz)&&dslot==null){if(dz==='deck'||dz==='otherDeck')return;const a=board.players[spi][sz];const [p]=a.splice(si,1);a.push(p);renderBoard();return}const c=removeCardAt(spi,sz,si,0);addAsPile(dpi,dz,c,{slot:dslot,position:(dz==='deck'||dz==='otherDeck')?'bottom':undefined});renderBoard()}
+function moveTopByDrag(spi,sz,si,dpi,dz,dslot){if(onlineServerDeckMutationBlocked(spi,sz)||onlineServerDeckMutationBlocked(dpi,dz))return;if(spi===dpi&&sz===dz&&FIXED.includes(sz)&&dslot!=null){const a=board.players[spi][sz];[a[si],a[dslot]]=[a[dslot],a[si]];renderBoard();return}if(spi===dpi&&sz===dz&&!FIXED.includes(sz)&&dslot==null){if(dz==='deck'||dz==='otherDeck')return;const a=board.players[spi][sz];const [p]=a.splice(si,1);a.push(p);renderBoard();return}const c=removeCardAt(spi,sz,si,0);addAsPile(dpi,dz,c,{slot:dslot,position:(dz==='deck'||dz==='otherDeck')?'bottom':undefined});renderBoard()}
 
 function boardMiniArtHtml(c){
  const source=cardImageSourceId(c);
@@ -29601,7 +29652,9 @@ function openZoneViewerMove(pi,z,instanceId,query=''){
  $('#zone-view-move-target').onchange=update;update();
  $('#zone-view-move-back').onclick=()=>openZoneViewer(pi,z,query);
  $('#zone-view-move-confirm').onclick=()=>{
-   const [tpiRaw,tz]=$('#zone-view-move-target').value.split('|'),tpi=Number(tpiRaw),card=removeZoneCardByInstance(pi,z,instanceId);
+   const [tpiRaw,tz]=$('#zone-view-move-target').value.split('|'),tpi=Number(tpiRaw);
+   if(onlineServerDeckMutationBlocked(pi,z)||onlineServerDeckMutationBlocked(tpi,tz))return;
+   const card=removeZoneCardByInstance(pi,z,instanceId);
    if(!card){toast('カードが見つかりません');openZoneViewer(pi,z,query);return}
    if(FIXED.includes(tz))addAsPile(tpi,tz,card,{slot:Number($('#zone-view-move-slot').value),stack:$('#zone-view-move-stack').value});
    else if(tz==='deck'||tz==='otherDeck')addAsPile(tpi,tz,card,{position:$('#zone-view-move-deckpos').value});
@@ -29610,9 +29663,9 @@ function openZoneViewerMove(pi,z,instanceId,query=''){
  };
 }
 function openZoneViewer(pi,z,initialQuery=''){
- const player=board.players[pi];
+ const player=board.players[pi],readOnly=onlineOpponentReadOnly(pi);
  openModal(`<div class="modal-head"><h3>${esc(player.name)} / ${ZONE_LABELS[z]} 一覧</h3><span class="pill" id="zone-view-count">0枚</span><button class="btn" id="zone-view-close">閉じる</button></div>
-   <p class="muted">盤面を動かさず中身を確認できます。詳細確認、ショートカット移動、「移動先」から任意ゾーンへの移動が可能です。</p>
+   <p class="muted">${readOnly?'相手の公開領域を閲覧しています。カードの移動・変更はできません。':'盤面を動かさず中身を確認できます。詳細確認、ショートカット移動、「移動先」から任意ゾーンへの移動が可能です。'}</p>
    <label>カード名検索<input id="zone-card-search" type="search" placeholder="カード名の一部を入力" value="${esc(initialQuery)}" autocomplete="off"></label>
    <div class="board-zone-list" id="zone-view-grid" style="margin-top:10px"></div>`);
  const search=$('#zone-card-search'),grid=$('#zone-view-grid'),count=$('#zone-view-count');
@@ -29648,11 +29701,11 @@ function openZoneViewer(pi,z,initialQuery=''){
          </details>
          <div class="actions board-zone-list-actions">
            <button class="btn small primary" data-zone-detail="${esc(x.instanceId)}">詳細</button>
-           <button class="btn small" data-zone-general-move="${esc(x.instanceId)}">移動先</button>
+           ${readOnly?'':`<button class="btn small" data-zone-general-move="${esc(x.instanceId)}">移動先</button>
            ${z!=='hand'?`<button class="btn small" data-zone-quick="${esc(x.instanceId)}|hand">手札へ</button>`:''}
            ${z!=='character'?`<button class="btn small" data-zone-quick="${esc(x.instanceId)}|character">ホームへ</button>`:''}
            ${z!=='grave'?`<button class="btn small" data-zone-quick="${esc(x.instanceId)}|grave">墓地へ</button>`:''}
-           ${z!=='banish'?`<button class="btn small" data-zone-quick="${esc(x.instanceId)}|banish">消失へ</button>`:''}
+           ${z!=='banish'?`<button class="btn small" data-zone-quick="${esc(x.instanceId)}|banish">消失へ</button>`:''}`}
          </div>
        </div>
      </div>`;
@@ -29664,8 +29717,8 @@ function openZoneViewer(pi,z,initialQuery=''){
      const ids=shown.map(x=>x.instanceId);
      openDetail(pi,z,loc.index,loc.cardIndex,ids);
    });
-   $$('[data-zone-general-move]').forEach(b=>b.onclick=()=>openZoneViewerMove(pi,z,b.dataset.zoneGeneralMove,search.value||''));
-   $$('[data-zone-quick]').forEach(b=>b.onclick=()=>{
+   if(!readOnly)$$('[data-zone-general-move]').forEach(b=>b.onclick=()=>openZoneViewerMove(pi,z,b.dataset.zoneGeneralMove,search.value||''));
+   if(!readOnly)$$('[data-zone-quick]').forEach(b=>b.onclick=()=>{
      const raw=b.dataset.zoneQuick,last=raw.lastIndexOf('|'),instanceId=raw.slice(0,last),dest=raw.slice(last+1);
      quickMove(instanceId,dest);
    });
@@ -29696,7 +29749,69 @@ function findCardInstance(pi,z,instanceId){
 function openModal(html,closable=true){if(floatingPreviewOpen&&floatingPreviewOwner.startsWith('modal:'))closeFloatingPreview();if(collectionViewerKeyHandler){document.removeEventListener('keydown',collectionViewerKeyHandler);collectionViewerKeyHandler=null}$('#modal').classList.remove('collection-viewer-modal','fx-editor-modal');$('#modal').innerHTML=html;$('#modal-layer').classList.add('open');$('#modal-layer').dataset.closable=closable?'1':'0'}
 function closeModal(){if($('#modal-layer').dataset.closable==='0')return;if(floatingPreviewOpen&&floatingPreviewOwner.startsWith('modal:'))closeFloatingPreview();if(collectionViewerKeyHandler){document.removeEventListener('keydown',collectionViewerKeyHandler);collectionViewerKeyHandler=null}cleanupImageEditorTemp();$('#modal-layer').classList.remove('open');$('#modal').classList.remove('collection-viewer-modal','fx-editor-modal');detailCtx=null;detailNav=null;browseSession=null}
 $('#modal-layer').onclick=e=>{if(e.target===$('#modal-layer'))closeModal()};
-function openDetail(pi,z,index,cardIndex=0,navIds){const pile=getPile(pi,z,index);if(!pile)return;cardIndex=Math.min(cardIndex,pile.cards.length-1);detailCtx={pi,z,index,cardIndex};const c=pile.cards[cardIndex];ensureInstanceBoardExtras(c);
+
+function onlineOpponentReadOnly(pi){
+  return !!onlineDuelActive&&Number(pi)+1!==Number(onlineOwnSlot());
+}
+function openOnlineReadOnlyDetail(pi,z,index,cardIndex=0,navIds){
+  const pile=getPile(pi,z,index);if(!pile)return;
+  cardIndex=Math.max(0,Math.min(Number(cardIndex)||0,pile.cards.length-1));
+  const c=pile.cards[cardIndex];if(!c)return;
+  ensureInstanceBoardExtras(c);
+
+  const ids=Array.isArray(navIds)?navIds:zoneDetailIds(pi,z);
+  const pos=ids.indexOf(c.instanceId);
+  const levelInfo=cardLevelParts(c),levelNow=levelInfo.has?levelInfo.total:'-';
+  const powerInfo=cardPowerParts(c,pi,z),powerNow=powerInfo.has?powerInfo.total:'-';
+  const markerHtml=(Array.isArray(c.markers)&&c.markers.length)
+    ?`<div class="detail-public-extra"><b>一時マーカー</b><div class="actions">${c.markers.map(m=>`<span class="pill">${esc(m.label||'マーカー')}</span>`).join('')}</div></div>`:'';
+  const counterHtml=(Array.isArray(c.counters)&&c.counters.length)
+    ?`<div class="detail-public-extra"><b>カウンター</b><div class="actions">${c.counters.map(x=>`<span class="pill">${esc(x.name||'カウンター')} ${Number(x.value)||0}</span>`).join('')}</div></div>`:'';
+
+  openModal(`<div class="modal-head">
+    <h3>${esc(c.faceDown?'裏向きカード':c.name)}</h3>
+    <span class="pill">相手公開情報・閲覧専用</span>
+    <button class="btn" id="online-readonly-detail-close">閉じる</button>
+  </div>
+  <div class="detail-grid">
+    <div class="card-full">
+      ${c.faceDown
+        ?'<div class="muted">このカードは裏向きのため、カード内容は公開されていません。</div>'
+        :`<div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div>
+          <h3>${esc(c.name)}</h3>
+          <div class="actions"><span class="pill">${esc(c.type||'-')}</span><span class="pill">Lv ${esc(levelNow)}</span><span class="pill">POWER ${esc(powerNow)}</span></div>
+          ${c.rarity?`<div class="muted">レアリティ：${esc(c.rarity)}</div>`:''}
+          <div class="muted">${esc(c.race||'種族なし')}</div>
+          <hr style="border:0;border-top:1px solid var(--line);margin:10px 0">
+          <div class="effect">${esc(c.effect||'効果テキストなし')}</div>
+          ${c.flavor?`<div class="muted" style="margin-top:10px;white-space:pre-wrap">${esc(c.flavor)}</div>`:''}`}
+    </div>
+    <div>
+      <h3 style="margin-top:0">公開状態</h3>
+      <div class="actions"><span class="pill">${c.rested?'レスト':'アクティブ'}</span>${c.faceDown?'<span class="pill">裏向き</span>':''}</div>
+      ${!c.faceDown&&levelInfo.numeric&&(levelInfo.persistent||levelInfo.temporary)?`<div class="muted">Lv補正：常時 ${signedNumber(levelInfo.persistent)} / 一時 ${signedNumber(levelInfo.temporary)}</div>`:''}
+      ${!c.faceDown&&powerInfo.numeric&&powerInfo.individual?`<div class="muted">個別POWER補正：${signedNumber(powerInfo.individual)}</div>`:''}
+      ${counterHtml}${markerHtml}
+      ${ids.length>1?`<div class="actions">
+        <button class="btn small" id="online-readonly-prev" ${pos<=0?'disabled':''}>← 前</button>
+        <button class="btn small" id="online-readonly-next" ${pos<0||pos>=ids.length-1?'disabled':''}>次 →</button>
+      </div>`:''}
+    </div>
+  </div>`);
+
+  if(!c.faceDown)hydrateBoardDetailImage(cardImageSourceId(c));
+  $('#online-readonly-detail-close').onclick=closeModal;
+  const move=step=>{
+    const id=ids[pos+step];if(!id)return;
+    const loc=findCardInstance(pi,z,id);
+    if(loc)openOnlineReadOnlyDetail(pi,z,loc.index,loc.cardIndex,ids);
+  };
+  const prev=$('#online-readonly-prev'),next=$('#online-readonly-next');
+  if(prev)prev.onclick=()=>move(-1);
+  if(next)next.onclick=()=>move(1);
+}
+
+function openDetail(pi,z,index,cardIndex=0,navIds){if(onlineOpponentReadOnly(pi))return openOnlineReadOnlyDetail(pi,z,index,cardIndex,navIds);const pile=getPile(pi,z,index);if(!pile)return;cardIndex=Math.min(cardIndex,pile.cards.length-1);detailCtx={pi,z,index,cardIndex};const c=pile.cards[cardIndex];ensureInstanceBoardExtras(c);
  if(Array.isArray(navIds))detailNav={pi,z,ids:navIds.filter(id=>findCardInstance(pi,z,id))};
  else if(!detailNav||detailNav.pi!==pi||detailNav.z!==z||!detailNav.ids.includes(c.instanceId))detailNav={pi,z,ids:zoneDetailIds(pi,z)};
  if(!detailNav.ids.includes(c.instanceId))detailNav.ids.push(c.instanceId);
@@ -29745,20 +29860,29 @@ function quickMoveFromDetail(dest){
 }
 function renderCounters(c){return c.counters.length?c.counters.map((x,i)=>`<div class="counter-row"><input data-counter-name="${i}" value="${esc(x.name)}"><input data-counter-val="${i}" type="number" value="${x.value}"><button class="btn small" data-counter-minus="${i}">−</button><button class="btn small" data-counter-plus="${i}">＋</button><button class="btn small danger delete-counter" data-counter-del="${i}">削除</button></div>`).join(''):'<div class="muted">カウンターなし</div>'}
 function bindCounters(c,refresh){$$('[data-counter-name]').forEach(x=>x.onchange=()=>{c.counters[Number(x.dataset.counterName)].name=x.value;renderBoard()});$$('[data-counter-val]').forEach(x=>x.onchange=()=>{c.counters[Number(x.dataset.counterVal)].value=Number(x.value)||0;renderBoard()});$$('[data-counter-minus]').forEach(b=>b.onclick=()=>{c.counters[Number(b.dataset.counterMinus)].value--;refresh();renderBoard()});$$('[data-counter-plus]').forEach(b=>b.onclick=()=>{c.counters[Number(b.dataset.counterPlus)].value++;refresh();renderBoard()});$$('[data-counter-del]').forEach(b=>b.onclick=()=>{c.counters.splice(Number(b.dataset.counterDel),1);refresh();renderBoard()})}
-function moveTargetsHtml(defaultPi=null,defaultZone='grave'){const order=['hand','character','pain','room','rulePlus','deck','otherDeck','grave','banish'];return board.players.map((p,pi)=>`<optgroup label="${esc(p.name)}">${order.map(z=>`<option value="${pi}|${z}"${Number(defaultPi)===pi&&z===defaultZone?' selected':''}>${ZONE_LABELS[z]}</option>`).join('')}</optgroup>`).join('')}
-function openMoveDialog(ctxOverride=null){const ctx=ctxOverride?{...ctxOverride}:{...detailCtx};const pile=getPile(ctx.pi,ctx.z,ctx.index), c=pile?.cards?.[ctx.cardIndex];if(!c)return;openModal(`<div class="modal-head"><h3>${esc(c.name)} を移動</h3><button class="btn" id="move-cancel">戻る</button></div><label>移動先<select id="move-target">${moveTargetsHtml(ctx.pi,'grave')}</select></label><div id="move-options" style="margin-top:10px"></div><button class="btn primary" id="move-confirm" style="margin-top:10px">移動する</button>`);$('#move-cancel').onclick=()=>openDetail(ctx.pi,ctx.z,ctx.index,ctx.cardIndex);const update=()=>{const[pi,z]=$('#move-target').value.split('|');let h='';if(FIXED.includes(z)){h=`<label>枠<select id="move-slot">${board.players[pi][z].map((x,i)=>`<option value="${i}">${i+1}${x?'（使用中）':''}</option>`).join('')}</select></label><label style="margin-top:8px">使用中の枠の場合<select id="occupied-mode"><option value="top">上に重ねる</option><option value="bottom">下に重ねる</option></select></label>`}else if(z==='deck'||z==='otherDeck'){h='<label>位置<select id="deck-pos"><option value="top">一番上</option><option value="bottom">一番下</option></select></label>'}$('#move-options').innerHTML=h};$('#move-target').onchange=update;update();$('#move-confirm').onclick=()=>{const[pi,z]=$('#move-target').value.split('|');const src=ctx;const card=removeCardAt(src.pi,src.z,src.index,src.cardIndex);if(FIXED.includes(z)){const slot=Number($('#move-slot').value),mode=$('#occupied-mode').value;addAsPile(Number(pi),z,card,{slot,stack:mode})}else if(z==='deck'||z==='otherDeck'){addAsPile(Number(pi),z,card,{position:$('#deck-pos').value==='bottom'?'bottom':'top'})}else addAsPile(Number(pi),z,card);$('#modal-layer').classList.remove('open');detailCtx=null;detailNav=null;renderBoard()}}
+function moveTargetsHtml(defaultPi=null,defaultZone='grave'){
+ const order=['hand','character','pain','room','rulePlus','deck','otherDeck','grave','banish'];
+ const own=onlineDuelActive?onlineOwnSlot():null;
+ return board.players.map((p,pi)=>{
+   if(onlineDuelActive&&own!=null&&pi!==Number(own)-1)return '';
+   const opts=order.filter(z=>!onlineServerDeckGuardActive(pi,z)).map(z=>`<option value="${pi}|${z}"${Number(defaultPi)===pi&&z===defaultZone?' selected':''}>${ZONE_LABELS[z]}</option>`).join('');
+   return opts?`<optgroup label="${esc(p.name)}">${opts}</optgroup>`:'';
+ }).join('');
+}
+function openMoveDialog(ctxOverride=null){const ctx=ctxOverride?{...ctxOverride}:{...detailCtx};const pile=getPile(ctx.pi,ctx.z,ctx.index), c=pile?.cards?.[ctx.cardIndex];if(!c)return;openModal(`<div class="modal-head"><h3>${esc(c.name)} を移動</h3><button class="btn" id="move-cancel">戻る</button></div><label>移動先<select id="move-target">${moveTargetsHtml(ctx.pi,'grave')}</select></label><div id="move-options" style="margin-top:10px"></div><button class="btn primary" id="move-confirm" style="margin-top:10px">移動する</button>`);$('#move-cancel').onclick=()=>openDetail(ctx.pi,ctx.z,ctx.index,ctx.cardIndex);const update=()=>{const[pi,z]=$('#move-target').value.split('|');let h='';if(FIXED.includes(z)){h=`<label>枠<select id="move-slot">${board.players[pi][z].map((x,i)=>`<option value="${i}">${i+1}${x?'（使用中）':''}</option>`).join('')}</select></label><label style="margin-top:8px">使用中の枠の場合<select id="occupied-mode"><option value="top">上に重ねる</option><option value="bottom">下に重ねる</option></select></label>`}else if(z==='deck'||z==='otherDeck'){h='<label>位置<select id="deck-pos"><option value="top">一番上</option><option value="bottom">一番下</option></select></label>'}$('#move-options').innerHTML=h};$('#move-target').onchange=update;update();$('#move-confirm').onclick=()=>{const[pi,z]=$('#move-target').value.split('|');if(onlineServerDeckMutationBlocked(Number(pi),z)||onlineServerDeckMutationBlocked(ctx.pi,ctx.z))return;const src=ctx;const card=removeCardAt(src.pi,src.z,src.index,src.cardIndex);if(FIXED.includes(z)){const slot=Number($('#move-slot').value),mode=$('#occupied-mode').value;addAsPile(Number(pi),z,card,{slot,stack:mode})}else if(z==='deck'||z==='otherDeck'){addAsPile(Number(pi),z,card,{position:$('#deck-pos').value==='bottom'?'bottom':'top'})}else addAsPile(Number(pi),z,card);$('#modal-layer').classList.remove('open');detailCtx=null;detailNav=null;renderBoard()}}
 function allPileOptions(exclude){let out='';board.players.forEach((p,pi)=>{Object.keys(ZONE_LABELS).forEach(z=>{p[z].forEach((pile,i)=>{if(!pile)return;if(exclude&&exclude.pi===pi&&exclude.z===z&&exclude.index===i)return;out+=`<option value="${pi}|${z}|${i}">${esc(p.name)} / ${ZONE_LABELS[z]} / ${esc(topCard(pile).name)}</option>`})})});return out}
 function stackCandidates(pi,z,exclude){const out=[];board.players[pi][z].forEach((pile,i)=>{if(!pile)return;if(exclude&&exclude.pi===pi&&exclude.z===z&&exclude.index===i)return;out.push({pile,index:i})});return out}
 function openStackDialog(){const ctx={...detailCtx},srcPile=getPile(ctx.pi,ctx.z,ctx.index),c=srcPile.cards[ctx.cardIndex];openModal(`<div class="modal-head"><h3>${esc(c.name)} を重ねる</h3><button class="btn" id="stack-cancel">戻る</button></div><label>プレイヤー<select id="stack-player">${board.players.map((p,i)=>`<option value="${i}">${esc(p.name)}</option>`).join('')}</select></label><label style="margin-top:8px">ゾーン<select id="stack-zone">${Object.entries(ZONE_LABELS).map(([z,l])=>`<option value="${z}">${l}</option>`).join('')}</select></label><label style="margin-top:8px">カード<select id="stack-target-card"></select></label><div id="stack-empty" class="muted" style="margin-top:6px"></div><label style="margin-top:8px">位置<select id="stack-pos"><option value="top">上に重ねる</option><option value="bottom">下に重ねる</option></select></label><button class="btn primary" id="stack-confirm" style="margin-top:10px">重ねる</button>`);$('#stack-cancel').onclick=()=>openDetail(ctx.pi,ctx.z,ctx.index,ctx.cardIndex);
- const refreshCards=()=>{const pi=Number($('#stack-player').value),z=$('#stack-zone').value,targets=stackCandidates(pi,z,ctx),sel=$('#stack-target-card');sel.innerHTML=targets.map(x=>`<option value="${x.pile.id}">${esc(topCard(x.pile).name)}${x.pile.cards.length>1?`（重なり${x.pile.cards.length}枚）`:''}</option>`).join('');$('#stack-empty').textContent=targets.length?'':'このゾーンに重ね先のカードがありません。';$('#stack-confirm').disabled=!targets.length};
- const pickFirstAvailable=()=>{for(let pi=0;pi<board.players.length;pi++){for(const z of Object.keys(ZONE_LABELS)){if(stackCandidates(pi,z,ctx).length){$('#stack-player').value=String(pi);$('#stack-zone').value=z;refreshCards();return true}}}return false};
+ const refreshCards=()=>{const pi=Number($('#stack-player').value),z=$('#stack-zone').value,own=onlineDuelActive?onlineOwnSlot():null,forbidden=(onlineDuelActive&&own!=null&&pi!==Number(own)-1)||onlineServerDeckGuardActive(pi,z),targets=forbidden?[]:stackCandidates(pi,z,ctx),sel=$('#stack-target-card');sel.innerHTML=targets.map(x=>`<option value="${x.pile.id}">${esc(topCard(x.pile).name)}${x.pile.cards.length>1?`（重なり${x.pile.cards.length}枚）`:''}</option>`).join('');$('#stack-empty').textContent=targets.length?'':'このゾーンに重ね先のカードがありません。';$('#stack-confirm').disabled=!targets.length};
+ const pickFirstAvailable=()=>{for(let pi=0;pi<board.players.length;pi++){if(onlineDuelActive&&onlineOwnSlot()!=null&&pi!==Number(onlineOwnSlot())-1)continue;for(const z of Object.keys(ZONE_LABELS)){if(onlineServerDeckGuardActive(pi,z))continue;if(stackCandidates(pi,z,ctx).length){$('#stack-player').value=String(pi);$('#stack-zone').value=z;refreshCards();return true}}}return false};
  $('#stack-player').onchange=refreshCards;$('#stack-zone').onchange=refreshCards;if(!pickFirstAvailable()){$('#stack-confirm').disabled=true;$('#stack-empty').textContent='重ね先のカードがありません。'}
- $('#stack-confirm').onclick=()=>{const tpi=Number($('#stack-player').value),z=$('#stack-zone').value,targetId=$('#stack-target-card').value;if(!targetId)return;const card=removeCardAt(ctx.pi,ctx.z,ctx.index,ctx.cardIndex),area=board.players[tpi][z],newIndex=area.findIndex(p=>p&&p.id===targetId),target=newIndex>=0?area[newIndex]:null;if(!target){addAsPile(tpi,z,card);toast('重ね先が移動したため通常配置しました')}else{prepareCardForDestination(card,z);if($('#stack-pos').value==='top')target.cards.unshift(card);else target.cards.push(card)};$('#modal-layer').classList.remove('open');detailCtx=null;detailNav=null;renderBoard()}}
+ $('#stack-confirm').onclick=()=>{const tpi=Number($('#stack-player').value),z=$('#stack-zone').value,targetId=$('#stack-target-card').value;if(!targetId)return;if(onlineServerDeckMutationBlocked(ctx.pi,ctx.z)||onlineServerDeckMutationBlocked(tpi,z))return;if(onlineDuelActive&&onlineOwnSlot()!=null&&tpi!==Number(onlineOwnSlot())-1){toast('相手側のカードは操作できません');return}const card=removeCardAt(ctx.pi,ctx.z,ctx.index,ctx.cardIndex),area=board.players[tpi][z],newIndex=area.findIndex(p=>p&&p.id===targetId),target=newIndex>=0?area[newIndex]:null;if(!target){addAsPile(tpi,z,card);toast('重ね先が移動したため通常配置しました')}else{prepareCardForDestination(card,z);if($('#stack-pos').value==='top')target.cards.unshift(card);else target.cards.push(card)};$('#modal-layer').classList.remove('open');detailCtx=null;detailNav=null;renderBoard()}}
 
 // Deck actions
 function takeTopCard(pi,z='deck'){const d=board.players[pi][z];if(!d.length)return null;const c=d[0].cards.shift();if(!d[0].cards.length)d.shift();return c}
 function shuffleDeck(pi,z='deck'){const d=board.players[pi][z],all=[];d.forEach(p=>p.cards.forEach(c=>all.push(c)));for(let i=all.length-1;i>0;i--){const j=boardRandomInt(i+1);[all[i],all[j]]=[all[j],all[i]]}board.players[pi][z]=all.map(c=>({id:uid('pile'),cards:[c]}))}
 function deckAction(a,pi,z='deck'){
+ if(onlineServerDeckMutationBlocked(pi,z))return;
  if(a==='shuffle'){shuffleDeck(pi,z);renderBoard();toast(`${ZONE_LABELS[z]}をシャッフルしました`)}
  else if(a==='draw'){const c=takeTopCard(pi,z);if(c)addAsPile(pi,'hand',c);renderBoard()}
  else if(a==='painFace'||a==='painBack'){const c=takeTopCard(pi,z);if(c){c.faceDown=a==='painBack';addAsPile(pi,'pain',c);toast(a==='painBack'?'PCへ裏向きで1枚追加しました':'PCへ表向きで1枚追加しました')}renderBoard()}
@@ -29769,10 +29893,7 @@ function deckAction(a,pi,z='deck'){
  else if(a==='look')lookTopX(pi,z);
 }
 function browseDeck(pi,z='deck',focusInstanceId=''){
- if(typeof onlineServerDeckGuardActive==='function'&&onlineServerDeckGuardActive(pi,z)){
-   toast('オンライン対戦中のメインデッキ順はサーバー管理です');
-   return;
- }
+ if(typeof onlineServerDeckMutationBlocked==='function'&&onlineServerDeckMutationBlocked(pi,z))return;
  browseSession={pi,z,field:'name',query:'',typeValue:'',focusInstanceId:String(focusInstanceId||''),orderOpenIds:[]};
  openModal(`<div class="modal-head"><h3>${ZONE_LABELS[z]}の中を見る</h3><button class="btn" id="browse-close">閉じる</button></div>
  <p class="muted">現在のデッキ順を確認しながら検索できます。↑↓や一番上・一番下で順番を入れ替え、カードを手札・ホーム・墓地・消失へ直接移動できます。</p>
@@ -30556,6 +30677,68 @@ function syncHomePlayModeUI(){
 }
 
 let onlineSetupDraft={deckId:'',otherDeckId:'',oshiiCardId:'',roomCode:''};
+
+const LS_ONLINE_OWNER_HAND='minkai-online-owner-hand-v1';
+function onlinePersistOwnerHand(){
+  if(!onlineDuelActive||!onlineSessionState.joinCode)return;
+  const slot=onlineOwnSlot(),p=slot?board?.players?.[slot-1]:null;
+  if(!slot||!p)return;
+  const hand=(Array.isArray(p.hand)?p.hand:[]).map(pile=>({
+    cards:(Array.isArray(pile?.cards)?pile.cards:[]).map(c=>({
+      id:String(c?.id||''),
+      name:String(c?.name||''),
+      faceDown:!!c?.faceDown,
+      rested:!!c?.rested,
+      powerMod:Number(c?.powerMod)||0,
+      levelModPersistent:Number(c?.levelModPersistent)||0,
+      levelModTemporary:Number(c?.levelModTemporary)||0,
+      counters:Array.isArray(c?.counters)?c.counters.map(x=>({name:String(x?.name||'カウンター'),value:Number(x?.value)||0})):[],
+      markers:Array.isArray(c?.markers)?c.markers.map(x=>({key:String(x?.key||'custom'),label:String(x?.label||'マーカー'),tone:String(x?.tone||'custom')})):[]
+    }))
+  }));
+  try{
+    const all=JSON.parse(localStorage.getItem(LS_ONLINE_OWNER_HAND)||'{}');
+    all[onlineSessionState.joinCode]={slot,hand,savedAt:Date.now()};
+    localStorage.setItem(LS_ONLINE_OWNER_HAND,JSON.stringify(all));
+  }catch(_){}
+}
+function onlineRestoreOwnerHand(player,slot,code){
+  try{
+    const all=JSON.parse(localStorage.getItem(LS_ONLINE_OWNER_HAND)||'{}');
+    const rec=all?.[code];
+    if(!rec||Number(rec.slot)!==Number(slot)||!Array.isArray(rec.hand))return false;
+    if(Date.now()-Number(rec.savedAt||0)>1000*60*60*6)return false;
+    const restored=[];
+    for(const pileRec of rec.hand){
+      const cardsOut=[];
+      for(const cr of Array.isArray(pileRec?.cards)?pileRec.cards:[]){
+        const master=cards.find(x=>String(x.id)===String(cr.id));
+        if(!master)continue;
+        const c=cloneInstance(master);
+        c.faceDown=!!cr.faceDown;c.rested=!!cr.rested;
+        c.powerMod=Number(cr.powerMod)||0;
+        c.levelModPersistent=Number(cr.levelModPersistent)||0;
+        c.levelModTemporary=Number(cr.levelModTemporary)||0;
+        c.counters=Array.isArray(cr.counters)?cr.counters.map(x=>({name:String(x.name||'カウンター'),value:Number(x.value)||0})):[];
+        c.markers=Array.isArray(cr.markers)?cr.markers.map(x=>({id:uid('mark'),key:String(x.key||'custom'),label:String(x.label||'マーカー'),tone:String(x.tone||'custom')})):[];
+        cardsOut.push(c);
+        onlineRemoveShadowDeckCard(player,c.id);
+      }
+      if(cardsOut.length)restored.push({id:uid('pile'),cards:cardsOut});
+    }
+    player.hand=restored;
+    return true;
+  }catch(_){return false}
+}
+function onlineForgetOwnerHand(code=''){
+  try{
+    const all=JSON.parse(localStorage.getItem(LS_ONLINE_OWNER_HAND)||'{}');
+    if(code)delete all[code];else Object.keys(all).forEach(k=>delete all[k]);
+    localStorage.setItem(LS_ONLINE_OWNER_HAND,JSON.stringify(all));
+  }catch(_){}
+}
+
+let onlineOwnerHandRestoreState='none'; // none | restored | fresh | incomplete
 let onlineDuelBoard=null;
 let onlineDuelRoomCode='';
 let onlineOfflineBoardState=null;
@@ -30623,6 +30806,7 @@ function onlinePublicCardToInstance(pub){
     instanceId:uid('remote-inst'),
     visualEffects:[],counters:[],markers:[],memo:'',powerMod:0,levelModPersistent:0,levelModTemporary:0,token:false
   };
+  if(pub?.publicKey)base.instanceId=`remote_${String(pub.publicKey)}`;
   if(!pub?.faceDown){
     base.name=String(pub?.name||base.name||'公開カード');
     base.type=String(pub?.type||base.type||'キャラクター');
@@ -30641,7 +30825,15 @@ function onlinePublicCardToInstance(pub){
   base.levelModPersistent=Number(pub?.levelModPersistent||0)||0;
   base.levelModTemporary=Number(pub?.levelModTemporary||0)||0;
   base.memo='';
-  base.counters=Array.isArray(pub?.counters)?pub.counters.map(x=>({name:String(x?.name||'カウンター'),value:Number(x?.value)||0})):[];
+  base.counters=Array.isArray(pub?.counters)?pub.counters.map(x=>({
+    name:String(x?.name||'カウンター'),value:Number(x?.value)||0
+  })):[];
+  base.markers=Array.isArray(pub?.markers)?pub.markers.map(x=>({
+    id:uid('remote-mark'),
+    key:String(x?.key||'custom'),
+    label:String(x?.label||'マーカー').slice(0,18),
+    tone:String(x?.tone||'custom')
+  })):[];
   return base;
 }
 function onlinePublicPileToLocal(pile){
@@ -30662,6 +30854,10 @@ function onlineApplyRemotePublicSlotToDuel(slot,state){
       player[z]=src.map(onlinePublicPileToLocal).filter(Boolean);
     }
   }
+  player.homePowerMod=Number(state?.meta?.homePowerMod)||0;
+  player.freeCounters=Array.isArray(state?.meta?.freeCounters)
+    ?state.meta.freeCounters.map(x=>({name:String(x?.name||'記録').slice(0,20),value:Number(x?.value)||0}))
+    :[];
 }
 function onlinePrepareDuelBoard(room){
   const code=String(room?.code||onlineSessionState.joinCode||'');
@@ -30674,7 +30870,12 @@ function onlinePrepareDuelBoard(room){
     const deckId=String(own?.deckId||onlineSetupDraft.deckId||'');
     const otherDeckId=String(own?.otherDeckId||onlineSetupDraft.otherDeckId||'');
     const oshii=String(own?.oshiiCardId||onlineSetupDraft.oshiiCardId||'');
-    if(deckId)players[ownSlot-1]=makePlayer(deckId,ownSlot-1,oshii,otherDeckId);
+    if(deckId){
+      players[ownSlot-1]=makePlayer(deckId,ownSlot-1,oshii,otherDeckId);
+      const restored=onlineRestoreOwnerHand(players[ownSlot-1],ownSlot,code);
+      const remoteHandCount=Number(own?.handCount||0);
+      onlineOwnerHandRestoreState=restored?'restored':(remoteHandCount>0?'incomplete':'fresh');
+    }
   }
 
   players[0].name='P1';
@@ -31055,7 +31256,27 @@ function onlineRenderDuelBoard(){
   </section>`;
 
   host.innerHTML=p2+'<div class="divider">──────── オンライン対戦ライン ────────</div>'+p1;
-  host.querySelectorAll('.online-duel-opponent [data-pile]').forEach(el=>el.setAttribute('draggable','false'));
+  host.querySelectorAll('.online-duel-opponent button:not([data-zone-view])').forEach(btn=>{
+    btn.disabled=true;
+    btn.setAttribute('aria-disabled','true');
+    btn.tabIndex=-1;
+  });
+  host.querySelectorAll('.online-duel-opponent [data-marker-remove]').forEach(btn=>{
+    btn.disabled=true;
+    btn.setAttribute('aria-disabled','true');
+    btn.tabIndex=-1;
+  });
+  const ownPi=Number(onlineOwnSlot()||0)-1;
+  if(ownPi>=0){
+    host.querySelectorAll(`[data-deck-action*="|${ownPi}|deck"], [data-deck-action$="|${ownPi}"]`).forEach(btn=>{
+      const raw=String(btn.dataset.deckAction||'').split('|');
+      if(Number(raw[1])===ownPi&&(raw[2]||'deck')==='deck'){
+        btn.disabled=true;
+        btn.setAttribute('aria-disabled','true');
+        btn.title='オンライン対戦中のメインデッキはサーバー管理です';
+      }
+    });
+  }
 
   bindBoard();
   bindBoardToolTray();
@@ -31561,13 +31782,27 @@ function onlineEmptyPublicBoard(){
 function onlineNormalizePublicPile(pile){
   if(!pile||typeof pile!=='object')return {cards:[]};
   const publicCards=Array.isArray(pile.cards)?pile.cards.map(c=>{
+    ensureInstanceBoardExtras(c);
+    const counters=Array.isArray(c?.counters)
+      ?c.counters.map(x=>({name:String(x?.name||'カウンター'),value:Number(x?.value)||0}))
+      :[];
+    const markers=Array.isArray(c?.markers)
+      ?c.markers.map(x=>({
+        key:String(x?.key||'custom'),
+        label:String(x?.label||'マーカー').slice(0,18),
+        tone:String(x?.tone||'custom')
+      }))
+      :[];
     if(c?.faceDown){
       return {
+        publicKey:String(c?.instanceId||''),
         id:'',name:'裏向きカード',type:'',level:'',power:'',race:'',rarity:'',effect:'',flavor:'',
-        rested:!!c?.rested,faceDown:true,counters:{},powerMod:0,levelModPersistent:0,levelModTemporary:0
+        rested:!!c?.rested,faceDown:true,counters,markers,
+        powerMod:0,levelModPersistent:0,levelModTemporary:0
       };
     }
     return {
+      publicKey:String(c?.instanceId||''),
       id:String(c?.id||''),
       name:String(c?.name||'名称未設定'),
       type:String(c?.type||''),
@@ -31579,10 +31814,10 @@ function onlineNormalizePublicPile(pile){
       flavor:String(c?.flavor||''),
       rested:!!c?.rested,
       faceDown:false,
-      counters:Array.isArray(c?.counters)?c.counters.map(x=>({name:String(x?.name||'カウンター'),value:Number(x?.value)||0})):[],
+      counters,markers,
       powerMod:Number(c?.powerMod||0)||0,
       levelModPersistent:Number(c?.levelModPersistent||0)||0,
-      levelModTemporary:Number(c?.levelModTemporary)||0
+      levelModTemporary:Number(c?.levelModTemporary||0)||0
     };
   }):[];
   return {cards:publicCards};
@@ -31595,6 +31830,11 @@ function onlineExtractPublicBoardFromSolo(slot){
     out[z]=(Array.isArray(p[z])?p[z]:[]).map(onlineNormalizePublicPile);
   }
   out.meta.updatedAt=Date.now();
+  out.meta.homePowerMod=Number(p.homePowerMod)||0;
+  out.meta.freeCounters=ensurePlayerFreeCounters(p).map(x=>({
+    name:String(x?.name||'記録').slice(0,20),
+    value:Number(x?.value)||0
+  }));
   return out;
 }
 function onlineRoomPublicState(room){
@@ -31720,10 +31960,18 @@ function onlinePublicPileSummary(pile){
   const cards=Array.isArray(pile?.cards)?pile.cards:[];
   if(!cards.length)return '空';
   return cards.map(c=>{
+    const counterText=Array.isArray(c?.counters)&&c.counters.length
+      ?`カウンター ${c.counters.map(x=>`${String(x?.name||'カウンター')}:${Number(x?.value)||0}`).join(' / ')}`
+      :'';
+    const markerText=Array.isArray(c?.markers)&&c.markers.length
+      ?`マーカー ${c.markers.map(x=>String(x?.label||'マーカー')).join(' / ')}`
+      :'';
+    const lvPersistent=Number(c?.levelModPersistent)||0,lvTemporary=Number(c?.levelModTemporary)||0;
     const extra=[
       c.rested?'REST':'',
       Number(c.powerMod||0)?`PW${Number(c.powerMod)>0?'+':''}${Number(c.powerMod)}`:'',
-      c.counters&&Object.keys(c.counters).length?`カウンター ${Object.entries(c.counters).map(([k,v])=>`${k}:${v}`).join(' / ')}`:''
+      lvPersistent||lvTemporary?`Lv 常時${signedNumber(lvPersistent)} / 一時${signedNumber(lvTemporary)}`:'',
+      counterText,markerText
     ].filter(Boolean).join(' / ');
     return `${esc(c.name||'名称未設定')}${extra?` <small>${esc(extra)}</small>`:''}`;
   }).join('<br>');
@@ -31883,7 +32131,10 @@ function onlinePublicHandCount(room,slot){
 function onlineUpdateVisibleHandCount(room,slot){
   const member=slot===1?room?.p1:room?.p2;
   if(!member)return;
-  member.handCount=onlineCountPrivateInfo(slot).handCount;
+  const local=onlineCountPrivateInfo(slot).handCount;
+  const own=onlineOwnSlot();
+  if(Number(slot)===Number(own)&&onlineOwnerHandRestoreState==='incomplete'&&local===0&&Number(member.handCount||0)>0)return;
+  member.handCount=local;
 }
 async function onlineEndTurn(){
   const out=$('#online-duel-tool-result');
@@ -31895,13 +32146,13 @@ async function onlineEndTurn(){
 
   let room=onlineLoadRooms()[code];
   if(onlineUsingRemoteProvider()){
-    try{
-      const latest=await onlineRemoteGetRoom();
-      if(latest)room=latest;
-    }catch(err){
-      toast(`ターン状態の確認に失敗しました：${String(err?.message||err)}`);
+    const latest=await onlineRemoteGetRoom();
+    if(!latest){
+      if(out)out.textContent='ターン終了中止：最新のターン状態を取得できませんでした';
+      toast('最新のターン状態を取得できないため、ターン終了を中止しました');
       return;
     }
+    room=latest;
   }
   if(!room||!onlineMatchStarted(room)){toast('対戦が開始されていません');return}
   const current=onlineCurrentTurnPlayer(room);
@@ -32101,6 +32352,13 @@ function onlineUpdateOwnPrivateState(room){
 function onlinePublicSnapshotString(slot){
   try{return JSON.stringify(onlineExtractPublicBoardFromSolo(slot))}catch(_){return ''}
 }
+
+function onlinePublicBoardSyncSignature(publicBoard){
+  const copy=JSON.parse(JSON.stringify(publicBoard||{}));
+  if(copy.meta&&typeof copy.meta==='object')delete copy.meta.updatedAt;
+  return JSON.stringify(copy);
+}
+
 async function onlineAutoSyncNow(){
   if(homePlayMode!=='online'||!onlineDuelActive||!['host','guest'].includes(onlineSessionState.role))return;
   const code=onlineSessionState.joinCode;
@@ -32112,9 +32370,8 @@ async function onlineAutoSyncNow(){
 
   board=onlineDuelBoard||board;
   const publicBoard=onlineExtractPublicBoardFromSolo(slot);
-  const snap=JSON.stringify(publicBoard);
+  const snap=onlinePublicBoardSyncSignature(publicBoard);
   if(snap===onlineLastPublicSnapshot)return;
-  onlineLastPublicSnapshot=snap;
 
   const state=onlineRoomPublicState(room);
   state[`p${slot}`]=publicBoard;
@@ -32123,6 +32380,7 @@ async function onlineAutoSyncNow(){
 
   onlineUpdateOwnPrivateState(room);
   onlineUpdateVisibleHandCount(room,slot);
+  onlinePersistOwnerHand();
   room.publicState=state;
   room.updatedAt=Date.now();
   rooms[code]=room;
@@ -32135,7 +32393,7 @@ async function onlineAutoSyncNow(){
         clientId:onlineSessionState.clientId,
         slot,
         publicBoard,
-        handCount:onlineCountPrivateInfo(slot).handCount,
+        handCount:Number((slot===1?room.p1:room.p2)?.handCount ?? onlineCountPrivateInfo(slot).handCount),
         revision:state.revision
       });
       if(data)onlineApplyRemoteRoomSnapshot(data);
@@ -32147,6 +32405,7 @@ async function onlineAutoSyncNow(){
     }
   }
 
+  onlineLastPublicSnapshot=snap;
   onlineBroadcast('public-board-update',{slot,revision:state.revision});
   onlineSignalRoomUpdate('public-board');
   onlineUpdateDuelToolbar(onlineLoadRooms()[code]||room);
@@ -32171,7 +32430,7 @@ function onlineStartBoardMutationWatch(){
     subtree:true,
     childList:true,
     attributes:true,
-    attributeFilter:['class','style','data-rested','data-face-down','data-power-mod','data-counter']
+    attributeFilter:['data-rested','data-face-down','data-power-mod','data-level-mod','data-counter','data-marker']
   });
 }
 function onlineStopBoardMutationWatch(){
@@ -32791,7 +33050,9 @@ async function onlineRemoteGetRoom(){
     });
     return onlineApplyRemoteRoomSnapshot(data);
   }catch(err){
-    onlineMarkConnectionProblem('ルーム状態の取得に失敗しました');
+    const msg=String(err?.message||err);
+    onlineMarkConnectionProblem(`ルーム状態の取得に失敗：${msg}`);
+    const sync=$('#online-duel-sync');if(sync)sync.textContent=`同期エラー：${msg}`;
     console.warn('remote get-room failed',err);
     return null;
   }
@@ -32874,11 +33135,16 @@ function onlineDeckCountFromRoom(room,slot){
   return Number.isFinite(n)&&n>=0?n:null;
 }
 function onlineServerDeckGuardActive(pi,z){
-  if(z!=='deck'||homePlayMode!=='online'||!onlineSessionState.joinCode)return false;
+  if(z!=='deck'||!onlineDuelActive||homePlayMode!=='online'||!onlineSessionState.joinCode)return false;
   const room=onlineLoadRooms()[onlineSessionState.joinCode];
   if(!onlineMatchStarted(room))return false;
   const own=onlineOwnSlot();
   return own!=null&&Number(pi)===Number(own);
+}
+function onlineServerDeckMutationBlocked(pi,z,showToast=true){
+  const blocked=onlineServerDeckGuardActive(pi,z);
+  if(blocked&&showToast)toast('オンライン対戦中のメインデッキはサーバー管理です。ドロー・シャッフルはP1/P2操作ボタンを使用してください');
+  return blocked;
 }
 
 async function onlineToolDraw(){
@@ -32897,6 +33163,7 @@ async function onlineToolDraw(){
     }
 
     const applied=onlineApplyServerDrawToLocalBoard(slot,drawn);
+    if(onlineOwnerHandRestoreState==='none')onlineOwnerHandRestoreState='fresh';
     if(applied.errors.length){
       if(out)out.textContent=`サーバードロー成功 / 盤面反映エラー：${applied.errors.join(' / ')}`;
     }else{
@@ -32907,7 +33174,8 @@ async function onlineToolDraw(){
     onlineRecordRoomAction('server-draw',{slot,count:drawn.length},`owner-p${slot}`);
     await onlineRemoteGetRoom();
     onlineSignalRoomUpdate('draw');
-    onlineRenderMatchBoard();
+    if(onlineDuelActive)onlineRenderDuelBoard();
+    else onlineRenderMatchBoard();
   }catch(err){
     if(out)out.textContent=`ドロー失敗：${String(err?.message||err)}`;
   }
@@ -32935,17 +33203,26 @@ async function onlineToolShuffle(){
 async function onlineToolRandomHand(){
   const room=onlineLoadRooms()[onlineSessionState.joinCode];
   if(!onlineCanOperateCurrentBoard(room)){toast('現在は自分の操作ターンではありません');return}
-
   if(!['host','guest'].includes(onlineSessionState.role))return;
+
   const slot=onlineSessionState.role==='host'?1:2,out=$('#online-duel-tool-result')||$('#online-tool-result');
   try{
     const p=board?.players?.[slot-1];
-    const ids=(Array.isArray(p?.hand)?p.hand:[]).flatMap(pile=>(pile?.cards||[]).map(c=>String(c?.id||''))).filter(Boolean);
-    if(!ids.length){if(out)out.textContent='手札がありません';return}
-    await onlineServerRandomPick(ids,1);
-    if(out)out.textContent='手札からランダム選択：1枚選択済み';
-    onlineRecordRoomAction('server-random-hand',{slot,count:ids.length},`owner-p${slot}`);
-  }catch(err){if(out)out.textContent=`ランダム選択失敗：${String(err?.message||err)}`}
+    const entries=(Array.isArray(p?.hand)?p.hand:[]).flatMap(pile=>(pile?.cards||[]).map(c=>({
+      id:String(c?.id||''),name:String(c?.name||'名称未設定')
+    }))).filter(x=>x.id);
+    if(!entries.length){if(out)out.textContent='手札がありません';return}
+
+    const res=await onlineServerRandomPick(entries.map(x=>x.id),1);
+    const pickedId=String(res?.picked?.[0]||'');
+    const picked=entries.find(x=>x.id===pickedId);
+    const label=picked?.name||'選択されたカード';
+    if(out)out.textContent=`手札からランダム選択：${label}`;
+    toast(`ランダム選択：${label}`);
+    onlineRecordRoomAction('server-random-hand',{slot,count:entries.length},`owner-p${slot}`);
+  }catch(err){
+    if(out)out.textContent=`ランダム選択失敗：${String(err?.message||err)}`;
+  }
 }
 
 async function onlineHeartbeat(){
@@ -33011,6 +33288,8 @@ async function onlineLeaveRoom(broadcast=true){
     onlineOfflineBoardState=null;
     onlineDuelActive=false;
   }
+  onlineForgetOwnerHand(onlineSessionState.joinCode);
+  onlineOwnerHandRestoreState='none';
   onlineDuelBoard=null;
   onlineDuelRoomCode='';
   onlineResetSetupDraft('');
