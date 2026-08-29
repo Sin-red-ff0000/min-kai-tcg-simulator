@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.1</title>
+<title>みん会TCG Simulator v16.2</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -19620,6 +19620,13 @@ ruby rt{font-size:.52em;line-height:1;color:inherit;font-weight:600}
  .pile.board-name-xlong .name{font-size:calc(7.2px * var(--board-name-comp,1))!important}
 }
 .ruby-help{font-size:11px;color:var(--muted);line-height:1.45;margin-top:4px}
+
+/* v16.2 ruby UI / board start safety */
+.ruby-preview-box{margin-top:7px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:rgba(0,0,0,.16)}
+.ruby-preview-box .ruby-preview-title{font-size:11px;color:var(--muted);margin-bottom:8px}
+.ruby-preview-sample{font-size:17px;font-weight:800;line-height:1.8;word-break:break-word}
+.ruby-current-setting{margin:8px 0;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:rgba(0,0,0,.12)}
+.ruby-current-setting code{white-space:pre-wrap;word-break:break-word}
 </style>
 </head>
 <body>
@@ -19628,7 +19635,7 @@ ruby rt{font-size:.52em;line-height:1;color:inherit;font-weight:600}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19962,7 +19969,7 @@ ruby rt{font-size:.52em;line-height:1;color:inherit;font-weight:600}
 
       <div id="tool-pane-manual" class="tool-pane">
         <form id="card-form" class="form-grid">
-          <label class="wide">カード名<input id="card-name" required /></label><label class="wide">ルビ設定<input id="card-ruby" placeholder="例：廻る=めぐる;越境者=えっきょうしゃ" /><div class="ruby-help">本文中の語句=よみ を ; または改行で区切って入力。カード名・種族・効果・フレーバーに共通適用します。</div></label>
+          <label class="wide">カード名<input id="card-name" required /></label><label class="wide">ルビ設定<input id="card-ruby" placeholder="例：廻る=めぐる;越境者=えっきょうしゃ" /><div class="ruby-help">本文中の語句=よみ を ; または改行で区切って入力。カード名・種族・効果・フレーバーに共通適用します。</div></label><div class="wide" id="card-ruby-preview"></div>
           <label>種類<select id="card-type"><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="__custom__">その他（自由入力）</option></select></label>
           <div class="wide custom-type-fields" id="card-custom-type-fields" hidden>
             <label>自由種類・左側<input id="card-custom-type-left" placeholder="自由入力"></label>
@@ -23656,7 +23663,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.1',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.2',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -24066,12 +24073,19 @@ function openRegisterFloatingPreview(){openFloatingPreview('カード登録プ�
 function refreshRegisterFloatingPreview(){if(floatingPreviewOpen&&floatingPreviewOwner==='screen:cards')openRegisterFloatingPreview()}
 function clearCardForm(){
  ['card-name','card-ruby','card-level','card-power','card-race','card-rarity','card-effect','card-flavor','card-custom-type-left','card-custom-type-right'].forEach(id=>{const el=$('#'+id);if(el)el.value=''});
- if($('#card-type'))$('#card-type').value='キャラクター';cleanupRegisterPreviewFile();syncManualCustomTypeFields();refreshRegisterFloatingPreview();
+ if($('#card-type'))$('#card-type').value='キャラクター';cleanupRegisterPreviewFile();syncManualCustomTypeFields();refreshRegisterFloatingPreview();if(typeof refreshCardRubyPreview==='function')refreshCardRubyPreview();
 }
 $('#card-type').onchange=()=>{syncManualCustomTypeFields();refreshRegisterFloatingPreview()};
 $('#card-custom-type-left').oninput=()=>{syncManualCustomTypeFields();refreshRegisterFloatingPreview()};
 $('#card-custom-type-right').oninput=()=>{syncManualCustomTypeFields();refreshRegisterFloatingPreview()};
 ['card-name','card-ruby','card-level','card-power','card-race','card-rarity','card-effect','card-flavor'].forEach(id=>$('#'+id)?.addEventListener('input',refreshRegisterFloatingPreview));
+function refreshCardRubyPreview(){
+ const host=$('#card-ruby-preview');if(!host)return;
+ host.innerHTML=rubyPreviewHtml($('#card-name')?.value||'', $('#card-race')?.value||'', $('#card-effect')?.value||'', $('#card-ruby')?.value||'');
+}
+['card-name','card-ruby','card-race','card-effect'].forEach(id=>$('#'+id)?.addEventListener('input',refreshCardRubyPreview));
+refreshCardRubyPreview();
+
 syncManualCustomTypeFields();
 $('#card-register-image').onchange=e=>{const file=e.target.files?.[0];if(!file){cleanupRegisterPreviewFile();refreshRegisterFloatingPreview();return}if(!String(file.type||'').startsWith('image/')){toast('画像ファイルを選択してください');cleanupRegisterPreviewFile();return}if(registerPreviewUrl){try{URL.revokeObjectURL(registerPreviewUrl)}catch{}}registerPreviewFile=file;registerPreviewUrl=URL.createObjectURL(file);$('#card-register-image-status').textContent=`選択中：${file.name}`;openRegisterFloatingPreview()};
 $('#card-register-preview-open').onclick=openRegisterFloatingPreview;
@@ -25456,6 +25470,7 @@ function openCardManagerDetail(id,opt={}){
      <div class="actions"><button class="btn" id="manager-image-settings">画像設定</button><button class="btn" id="manager-image-enlarge" style="display:none">画像を拡大</button></div>
    </div>`:''}
  </div>
+ ${c.ruby?`<div class="ruby-current-setting"><b>ルビ設定</b><div class="ruby-preview-sample">${rubyTextHtml(c.name,c.ruby)}</div><code>${esc(c.ruby)}</code></div>`:'<div class="ruby-current-setting muted">ルビ設定なし</div>'}
  <div class="manager-text-export"><div class="muted manager-text-export-title">テキスト出力</div><div class="actions"><button class="btn" id="manager-copy-jelly">ゼリー君式でコピー</button><button class="btn" id="manager-copy-bake">化けさん式でコピー</button></div></div>
  <div class="actions"><button class="btn primary" id="manager-edit-card">編集</button><button class="btn" id="manager-card-fx">エフェクト設定</button><button class="btn" id="manager-card-frame">フレーム設定</button><button class="btn" id="manager-copy-appearance">外観設定コピー</button><button class="btn" id="manager-appearance-presets">外観プリセット</button><button class="btn" id="manager-clone-card">複製</button></div>
  <div class="manager-danger-zone"><button class="btn danger" id="manager-delete-card">削除</button></div>`);
@@ -25471,7 +25486,7 @@ function openCardManagerEdit(id){
  const custom=isCustomCardType(c.type),parts=splitCustomCardType(c.type);
  openModal(`<div class="modal-head"><h3>カード編集</h3><button class="btn" id="manager-edit-close">閉じる</button></div>
  <form id="manager-edit-form" class="form-grid">
-   <label class="wide">カード名<input id="manager-edit-name" required value="${esc(c.name)}"></label><label class="wide">ルビ設定<input id="manager-edit-ruby" value="${esc(c.ruby||'')}" placeholder="例：廻る=めぐる;越境者=えっきょうしゃ"><div class="ruby-help">語句=よみ を ; または改行で区切ります。</div></label>
+   <label class="wide">カード名<input id="manager-edit-name" required value="${esc(c.name)}"></label><label class="wide">ルビ設定<input id="manager-edit-ruby" value="${esc(c.ruby||'')}" placeholder="例：廻る=めぐる;越境者=えっきょうしゃ"><div class="ruby-help">語句=よみ を ; または改行で区切ります。</div></label><div class="wide" id="manager-edit-ruby-preview">${rubyPreviewHtml(c.name,c.race,c.effect,c.ruby)}</div>
    <label>種類<select id="manager-edit-type">${cardTypeOptionsHtml(c.type,true)}</select></label>
    <div class="wide custom-type-fields" id="manager-edit-custom-type-fields" ${custom?'':'hidden'}>
      <label>自由種類・左側<input id="manager-edit-custom-left" value="${esc(parts[0])}" placeholder="自由入力"></label><span class="custom-type-colon">:</span><label>自由種類・右側<input id="manager-edit-custom-right" value="${esc(parts[1])}" placeholder="自由入力"></label>
@@ -25486,6 +25501,9 @@ function openCardManagerEdit(id){
  </form>`);
  const syncCustom=()=>{$('#manager-edit-custom-type-fields').hidden=$('#manager-edit-type').value!=='__custom__'};
  $('#manager-edit-type').onchange=syncCustom;syncCustom();
+ const refreshEditRuby=()=>{const host=$('#manager-edit-ruby-preview');if(host)host.innerHTML=rubyPreviewHtml($('#manager-edit-name')?.value||'', $('#manager-edit-race')?.value||'', $('#manager-edit-effect')?.value||'', $('#manager-edit-ruby')?.value||'')};
+ ['manager-edit-name','manager-edit-ruby','manager-edit-race','manager-edit-effect'].forEach(x=>$('#'+x)?.addEventListener('input',refreshEditRuby));
+
  $('#manager-edit-close').onclick=()=>openCardManagerDetail(id,{keepContext:true});$('#manager-edit-cancel').onclick=()=>openCardManagerDetail(id,{keepContext:true});
  $('#manager-edit-form').onsubmit=e=>{
    e.preventDefault();const i=cards.findIndex(x=>x.id===id);if(i<0)return;
@@ -28416,7 +28434,22 @@ function cloneInstance(c){return {...c,visualEffects:normalizeCardVisualEffects(
 function makeDeckPiles(deckId){const d=decks.find(x=>x.id===deckId),phys=[];if(d)Object.entries(d.entries).forEach(([id,n])=>{const c=cards.find(x=>x.id===id);if(c)for(let i=0;i<n;i++)phys.push({id:uid('pile'),cards:[cloneInstance(c)]})});return phys}
 function shufflePileArray(arr){for(let i=arr.length-1;i>0;i--){const j=boardRandomInt(i+1);[arr[i],arr[j]]=[arr[j],arr[i]]}}
 function makePlayer(deckId,index,favoriteCardId='',otherDeckId=''){const phys=makeDeckPiles(deckId),other=makeDeckPiles(otherDeckId);const player={name:'プレイヤー'+(index+1),homePowerMod:0,freeCounters:[],character:Array(5).fill(null),pain:Array(5).fill(null),room:Array(5).fill(null),rulePlus:Array(1).fill(null),hand:[],handMode:'scroll',deck:phys,otherDeck:other,grave:[],banish:[],collapsed:{pain:false,room:false,rulePlus:false}};if(favoriteCardId){const i=player.deck.findIndex(p=>p.cards[0]?.id===favoriteCardId);if(i>=0){const [pile]=player.deck.splice(i,1);player.hand.push(pile)}}shufflePileArray(player.deck);return player}
-$('#start-board').onclick=()=>{const mode=Number($('#mode-select').value);if(!$('#setup-deck-1').value){alert(decks.length?'メインデッキとして盤面開始に表示されているデッキがありません。デッキ設定を確認してください。':'デッキを1つ以上作成してください。');return}const setup={mode,deck1:$('#setup-deck-1').value,otherDeck1:$('#setup-other-deck-1').value,favorite1:$('#setup-favorite-1').value,deck2:$('#setup-deck-2').value||$('#setup-deck-1').value,otherDeck2:$('#setup-other-deck-2').value,favorite2:$('#setup-favorite-2').value};handScrollPositions=[0,0];zoneScrollPositions={};pendingHandFollow.clear();board={mode,setup,players:[makePlayer(setup.deck1,0,setup.favorite1,setup.otherDeck1)],note:'',turn:1,ui:{panelCollapsed:{operations:false,tray:true,power:true,note:false},trayCounterName:'カウンター',trayCustomMarker:'',diceExpression:'1d6',randomHistory:[],boardSearchQuery:'',linkJumpHistory:[],homePowerApplyDraft:{0:0,1:0}}};if(mode===2)board.players.push(makePlayer(setup.deck2,1,setup.favorite2,setup.otherDeck2));boardZoom=1;resetBoardHistory();renderBoard();nav('board');saveBoardSessionNow(false)};
+$('#start-board').onclick=()=>{const mode=Number($('#mode-select').value);if(!$('#setup-deck-1').value){alert(decks.length?'メインデッキとして盤面開始に表示されているデッキがありません。デッキ設定を確認してください。':'デッキを1つ以上作成してください。');return}const setup={mode,deck1:$('#setup-deck-1').value,otherDeck1:$('#setup-other-deck-1').value,favorite1:$('#setup-favorite-1').value,deck2:$('#setup-deck-2').value||$('#setup-deck-1').value,otherDeck2:$('#setup-other-deck-2').value,favorite2:$('#setup-favorite-2').value};handScrollPositions=[0,0];zoneScrollPositions={};pendingHandFollow.clear();board={mode,setup,players:[makePlayer(setup.deck1,0,setup.favorite1,setup.otherDeck1)],note:'',turn:1,ui:{panelCollapsed:{operations:false,tray:true,power:true,note:false},trayCounterName:'カウンター',trayCustomMarker:'',diceExpression:'1d6',randomHistory:[],boardSearchQuery:'',linkJumpHistory:[],homePowerApplyDraft:{0:0,1:0}}};if(mode===2)board.players.push(makePlayer(setup.deck2,1,setup.favorite2,setup.otherDeck2));boardZoom=1;resetBoardHistory();nav('board');
+try{
+  renderBoard();
+}catch(err){
+  console.error('board start render failed',err);
+  try{
+    const originalRuby=window.__minkaiRubyDisabled;
+    window.__minkaiRubyDisabled=true;
+    renderBoard();
+    window.__minkaiRubyDisabled=originalRuby;
+  }catch(fallbackErr){
+    console.error('board start fallback render failed',fallbackErr);
+    toast(`盤面表示エラー：${String(fallbackErr?.message||fallbackErr).slice(0,80)}`);
+  }
+}
+saveBoardSessionNow(false)};
 
 // Board rendering
 function currentNamePosition(){
@@ -29021,7 +29054,7 @@ function renderPile(pile,pi,z,index){
  const markers=renderCardMarkers(c),sizeClass=boardNameSizeClass(c);
  if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${markers}<div class="back-title">裏向きカード</div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;
  const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';
- return `<div class="pile ${sizeClass} ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}${cardFxHtml(c,'board')}${cardFrameHtml(c)}${markers}<div class="name">${rubyTextHtml(c.name,cardRubySpec(c))}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div>${c.token?'<span class="pill" style="position:absolute;left:4px;bottom:4px;font-size:10px">TOKEN</span>':''}${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;
+ return `<div class="pile ${sizeClass} ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}${cardFxHtml(c,'board')}${cardFrameHtml(c)}${markers}<div class="name">${(()=>{try{return rubyTextHtml(c.name,cardRubySpec(c))}catch{return esc(c.name||'名称未設定')}})()}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div>${c.token?'<span class="pill" style="position:absolute;left:4px;bottom:4px;font-size:10px">TOKEN</span>':''}${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;
 }
 async function hydrateBoardDetailImage(cardId){
  const el=$('#board-detail-image');if(!el||!cardId)return;
@@ -29761,40 +29794,57 @@ function openZoneViewer(pi,z,initialQuery=''){
 
 // Detail modal
 function parseRubySpec(spec){
- const rows=String(spec||'').split(/\n|;/).map(x=>x.trim()).filter(Boolean);
- const out=[];
- for(const row of rows){
-   const at=row.indexOf('=');
-   if(at<=0)continue;
-   const base=row.slice(0,at).trim(),reading=row.slice(at+1).trim();
-   if(base&&reading)out.push({base,reading});
- }
- return out.sort((a,b)=>b.base.length-a.base.length);
+ try{
+   const rows=String(spec||'').split(/\n|;/).map(x=>x.trim()).filter(Boolean);
+   const out=[];
+   for(const row of rows){
+     const at=row.indexOf('=');
+     if(at<=0)continue;
+     const base=row.slice(0,at).trim(),reading=row.slice(at+1).trim();
+     if(base&&reading)out.push({base,reading});
+   }
+   return out.sort((a,b)=>b.base.length-a.base.length);
+ }catch{return []}
 }
 function rubyTextHtml(text,spec){
- const raw=String(text??'');
- const maps=parseRubySpec(spec);
- if(!maps.length)return esc(raw).replace(/\n/g,'<br>');
- let i=0,out='';
- while(i<raw.length){
-   let best=null,bestAt=-1;
-   for(const m of maps){
-     const at=raw.indexOf(m.base,i);
-     if(at<0)continue;
-     if(bestAt<0||at<bestAt||(at===bestAt&&m.base.length>best.base.length)){best=m;bestAt=at}
+ try{
+   if(window.__minkaiRubyDisabled)return esc(String(text??'')).replace(/\n/g,'<br>');
+   const raw=String(text??'');
+   const maps=parseRubySpec(spec);
+   if(!maps.length)return esc(raw).replace(/\n/g,'<br>');
+   let i=0,out='';
+   while(i<raw.length){
+     let best=null,bestAt=-1;
+     for(const row of maps){
+       const at=raw.indexOf(row.base,i);
+       if(at<0)continue;
+       if(bestAt<0||at<bestAt||(at===bestAt&&best&&row.base.length>best.base.length)){best=row;bestAt=at}
+     }
+     if(bestAt<0||!best){out+=esc(raw.slice(i));break}
+     if(bestAt>i)out+=esc(raw.slice(i,bestAt));
+     out+=`<ruby>${esc(best.base)}<rt>${esc(best.reading)}</rt></ruby>`;
+     i=bestAt+best.base.length;
    }
-   if(bestAt<0){out+=esc(raw.slice(i));break}
-   if(bestAt>i)out+=esc(raw.slice(i,bestAt));
-   out+=`<ruby><rb>${esc(best.base)}</rb><rt>${esc(best.reading)}</rt></ruby>`;
-   i=bestAt+best.base.length;
+   return out.replace(/\n/g,'<br>');
+ }catch(err){
+   console.warn('ruby render fallback',err);
+   return esc(String(text??'')).replace(/\n/g,'<br>');
  }
- return out.replace(/\n/g,'<br>');
 }
-function cardRubySpec(c){return String(c?.ruby||'')}
+function cardRubySpec(c){try{return String(c?.ruby||'')}catch{return ''}}
 function boardNameSizeClass(c){
  const n=String(c?.name||'').length;
  return n>=18?'board-name-xlong':n>=11?'board-name-long':'';
 }
+function rubyPreviewHtml(name,race,effect,spec){
+ const ruby=String(spec||'').trim();
+ return `<div class="ruby-preview-box"><div class="ruby-preview-title">ルビ表示プレビュー${ruby?'':'（未設定）'}</div>
+   <div class="ruby-preview-sample">${rubyTextHtml(name||'カード名サンプル',ruby)}</div>
+   ${race?`<div class="muted" style="margin-top:5px">${rubyTextHtml(race,ruby)}</div>`:''}
+   ${effect?`<div class="muted" style="margin-top:5px;white-space:pre-wrap">${rubyTextHtml(effect,ruby)}</div>`:''}
+ </div>`;
+}
+
 
 function zoneDetailIds(pi,z){
  const ids=[];
@@ -29936,7 +29986,7 @@ function openDetail(pi,z,index,cardIndex=0,navIds){if(onlineOpponentReadOnly(pi)
  const helperOpen=(Number(c.powerMod)||0)!==0||(Number(c.levelModPersistent)||0)!==0||(Number(c.levelModTemporary)||0)!==0||c.counters.length||c.markers.length;
  const stackOpen=pile.cards.length>1;
  const relatedHtml=renderBoardRelatedLinks(c);
- openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div><h3>${rubyTextHtml(c.name,cardRubySpec(c))}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(levelNow)}</span><span class="pill">POWER ${pow===null?'-':esc(pow)}</span></div>${levelBreakdown}${powerBreakdown}<div class="muted">${rubyTextHtml(c.race||'種族なし',cardRubySpec(c))}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${rubyTextHtml(c.effect||'効果テキストなし',cardRubySpec(c))}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="reset-card-corrections" ${((Number(c.powerMod)||0)===0&&(Number(c.levelModPersistent)||0)===0&&(Number(c.levelModTemporary)||0)===0)?'disabled':''}>POWER/Lv修正をリセット</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><details class="board-detail-fold board-helper-fold" ${helperOpen?'open':''}><summary>補助情報 <span class="pill">${(Number(c.powerMod)||0)!==0?'PW':''}${((Number(c.levelModPersistent)||0)!==0||(Number(c.levelModTemporary)||0)!==0)?`${(Number(c.powerMod)||0)!==0?' / ':''}LV`:''}${c.counters.length?`${(Number(c.powerMod)||0)!==0?' / ':''}C${c.counters.length}`:''}${c.markers.length?`${((Number(c.powerMod)||0)!==0||c.counters.length)?' / ':''}M${c.markers.length}`:''}${!helperOpen?'なし':''}</span></summary><div class="board-detail-fold-body"><label>POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h4>レベル補正</h4><div class="level-mod-grid"><label>常時<input id="level-mod-persistent" type="number" value="${Number(c.levelModPersistent)||0}"></label><label>一時<input id="level-mod-temporary" type="number" value="${Number(c.levelModTemporary)||0}"></label></div><div class="muted">元Lvが数値なら合算して現在Lvとして扱います。？やXなどの場合は補正値だけを別表示します。</div><h4>カウンター</h4><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button><h4>一時マーカー</h4><div id="detail-marker-list">${renderDetailMarkers(c)}</div>${Array.isArray(c.markers)&&c.markers.length?'<button class="btn small" id="clear-temp-markers">すべて外す</button>':''}</div></details><details class="board-detail-fold" ${stackOpen?'open':''}><summary>重なり <span class="pill">${pile.cards.length}</span></summary><div class="board-detail-fold-body">${pile.cards.length>1?`<div class="actions stack-quick-actions"><button class="btn small" id="stack-move-top">一番上だけ移動</button><button class="btn small" id="stack-move-bottom">一番下だけ移動</button><button class="btn small" id="stack-move-all">全部まとめて移動</button><button class="btn small danger" id="stack-split-all">ばらす</button></div>`:''}<div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item stack-item-rich ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span class="stack-order">${i+1}</span><div class="stack-mini-art">${boardMiniArtHtml(x)}</div><div class="stack-item-copy"><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}${x.faceDown?' / 裏向き':''}${x.rested?' / レスト':''}</div></div><div class="stack-item-actions"><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div></div></details>${relatedHtml}</div></div>`);
+ openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div><h3>${rubyTextHtml(c.name,cardRubySpec(c))}</h3>${c.ruby?`<div class="muted">ルビ：${esc(c.ruby)}</div>`:''}<div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(levelNow)}</span><span class="pill">POWER ${pow===null?'-':esc(pow)}</span></div>${levelBreakdown}${powerBreakdown}<div class="muted">${rubyTextHtml(c.race||'種族なし',cardRubySpec(c))}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${rubyTextHtml(c.effect||'効果テキストなし',cardRubySpec(c))}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="reset-card-corrections" ${((Number(c.powerMod)||0)===0&&(Number(c.levelModPersistent)||0)===0&&(Number(c.levelModTemporary)||0)===0)?'disabled':''}>POWER/Lv修正をリセット</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><details class="board-detail-fold board-helper-fold" ${helperOpen?'open':''}><summary>補助情報 <span class="pill">${(Number(c.powerMod)||0)!==0?'PW':''}${((Number(c.levelModPersistent)||0)!==0||(Number(c.levelModTemporary)||0)!==0)?`${(Number(c.powerMod)||0)!==0?' / ':''}LV`:''}${c.counters.length?`${(Number(c.powerMod)||0)!==0?' / ':''}C${c.counters.length}`:''}${c.markers.length?`${((Number(c.powerMod)||0)!==0||c.counters.length)?' / ':''}M${c.markers.length}`:''}${!helperOpen?'なし':''}</span></summary><div class="board-detail-fold-body"><label>POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h4>レベル補正</h4><div class="level-mod-grid"><label>常時<input id="level-mod-persistent" type="number" value="${Number(c.levelModPersistent)||0}"></label><label>一時<input id="level-mod-temporary" type="number" value="${Number(c.levelModTemporary)||0}"></label></div><div class="muted">元Lvが数値なら合算して現在Lvとして扱います。？やXなどの場合は補正値だけを別表示します。</div><h4>カウンター</h4><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button><h4>一時マーカー</h4><div id="detail-marker-list">${renderDetailMarkers(c)}</div>${Array.isArray(c.markers)&&c.markers.length?'<button class="btn small" id="clear-temp-markers">すべて外す</button>':''}</div></details><details class="board-detail-fold" ${stackOpen?'open':''}><summary>重なり <span class="pill">${pile.cards.length}</span></summary><div class="board-detail-fold-body">${pile.cards.length>1?`<div class="actions stack-quick-actions"><button class="btn small" id="stack-move-top">一番上だけ移動</button><button class="btn small" id="stack-move-bottom">一番下だけ移動</button><button class="btn small" id="stack-move-all">全部まとめて移動</button><button class="btn small danger" id="stack-split-all">ばらす</button></div>`:''}<div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item stack-item-rich ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span class="stack-order">${i+1}</span><div class="stack-mini-art">${boardMiniArtHtml(x)}</div><div class="stack-item-copy"><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}${x.faceDown?' / 裏向き':''}${x.rested?' / レスト':''}</div></div><div class="stack-item-actions"><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div></div></details>${relatedHtml}</div></div>`);
  hydrateBoardDetailImage(cardImageSourceId(c));
  hydrateBoardMiniListImages($('#modal'));
  bindBoardRelatedLinks(c);
