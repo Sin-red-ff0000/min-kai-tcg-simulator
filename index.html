@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.19</title>
+<title>みん会TCG Simulator v13.20</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17908,6 +17908,37 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   #online-board-tool-window-p1{right:286px}
 }
 
+
+/* v13.20: online zoom prioritizes card names */
+#online-duel-main.zoom-name-priority .pile .name{
+  font-size:calc(12px * var(--board-name-comp,1));
+  line-height:1.08;
+  font-weight:800;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#online-duel-main.zoom-low .pile .stats,
+#online-duel-main.zoom-tiny .pile .stats,
+#online-duel-main.zoom-overview .pile .stats{
+  font-size:8px;
+  opacity:.7;
+}
+#online-duel-main.zoom-tiny .pile .stats,
+#online-duel-main.zoom-overview .pile .stats{
+  display:none!important;
+}
+#online-duel-main.zoom-overview .pile .memo,
+#online-duel-main.zoom-overview .pile .race,
+#online-duel-main.zoom-overview .pile .effect{
+  display:none!important;
+}
+#online-duel-main.zoom-overview .pile .name{
+  display:block!important;
+  font-size:calc(11px * var(--board-name-comp,1));
+  line-height:1.05;
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -19476,7 +19507,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.19 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.20 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23491,7 +23522,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.19',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.20',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -30569,8 +30600,24 @@ const onlineToolWindowState={1:{open:false,section:'menu'},2:{open:false,section
 function onlineApplyDuelZoom(){
   const root=$('#online-duel-main');
   if(!root)return;
+
   onlineDuelZoom=Math.max(.3,Math.min(2,Math.round(onlineDuelZoom*10)/10));
   root.style.setProperty('--online-board-zoom',String(onlineDuelZoom));
+
+  let nameComp=1;
+  if(onlineDuelZoom<1){
+    nameComp=onlineDuelZoom<=.4
+      ?Math.min(2.2,1/onlineDuelZoom)
+      :Math.min(2.6,1/onlineDuelZoom);
+  }
+  root.style.setProperty('--board-name-comp',String(nameComp));
+
+  root.classList.toggle('zoom-name-priority',onlineDuelZoom<1);
+  root.classList.toggle('zoom-mid',onlineDuelZoom>=.7&&onlineDuelZoom<1);
+  root.classList.toggle('zoom-low',onlineDuelZoom>=.5&&onlineDuelZoom<.7);
+  root.classList.toggle('zoom-tiny',onlineDuelZoom<.5);
+  root.classList.toggle('zoom-overview',onlineDuelZoom<=.4);
+
   const label=$('#online-board-zoom-reset');
   if(label)label.textContent=Math.round(onlineDuelZoom*100)+'%';
   const out=$('#online-board-zoom-out'),inn=$('#online-board-zoom-in');
