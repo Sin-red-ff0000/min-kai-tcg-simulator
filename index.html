@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.21</title>
+<title>みん会TCG Simulator v13.22</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17991,6 +17991,16 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   }
 }
 
+
+/* v13.22 online player action buttons */
+.online-player-toolbar [data-online-slot-action]:not(:disabled){
+  cursor:pointer;
+  touch-action:manipulation;
+}
+.online-player-toolbar [data-online-slot-action]:active:not(:disabled){
+  transform:translateY(1px);
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -19559,7 +19569,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.21 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.22 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23581,7 +23591,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.21',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.22',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -30992,7 +31002,39 @@ function onlinePlayerActionToolbar(slot,room){
     <button class="btn small primary" type="button" data-online-slot-action="${slot}|end" ${mine?'':'disabled'}>ターン終了</button>
   </div>`;
 }
-function onlineBindDuelConvenienceTools(){ /* v13.19: P1/P2 floating tools handle this */ }
+function onlineBindDuelConvenienceTools(){
+  const host=$('#online-duel-main');
+  if(!host)return;
+
+  if(host.dataset.onlineActionDelegation!=='1'){
+    host.dataset.onlineActionDelegation='1';
+    host.addEventListener('click',e=>{
+      const btn=e.target.closest?.('[data-online-slot-action]');
+      if(!btn||!host.contains(btn))return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      const raw=String(btn.dataset.onlineSlotAction||'');
+      const [slotRaw,action]=raw.split('|');
+      const slot=Number(slotRaw);
+      if(![1,2].includes(slot)||!['draw','shuffle','random','end'].includes(action))return;
+
+      const own=onlineOwnSlot();
+      if(slot!==own){
+        toast(`P${slot}側の操作はP${slot}本人だけ使用できます`);
+        return;
+      }
+
+      Promise.resolve(onlineDuelRunForSlot(slot,action)).catch(err=>{
+        console.error('online player action failed',err);
+        const msg=String(err?.message||err);
+        const out=$('#online-duel-tool-result');
+        if(out)out.textContent=`操作失敗：${msg}`;
+        toast(`操作失敗：${msg}`);
+      });
+    });
+  }
+}
 
 
 function onlineRenderDuelBoard(){
@@ -31844,6 +31886,8 @@ function onlineUpdateVisibleHandCount(room,slot){
   member.handCount=onlineCountPrivateInfo(slot).handCount;
 }
 async function onlineEndTurn(){
+  const out=$('#online-duel-tool-result');
+  if(out)out.textContent='ターン終了を送信中…';
   const code=onlineSessionState.joinCode;
   if(!code){toast('オンラインルームに接続されていません');return}
   const own=onlineOwnSlot();
@@ -31891,6 +31935,7 @@ async function onlineEndTurn(){
     onlineUpdateDuelToolbar(room);
     onlineRenderDuelBoard();
   }else onlineRenderMatchBoard();
+  if(out)out.textContent=`P${current} → P${onlineCurrentTurnPlayer(room)} にターンを更新しました`;
   toast(`P${current}のターンを終了しました`);
 }
 function onlineRenderTurnPanel(room){
