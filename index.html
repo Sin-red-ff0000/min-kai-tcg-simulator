@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.28.1</title>
+<title>みん会TCG Simulator v13.29</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -19596,7 +19596,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.28.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.29 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -20568,7 +20568,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
     </div>
 
     <div class="online-duel-wrap">
-      <main id="online-duel-main" class="online-duel-main"></main>
+      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：カード名・種族・効果テキスト等に任意の読み仮名を設定する機能を追加予定</p></section></main>
 
       <aside class="online-duel-tools">
         <div class="panel">
@@ -23624,7 +23624,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.28.1',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.29',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -28981,7 +28981,7 @@ function renderDeckBox(p,pi,z,label){const count=physicalCount(p[z]),empty=count
 function renderUtility(p,pi){return `<div class="utility-grid"><div class="deck-pair">${renderDeckBox(p,pi,'deck','デッキ')}${renderDeckBox(p,pi,'otherDeck','その他デッキ')}</div><div class="grave-banish-pair">${compactZoneBox(p,pi,'grave')}${compactZoneBox(p,pi,'banish')}</div></div>`}
 function physicalCount(arr){return arr.reduce((a,p)=>a+p.cards.length,0)}
 function topCard(pile){return pile.cards[0]}
-function renderPile(pile,pi,z,index){const c=topCard(pile);ensureInstanceBoardExtras(c);const counters=c.counters?.length?c.counters.map(x=>`${esc(x.name)} ${x.value}`).join(' / '):'カウンターなし';const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;const title=`${c.name}${c.memo?'\nメモ: '+c.memo:''}${pile.cards.length>1?'\n重なり: '+pile.cards.map(x=>x.name).join(' → '):''}`;const markers=renderCardMarkers(c);if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${markers}<div class="back-title">裏向きカード</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';return `<div class="pile ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}${cardFxHtml(c,'board')}${cardFrameHtml(c)}${markers}<div class="name">${esc(c.name)}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`}
+function renderPile(pile,pi,z,index){const c=topCard(pile);ensureInstanceBoardExtras(c);const counters=c.counters?.length?c.counters.map(x=>`${esc(x.name)} ${x.value}`).join(' / '):'カウンターなし';const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;const title=`${c.name}${c.memo?'\nメモ: '+c.memo:''}${pile.cards.length>1?'\n重なり: '+pile.cards.map(x=>x.name).join(' → '):''}`;const markers=renderCardMarkers(c);if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${markers}<div class="back-title">裏向きカード</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';return `<div class="pile ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}${cardFxHtml(c,'board')}${cardFrameHtml(c)}${markers}<div class="name">${esc(c.name)}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`}
 
 async function hydrateBoardImages(){
  const root=$('#board-main');
@@ -29759,6 +29759,43 @@ $('#modal-layer').onclick=e=>{if(e.target===$('#modal-layer'))closeModal()};
 function onlineOpponentReadOnly(pi){
   return !!onlineDuelActive&&Number(pi)+1!==Number(onlineOwnSlot());
 }
+function onlineClonePublicCardForControl(card){
+  if(!card||card.faceDown)return null;
+  const clone={
+    ...JSON.parse(JSON.stringify(card)),
+    id:uid('public-copy'),
+    instanceId:uid('instance'),
+    publicCopy:true,
+    publicSourceId:String(card.publicKey||card.instanceId||card.id||''),
+    memo:''
+  };
+  clone.faceDown=false;
+  clone.counters=Array.isArray(card.counters)?card.counters.map(x=>({...x})):[];
+  clone.markers=Array.isArray(card.markers)?card.markers.map(x=>({...x})):[];
+  ensureInstanceBoardExtras(clone);
+  return clone;
+}
+
+function onlineCopyPublicCardToOwnCharacter(pi,z,index,cardIndex=0){
+  if(!onlineDuelActive){toast('オンライン対戦盤面で使用してください');return}
+  const own=onlineOwnSlot();
+  if(!own){toast('観戦者はコピーを配置できません');return}
+  if(Number(pi)+1===Number(own)){toast('相手の公開カードから使用してください');return}
+  const pile=getPile(pi,z,index),src=pile?.cards?.[cardIndex];
+  if(!src){toast('コピー元のカードが見つかりません');return}
+  if(src.faceDown){toast('裏向きカードはコピーできません');return}
+  const clone=onlineClonePublicCardForControl(src);
+  if(!clone){toast('コピーを作成できません');return}
+  const ownPi=Number(own)-1,zone=board.players[ownPi].character;
+  let slot=zone.findIndex(x=>!x);
+  if(slot<0){zone.push(null);slot=zone.length-1}
+  addAsPile(ownPi,'character',clone,{slot,stack:'top'});
+  closeModal();
+  renderBoard();
+  onlineScheduleAutoSync();
+  toast(`${clone.name} の公開コピーを自分のキャラクターゾーンへ配置しました`);
+}
+
 function openOnlineReadOnlyDetail(pi,z,index,cardIndex=0,navIds){
   const pile=getPile(pi,z,index);if(!pile)return;
   cardIndex=Math.max(0,Math.min(Number(cardIndex)||0,pile.cards.length-1));
@@ -29798,6 +29835,10 @@ function openOnlineReadOnlyDetail(pi,z,index,cardIndex=0,navIds){
       ${!c.faceDown&&levelInfo.numeric&&(levelInfo.persistent||levelInfo.temporary)?`<div class="muted">Lv補正：常時 ${signedNumber(levelInfo.persistent)} / 一時 ${signedNumber(levelInfo.temporary)}</div>`:''}
       ${!c.faceDown&&powerInfo.numeric&&powerInfo.individual?`<div class="muted">個別POWER補正：${signedNumber(powerInfo.individual)}</div>`:''}
       ${counterHtml}${markerHtml}
+      ${!c.faceDown?`<div class="actions" style="margin-top:12px">
+        <button class="btn primary" id="online-copy-public-card">この公開カードを自分のキャラクターゾーンへコピー</button>
+      </div>
+      <div class="muted" style="margin-top:7px">コントロール変更に使う場合、元カードは元のコントローラー側でその他デッキ等へ退避してください。</div>`:''}
       ${ids.length>1?`<div class="actions">
         <button class="btn small" id="online-readonly-prev" ${pos<=0?'disabled':''}>← 前</button>
         <button class="btn small" id="online-readonly-next" ${pos<0||pos>=ids.length-1?'disabled':''}>次 →</button>
@@ -29807,6 +29848,8 @@ function openOnlineReadOnlyDetail(pi,z,index,cardIndex=0,navIds){
 
   if(!c.faceDown)hydrateBoardDetailImage(cardImageSourceId(c));
   $('#online-readonly-detail-close').onclick=closeModal;
+  const copyBtn=$('#online-copy-public-card');
+  if(copyBtn)copyBtn.onclick=()=>onlineCopyPublicCardToOwnCharacter(pi,z,index,cardIndex);
   const move=step=>{
     const id=ids[pos+step];if(!id)return;
     const loc=findCardInstance(pi,z,id);
@@ -31903,7 +31946,9 @@ function onlineNormalizePublicPile(pile){
       counters,markers,
       powerMod:Number(c?.powerMod||0)||0,
       levelModPersistent:Number(c?.levelModPersistent||0)||0,
-      levelModTemporary:Number(c?.levelModTemporary||0)||0
+      levelModTemporary:Number(c?.levelModTemporary||0)||0,
+      publicCopy:!!c?.publicCopy,
+      publicSourceId:String(c?.publicSourceId||'')
     };
   }):[];
   return {cards:publicCards};
@@ -33179,9 +33224,12 @@ function onlineApplyServerDrawToLocalBoard(slot,drawnIds){
   return {names,errors};
 }
 function onlineDeckCountFromRoom(room,slot){
-  const member=slot===1?room?.p1:room?.p2;
+  const member=Number(slot)===1?room?.p1:room?.p2;
   const n=Number(member?.deckCount);
-  return Number.isFinite(n)&&n>=0?n:null;
+  if(Number.isFinite(n)&&n>=0)return n;
+  const total=Number(member?.deckTotal);
+  if(Number.isFinite(total)&&total>=0)return total;
+  return null;
 }
 function onlineServerDeckGuardActive(pi,z){
   if(z!=='deck'||!onlineDuelActive||homePlayMode!=='online'||!onlineSessionState.joinCode)return false;
