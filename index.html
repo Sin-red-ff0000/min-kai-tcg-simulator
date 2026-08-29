@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.17</title>
+<title>みん会TCG Simulator v13.18</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17703,6 +17703,127 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   .online-duel-tools>.panel:last-child{grid-column:auto}
 }
 
+
+/* v13.18 online duel isolation / mobile layout */
+#screen-online-duel{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  overflow:hidden;
+}
+.online-duel-head{
+  width:100%;
+  min-width:0;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.online-duel-title-row{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-wrap:wrap;
+  min-width:0;
+}
+.online-duel-title-row h2{margin:0}
+.online-duel-head-actions{margin-left:auto}
+.online-duel-wrap{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(220px,270px);
+  gap:10px;
+  align-items:start;
+  overflow:hidden;
+}
+.online-duel-main{
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  overflow-x:auto;
+  overflow-y:visible;
+  -webkit-overflow-scrolling:touch;
+}
+.online-player-section{
+  width:100%;
+  min-width:0;
+  margin-bottom:12px;
+}
+.online-player-toolbar{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+  padding:7px 8px;
+  margin:0 0 7px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:rgba(255,255,255,.025);
+}
+.online-player-toolbar .online-player-toolbar-title{
+  font-weight:700;
+  margin-right:2px;
+}
+.online-player-toolbar .online-player-toolbar-spacer{flex:1}
+.online-player-toolbar .btn{margin:0}
+.online-duel-tools{
+  min-width:0;
+  display:grid;
+  gap:8px;
+  position:sticky;
+  top:8px;
+}
+.online-common-tools{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+}
+.online-common-tools .btn{margin:0}
+.online-duel-opponent{
+  position:relative;
+}
+.online-duel-opponent::before{
+  content:"相手公開盤面・閲覧専用";
+  display:block;
+  padding:5px 7px;
+  margin-bottom:6px;
+  border-radius:8px;
+  background:rgba(255,255,255,.035);
+  font-size:12px;
+  opacity:.78;
+}
+.online-duel-opponent button,
+.online-duel-opponent [draggable="true"]{
+  pointer-events:none!important;
+}
+@media(max-width:900px){
+  .online-duel-wrap{grid-template-columns:1fr}
+  .online-duel-tools{
+    position:static;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+@media(max-width:620px){
+  .online-duel-head-actions{
+    width:100%;
+    margin-left:0;
+  }
+  .online-duel-head-actions .btn{width:100%}
+  .online-duel-tools{grid-template-columns:1fr}
+  .online-player-toolbar{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .online-player-toolbar .online-player-toolbar-title,
+  .online-player-toolbar .online-player-toolbar-spacer{
+    grid-column:1/-1;
+  }
+  .online-player-toolbar .btn{width:100%}
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -19271,7 +19392,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.17 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.18 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -20215,11 +20336,13 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
 
   <section id="screen-online-duel" class="screen">
     <div class="section-head online-duel-head">
-      <h2>オンライン対戦盤面</h2>
-      <span id="online-duel-room-code" class="pill">------</span>
-      <span id="online-duel-role" class="pill">未接続</span>
-      <span id="online-duel-turn" class="pill">P1 TURN</span>
-      <div class="actions">
+      <div class="online-duel-title-row">
+        <h2>オンライン対戦盤面</h2>
+        <span id="online-duel-room-code" class="pill">------</span>
+        <span id="online-duel-role" class="pill">未接続</span>
+        <span id="online-duel-turn" class="pill">P1 TURN</span>
+      </div>
+      <div class="actions online-duel-head-actions">
         <button class="btn" type="button" id="online-duel-back">ロビーへ戻る</button>
       </div>
     </div>
@@ -20230,34 +20353,57 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
     </div>
 
     <div class="online-duel-wrap">
-      <main id="online-duel-main" class="board-main online-duel-main"></main>
+      <main id="online-duel-main" class="online-duel-main"></main>
 
       <aside class="online-duel-tools">
         <div class="panel">
-          <div class="board-panel-head"><h3>P1 操作</h3><span id="online-duel-p1-state" class="pill">閲覧</span></div>
-          <div class="actions online-duel-actions">
-            <button class="btn small" id="online-duel-p1-draw" type="button">1枚ドロー</button>
-            <button class="btn small" id="online-duel-p1-shuffle" type="button">デッキをシャッフル</button>
-            <button class="btn small" id="online-duel-p1-random" type="button">手札からランダム</button>
-            <button class="btn small primary" id="online-duel-p1-end" type="button">ターン終了</button>
+          <div class="board-panel-head"><h3>便利操作</h3></div>
+          <div class="online-common-tools">
+            <button class="btn small" id="online-board-settings" type="button">盤面設定</button>
+            <button class="btn small" id="online-board-search" type="button">カード検索</button>
+            <button class="btn small" id="online-create-token" type="button">トークン作成</button>
+            <button class="btn small" id="online-random-picker" type="button">指定カードからランダム</button>
           </div>
         </div>
 
         <div class="panel">
-          <div class="board-panel-head"><h3>P2 操作</h3><span id="online-duel-p2-state" class="pill">閲覧</span></div>
-          <div class="actions online-duel-actions">
-            <button class="btn small" id="online-duel-p2-draw" type="button">1枚ドロー</button>
-            <button class="btn small" id="online-duel-p2-shuffle" type="button">デッキをシャッフル</button>
-            <button class="btn small" id="online-duel-p2-random" type="button">手札からランダム</button>
-            <button class="btn small primary" id="online-duel-p2-end" type="button">ターン終了</button>
+          <div class="board-panel-head"><h3>一時マーカー</h3></div>
+          <div class="board-tool-grid">
+            <button class="board-drag-tool marker-used" type="button" draggable="true" data-board-tool="marker|used">効果使用済</button>
+            <button class="board-drag-tool marker-attack" type="button" draggable="true" data-board-tool="marker|attack">攻撃済</button>
+            <button class="board-drag-tool marker-target" type="button" draggable="true" data-board-tool="marker|target">対象</button>
+            <button class="board-drag-tool marker-negate" type="button" draggable="true" data-board-tool="marker|negate">無効</button>
+            <button class="board-drag-tool marker-turn" type="button" draggable="true" data-board-tool="marker|turn">ターン終了時まで</button>
           </div>
+          <label class="board-tool-input">カスタムマーカー<input id="online-board-custom-marker" maxlength="18" placeholder="例：効果処理待ち"></label>
+          <button class="board-drag-tool marker-custom" type="button" draggable="true" data-board-tool="marker|custom">カスタムをドラッグ</button>
+        </div>
+
+        <div class="panel">
+          <div class="board-panel-head"><h3>カウンター</h3></div>
+          <label class="board-tool-input">名前<input id="online-board-counter-name" maxlength="20" value="カウンター"></label>
+          <div class="board-tool-grid board-counter-tools">
+            <button class="board-drag-tool counter-plus" type="button" draggable="true" data-board-tool="counter|1"><span>カウンター +1</span></button>
+            <button class="board-drag-tool counter-minus" type="button" draggable="true" data-board-tool="counter|-1"><span>カウンター −1</span></button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="board-panel-head"><h3>サイコロ・コイン</h3></div>
+          <div class="online-common-tools">
+            <button class="btn small" type="button" data-online-dice="1d6">1d6</button>
+            <button class="btn small" type="button" data-online-dice="2d6">2d6</button>
+            <button class="btn small" type="button" data-online-dice="1d20">1d20</button>
+            <button class="btn small" type="button" data-online-coin="1">コイン1回</button>
+          </div>
+          <div id="online-random-result" class="muted">まだ結果はありません。</div>
         </div>
 
         <div class="panel">
           <div class="board-panel-head"><h3>対戦情報</h3></div>
           <div id="online-duel-private-counts" class="muted">手札・デッキ枚数を取得中</div>
           <div id="online-duel-tool-result" class="muted">操作待機中</div>
-          <div class="muted">相手側は公開ゾーンだけを盤面へ反映します。手札内容とデッキ順は表示しません。</div>
+          <div class="muted">相手側は公開ゾーンのみ同期します。手札内容とデッキ順は相手へ送りません。</div>
         </div>
       </aside>
     </div>
@@ -22915,6 +23061,9 @@ function pushAppScreenHistory(name){
 function nav(name,opt={}){
  const screen=$('#screen-'+name);if(!screen)return;
  const previous=currentScreenName;
+ if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive&&name!=='online-duel'&&name!=='online'){
+   onlineSuspendDuelForNormalNavigation();
+ }
  if(floatingPreviewOpen&&floatingPreviewOwner.startsWith('screen:')&&floatingPreviewOwner!==`screen:${name}`)closeFloatingPreview();
  if(name!==previous){
    if(name==='home')appScreenHistory.length=0;
@@ -23268,7 +23417,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.17',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.18',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -27900,6 +28049,7 @@ function loadStoredBoardSession(){
  try{return normalizeStoredBoardSession(JSON.parse(localStorage.getItem(LS_BOARD_SESSION)||'null'))}catch{return null}
 }
 function saveBoardSessionNow(showToast=false){
+ if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive)return true;
  if(!board)return false;
  if(boardAutosaveTimer){clearTimeout(boardAutosaveTimer);boardAutosaveTimer=null}
  const rec=boardSessionRecordFrom();
@@ -27914,6 +28064,10 @@ function saveBoardSessionNow(showToast=false){
  }
 }
 function scheduleBoardAutosave(){
+ if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive){
+   if(typeof onlineScheduleAutoSync==='function')onlineScheduleAutoSync();
+   return;
+ }
  if(!board)return;
  if(boardAutosaveTimer)clearTimeout(boardAutosaveTimer);
  boardAutosaveTimer=setTimeout(()=>saveBoardSessionNow(false),250);
@@ -28390,7 +28544,14 @@ function syncBoardRandomTools(){
  }
 }
 
-function renderBoard(){if(!board)return;ensureBoardUiState();captureHandScroll();captureFixedZoneScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardDisplaySettings();applyBoardZoom();renderHomePowerControls();renderBoardPanelState();syncBoardTrayFields();renderBoardToolPresets();syncBoardRandomTools();hydratePlayerBoardBackgrounds();restoreBoardScroll();refreshMobileBoardToolWindow();syncMobileBoardToolsVisibility();commitBoardHistory();scheduleBoardAutosave()}
+function renderBoard(){
+ if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive&&currentScreenName==='online-duel'){
+   onlineDuelBoard=board;
+   onlineRenderDuelBoard();
+   onlineScheduleAutoSync();
+   return;
+ }
+ if(!board)return;ensureBoardUiState();captureHandScroll();captureFixedZoneScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardDisplaySettings();applyBoardZoom();renderHomePowerControls();renderBoardPanelState();syncBoardTrayFields();renderBoardToolPresets();syncBoardRandomTools();hydratePlayerBoardBackgrounds();restoreBoardScroll();refreshMobileBoardToolWindow();syncMobileBoardToolsVisibility();commitBoardHistory();scheduleBoardAutosave()}
 function zoneHeader(pi,z){const p=board.players[pi], n=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button><button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;else if(['hand','grave','banish'].includes(z))controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll';controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button></span>`}return `<div class="zone-head"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
 
 function signedNumber(n){
@@ -30307,25 +30468,95 @@ function onlineMergeRemotePublicIntoDuel(room){
   if(own!==2)onlineApplyRemotePublicSlotToDuel(2,state.p2);
   onlineDuelBoard.turn=Number(room?.match?.turnCount||onlineDuelBoard.turn||1);
 }
+
+function onlineSuspendDuelForNormalNavigation(){
+  if(!onlineDuelActive)return;
+  onlineStopBoardMutationWatch();
+  onlineDuelBoard=board;
+  board=onlineOfflineBoardState;
+  onlineOfflineBoardState=null;
+  onlineDuelActive=false;
+}
+function onlinePlayerActionToolbar(slot,room){
+  const own=onlineOwnSlot()||0;
+  const current=onlineCurrentTurnPlayer(room);
+  const mine=own===slot;
+  const can=mine&&current===slot;
+  return `<div class="online-player-toolbar" data-online-toolbar-slot="${slot}">
+    <span class="online-player-toolbar-title">P${slot} 操作</span>
+    <span class="pill">${mine?(can?'操作可':'相手ターン'):'閲覧専用'}</span>
+    <span class="online-player-toolbar-spacer"></span>
+    <button class="btn small" type="button" data-online-slot-action="${slot}|draw" ${can?'':'disabled'}>1枚ドロー</button>
+    <button class="btn small" type="button" data-online-slot-action="${slot}|shuffle" ${can?'':'disabled'}>デッキをシャッフル</button>
+    <button class="btn small" type="button" data-online-slot-action="${slot}|random" ${can?'':'disabled'}>手札からランダム</button>
+    <button class="btn small primary" type="button" data-online-slot-action="${slot}|end" ${can?'':'disabled'}>ターン終了</button>
+  </div>`;
+}
+function onlineBindDuelConvenienceTools(){
+  $$('[data-online-slot-action]').forEach(btn=>{
+    btn.onclick=()=>{
+      const [slot,action]=btn.dataset.onlineSlotAction.split('|');
+      onlineDuelRunForSlot(Number(slot),action);
+    };
+  });
+  $('#online-board-settings')?.addEventListener('click',openBoardSettings);
+  $('#online-board-search')?.addEventListener('click',()=>openBoardCardSearch(''));
+  $('#online-create-token')?.addEventListener('click',()=>openTokenCreator(null,Math.max(0,(onlineOwnSlot()||1)-1)));
+  $('#online-random-picker')?.addEventListener('click',openRandomCardPicker);
+
+  $$('[data-online-dice]').forEach(btn=>btn.onclick=()=>{
+    const expr=btn.dataset.onlineDice;
+    const parsed=parseDiceExpression(expr);
+    if(!parsed)return;
+    const rolls=Array.from({length:parsed.count},()=>boardRandomInt(parsed.sides)+1);
+    const total=rolls.reduce((a,b)=>a+b,0);
+    const out=$('#online-random-result');
+    if(out)out.textContent=`${expr}：${rolls.join(' + ')}${rolls.length>1?` = ${total}`:''}`;
+  });
+  $$('[data-online-coin]').forEach(btn=>btn.onclick=()=>{
+    const n=Math.max(1,Math.min(10,Number(btn.dataset.onlineCoin)||1));
+    const rows=Array.from({length:n},()=>boardRandomInt(2)===0?'表':'裏');
+    const out=$('#online-random-result');
+    if(out)out.textContent=`コイン：${rows.join('・')}`;
+  });
+
+  const custom=$('#online-board-custom-marker');
+  const counter=$('#online-board-counter-name');
+  if(custom){
+    custom.value=board?.ui?.trayCustomMarker||'';
+    custom.oninput=()=>{ensureBoardUiState().trayCustomMarker=custom.value;scheduleBoardAutosave()};
+  }
+  if(counter){
+    counter.value=board?.ui?.trayCounterName||'カウンター';
+    counter.oninput=()=>{ensureBoardUiState().trayCounterName=counter.value||'カウンター';scheduleBoardAutosave()};
+  }
+  bindBoardToolTray();
+}
+
 function onlineRenderDuelBoard(){
   const host=$('#online-duel-main');
   const room=onlineLoadRooms()[onlineSessionState.joinCode];
   if(!host||!room||!onlineDuelBoard)return;
 
   onlineMergeRemotePublicIntoDuel(room);
-  const prevBoard=board;
   board=onlineDuelBoard;
-  const p2=renderPlayer(board.players[1],1,true);
-  const p1=renderPlayer(board.players[0],0,false);
+
+  const p2=`<section class="online-player-section ${onlineOwnSlot()===2?'':'online-duel-opponent'}">
+    ${onlinePlayerActionToolbar(2,room)}
+    ${renderPlayer(board.players[1],1,true)}
+  </section>`;
+  const p1=`<section class="online-player-section ${onlineOwnSlot()===1?'':'online-duel-opponent'}">
+    ${onlinePlayerActionToolbar(1,room)}
+    ${renderPlayer(board.players[0],0,false)}
+  </section>`;
+
   host.innerHTML=p2+'<div class="divider">──────── オンライン対戦ライン ────────</div>'+p1;
-  host.querySelectorAll('.player-board').forEach(el=>{
-    const slot=Number(el.dataset.playerBackground||0)+1;
-    if(slot!==onlineOwnSlot())el.classList.add('online-duel-opponent');
-  });
+
   bindBoard();
+  bindBoardToolTray();
+  onlineBindDuelConvenienceTools();
   applyBoardDisplaySettings();
   hydratePlayerBoardBackgrounds();
-  board=prevBoard===onlineDuelBoard?onlineDuelBoard:onlineDuelBoard;
   onlineUpdateDuelToolbar(room);
 }
 function onlineUpdateDuelToolbar(room){
@@ -30360,12 +30591,14 @@ function onlineEnterDuelBoard(){
   const room=onlineLoadRooms()[onlineSessionState.joinCode];
   if(!room||!onlineMatchStarted(room)){toast('対戦が開始されていません');return}
   onlineMountDedicatedScreens();
+
   if(!onlineDuelActive){
     onlineOfflineBoardState=board;
     onlineDuelActive=true;
   }
   onlinePrepareDuelBoard(room);
   board=onlineDuelBoard;
+
   setHomePlayMode('online');
   nav('online-duel');
   onlineRenderDuelBoard();
@@ -31070,8 +31303,8 @@ async function onlineHandleRealtimeSignal(signal){
   if(onlineUsingRemoteProvider()){
     const room=await onlineRemoteGetRoom();
     if(room){
-      if(!$('#online-match-board-panel')?.hidden)onlineRenderMatchBoard();
-      else onlineRefreshLobby();
+      if(currentScreenName==='online-duel'&&onlineDuelActive)onlineRenderDuelBoard();
+      else if(currentScreenName==='online')onlineRefreshLobby();
     }
   }else{
     if(!$('#online-match-board-panel')?.hidden)onlineRenderMatchBoard();
@@ -31326,18 +31559,23 @@ function onlineUpdateOwnPrivateState(room){
 function onlinePublicSnapshotString(slot){
   try{return JSON.stringify(onlineExtractPublicBoardFromSolo(slot))}catch(_){return ''}
 }
-function onlineAutoSyncNow(){
-  if(homePlayMode!=='online'||!['host','guest'].includes(onlineSessionState.role))return;
+async function onlineAutoSyncNow(){
+  if(homePlayMode!=='online'||!onlineDuelActive||!['host','guest'].includes(onlineSessionState.role))return;
   const code=onlineSessionState.joinCode;
   const rooms=onlineLoadRooms(),room=rooms[code];
   if(!room||!onlineMatchStarted(room))return;
-  const slot=onlineSessionState.role==='host'?1:2;
-  const snap=onlinePublicSnapshotString(slot);
+
+  const slot=onlineOwnSlot();
+  if(!slot)return;
+
+  board=onlineDuelBoard||board;
+  const publicBoard=onlineExtractPublicBoardFromSolo(slot);
+  const snap=JSON.stringify(publicBoard);
   if(snap===onlineLastPublicSnapshot)return;
   onlineLastPublicSnapshot=snap;
 
   const state=onlineRoomPublicState(room);
-  state[`p${slot}`]=onlineExtractPublicBoardFromSolo(slot);
+  state[`p${slot}`]=publicBoard;
   state.revision=Number(state.revision||0)+1;
   state.updatedAt=Date.now();
 
@@ -31345,12 +31583,31 @@ function onlineAutoSyncNow(){
   onlineUpdateVisibleHandCount(room,slot);
   room.publicState=state;
   room.updatedAt=Date.now();
-  onlineAuditPush(room,'public-board-sync',{slot,revision:state.revision},'public');
   rooms[code]=room;
   onlineSaveRooms(rooms);
+
+  if(onlineUsingRemoteProvider()){
+    try{
+      const data=await onlineProviderRequest('sync-public-board',{
+        roomCode:code,
+        clientId:onlineSessionState.clientId,
+        slot,
+        publicBoard,
+        handCount:onlineCountPrivateInfo(slot).handCount,
+        revision:state.revision
+      });
+      if(data)onlineApplyRemoteRoomSnapshot(data);
+    }catch(err){
+      console.warn('remote public sync failed',err);
+      const status=$('#online-duel-sync');
+      if(status)status.textContent=`公開盤面送信失敗：${String(err?.message||err)}`;
+      return;
+    }
+  }
+
   onlineBroadcast('public-board-update',{slot,revision:state.revision});
   onlineSignalRoomUpdate('public-board');
-  if(!$('#online-match-board-panel')?.hidden)onlineRenderMatchBoard();
+  onlineUpdateDuelToolbar(onlineLoadRooms()[code]||room);
 }
 function onlineScheduleAutoSync(){
   if(onlineAutoSyncTimer)clearTimeout(onlineAutoSyncTimer);
@@ -32025,8 +32282,8 @@ function onlineStartRemotePolling(){
     if(document.hidden)return;
     const room=await onlineRemoteGetRoom();
     if(room){
-      if(!$('#online-match-board-panel')?.hidden)onlineRenderMatchBoard();
-      else onlineRefreshLobby();
+      if(currentScreenName==='online-duel'&&onlineDuelActive)onlineRenderDuelBoard();
+      else if(currentScreenName==='online')onlineRefreshLobby();
     }
   },ONLINE_REMOTE_POLL_MS);
 }
@@ -32063,8 +32320,8 @@ function onlineApplyServerDrawToLocalBoard(slot,drawnIds){
     if(r.ok)names.push(r.name);else errors.push(r.reason);
   }
   if(names.length){
+    onlineDuelBoard=board;
     renderBoard();
-    saveBoardSessionNow(false);
     onlineScheduleAutoSync();
   }
   return {names,errors};
@@ -32087,7 +32344,7 @@ async function onlineToolDraw(){
   if(!onlineCanOperateCurrentBoard(room)){toast('現在は自分の操作ターンではありません');return}
   if(!['host','guest'].includes(onlineSessionState.role))return;
 
-  const slot=onlineSessionState.role==='host'?1:2,out=$('#online-tool-result');
+  const slot=onlineSessionState.role==='host'?1:2,out=$('#online-duel-tool-result')||$('#online-tool-result');
   try{
     const res=await onlineServerDraw(slot,1);
     const drawn=(res?.drawn||[]).map(String);
@@ -32118,7 +32375,7 @@ async function onlineToolShuffle(){
   if(!onlineCanOperateCurrentBoard(room)){toast('現在は自分の操作ターンではありません');return}
 
   if(!['host','guest'].includes(onlineSessionState.role))return;
-  const slot=onlineSessionState.role==='host'?1:2,out=$('#online-tool-result');
+  const slot=onlineSessionState.role==='host'?1:2,out=$('#online-duel-tool-result')||$('#online-tool-result');
   try{
     if(onlineUsingRemoteProvider()){
       await onlineProviderRequest('shuffle-deck',onlineRemoteRequestPayload({roomCode:onlineSessionState.joinCode,slot}));
@@ -32138,7 +32395,7 @@ async function onlineToolRandomHand(){
   if(!onlineCanOperateCurrentBoard(room)){toast('現在は自分の操作ターンではありません');return}
 
   if(!['host','guest'].includes(onlineSessionState.role))return;
-  const slot=onlineSessionState.role==='host'?1:2,out=$('#online-tool-result');
+  const slot=onlineSessionState.role==='host'?1:2,out=$('#online-duel-tool-result')||$('#online-tool-result');
   try{
     const p=board?.players?.[slot-1];
     const ids=(Array.isArray(p?.hand)?p.hand:[]).flatMap(pile=>(pile?.cards||[]).map(c=>String(c?.id||''))).filter(Boolean);
@@ -32286,12 +32543,7 @@ function initOnlineModeFoundation(){
   $('#online-reconnect-forget')?.addEventListener('click',onlineForgetResumeSession);
   $('#online-screen-home')?.addEventListener('click',()=>{setHomePlayMode('solo');nav('home')});
   $('#online-duel-back')?.addEventListener('click',onlineExitDuelBoardToLobby);
-  for(const slot of [1,2]){
-    $('#online-duel-p'+slot+'-draw')?.addEventListener('click',()=>onlineDuelRunForSlot(slot,'draw'));
-    $('#online-duel-p'+slot+'-shuffle')?.addEventListener('click',()=>onlineDuelRunForSlot(slot,'shuffle'));
-    $('#online-duel-p'+slot+'-random')?.addEventListener('click',()=>onlineDuelRunForSlot(slot,'random'));
-    $('#online-duel-p'+slot+'-end')?.addEventListener('click',()=>onlineDuelRunForSlot(slot,'end'));
-  }
+
   onlineMountDedicatedScreens();
   onlineApplySavedProviderConfig();
   onlineShowResumeOffer();
