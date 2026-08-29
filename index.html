@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.29</title>
+<title>みん会TCG Simulator v13.30</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -19596,7 +19596,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.29 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.30 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23624,7 +23624,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.29',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.30',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -28981,7 +28981,7 @@ function renderDeckBox(p,pi,z,label){const count=physicalCount(p[z]),empty=count
 function renderUtility(p,pi){return `<div class="utility-grid"><div class="deck-pair">${renderDeckBox(p,pi,'deck','デッキ')}${renderDeckBox(p,pi,'otherDeck','その他デッキ')}</div><div class="grave-banish-pair">${compactZoneBox(p,pi,'grave')}${compactZoneBox(p,pi,'banish')}</div></div>`}
 function physicalCount(arr){return arr.reduce((a,p)=>a+p.cards.length,0)}
 function topCard(pile){return pile.cards[0]}
-function renderPile(pile,pi,z,index){const c=topCard(pile);ensureInstanceBoardExtras(c);const counters=c.counters?.length?c.counters.map(x=>`${esc(x.name)} ${x.value}`).join(' / '):'カウンターなし';const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;const title=`${c.name}${c.memo?'\nメモ: '+c.memo:''}${pile.cards.length>1?'\n重なり: '+pile.cards.map(x=>x.name).join(' → '):''}`;const markers=renderCardMarkers(c);if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${markers}<div class="back-title">裏向きカード</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';return `<div class="pile ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}${cardFxHtml(c,'board')}${cardFrameHtml(c)}${markers}<div class="name">${esc(c.name)}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`}
+function renderPile(pile,pi,z,index){const c=topCard(pile);ensureInstanceBoardExtras(c);const counters=c.counters?.length?c.counters.map(x=>`${esc(x.name)} ${x.value}`).join(' / '):'カウンターなし';const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;const title=`${c.name}${c.memo?'\nメモ: '+c.memo:''}${pile.cards.length>1?'\n重なり: '+pile.cards.map(x=>x.name).join(' → '):''}`;const markers=renderCardMarkers(c);if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${markers}<div class="back-title">裏向きカード</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';return `<div class="pile ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}${cardFxHtml(c,'board')}${cardFrameHtml(c)}${markers}<div class="name">${esc(c.name)}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${c.token?'<span class="pill" style="position:absolute;left:4px;bottom:4px;font-size:10px">TOKEN</span>':''}${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`}
 
 async function hydrateBoardImages(){
  const root=$('#board-main');
@@ -30304,8 +30304,14 @@ function pickCardForDeck(targetPi,pos,targetZone='deck'){const options=allPileOp
 function openTokenCreator(baseCard=null,defaultPlayer=0){
  if(!board)return;
  const base=baseCard||{};
+ const onlineOwnPi=(onlineDuelActive&&onlineOwnSlot())?Number(onlineOwnSlot())-1:null;
+ if(onlineDuelActive&&onlineOwnPi==null){toast('観戦者はトークンを作成できません');return}
+ if(onlineOwnPi!=null)defaultPlayer=onlineOwnPi;
  const defaultTokenName=baseCard?`${base.name||'トークン'}（コピー）`:(base.name||'トークン');
  const title=baseCard?'カードを元にトークン作成':'トークン作成';
+ const playerOptions=onlineOwnPi!=null
+   ?`<option value="${onlineOwnPi}" selected>${esc(board.players[onlineOwnPi].name)}</option>`
+   :board.players.map((p,i)=>`<option value="${i}"${i===defaultPlayer?' selected':''}>${esc(p.name)}</option>`).join('');
  openModal(`<div class="modal-head"><h3>${title}</h3><button class="btn" id="token-close">閉じる</button></div>
  <p class="muted">${baseCard?'元カードの情報を引き継いでいます。必要な項目だけ変更して作成できます。':'盤面上だけで使う一時的なトークンを作成します。'}</p>
  <div class="form-grid">
@@ -30315,12 +30321,17 @@ function openTokenCreator(baseCard=null,defaultPlayer=0){
    <label>種族<input id="token-race" value="${esc(base.race||'')}"></label>
    <label class="wide">効果<textarea id="token-effect">${esc(base.effect||'')}</textarea></label>
    <label class="wide">メモ<textarea id="token-memo"></textarea></label>
-   <label>置くプレイヤー<select id="token-player">${board.players.map((p,i)=>`<option value="${i}"${i===defaultPlayer?' selected':''}>${esc(p.name)}</option>`).join('')}</select></label>
-   <label>置くゾーン<select id="token-zone">${Object.entries(ZONE_LABELS).filter(([z])=>z!=='deck').map(([z,l])=>`<option value="${z}">${l}</option>`).join('')}</select></label>
+   <label>置くプレイヤー<select id="token-player" ${onlineOwnPi!=null?'disabled':''}>${playerOptions}</select></label>
+   <label>置くゾーン<select id="token-zone">${Object.entries(ZONE_LABELS).filter(([z])=>z!=='deck').map(([z,l])=>`<option value="${z}"${z==='character'?' selected':''}>${l}</option>`).join('')}</select></label>
  </div>
  <button class="btn primary" id="token-create" style="margin-top:10px">作成</button>`);
  $('#token-close').onclick=closeModal;
- $('#token-create').onclick=()=>{
+ $('#token-create').onclick=async()=>{
+   let pi=Number($('#token-player').value);
+   if(onlineOwnPi!=null)pi=onlineOwnPi;
+   if(onlineDuelActive&&pi!==onlineOwnPi){toast('オンラインでは自分側にのみトークンを作成できます');return}
+   const z=$('#token-zone').value;
+   if(onlineDuelActive&&z==='deck'){toast('オンラインではメインデッキへトークンを作成できません');return}
    const c={
      id:uid('tokenDef'),instanceId:uid('inst'),
      imageSourceCardId:baseCard?cardImageSourceId(baseCard):'',
@@ -30333,8 +30344,14 @@ function openTokenCreator(baseCard=null,defaultPlayer=0){
      faceDown:false,rested:false,counters:[],markers:[],
      memo:$('#token-memo').value,powerMod:0,token:true
    };
-   addAsPile(Number($('#token-player').value),$('#token-zone').value,c);
-   closeModal();renderBoard();
+   addAsPile(pi,z,c);
+   closeModal();
+   renderBoard();
+   if(onlineDuelActive){
+     onlineScheduleAutoSync();
+     try{await onlineAutoSyncNow()}catch(err){console.warn('token public sync failed',err)}
+   }
+   toast(`${c.name} を${ZONE_LABELS[z]||z}に作成しました`);
  };
 }
 
@@ -30974,9 +30991,10 @@ function onlineApplyRemotePublicSlotToDuel(slot,state){
   for(const z of ONLINE_PUBLIC_ZONES){
     const src=Array.isArray(state?.[z])?state[z]:[];
     if(['character','pain','room','rulePlus'].includes(z)){
-      const len=z==='rulePlus'?1:5;
+      const minLen=z==='rulePlus'?1:5;
+      const len=Math.max(minLen,src.length);
       const fixed=Array(len).fill(null);
-      src.slice(0,len).forEach((pile,i)=>fixed[i]=onlinePublicPileToLocal(pile));
+      src.forEach((pile,i)=>{fixed[i]=onlinePublicPileToLocal(pile)});
       player[z]=fixed;
     }else{
       player[z]=src.map(onlinePublicPileToLocal).filter(Boolean);
@@ -31948,7 +31966,8 @@ function onlineNormalizePublicPile(pile){
       levelModPersistent:Number(c?.levelModPersistent||0)||0,
       levelModTemporary:Number(c?.levelModTemporary||0)||0,
       publicCopy:!!c?.publicCopy,
-      publicSourceId:String(c?.publicSourceId||'')
+      publicSourceId:String(c?.publicSourceId||''),
+      token:!!c?.token
     };
   }):[];
   return {cards:publicCards};
