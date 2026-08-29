@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.18</title>
+<title>みん会TCG Simulator v13.19</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17824,6 +17824,90 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   .online-player-toolbar .btn{width:100%}
 }
 
+
+/* v13.19 full online board tools / zoom */
+.online-board-zoom-controls{
+  margin-left:auto;
+}
+.online-board-zoom-controls .board-zoom-value{
+  min-width:58px;
+}
+#online-duel-main{
+  --online-board-zoom:1;
+  zoom:var(--online-board-zoom);
+  transform-origin:top left;
+}
+.online-board-tool-root{
+  display:none;
+}
+.online-board-tool-button{
+  position:fixed;
+  z-index:92;
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  border:1px solid #73849b;
+  background:rgba(15,21,30,.97);
+  color:#edf3f9;
+  box-shadow:0 8px 22px rgba(0,0,0,.45);
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  padding:0;
+}
+.online-board-tool-button span{font-size:20px;line-height:1}
+.online-board-tool-button small{font-size:8px;line-height:1.1;font-weight:850;margin-top:2px}
+.online-board-tool-button.p1{right:14px;bottom:18px}
+.online-board-tool-button.p2{left:14px;top:135px}
+.online-board-tool-window{
+  position:fixed;
+  z-index:91;
+  width:min(350px,calc(100vw - 18px));
+  max-height:min(70dvh,590px);
+  overflow:hidden;
+  background:rgba(19,24,32,.99);
+  border:1px solid #59697d;
+  border-radius:13px;
+  box-shadow:0 12px 30px rgba(0,0,0,.5);
+  padding:8px;
+}
+.online-board-tool-window[hidden]{display:none!important}
+#online-board-tool-window-p1{right:9px;bottom:84px}
+#online-board-tool-window-p2{left:9px;top:201px}
+.online-board-tool-root.available{display:block}
+.online-tool-player-note{
+  padding:6px 8px;
+  margin-bottom:7px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  font-size:11px;
+}
+.online-tool-readonly{
+  opacity:.58;
+  pointer-events:none!important;
+}
+.online-tool-zoom-section{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:6px;
+  align-items:center;
+}
+.online-tool-zoom-section .btn{margin:0}
+@media(max-width:900px){
+  .online-duel-tools{display:none}
+  .online-board-tool-root{display:none}
+  .online-board-tool-root.available{display:block}
+}
+@media(min-width:901px){
+  .online-board-tool-root.available{display:block}
+  .online-board-tool-button.p1{right:286px;bottom:18px}
+  .online-board-tool-button.p2{left:14px;top:135px}
+  #online-board-tool-window-p1{right:286px}
+}
+
 /* Frame editor */
 .frame-editor-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .frame-editor-preview-section,.frame-library-section{min-width:0}
@@ -19392,7 +19476,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.18 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.19 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -20350,6 +20434,11 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
     <div class="online-duel-status">
       <span id="online-duel-sync" class="muted">公開情報を同期中</span>
       <span id="online-duel-permission" class="pill">閲覧</span>
+      <div class="board-zoom-controls online-board-zoom-controls" aria-label="オンライン盤面ズーム">
+        <button class="btn small" id="online-board-zoom-out" type="button" aria-label="ズームアウト">−</button>
+        <button class="btn small board-zoom-value" id="online-board-zoom-reset" type="button" title="100%に戻す">100%</button>
+        <button class="btn small" id="online-board-zoom-in" type="button" aria-label="ズームイン">＋</button>
+      </div>
     </div>
 
     <div class="online-duel-wrap">
@@ -20357,57 +20446,42 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
 
       <aside class="online-duel-tools">
         <div class="panel">
-          <div class="board-panel-head"><h3>便利操作</h3></div>
-          <div class="online-common-tools">
-            <button class="btn small" id="online-board-settings" type="button">盤面設定</button>
-            <button class="btn small" id="online-board-search" type="button">カード検索</button>
-            <button class="btn small" id="online-create-token" type="button">トークン作成</button>
-            <button class="btn small" id="online-random-picker" type="button">指定カードからランダム</button>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="board-panel-head"><h3>一時マーカー</h3></div>
-          <div class="board-tool-grid">
-            <button class="board-drag-tool marker-used" type="button" draggable="true" data-board-tool="marker|used">効果使用済</button>
-            <button class="board-drag-tool marker-attack" type="button" draggable="true" data-board-tool="marker|attack">攻撃済</button>
-            <button class="board-drag-tool marker-target" type="button" draggable="true" data-board-tool="marker|target">対象</button>
-            <button class="board-drag-tool marker-negate" type="button" draggable="true" data-board-tool="marker|negate">無効</button>
-            <button class="board-drag-tool marker-turn" type="button" draggable="true" data-board-tool="marker|turn">ターン終了時まで</button>
-          </div>
-          <label class="board-tool-input">カスタムマーカー<input id="online-board-custom-marker" maxlength="18" placeholder="例：効果処理待ち"></label>
-          <button class="board-drag-tool marker-custom" type="button" draggable="true" data-board-tool="marker|custom">カスタムをドラッグ</button>
-        </div>
-
-        <div class="panel">
-          <div class="board-panel-head"><h3>カウンター</h3></div>
-          <label class="board-tool-input">名前<input id="online-board-counter-name" maxlength="20" value="カウンター"></label>
-          <div class="board-tool-grid board-counter-tools">
-            <button class="board-drag-tool counter-plus" type="button" draggable="true" data-board-tool="counter|1"><span>カウンター +1</span></button>
-            <button class="board-drag-tool counter-minus" type="button" draggable="true" data-board-tool="counter|-1"><span>カウンター −1</span></button>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="board-panel-head"><h3>サイコロ・コイン</h3></div>
-          <div class="online-common-tools">
-            <button class="btn small" type="button" data-online-dice="1d6">1d6</button>
-            <button class="btn small" type="button" data-online-dice="2d6">2d6</button>
-            <button class="btn small" type="button" data-online-dice="1d20">1d20</button>
-            <button class="btn small" type="button" data-online-coin="1">コイン1回</button>
-          </div>
-          <div id="online-random-result" class="muted">まだ結果はありません。</div>
-        </div>
-
-        <div class="panel">
           <div class="board-panel-head"><h3>対戦情報</h3></div>
           <div id="online-duel-private-counts" class="muted">手札・デッキ枚数を取得中</div>
           <div id="online-duel-tool-result" class="muted">操作待機中</div>
-          <div class="muted">相手側は公開ゾーンのみ同期します。手札内容とデッキ順は相手へ送りません。</div>
+          <div class="muted">盤面ツールはP1/P2それぞれの丸ボタンから開きます。</div>
         </div>
       </aside>
     </div>
-  </section>
+  
+    <div id="online-board-tool-root-p1" class="online-board-tool-root" data-online-tool-slot="1" aria-hidden="true">
+      <button id="online-board-tool-button-p1" class="online-board-tool-button p1" type="button" aria-label="P1盤面ツール">
+        <span>☰</span><small>P1ツール</small>
+      </button>
+      <section id="online-board-tool-window-p1" class="online-board-tool-window" hidden>
+        <div class="mobile-board-tool-head">
+          <button class="btn small" type="button" data-online-tool-back="1" hidden>‹</button>
+          <b id="online-board-tool-title-p1">P1 盤面ツール</b>
+          <button class="btn small" type="button" data-online-tool-close="1">閉じる</button>
+        </div>
+        <div id="online-board-tool-content-p1" class="mobile-board-tool-content"></div>
+      </section>
+    </div>
+
+    <div id="online-board-tool-root-p2" class="online-board-tool-root" data-online-tool-slot="2" aria-hidden="true">
+      <button id="online-board-tool-button-p2" class="online-board-tool-button p2" type="button" aria-label="P2盤面ツール">
+        <span>☰</span><small>P2ツール</small>
+      </button>
+      <section id="online-board-tool-window-p2" class="online-board-tool-window" hidden>
+        <div class="mobile-board-tool-head">
+          <button class="btn small" type="button" data-online-tool-back="2" hidden>‹</button>
+          <b id="online-board-tool-title-p2">P2 盤面ツール</b>
+          <button class="btn small" type="button" data-online-tool-close="2">閉じる</button>
+        </div>
+        <div id="online-board-tool-content-p2" class="mobile-board-tool-content"></div>
+      </section>
+    </div>
+</section>
 
 <section id="screen-board" class="screen">
     <div class="section-head">
@@ -23417,7 +23491,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.18',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.19',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -28326,6 +28400,7 @@ function boardMarkerPayload(key){
  const p=BOARD_MARKER_PRESETS[key];
  return p?{kind:'marker',key,label:p.label,tone:p.tone}:null;
 }
+let onlineBoardToolSourceSlot=0;
 function boardToolPayloadFromElement(el){
  if(!el||!board)return null;
  const [kind,arg]=String(el.dataset.boardTool||'').split('|');
@@ -28354,6 +28429,10 @@ function ensureInstanceBoardExtras(c){
 function applyBoardToolToPile(tool,pileKey){
  if(!tool||!pileKey||!board)return false;
  const [piRaw,z,indexRaw]=String(pileKey).split('|'),pi=Number(piRaw),index=Number(indexRaw);
+ if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive&&onlineBoardToolSourceSlot&&pi!==onlineBoardToolSourceSlot-1){
+   toast(`P${onlineBoardToolSourceSlot}ツールはP${onlineBoardToolSourceSlot}側のカードに使用してください`);
+   return false;
+ }
  const pile=getPile(pi,z,index),c=pile&&topCard(pile);
  if(!c)return false;
  ensureInstanceBoardExtras(c);
@@ -28796,6 +28875,8 @@ function updateBoardToolTouchVisual(state){
 }
 function beginBoardToolTouch(e,el){
  if(!board||!e.touches||e.touches.length!==1)return;
+ const onlineRoot=el.closest?.('[data-online-tool-slot]');
+ onlineBoardToolSourceSlot=onlineRoot?Number(onlineRoot.dataset.onlineToolSlot)||0:0;
  const tool=boardToolPayloadFromElement(el);
  if(!tool){
    if(String(el.dataset.boardTool||'').startsWith('marker|custom'))toast('カスタムマーカー名を入力してください');
@@ -28831,6 +28912,8 @@ function bindBoardToolTray(){
    el.dataset.boardToolBound='1';
    el.ondragstart=e=>{
      if(!board){e.preventDefault();return}
+     const onlineRoot=el.closest?.('[data-online-tool-slot]');
+     onlineBoardToolSourceSlot=onlineRoot?Number(onlineRoot.dataset.onlineToolSlot)||0:0;
      const tool=boardToolPayloadFromElement(el);
      if(!tool){
        e.preventDefault();
@@ -30471,12 +30554,273 @@ function onlineMergeRemotePublicIntoDuel(room){
 
 function onlineSuspendDuelForNormalNavigation(){
   if(!onlineDuelActive)return;
+  onlineCloseToolWindow(1);onlineCloseToolWindow(2);
+  for(const slot of [1,2])$(`#online-board-tool-root-p${slot}`)?.classList.remove('available');
   onlineStopBoardMutationWatch();
   onlineDuelBoard=board;
   board=onlineOfflineBoardState;
   onlineOfflineBoardState=null;
   onlineDuelActive=false;
 }
+
+let onlineDuelZoom=1;
+const onlineToolWindowState={1:{open:false,section:'menu'},2:{open:false,section:'menu'}};
+
+function onlineApplyDuelZoom(){
+  const root=$('#online-duel-main');
+  if(!root)return;
+  onlineDuelZoom=Math.max(.3,Math.min(2,Math.round(onlineDuelZoom*10)/10));
+  root.style.setProperty('--online-board-zoom',String(onlineDuelZoom));
+  const label=$('#online-board-zoom-reset');
+  if(label)label.textContent=Math.round(onlineDuelZoom*100)+'%';
+  const out=$('#online-board-zoom-out'),inn=$('#online-board-zoom-in');
+  if(out)out.disabled=onlineDuelZoom<=.3;
+  if(inn)inn.disabled=onlineDuelZoom>=2;
+}
+function onlineSetDuelZoom(next){
+  onlineDuelZoom=Math.max(.3,Math.min(2,Number(next)||1));
+  onlineApplyDuelZoom();
+}
+function onlineToolCanOperate(slot){
+  const room=onlineLoadRooms()[onlineSessionState.joinCode];
+  return Number(slot)===Number(onlineOwnSlot())&&onlineCurrentTurnPlayer(room)===Number(slot);
+}
+function onlineToolIsOwner(slot){
+  return Number(slot)===Number(onlineOwnSlot());
+}
+function onlineToolMenuHtml(slot){
+  const entries=[
+    ['operations','盤面操作','設定・検索・Undoなど'],
+    ['marker','マーカー','一時マーカー'],
+    ['counter','カウンター','カードへ±'],
+    ['random','ランダム','ダイス・コイン・カード選択'],
+    ['power','ホームPOWER修正','常時 / 現在のみ'],
+    ['note','盤面メモ','ターン中の記録'],
+    ['zoom','ズーム','盤面全体を縮小・拡大']
+  ];
+  return `<div class="online-tool-player-note">P${slot}用の盤面ツールです。${onlineToolIsOwner(slot)?'この端末の担当プレイヤーです。':'相手側のため閲覧専用です。'}</div>
+    <div class="mobile-board-tool-menu">
+      ${entries.map(([key,label,desc])=>`<button class="mobile-board-tool-menu-item" type="button" data-online-tool-section="${slot}|${key}"><b>${label}</b><small>${desc}</small><span>›</span></button>`).join('')}
+    </div>`;
+}
+function onlineOperationsToolHtml(slot){
+  const owner=onlineToolIsOwner(slot);
+  return `<div class="mobile-tool-section ${owner?'':'online-tool-readonly'}">
+    <div class="mobile-operation-grid">
+      <button class="btn" type="button" data-online-operation="${slot}|settings">設定</button>
+      <button class="btn" type="button" data-online-operation="${slot}|search">カード検索</button>
+      <button class="btn" type="button" data-online-operation="${slot}|token">トークン作成</button>
+      <button class="btn" type="button" data-online-operation="${slot}|undo" ${!boardHistoryUndo.length?'disabled':''}>↶ 元に戻す</button>
+      <button class="btn" type="button" data-online-operation="${slot}|redo" ${!boardHistoryRedo.length?'disabled':''}>↷ やり直す</button>
+      <button class="btn danger mobile-operation-wide" type="button" data-online-operation="${slot}|reset">自分側を初期化</button>
+    </div>
+  </div>`;
+}
+function onlineMarkerToolHtml(slot){
+  const ui=ensureBoardUiState();
+  return `<div class="mobile-tool-section ${onlineToolIsOwner(slot)?'':'online-tool-readonly'}">
+    <div class="board-tool-grid">
+      <button class="board-drag-tool marker-used" type="button" draggable="true" data-board-tool="marker|used">効果使用済</button>
+      <button class="board-drag-tool marker-attack" type="button" draggable="true" data-board-tool="marker|attack">攻撃済</button>
+      <button class="board-drag-tool marker-target" type="button" draggable="true" data-board-tool="marker|target">対象</button>
+      <button class="board-drag-tool marker-negate" type="button" draggable="true" data-board-tool="marker|negate">無効</button>
+      <button class="board-drag-tool marker-turn" type="button" draggable="true" data-board-tool="marker|turn">ターン終了時まで</button>
+    </div>
+    <label class="board-tool-input">カスタムマーカー<input data-online-custom-marker="${slot}" maxlength="18" value="${esc(ui?.trayCustomMarker||'')}" placeholder="例：効果処理待ち"></label>
+    <div class="board-tool-inline-actions">
+      <button class="board-drag-tool marker-custom" type="button" draggable="true" data-board-tool="marker|custom">カスタムをドラッグ</button>
+      <button class="btn small" type="button" data-online-save-marker="${slot}">保存</button>
+    </div>
+    <div class="board-saved-presets mobile-saved-presets">
+      ${boardToolPrefs.markerPresets.length?boardToolPrefs.markerPresets.map((name,i)=>`<button class="board-drag-tool saved-preset-tool" type="button" draggable="true" data-board-tool="markerSaved|${i}" data-board-preset-label="${esc(name)}">${esc(name)}</button>`).join(''):'<span class="muted">保存済みなし</span>'}
+    </div>
+    <details class="mobile-tool-compact-details"><summary>マーカー整理</summary>
+      <div class="actions">
+        <button class="btn small" type="button" data-online-preset-manager="${slot}">プリセット整理</button>
+        <button class="btn small danger" type="button" data-online-bulk-marker="${slot}">P${slot}を一括解除</button>
+      </div>
+    </details>
+    <div class="muted mobile-tool-drag-hint">マーカーをカードへドラッグして乗せます。</div>
+  </div>`;
+}
+function onlineCounterToolHtml(slot){
+  const ui=ensureBoardUiState(),name=(ui?.trayCounterName||'カウンター').trim()||'カウンター';
+  return `<div class="mobile-tool-section ${onlineToolIsOwner(slot)?'':'online-tool-readonly'}">
+    <label class="board-tool-input">カウンター名<input data-online-counter-name="${slot}" maxlength="20" value="${esc(name)}"></label>
+    <div class="board-tool-grid board-counter-tools">
+      <button class="board-drag-tool counter-plus" type="button" draggable="true" data-board-tool="counter|1"><span>${esc(name)} +1</span></button>
+      <button class="board-drag-tool counter-minus" type="button" draggable="true" data-board-tool="counter|-1"><span>${esc(name)} −1</span></button>
+    </div>
+    <div class="actions">
+      <button class="btn small" type="button" data-online-save-counter="${slot}">現在の名前を保存</button>
+      <button class="btn small" type="button" data-online-preset-manager="${slot}">プリセット整理</button>
+    </div>
+    <div class="board-saved-presets mobile-saved-presets">
+      ${boardToolPrefs.counterPresets.length?boardToolPrefs.counterPresets.map((preset,i)=>`<span class="saved-counter-pair"><button class="board-drag-tool saved-preset-tool counter-plus" type="button" draggable="true" data-board-tool="counterSaved|1" data-board-preset-label="${esc(preset)}">${esc(preset)} +1</button><button class="board-drag-tool saved-preset-tool counter-minus" type="button" draggable="true" data-board-tool="counterSaved|-1" data-board-preset-label="${esc(preset)}">−1</button></span>`).join(''):'<span class="muted">保存済みなし</span>'}
+    </div>
+    <div class="muted mobile-tool-drag-hint">＋1 / −1をカードへドラッグします。</div>
+  </div>`;
+}
+function onlineRandomToolHtml(slot){
+  const ui=ensureBoardUiState(),rows=ui?.randomHistory||[],last=rows[0],owner=onlineToolIsOwner(slot);
+  return `<div class="mobile-tool-section ${owner?'':'online-tool-readonly'}">
+    <div class="board-dice-presets">
+      <button class="btn small" type="button" data-online-dice="${slot}|1d6">1d6</button>
+      <button class="btn small" type="button" data-online-dice="${slot}|2d6">2d6</button>
+      <button class="btn small" type="button" data-online-dice="${slot}|1d20">1d20</button>
+      <button class="btn small" type="button" data-online-dice="${slot}|1d100">1d100</button>
+    </div>
+    <div class="board-random-inline">
+      <input data-online-dice-input="${slot}" type="text" maxlength="6" value="${esc(ui?.diceExpression||'1d6')}" placeholder="例 3d12">
+      <button class="btn primary small" type="button" data-online-dice-roll="${slot}">振る</button>
+    </div>
+    <div class="muted board-random-rule">1〜10個 / d2〜d100。最大10d100。</div>
+    <div class="board-coin-row"><span class="muted">コイン</span>${[1,2,5,10].map(n=>`<button class="btn small" type="button" data-online-coin="${slot}|${n}">${n}回</button>`).join('')}</div>
+    <div class="board-random-card-actions">
+      <button class="btn small" type="button" data-online-random-hand="${slot}">P${slot}手札</button>
+      <button class="btn small wide" type="button" data-online-random-cards="${slot}">指定カードから1枚</button>
+    </div>
+    <div class="board-random-last">${last?`<b>${esc(last.label)}</b><span>${esc(last.detail)}</span>${last.totalText?`<strong>${esc(last.totalText)}</strong>`:''}`:'<span class="muted">まだ結果はありません。</span>'}</div>
+    <details class="mobile-tool-compact-details"><summary>直近の履歴 ${rows.length?`(${rows.length})`:''}</summary>
+      <div class="board-random-history">${rows.length?rows.map(x=>`<div class="board-random-history-row"><span>${esc(x.at||'')}</span><b>${esc(x.label)}</b><span>${esc(x.detail)}</span>${x.totalText?`<strong>${esc(x.totalText)}</strong>`:''}</div>`).join(''):'<div class="muted">履歴なし</div>'}</div>
+      ${rows.length?`<button class="btn small" type="button" data-online-random-clear="${slot}">履歴を消す</button>`:''}
+    </details>
+  </div>`;
+}
+function onlinePowerToolHtml(slot){
+  if(!board?.players?.[slot-1])return '<div class="muted">プレイヤー情報がありません。</div>';
+  const ui=ensureBoardUiState(),p=board.players[slot-1],pi=slot-1;
+  const persistent=Number(p.homePowerMod)||0,current=Number(ui.homePowerApplyDraft?.[pi])||0;
+  return `<div class="mobile-tool-section mobile-power-tool ${onlineToolIsOwner(slot)?'':'online-tool-readonly'}">
+    <div class="home-power-row">
+      <div class="home-power-player"><b>P${slot}</b></div>
+      <div class="home-power-mode-block">
+        <div class="home-power-mode-head"><b>常時修正</b><span class="pill ${persistent?'active-mod':''}">${signedNumber(persistent)}</span></div>
+        <div class="home-power-value-row">
+          <button class="btn small" data-home-power-persistent-step="${pi}|-1000">−1000</button>
+          <input data-home-power-persistent-input="${pi}" type="number" inputmode="numeric" step="1000" value="${persistent}">
+          <button class="btn small" data-home-power-persistent-step="${pi}|1000">＋1000</button>
+        </div>
+        <button class="btn small home-power-mode-button" data-home-power-persistent-reset="${pi}" ${persistent===0?'disabled':''}>常時修正を0に戻す</button>
+      </div>
+      <div class="home-power-mode-block home-power-current-block">
+        <div class="home-power-mode-head"><b>現在のホームに反映</b><span class="pill ${current?'active-mod':''}">${signedNumber(current)}</span></div>
+        <div class="home-power-value-row">
+          <button class="btn small" data-home-power-current-step="${pi}|-1000">−1000</button>
+          <input data-home-power-current-input="${pi}" type="number" inputmode="numeric" step="1000" value="${current}">
+          <button class="btn small" data-home-power-current-step="${pi}|1000">＋1000</button>
+        </div>
+        <button class="btn small primary home-power-mode-button" data-home-power-current-apply="${pi}" ${current===0?'disabled':''}>現在のキャラクターに反映</button>
+      </div>
+    </div>
+  </div>`;
+}
+function onlineNoteToolHtml(slot){
+  const p=board?.players?.[slot-1];
+  const note=String(p?.onlineNote||'');
+  return `<div class="mobile-tool-section ${onlineToolIsOwner(slot)?'':'online-tool-readonly'}">
+    <textarea class="board-note mobile-board-note" data-online-board-note="${slot}" placeholder="P${slot}のターン中メモ">${esc(note)}</textarea>
+  </div>`;
+}
+function onlineZoomToolHtml(){
+  return `<div class="mobile-tool-section">
+    <div class="online-tool-zoom-section">
+      <button class="btn" type="button" data-online-tool-zoom="-0.1">− 縮小</button>
+      <span class="pill">${Math.round(onlineDuelZoom*100)}%</span>
+      <button class="btn" type="button" data-online-tool-zoom="0.1">＋ 拡大</button>
+    </div>
+    <div class="actions"><button class="btn small" type="button" data-online-tool-zoom-reset>100%に戻す</button></div>
+    <div class="muted">30%〜200%で変更できます。オンライン盤面全体を縮小・拡大します。</div>
+  </div>`;
+}
+function onlineRenderToolWindow(slot,section='menu'){
+  slot=Number(slot);
+  const st=onlineToolWindowState[slot];if(!st)return;
+  st.section=section||'menu';
+  const win=$(`#online-board-tool-window-p${slot}`),content=$(`#online-board-tool-content-p${slot}`),title=$(`#online-board-tool-title-p${slot}`),back=$(`[data-online-tool-back="${slot}"]`);
+  if(!win||!content||!title)return;
+  const labels={menu:'盤面ツール',operations:'盤面操作',marker:'マーカー',counter:'カウンター',random:'ランダム',power:'ホームPOWER修正',note:'盤面メモ',zoom:'ズーム'};
+  title.textContent=`P${slot} ${labels[st.section]||'盤面ツール'}`;
+  if(back)back.hidden=st.section==='menu';
+  if(st.section==='operations')content.innerHTML=onlineOperationsToolHtml(slot);
+  else if(st.section==='marker')content.innerHTML=onlineMarkerToolHtml(slot);
+  else if(st.section==='counter')content.innerHTML=onlineCounterToolHtml(slot);
+  else if(st.section==='random')content.innerHTML=onlineRandomToolHtml(slot);
+  else if(st.section==='power')content.innerHTML=onlinePowerToolHtml(slot);
+  else if(st.section==='note')content.innerHTML=onlineNoteToolHtml(slot);
+  else if(st.section==='zoom')content.innerHTML=onlineZoomToolHtml();
+  else content.innerHTML=onlineToolMenuHtml(slot);
+  onlineBindToolWindow(slot);
+}
+function onlineOpenToolWindow(slot,section='menu'){
+  slot=Number(slot);const st=onlineToolWindowState[slot];if(!st)return;
+  st.open=true;
+  const win=$(`#online-board-tool-window-p${slot}`);if(win)win.hidden=false;
+  onlineRenderToolWindow(slot,section);
+}
+function onlineCloseToolWindow(slot){
+  slot=Number(slot);const st=onlineToolWindowState[slot];if(st)st.open=false;
+  const win=$(`#online-board-tool-window-p${slot}`);if(win)win.hidden=true;
+}
+function onlineRefreshToolAvailability(){
+  const own=onlineOwnSlot();
+  for(const slot of [1,2]){
+    const root=$(`#online-board-tool-root-p${slot}`);
+    if(!root)continue;
+    root.classList.toggle('available',currentScreenName==='online-duel');
+    root.setAttribute('aria-hidden',currentScreenName==='online-duel'?'false':'true');
+    const btn=$(`#online-board-tool-button-p${slot}`);
+    if(btn){
+      btn.disabled=false;
+      btn.title=Number(slot)===Number(own)?`P${slot}盤面ツール`:`P${slot}盤面ツール（相手側は閲覧専用）`;
+    }
+  }
+}
+function onlineBindToolWindow(slot){
+  const content=$(`#online-board-tool-content-p${slot}`);if(!content)return;
+  content.querySelectorAll('[data-online-tool-section]').forEach(b=>b.onclick=()=>{
+    const [,section]=b.dataset.onlineToolSection.split('|');onlineRenderToolWindow(slot,section);
+  });
+  content.querySelectorAll('[data-online-operation]').forEach(b=>b.onclick=()=>{
+    if(!onlineToolIsOwner(slot))return;
+    const [,action]=b.dataset.onlineOperation.split('|');
+    if(action==='settings')openBoardSettings();
+    else if(action==='search')openBoardCardSearch();
+    else if(action==='token')openTokenCreator(null,slot-1);
+    else if(action==='undo')undoBoard();
+    else if(action==='redo')redoBoard();
+    else if(action==='reset'){
+      if(!confirm(`P${slot}側のオンライン盤面を初期化しますか？`))return;
+      const fresh=onlineCreateBlankPlayer(slot-1);
+      fresh.name=`P${slot}`;
+      onlineDuelBoard.players[slot-1]=fresh;
+      board=onlineDuelBoard;renderBoard();onlineScheduleAutoSync();
+    }
+  });
+  const marker=content.querySelector(`[data-online-custom-marker="${slot}"]`);
+  if(marker)marker.oninput=e=>{ensureBoardUiState().trayCustomMarker=e.target.value.slice(0,18);syncBoardTrayFields();onlineScheduleAutoSync()};
+  const counter=content.querySelector(`[data-online-counter-name="${slot}"]`);
+  if(counter)counter.oninput=e=>{ensureBoardUiState().trayCounterName=e.target.value.slice(0,20);syncBoardTrayFields();onlineRenderToolWindow(slot,'counter')};
+  const sm=content.querySelector(`[data-online-save-marker="${slot}"]`);if(sm)sm.onclick=()=>{addBoardToolPreset('marker',ensureBoardUiState().trayCustomMarker);onlineRenderToolWindow(slot,'marker')};
+  const sc=content.querySelector(`[data-online-save-counter="${slot}"]`);if(sc)sc.onclick=()=>{addBoardToolPreset('counter',ensureBoardUiState().trayCounterName);onlineRenderToolWindow(slot,'counter')};
+  content.querySelectorAll(`[data-online-preset-manager="${slot}"]`).forEach(b=>b.onclick=openBoardPresetManager);
+  content.querySelectorAll(`[data-online-bulk-marker="${slot}"]`).forEach(b=>b.onclick=()=>openBulkMarkerManager(String(slot-1)));
+  content.querySelectorAll('[data-online-dice]').forEach(b=>b.onclick=()=>{if(!onlineToolIsOwner(slot))return;const [,expr]=b.dataset.onlineDice.split('|');rollBoardDice(expr);onlineRenderToolWindow(slot,'random')});
+  const di=content.querySelector(`[data-online-dice-input="${slot}"]`);
+  const dr=content.querySelector(`[data-online-dice-roll="${slot}"]`);
+  if(di)di.oninput=e=>{ensureBoardUiState().diceExpression=e.target.value.slice(0,6)};
+  if(dr)dr.onclick=()=>{if(!onlineToolIsOwner(slot))return;rollBoardDice(di?.value||'1d6');onlineRenderToolWindow(slot,'random')};
+  content.querySelectorAll('[data-online-coin]').forEach(b=>b.onclick=()=>{if(!onlineToolIsOwner(slot))return;const [,n]=b.dataset.onlineCoin.split('|');flipBoardCoins(Number(n));onlineRenderToolWindow(slot,'random')});
+  const rh=content.querySelector(`[data-online-random-hand="${slot}"]`);if(rh)rh.onclick=()=>{if(onlineToolIsOwner(slot))pickRandomFromHand(slot-1)};
+  const rc=content.querySelector(`[data-online-random-cards="${slot}"]`);if(rc)rc.onclick=()=>{if(onlineToolIsOwner(slot))openRandomCardPicker()};
+  const clear=content.querySelector(`[data-online-random-clear="${slot}"]`);if(clear)clear.onclick=()=>{ensureBoardUiState().randomHistory=[];onlineRenderToolWindow(slot,'random')};
+  const note=content.querySelector(`[data-online-board-note="${slot}"]`);if(note)note.oninput=e=>{if(!onlineToolIsOwner(slot))return;const p=board?.players?.[slot-1];if(p)p.onlineNote=e.target.value;onlineScheduleAutoSync()};
+  content.querySelectorAll('[data-online-tool-zoom]').forEach(b=>b.onclick=()=>{onlineSetDuelZoom(onlineDuelZoom+Number(b.dataset.onlineToolZoom));onlineRenderToolWindow(slot,'zoom')});
+  const zr=content.querySelector('[data-online-tool-zoom-reset]');if(zr)zr.onclick=()=>{onlineSetDuelZoom(1);onlineRenderToolWindow(slot,'zoom')};
+  bindHomePowerControls(content);
+  bindBoardToolTray();
+}
+
 function onlinePlayerActionToolbar(slot,room){
   const own=onlineOwnSlot()||0;
   const current=onlineCurrentTurnPlayer(room);
@@ -30492,46 +30836,8 @@ function onlinePlayerActionToolbar(slot,room){
     <button class="btn small primary" type="button" data-online-slot-action="${slot}|end" ${can?'':'disabled'}>ターン終了</button>
   </div>`;
 }
-function onlineBindDuelConvenienceTools(){
-  $$('[data-online-slot-action]').forEach(btn=>{
-    btn.onclick=()=>{
-      const [slot,action]=btn.dataset.onlineSlotAction.split('|');
-      onlineDuelRunForSlot(Number(slot),action);
-    };
-  });
-  $('#online-board-settings')?.addEventListener('click',openBoardSettings);
-  $('#online-board-search')?.addEventListener('click',()=>openBoardCardSearch(''));
-  $('#online-create-token')?.addEventListener('click',()=>openTokenCreator(null,Math.max(0,(onlineOwnSlot()||1)-1)));
-  $('#online-random-picker')?.addEventListener('click',openRandomCardPicker);
+function onlineBindDuelConvenienceTools(){ /* v13.19: P1/P2 floating tools handle this */ }
 
-  $$('[data-online-dice]').forEach(btn=>btn.onclick=()=>{
-    const expr=btn.dataset.onlineDice;
-    const parsed=parseDiceExpression(expr);
-    if(!parsed)return;
-    const rolls=Array.from({length:parsed.count},()=>boardRandomInt(parsed.sides)+1);
-    const total=rolls.reduce((a,b)=>a+b,0);
-    const out=$('#online-random-result');
-    if(out)out.textContent=`${expr}：${rolls.join(' + ')}${rolls.length>1?` = ${total}`:''}`;
-  });
-  $$('[data-online-coin]').forEach(btn=>btn.onclick=()=>{
-    const n=Math.max(1,Math.min(10,Number(btn.dataset.onlineCoin)||1));
-    const rows=Array.from({length:n},()=>boardRandomInt(2)===0?'表':'裏');
-    const out=$('#online-random-result');
-    if(out)out.textContent=`コイン：${rows.join('・')}`;
-  });
-
-  const custom=$('#online-board-custom-marker');
-  const counter=$('#online-board-counter-name');
-  if(custom){
-    custom.value=board?.ui?.trayCustomMarker||'';
-    custom.oninput=()=>{ensureBoardUiState().trayCustomMarker=custom.value;scheduleBoardAutosave()};
-  }
-  if(counter){
-    counter.value=board?.ui?.trayCounterName||'カウンター';
-    counter.oninput=()=>{ensureBoardUiState().trayCounterName=counter.value||'カウンター';scheduleBoardAutosave()};
-  }
-  bindBoardToolTray();
-}
 
 function onlineRenderDuelBoard(){
   const host=$('#online-duel-main');
@@ -30558,6 +30864,11 @@ function onlineRenderDuelBoard(){
   applyBoardDisplaySettings();
   hydratePlayerBoardBackgrounds();
   onlineUpdateDuelToolbar(room);
+  onlineApplyDuelZoom();
+  onlineRefreshToolAvailability();
+  for(const slot of [1,2]){
+    if(onlineToolWindowState[slot]?.open)onlineRenderToolWindow(slot,onlineToolWindowState[slot].section);
+  }
 }
 function onlineUpdateDuelToolbar(room){
   if(!room)return;
@@ -30607,6 +30918,8 @@ function onlineEnterDuelBoard(){
 }
 function onlineExitDuelBoardToLobby(){
   onlineStopBoardMutationWatch();
+  onlineCloseToolWindow(1);onlineCloseToolWindow(2);
+  for(const slot of [1,2])$(`#online-board-tool-root-p${slot}`)?.classList.remove('available');
   if(onlineDuelActive){
     onlineDuelBoard=board;
     board=onlineOfflineBoardState;
@@ -32543,6 +32856,14 @@ function initOnlineModeFoundation(){
   $('#online-reconnect-forget')?.addEventListener('click',onlineForgetResumeSession);
   $('#online-screen-home')?.addEventListener('click',()=>{setHomePlayMode('solo');nav('home')});
   $('#online-duel-back')?.addEventListener('click',onlineExitDuelBoardToLobby);
+  $('#online-board-zoom-out')?.addEventListener('click',()=>onlineSetDuelZoom(onlineDuelZoom-0.1));
+  $('#online-board-zoom-in')?.addEventListener('click',()=>onlineSetDuelZoom(onlineDuelZoom+0.1));
+  $('#online-board-zoom-reset')?.addEventListener('click',()=>onlineSetDuelZoom(1));
+  for(const slot of [1,2]){
+    $(`#online-board-tool-button-p${slot}`)?.addEventListener('click',()=>onlineOpenToolWindow(slot,'menu'));
+    $(`[data-online-tool-close="${slot}"]`)?.addEventListener('click',()=>onlineCloseToolWindow(slot));
+    $(`[data-online-tool-back="${slot}"]`)?.addEventListener('click',()=>onlineRenderToolWindow(slot,'menu'));
+  }
 
   onlineMountDedicatedScreens();
   onlineApplySavedProviderConfig();
