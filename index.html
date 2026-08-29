@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.6</title>
+<title>みん会TCG Simulator v16.7</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -19678,6 +19678,58 @@ h3 .minkai-ruby{margin-top:.45em}
 .collection-placeholder-name{
   line-height:1.45!important;
 }
+
+/* v16.7 collection ruby alignment */
+.collection-card-name,
+.collection-placeholder-name,
+.collection-detail-main h2,
+.collection-viewer-modal h2,
+.collection-viewer-modal h3{
+  text-align:center!important;
+}
+.collection-name-ruby{
+  display:inline-flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  vertical-align:bottom!important;
+  line-height:1!important;
+  max-width:100%;
+}
+.collection-name-reading{
+  display:block!important;
+  width:100%;
+  text-align:center!important;
+  font-size:.5em!important;
+  line-height:1!important;
+  font-weight:600;
+  white-space:nowrap!important;
+  margin:0 0 .08em!important;
+  padding:0!important;
+}
+.collection-name-base{
+  display:block!important;
+  width:100%;
+  text-align:center!important;
+  line-height:1.15!important;
+  white-space:normal!important;
+  word-break:break-word;
+  margin:0!important;
+  padding:0!important;
+}
+.collection-card-name{
+  min-height:2.35em;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  overflow:visible!important;
+}
+.collection-placeholder-name{
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  min-height:2.6em;
+}
 </style>
 </head>
 <body>
@@ -19686,7 +19738,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.6 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23752,7 +23804,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.6',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.7',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -27038,7 +27090,7 @@ function collectionCardGalleryHtml(c,showNames){
  const fav=isCollectionFavorite(c.id);
  return `<div class="collection-card ${showNames?'':'image-only'}" data-collection-card="${c.id}">
    <div class="collection-card-art" data-collection-art="${c.id}"><span class="collection-placeholder-name">${esc(c.name)}</span>${cardFxHtml(c,'collection')}${cardFrameHtml(c)}<button class="collection-favorite ${fav?'active':''}" type="button" data-collection-favorite="${c.id}" aria-label="お気に入り">${fav?'★':'☆'}</button></div>
-   ${showNames?`<div class="collection-card-name">${rubyTextHtml(c.name,cardRubySpec(c))}</div>`:''}
+   ${showNames?`<div class="collection-card-name">${collectionNameHtml(c)}</div>`:''}
  </div>`;
 }
 function collectionEmptyGalleryHtml(slotIndex){
@@ -27767,7 +27819,7 @@ function openCollectionDetail(id){
  <div class="collection-detail">
    <div id="collection-detail-art" class="collection-detail-art visual-quality-high"><span class="collection-placeholder-name">${esc(c.name)}</span>${cardFxHtml(c,'collection')}${cardFrameHtml(c)}</div>
    <div class="collection-detail-main">
-     <h2>${rubyTextHtml(c.name,cardRubySpec(c))}</h2>${c.rarity?`<div class="collection-detail-rarity">${esc(c.rarity)}</div>`:''}${flavor?`<div class="collection-detail-flavor">${esc(flavor)}</div>`:''}
+     <h2>${collectionNameHtml(c)}</h2>${c.rarity?`<div class="collection-detail-rarity">${esc(c.rarity)}</div>`:''}${flavor?`<div class="collection-detail-flavor">${esc(flavor)}</div>`:''}
      <div class="actions collection-detail-actions">
        <button class="btn ${fav?'primary':''}" id="collection-detail-favorite">${fav?'★ お気に入り':'☆ お気に入り'}</button>
        <button class="btn" id="collection-detail-albums">アルバムへ追加</button>
@@ -29940,6 +29992,16 @@ function rubyTextHtml(text,spec){
    return esc(String(text??'')).replace(/\n/g,'<br>');
  }
 }
+function collectionNameHtml(c){
+ const name=String(c?.name||'名称未設定');
+ const maps=parseRubySpec(cardRubySpec(c));
+ if(!maps.length)return `<span class="collection-name-base">${esc(name)}</span>`;
+ const exact=maps.find(x=>x.base===name);
+ if(exact){
+   return `<span class="collection-name-ruby"><span class="collection-name-reading">${esc(exact.reading)}</span><span class="collection-name-base">${esc(name)}</span></span>`;
+ }
+ return `<span class="collection-name-base">${rubyTextHtml(name,cardRubySpec(c))}</span>`;
+}
 function cardRubySpec(c){try{return String(c?.ruby||'')}catch{return ''}}
 function boardNameSizeClass(c){
  const n=String(c?.name||'').length;
@@ -30041,7 +30103,7 @@ function openOnlineReadOnlyDetail(pi,z,index,cardIndex=0,navIds){
       ${c.faceDown
         ?'<div class="muted">このカードは裏向きのため、カード内容は公開されていません。</div>'
         :`<div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div>
-          <h3>${rubyTextHtml(c.name,cardRubySpec(c))}</h3>
+          <h3>${collectionNameHtml(c)}</h3>
           <div class="actions"><span class="pill">${esc(c.type||'-')}</span><span class="pill">Lv ${esc(levelNow)}</span><span class="pill">POWER ${esc(powerNow)}</span></div>
           ${c.rarity?`<div class="muted">レアリティ：${esc(c.rarity)}</div>`:''}
           <div class="muted">${rubyTextHtml(c.race||'種族なし',cardRubySpec(c))}</div>
@@ -30102,7 +30164,7 @@ function openDetail(pi,z,index,cardIndex=0,navIds){if(onlineOpponentReadOnly(pi)
  const helperOpen=(Number(c.powerMod)||0)!==0||(Number(c.levelModPersistent)||0)!==0||(Number(c.levelModTemporary)||0)!==0||c.counters.length||c.markers.length;
  const stackOpen=pile.cards.length>1;
  const relatedHtml=renderBoardRelatedLinks(c);
- openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div><h3>${rubyTextHtml(c.name,cardRubySpec(c))}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(levelNow)}</span><span class="pill">POWER ${pow===null?'-':esc(pow)}</span></div>${levelBreakdown}${powerBreakdown}<div class="muted">${rubyTextHtml(c.race||'種族なし',cardRubySpec(c))}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${rubyTextHtml(c.effect||'効果テキストなし',cardRubySpec(c))}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="reset-card-corrections" ${((Number(c.powerMod)||0)===0&&(Number(c.levelModPersistent)||0)===0&&(Number(c.levelModTemporary)||0)===0)?'disabled':''}>POWER/Lv修正をリセット</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><details class="board-detail-fold board-helper-fold" ${helperOpen?'open':''}><summary>補助情報 <span class="pill">${(Number(c.powerMod)||0)!==0?'PW':''}${((Number(c.levelModPersistent)||0)!==0||(Number(c.levelModTemporary)||0)!==0)?`${(Number(c.powerMod)||0)!==0?' / ':''}LV`:''}${c.counters.length?`${(Number(c.powerMod)||0)!==0?' / ':''}C${c.counters.length}`:''}${c.markers.length?`${((Number(c.powerMod)||0)!==0||c.counters.length)?' / ':''}M${c.markers.length}`:''}${!helperOpen?'なし':''}</span></summary><div class="board-detail-fold-body"><label>POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h4>レベル補正</h4><div class="level-mod-grid"><label>常時<input id="level-mod-persistent" type="number" value="${Number(c.levelModPersistent)||0}"></label><label>一時<input id="level-mod-temporary" type="number" value="${Number(c.levelModTemporary)||0}"></label></div><div class="muted">元Lvが数値なら合算して現在Lvとして扱います。？やXなどの場合は補正値だけを別表示します。</div><h4>カウンター</h4><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button><h4>一時マーカー</h4><div id="detail-marker-list">${renderDetailMarkers(c)}</div>${Array.isArray(c.markers)&&c.markers.length?'<button class="btn small" id="clear-temp-markers">すべて外す</button>':''}</div></details><details class="board-detail-fold" ${stackOpen?'open':''}><summary>重なり <span class="pill">${pile.cards.length}</span></summary><div class="board-detail-fold-body">${pile.cards.length>1?`<div class="actions stack-quick-actions"><button class="btn small" id="stack-move-top">一番上だけ移動</button><button class="btn small" id="stack-move-bottom">一番下だけ移動</button><button class="btn small" id="stack-move-all">全部まとめて移動</button><button class="btn small danger" id="stack-split-all">ばらす</button></div>`:''}<div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item stack-item-rich ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span class="stack-order">${i+1}</span><div class="stack-mini-art">${boardMiniArtHtml(x)}</div><div class="stack-item-copy"><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}${x.faceDown?' / 裏向き':''}${x.rested?' / レスト':''}</div></div><div class="stack-item-actions"><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div></div></details>${relatedHtml}</div></div>`);
+ openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div><h3>${collectionNameHtml(c)}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(levelNow)}</span><span class="pill">POWER ${pow===null?'-':esc(pow)}</span></div>${levelBreakdown}${powerBreakdown}<div class="muted">${rubyTextHtml(c.race||'種族なし',cardRubySpec(c))}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${rubyTextHtml(c.effect||'効果テキストなし',cardRubySpec(c))}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="reset-card-corrections" ${((Number(c.powerMod)||0)===0&&(Number(c.levelModPersistent)||0)===0&&(Number(c.levelModTemporary)||0)===0)?'disabled':''}>POWER/Lv修正をリセット</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><details class="board-detail-fold board-helper-fold" ${helperOpen?'open':''}><summary>補助情報 <span class="pill">${(Number(c.powerMod)||0)!==0?'PW':''}${((Number(c.levelModPersistent)||0)!==0||(Number(c.levelModTemporary)||0)!==0)?`${(Number(c.powerMod)||0)!==0?' / ':''}LV`:''}${c.counters.length?`${(Number(c.powerMod)||0)!==0?' / ':''}C${c.counters.length}`:''}${c.markers.length?`${((Number(c.powerMod)||0)!==0||c.counters.length)?' / ':''}M${c.markers.length}`:''}${!helperOpen?'なし':''}</span></summary><div class="board-detail-fold-body"><label>POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h4>レベル補正</h4><div class="level-mod-grid"><label>常時<input id="level-mod-persistent" type="number" value="${Number(c.levelModPersistent)||0}"></label><label>一時<input id="level-mod-temporary" type="number" value="${Number(c.levelModTemporary)||0}"></label></div><div class="muted">元Lvが数値なら合算して現在Lvとして扱います。？やXなどの場合は補正値だけを別表示します。</div><h4>カウンター</h4><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button><h4>一時マーカー</h4><div id="detail-marker-list">${renderDetailMarkers(c)}</div>${Array.isArray(c.markers)&&c.markers.length?'<button class="btn small" id="clear-temp-markers">すべて外す</button>':''}</div></details><details class="board-detail-fold" ${stackOpen?'open':''}><summary>重なり <span class="pill">${pile.cards.length}</span></summary><div class="board-detail-fold-body">${pile.cards.length>1?`<div class="actions stack-quick-actions"><button class="btn small" id="stack-move-top">一番上だけ移動</button><button class="btn small" id="stack-move-bottom">一番下だけ移動</button><button class="btn small" id="stack-move-all">全部まとめて移動</button><button class="btn small danger" id="stack-split-all">ばらす</button></div>`:''}<div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item stack-item-rich ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span class="stack-order">${i+1}</span><div class="stack-mini-art">${boardMiniArtHtml(x)}</div><div class="stack-item-copy"><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}${x.faceDown?' / 裏向き':''}${x.rested?' / レスト':''}</div></div><div class="stack-item-actions"><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div></div></details>${relatedHtml}</div></div>`);
  hydrateBoardDetailImage(cardImageSourceId(c));
  hydrateBoardMiniListImages($('#modal'));
  bindBoardRelatedLinks(c);
