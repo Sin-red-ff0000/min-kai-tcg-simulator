@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.27</title>
+<title>みん会TCG Simulator v13.28</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -19596,7 +19596,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.27 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v13.28 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19698,6 +19698,12 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
       <div class="online-ready-grid">
         <div class="online-ready-row"><span>P1</span><b id="online-ready-p1">未準備</b></div>
         <div class="online-ready-row"><span>P2</span><b id="online-ready-p2">未準備</b></div>
+      </div>
+      <div class="online-initiative-box" style="margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:10px">
+        <div class="section-head"><h4 style="margin:0">先攻・後攻</h4></div>
+        <div class="actions"><button class="btn" id="online-decide-initiative" type="button">先攻・後攻を決める</button></div>
+        <div id="online-initiative-result" class="muted" style="margin-top:8px">未決定</div>
+        <div class="muted" style="margin-top:4px;font-size:12px">同じルームコードならP1・P2どちらで押しても同じ結果になります。</div>
       </div>
 
       <div id="online-match-ready-note" class="online-match-ready-note muted">両プレイヤーの準備完了を待っています。</div>
@@ -23618,7 +23624,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.27',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.28',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -29881,6 +29887,37 @@ function openStackDialog(){const ctx={...detailCtx},srcPile=getPile(ctx.pi,ctx.z
 // Deck actions
 function takeTopCard(pi,z='deck'){const d=board.players[pi][z];if(!d.length)return null;const c=d[0].cards.shift();if(!d[0].cards.length)d.shift();return c}
 function shuffleDeck(pi,z='deck'){const d=board.players[pi][z],all=[];d.forEach(p=>p.cards.forEach(c=>all.push(c)));for(let i=all.length-1;i>0;i--){const j=boardRandomInt(i+1);[all[i],all[j]]=[all[j],all[i]]}board.players[pi][z]=all.map(c=>({id:uid('pile'),cards:[c]}))}
+async function onlineServerTopCardToZone(pi,targetZone,faceDown=false){
+  const ownPi=Number(onlineOwnSlot()||0)-1;
+  if(Number(pi)!==ownPi){toast('相手のメインデッキは操作できません');return}
+  const slot=Number(pi)+1,out=$('#online-duel-tool-result')||$('#online-tool-result');
+  try{
+    const res=await onlineServerDraw(slot,1),id=String(res?.drawn?.[0]||'');
+    if(!id){if(out)out.textContent='デッキにカードがありません';return}
+    const p=board?.players?.[pi]; let card=null;
+    for(let i=0;i<(p?.deck||[]).length;i++){
+      const pile=p.deck[i],ci=(pile?.cards||[]).findIndex(c=>String(c?.id||'')===id);
+      if(ci>=0){card=pile.cards.splice(ci,1)[0];if(!pile.cards.length)p.deck.splice(i,1);break}
+    }
+    if(!card){
+      const master=(cards||[]).find(c=>String(c?.id||'')===id);
+      card=master?JSON.parse(JSON.stringify(master)):null;
+    }
+    if(!card)throw new Error('カード情報を復元できません');
+    card.faceDown=!!faceDown; card.rested=false;
+    addAsPile(pi,targetZone,card);
+    onlineRecordRoomAction('server-draw-to-zone',{slot,targetZone,faceDown},'public');
+    renderBoard();
+    await onlineAutoSyncNow();
+    await onlineRemoteGetRoom();
+    if(out)out.textContent='ペインカウントへ1枚追加しました';
+  }catch(err){
+    const msg=String(err?.message||err);
+    if(out)out.textContent=`操作失敗：${msg}`;
+    toast(`操作失敗：${msg}`);
+  }
+}
+
 function onlineBrowseManagedDeckContents(pi){
   if(!onlineServerDeckGuardActive(pi,'deck'))return false;
   const p=board?.players?.[pi];
@@ -29923,7 +29960,9 @@ function deckAction(a,pi,z='deck'){
    if(a==='draw'){onlineToolDraw();return}
    if(a==='shuffle'){onlineToolShuffle();return}
    if(a==='browse'){onlineBrowseManagedDeckContents(pi);return}
-   toast('このメインデッキ操作はサーバー連携が必要なため現在は使用できません');
+   if(a==='painFace'){onlineServerTopCardToZone(pi,'pain',false);return}
+   if(a==='painBack'){onlineServerTopCardToZone(pi,'pain',true);return}
+   toast('このメインデッキ操作はまだサーバー連携に対応していません');
    return;
  }
  if(a==='shuffle'){shuffleDeck(pi,z);renderBoard();toast(`${ZONE_LABELS[z]}をシャッフルしました`)}
@@ -31235,18 +31274,14 @@ function onlineBindToolWindow(slot){
 }
 
 function onlinePlayerActionToolbar(slot,room){
-  const own=onlineOwnSlot()||0;
-  const current=onlineCurrentTurnPlayer(room);
-  const mine=own===slot;
-  const ownTurn=mine&&current===slot;
+  const own=onlineOwnSlot()||0,mine=own===slot;
   return `<div class="online-player-toolbar" data-online-toolbar-slot="${slot}">
     <span class="online-player-toolbar-title">P${slot} 操作</span>
-    <span class="pill">${mine?(ownTurn?'自分のターン・操作可':'相手ターン・自分側操作可'):'閲覧専用'}</span>
+    <span class="pill">${mine?'自分側・常時操作可':'閲覧専用'}</span>
     <span class="online-player-toolbar-spacer"></span>
     <button class="btn small" type="button" data-online-slot-action="${slot}|draw" ${mine?'':'disabled'}>1枚ドロー</button>
     <button class="btn small" type="button" data-online-slot-action="${slot}|shuffle" ${mine?'':'disabled'}>デッキをシャッフル</button>
     <button class="btn small" type="button" data-online-slot-action="${slot}|random" ${mine?'':'disabled'}>手札からランダム</button>
-    <button class="btn small primary" type="button" data-online-slot-action="${slot}|end" ${mine?'':'disabled'}>ターン終了</button>
   </div>`;
 }
 function onlineBindDuelConvenienceTools(){
@@ -31314,11 +31349,14 @@ function onlineRenderDuelBoard(){
   });
   const ownPi=Number(onlineOwnSlot()||0)-1;
   if(ownPi>=0){
+    host.querySelectorAll(`[data-slot-plus^="${ownPi}|"], [data-slot-minus^="${ownPi}|"], [data-zone-view^="${ownPi}|"], [data-hand-mode^="${ownPi}|"]`).forEach(btn=>{
+      btn.disabled=false;btn.removeAttribute('aria-disabled');btn.tabIndex=0;btn.style.pointerEvents='auto';btn.style.opacity='1';
+    });
     host.querySelectorAll(`[data-deck-action*="|${ownPi}|deck"], [data-deck-action$="|${ownPi}"]`).forEach(btn=>{
       const raw=String(btn.dataset.deckAction||'').split('|');
       const action=raw[0],pi=Number(raw[1]),z=raw[2]||'deck';
       if(pi===ownPi&&z==='deck'){
-        const supported=['draw','shuffle','browse'].includes(action);
+        const supported=['draw','shuffle','browse','painFace','painBack'].includes(action);
         btn.disabled=!supported;
         if(supported){
           btn.removeAttribute('aria-disabled');
@@ -31347,32 +31385,23 @@ function onlineRenderDuelBoard(){
 }
 function onlineUpdateDuelToolbar(room){
   if(!room)return;
-  const own=onlineOwnSlot()||0,current=onlineCurrentTurnPlayer(room);
+  const own=onlineOwnSlot()||0;
   document.documentElement.dataset.onlineDuelOwn=String(own);
   $('#online-duel-room-code').textContent=onlineSessionState.joinCode||'------';
   $('#online-duel-role').textContent=onlineRoleLabel();
-  $('#online-duel-turn').textContent=`P${current} TURN / ${Number(room.match?.turnCount||1)}`;
-  $('#online-duel-permission').textContent=own
-    ?(current===own?`P${own} 自分のターン・自分側操作可`:`P${own} 相手ターン・自分側操作可`)
-    :'観戦専用';
-
+  const turnLabel=$('#online-duel-turn'); if(turnLabel)turnLabel.textContent='通話進行';
+  $('#online-duel-permission').textContent=own?`P${own} 自分側・常時操作可`:'観戦専用';
   for(const slot of [1,2]){
     const mine=own===slot;
-    const turn=mine&&current===slot;
-    const state=$(`#online-duel-p${slot}-state`);
-    if(state)state.textContent=mine?(turn?'自分のターン・操作可':'相手ターン・操作可'):'閲覧';
-    for(const kind of ['draw','shuffle','random','end']){
-      const b=$(`#online-duel-p${slot}-${kind}`);
-      if(b)b.disabled=!mine;
-    }
+    const state=$(`#online-duel-p${slot}-state`); if(state)state.textContent=mine?'常時操作可':'閲覧';
+    for(const kind of ['draw','shuffle','random']){const b=$(`#online-duel-p${slot}-${kind}`);if(b)b.disabled=!mine}
+    const end=$(`#online-duel-p${slot}-end`); if(end)end.remove();
   }
-
   const h1=onlinePublicHandCount(room,1),h2=onlinePublicHandCount(room,2);
   const d1=onlineDeckCountFromRoom(room,1),d2=onlineDeckCountFromRoom(room,2);
   const counts=$('#online-duel-private-counts');
   if(counts)counts.textContent=`P1 手札 ${h1??'?'} / デッキ ${d1??'?'}　｜　P2 手札 ${h2??'?'} / デッキ ${d2??'?'}`;
-  const state=onlineRoomPublicState(room);
-  const sync=$('#online-duel-sync');
+  const state=onlineRoomPublicState(room),sync=$('#online-duel-sync');
   if(sync)sync.textContent=`公開盤面 Rev.${Number(state.revision||0)} / ${new Date(Number(state.updatedAt||Date.now())).toLocaleTimeString()}`;
 }
 function onlineEnterDuelBoard(){
@@ -31411,7 +31440,7 @@ function onlineDuelRunForSlot(slot,action){
   if(action==='draw')return onlineToolDraw();
   if(action==='shuffle')return onlineToolShuffle();
   if(action==='random')return onlineToolRandomHand();
-  if(action==='end')return onlineEndTurn();
+  if(action==='end'){toast('オンラインのターン管理は廃止されました');return}
 }
 
 function onlineShowEntry(){
@@ -31927,9 +31956,6 @@ async function onlineStartMatch(){
   room.match.status='started';
   room.match.startedAt=Date.now();
   room.match.startedBy=onlineSessionState.clientId;
-  room.match.turnPlayer=1;
-  room.match.turnCount=1;
-  room.match.turnChangedAt=Date.now();
   onlineUpdateVisibleHandCount(room,1);
   onlineUpdateVisibleHandCount(room,2);
   room.publicState={
@@ -32063,7 +32089,6 @@ function onlineAuditLabel(type){
     'server-draw':'ドロー',
     'server-shuffle':'シャッフル',
     'server-random-hand':'手札ランダム選択',
-    'turn-ended':'ターン終了'
   })[type]||type;
 }
 function onlineRenderAudit(room){
@@ -32103,19 +32128,7 @@ function onlineIsOwnTurn(room){
   const own=onlineOwnSlot();
   return !!own&&onlineMatchStarted(room)&&onlineCurrentTurnPlayer(room)===own;
 }
-function onlineApplyPermissionState(room){
-  const own=onlineOwnSlot();
-  const canOperate=onlineCanOperateCurrentBoard(room);
-  const status=$('#online-permission-status');
-  if(status){
-    if(onlineSessionState.role==='spectator')status.textContent='観戦専用';
-    else if(canOperate)status.textContent=`P${own} 操作可`;
-    else status.textContent=`P${own} 閲覧`;
-  }
-  document.documentElement.dataset.onlineCanOperate=canOperate?'1':'0';
-  document.documentElement.dataset.onlineRole=onlineSessionState.role||'none';
-  document.documentElement.dataset.onlineOwnSlot=own||'';
-}
+function onlineApplyPermissionState(room){return}
 function onlineSignalRoomUpdate(reason='sync'){
   if(!onlineSessionState.joinCode)return;
   const signal={
@@ -32250,32 +32263,7 @@ async function onlineEndTurn(){
   if(out)out.textContent=`P${current} → P${onlineCurrentTurnPlayer(room)} にターンを更新しました`;
   toast(`P${current}のターンを終了しました`);
 }
-function onlineRenderTurnPanel(room){
-  const turn=onlineCurrentTurnPlayer(room);
-  const owner=$('#online-turn-owner');
-  if(owner)owner.textContent=`P${turn} TURN`;
-
-  const h1=onlinePublicHandCount(room,1),h2=onlinePublicHandCount(room,2);
-  const d1=onlineDeckCountFromRoom(room,1),d2=onlineDeckCountFromRoom(room,2);
-  const e1=$('#online-hand-count-p1'),e2=$('#online-hand-count-p2');
-  const de1=$('#online-deck-count-p1'),de2=$('#online-deck-count-p2');
-  if(e1)e1.textContent=`手札 ${h1==null?'?':h1}枚`;
-  if(e2)e2.textContent=`手札 ${h2==null?'?':h2}枚`;
-  if(de1)de1.textContent=`デッキ ${d1==null?'?':d1}枚`;
-  if(de2)de2.textContent=`デッキ ${d2==null?'?':d2}枚`;
-
-  const btn=$('#online-end-turn'),note=$('#online-turn-note');
-  const can=onlineCanEndTurn(room);
-  if(btn){
-    btn.disabled=!can;
-    btn.textContent=can?'ターン終了':`P${turn}のターン`;
-  }
-  if(note){
-    if(onlineSessionState.role==='spectator')note.textContent='観戦者はターン操作できません。';
-    else if(can)note.textContent='自分のターンです。操作終了後にターン終了してください。';
-    else note.textContent=`現在はP${turn}のターンです。`;
-  }
-}
+function onlineRenderTurnPanel(room){return}
 
 function onlineRenderMatchBoard(){
   const code=onlineSessionState.joinCode,room=onlineLoadRooms()[code];
@@ -33313,6 +33301,31 @@ function onlineShowLobby(){
   $('#online-room-lobby').hidden=false;
   onlineRefreshLobby();
 }
+function onlineInitiativeForRoom(code){
+  const text=String(code||'').trim().toUpperCase();
+  if(!text)return null;
+  let h=2166136261;
+  for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}
+  const first=(h>>>0)%2===0?1:2;
+  return {first,second:first===1?2:1};
+}
+function onlineRenderInitiative(){
+  const out=$('#online-initiative-result');
+  if(!out)return;
+  const code=onlineSessionState.joinCode;
+  const saved=code?sessionStorage.getItem(`minkai_initiative_${code}`):'';
+  if(!saved){out.textContent='未決定';return}
+  const result=onlineInitiativeForRoom(code);
+  out.textContent=result?`先攻 P${result.first} / 後攻 P${result.second}`:'未決定';
+}
+function onlineDecideInitiative(){
+  const code=onlineSessionState.joinCode,result=onlineInitiativeForRoom(code);
+  if(!result){toast('ルームコードを取得できません');return}
+  sessionStorage.setItem(`minkai_initiative_${code}`,'1');
+  onlineRenderInitiative();
+  toast(`先攻 P${result.first} / 後攻 P${result.second}`);
+}
+
 async function onlineRefreshLobby(){
   if(onlineSessionState.connection==='connected')onlinePersistResumeSession();
   onlineUpdateRemoteSessionStatus();
@@ -33333,6 +33346,7 @@ async function onlineRefreshLobby(){
   $('#online-member-spectators').textContent=`${Array.isArray(room.spectators)?room.spectators.length:0}人`;
   onlineApplySetupUI(room);
   onlineApplyMatchUI(room);
+  onlineRenderInitiative();
   $('#online-room-message').textContent=onlineSessionState.role==='host'
     ?(room.p2?'P2が参加しました。次の更新でデッキ選択・準備完了へ進みます。':'参加コードを相手へ共有してください。')
     :(onlineSessionState.role==='guest'
@@ -33409,6 +33423,7 @@ function initOnlineModeFoundation(){
   $('#online-other-deck-select')?.addEventListener('change',()=>{onlineCaptureSetupDraft();onlineUpdateDeckSelection()});
   $('#online-oshii-select')?.addEventListener('change',()=>{onlineCaptureSetupDraft();onlineUpdateDeckSelection()});
   $('#online-ready-toggle')?.addEventListener('click',onlineToggleReady);
+  $('#online-decide-initiative')?.addEventListener('click',onlineDecideInitiative);
   $('#online-start-match')?.addEventListener('click',onlineStartMatch);
   $('#online-open-match-board')?.addEventListener('click',onlineShowMatchBoard);
   $('#online-back-to-lobby')?.addEventListener('click',onlineBackToLobby);
@@ -33420,7 +33435,6 @@ function initOnlineModeFoundation(){
   $('#online-tool-draw')?.addEventListener('click',onlineToolDraw);
   $('#online-tool-shuffle')?.addEventListener('click',onlineToolShuffle);
   $('#online-tool-random-hand')?.addEventListener('click',onlineToolRandomHand);
-  $('#online-end-turn')?.addEventListener('click',onlineEndTurn);
   $('#online-reconnect-now')?.addEventListener('click',onlineResumePreviousSession);
   $('#online-reconnect-forget')?.addEventListener('click',onlineForgetResumeSession);
   $('#online-screen-home')?.addEventListener('click',()=>{setHomePlayMode('solo');nav('home')});
