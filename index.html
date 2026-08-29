@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.7</title>
+<title>みん会TCG Simulator v16.8</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -19730,6 +19730,84 @@ h3 .minkai-ruby{margin-top:.45em}
   justify-content:center!important;
   min-height:2.6em;
 }
+
+/* v16.8 collection partial-ruby alignment */
+.collection-card-name,
+.collection-placeholder-name,
+.collection-detail-main h2,
+.collection-viewer-modal h2,
+.collection-viewer-modal h3{
+  text-align:center!important;
+}
+.collection-name-line{
+  display:inline-flex!important;
+  flex-direction:row!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  flex-wrap:wrap!important;
+  max-width:100%;
+  line-height:1.15!important;
+  vertical-align:bottom!important;
+}
+.collection-name-plain{
+  display:inline-block!important;
+  width:auto!important;
+  flex:0 0 auto!important;
+  align-self:flex-end!important;
+  line-height:1.15!important;
+  white-space:pre-wrap!important;
+  margin:0!important;
+  padding:0!important;
+}
+.collection-name-ruby-segment{
+  display:inline-flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  width:auto!important;
+  flex:0 0 auto!important;
+  line-height:1!important;
+  vertical-align:bottom!important;
+  margin:0!important;
+  padding:0!important;
+}
+.collection-name-reading{
+  display:block!important;
+  width:auto!important;
+  text-align:center!important;
+  font-size:.48em!important;
+  line-height:1!important;
+  font-weight:600!important;
+  white-space:nowrap!important;
+  margin:0 0 .12em!important;
+  padding:0!important;
+}
+.collection-name-ruby-base{
+  display:block!important;
+  width:auto!important;
+  text-align:center!important;
+  line-height:1.15!important;
+  white-space:nowrap!important;
+  margin:0!important;
+  padding:0!important;
+}
+.collection-card-name{
+  min-height:2.2em!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  overflow:visible!important;
+}
+.collection-placeholder-name{
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+}
+/* v16.7の幅100%指定を部分ルビでは無効化 */
+.collection-name-line .collection-name-base,
+.collection-name-line .collection-name-reading{
+  width:auto!important;
+}
 </style>
 </head>
 <body>
@@ -19738,7 +19816,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23804,7 +23882,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.7',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.8',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -29995,12 +30073,24 @@ function rubyTextHtml(text,spec){
 function collectionNameHtml(c){
  const name=String(c?.name||'名称未設定');
  const maps=parseRubySpec(cardRubySpec(c));
- if(!maps.length)return `<span class="collection-name-base">${esc(name)}</span>`;
- const exact=maps.find(x=>x.base===name);
- if(exact){
-   return `<span class="collection-name-ruby"><span class="collection-name-reading">${esc(exact.reading)}</span><span class="collection-name-base">${esc(name)}</span></span>`;
+ if(!maps.length)return `<span class="collection-name-line"><span class="collection-name-plain">${esc(name)}</span></span>`;
+ let i=0,parts=[];
+ while(i<name.length){
+   let best=null,bestAt=-1;
+   for(const row of maps){
+     const at=name.indexOf(row.base,i);
+     if(at<0)continue;
+     if(bestAt<0||at<bestAt||(at===bestAt&&best&&row.base.length>best.base.length)){best=row;bestAt=at}
+   }
+   if(bestAt<0||!best){
+     if(i<name.length)parts.push(`<span class="collection-name-plain">${esc(name.slice(i))}</span>`);
+     break;
+   }
+   if(bestAt>i)parts.push(`<span class="collection-name-plain">${esc(name.slice(i,bestAt))}</span>`);
+   parts.push(`<span class="collection-name-ruby-segment"><span class="collection-name-reading">${esc(best.reading)}</span><span class="collection-name-ruby-base">${esc(best.base)}</span></span>`);
+   i=bestAt+best.base.length;
  }
- return `<span class="collection-name-base">${rubyTextHtml(name,cardRubySpec(c))}</span>`;
+ return `<span class="collection-name-line">${parts.join('')}</span>`;
 }
 function cardRubySpec(c){try{return String(c?.ruby||'')}catch{return ''}}
 function boardNameSizeClass(c){
