@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v13.30</title>
+<title>みん会TCG Simulator v16.1</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -19588,6 +19588,38 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   will-change:transform,opacity,filter;
 }
 
+
+/* v16.1 ルビ / 盤面カード名の視認性 */
+ruby{ruby-position:over}
+ruby rt{font-size:.52em;line-height:1;color:inherit;font-weight:600}
+.pile .name{
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
+  white-space:normal!important;
+  overflow:hidden!important;
+  text-overflow:clip!important;
+  word-break:break-all;
+  overflow-wrap:anywhere;
+  min-height:1.08em;
+  max-height:3.35em!important;
+  padding:2px 3px;
+  box-sizing:border-box;
+  background:rgba(5,8,13,.9)!important;
+  border-radius:4px;
+  z-index:15!important;
+}
+.pile .name ruby{white-space:normal}
+.pile .name rt{font-size:.48em}
+.pile .flags{display:none!important}
+.pile.board-name-long .name{font-size:calc(9.5px * var(--board-name-comp,1))!important;line-height:1.02}
+.pile.board-name-xlong .name{font-size:calc(8px * var(--board-name-comp,1))!important;line-height:1}
+@media(max-width:650px){
+ .pile .name{font-size:calc(10px * var(--board-name-comp,1))!important;-webkit-line-clamp:3;max-height:3.3em!important}
+ .pile.board-name-long .name{font-size:calc(8.5px * var(--board-name-comp,1))!important}
+ .pile.board-name-xlong .name{font-size:calc(7.2px * var(--board-name-comp,1))!important}
+}
+.ruby-help{font-size:11px;color:var(--muted);line-height:1.45;margin-top:4px}
 </style>
 </head>
 <body>
@@ -19596,7 +19628,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v13.30 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -19930,7 +19962,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
 
       <div id="tool-pane-manual" class="tool-pane">
         <form id="card-form" class="form-grid">
-          <label class="wide">カード名<input id="card-name" required /></label>
+          <label class="wide">カード名<input id="card-name" required /></label><label class="wide">ルビ設定<input id="card-ruby" placeholder="例：廻る=めぐる;越境者=えっきょうしゃ" /><div class="ruby-help">本文中の語句=よみ を ; または改行で区切って入力。カード名・種族・効果・フレーバーに共通適用します。</div></label>
           <label>種類<select id="card-type"><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option value="__custom__">その他（自由入力）</option></select></label>
           <div class="wide custom-type-fields" id="card-custom-type-fields" hidden>
             <label>自由種類・左側<input id="card-custom-type-left" placeholder="自由入力"></label>
@@ -20568,7 +20600,7 @@ html[data-online-duel-own="0"] .online-duel-actions .btn{
     </div>
 
     <div class="online-duel-wrap">
-      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：カード名・種族・効果テキスト等に任意の読み仮名を設定する機能を追加予定</p></section></main>
+      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示</p></section></main>
 
       <aside class="online-duel-tools">
         <div class="panel">
@@ -23362,7 +23394,7 @@ function normalizeImportedCard(raw){
   if(!raw||typeof raw!=='object')return null;
   const type=normalizeCardType(raw.type);
   const races=Array.isArray(raw.races)?raw.races.join(' / '):(raw.race??'');
-  return {sourceId:raw.id||null,name:String(raw.name??'').trim(),type,level:raw.level==null?'':String(raw.level),power:raw.power==null?'':String(raw.power),race:String(races),rarity:String(raw.rarity??''),effect:String(raw.effect??''),flavor:String(raw.flavor??''),visualEffects:normalizeCardVisualEffects(raw.visualEffects),appearancePresetMeta:normalizeAppearancePresetMeta(raw.appearancePresetMeta),importLinks:Array.isArray(raw.cardLinks)?raw.cardLinks:[]};
+  return {sourceId:raw.id||null,name:String(raw.name??'').trim(),ruby:String(raw.ruby??''),type,level:raw.level==null?'':String(raw.level),power:raw.power==null?'':String(raw.power),race:String(races),rarity:String(raw.rarity??''),effect:String(raw.effect??''),flavor:String(raw.flavor??''),visualEffects:normalizeCardVisualEffects(raw.visualEffects),appearancePresetMeta:normalizeAppearancePresetMeta(raw.appearancePresetMeta),importLinks:Array.isArray(raw.cardLinks)?raw.cardLinks:[]};
 }
 function splitCardText(src){
   src=String(src||'').replace(/\r\n?/g,'\n').trim();
@@ -23624,7 +23656,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'13.30',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.1',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -24033,13 +24065,13 @@ function registerPreviewHtml(){const c=manualRegisterDraft(),stats=[c.type,c.lev
 function openRegisterFloatingPreview(){openFloatingPreview('カード登録プレビュー','screen:cards',registerPreviewHtml())}
 function refreshRegisterFloatingPreview(){if(floatingPreviewOpen&&floatingPreviewOwner==='screen:cards')openRegisterFloatingPreview()}
 function clearCardForm(){
- ['card-name','card-level','card-power','card-race','card-rarity','card-effect','card-flavor','card-custom-type-left','card-custom-type-right'].forEach(id=>{const el=$('#'+id);if(el)el.value=''});
+ ['card-name','card-ruby','card-level','card-power','card-race','card-rarity','card-effect','card-flavor','card-custom-type-left','card-custom-type-right'].forEach(id=>{const el=$('#'+id);if(el)el.value=''});
  if($('#card-type'))$('#card-type').value='キャラクター';cleanupRegisterPreviewFile();syncManualCustomTypeFields();refreshRegisterFloatingPreview();
 }
 $('#card-type').onchange=()=>{syncManualCustomTypeFields();refreshRegisterFloatingPreview()};
 $('#card-custom-type-left').oninput=()=>{syncManualCustomTypeFields();refreshRegisterFloatingPreview()};
 $('#card-custom-type-right').oninput=()=>{syncManualCustomTypeFields();refreshRegisterFloatingPreview()};
-['card-name','card-level','card-power','card-race','card-rarity','card-effect','card-flavor'].forEach(id=>$('#'+id)?.addEventListener('input',refreshRegisterFloatingPreview));
+['card-name','card-ruby','card-level','card-power','card-race','card-rarity','card-effect','card-flavor'].forEach(id=>$('#'+id)?.addEventListener('input',refreshRegisterFloatingPreview));
 syncManualCustomTypeFields();
 $('#card-register-image').onchange=e=>{const file=e.target.files?.[0];if(!file){cleanupRegisterPreviewFile();refreshRegisterFloatingPreview();return}if(!String(file.type||'').startsWith('image/')){toast('画像ファイルを選択してください');cleanupRegisterPreviewFile();return}if(registerPreviewUrl){try{URL.revokeObjectURL(registerPreviewUrl)}catch{}}registerPreviewFile=file;registerPreviewUrl=URL.createObjectURL(file);$('#card-register-image-status').textContent=`選択中：${file.name}`;openRegisterFloatingPreview()};
 $('#card-register-preview-open').onclick=openRegisterFloatingPreview;
@@ -24048,7 +24080,7 @@ $('#card-form').onsubmit=async e=>{
  e.preventDefault();const submit=$('#card-register-submit');if(submit?.disabled)return;
  let type=$('#card-type').value;
  if(type==='__custom__'){type=buildCustomCardType($('#card-custom-type-left').value,$('#card-custom-type-right').value);if(!type){toast('自由種類は左右どちらも入力してください。「:」は入力欄の中では使用できません。');return}}
- const obj={id:uid('card'),name:$('#card-name').value.trim(),type:normalizeCardType(type),level:$('#card-level').value.trim(),power:$('#card-power').value.trim(),race:$('#card-race').value.trim(),rarity:$('#card-rarity').value.trim(),effect:$('#card-effect').value,flavor:$('#card-flavor').value,visualEffects:[],cardLinks:[]};
+ const obj={id:uid('card'),name:$('#card-name').value.trim(),ruby:$('#card-ruby').value.trim(),type:normalizeCardType(type),level:$('#card-level').value.trim(),power:$('#card-power').value.trim(),race:$('#card-race').value.trim(),rarity:$('#card-rarity').value.trim(),effect:$('#card-effect').value,flavor:$('#card-flavor').value,visualEffects:[],cardLinks:[]};
  if(!obj.name)return;
  if(registerPreviewFile&&!imageSystemAvailable){toast('このブラウザでは画像保存を利用できません');return}
  if(submit){submit.disabled=true;submit.textContent='登録中…'}
@@ -25439,7 +25471,7 @@ function openCardManagerEdit(id){
  const custom=isCustomCardType(c.type),parts=splitCustomCardType(c.type);
  openModal(`<div class="modal-head"><h3>カード編集</h3><button class="btn" id="manager-edit-close">閉じる</button></div>
  <form id="manager-edit-form" class="form-grid">
-   <label class="wide">カード名<input id="manager-edit-name" required value="${esc(c.name)}"></label>
+   <label class="wide">カード名<input id="manager-edit-name" required value="${esc(c.name)}"></label><label class="wide">ルビ設定<input id="manager-edit-ruby" value="${esc(c.ruby||'')}" placeholder="例：廻る=めぐる;越境者=えっきょうしゃ"><div class="ruby-help">語句=よみ を ; または改行で区切ります。</div></label>
    <label>種類<select id="manager-edit-type">${cardTypeOptionsHtml(c.type,true)}</select></label>
    <div class="wide custom-type-fields" id="manager-edit-custom-type-fields" ${custom?'':'hidden'}>
      <label>自由種類・左側<input id="manager-edit-custom-left" value="${esc(parts[0])}" placeholder="自由入力"></label><span class="custom-type-colon">:</span><label>自由種類・右側<input id="manager-edit-custom-right" value="${esc(parts[1])}" placeholder="自由入力"></label>
@@ -25460,7 +25492,7 @@ function openCardManagerEdit(id){
    const name=$('#manager-edit-name').value.trim();if(!name)return;
    let type=$('#manager-edit-type').value;
    if(type==='__custom__'){type=buildCustomCardType($('#manager-edit-custom-left').value,$('#manager-edit-custom-right').value);if(!type){toast('自由種類は左右どちらも入力してください。「:」は入力欄の中では使用できません。');return}}
-   cards[i]={id,name,type:normalizeCardType(type),level:$('#manager-edit-level').value.trim(),power:$('#manager-edit-power').value.trim(),race:$('#manager-edit-race').value.trim(),rarity:$('#manager-edit-rarity').value.trim(),effect:$('#manager-edit-effect').value,flavor:$('#manager-edit-flavor').value,visualEffects:normalizeCardVisualEffects(c.visualEffects),appearancePresetMeta:appearancePresetMetaPortable(c.appearancePresetMeta),cardLinks:cardLinksFor(c)};
+   cards[i]={id,name,ruby:$('#manager-edit-ruby').value.trim(),type:normalizeCardType(type),level:$('#manager-edit-level').value.trim(),power:$('#manager-edit-power').value.trim(),race:$('#manager-edit-race').value.trim(),rarity:$('#manager-edit-rarity').value.trim(),effect:$('#manager-edit-effect').value,flavor:$('#manager-edit-flavor').value,visualEffects:normalizeCardVisualEffects(c.visualEffects),appearancePresetMeta:appearancePresetMetaPortable(c.appearancePresetMeta),cardLinks:cardLinksFor(c)};
    save(LS_CARDS,cards);touchRecentCards(id);renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();openCardManagerDetail(id,{keepContext:true});toast('カードを更新しました');
  };
 }
@@ -28981,23 +29013,15 @@ function renderDeckBox(p,pi,z,label){const count=physicalCount(p[z]),empty=count
 function renderUtility(p,pi){return `<div class="utility-grid"><div class="deck-pair">${renderDeckBox(p,pi,'deck','デッキ')}${renderDeckBox(p,pi,'otherDeck','その他デッキ')}</div><div class="grave-banish-pair">${compactZoneBox(p,pi,'grave')}${compactZoneBox(p,pi,'banish')}</div></div>`}
 function physicalCount(arr){return arr.reduce((a,p)=>a+p.cards.length,0)}
 function topCard(pile){return pile.cards[0]}
-function renderPile(pile,pi,z,index){const c=topCard(pile);ensureInstanceBoardExtras(c);const counters=c.counters?.length?c.counters.map(x=>`${esc(x.name)} ${x.value}`).join(' / '):'カウンターなし';const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;const title=`${c.name}${c.memo?'\nメモ: '+c.memo:''}${pile.cards.length>1?'\n重なり: '+pile.cards.map(x=>x.name).join(' → '):''}`;const markers=renderCardMarkers(c);if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${markers}<div class="back-title">裏向きカード</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';return `<div class="pile ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}${cardFxHtml(c,'board')}${cardFrameHtml(c)}${markers}<div class="name">${esc(c.name)}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div><div class="flags"><span>${c.memo?'メモあり':'メモなし'}</span></div>${c.token?'<span class="pill" style="position:absolute;left:4px;bottom:4px;font-size:10px">TOKEN</span>':''}${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`}
-
-async function hydrateBoardImages(){
- const root=$('#board-main');
- if(!root||boardDisplayPrefs.showCardImages===false)return;
- await imageReadyPromise;
- const orientation=boardDisplayPrefs.orientation;
- root.querySelectorAll('[data-card-art]').forEach(async el=>{
-   const cardId=el.dataset.cardArt,link=getCachedImageLink(cardId)||await getCardImageLink(cardId);
-   if(!link||!el.isConnected)return;
-   const view=imageViewForOrientation(link,orientation),url=await getImageObjectUrl(link.imageId,'thumb');
-   if(!url||!el.isConnected||el.dataset.cardArt!==cardId)return;
-   el.style.backgroundImage=`url("${url}")`;
-   el.style.backgroundSize=view.fit;
-   el.style.backgroundPosition=`${view.x}% ${view.y}%`;
-   el.classList.add('image-loaded');
- });
+function renderPile(pile,pi,z,index){
+ const c=topCard(pile);ensureInstanceBoardExtras(c);
+ const counters=c.counters?.length?c.counters.map(x=>`${esc(x.name)} ${x.value}`).join(' / '):'カウンターなし';
+ const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;
+ const title=`${c.name}${pile.cards.length>1?'\n重なり: '+pile.cards.map(x=>x.name).join(' → '):''}`;
+ const markers=renderCardMarkers(c),sizeClass=boardNameSizeClass(c);
+ if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${markers}<div class="back-title">裏向きカード</div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;
+ const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';
+ return `<div class="pile ${sizeClass} ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}${cardFxHtml(c,'board')}${cardFrameHtml(c)}${markers}<div class="name">${rubyTextHtml(c.name,cardRubySpec(c))}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div>${c.token?'<span class="pill" style="position:absolute;left:4px;bottom:4px;font-size:10px">TOKEN</span>':''}${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;
 }
 async function hydrateBoardDetailImage(cardId){
  const el=$('#board-detail-image');if(!el||!cardId)return;
@@ -29736,6 +29760,42 @@ function openZoneViewer(pi,z,initialQuery=''){
 }
 
 // Detail modal
+function parseRubySpec(spec){
+ const rows=String(spec||'').split(/\n|;/).map(x=>x.trim()).filter(Boolean);
+ const out=[];
+ for(const row of rows){
+   const at=row.indexOf('=');
+   if(at<=0)continue;
+   const base=row.slice(0,at).trim(),reading=row.slice(at+1).trim();
+   if(base&&reading)out.push({base,reading});
+ }
+ return out.sort((a,b)=>b.base.length-a.base.length);
+}
+function rubyTextHtml(text,spec){
+ const raw=String(text??'');
+ const maps=parseRubySpec(spec);
+ if(!maps.length)return esc(raw).replace(/\n/g,'<br>');
+ let i=0,out='';
+ while(i<raw.length){
+   let best=null,bestAt=-1;
+   for(const m of maps){
+     const at=raw.indexOf(m.base,i);
+     if(at<0)continue;
+     if(bestAt<0||at<bestAt||(at===bestAt&&m.base.length>best.base.length)){best=m;bestAt=at}
+   }
+   if(bestAt<0){out+=esc(raw.slice(i));break}
+   if(bestAt>i)out+=esc(raw.slice(i,bestAt));
+   out+=`<ruby><rb>${esc(best.base)}</rb><rt>${esc(best.reading)}</rt></ruby>`;
+   i=bestAt+best.base.length;
+ }
+ return out.replace(/\n/g,'<br>');
+}
+function cardRubySpec(c){return String(c?.ruby||'')}
+function boardNameSizeClass(c){
+ const n=String(c?.name||'').length;
+ return n>=18?'board-name-xlong':n>=11?'board-name-long':'';
+}
+
 function zoneDetailIds(pi,z){
  const ids=[];
  const area=board?.players?.[pi]?.[z]||[];
@@ -29821,12 +29881,12 @@ function openOnlineReadOnlyDetail(pi,z,index,cardIndex=0,navIds){
       ${c.faceDown
         ?'<div class="muted">このカードは裏向きのため、カード内容は公開されていません。</div>'
         :`<div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div>
-          <h3>${esc(c.name)}</h3>
+          <h3>${rubyTextHtml(c.name,cardRubySpec(c))}</h3>
           <div class="actions"><span class="pill">${esc(c.type||'-')}</span><span class="pill">Lv ${esc(levelNow)}</span><span class="pill">POWER ${esc(powerNow)}</span></div>
           ${c.rarity?`<div class="muted">レアリティ：${esc(c.rarity)}</div>`:''}
-          <div class="muted">${esc(c.race||'種族なし')}</div>
+          <div class="muted">${rubyTextHtml(c.race||'種族なし',cardRubySpec(c))}</div>
           <hr style="border:0;border-top:1px solid var(--line);margin:10px 0">
-          <div class="effect">${esc(c.effect||'効果テキストなし')}</div>
+          <div class="effect">${rubyTextHtml(c.effect||'効果テキストなし',cardRubySpec(c))}</div>
           ${c.flavor?`<div class="muted" style="margin-top:10px;white-space:pre-wrap">${esc(c.flavor)}</div>`:''}`}
     </div>
     <div>
@@ -29876,7 +29936,7 @@ function openDetail(pi,z,index,cardIndex=0,navIds){if(onlineOpponentReadOnly(pi)
  const helperOpen=(Number(c.powerMod)||0)!==0||(Number(c.levelModPersistent)||0)!==0||(Number(c.levelModTemporary)||0)!==0||c.counters.length||c.markers.length;
  const stackOpen=pile.cards.length>1;
  const relatedHtml=renderBoardRelatedLinks(c);
- openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div><h3>${esc(c.name)}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(levelNow)}</span><span class="pill">POWER ${pow===null?'-':esc(pow)}</span></div>${levelBreakdown}${powerBreakdown}<div class="muted">${esc(c.race||'種族なし')}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${esc(c.effect||'効果テキストなし')}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="reset-card-corrections" ${((Number(c.powerMod)||0)===0&&(Number(c.levelModPersistent)||0)===0&&(Number(c.levelModTemporary)||0)===0)?'disabled':''}>POWER/Lv修正をリセット</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><details class="board-detail-fold board-helper-fold" ${helperOpen?'open':''}><summary>補助情報 <span class="pill">${(Number(c.powerMod)||0)!==0?'PW':''}${((Number(c.levelModPersistent)||0)!==0||(Number(c.levelModTemporary)||0)!==0)?`${(Number(c.powerMod)||0)!==0?' / ':''}LV`:''}${c.counters.length?`${(Number(c.powerMod)||0)!==0?' / ':''}C${c.counters.length}`:''}${c.markers.length?`${((Number(c.powerMod)||0)!==0||c.counters.length)?' / ':''}M${c.markers.length}`:''}${!helperOpen?'なし':''}</span></summary><div class="board-detail-fold-body"><label>POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h4>レベル補正</h4><div class="level-mod-grid"><label>常時<input id="level-mod-persistent" type="number" value="${Number(c.levelModPersistent)||0}"></label><label>一時<input id="level-mod-temporary" type="number" value="${Number(c.levelModTemporary)||0}"></label></div><div class="muted">元Lvが数値なら合算して現在Lvとして扱います。？やXなどの場合は補正値だけを別表示します。</div><h4>カウンター</h4><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button><h4>一時マーカー</h4><div id="detail-marker-list">${renderDetailMarkers(c)}</div>${Array.isArray(c.markers)&&c.markers.length?'<button class="btn small" id="clear-temp-markers">すべて外す</button>':''}</div></details><details class="board-detail-fold" ${stackOpen?'open':''}><summary>重なり <span class="pill">${pile.cards.length}</span></summary><div class="board-detail-fold-body">${pile.cards.length>1?`<div class="actions stack-quick-actions"><button class="btn small" id="stack-move-top">一番上だけ移動</button><button class="btn small" id="stack-move-bottom">一番下だけ移動</button><button class="btn small" id="stack-move-all">全部まとめて移動</button><button class="btn small danger" id="stack-split-all">ばらす</button></div>`:''}<div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item stack-item-rich ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span class="stack-order">${i+1}</span><div class="stack-mini-art">${boardMiniArtHtml(x)}</div><div class="stack-item-copy"><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}${x.faceDown?' / 裏向き':''}${x.rested?' / レスト':''}</div></div><div class="stack-item-actions"><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div></div></details>${relatedHtml}</div></div>`);
+ openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div><h3>${rubyTextHtml(c.name,cardRubySpec(c))}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(levelNow)}</span><span class="pill">POWER ${pow===null?'-':esc(pow)}</span></div>${levelBreakdown}${powerBreakdown}<div class="muted">${rubyTextHtml(c.race||'種族なし',cardRubySpec(c))}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${rubyTextHtml(c.effect||'効果テキストなし',cardRubySpec(c))}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="reset-card-corrections" ${((Number(c.powerMod)||0)===0&&(Number(c.levelModPersistent)||0)===0&&(Number(c.levelModTemporary)||0)===0)?'disabled':''}>POWER/Lv修正をリセット</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><details class="board-detail-fold board-helper-fold" ${helperOpen?'open':''}><summary>補助情報 <span class="pill">${(Number(c.powerMod)||0)!==0?'PW':''}${((Number(c.levelModPersistent)||0)!==0||(Number(c.levelModTemporary)||0)!==0)?`${(Number(c.powerMod)||0)!==0?' / ':''}LV`:''}${c.counters.length?`${(Number(c.powerMod)||0)!==0?' / ':''}C${c.counters.length}`:''}${c.markers.length?`${((Number(c.powerMod)||0)!==0||c.counters.length)?' / ':''}M${c.markers.length}`:''}${!helperOpen?'なし':''}</span></summary><div class="board-detail-fold-body"><label>POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h4>レベル補正</h4><div class="level-mod-grid"><label>常時<input id="level-mod-persistent" type="number" value="${Number(c.levelModPersistent)||0}"></label><label>一時<input id="level-mod-temporary" type="number" value="${Number(c.levelModTemporary)||0}"></label></div><div class="muted">元Lvが数値なら合算して現在Lvとして扱います。？やXなどの場合は補正値だけを別表示します。</div><h4>カウンター</h4><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button><h4>一時マーカー</h4><div id="detail-marker-list">${renderDetailMarkers(c)}</div>${Array.isArray(c.markers)&&c.markers.length?'<button class="btn small" id="clear-temp-markers">すべて外す</button>':''}</div></details><details class="board-detail-fold" ${stackOpen?'open':''}><summary>重なり <span class="pill">${pile.cards.length}</span></summary><div class="board-detail-fold-body">${pile.cards.length>1?`<div class="actions stack-quick-actions"><button class="btn small" id="stack-move-top">一番上だけ移動</button><button class="btn small" id="stack-move-bottom">一番下だけ移動</button><button class="btn small" id="stack-move-all">全部まとめて移動</button><button class="btn small danger" id="stack-split-all">ばらす</button></div>`:''}<div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item stack-item-rich ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span class="stack-order">${i+1}</span><div class="stack-mini-art">${boardMiniArtHtml(x)}</div><div class="stack-item-copy"><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}${x.faceDown?' / 裏向き':''}${x.rested?' / レスト':''}</div></div><div class="stack-item-actions"><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div></div></details>${relatedHtml}</div></div>`);
  hydrateBoardDetailImage(cardImageSourceId(c));
  hydrateBoardMiniListImages($('#modal'));
  bindBoardRelatedLinks(c);
@@ -30941,6 +31001,7 @@ function onlinePublicCardToInstance(pub){
   const base=master?cloneInstance(master):{
     id:String(pub?.id||uid('remote-card')),
     name:String(pub?.name||'公開カード'),
+    ruby:String(pub?.ruby||''),
     type:String(pub?.type||'キャラクター'),
     level:pub?.level??'',
     power:pub?.power??'',
@@ -30954,6 +31015,7 @@ function onlinePublicCardToInstance(pub){
   if(pub?.publicKey)base.instanceId=`remote_${String(pub.publicKey)}`;
   if(!pub?.faceDown){
     base.name=String(pub?.name||base.name||'公開カード');
+    base.ruby=String(pub?.ruby??base.ruby??'');
     base.type=String(pub?.type||base.type||'キャラクター');
     base.level=pub?.level??base.level??'';
     base.power=pub?.power??base.power??'';
@@ -30962,7 +31024,7 @@ function onlinePublicCardToInstance(pub){
     base.effect=String(pub?.effect??base.effect??'');
     base.flavor=String(pub?.flavor??base.flavor??'');
   }else{
-    base.name='裏向きカード';base.type='';base.level='';base.power='';base.race='';base.rarity='';base.effect='';base.flavor='';
+    base.name='裏向きカード';base.ruby='';base.type='';base.level='';base.power='';base.race='';base.rarity='';base.effect='';base.flavor='';
   }
   base.rested=!!pub?.rested;
   base.faceDown=!!pub?.faceDown;
@@ -31943,7 +32005,7 @@ function onlineNormalizePublicPile(pile){
     if(c?.faceDown){
       return {
         publicKey:String(c?.instanceId||''),
-        id:'',name:'裏向きカード',type:'',level:'',power:'',race:'',rarity:'',effect:'',flavor:'',
+        id:'',name:'裏向きカード',ruby:'',type:'',level:'',power:'',race:'',rarity:'',effect:'',flavor:'',
         rested:!!c?.rested,faceDown:true,counters,markers,
         powerMod:0,levelModPersistent:0,levelModTemporary:0
       };
@@ -31952,6 +32014,7 @@ function onlineNormalizePublicPile(pile){
       publicKey:String(c?.instanceId||''),
       id:String(c?.id||''),
       name:String(c?.name||'名称未設定'),
+      ruby:String(c?.ruby||''),
       type:String(c?.type||''),
       level:c?.level??'',
       power:c?.power??'',
