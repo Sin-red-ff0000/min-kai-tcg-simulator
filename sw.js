@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minkai-tcg-simulator-v13-28';
+const CACHE_NAME = 'minkai-tcg-simulator-v13-28-1';
 const APP_SHELL = [
   './',
   './index.html',
@@ -26,7 +26,7 @@ const APP_SHELL = [
   './frames/second-infernal-sigil.png',
   './frames/second-ancient-forest-temple.png',
   './frames/second-luxury-cyber.png',
-  './frames/second-void-fracture.png',  './effects/frost-ice.png',  './effects/holographic-film-soft.png',
+  './frames/second-void-fracture.png',  './effects/holographic-film-soft.png',
   './effects/surface-diamond-cut.png',  './effects/surface-anodized-metal.png',  './effects/surface-carbon-iridescent.png',
   './effects/surface-velvet-matte.png',
   './effects/surface-diamond-cut-fine.png',
@@ -78,7 +78,14 @@ const APP_SHELL = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(APP_SHELL))
+      .then(cache => Promise.all(
+        APP_SHELL.map(path =>
+          cache.add(path).catch(err => {
+            console.warn('PWA cache skipped:', path, err);
+            return null;
+          })
+        )
+      ))
       .then(() => self.skipWaiting())
   );
 });
