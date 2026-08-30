@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.8</title>
+<title>みん会TCG Simulator v16.9</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -19816,7 +19816,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.9 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -20788,7 +20788,7 @@ h3 .minkai-ruby{margin-top:.45em}
     </div>
 
     <div class="online-duel-wrap">
-      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示</p></section></main>
+      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：未実装。カード管理などで複数カードを選択し、選択したカードをまとめてテキスト形式でクリップボードへコピーできる機能</p></section></main>
 
       <aside class="online-duel-tools">
         <div class="panel">
@@ -23882,7 +23882,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.8',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.9',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
