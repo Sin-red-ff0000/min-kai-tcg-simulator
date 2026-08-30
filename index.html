@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.11</title>
+<title>みん会TCG Simulator v16.13</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17204,6 +17204,237 @@ html{--visual-generation:"12.0"}
 .fx-thermal-liquid-crystal>.fx-deco{display:none!important}
 
 /* ==========================================================
+   v16.13 Material Concept Pack
+   OFFでも質感が読める濃い全面素材。ONでは反射・内部模様のみを動かす。
+   ========================================================== */
+.fx-black-pearl{
+ background-image:url('effects/surface-black-pearl.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-black-pearl>.fx-deco{display:none!important}
+.fx-dark-mother-pearl{
+ background-image:url('effects/surface-dark-mother-pearl.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-dark-mother-pearl>.fx-deco{display:none!important}
+.fx-cracked-crystal{
+ background-image:url('effects/surface-cracked-crystal.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-cracked-crystal>.fx-deco{display:none!important}
+.fx-black-crystal{
+ background-image:url('effects/surface-black-crystal.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:hard-light;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-black-crystal>.fx-deco{display:none!important}
+.fx-aurora-quartz{
+ background-image:url('effects/surface-aurora-quartz.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-aurora-quartz>.fx-deco{display:none!important}
+.fx-labradorite{
+ background-image:url('effects/surface-labradorite.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:color-dodge;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-labradorite>.fx-deco{display:none!important}
+.fx-tiger-eye{
+ background-image:url('effects/surface-tiger-eye.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:overlay;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-tiger-eye>.fx-deco{display:none!important}
+.fx-black-opal{
+ background-image:url('effects/surface-black-opal.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-black-opal>.fx-deco{display:none!important}
+.fx-mineral-vein{
+ background-image:url('effects/surface-mineral-vein.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-mineral-vein>.fx-deco{display:none!important}
+.fx-lava-glass{
+ background-image:url('effects/surface-lava-glass.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-lava-glass>.fx-deco{display:none!important}
+.fx-abyss-lacquer{
+ background-image:url('effects/surface-abyss-lacquer.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:overlay;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-abyss-lacquer>.fx-deco{display:none!important}
+.fx-raden{
+ background-image:url('effects/surface-raden.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-raden>.fx-deco{display:none!important}
+.fx-cloisonne{
+ background-image:url('effects/surface-cloisonne.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:overlay;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-cloisonne>.fx-deco{display:none!important}
+.fx-crackle-glaze{
+ background-image:url('effects/surface-crackle-glaze.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:overlay;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-crackle-glaze>.fx-deco{display:none!important}
+.fx-stained-glass-material{
+ background-image:url('effects/surface-stained-glass-material.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:overlay;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-stained-glass-material>.fx-deco{display:none!important}
+.fx-dichroic-mosaic{
+ background-image:url('effects/surface-dichroic-mosaic.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-dichroic-mosaic>.fx-deco{display:none!important}
+.fx-smoke-resin{
+ background-image:url('effects/surface-smoke-resin.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:overlay;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-smoke-resin>.fx-deco{display:none!important}
+.fx-ink-resin{
+ background-image:url('effects/surface-ink-resin.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-ink-resin>.fx-deco{display:none!important}
+.fx-scale-emboss{
+ background-image:url('effects/surface-scale-emboss.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:overlay;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-scale-emboss>.fx-deco{display:none!important}
+.fx-ripple-emboss{
+ background-image:url('effects/surface-ripple-emboss.png')!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ mix-blend-mode:screen;
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.fx-ripple-emboss>.fx-deco{display:none!important}
+@keyframes fxConceptMaterialShift{
+  0%{background-position:46% 48%;transform:scale(1.01);filter:hue-rotate(calc(var(--fx-hue,0deg) - 8deg)) saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1))}
+  50%{background-position:54% 52%;transform:scale(1.035);filter:hue-rotate(calc(var(--fx-hue,0deg) + 14deg)) saturate(calc(var(--fx-sat,1)*1.08)) brightness(calc(var(--fx-bright,1)*1.06))}
+  100%{background-position:46% 48%;transform:scale(1.01);filter:hue-rotate(calc(var(--fx-hue,0deg) - 8deg)) saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1))}
+}
+@keyframes fxConceptMaterialPulse{
+  0%,100%{opacity:calc(var(--fx-o,.72)*.78)}
+  50%{opacity:var(--fx-o,.72)}
+}
+
+.fx-animate .fx-black-pearl,
+.fx-animate .fx-dark-mother-pearl,
+.fx-animate .fx-cracked-crystal,
+.fx-animate .fx-black-crystal,
+.fx-animate .fx-aurora-quartz,
+.fx-animate .fx-labradorite,
+.fx-animate .fx-tiger-eye,
+.fx-animate .fx-black-opal,
+.fx-animate .fx-mineral-vein,
+.fx-animate .fx-lava-glass,
+.fx-animate .fx-abyss-lacquer,
+.fx-animate .fx-raden,
+.fx-animate .fx-cloisonne,
+.fx-animate .fx-crackle-glaze,
+.fx-animate .fx-stained-glass-material,
+.fx-animate .fx-dichroic-mosaic,
+.fx-animate .fx-smoke-resin,
+.fx-animate .fx-ink-resin,
+.fx-animate .fx-scale-emboss,
+.fx-animate .fx-ripple-emboss{
+  animation-name:fxConceptMaterialShift;
+  animation-duration:var(--fx-duration,8.5s);
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
+  animation-direction:alternate;
+  animation-fill-mode:both;
+}
+.fx-animate .fx-lava-glass,
+.fx-animate .fx-raden,
+.fx-animate .fx-cracked-crystal{
+  animation-name:fxConceptMaterialShift,fxConceptMaterialPulse;
+  animation-duration:var(--fx-duration,7s),calc(var(--fx-duration,7s)*.62);
+  animation-timing-function:ease-in-out,ease-in-out;
+  animation-iteration-count:infinite,infinite;
+}
+
+
+/* ==========================================================
    v13.0 Home mode separation / online foundation
    ========================================================== */
 .home-mode-switcher{
@@ -19838,7 +20069,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.11 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.13 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -21120,71 +21351,91 @@ function cardTypeOptionsHtml(selected='',allowCustomChoice=false){
 
 
 const CARD_VISUAL_EFFECTS=[
- {id:'hologram',name:'ホログラム',category:'ホロ・加工'},
- {id:'prism',name:'プリズム',category:'ホロ・加工'},
- {id:'aurora',name:'オーロラ',category:'ホロ・加工'},
- {id:'rainbow',name:'レインボー',category:'ホロ・加工'},
- {id:'gold-foil',name:'ゴールドフォイル',category:'ホロ・加工'},
- {id:'silver-foil',name:'シルバーフォイル',category:'ホロ・加工'},
- {id:'fire',name:'炎',category:'属性・自然'},
- {id:'petals',name:'花吹雪',category:'属性・自然'},
- {id:'fog',name:'霧',category:'属性・自然'},
- {id:'digital-code',name:'デジタルコード',category:'機械・デジタル'},
- {id:'moonlight',name:'月光',category:'光・魔法'},
- {id:'solar-flare',name:'日輪',category:'属性・自然'},
- {id:'rain-streak',name:'降雨',category:'属性・自然'},
- {id:'oil-slick',name:'偏光油膜',category:'ホロ・加工'},
- {id:'holographic-film-soft',name:'ホログラフィックフィルム',category:'ホロ・加工'},
- {id:'diamond-cut',name:'ダイヤモンドカット',category:'表面加工'},
- {id:'anodized-metal',name:'アノダイズドメタル',category:'表面加工'},
- {id:'carbon-iridescent',name:'イリデセントカーボン',category:'表面加工'},
- {id:'velvet-matte',name:'ベルベットマット',category:'表面加工'},
- {id:'diamond-cut-fine',name:'ダイヤモンドカット・ファイン',category:'表面加工'},
- {id:'diamond-cut-deep',name:'ダイヤモンドカット・ディープ',category:'表面加工'},
- {id:'diamond-cut-aurora',name:'ダイヤモンドカット・オーロラ',category:'表面加工'},
- {id:'diamond-cut-black',name:'ダイヤモンドカット・ブラック',category:'表面加工'},
- {id:'dichroic-glass',name:'ダイクロイックガラス',category:'表面加工'},
- {id:'heat-titanium',name:'ヒートチタン',category:'表面加工'},
- {id:'rainbow-facet',name:'レインボーファセット',category:'表面加工'},
- {id:'sapphire-cut',name:'サファイアカット',category:'表面加工'},
- {id:'ruby-cut',name:'ルビーカット',category:'表面加工'},
- {id:'emerald-cut',name:'エメラルドカット',category:'表面加工'},
- {id:'amethyst-cut',name:'アメジストカット',category:'表面加工'},
- {id:'burnished-copper',name:'バーニッシュドカッパー',category:'表面加工'},
- {id:'gunmetal',name:'ガンメタル',category:'表面加工'},
- {id:'rose-gold',name:'ローズゴールド',category:'表面加工'},
- {id:'red-lacquer',name:'紅漆',category:'表面加工'},
- {id:'blue-enamel',name:'ブルーエナメル',category:'表面加工'},
- {id:'orange-candy',name:'オレンジキャンディ',category:'表面加工'},
- {id:'green-candy',name:'グリーンキャンディ',category:'表面加工'},
- {id:'magenta-candy',name:'マゼンタキャンディ',category:'表面加工'},
- {id:'electric-blue',name:'エレクトリックブルー',category:'表面加工'},
- {id:'hot-pink',name:'ホットピンクコート',category:'表面加工'},
- {id:'violet-mirror',name:'ヴァイオレットミラー',category:'表面加工'},
- {id:'gold-orange',name:'ゴールドオレンジ',category:'表面加工'},
- {id:'titanium-spectrum',name:'チタン・スペクトラム',category:'表面加工'},
- {id:'dichroic-film',name:'ダイクロイックフィルム',category:'表面加工'},
- {id:'polarized-lcd',name:'偏光LCD',category:'表面加工'},
- {id:'opal-glass',name:'オパールガラス',category:'表面加工'},
- {id:'beetle-wing',name:'玉虫コート',category:'表面加工'},
- {id:'verdigris',name:'ヴェルディグリ',category:'表面加工'},
- {id:'neon-film',name:'ネオンフィルム',category:'表面加工'},
- {id:'stained-film',name:'ステンドフィルム',category:'表面加工'},
- {id:'azure-marble',name:'アズールマーブル',category:'表面加工'},
- {id:'obsidian',name:'オブシディアン',category:'表面加工'},
- {id:'amber-resin',name:'アンバーレジン',category:'表面加工'},
- {id:'crystal-resin',name:'クリスタルレジン',category:'表面加工'},
- {id:'jade-gloss',name:'ジェイドグロス',category:'表面加工'},
- {id:'lenticular',name:'レンチキュラー',category:'表面加工'},
- {id:'damascus',name:'ダマスカス鋼',category:'表面加工'},
- {id:'morpho-wing',name:'モルフォ構造色',category:'表面加工'},
- {id:'aurora-silk',name:'オーロラシルク',category:'表面加工'},
- {id:'black-oil-slick',name:'黒油膜',category:'表面加工'},
- {id:'frosted-hologlass',name:'フロストホロガラス',category:'表面加工'},
- {id:'molten-metal',name:'溶融金属',category:'表面加工'},
- {id:'soap-membrane',name:'薄膜メンブレン',category:'表面加工'},
- {id:'royal-velvet',name:'ロイヤルベルベット',category:'表面加工'},
- {id:'thermal-liquid-crystal',name:'サーモ液晶',category:'表面加工'}
+ {id:"hologram",name:"ホログラム",category:"ホログラム・偏光"},
+ {id:"prism",name:"プリズム",category:"ホログラム・偏光"},
+ {id:"aurora",name:"オーロラ",category:"ホログラム・偏光"},
+ {id:"rainbow",name:"レインボー",category:"ホログラム・偏光"},
+ {id:"holographic-film-soft",name:"ホログラフィックフィルム",category:"ホログラム・偏光"},
+ {id:"oil-slick",name:"偏光油膜",category:"ホログラム・偏光"},
+ {id:"dichroic-film",name:"ダイクロイックフィルム",category:"ホログラム・偏光"},
+ {id:"polarized-lcd",name:"偏光LCD",category:"ホログラム・偏光"},
+ {id:"beetle-wing",name:"玉虫コート",category:"ホログラム・偏光"},
+ {id:"morpho-wing",name:"モルフォ構造色",category:"ホログラム・偏光"},
+ {id:"soap-membrane",name:"薄膜メンブレン",category:"ホログラム・偏光"},
+ {id:"thermal-liquid-crystal",name:"サーモ液晶",category:"ホログラム・偏光"},
+ {id:"neon-film",name:"ネオンフィルム",category:"ホログラム・偏光"},
+ {id:"gold-foil",name:"ゴールドフォイル",category:"箔・金属"},
+ {id:"silver-foil",name:"シルバーフォイル",category:"箔・金属"},
+ {id:"anodized-metal",name:"アノダイズドメタル",category:"箔・金属"},
+ {id:"heat-titanium",name:"ヒートチタン",category:"箔・金属"},
+ {id:"titanium-spectrum",name:"チタン・スペクトラム",category:"箔・金属"},
+ {id:"burnished-copper",name:"バーニッシュドカッパー",category:"箔・金属"},
+ {id:"gunmetal",name:"ガンメタル",category:"箔・金属"},
+ {id:"rose-gold",name:"ローズゴールド",category:"箔・金属"},
+ {id:"verdigris",name:"ヴェルディグリ",category:"箔・金属"},
+ {id:"damascus",name:"ダマスカス鋼",category:"箔・金属"},
+ {id:"molten-metal",name:"溶融金属",category:"箔・金属"},
+ {id:"diamond-cut",name:"ダイヤモンドカット",category:"カット・ファセット"},
+ {id:"diamond-cut-fine",name:"ダイヤモンドカット・ファイン",category:"カット・ファセット"},
+ {id:"diamond-cut-deep",name:"ダイヤモンドカット・ディープ",category:"カット・ファセット"},
+ {id:"diamond-cut-aurora",name:"ダイヤモンドカット・オーロラ",category:"カット・ファセット"},
+ {id:"diamond-cut-black",name:"ダイヤモンドカット・ブラック",category:"カット・ファセット"},
+ {id:"rainbow-facet",name:"レインボーファセット",category:"カット・ファセット"},
+ {id:"sapphire-cut",name:"サファイアカット",category:"カット・ファセット"},
+ {id:"ruby-cut",name:"ルビーカット",category:"カット・ファセット"},
+ {id:"emerald-cut",name:"エメラルドカット",category:"カット・ファセット"},
+ {id:"amethyst-cut",name:"アメジストカット",category:"カット・ファセット"},
+ {id:"lenticular",name:"レンチキュラー",category:"カット・ファセット"},
+ {id:"dichroic-glass",name:"ダイクロイックガラス",category:"ガラス・宝石・樹脂"},
+ {id:"opal-glass",name:"オパールガラス",category:"ガラス・宝石・樹脂"},
+ {id:"frosted-hologlass",name:"フロストホロガラス",category:"ガラス・宝石・樹脂"},
+ {id:"obsidian",name:"オブシディアン",category:"ガラス・宝石・樹脂"},
+ {id:"amber-resin",name:"アンバーレジン",category:"ガラス・宝石・樹脂"},
+ {id:"crystal-resin",name:"クリスタルレジン",category:"ガラス・宝石・樹脂"},
+ {id:"jade-gloss",name:"ジェイドグロス",category:"ガラス・宝石・樹脂"},
+ {id:"azure-marble",name:"アズールマーブル",category:"ガラス・宝石・樹脂"},
+ {id:"stained-film",name:"ステンドフィルム",category:"ガラス・宝石・樹脂"},
+ {id:"red-lacquer",name:"紅漆",category:"塗装・カラーコート"},
+ {id:"blue-enamel",name:"ブルーエナメル",category:"塗装・カラーコート"},
+ {id:"orange-candy",name:"オレンジキャンディ",category:"塗装・カラーコート"},
+ {id:"green-candy",name:"グリーンキャンディ",category:"塗装・カラーコート"},
+ {id:"magenta-candy",name:"マゼンタキャンディ",category:"塗装・カラーコート"},
+ {id:"electric-blue",name:"エレクトリックブルー",category:"塗装・カラーコート"},
+ {id:"hot-pink",name:"ホットピンクコート",category:"塗装・カラーコート"},
+ {id:"violet-mirror",name:"ヴァイオレットミラー",category:"塗装・カラーコート"},
+ {id:"gold-orange",name:"ゴールドオレンジ",category:"塗装・カラーコート"},
+ {id:"black-oil-slick",name:"黒油膜",category:"塗装・カラーコート"},
+ {id:"carbon-iridescent",name:"イリデセントカーボン",category:"布・特殊素材"},
+ {id:"velvet-matte",name:"ベルベットマット",category:"布・特殊素材"},
+ {id:"aurora-silk",name:"オーロラシルク",category:"布・特殊素材"},
+ {id:"royal-velvet",name:"ロイヤルベルベット",category:"布・特殊素材"},
+ {id:"black-pearl",name:"黒蝶真珠",category:"貝・有機素材"},
+ {id:"dark-mother-pearl",name:"マザーオブパール・ダーク",category:"貝・有機素材"},
+ {id:"cracked-crystal",name:"クラックドクリスタル",category:"結晶・鉱石"},
+ {id:"black-crystal",name:"ブラッククリスタル",category:"結晶・鉱石"},
+ {id:"aurora-quartz",name:"オーロラクォーツ",category:"結晶・鉱石"},
+ {id:"labradorite",name:"ラブラドライト",category:"結晶・鉱石"},
+ {id:"tiger-eye",name:"タイガーアイ",category:"結晶・鉱石"},
+ {id:"black-opal",name:"ブラックオパール",category:"結晶・鉱石"},
+ {id:"mineral-vein",name:"鉱脈石",category:"結晶・鉱石"},
+ {id:"lava-glass",name:"溶岩ガラス",category:"結晶・鉱石"},
+ {id:"abyss-lacquer",name:"深淵漆",category:"漆・陶器"},
+ {id:"raden",name:"螺鈿",category:"漆・陶器"},
+ {id:"cloisonne",name:"七宝焼",category:"漆・陶器"},
+ {id:"crackle-glaze",name:"クラックル釉",category:"漆・陶器"},
+ {id:"stained-glass-material",name:"ステンドグラス加工",category:"ガラス・樹脂"},
+ {id:"dichroic-mosaic",name:"ダイクロイック・モザイク",category:"ガラス・樹脂"},
+ {id:"smoke-resin",name:"スモークレジン",category:"ガラス・樹脂"},
+ {id:"ink-resin",name:"インクレジン",category:"ガラス・樹脂"},
+ {id:"scale-emboss",name:"鱗エンボス",category:"エンボス・型押し"},
+ {id:"ripple-emboss",name:"波紋エンボス",category:"エンボス・型押し"},
+ {id:"petals",name:"花吹雪",category:"自然・天候"},
+ {id:"fog",name:"霧",category:"自然・天候"},
+ {id:"rain-streak",name:"降雨",category:"自然・天候"},
+ {id:"fire",name:"炎",category:"炎・天体光"},
+ {id:"solar-flare",name:"日輪",category:"炎・天体光"},
+ {id:"moonlight",name:"月光",category:"炎・天体光"},
+ {id:"digital-code",name:"デジタルコード",category:"機械・デジタル"}
 ];
 const CARD_FX_IDS=new Set(CARD_VISUAL_EFFECTS.map(x=>x.id));
 function customFxIdFromType(type=''){const s=String(type||'');return s.startsWith('custom:')?s.slice(7):''}
@@ -21688,8 +21939,27 @@ const FX_BASE_DURATIONS={
  'fire':1.8,'petals':5.8,'fog':6.8,'digital-code':5.8,
  'prism-cut':7,'diamond-glitter':5.5,'sandblast':12,'metallic-brush':7.5,
  'mirror-reflection':5.8,'opal-shimmer':9,'pearl-shell':10,'frost-ice':9,
- 'holographic-film-soft':10
-};
+ 'holographic-film-soft':10,
+ 'black-pearl':8.5,
+ 'dark-mother-pearl':9.5,
+ 'cracked-crystal':7.0,
+ 'black-crystal':8.0,
+ 'aurora-quartz':9.0,
+ 'labradorite':8.5,
+ 'tiger-eye':7.5,
+ 'black-opal':9.5,
+ 'mineral-vein':8.0,
+ 'lava-glass':5.5,
+ 'abyss-lacquer':9.0,
+ 'raden':7.0,
+ 'cloisonne':8.0,
+ 'crackle-glaze':10.0,
+ 'stained-glass-material':8.5,
+ 'dichroic-mosaic':7.5,
+ 'smoke-resin':10.0,
+ 'ink-resin':9.0,
+ 'scale-emboss':6.8,
+ 'ripple-emboss':7.8};
 function fxLayerStyle(x,v,power){
  const sat=v.sat*(x.saturation/100),bright=v.bright*(x.brightness/100),base=FX_BASE_DURATIONS[x.type]||5.5,duration=Math.max(.35,base/(x.speed/100));
  const sizeInset=-10-((x.size-100)*.34),densityScale=Math.max(.56,Math.min(1.55,100/x.density));
@@ -21746,7 +22016,7 @@ function openCardFxShowcase(){
    root.innerHTML=CARD_VISUAL_EFFECTS.map(x=>fxShowcaseTileHtml(x,animate)).join('');
    const label=$('#fx-showcase-animation-label');if(label)label.textContent=animate?'アニメーションON':'アニメーションOFF';
  };
- openModal(`<div class="modal-head"><h3>カードエフェクト / 全30種表示確認</h3><button class="btn" id="fx-showcase-close">閉じる</button></div>
+ openModal(`<div class="modal-head"><h3>カードエフェクト / 全${CARD_VISUAL_EFFECTS.length}種表示確認</h3><button class="btn" id="fx-showcase-close">閉じる</button></div>
    <p class="muted">各エフェクトが描画されているかを一覧で確認できます。カード個別設定には影響しません。</p>
    <div class="actions fx-showcase-toolbar">
      <button class="btn" type="button" id="fx-showcase-animation"><span id="fx-showcase-animation-label">アニメーションOFF</span></button>
@@ -23946,7 +24216,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.11',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.12',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,

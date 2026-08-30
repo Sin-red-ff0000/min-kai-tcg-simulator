@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minkai-tcg-simulator-v16-11';
+const CACHE_NAME = 'minkai-tcg-simulator-v16-13';
 const APP_SHELL = [
   './',
   './index.html',
@@ -73,6 +73,26 @@ const APP_SHELL = [
   './effects/surface-soap-membrane.png',
   './effects/surface-royal-velvet.png',
   './effects/surface-thermal-liquid-crystal.png',
+  './effects/surface-black-pearl.png',
+  './effects/surface-dark-mother-pearl.png',
+  './effects/surface-cracked-crystal.png',
+  './effects/surface-black-crystal.png',
+  './effects/surface-aurora-quartz.png',
+  './effects/surface-labradorite.png',
+  './effects/surface-tiger-eye.png',
+  './effects/surface-black-opal.png',
+  './effects/surface-mineral-vein.png',
+  './effects/surface-lava-glass.png',
+  './effects/surface-abyss-lacquer.png',
+  './effects/surface-raden.png',
+  './effects/surface-cloisonne.png',
+  './effects/surface-crackle-glaze.png',
+  './effects/surface-stained-glass-material.png',
+  './effects/surface-dichroic-mosaic.png',
+  './effects/surface-smoke-resin.png',
+  './effects/surface-ink-resin.png',
+  './effects/surface-scale-emboss.png',
+  './effects/surface-ripple-emboss.png',
 ];
 
 self.addEventListener('install', event => {
