@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.13</title>
+<title>みん会TCG Simulator v16.14</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17204,7 +17204,7 @@ html{--visual-generation:"12.0"}
 .fx-thermal-liquid-crystal>.fx-deco{display:none!important}
 
 /* ==========================================================
-   v16.13 Material Concept Pack
+   v16.14 Material Concept Pack
    OFFでも質感が読める濃い全面素材。ONでは反射・内部模様のみを動かす。
    ========================================================== */
 .fx-black-pearl{
@@ -17433,6 +17433,48 @@ html{--visual-generation:"12.0"}
   animation-iteration-count:infinite,infinite;
 }
 
+
+
+/* ==========================================================
+   v16.14 Material Concept Pack II
+   線画/単純図形に見えた11種を、面・層・反射・凹凸中心へ再設計。
+   ========================================================== */
+.fx-cracked-crystal{mix-blend-mode:screen!important}
+.fx-black-crystal{mix-blend-mode:hard-light!important}
+.fx-mineral-vein{mix-blend-mode:screen!important}
+.fx-lava-glass{mix-blend-mode:screen!important}
+.fx-abyss-lacquer{mix-blend-mode:overlay!important}
+.fx-raden{mix-blend-mode:screen!important}
+.fx-cloisonne{mix-blend-mode:overlay!important}
+.fx-stained-glass-material{mix-blend-mode:soft-light!important}
+.fx-dichroic-mosaic{mix-blend-mode:screen!important}
+.fx-scale-emboss{mix-blend-mode:overlay!important}
+.fx-ripple-emboss{mix-blend-mode:soft-light!important}
+
+@keyframes fxMaterialFacetShift{
+  0%{background-position:47% 49%;transform:scale(1.01);filter:hue-rotate(calc(var(--fx-hue,0deg) - 5deg)) saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1))}
+  50%{background-position:53% 51%;transform:scale(1.025);filter:hue-rotate(calc(var(--fx-hue,0deg) + 10deg)) saturate(calc(var(--fx-sat,1)*1.06)) brightness(calc(var(--fx-bright,1)*1.08))}
+  100%{background-position:47% 49%;transform:scale(1.01);filter:hue-rotate(calc(var(--fx-hue,0deg) - 5deg)) saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1))}
+}
+@keyframes fxEmbossLightMove{
+  0%,100%{background-position:48% 50%;filter:brightness(calc(var(--fx-bright,1)*.92)) contrast(1.04)}
+  50%{background-position:52% 50%;filter:brightness(calc(var(--fx-bright,1)*1.12)) contrast(1.12)}
+}
+.fx-animate .fx-cracked-crystal,
+.fx-animate .fx-black-crystal,
+.fx-animate .fx-mineral-vein,
+.fx-animate .fx-lava-glass,
+.fx-animate .fx-abyss-lacquer,
+.fx-animate .fx-raden,
+.fx-animate .fx-cloisonne,
+.fx-animate .fx-stained-glass-material,
+.fx-animate .fx-dichroic-mosaic{
+  animation-name:fxMaterialFacetShift!important;
+}
+.fx-animate .fx-scale-emboss,
+.fx-animate .fx-ripple-emboss{
+  animation-name:fxEmbossLightMove!important;
+}
 
 /* ==========================================================
    v13.0 Home mode separation / online foundation
@@ -20069,7 +20111,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.13 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.14 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
