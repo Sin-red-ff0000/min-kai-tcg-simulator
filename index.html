@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.10</title>
+<title>みん会TCG Simulator v16.11</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -19814,6 +19814,7 @@ h3 .minkai-ruby{margin-top:.45em}
 .deck-review-pane{max-width:980px;margin:0 auto}
 .deck-review-tools{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:12px}
 .deck-review-tools label{min-width:150px}
+.deck-review-tools label:first-child{min-width:min(320px,100%);flex:1}
 .deck-review-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(120px,.45fr) auto;gap:10px;align-items:center;cursor:pointer}
 .deck-review-row:hover{border-color:#596579}
 .deck-review-name{font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -19837,7 +19838,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.10 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.11 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -20473,6 +20474,9 @@ h3 .minkai-ruby{margin-top:.45em}
         <button class="btn primary" type="button" id="deck-review-copy">デッキをコピー</button>
       </div>
       <div class="deck-review-tools">
+        <label>確認するデッキ
+          <select id="deck-review-deck-select"></select>
+        </label>
         <label>並び替え
           <select id="deck-review-sort">
             <option value="manual">デッキ表示順</option>
@@ -23942,7 +23946,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.10',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.11',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -28386,9 +28390,25 @@ function renderDeckDefaultOshii(){
 }
 
 
-let deckViewMode='edit',deckReviewSort='manual',deckReviewSortDir='asc',deckReviewDetailIds=[];
+let deckViewMode='edit',deckReviewSort='manual',deckReviewSortDir='asc',deckReviewDetailIds=[],deckReviewDeckId='__working__';
+function deckReviewSourceDeck(){
+ if(deckReviewDeckId==='__working__')return workingDeck;
+ return decks.find(d=>String(d.id)===String(deckReviewDeckId))||workingDeck;
+}
+function deckReviewSourceEntries(){
+ const d=deckReviewSourceDeck();
+ return Object.entries(d?.entries||{}).filter(([,n])=>Number(n)>0);
+}
+function renderDeckReviewDeckSelect(){
+ const sel=$('#deck-review-deck-select');if(!sel)return;
+ const saved=decks.map(d=>`<option value="${esc(d.id)}">${esc(d.name||'名称未設定デッキ')} 〔${esc(deckStatusText(d))}〕</option>`).join('');
+ sel.innerHTML=`<option value="__working__">現在編集中の内容${workingDeck.name?`：${esc(workingDeck.name)}`:''}</option>${saved}`;
+ const exists=deckReviewDeckId==='__working__'||decks.some(d=>String(d.id)===String(deckReviewDeckId));
+ if(!exists)deckReviewDeckId='__working__';
+ sel.value=deckReviewDeckId;
+}
 function deckReviewRows(){
- let rows=deckContentEntryRows().map(([id,n],i)=>({id,n:Number(n)||0,i,card:cards.find(c=>c.id===id)})).filter(x=>x.card);
+ let rows=deckReviewSourceEntries().map(([id,n],i)=>({id,n:Number(n)||0,i,card:cards.find(c=>c.id===id)})).filter(x=>x.card);
  if(deckReviewSort!=='manual'){
    rows=rows.slice().sort((a,b)=>{
      let av='',bv='';
@@ -28413,14 +28433,21 @@ function setDeckViewMode(mode){
  if(editBtn)editBtn.classList.toggle('primary',deckViewMode==='edit');
  if(reviewBtn)reviewBtn.classList.toggle('primary',deckViewMode==='review');
  if(newBtn)newBtn.hidden=deckViewMode==='review';
- if(deckViewMode==='review')renderDeckReview();
+ if(deckViewMode==='review'){
+   if(!deckReviewDeckId||(!decks.some(d=>String(d.id)===String(deckReviewDeckId))&&deckReviewDeckId!=='__working__')){
+     deckReviewDeckId=editingDeckId&&decks.some(d=>String(d.id)===String(editingDeckId))?String(editingDeckId):'__working__';
+   }
+   renderDeckReview();
+ }
 }
 function renderDeckReview(){
  const root=$('#deck-review-list');if(!root)return;
+ renderDeckReviewDeckSelect();
+ const source=deckReviewSourceDeck();
  const rows=deckReviewRows();
  const total=rows.reduce((n,x)=>n+x.n,0);
  const unique=uniqueCardsByNameInOrder(rows.map(x=>x.card));
- $('#deck-review-title').textContent=workingDeck.name?.trim()||'名称未設定デッキ';
+ $('#deck-review-title').textContent=source?.name?.trim()||'名称未設定デッキ';
  $('#deck-review-summary').textContent=`合計 ${total}枚 / ${unique.length}種類`;
  const sort=$('#deck-review-sort'),dir=$('#deck-review-sort-dir');
  if(sort)sort.value=deckReviewSort;if(dir)dir.value=deckReviewSortDir;
@@ -28515,6 +28542,10 @@ $('#deck-content-sort-apply').onclick=()=>{sortWorkingDeckEntries($('#deck-conte
 $('#deck-default-oshii').onchange=()=>{workingDeck.defaultOshiiCardId=$('#deck-default-oshii').value||''};
 $('#deck-view-edit').onclick=()=>setDeckViewMode('edit');
 $('#deck-view-review').onclick=()=>setDeckViewMode('review');
+$('#deck-review-deck-select').onchange=()=>{
+ deckReviewDeckId=$('#deck-review-deck-select').value||'__working__';
+ renderDeckReview();
+};
 $('#deck-review-sort').onchange=()=>{deckReviewSort=$('#deck-review-sort').value||'manual';renderDeckReview()};
 $('#deck-review-sort-dir').onchange=()=>{deckReviewSortDir=$('#deck-review-sort-dir').value==='desc'?'desc':'asc';renderDeckReview()};
 $('#deck-review-copy').onclick=async()=>{
