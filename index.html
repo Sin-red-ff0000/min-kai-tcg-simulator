@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.28</title>
+<title>みん会TCG Simulator v16.29</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20174,12 +20174,82 @@ h3 .minkai-ruby{margin-top:.45em}
 </style>
 
 <style>
-/* v16.28: deck statistics, duplication, tags, home data overview */
+/* v16.29: deck statistics, duplication, tags, home data overview */
 .deck-tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.deck-tag-pill{display:inline-flex;align-items:center;padding:3px 8px;border:1px solid var(--line);border-radius:999px;font-size:12px;background:rgba(255,255,255,.04)}
 .deck-stat-grid,.home-data-overview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.deck-stat-card,.home-data-overview-card{border:1px solid var(--line);border-radius:12px;padding:10px;background:rgba(255,255,255,.025)}.deck-stat-card b,.home-data-overview-card b{display:block;font-size:18px}.deck-stat-card span,.home-data-overview-card span{font-size:12px;color:var(--muted)}
 .deck-stat-section{margin-top:14px}.deck-stat-bars{display:grid;gap:7px;margin-top:7px}.deck-stat-bar{display:grid;grid-template-columns:minmax(90px,1fr) 2fr auto;gap:8px;align-items:center}.deck-stat-track{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.deck-stat-fill{height:100%;background:currentColor;opacity:.65;border-radius:inherit}.deck-stat-value{font-variant-numeric:tabular-nums;font-size:12px;white-space:nowrap}.home-data-overview-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.home-data-overview-note{margin-top:8px}
 @media(max-width:700px){.deck-stat-grid,.home-data-overview-grid{grid-template-columns:1fr 1fr}.deck-stat-bar{grid-template-columns:minmax(78px,1fr) 1.6fr auto}}
 </style>
+
+<style id="v1629-material-effects">
+/* v16.29 material effect generation: structure stays fixed; only light/reflection moves. */
+.card-fx-layer.fx-metal-foil{background:linear-gradient(120deg,rgba(40,45,50,.22),rgba(220,230,235,.38) 26%,rgba(85,95,105,.16) 48%,rgba(245,248,250,.30) 73%,rgba(50,55,60,.20));mix-blend-mode:soft-light}
+.card-fx-layer.fx-metal-foil::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(104deg,rgba(255,255,255,.16) 0 1px,transparent 1px 9px);opacity:.30;mix-blend-mode:screen}
+.card-fx-layer.fx-metal-foil::after{content:"";position:absolute;inset:0;background:linear-gradient(112deg,transparent 20%,rgba(255,255,255,.36) 39%,transparent 58%);opacity:.45;mix-blend-mode:screen}
+.fx-animate .fx-metal-foil::after{animation:v1629LightSweep var(--fx-duration,8s) ease-in-out infinite alternate}
+
+.card-fx-layer.fx-lacquer-coat{background:radial-gradient(120% 90% at 22% 14%,rgba(255,255,255,.22),transparent 34%),linear-gradient(135deg,rgba(28,3,7,.48),rgba(130,15,35,.28) 48%,rgba(8,5,7,.58));mix-blend-mode:soft-light}
+.card-fx-layer.fx-lacquer-coat::before{content:"";position:absolute;inset:0;background:linear-gradient(112deg,transparent 18%,rgba(255,255,255,.22) 36%,transparent 54%);opacity:.34;mix-blend-mode:screen}
+.fx-animate .fx-lacquer-coat::before{animation:v1629LightSweep var(--fx-duration,10s) ease-in-out infinite alternate}
+.card-fx-layer.fx-enamel-coat{background:radial-gradient(100% 72% at 25% 10%,rgba(255,255,255,.26),transparent 40%),linear-gradient(140deg,rgba(55,72,86,.32),rgba(130,160,175,.18),rgba(35,48,58,.34));mix-blend-mode:soft-light}
+.card-fx-layer.fx-enamel-coat::after{content:"";position:absolute;inset:0;background:linear-gradient(118deg,transparent 24%,rgba(255,255,255,.30) 44%,transparent 62%);opacity:.30;mix-blend-mode:screen}
+.card-fx-layer.fx-candy-coat{background:linear-gradient(135deg,rgba(110,20,28,.24),rgba(245,84,75,.20) 45%,rgba(70,5,12,.34)),radial-gradient(90% 75% at 30% 18%,rgba(255,255,255,.24),transparent 44%);mix-blend-mode:soft-light}
+.card-fx-layer.fx-candy-coat::after{content:"";position:absolute;inset:0;background:linear-gradient(112deg,transparent 17%,rgba(255,255,255,.34) 35%,transparent 52%);opacity:.38;mix-blend-mode:screen}
+.card-fx-layer.fx-mirror-coat{background:linear-gradient(112deg,rgba(18,22,28,.20),rgba(230,238,245,.36) 27%,rgba(50,60,72,.18) 49%,rgba(246,248,250,.42) 67%,rgba(22,26,32,.24));mix-blend-mode:soft-light}
+.card-fx-layer.fx-mirror-coat::after{content:"";position:absolute;inset:0;background:linear-gradient(112deg,transparent 25%,rgba(255,255,255,.52) 42%,transparent 55%);opacity:.48;mix-blend-mode:screen}
+.fx-animate .fx-mirror-coat::after,.fx-animate .fx-candy-coat::after,.fx-animate .fx-enamel-coat::after{animation:v1629LightSweep var(--fx-duration,9s) ease-in-out infinite alternate}
+
+.card-fx-layer.fx-meteorite-crystal{background:conic-gradient(from 17deg at 24% 34%,rgba(25,31,36,.42),rgba(160,172,178,.20) 14%,rgba(54,62,68,.34) 28%,rgba(205,214,218,.18) 43%,rgba(32,38,43,.42) 58%,rgba(120,132,139,.24) 73%,rgba(41,47,52,.38) 88%,rgba(25,31,36,.42));mix-blend-mode:soft-light}
+.fx-meteorite-crystal::before{content:"";position:absolute;inset:0;background:conic-gradient(from 102deg at 74% 68%,transparent 0 9%,rgba(230,236,238,.18) 10% 18%,rgba(18,23,27,.22) 19% 31%,transparent 32% 47%,rgba(145,157,164,.18) 48% 61%,transparent 62%);mix-blend-mode:overlay;opacity:.92}
+.fx-meteorite-crystal::after{content:"";position:absolute;inset:0;background:radial-gradient(42% 34% at 18% 18%,rgba(255,255,255,.22),transparent 62%),radial-gradient(40% 32% at 76% 66%,rgba(255,255,255,.18),transparent 65%);opacity:.45;mix-blend-mode:screen}
+.fx-animate .fx-meteorite-crystal::after{animation:v1629CrystalLight var(--fx-duration,10.5s) ease-in-out infinite alternate}
+
+.card-fx-layer.fx-hammered-forge{background:radial-gradient(ellipse 16% 12% at 18% 18%,rgba(255,255,255,.18),rgba(90,98,104,.06) 36%,rgba(0,0,0,.18) 70%,transparent 74%),radial-gradient(ellipse 19% 14% at 51% 24%,rgba(255,255,255,.16),rgba(90,98,104,.05) 38%,rgba(0,0,0,.20) 72%,transparent 76%),radial-gradient(ellipse 13% 17% at 81% 37%,rgba(255,255,255,.17),rgba(90,98,104,.04) 40%,rgba(0,0,0,.18) 72%,transparent 76%),radial-gradient(ellipse 18% 12% at 28% 58%,rgba(255,255,255,.15),rgba(90,98,104,.04) 40%,rgba(0,0,0,.19) 73%,transparent 77%),radial-gradient(ellipse 15% 19% at 67% 70%,rgba(255,255,255,.17),rgba(90,98,104,.05) 38%,rgba(0,0,0,.19) 72%,transparent 76%),linear-gradient(135deg,rgba(48,55,60,.30),rgba(150,158,163,.12),rgba(35,41,45,.32));mix-blend-mode:soft-light;background-size:48% 44%,52% 47%,46% 51%,50% 46%,47% 52%,100% 100%}
+.fx-hammered-forge::after{content:"";position:absolute;inset:0;background:linear-gradient(125deg,rgba(255,255,255,.10),transparent 35%,rgba(0,0,0,.08) 72%);opacity:.55;mix-blend-mode:overlay}
+.fx-animate .fx-hammered-forge::after{animation:v1629ForgeLight var(--fx-duration,12s) ease-in-out infinite alternate}
+
+.card-fx-layer.fx-oxidized-silver{background:radial-gradient(65% 50% at 22% 30%,rgba(12,15,17,.45),transparent 64%),radial-gradient(52% 42% at 76% 68%,rgba(8,10,12,.38),transparent 68%),linear-gradient(130deg,rgba(68,74,79,.35),rgba(195,203,207,.20) 36%,rgba(40,44,47,.40) 62%,rgba(160,168,172,.18));mix-blend-mode:soft-light}
+.fx-oxidized-silver::before{content:"";position:absolute;inset:0;background:radial-gradient(36% 22% at 26% 18%,rgba(245,248,250,.26),transparent 67%),radial-gradient(28% 20% at 74% 55%,rgba(238,242,244,.18),transparent 68%);opacity:.48;mix-blend-mode:screen}
+.fx-animate .fx-oxidized-silver::before{animation:v1629SilverWear var(--fx-duration,11s) ease-in-out infinite alternate}
+
+.card-fx-layer.fx-white-pearl{background:radial-gradient(58% 42% at 18% 22%,rgba(255,185,205,.15),transparent 70%),radial-gradient(62% 48% at 78% 30%,rgba(150,225,218,.14),transparent 72%),radial-gradient(58% 42% at 45% 78%,rgba(170,185,255,.13),transparent 72%),linear-gradient(135deg,rgba(235,235,228,.18),rgba(120,125,128,.08),rgba(252,250,240,.16));mix-blend-mode:soft-light}
+.fx-white-pearl::before{content:"";position:absolute;inset:0;background:radial-gradient(45% 24% at 28% 16%,rgba(255,255,255,.34),transparent 70%);mix-blend-mode:screen;opacity:.42}
+.fx-white-pearl::after{content:"";position:absolute;inset:0;background:radial-gradient(62% 48% at 70% 62%,rgba(230,198,126,.09),transparent 72%);mix-blend-mode:screen;opacity:.55}
+.fx-animate .fx-white-pearl::before,.fx-animate .fx-white-pearl::after{animation:v1629PearlLight var(--fx-duration,12s) ease-in-out infinite alternate}
+
+.card-fx-layer.fx-layered-mica{background:linear-gradient(18deg,transparent 10%,rgba(210,204,188,.14) 11% 15%,transparent 16% 28%,rgba(150,145,138,.12) 29% 34%,transparent 35% 52%,rgba(230,220,192,.12) 53% 56%,transparent 57%),linear-gradient(-22deg,transparent 18%,rgba(205,210,214,.13) 19% 23%,transparent 24% 43%,rgba(142,132,148,.10) 44% 48%,transparent 49%);background-size:34% 29%,42% 36%;mix-blend-mode:soft-light}
+.fx-layered-mica::before{content:"";position:absolute;inset:0;background:linear-gradient(12deg,transparent 18%,rgba(255,255,255,.16) 19% 22%,transparent 23% 40%,rgba(225,208,170,.14) 41% 45%,transparent 46%);background-size:55% 47%;opacity:.45;mix-blend-mode:screen}
+.fx-layered-mica::after{content:"";position:absolute;inset:0;background:radial-gradient(32% 18% at 25% 35%,rgba(255,255,255,.12),transparent 70%),radial-gradient(30% 20% at 75% 66%,rgba(255,255,255,.10),transparent 70%);opacity:.35;mix-blend-mode:screen}
+.fx-animate .fx-layered-mica::after{animation:v1629MicaLight var(--fx-duration,13s) ease-in-out infinite alternate}
+
+.card-fx-layer.fx-ice-inclusion-resin{background:radial-gradient(48% 38% at 22% 26%,rgba(230,242,245,.22),transparent 72%),radial-gradient(38% 32% at 78% 67%,rgba(210,228,234,.18),transparent 70%),radial-gradient(circle at 34% 64%,rgba(255,255,255,.14) 0 1.2%,transparent 1.6%),radial-gradient(circle at 66% 24%,rgba(255,255,255,.13) 0 .9%,transparent 1.3%);background-size:auto,auto,20% 23%,24% 27%;mix-blend-mode:soft-light}
+.fx-ice-inclusion-resin::before{content:"";position:absolute;inset:0;background:linear-gradient(126deg,transparent 18%,rgba(195,226,238,.16) 34%,transparent 49%),linear-gradient(58deg,transparent 54%,rgba(230,245,250,.10) 65%,transparent 78%);opacity:.48;mix-blend-mode:screen}
+.fx-ice-inclusion-resin::after{content:"";position:absolute;inset:0;background:radial-gradient(42% 20% at 30% 18%,rgba(255,255,255,.22),transparent 72%);opacity:.34;mix-blend-mode:screen}
+.fx-animate .fx-ice-inclusion-resin::after{animation:v1629ResinLight var(--fx-duration,11.5s) ease-in-out infinite alternate}
+
+.card-fx-layer.fx-crystal-aggregate-resin{background:linear-gradient(31deg,transparent 0 18%,rgba(225,235,240,.12) 19% 27%,transparent 28% 58%,rgba(190,208,214,.10) 59% 66%,transparent 67%),linear-gradient(-42deg,transparent 0 32%,rgba(250,250,245,.15) 33% 39%,transparent 40% 71%,rgba(185,198,212,.10) 72% 78%,transparent 79%);background-size:48% 52%,63% 58%;mix-blend-mode:soft-light}
+.fx-crystal-aggregate-resin::before{content:"";position:absolute;inset:0;background:conic-gradient(from 40deg at 23% 29%,transparent 0 18%,rgba(255,255,255,.18) 19% 27%,rgba(120,145,155,.10) 28% 39%,transparent 40%),conic-gradient(from 160deg at 76% 63%,transparent 0 22%,rgba(235,245,248,.16) 23% 31%,rgba(95,120,130,.10) 32% 42%,transparent 43%);opacity:.55;mix-blend-mode:screen}
+.fx-crystal-aggregate-resin::after{content:"";position:absolute;inset:0;background:radial-gradient(35% 18% at 26% 19%,rgba(255,255,255,.18),transparent 75%),radial-gradient(28% 16% at 72% 68%,rgba(255,255,255,.12),transparent 75%);opacity:.38;mix-blend-mode:screen}
+.fx-animate .fx-crystal-aggregate-resin::after{animation:v1629CrystalLight var(--fx-duration,10.5s) ease-in-out infinite alternate}
+
+.card-fx-layer.fx-fiber-paper{background:linear-gradient(108deg,transparent 0 42%,rgba(250,250,245,.11) 43% 44%,transparent 45% 100%),linear-gradient(24deg,transparent 0 57%,rgba(105,108,106,.08) 58% 59%,transparent 60% 100%),linear-gradient(138deg,rgba(230,230,224,.08),rgba(80,82,80,.04),rgba(238,236,228,.08));background-size:31% 27%,37% 33%,100% 100%;mix-blend-mode:soft-light}
+.fx-fiber-paper::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(17deg,transparent 0 18px,rgba(245,245,238,.07) 19px 20px,transparent 21px 39px);opacity:.32;mix-blend-mode:overlay}
+.fx-fiber-paper::after{content:"";position:absolute;inset:0;background:radial-gradient(70% 50% at 28% 18%,rgba(255,255,255,.09),transparent 72%);opacity:.28;mix-blend-mode:screen}
+.fx-animate .fx-fiber-paper::after{animation:v1629FiberLight var(--fx-duration,14s) ease-in-out infinite alternate}
+
+.fx-intensity-weak.fx-meteorite-crystal,.fx-intensity-weak.fx-hammered-forge,.fx-intensity-weak.fx-oxidized-silver,.fx-intensity-weak.fx-white-pearl,.fx-intensity-weak.fx-layered-mica,.fx-intensity-weak.fx-ice-inclusion-resin,.fx-intensity-weak.fx-crystal-aggregate-resin,.fx-intensity-weak.fx-fiber-paper{--v1629-contrast:.72}
+.fx-intensity-strong.fx-meteorite-crystal,.fx-intensity-strong.fx-hammered-forge,.fx-intensity-strong.fx-oxidized-silver,.fx-intensity-strong.fx-white-pearl,.fx-intensity-strong.fx-layered-mica,.fx-intensity-strong.fx-ice-inclusion-resin,.fx-intensity-strong.fx-crystal-aggregate-resin,.fx-intensity-strong.fx-fiber-paper{--v1629-contrast:1.22}
+.card-fx-layer.fx-meteorite-crystal,.card-fx-layer.fx-hammered-forge,.card-fx-layer.fx-oxidized-silver,.card-fx-layer.fx-white-pearl,.card-fx-layer.fx-layered-mica,.card-fx-layer.fx-ice-inclusion-resin,.card-fx-layer.fx-crystal-aggregate-resin,.card-fx-layer.fx-fiber-paper{opacity:calc(var(--fx-o,.7)*var(--v1629-contrast,1))}
+@keyframes v1629LightSweep{0%{background-position:20% 50%}100%{background-position:80% 50%}}
+@keyframes v1629CrystalLight{0%{opacity:.26}50%{opacity:.58}100%{opacity:.34}}
+@keyframes v1629ForgeLight{0%{opacity:.40}100%{opacity:.72}}
+@keyframes v1629SilverWear{0%{opacity:.28}100%{opacity:.58}}
+@keyframes v1629PearlLight{0%{opacity:.28}100%{opacity:.54}}
+@keyframes v1629MicaLight{0%{opacity:.20}100%{opacity:.48}}
+@keyframes v1629ResinLight{0%{opacity:.22}100%{opacity:.50}}
+@keyframes v1629FiberLight{0%{opacity:.18}100%{opacity:.34}}
+</style>
+
 </head>
 <body>
 <div id="app-background-layer" aria-hidden="true">
@@ -20187,7 +20257,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.28 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.29 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -21632,27 +21702,20 @@ const CARD_VISUAL_EFFECTS=[
  {id:"soap-membrane",name:"薄膜メンブレン",category:"ホログラム・偏光"},
  {id:"thermal-liquid-crystal",name:"サーモ液晶",category:"ホログラム・偏光"},
  {id:"neon-film",name:"ネオンフィルム",category:"ホログラム・偏光"},
- {id:"gold-foil",name:"ゴールドフォイル",category:"箔・金属"},
- {id:"silver-foil",name:"シルバーフォイル",category:"箔・金属"},
+ {id:"metal-foil",name:"メタルフォイル",category:"箔・金属"},
  {id:"anodized-metal",name:"アノダイズドメタル",category:"箔・金属"},
  {id:"heat-titanium",name:"ヒートチタン",category:"箔・金属"},
  {id:"titanium-spectrum",name:"チタン・スペクトラム",category:"箔・金属"},
  {id:"burnished-copper",name:"バーニッシュドカッパー",category:"箔・金属"},
  {id:"gunmetal",name:"ガンメタル",category:"箔・金属"},
- {id:"rose-gold",name:"ローズゴールド",category:"箔・金属"},
  {id:"verdigris",name:"ヴェルディグリ",category:"箔・金属"},
  {id:"damascus",name:"ダマスカス鋼",category:"箔・金属"},
  {id:"molten-metal",name:"溶融金属",category:"箔・金属"},
  {id:"diamond-cut",name:"ダイヤモンドカット",category:"カット・ファセット"},
  {id:"diamond-cut-fine",name:"ダイヤモンドカット・ファイン",category:"カット・ファセット"},
  {id:"diamond-cut-deep",name:"ダイヤモンドカット・ディープ",category:"カット・ファセット"},
- {id:"diamond-cut-aurora",name:"ダイヤモンドカット・オーロラ",category:"カット・ファセット"},
- {id:"diamond-cut-black",name:"ダイヤモンドカット・ブラック",category:"カット・ファセット"},
- {id:"rainbow-facet",name:"レインボーファセット",category:"カット・ファセット"},
- {id:"sapphire-cut",name:"サファイアカット",category:"カット・ファセット"},
- {id:"ruby-cut",name:"ルビーカット",category:"カット・ファセット"},
- {id:"emerald-cut",name:"エメラルドカット",category:"カット・ファセット"},
- {id:"amethyst-cut",name:"アメジストカット",category:"カット・ファセット"},
+ {id:"diamond-cut-aurora",name:"偏光ファセット",category:"カット・ファセット"},
+ {id:"rainbow-facet",name:"分光ファセット",category:"カット・ファセット"},
  {id:"lenticular",name:"レンチキュラー",category:"カット・ファセット"},
  {id:"dichroic-glass",name:"ダイクロイックガラス",category:"ガラス・宝石・樹脂"},
  {id:"opal-glass",name:"オパールガラス",category:"ガラス・宝石・樹脂"},
@@ -21663,15 +21726,10 @@ const CARD_VISUAL_EFFECTS=[
  {id:"jade-gloss",name:"ジェイドグロス",category:"ガラス・宝石・樹脂"},
  {id:"azure-marble",name:"アズールマーブル",category:"ガラス・宝石・樹脂"},
  {id:"stained-film",name:"ステンドフィルム",category:"ガラス・宝石・樹脂"},
- {id:"red-lacquer",name:"紅漆",category:"塗装・カラーコート"},
- {id:"blue-enamel",name:"ブルーエナメル",category:"塗装・カラーコート"},
- {id:"orange-candy",name:"オレンジキャンディ",category:"塗装・カラーコート"},
- {id:"green-candy",name:"グリーンキャンディ",category:"塗装・カラーコート"},
- {id:"magenta-candy",name:"マゼンタキャンディ",category:"塗装・カラーコート"},
- {id:"electric-blue",name:"エレクトリックブルー",category:"塗装・カラーコート"},
- {id:"hot-pink",name:"ホットピンクコート",category:"塗装・カラーコート"},
- {id:"violet-mirror",name:"ヴァイオレットミラー",category:"塗装・カラーコート"},
- {id:"gold-orange",name:"ゴールドオレンジ",category:"塗装・カラーコート"},
+ {id:"lacquer-coat",name:"漆塗り",category:"塗装・カラーコート"},
+ {id:"enamel-coat",name:"エナメルコート",category:"塗装・カラーコート"},
+ {id:"candy-coat",name:"キャンディコート",category:"塗装・カラーコート"},
+ {id:"mirror-coat",name:"ミラーコート",category:"塗装・カラーコート"},
  {id:"black-oil-slick",name:"黒油膜",category:"塗装・カラーコート"},
  {id:"carbon-iridescent",name:"イリデセントカーボン",category:"布・特殊素材"},
  {id:"velvet-matte",name:"ベルベットマット",category:"布・特殊素材"},
@@ -21703,12 +21761,37 @@ const CARD_VISUAL_EFFECTS=[
  {id:"fire",name:"炎",category:"炎・天体光"},
  {id:"solar-flare",name:"日輪",category:"炎・天体光"},
  {id:"moonlight",name:"月光",category:"炎・天体光"},
- {id:"digital-code",name:"デジタルコード",category:"機械・デジタル"}
+ {id:"digital-code",name:"デジタルコード",category:"機械・デジタル"},
+ {id:"meteorite-crystal",name:"隕鉄結晶",category:"箔・金属"},
+ {id:"hammered-forge",name:"槌目鍛造",category:"箔・金属"},
+ {id:"oxidized-silver",name:"酸化銀",category:"箔・金属"},
+ {id:"white-pearl",name:"白蝶真珠",category:"貝・有機素材"},
+ {id:"layered-mica",name:"雲母積層",category:"結晶・鉱石"},
+ {id:"ice-inclusion-resin",name:"氷封レジン",category:"ガラス・樹脂"},
+ {id:"crystal-aggregate-resin",name:"砕晶レジン",category:"ガラス・樹脂"},
+ {id:"fiber-paper",name:"繊維紙",category:"布・特殊素材"}
 ];
 const CARD_FX_IDS=new Set(CARD_VISUAL_EFFECTS.map(x=>x.id));
 function customFxIdFromType(type=''){const s=String(type||'');return s.startsWith('custom:')?s.slice(7):''}
 function isCustomFxType(type=''){return !!customFxIdFromType(type)}
 const REMOVED_CARD_FX_IDS=new Set(['bubbles','butterfly-light','cosmos','crystal-dust','curse-miasma','dark-aura','ember-ash','feathers','gears','glitch','holy-light','ice-crystal','ink','light-particles','lightning','luxury-sparkle','magic-circle','ritual-seal','runes','sakura','sand','shatter-light','snow','spectral-chain','stardust','water']);
+const CARD_FX_MIGRATION={
+ 'gold-foil':{type:'metal-foil',hue:42},'silver-foil':{type:'metal-foil',hue:0},
+ 'rose-gold':{type:'metal-foil',hue:18},
+ 'sapphire-cut':{type:'diamond-cut',hue:-150},'ruby-cut':{type:'diamond-cut',hue:0},'emerald-cut':{type:'diamond-cut',hue:115},'amethyst-cut':{type:'diamond-cut',hue:-55},'diamond-cut-black':{type:'diamond-cut',brightness:68,saturation:70},
+ 'red-lacquer':{type:'lacquer-coat',hue:0},'blue-enamel':{type:'enamel-coat',hue:-140},
+ 'orange-candy':{type:'candy-coat',hue:28},'green-candy':{type:'candy-coat',hue:110},'magenta-candy':{type:'candy-coat',hue:-35},
+ 'electric-blue':{type:'mirror-coat',hue:-145},'hot-pink':{type:'mirror-coat',hue:-35},'violet-mirror':{type:'mirror-coat',hue:-70},'gold-orange':{type:'mirror-coat',hue:35}
+};
+function migrateCardFxLayer(raw={}){
+ const x={...(raw||{})},m=CARD_FX_MIGRATION[String(x.type||'')];if(!m)return x;
+ x.type=m.type;
+ if((x.hue===undefined||Number(x.hue)===0)&&m.hue!==undefined)x.hue=m.hue;
+ if((x.brightness===undefined||Number(x.brightness)===100)&&m.brightness!==undefined)x.brightness=m.brightness;
+ if((x.saturation===undefined||Number(x.saturation)===100)&&m.saturation!==undefined)x.saturation=m.saturation;
+ return x;
+}
+
 function isValidCardFxType(type=''){const s=String(type||'');return !REMOVED_CARD_FX_IDS.has(s)&&(CARD_FX_IDS.has(s)||isCustomFxType(s))}
 function defaultMobileBoardToolPrefs(){return {x:.88,y:.68,mode:'compact'}}
 function normalizeMobileBoardToolPrefs(raw={}){
@@ -21777,7 +21860,7 @@ function normalizeCardFxPrefs(raw={}){
 function normalizeCardVisualEffects(raw){
  const source=Array.isArray(raw)?raw:[],out=[],used=new Set();
  for(let i=0;i<source.length;i++){
-   const x=source[i];if(!x||typeof x!=='object'||!isValidCardFxType(String(x.type||'')))continue;
+   const rawLayer=source[i];if(!rawLayer||typeof rawLayer!=='object')continue;const x=migrateCardFxLayer(rawLayer);if(!isValidCardFxType(String(x.type||'')))continue;
    const requested=Number(x.slot),slot=[1,2,3,4].includes(requested)?requested:i+1;
    if(slot<1||slot>4||used.has(slot))continue;
    used.add(slot);
@@ -22227,7 +22310,8 @@ const FX_BASE_DURATIONS={
  'smoke-resin':10.0,
  'ink-resin':9.0,
  'scale-emboss':6.8,
- 'ripple-emboss':7.8};
+ 'ripple-emboss':7.8,
+ 'meteorite-crystal':10.5,'hammered-forge':12,'oxidized-silver':11,'white-pearl':12,'layered-mica':13,'ice-inclusion-resin':11.5,'crystal-aggregate-resin':10.5,'fiber-paper':14};
 function fxLayerStyle(x,v,power){
  const sat=v.sat*(x.saturation/100),bright=v.bright*(x.brightness/100),base=FX_BASE_DURATIONS[x.type]||5.5,duration=Math.max(.35,base/(x.speed/100));
  const sizeInset=-10-((x.size-100)*.34),densityScale=Math.max(.56,Math.min(1.55,100/x.density));
@@ -22933,7 +23017,12 @@ const BUILTIN_CARD_FRAMES=[
  {id:'builtin:gen2-18',name:'地獄・魔印',path:'frames/second-infernal-sigil.png'},
  {id:'builtin:gen2-19',name:'古森・神殿',path:'frames/second-ancient-forest-temple.png'},
  {id:'builtin:gen2-20',name:'高級サイバー',path:'frames/second-luxury-cyber.png'},
- {id:'builtin:gen2-21',name:'虚無・断裂',path:'frames/second-void-fracture.png'}
+ {id:'builtin:gen2-21',name:'虚無・断裂',path:'frames/second-void-fracture.png'},
+ {id:'builtin:material-01',name:'鍛造黒鉄',path:'frames/material-forged-black-iron.png'},
+ {id:'builtin:material-02',name:'白磁装飾',path:'frames/material-white-porcelain.png'},
+ {id:'builtin:material-03',name:'古代青銅彫刻',path:'frames/material-ancient-bronze.png'},
+ {id:'builtin:material-04',name:'革装丁',path:'frames/material-leather-binding.png'},
+ {id:'builtin:material-05',name:'象嵌金属',path:'frames/material-metal-inlay.png'}
 ];
 function builtinFrameById(frameId){return BUILTIN_CARD_FRAMES.find(x=>x.id===String(frameId||''))||null}
 function isBuiltinFrameId(frameId){return !!builtinFrameById(frameId)}
@@ -24506,7 +24595,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.28',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.29',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -35236,7 +35325,7 @@ async function accountCloudInitialize(){
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.28'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.29'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
@@ -35253,7 +35342,7 @@ function accountCloudLocalSnapshot(){
   const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
     schema_version:2,
-    app_version:'16.28',
+    app_version:'16.29',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
     decks:Array.isArray(decks)?decks:[],
@@ -35434,7 +35523,7 @@ function accountCloudMergeSelected(base,source,rows,indexes){
     }
     out[prop]=list;
   }
-  out.schema_version=2; out.app_version='16.28'; out.saved_at=new Date().toISOString();
+  out.schema_version=2; out.app_version='16.29'; out.saved_at=new Date().toISOString();
   return out;
 }
 async function accountCloudSelectedSync(direction){
@@ -35853,7 +35942,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='16.28';
+  manifest.appVersion='16.29';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -35894,7 +35983,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'16.28',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'16.29',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
