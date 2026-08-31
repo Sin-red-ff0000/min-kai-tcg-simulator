@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.18</title>
+<title>みん会TCG Simulator v16.19</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20119,6 +20119,7 @@ h3 .minkai-ruby{margin-top:.45em}
 .account-cloud-head h3{margin:0}
 .account-cloud-detail{margin-top:8px;line-height:1.55;overflow-wrap:anywhere}
 .account-cloud-actions{margin-top:12px}
+.account-cloud-comparison{margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.025);line-height:1.6;white-space:pre-line;overflow-wrap:anywhere}
 .account-recovery-panel{grid-column:1/-1}
 .account-local-note{grid-column:1/-1}
 @media(max-width:760px){
@@ -20135,7 +20136,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.18 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.19 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -20859,16 +20860,19 @@ h3 .minkai-ruby{margin-top:.45em}
           <h3>クラウド保存</h3>
           <span id="account-cloud-state-pill" class="pill">未確認</span>
         </div>
-        <p class="muted">v16.18では登録カード・保存デッキに加えて、コレクションのお気に入り・アルバム情報も手動でクラウド保存・復元できます。クラウドへ上書きする前の保存内容と、端末へ復元する直前の内容をそれぞれ退避する安全機能も追加しています。自動同期や自動上書きは行いません。</p>
+        <p class="muted">v16.19では、端末・現在のクラウド・クラウド1世代前の保存内容を比較できるようにし、クラウド側も1世代前へ戻せるようにしました。登録カード・保存デッキ・コレクションのお気に入り・アルバム情報は引き続き手動同期です。自動同期や自動上書きは行いません。</p>
         <div id="account-cloud-detail" class="account-cloud-detail muted">クラウド保存領域への接続状態を確認できます。</div>
         <div class="actions account-actions account-cloud-actions">
           <button class="btn" type="button" id="account-cloud-check">接続を確認</button>
           <button class="btn" type="button" id="account-cloud-init">クラウド保存を初期化</button>
+          <button class="btn" type="button" id="account-cloud-compare">保存内容を比較</button>
           <button class="btn primary" type="button" id="account-cloud-upload">端末データをクラウドへ保存</button>
           <button class="btn" type="button" id="account-cloud-download">クラウドデータで端末を復元</button>
+          <button class="btn" type="button" id="account-cloud-restore-previous">クラウドを1世代前へ戻す</button>
           <button class="btn" type="button" id="account-cloud-undo-restore">直前の端末データに戻す</button>
         </div>
-        <p class="muted" style="margin-top:10px">復元は現在の端末内カード・デッキ・コレクション情報を置き換えます。復元直前の端末データはこの端末へ1世代だけ自動退避します。クラウド側も上書き前の保存内容を1世代だけ保持します。カード画像・背景・端末表示設定・盤面データは同期しません。</p>
+        <div id="account-cloud-compare-detail" class="account-cloud-comparison muted" hidden></div>
+        <p class="muted" style="margin-top:10px">復元は現在の端末内カード・デッキ・コレクション情報を置き換えます。復元直前の端末データはこの端末へ1世代だけ自動退避します。クラウド側も上書き前の保存内容を1世代だけ保持します。1世代前へ戻した場合は現在版と1世代前を入れ替えるため、もう一度押すと戻す前の版へ戻せます。カード画像・背景・端末表示設定・盤面データは同期しません。</p>
       </div>
 
       <div class="panel account-recovery-panel" id="account-recovery-panel" hidden>
@@ -34783,7 +34787,7 @@ function accountSetMessage(text='',kind=''){
   el.classList.toggle('muted',!kind);
 }
 function accountSetBusy(busy){
-  ['account-login','account-signup','account-reset','account-save-profile','account-logout','account-save-recovery-password','account-cancel-recovery','account-cloud-check','account-cloud-init','account-cloud-upload','account-cloud-download','account-cloud-undo-restore']
+  ['account-login','account-signup','account-reset','account-save-profile','account-logout','account-save-recovery-password','account-cancel-recovery','account-cloud-check','account-cloud-init','account-cloud-compare','account-cloud-upload','account-cloud-download','account-cloud-restore-previous','account-cloud-undo-restore']
     .forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!!busy});
 }
 function accountRedirectUrl(){return location.href.split('#')[0]}
@@ -34918,7 +34922,7 @@ async function accountCloudInitialize(){
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.18'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.19'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
@@ -34935,7 +34939,7 @@ function accountCloudLocalSnapshot(){
   const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
     schema_version:2,
-    app_version:'16.18',
+    app_version:'16.19',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
     decks:Array.isArray(decks)?decks:[],
@@ -34978,6 +34982,64 @@ function accountApplyCloudSnapshot(payload,{preserveCollectionWhenMissing=true}=
   cards=nextCards;decks=nextDecks;collectionData=nextCollection;
   save(LS_CARDS,cards);save(LS_DECKS,decks);save(LS_COLLECTION,collectionData);
   return accountCloudSnapshotSummary({cards,decks,collection:collectionData});
+}
+function accountCloudSummaryLine(label,snapshot,row=null){
+  if(!snapshot)return `${label}: 保存なし`;
+  const x=accountCloudSnapshotSummary(snapshot);
+  const savedAt=snapshot?.saved_at||row?.updated_at||'';
+  const time=savedAt?` / ${accountCloudFormatTime(savedAt)}`:'';
+  return `${label}: カード ${x.cardCount}枚 / デッキ ${x.deckCount}件 / お気に入り ${x.favoriteCount}枚 / アルバム ${x.albumCount}冊${time}`;
+}
+async function accountCloudCompare(){
+  if(!accountUser()?.id){accountSetMessage('ログインが必要です。','error');return}
+  const box=document.getElementById('account-cloud-compare-detail');
+  accountSetBusy(true);accountSetMessage('保存内容を比較しています…');
+  try{
+    const [current,previous]=await Promise.all([accountCloudGet('cards_decks'),accountCloudGet('cards_decks_previous')]);
+    if(!current.ok){accountSetMessage(current.message||'現在のクラウド保存を確認できませんでした。','error');return}
+    if(!previous.ok){accountSetMessage(previous.message||'1世代前のクラウド保存を確認できませんでした。','error');return}
+    const local=accountCloudLocalSnapshot();
+    const lines=[
+      accountCloudSummaryLine('この端末',local),
+      accountCloudSummaryLine('現在のクラウド',current.row?.payload||null,current.row),
+      accountCloudSummaryLine('クラウド1世代前',previous.row?.payload||null,previous.row)
+    ];
+    if(box){box.hidden=false;box.textContent=lines.join('\n')}
+    accountSetMessage('端末とクラウドの保存内容を比較しました。','ok');
+  }finally{accountSetBusy(false);accountRender()}
+}
+async function accountCloudRestorePrevious(){
+  if(!accountUser()?.id){accountSetMessage('ログインが必要です。','error');return}
+  accountSetBusy(true);accountSetMessage('クラウドの1世代前データを確認しています…');
+  try{
+    const [current,previous]=await Promise.all([accountCloudGet('cards_decks'),accountCloudGet('cards_decks_previous')]);
+    if(!current.ok){accountSetMessage(current.message||'現在のクラウド保存を確認できませんでした。','error');return}
+    if(!previous.ok){accountSetMessage(previous.message||'1世代前のクラウド保存を確認できませんでした。','error');return}
+    if(!previous.row?.payload){accountSetMessage('クラウドに1世代前の保存データがありません。','error');return}
+    const prevSummary=accountCloudSnapshotSummary(previous.row.payload);
+    const currentSummary=current.row?.payload?accountCloudSnapshotSummary(current.row.payload):null;
+    const currentText=currentSummary?`現在: カード ${currentSummary.cardCount}枚・デッキ ${currentSummary.deckCount}件\n`:'';
+    if(!confirm(`クラウド保存を1世代前へ戻します。\n\n${currentText}1世代前: カード ${prevSummary.cardCount}枚・デッキ ${prevSummary.deckCount}件・お気に入り ${prevSummary.favoriteCount}枚・アルバム ${prevSummary.albumCount}冊\n\n現在版と1世代前を入れ替えます。端末内データは変更しません。続けますか？`)){
+      accountSetMessage('クラウドの巻き戻しをキャンセルしました。');return;
+    }
+    const oldCurrent=current.row?.payload||null;
+    if(oldCurrent){
+      const b=await accountCloudUpsert('cards_decks_previous',oldCurrent,Number(current.row?.revision)||Date.now());
+      if(!b.ok){accountSetMessage(b.message||'現在のクラウド保存を退避できなかったため、中止しました。','error');return}
+    }else{
+      const d=await accountCloudDelete('cards_decks_previous');
+      if(!d.ok){accountSetMessage(d.message||'クラウド保存の入れ替え準備に失敗しました。','error');return}
+    }
+    const restored=await accountCloudUpsert('cards_decks',previous.row.payload,Number(previous.row.revision)||Date.now());
+    if(!restored.ok){
+      if(oldCurrent)await accountCloudUpsert('cards_decks_previous',previous.row.payload,Number(previous.row.revision)||Date.now()).catch(()=>{});
+      accountSetMessage(restored.message||'クラウドを1世代前へ戻せませんでした。','error');return;
+    }
+    const row=Array.isArray(restored.data)?restored.data[0]:null;
+    accountSetCloudState('ready','巻き戻し済み',`クラウドを1世代前へ戻しました。カード ${prevSummary.cardCount}枚・デッキ ${prevSummary.deckCount}件・お気に入り ${prevSummary.favoriteCount}枚・アルバム ${prevSummary.albumCount}冊。端末内データは変更していません。`,row?.updated_at||previous.row?.updated_at||'');
+    accountSetMessage('クラウド保存を1世代前へ戻しました。現在版は1世代前の領域へ入れ替えて保持しています。','ok');
+    await accountCloudCompare();
+  }finally{accountSetBusy(false);accountRender()}
 }
 async function accountCloudUploadCardsDecks(){
   if(!accountUser()?.id){accountSetMessage('ログインが必要です。','error');return}
@@ -35159,8 +35221,10 @@ function accountBindUi(){
   bind('account-cancel-recovery',()=>{accountClearRecoveryHash();accountSetMessage('パスワード再設定をキャンセルしました。');accountRender()});
   bind('account-cloud-check',()=>accountCloudCheck().catch(err=>{accountSetCloudState('error','接続エラー',err.message||String(err));accountSetMessage(err.message||String(err),'error')}));
   bind('account-cloud-init',()=>accountCloudInitialize().catch(err=>{accountSetCloudState('error','初期化失敗',err.message||String(err));accountSetMessage(err.message||String(err),'error')}));
+  bind('account-cloud-compare',()=>accountCloudCompare().catch(err=>accountSetMessage(err.message||String(err),'error')));
   bind('account-cloud-upload',()=>accountCloudUploadCardsDecks().catch(err=>accountSetMessage(err.message||String(err),'error')));
   bind('account-cloud-download',()=>accountCloudDownloadCardsDecks().catch(err=>accountSetMessage(err.message||String(err),'error')));
+  bind('account-cloud-restore-previous',()=>accountCloudRestorePrevious().catch(err=>accountSetMessage(err.message||String(err),'error')));
   bind('account-cloud-undo-restore',()=>accountCloudUndoRestore().catch(err=>accountSetMessage(err.message||String(err),'error')));
   const pass=document.getElementById('account-password');if(pass)pass.addEventListener('keydown',e=>{if(e.key==='Enter')accountLogin().catch(err=>accountSetMessage(err.message||String(err),'error'))});
 }
@@ -35208,8 +35272,10 @@ window.accountCloudUpsert=accountCloudUpsert;
 window.accountCloudDelete=accountCloudDelete;
 window.accountCloudCheck=accountCloudCheck;
 window.accountCloudInitialize=accountCloudInitialize;
+window.accountCloudCompare=accountCloudCompare;
 window.accountCloudUploadCardsDecks=accountCloudUploadCardsDecks;
 window.accountCloudDownloadCardsDecks=accountCloudDownloadCardsDecks;
+window.accountCloudRestorePrevious=accountCloudRestorePrevious;
 window.accountCloudUndoRestore=accountCloudUndoRestore;
 window.accountBindUi=accountBindUi;
 window.accountInit=accountInit;
