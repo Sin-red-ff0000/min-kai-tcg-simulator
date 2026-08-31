@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.15</title>
+<title>みん会TCG Simulator v16.16</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20115,6 +20115,10 @@ h3 .minkai-ruby{margin-top:.45em}
 .account-message{margin-top:12px;min-height:1.4em}
 .account-message.account-message-ok{color:var(--ok)}
 .account-message.account-message-error{color:var(--danger)}
+.account-cloud-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.account-cloud-head h3{margin:0}
+.account-cloud-detail{margin-top:8px;line-height:1.55;overflow-wrap:anywhere}
+.account-cloud-actions{margin-top:12px}
 .account-recovery-panel{grid-column:1/-1}
 .account-local-note{grid-column:1/-1}
 @media(max-width:760px){
@@ -20131,7 +20135,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.15 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.16 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -20849,6 +20853,18 @@ h3 .minkai-ruby{margin-top:.45em}
           <button class="btn primary" type="button" id="account-save-profile">表示名を保存</button>
           <button class="btn" type="button" id="account-logout">ログアウト</button>
         </div>
+
+        <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+        <div class="account-cloud-head">
+          <h3>クラウド保存</h3>
+          <span id="account-cloud-state-pill" class="pill">未確認</span>
+        </div>
+        <p class="muted">v16.16ではクラウド保存の基盤だけを用意します。接続確認や初期化を行っても、端末内のカード・デッキ・設定はまだ送信しません。</p>
+        <div id="account-cloud-detail" class="account-cloud-detail muted">SUPABASE_SETUP_v16_16.sqlを適用後、接続を確認できます。</div>
+        <div class="actions account-actions account-cloud-actions">
+          <button class="btn" type="button" id="account-cloud-check">接続を確認</button>
+          <button class="btn primary" type="button" id="account-cloud-init">クラウド保存を初期化</button>
+        </div>
       </div>
 
       <div class="panel account-recovery-panel" id="account-recovery-panel" hidden>
@@ -20864,8 +20880,8 @@ h3 .minkai-ruby{margin-top:.45em}
       </div>
 
       <div class="panel account-local-note">
-        <h3 style="margin-top:0">v16.15での保存範囲</h3>
-        <p class="muted">今回のアカウント機能はログイン基盤のみです。登録済みカード、デッキ、設定などの端末内データは自動でクラウドへ送信・上書きしません。オンライン対戦のルーム用セッションも、アカウントのログインとは別のまま維持します。</p>
+        <h3 style="margin-top:0">v16.16での保存範囲</h3>
+        <p class="muted">アカウントごとのクラウド保存領域を追加しましたが、今回は接続基盤と初期化情報だけです。登録済みカード、デッキ、設定などの端末内データは自動でクラウドへ送信・上書きしません。オンライン対戦のルーム用セッションも、アカウントのログインとは別のまま維持します。</p>
       </div>
     </div>
     <div id="account-message" class="account-message muted" role="status" aria-live="polite"></div>
@@ -34655,8 +34671,9 @@ pauseVisualAnimationsForVisibility();
 
 <script>
 /* ==========================================================
-   v16.15 Account / Supabase Auth foundation
+   v16.16 Account + cloud storage foundation
    - Existing local card/deck/settings storage is intentionally untouched.
+   - Cloud initialization writes metadata only; card/deck sync is not enabled yet.
    - Online X-Minkai-Session remains a separate session mechanism.
    ========================================================== */
 (() => {
@@ -34667,6 +34684,7 @@ const LS_ACCOUNT_SESSION='minkai_account_session_v1';
 let accountSession=null;
 let accountMessage={text:'',kind:''};
 let accountRecoverySession=null;
+let accountCloudState={status:'idle',text:'未確認',detail:'SUPABASE_SETUP_v16_16.sqlを適用後、接続を確認できます。',updatedAt:''};
 
 function accountReadSession(){
   try{
@@ -34762,7 +34780,7 @@ function accountSetMessage(text='',kind=''){
   el.classList.toggle('muted',!kind);
 }
 function accountSetBusy(busy){
-  ['account-login','account-signup','account-reset','account-save-profile','account-logout','account-save-recovery-password','account-cancel-recovery']
+  ['account-login','account-signup','account-reset','account-save-profile','account-logout','account-save-recovery-password','account-cancel-recovery','account-cloud-check','account-cloud-init']
     .forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!!busy});
 }
 function accountRedirectUrl(){return location.href.split('#')[0]}
@@ -34782,8 +34800,133 @@ function accountRender(){
     const name=document.getElementById('account-display-name');if(name&&document.activeElement!==name)name.value=accountDisplayName(user);
   }
   if(recovery)recovery.hidden=!accountRecoverySession?.access_token;
+  accountRenderCloud();
   accountSetMessage(accountMessage.text,accountMessage.kind);
 }
+function accountCloudFormatTime(value){
+  if(!value)return '';
+  try{return new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(value))}catch(_){return String(value)}
+}
+function accountSetCloudState(status='idle',text='未確認',detail='',updatedAt=''){
+  accountCloudState={status,text,detail,updatedAt};
+  accountRenderCloud();
+}
+function accountRenderCloud(){
+  const pill=document.getElementById('account-cloud-state-pill');
+  const detail=document.getElementById('account-cloud-detail');
+  if(pill)pill.textContent=accountCloudState.text||'未確認';
+  if(detail){
+    const suffix=accountCloudState.updatedAt?` 最終更新: ${accountCloudFormatTime(accountCloudState.updatedAt)}`:'';
+    detail.textContent=(accountCloudState.detail||'')+suffix;
+  }
+}
+function accountCloudMissingTable(result){
+  const raw=String(result?.data?.message||result?.data?.hint||result?.data?.details||result?.message||'').toLowerCase();
+  const code=String(result?.data?.code||'').toUpperCase();
+  return result?.status===404||code==='PGRST205'||raw.includes('minkai_user_storage')&&(raw.includes('schema cache')||raw.includes('could not find'));
+}
+async function accountCloudRequest(path,{method='GET',body=null,prefer='',allowError=false}={}){
+  const session=await accountEnsureSession();
+  if(!session?.access_token){
+    const out={ok:false,status:401,data:null,message:'ログインが必要です。'};
+    if(allowError)return out;
+    throw new Error(out.message);
+  }
+  const headers={apikey:ACCOUNT_SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${session.access_token}`};
+  if(body!==null)headers['Content-Type']='application/json';
+  if(prefer)headers.Prefer=prefer;
+  let response;
+  try{
+    response=await fetch(`${ACCOUNT_SUPABASE_URL}${path}`,{method,headers,body:body===null?undefined:JSON.stringify(body)});
+  }catch(_){
+    const out={ok:false,status:0,data:null,message:'ネットワークに接続できませんでした。'};
+    if(allowError)return out;
+    throw new Error(out.message);
+  }
+  let data=null;
+  const text=await response.text();
+  if(text){try{data=JSON.parse(text)}catch(_){data={message:text}}}
+  if(!response.ok){
+    const out={ok:false,status:response.status,data,message:accountApiErrorMessage(data,response.status)};
+    if(allowError)return out;
+    throw new Error(out.message);
+  }
+  return {ok:true,status:response.status,data,message:''};
+}
+async function accountCloudGet(storageKey){
+  const key=encodeURIComponent(String(storageKey||''));
+  const result=await accountCloudRequest(`/rest/v1/minkai_user_storage?select=storage_key,payload,revision,updated_at&storage_key=eq.${key}&limit=1`,{allowError:true});
+  if(!result.ok)return result;
+  return {...result,row:Array.isArray(result.data)?(result.data[0]||null):null};
+}
+async function accountCloudUpsert(storageKey,payload,revision=1){
+  const user=accountUser();
+  if(!user?.id)return {ok:false,status:401,data:null,message:'ログインが必要です。'};
+  const now=new Date().toISOString();
+  return accountCloudRequest('/rest/v1/minkai_user_storage?on_conflict=user_id,storage_key',{
+    method:'POST',
+    prefer:'resolution=merge-duplicates,return=representation',
+    body:[{user_id:user.id,storage_key:String(storageKey),payload:payload??{},revision:Number(revision)||1,updated_at:now}],
+    allowError:true
+  });
+}
+async function accountCloudDelete(storageKey){
+  const key=encodeURIComponent(String(storageKey||''));
+  return accountCloudRequest(`/rest/v1/minkai_user_storage?storage_key=eq.${key}`,{method:'DELETE',prefer:'return=minimal',allowError:true});
+}
+async function accountCloudCheck({quiet=false}={}){
+  if(!accountUser()?.id){accountSetCloudState('idle','未確認','ログインするとクラウド保存の接続を確認できます。');return false}
+  accountSetCloudState('checking','確認中','クラウド保存領域へ接続しています…');
+  const result=await accountCloudGet('_meta');
+  if(!result.ok){
+    if(accountCloudMissingTable(result)){
+      accountSetCloudState('setup','未設定','SUPABASE_SETUP_v16_16.sqlをSupabaseで実行すると利用できます。');
+      if(!quiet)accountSetMessage('クラウド保存用テーブルがまだ作成されていません。','error');
+    }else{
+      accountSetCloudState('error','接続エラー',result.message||'クラウド保存領域を確認できませんでした。');
+      if(!quiet)accountSetMessage(result.message||'クラウド保存領域を確認できませんでした。','error');
+    }
+    return false;
+  }
+  if(result.row){
+    accountSetCloudState('ready','利用可能','クラウド保存領域は初期化済みです。カード・デッキ同期はまだ行いません。',result.row.updated_at||'');
+  }else{
+    accountSetCloudState('ready','利用可能','クラウド保存領域へ接続できました。まだ初期化情報はありません。');
+  }
+  if(!quiet)accountSetMessage('クラウド保存の接続を確認しました。','ok');
+  return true;
+}
+async function accountCloudInitialize(){
+  if(!accountUser()?.id){accountSetMessage('ログインが必要です。','error');return}
+  accountSetBusy(true);
+  accountSetMessage('クラウド保存を初期化しています…');
+  try{
+    const existing=await accountCloudGet('_meta');
+    if(!existing.ok){
+      if(accountCloudMissingTable(existing)){
+        accountSetCloudState('setup','未設定','SUPABASE_SETUP_v16_16.sqlをSupabaseで実行してから初期化してください。');
+        accountSetMessage('クラウド保存用テーブルがまだ作成されていません。','error');
+      }else accountSetMessage(existing.message||'クラウド保存領域を確認できませんでした。','error');
+      return;
+    }
+    if(existing.row){
+      accountSetCloudState('ready','利用可能','クラウド保存領域はすでに初期化済みです。カード・デッキ同期はまだ行いません。',existing.row.updated_at||'');
+      accountSetMessage('クラウド保存はすでに初期化されています。','ok');
+      return;
+    }
+    const now=new Date().toISOString();
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.16'},1);
+    if(!result.ok){
+      accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
+      accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
+      return;
+    }
+    const row=Array.isArray(result.data)?result.data[0]:null;
+    accountSetCloudState('ready','利用可能','クラウド保存領域を初期化しました。今回保存したのは初期化情報だけです。',row?.updated_at||now);
+    accountSetMessage('クラウド保存を初期化しました。カード・デッキはまだ送信していません。','ok');
+  }finally{accountSetBusy(false);accountRender()}
+}
+
 async function accountSyncUser({quiet=false}={}){
   const session=await accountEnsureSession();
   if(!session?.access_token){accountRender();return null}
@@ -34808,6 +34951,7 @@ async function accountLogin(){
     const pass=document.getElementById('account-password');if(pass)pass.value='';
     accountSetMessage('ログインしました。','ok');
     await accountSyncUser({quiet:true});
+    if(accountUser()?.id)await accountCloudCheck({quiet:true});
   }finally{accountSetBusy(false);accountRender()}
 }
 async function accountSignup(){
@@ -34823,6 +34967,7 @@ async function accountSignup(){
       accountWriteSession(result.data);
       accountSetMessage('アカウントを作成してログインしました。','ok');
       await accountSyncUser({quiet:true});
+      if(accountUser()?.id)await accountCloudCheck({quiet:true});
     }else{
       accountSetMessage('登録を受け付けました。確認メールが届いた場合は、メール内のリンクから確認を完了してください。','ok');
     }
@@ -34855,6 +35000,7 @@ async function accountLogout(){
   try{
     if(session?.access_token)await accountRequest('/auth/v1/logout',{method:'POST',token:session.access_token,allowError:true});
     accountWriteSession(null);
+    accountSetCloudState('idle','未確認','ログインするとクラウド保存の接続を確認できます。');
     accountSetMessage('ログアウトしました。','ok');
   }finally{accountSetBusy(false);accountRender()}
 }
@@ -34899,6 +35045,8 @@ function accountBindUi(){
   bind('account-logout',()=>accountLogout().catch(err=>accountSetMessage(err.message||String(err),'error')));
   bind('account-save-recovery-password',()=>accountSaveRecoveryPassword().catch(err=>accountSetMessage(err.message||String(err),'error')));
   bind('account-cancel-recovery',()=>{accountClearRecoveryHash();accountSetMessage('パスワード再設定をキャンセルしました。');accountRender()});
+  bind('account-cloud-check',()=>accountCloudCheck().catch(err=>{accountSetCloudState('error','接続エラー',err.message||String(err));accountSetMessage(err.message||String(err),'error')}));
+  bind('account-cloud-init',()=>accountCloudInitialize().catch(err=>{accountSetCloudState('error','初期化失敗',err.message||String(err));accountSetMessage(err.message||String(err),'error')}));
   const pass=document.getElementById('account-password');if(pass)pass.addEventListener('keydown',e=>{if(e.key==='Enter')accountLogin().catch(err=>accountSetMessage(err.message||String(err),'error'))});
 }
 async function accountInit(){
@@ -34913,7 +35061,10 @@ async function accountInit(){
     return;
   }
   if(accountSession){
-    try{await accountSyncUser({quiet:true})}catch(err){console.warn('Account session restore failed',err);accountRender()}
+    try{
+      await accountSyncUser({quiet:true});
+      if(accountUser()?.id)await accountCloudCheck({quiet:true});
+    }catch(err){console.warn('Account session restore failed',err);accountRender()}
   }
 }
 
@@ -34936,6 +35087,12 @@ window.accountSendPasswordReset=accountSendPasswordReset;
 window.accountSaveProfile=accountSaveProfile;
 window.accountSaveRecoveryPassword=accountSaveRecoveryPassword;
 window.accountLogout=accountLogout;
+window.accountCloudRequest=accountCloudRequest;
+window.accountCloudGet=accountCloudGet;
+window.accountCloudUpsert=accountCloudUpsert;
+window.accountCloudDelete=accountCloudDelete;
+window.accountCloudCheck=accountCloudCheck;
+window.accountCloudInitialize=accountCloudInitialize;
 window.accountBindUi=accountBindUi;
 window.accountInit=accountInit;
 
