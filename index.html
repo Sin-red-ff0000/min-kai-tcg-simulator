@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.17</title>
+<title>みん会TCG Simulator v16.18</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20135,7 +20135,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.17 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.18 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -20859,15 +20859,16 @@ h3 .minkai-ruby{margin-top:.45em}
           <h3>クラウド保存</h3>
           <span id="account-cloud-state-pill" class="pill">未確認</span>
         </div>
-        <p class="muted">v16.17では登録カードと保存デッキを、操作した時だけクラウドへ保存・復元できます。自動同期や自動上書きは行いません。カード画像は今回の同期対象外です。</p>
+        <p class="muted">v16.18では登録カード・保存デッキに加えて、コレクションのお気に入り・アルバム情報も手動でクラウド保存・復元できます。クラウドへ上書きする前の保存内容と、端末へ復元する直前の内容をそれぞれ退避する安全機能も追加しています。自動同期や自動上書きは行いません。</p>
         <div id="account-cloud-detail" class="account-cloud-detail muted">クラウド保存領域への接続状態を確認できます。</div>
         <div class="actions account-actions account-cloud-actions">
           <button class="btn" type="button" id="account-cloud-check">接続を確認</button>
           <button class="btn" type="button" id="account-cloud-init">クラウド保存を初期化</button>
-          <button class="btn primary" type="button" id="account-cloud-upload">端末のカード・デッキをクラウドへ保存</button>
-          <button class="btn" type="button" id="account-cloud-download">クラウドのカード・デッキで端末を復元</button>
+          <button class="btn primary" type="button" id="account-cloud-upload">端末データをクラウドへ保存</button>
+          <button class="btn" type="button" id="account-cloud-download">クラウドデータで端末を復元</button>
+          <button class="btn" type="button" id="account-cloud-undo-restore">直前の端末データに戻す</button>
         </div>
-        <p class="muted" style="margin-top:10px">復元は現在の端末内カード・デッキを置き換えます。実行前に確認画面を表示します。カード画像・背景・外観設定・盤面データは同期しません。</p>
+        <p class="muted" style="margin-top:10px">復元は現在の端末内カード・デッキ・コレクション情報を置き換えます。復元直前の端末データはこの端末へ1世代だけ自動退避します。クラウド側も上書き前の保存内容を1世代だけ保持します。カード画像・背景・端末表示設定・盤面データは同期しません。</p>
       </div>
 
       <div class="panel account-recovery-panel" id="account-recovery-panel" hidden>
@@ -20883,8 +20884,8 @@ h3 .minkai-ruby{margin-top:.45em}
       </div>
 
       <div class="panel account-local-note">
-        <h3 style="margin-top:0">v16.17での保存範囲</h3>
-        <p class="muted">登録カードと保存デッキを手動でクラウド保存・復元できます。同期方向は毎回自分で選び、自動マージや自動上書きは行いません。カード画像・コレクション設定・外観設定・盤面データは端末側のままです。オンライン対戦のルーム用セッションもアカウントとは別のまま維持します。</p>
+        <h3 style="margin-top:0">v16.18での保存範囲</h3>
+        <p class="muted">登録カード、保存デッキ、コレクションのお気に入り・アルバム情報を手動でクラウド保存・復元できます。同期方向は毎回自分で選び、自動マージや自動上書きは行いません。カード画像、背景、端末表示設定、盤面データは端末側のままです。オンライン対戦のルーム用セッションもアカウントとは別のまま維持します。</p>
       </div>
     </div>
     <div id="account-message" class="account-message muted" role="status" aria-live="polite"></div>
@@ -34672,7 +34673,7 @@ pauseVisualAnimationsForVisibility();
 
 <script>
 /* ==========================================================
-   v16.17 Account + card/deck cloud sync
+   v16.18 Account + safer card/deck/collection cloud sync
    - Existing local card/deck/settings storage is intentionally untouched.
    - Cloud initialization writes metadata only; card/deck sync is not enabled yet.
    - Online X-Minkai-Session remains a separate session mechanism.
@@ -34682,6 +34683,7 @@ pauseVisualAnimationsForVisibility();
 const ACCOUNT_SUPABASE_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co';
 const ACCOUNT_SUPABASE_PUBLISHABLE_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_ACCOUNT_SESSION='minkai_account_session_v1';
+const LS_ACCOUNT_RESTORE_BACKUP='minkai_account_restore_backup_v1618';
 let accountSession=null;
 let accountMessage={text:'',kind:''};
 let accountRecoverySession=null;
@@ -34781,7 +34783,7 @@ function accountSetMessage(text='',kind=''){
   el.classList.toggle('muted',!kind);
 }
 function accountSetBusy(busy){
-  ['account-login','account-signup','account-reset','account-save-profile','account-logout','account-save-recovery-password','account-cancel-recovery','account-cloud-check','account-cloud-init','account-cloud-upload','account-cloud-download']
+  ['account-login','account-signup','account-reset','account-save-profile','account-logout','account-save-recovery-password','account-cancel-recovery','account-cloud-check','account-cloud-init','account-cloud-upload','account-cloud-download','account-cloud-undo-restore']
     .forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!!busy});
 }
 function accountRedirectUrl(){return location.href.split('#')[0]}
@@ -34890,7 +34892,7 @@ async function accountCloudCheck({quiet=false}={}){
     return false;
   }
   if(result.row){
-    accountSetCloudState('ready','利用可能','クラウド保存領域は初期化済みです。カード・デッキを手動で保存・復元できます。',result.row.updated_at||'');
+    accountSetCloudState('ready','利用可能','クラウド保存領域は初期化済みです。端末データを手動で保存・復元できます。',result.row.updated_at||'');
   }else{
     accountSetCloudState('ready','利用可能','クラウド保存領域へ接続できました。まだ初期化情報はありません。');
   }
@@ -34911,67 +34913,131 @@ async function accountCloudInitialize(){
       return;
     }
     if(existing.row){
-      accountSetCloudState('ready','利用可能','クラウド保存領域はすでに初期化済みです。カード・デッキを手動で保存・復元できます。',existing.row.updated_at||'');
+      accountSetCloudState('ready','利用可能','クラウド保存領域はすでに初期化済みです。端末データを手動で保存・復元できます。',existing.row.updated_at||'');
       accountSetMessage('クラウド保存はすでに初期化されています。','ok');
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.17'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.18'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
       return;
     }
     const row=Array.isArray(result.data)?result.data[0]:null;
-    accountSetCloudState('ready','利用可能','クラウド保存領域を初期化しました。カード・デッキは必要な時に手動で保存できます。',row?.updated_at||now);
-    accountSetMessage('クラウド保存を初期化しました。カード・デッキはまだ送信していません。必要な時に保存ボタンを押してください。','ok');
+    accountSetCloudState('ready','利用可能','クラウド保存領域を初期化しました。端末データは必要な時に手動で保存できます。',row?.updated_at||now);
+    accountSetMessage('クラウド保存を初期化しました。端末データはまだ送信していません。必要な時に保存ボタンを押してください。','ok');
   }finally{accountSetBusy(false);accountRender()}
 }
 
 
 function accountCloudLocalSnapshot(){
+  const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
-    schema_version:1,
-    app_version:'16.17',
+    schema_version:2,
+    app_version:'16.18',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
-    decks:Array.isArray(decks)?decks:[]
+    decks:Array.isArray(decks)?decks:[],
+    collection:normalizeCollectionData(collectionData||{},validIds)
   };
+}
+function accountCloudSnapshotSummary(snapshot){
+  const cardCount=Array.isArray(snapshot?.cards)?snapshot.cards.length:0;
+  const deckCount=Array.isArray(snapshot?.decks)?snapshot.decks.length:0;
+  const collection=snapshot?.collection&&typeof snapshot.collection==='object'?snapshot.collection:null;
+  const favoriteCount=Array.isArray(collection?.favorites)?collection.favorites.length:0;
+  const albumCount=Array.isArray(collection?.albums)?collection.albums.length:0;
+  return {cardCount,deckCount,favoriteCount,albumCount};
+}
+function accountSaveRestoreBackup(snapshot){
+  try{
+    localStorage.setItem(LS_ACCOUNT_RESTORE_BACKUP,JSON.stringify({saved_at:new Date().toISOString(),payload:snapshot}));
+    return true;
+  }catch(err){
+    console.warn('Account restore backup save failed',err);
+    return false;
+  }
+}
+function accountReadRestoreBackup(){
+  try{
+    const raw=localStorage.getItem(LS_ACCOUNT_RESTORE_BACKUP);
+    if(!raw)return null;
+    const parsed=JSON.parse(raw);
+    return parsed&&parsed.payload?parsed:null;
+  }catch(_){return null}
+}
+function accountApplyCloudSnapshot(payload,{preserveCollectionWhenMissing=true}={}){
+  const nextCards=Array.isArray(payload?.cards)?payload.cards:[];
+  const nextDecks=Array.isArray(payload?.decks)?payload.decks:[];
+  const validIds=new Set(nextCards.map(c=>String(c?.id||'')));
+  let nextCollection;
+  if(payload?.collection&&typeof payload.collection==='object')nextCollection=normalizeCollectionData(payload.collection,validIds);
+  else if(preserveCollectionWhenMissing)nextCollection=normalizeCollectionData(collectionData||{},validIds);
+  else nextCollection=normalizeCollectionData({},validIds);
+  cards=nextCards;decks=nextDecks;collectionData=nextCollection;
+  save(LS_CARDS,cards);save(LS_DECKS,decks);save(LS_COLLECTION,collectionData);
+  return accountCloudSnapshotSummary({cards,decks,collection:collectionData});
 }
 async function accountCloudUploadCardsDecks(){
   if(!accountUser()?.id){accountSetMessage('ログインが必要です。','error');return}
   const local=accountCloudLocalSnapshot();
-  if(!confirm(`端末内のカード ${local.cards.length}枚・デッキ ${local.decks.length}件をクラウドへ保存します。\n\nクラウドにある以前のカード・デッキ保存内容は置き換わります。続けますか？`))return;
-  accountSetBusy(true);accountSetMessage('カード・デッキをクラウドへ保存しています…');
+  const summary=accountCloudSnapshotSummary(local);
+  if(!confirm(`端末内のカード ${summary.cardCount}枚・デッキ ${summary.deckCount}件・お気に入り ${summary.favoriteCount}枚・アルバム ${summary.albumCount}冊をクラウドへ保存します。\n\nクラウドにある現在の保存内容は1世代前として退避してから置き換えます。続けますか？`))return;
+  accountSetBusy(true);accountSetMessage('端末データをクラウドへ保存しています…');
   try{
+    const existing=await accountCloudGet('cards_decks');
+    if(!existing.ok){accountSetMessage(existing.message||'現在のクラウド保存を確認できませんでした。','error');return}
+    if(existing.row?.payload){
+      const backup=await accountCloudUpsert('cards_decks_previous',existing.row.payload,Number(existing.row.revision)||Date.now());
+      if(!backup.ok){accountSetMessage(backup.message||'クラウドの旧データを退避できなかったため、上書きを中止しました。','error');return}
+    }
     const result=await accountCloudUpsert('cards_decks',local,Date.now());
     if(!result.ok){accountSetMessage(result.message||'クラウドへ保存できませんでした。','error');return}
     const row=Array.isArray(result.data)?result.data[0]:null;
-    accountSetCloudState('ready','保存済み',`カード ${local.cards.length}枚・デッキ ${local.decks.length}件をクラウドへ保存しました。カード画像は同期していません。`,row?.updated_at||local.saved_at);
-    accountSetMessage('カード・デッキをクラウドへ保存しました。','ok');
+    accountSetCloudState('ready','保存済み',`カード ${summary.cardCount}枚・デッキ ${summary.deckCount}件・お気に入り ${summary.favoriteCount}枚・アルバム ${summary.albumCount}冊をクラウドへ保存しました。カード画像は同期していません。`,row?.updated_at||local.saved_at);
+    accountSetMessage('端末データをクラウドへ保存しました。','ok');
   }finally{accountSetBusy(false);accountRender()}
 }
 async function accountCloudDownloadCardsDecks(){
   if(!accountUser()?.id){accountSetMessage('ログインが必要です。','error');return}
-  accountSetBusy(true);accountSetMessage('クラウドのカード・デッキを確認しています…');
+  accountSetBusy(true);accountSetMessage('クラウドデータを確認しています…');
   try{
     const result=await accountCloudGet('cards_decks');
     if(!result.ok){accountSetMessage(result.message||'クラウド保存を読み込めませんでした。','error');return}
-    if(!result.row?.payload){accountSetMessage('クラウドにカード・デッキの保存データがありません。','error');return}
+    if(!result.row?.payload){accountSetMessage('クラウドに保存データがありません。','error');return}
     const payload=result.row.payload;
-    const cloudCards=Array.isArray(payload.cards)?payload.cards:[];
-    const cloudDecks=Array.isArray(payload.decks)?payload.decks:[];
-    const localCards=Array.isArray(cards)?cards.length:0,localDecks=Array.isArray(decks)?decks.length:0;
-    if(!confirm(`クラウドのカード ${cloudCards.length}枚・デッキ ${cloudDecks.length}件で、現在の端末内カード ${localCards}枚・デッキ ${localDecks}件を置き換えます。\n\nこの操作は自動マージしません。必要なら先に通常バックアップを作成してください。続けますか？`)){
+    const cloudSummary=accountCloudSnapshotSummary(payload);
+    const localSnapshot=accountCloudLocalSnapshot();
+    const localSummary=accountCloudSnapshotSummary(localSnapshot);
+    const collectionText=payload.collection?`・お気に入り ${cloudSummary.favoriteCount}枚・アルバム ${cloudSummary.albumCount}冊`:'';
+    if(!confirm(`クラウドのカード ${cloudSummary.cardCount}枚・デッキ ${cloudSummary.deckCount}件${collectionText}で、現在の端末データを置き換えます。\n\n復元直前の端末データは、この端末に1世代だけ自動退避します。続けますか？`)){
       accountSetMessage('復元をキャンセルしました。');return;
     }
-    cards=cloudCards;decks=cloudDecks;
-    save(LS_CARDS,cards);save(LS_DECKS,decks);
-    accountSetCloudState('ready','復元済み',`クラウドからカード ${cards.length}枚・デッキ ${decks.length}件を端末へ復元しました。カード画像はクラウドから復元されません。`,result.row.updated_at||'');
-    accountSetMessage('クラウドのカード・デッキを端末へ復元しました。画面を更新します。','ok');
+    if(!accountSaveRestoreBackup(localSnapshot)){
+      accountSetMessage('復元前の端末データを安全退避できなかったため、復元を中止しました。端末の空き容量を確認してください。','error');return;
+    }
+    const applied=accountApplyCloudSnapshot(payload,{preserveCollectionWhenMissing:true});
+    accountSetCloudState('ready','復元済み',`クラウドからカード ${applied.cardCount}枚・デッキ ${applied.deckCount}件・お気に入り ${applied.favoriteCount}枚・アルバム ${applied.albumCount}冊を端末へ復元しました。カード画像はクラウドから復元されません。`,result.row.updated_at||'');
+    accountSetMessage('クラウドデータを端末へ復元しました。画面を更新します。','ok');
     setTimeout(()=>location.reload(),350);
   }finally{accountSetBusy(false);accountRender()}
 }
+async function accountCloudUndoRestore(){
+  const backup=accountReadRestoreBackup();
+  if(!backup?.payload){accountSetMessage('この端末には復元直前の退避データがありません。','error');return}
+  const summary=accountCloudSnapshotSummary(backup.payload);
+  if(!confirm(`直前に退避した端末データへ戻します。\n\nカード ${summary.cardCount}枚・デッキ ${summary.deckCount}件・お気に入り ${summary.favoriteCount}枚・アルバム ${summary.albumCount}冊を復元します。続けますか？`))return;
+  accountSetBusy(true);
+  try{
+    const applied=accountApplyCloudSnapshot(backup.payload,{preserveCollectionWhenMissing:false});
+    localStorage.removeItem(LS_ACCOUNT_RESTORE_BACKUP);
+    accountSetMessage(`直前の端末データへ戻しました。カード ${applied.cardCount}枚・デッキ ${applied.deckCount}件を復元しました。画面を更新します。`,'ok');
+    setTimeout(()=>location.reload(),350);
+  }catch(err){accountSetMessage(err?.message||'退避データを復元できませんでした。','error')}
+  finally{accountSetBusy(false);accountRender()}
+}
+
 
 async function accountSyncUser({quiet=false}={}){
   const session=await accountEnsureSession();
@@ -35095,6 +35161,7 @@ function accountBindUi(){
   bind('account-cloud-init',()=>accountCloudInitialize().catch(err=>{accountSetCloudState('error','初期化失敗',err.message||String(err));accountSetMessage(err.message||String(err),'error')}));
   bind('account-cloud-upload',()=>accountCloudUploadCardsDecks().catch(err=>accountSetMessage(err.message||String(err),'error')));
   bind('account-cloud-download',()=>accountCloudDownloadCardsDecks().catch(err=>accountSetMessage(err.message||String(err),'error')));
+  bind('account-cloud-undo-restore',()=>accountCloudUndoRestore().catch(err=>accountSetMessage(err.message||String(err),'error')));
   const pass=document.getElementById('account-password');if(pass)pass.addEventListener('keydown',e=>{if(e.key==='Enter')accountLogin().catch(err=>accountSetMessage(err.message||String(err),'error'))});
 }
 async function accountInit(){
@@ -35143,6 +35210,7 @@ window.accountCloudCheck=accountCloudCheck;
 window.accountCloudInitialize=accountCloudInitialize;
 window.accountCloudUploadCardsDecks=accountCloudUploadCardsDecks;
 window.accountCloudDownloadCardsDecks=accountCloudDownloadCardsDecks;
+window.accountCloudUndoRestore=accountCloudUndoRestore;
 window.accountBindUi=accountBindUi;
 window.accountInit=accountInit;
 
