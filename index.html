@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.36</title>
+<title>みん会TCG Simulator v16.37</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20837,6 +20837,38 @@ h3 .minkai-ruby{margin-top:.45em}
 .card-frame-overlay.frame-motion-enabled>.frame-grade-light{animation:v1636FrameOpticalSweep calc(7.5s / var(--frame-motion-speed,1)) ease-in-out infinite alternate}
 @keyframes v1636FrameOpticalSweep{0%{transform:translate3d(-3%,0,0);opacity:.56}100%{transform:translate3d(3%,0,0);opacity:.90}}
 @media(max-width:700px){.card-fx-layer>.fx-material-grade{box-shadow:inset 0 0 14px rgba(var(--fx-shadow-rgb,0,0,0),calc(var(--fx-edge-shade,.07)*.8))}.card-frame-overlay>.frame-grade-light{filter:none}}
+
+</style>
+
+<style id="v1637-material-structure-round2">
+/* v16.37 / 2 of 4 — material structure rebuild.
+   Structural layers stay static; only v16.36 optical grading is animated. */
+.card-fx-layer>.fx-material-structure{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;overflow:hidden;opacity:calc(.16 + var(--fx-structure,.9)*.26);mix-blend-mode:soft-light;filter:contrast(var(--fx-structure-contrast,1));transform:scale(var(--fx-structure-scale,1));transform-origin:center}
+.card-fx-layer[data-fx-family="interference"]>.fx-material-structure{background:repeating-linear-gradient(104deg,rgba(255,255,255,.10) 0 1px,transparent 1px 11px),repeating-linear-gradient(16deg,rgba(20,40,70,.12) 0 1px,transparent 1px 17px);background-size:calc(24px*var(--fx-density-scale,1)) calc(24px*var(--fx-density-scale,1)),calc(38px*var(--fx-density-scale,1)) calc(38px*var(--fx-density-scale,1));opacity:calc(.12 + var(--fx-structure,.9)*.20)}
+.card-fx-layer[data-fx-family="metal"]>.fx-material-structure{background:repeating-linear-gradient(92deg,rgba(255,255,255,.11) 0 1px,rgba(0,0,0,.09) 1px 2px,transparent 2px 7px),radial-gradient(ellipse at 18% 26%,rgba(255,255,255,.10),transparent 22%),radial-gradient(ellipse at 72% 68%,rgba(0,0,0,.13),transparent 28%);background-size:calc(17px*var(--fx-density-scale,1)) 100%,100% 100%,100% 100%;mix-blend-mode:overlay}
+.card-fx-layer[data-fx-family="facet"]>.fx-material-structure{background:conic-gradient(from 18deg at 24% 28%,rgba(255,255,255,.13) 0 9deg,rgba(0,0,0,.10) 9deg 20deg,transparent 20deg 36deg,rgba(255,255,255,.07) 36deg 49deg,transparent 49deg 72deg),conic-gradient(from 192deg at 72% 66%,rgba(0,0,0,.12) 0 14deg,rgba(255,255,255,.11) 14deg 28deg,transparent 28deg 52deg);background-size:calc(94px*var(--fx-density-scale,1)) calc(94px*var(--fx-density-scale,1)),calc(118px*var(--fx-density-scale,1)) calc(118px*var(--fx-density-scale,1));mix-blend-mode:overlay}
+.card-fx-layer[data-fx-family="glass"]>.fx-material-structure{background:radial-gradient(circle at 20% 24%,rgba(255,255,255,.12) 0 1.2%,transparent 2.5%),radial-gradient(circle at 72% 36%,rgba(255,255,255,.08) 0 .8%,transparent 2%),radial-gradient(ellipse at 42% 74%,rgba(0,0,0,.08),transparent 30%),linear-gradient(118deg,rgba(255,255,255,.06),transparent 38% 63%,rgba(255,255,255,.05));background-size:71px 67px,97px 83px,100% 100%,100% 100%;mix-blend-mode:soft-light}
+.card-fx-layer[data-fx-family="coating"]>.fx-material-structure{background:radial-gradient(ellipse at 30% 18%,rgba(255,255,255,.14),transparent 32%),radial-gradient(ellipse at 68% 79%,rgba(0,0,0,.10),transparent 37%),linear-gradient(160deg,rgba(255,255,255,.045),transparent 44% 72%,rgba(0,0,0,.055));mix-blend-mode:soft-light}
+.card-fx-layer[data-fx-family="fiber"]>.fx-material-structure{background:repeating-linear-gradient(13deg,transparent 0 5px,rgba(255,255,255,.075) 5px 6px,transparent 6px 13px),repeating-linear-gradient(101deg,transparent 0 9px,rgba(0,0,0,.065) 9px 10px,transparent 10px 19px);background-size:calc(42px*var(--fx-density-scale,1)) calc(30px*var(--fx-density-scale,1)),calc(55px*var(--fx-density-scale,1)) calc(44px*var(--fx-density-scale,1));opacity:calc(.13 + var(--fx-structure,.9)*.18)}
+.card-fx-layer[data-fx-family="organic"]>.fx-material-structure{background:radial-gradient(ellipse at 18% 25%,rgba(255,255,255,.10),transparent 18%),radial-gradient(ellipse at 53% 52%,rgba(130,180,210,.08),transparent 22%),radial-gradient(ellipse at 82% 78%,rgba(255,190,220,.08),transparent 20%),repeating-radial-gradient(ellipse at 50% 48%,transparent 0 12px,rgba(255,255,255,.035) 13px,transparent 15px 24px);mix-blend-mode:soft-light}
+.card-fx-layer[data-fx-family="mineral"]>.fx-material-structure{background:radial-gradient(circle at 14% 23%,rgba(255,255,255,.12) 0 1px,transparent 2px),radial-gradient(circle at 66% 39%,rgba(0,0,0,.10) 0 1.5px,transparent 3px),linear-gradient(126deg,transparent 0 43%,rgba(255,255,255,.08) 44% 45%,rgba(0,0,0,.08) 46%,transparent 48% 100%);background-size:37px 41px,53px 47px,83px 97px;mix-blend-mode:overlay}
+.card-fx-layer[data-fx-family="ceramic"]>.fx-material-structure{background:linear-gradient(31deg,transparent 0 47%,rgba(255,255,255,.07) 48%,rgba(0,0,0,.07) 49%,transparent 51% 100%),linear-gradient(147deg,transparent 0 61%,rgba(0,0,0,.06) 62%,transparent 64%);background-size:83px 71px,117px 103px;mix-blend-mode:soft-light}
+.card-fx-layer[data-fx-family="emboss"]>.fx-material-structure{background:repeating-radial-gradient(ellipse at 50% 50%,rgba(255,255,255,.11) 0 1px,transparent 2px 8px,rgba(0,0,0,.09) 9px 10px,transparent 11px 18px);background-size:calc(52px*var(--fx-density-scale,1)) calc(34px*var(--fx-density-scale,1));mix-blend-mode:overlay}
+.card-fx-layer[data-fx-family="atmosphere"]>.fx-material-structure{background:radial-gradient(ellipse at 18% 33%,rgba(255,255,255,.08),transparent 36%),radial-gradient(ellipse at 76% 62%,rgba(0,0,0,.07),transparent 39%);opacity:calc(.08 + var(--fx-structure,.9)*.11)}
+.card-fx-layer[data-fx-family="energy"]>.fx-material-structure{background:radial-gradient(ellipse at 50% 110%,rgba(255,255,255,.13),transparent 42%),repeating-linear-gradient(104deg,transparent 0 17px,rgba(255,255,255,.045) 18px,transparent 20px 37px);mix-blend-mode:screen;opacity:calc(.09 + var(--fx-structure,.9)*.14)}
+.card-fx-layer[data-fx-family="digital"]>.fx-material-structure{background:linear-gradient(90deg,transparent 0 49%,rgba(255,255,255,.08) 50%,transparent 51%),linear-gradient(0deg,transparent 0 49%,rgba(0,0,0,.08) 50%,transparent 51%),repeating-linear-gradient(90deg,transparent 0 13px,rgba(255,255,255,.045) 14px,transparent 15px 31px);background-size:31px 31px,31px 31px,100% 100%;mix-blend-mode:overlay}
+
+.card-frame-overlay>.frame-material-surface{position:absolute;inset:0;z-index:1;pointer-events:none;-webkit-mask-image:var(--frame-mask-image);mask-image:var(--frame-mask-image);-webkit-mask-size:var(--frame-mask-size,100% 100%);mask-size:var(--frame-mask-size,100% 100%);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;opacity:.42;mix-blend-mode:soft-light}
+.card-frame-overlay[data-frame-material="polished-metal"]>.frame-material-surface{background:repeating-linear-gradient(91deg,rgba(255,255,255,.11) 0 1px,rgba(0,0,0,.07) 1px 2px,transparent 2px 8px),linear-gradient(132deg,rgba(255,255,255,.10),transparent 30% 66%,rgba(0,0,0,.09));mix-blend-mode:overlay}
+.card-frame-overlay[data-frame-material="forged-metal"]>.frame-material-surface{background:radial-gradient(ellipse at 19% 22%,rgba(255,255,255,.10),rgba(0,0,0,.08) 19%,transparent 33%),radial-gradient(ellipse at 71% 61%,rgba(0,0,0,.11),rgba(255,255,255,.07) 20%,transparent 35%);background-size:43px 37px,57px 49px;mix-blend-mode:overlay}
+.card-frame-overlay[data-frame-material="lacquer"]>.frame-material-surface{background:radial-gradient(ellipse at 24% 15%,rgba(255,255,255,.14),transparent 31%),linear-gradient(160deg,rgba(255,255,255,.04),transparent 51%,rgba(0,0,0,.08));opacity:.34}
+.card-frame-overlay[data-frame-material="porcelain"]>.frame-material-surface{background:radial-gradient(circle at 28% 19%,rgba(255,255,255,.14),transparent 27%),repeating-linear-gradient(37deg,transparent 0 41px,rgba(100,120,130,.045) 42px,transparent 43px 79px);opacity:.27}
+.card-frame-overlay[data-frame-material="leather"]>.frame-material-surface{background:radial-gradient(ellipse at 20% 30%,rgba(255,255,255,.07),transparent 15%),radial-gradient(ellipse at 67% 70%,rgba(0,0,0,.10),transparent 18%),repeating-linear-gradient(23deg,transparent 0 8px,rgba(0,0,0,.045) 9px,transparent 10px 18px);background-size:29px 23px,37px 31px,100% 100%;opacity:.38}
+.card-frame-overlay[data-frame-material="crystal"]>.frame-material-surface{background:conic-gradient(from 21deg at 25% 24%,rgba(255,255,255,.13),transparent 16deg 42deg,rgba(0,0,0,.07) 43deg 60deg,transparent 61deg),conic-gradient(from 192deg at 75% 72%,rgba(255,255,255,.10),transparent 25deg 55deg,rgba(0,0,0,.06) 56deg 74deg,transparent 75deg);background-size:89px 89px,113px 113px;mix-blend-mode:overlay}
+.card-frame-overlay[data-frame-material="organic"]>.frame-material-surface{background:repeating-linear-gradient(13deg,transparent 0 11px,rgba(255,255,255,.055) 12px,transparent 14px 25px),radial-gradient(ellipse at 30% 30%,rgba(0,0,0,.07),transparent 38%);opacity:.31}
+.card-frame-overlay[data-frame-material="dark-stone"]>.frame-material-surface{background:radial-gradient(circle at 21% 27%,rgba(255,255,255,.055) 0 1px,transparent 2px),radial-gradient(circle at 69% 63%,rgba(0,0,0,.11) 0 2px,transparent 4px),linear-gradient(145deg,rgba(255,255,255,.035),transparent 44%,rgba(0,0,0,.10));background-size:31px 29px,47px 43px,100% 100%;mix-blend-mode:overlay}
+.card-frame-overlay[data-frame-material="arcane"]>.frame-material-surface{background:repeating-conic-gradient(from 9deg,transparent 0 18deg,rgba(255,255,255,.055) 19deg 20deg,transparent 21deg 37deg),radial-gradient(circle at 50% 50%,rgba(255,255,255,.08),transparent 42%);opacity:.28;mix-blend-mode:screen}
+@media(max-width:700px){.card-fx-layer>.fx-material-structure{opacity:calc(.10 + var(--fx-structure,.9)*.18)}.card-frame-overlay>.frame-material-surface{opacity:.30}}
 </style>
 
 </head>
@@ -20846,7 +20878,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.36 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.37 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22429,7 +22461,7 @@ function moveBoardToolPreset(kind,index,step){
  saveBoardToolPrefs();
 }
 
-function defaultCardFxPrefs(){return {maxLayers:2,collectionVisible:true,collectionAnimation:false,boardVisible:true,boardAnimation:false,boardQualityDesktop:'standard',boardQualityMobile:'standard',appearanceEditorMode:'simple',motionEngine:3,effectGeneration:5}}
+function defaultCardFxPrefs(){return {maxLayers:2,collectionVisible:true,collectionAnimation:false,boardVisible:true,boardAnimation:false,boardQualityDesktop:'standard',boardQualityMobile:'standard',appearanceEditorMode:'simple',motionEngine:3,effectGeneration:6}}
 function normalizeCardFxPrefs(raw={}){
  const motionV=Number(raw.motionEngine)||0,legacyMotion=motionV<3;
  const quality=v=>['high','standard','light'].includes(String(v||''))?String(v):'standard';
@@ -22443,7 +22475,7 @@ function normalizeCardFxPrefs(raw={}){
    boardQualityMobile:quality(raw.boardQualityMobile),
    appearanceEditorMode:['simple','advanced'].includes(String(raw.appearanceEditorMode||''))?String(raw.appearanceEditorMode):'simple',
    motionEngine:3,
-   effectGeneration:5
+   effectGeneration:6
  };
 }
 function normalizeCardVisualEffects(raw){
@@ -22936,6 +22968,24 @@ function fxLayerStyle(x,v,power){
  const gradeOpacity=Math.max(.18,1-.63*artProtect),edgeShade=(.035+.16*shadowDepth)*(1-.35*artProtect);
  return `--fx-base-rgb:${baseRgb};--fx-base-tint:${baseTint.toFixed(3)};--fx-base-alpha:${baseAlpha.toFixed(3)};--fx-reflection-rgb:${reflectionRgb};--fx-reflection-alpha:${reflectionAlpha.toFixed(3)};--fx-shadow-rgb:${shadowRgb};--fx-shadow-alpha:${shadowAlpha.toFixed(3)};--fx-accent-rgb:${accentRgb};--fx-accent-alpha:${accentAlpha.toFixed(3)};--fx-reflection-angle:${reflectionAngle.toFixed(1)}deg;--fx-reflection-hardness:${reflectionHardness.toFixed(3)};--fx-highlight-start:${hiStart}%;--fx-highlight-end:${hiEnd}%;--fx-structure-scale:${structureScale.toFixed(3)};--fx-structure-scale-pct:${(structureScale*100).toFixed(1)}%;--fx-structure-contrast:${structureContrast.toFixed(3)};--fx-grade-opacity:${gradeOpacity.toFixed(3)};--fx-edge-shade:${edgeShade.toFixed(3)};--fx-warm-alpha:${warmAlpha.toFixed(3)};--fx-cool-alpha:${coolAlpha.toFixed(3)};--fx-duration:${duration.toFixed(3)}s;--fx-o:${x.opacity/100};--fx-sat:${effectiveSat.toFixed(3)};--fx-bright:${bright.toFixed(3)};--fx-power:${power};--fx-slot:${x.slot};--fx-hue:${effectiveHue.toFixed(2)}deg;--fx-size-inset:${sizeInset.toFixed(2)}%;--fx-density-scale:${densityScale.toFixed(3)};--fx-motion:${(x.motion/100).toFixed(3)};--fx-structure:${structure.toFixed(3)};--fx-reflection:${reflection.toFixed(3)};--fx-reflect-area:${reflectionArea.toFixed(3)};--fx-color-influence:${colorInfluence.toFixed(3)};${dir?`--fx-direction:${dir};`:''}${rot?`--fx-rotation-direction:${rot};`:''}`;
 }
+const FX_MATERIAL_FAMILY={
+ interference:new Set(['hologram','prism','aurora','rainbow','holographic-film-soft','oil-slick','dichroic-film','polarized-lcd','beetle-wing','morpho-wing','soap-membrane','thermal-liquid-crystal','neon-film']),
+ metal:new Set(['metal-foil','anodized-metal','heat-titanium','titanium-spectrum','burnished-copper','gunmetal','verdigris','damascus','molten-metal','meteorite-crystal','hammered-forge','oxidized-silver']),
+ facet:new Set(['diamond-cut','diamond-cut-fine','diamond-cut-deep','diamond-cut-aurora','rainbow-facet','lenticular']),
+ glass:new Set(['dichroic-glass','opal-glass','frosted-hologlass','obsidian','amber-resin','crystal-resin','jade-gloss','azure-marble','stained-film','stained-glass-material','dichroic-mosaic','smoke-resin','ink-resin','ice-inclusion-resin','crystal-aggregate-resin']),
+ coating:new Set(['lacquer-coat','enamel-coat','candy-coat','mirror-coat','black-oil-slick']),
+ fiber:new Set(['carbon-iridescent','velvet-matte','aurora-silk','royal-velvet','fiber-paper']),
+ organic:new Set(['black-pearl','dark-mother-pearl','white-pearl']),
+ mineral:new Set(['cracked-crystal','black-crystal','aurora-quartz','labradorite','tiger-eye','black-opal','mineral-vein','lava-glass','layered-mica']),
+ ceramic:new Set(['abyss-lacquer','raden','cloisonne','crackle-glaze']),
+ emboss:new Set(['scale-emboss','ripple-emboss']),
+ atmosphere:new Set(['petals','fog','rain-streak']),
+ energy:new Set(['fire','solar-flare','moonlight']),
+ digital:new Set(['digital-code'])
+};
+function fxMaterialFamily(type=''){
+ const t=String(type||'');for(const [family,set] of Object.entries(FX_MATERIAL_FAMILY))if(set.has(t))return family;return 'coating';
+}
 function cardFxStackHtmlFromLayers(layers,opt={}){
  const max=Math.max(1,Math.min(4,Number(opt.maxLayers)||4)),animate=opt.animate===true,visible=opt.visible!==false;
  if(!visible)return '';
@@ -22944,10 +22994,10 @@ function cardFxStackHtmlFromLayers(layers,opt={}){
  const count=Math.max(1,Math.min(4,rows.length));
  const quality=['high','standard','light'].includes(opt.quality)?opt.quality:'standard';
  return `<div class="card-fx-stack visual-perf-node fx-count-${count} ${animate?'fx-animate':''} ${opt.forceAnimation===true?'fx-force-animation':''} fx-quality-${quality}" data-fx-count="${count}" data-fx-quality="${quality}" aria-hidden="true">${rows.map(x=>{
-   const v=fxIntensityVars(x.intensity),power=x.intensity==='weak'?.78:x.intensity==='strong'?1.28:1,customId=customFxIdFromType(x.type),style=fxLayerStyle(x,v,power),mask=`fx-mask-${x.mask||'full'}`;
+   const v=fxIntensityVars(x.intensity),power=x.intensity==='weak'?.78:x.intensity==='strong'?1.28:1,customId=customFxIdFromType(x.type),style=fxLayerStyle(x,v,power),mask=`fx-mask-${x.mask||'full'}`,family=fxMaterialFamily(x.type);
    const tune=`data-fx-speed="${x.speed}" data-fx-direction="${x.direction}" data-fx-rotation="${x.rotationDirection}" data-fx-motion="${x.motion}" data-fx-density="${x.density}"`;
    if(customId)return `<span class="card-fx-layer fx-custom fx-intensity-${x.intensity} ${mask}" data-fx-type="${esc(x.type)}" data-custom-fx="${esc(customId)}" data-fx-slot="${x.slot}" ${tune} style="${style}"></span>`;
-   return `<span class="card-fx-layer fx-${x.type} fx-intensity-${x.intensity} ${mask}" data-fx-type="${x.type}" data-fx-slot="${x.slot}" ${tune} style="${style}"><i class="fx-deco fx-deco-a"></i><i class="fx-deco fx-deco-b"></i><i class="fx-deco fx-deco-c"></i><i class="fx-material-grade"></i></span>`;
+   return `<span class="card-fx-layer fx-${x.type} fx-intensity-${x.intensity} ${mask}" data-fx-type="${x.type}" data-fx-family="${family}" data-fx-slot="${x.slot}" ${tune} style="${style}"><i class="fx-deco fx-deco-a"></i><i class="fx-deco fx-deco-b"></i><i class="fx-deco fx-deco-c"></i><i class="fx-material-structure"></i><i class="fx-material-grade"></i></span>`;
  }).join('')}</div>`;
 }
 function currentBoardFxQuality(){
@@ -24023,6 +24073,16 @@ function hydrateAllCustomFx(root=document){
 let customFxHydrationObserver=null;
 function initCustomFxHydrationObserver(){if(customFxHydrationObserver)return;customFxHydrationObserver=new MutationObserver(records=>{for(const rec of records)for(const node of rec.addedNodes){if(node?.nodeType!==1)continue;applyFxRuntimeTuning(node);if(node.matches?.('[data-custom-fx]'))hydrateCustomFxLayer(node);node.querySelectorAll?.('[data-custom-fx]').forEach(hydrateCustomFxLayer)}});customFxHydrationObserver.observe(document.body,{childList:true,subtree:true});hydrateAllCustomFx()}
 
+const FRAME_MATERIAL_FAMILY={
+ 'builtin_royal_gold':'polished-metal','builtin_silver_prism':'polished-metal','builtin_cyber_circuit':'polished-metal',
+ 'builtin_sakura_lacquer':'lacquer','builtin_arcane_halo':'arcane',
+ 'builtin:material-01':'forged-metal','builtin:material-02':'porcelain','builtin:material-03':'forged-metal','builtin:material-04':'leather','builtin:material-05':'polished-metal',
+ 'builtin:gen2-02':'crystal','builtin:gen2-04':'polished-metal','builtin:gen2-06':'organic','builtin:gen2-08':'crystal','builtin:gen2-09':'dark-stone','builtin:gen2-10':'arcane','builtin:gen2-17':'dark-stone','builtin:gen2-18':'dark-stone','builtin:gen2-19':'organic','builtin:gen2-20':'polished-metal','builtin:gen2-21':'dark-stone'
+};
+function frameMaterialFamily(id=''){
+ const t=String(id||'');if(FRAME_MATERIAL_FAMILY[t])return FRAME_MATERIAL_FAMILY[t];
+ if(t.startsWith('builtin:gen2-'))return 'arcane';return isBuiltinFrameId(t)?'polished-metal':'custom';
+}
 function cardFrameHtml(card){
  const cardId=typeof card==='string'?String(card):String(card?.id||'');
  const sourceId=typeof card==='string'?'':cardFrameSourceId(card);
@@ -24030,7 +24090,7 @@ function cardFrameHtml(card){
  if(!primaryId)return '';
  const fallbackId=sourceId&&sourceId!==primaryId?sourceId:'';
  const attrs=`data-card-frame="${esc(primaryId)}"${fallbackId?` data-card-frame-fallback="${esc(fallbackId)}"`:''}`;
- return `<span class="card-frame-overlay visual-perf-node card-frame-layer-1" ${attrs} data-frame-layer="1" aria-hidden="true"><i class="frame-grade frame-grade-tone"></i><i class="frame-grade frame-grade-light"></i></span><span class="card-frame-overlay card-frame-layer-2" ${attrs} data-frame-layer="2" aria-hidden="true"><i class="frame-grade frame-grade-tone"></i><i class="frame-grade frame-grade-light"></i></span>`;
+ return `<span class="card-frame-overlay visual-perf-node card-frame-layer-1" ${attrs} data-frame-layer="1" aria-hidden="true"><i class="frame-material-surface"></i><i class="frame-grade frame-grade-tone"></i><i class="frame-grade frame-grade-light"></i></span><span class="card-frame-overlay card-frame-layer-2" ${attrs} data-frame-layer="2" aria-hidden="true"><i class="frame-material-surface"></i><i class="frame-grade frame-grade-tone"></i><i class="frame-grade frame-grade-light"></i></span>`;
 }
 async function hydrateCardFrame(el){
  if(!el?.isConnected||el.dataset.frameReady==='1')return;
@@ -24064,6 +24124,7 @@ async function hydrateCardFrame(el){
    applyFrameLinkVisual(el,cfg,syncProfile);
    el.classList.add('frame-loaded');
    el.dataset.frameId=cfg.frameId;
+   el.dataset.frameMaterial=frameMaterialFamily(cfg.frameId);
    el.classList.toggle('frame-builtin-enhanced',isBuiltinFrameId(cfg.frameId));
    el.dataset.frameReady='1';
  }catch(err){
@@ -25228,7 +25289,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.36',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.37',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -36028,7 +36089,7 @@ async function accountCloudInitialize(){
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.36'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.37'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
@@ -36045,7 +36106,7 @@ function accountCloudLocalSnapshot(){
   const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
     schema_version:2,
-    app_version:'16.36',
+    app_version:'16.37',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
     decks:Array.isArray(decks)?decks:[],
@@ -36686,7 +36747,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'16.36',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'16.37',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
