@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.22</title>
+<title>みん会TCG Simulator v16.23</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20124,6 +20124,20 @@ h3 .minkai-ruby{margin-top:.45em}
 .account-cloud-select-row{display:flex;align-items:flex-start;gap:8px;margin:5px 0}.account-cloud-select-row input{margin-top:3px}.account-cloud-history-item{padding:8px 0;border-top:1px solid var(--line)}
 .account-recovery-panel{grid-column:1/-1}
 .account-local-note{grid-column:1/-1}
+
+.account-cloud-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 12px}
+.account-cloud-tab{appearance:none;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:999px;padding:8px 12px;font:inherit;cursor:pointer}
+.account-cloud-tab.active{background:var(--accent);color:#fff;border-color:transparent}
+.account-cloud-pane[hidden]{display:none!important}
+.account-cloud-pane{margin-top:8px}
+.account-cloud-overview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.account-cloud-overview-card{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.025)}
+.account-cloud-overview-card h4{margin:0 0 5px;font-size:.96em}
+.account-cloud-overview-card p{margin:0;line-height:1.5}
+.account-cloud-section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.account-cloud-section-title h3{margin:0}
+.account-cloud-danger-note{margin-top:10px;padding:9px 11px;border-left:3px solid var(--line);background:rgba(255,255,255,.02);border-radius:0 8px 8px 0}
+@media(max-width:700px){.account-cloud-overview-grid{grid-template-columns:1fr}.account-cloud-tab{flex:1 1 calc(50% - 8px);text-align:center}}
 @media(max-width:760px){
   .account-layout{grid-template-columns:1fr}
   .account-profile-grid{grid-template-columns:1fr}
@@ -20138,7 +20152,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.22 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.23 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -20859,39 +20873,69 @@ h3 .minkai-ruby{margin-top:.45em}
 
         <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
         <div class="account-cloud-head">
-          <h3>クラウド保存</h3>
+          <h3>クラウド管理</h3>
           <span id="account-cloud-state-pill" class="pill">未確認</span>
         </div>
-        <p class="muted">v16.22では、これまでのカード・デッキ同期に加えて、カード画像・背景画像・カスタムフレーム・自作エフェクト・カード外観設定をまとめて保存できるクラウド完全バックアップを追加しました。通常の選択同期とは分離されており、自動上書きは行いません。</p>
+        <p class="muted">v16.23ではクラウド機能を用途別に整理しました。同期・履歴・完全バックアップはすべて手動実行のままで、ログインしただけでは端末データを変更しません。</p>
         <div id="account-cloud-detail" class="account-cloud-detail muted">クラウド保存領域への接続状態を確認できます。</div>
-        <div class="actions account-actions account-cloud-actions">
-          <button class="btn" type="button" id="account-cloud-check">接続を確認</button>
-          <button class="btn" type="button" id="account-cloud-init">クラウド保存を初期化</button>
-          <button class="btn" type="button" id="account-cloud-compare">端末とクラウドの差分を確認</button>
-          <button class="btn primary" type="button" id="account-cloud-upload">端末データをクラウドへ保存</button>
-          <button class="btn" type="button" id="account-cloud-download">クラウドデータで端末を復元</button>
-          <button class="btn" type="button" id="account-cloud-selected-upload">選択したカード・デッキをクラウドへ</button>
-          <button class="btn" type="button" id="account-cloud-selected-download">選択したカード・デッキを端末へ</button>
-          <button class="btn" type="button" id="account-cloud-history">クラウド履歴を表示</button>
-          <button class="btn" type="button" id="account-cloud-restore-previous">クラウドを1世代前へ戻す</button>
-          <button class="btn" type="button" id="account-cloud-undo-restore">直前の端末データに戻す</button>
+
+        <div class="account-cloud-tabs" role="tablist" aria-label="クラウド管理">
+          <button class="account-cloud-tab active" type="button" data-account-cloud-tab="overview" role="tab" aria-selected="true">概要</button>
+          <button class="account-cloud-tab" type="button" data-account-cloud-tab="sync" role="tab" aria-selected="false">カード・デッキ同期</button>
+          <button class="account-cloud-tab" type="button" data-account-cloud-tab="backup" role="tab" aria-selected="false">完全バックアップ</button>
+          <button class="account-cloud-tab" type="button" data-account-cloud-tab="history" role="tab" aria-selected="false">履歴・復旧</button>
+        </div>
+
+        <div class="account-cloud-pane" data-account-cloud-pane="overview">
+          <div class="account-cloud-overview-grid">
+            <div class="account-cloud-overview-card"><h4>カード・デッキ同期</h4><p class="muted">軽量データを対象に、全体同期または差分から選択同期できます。</p></div>
+            <div class="account-cloud-overview-card"><h4>クラウド履歴</h4><p class="muted">上書き前のクラウド内容を最大5世代保持し、必要な時に戻せます。</p></div>
+            <div class="account-cloud-overview-card"><h4>画像・外観</h4><p class="muted">画像、背景、カスタムフレーム、自作エフェクト、外観設定をZIPで保管します。</p></div>
+            <div class="account-cloud-overview-card"><h4>自動同期</h4><p class="muted">無効。保存・復元・選択同期はいずれも操作した時だけ実行します。</p></div>
+          </div>
+          <div class="actions account-actions account-cloud-actions">
+            <button class="btn" type="button" id="account-cloud-check">接続を確認</button>
+            <button class="btn" type="button" id="account-cloud-init">クラウド保存を初期化</button>
+            <button class="btn" type="button" id="account-full-cloud-check">完全バックアップ状態を確認</button>
+          </div>
+        </div>
+
+        <div class="account-cloud-pane" data-account-cloud-pane="sync" hidden>
+          <div class="account-cloud-section-title"><h3>カード・デッキ同期</h3><span class="pill">軽量</span></div>
+          <p class="muted">カード・デッキ・お気に入り・アルバムの軽量データを扱います。差分確認後に全体またはカード・デッキ単位で反映できます。</p>
+          <div class="actions account-actions account-cloud-actions">
+            <button class="btn" type="button" id="account-cloud-compare">端末とクラウドの差分を確認</button>
+            <button class="btn primary" type="button" id="account-cloud-upload">端末データをクラウドへ保存</button>
+            <button class="btn" type="button" id="account-cloud-download">クラウドデータで端末を復元</button>
+            <button class="btn" type="button" id="account-cloud-selected-upload">選択したカード・デッキをクラウドへ</button>
+            <button class="btn" type="button" id="account-cloud-selected-download">選択したカード・デッキを端末へ</button>
+          </div>
+        </div>
+
+        <div class="account-cloud-pane" data-account-cloud-pane="backup" hidden>
+          <div class="account-cloud-head">
+            <h3>画像・外観のクラウド完全バックアップ</h3>
+            <span id="account-full-cloud-state-pill" class="pill">未確認</span>
+          </div>
+          <p class="muted">カード画像、背景画像、カスタムフレーム、自作エフェクト、カードごとの外観・エフェクト設定、外観プリセットをカード・デッキと一緒に1つのZIPとして保存します。現在の盤面と盤面スナップショットは含めません。</p>
+          <div id="account-full-cloud-detail" class="account-cloud-detail muted">v16.22用のSupabase Storage設定後に利用できます。</div>
+          <div class="actions account-actions account-cloud-actions">
+            <button class="btn primary" type="button" id="account-full-cloud-upload">完全バックアップをクラウドへ保存</button>
+            <button class="btn" type="button" id="account-full-cloud-download">クラウド完全バックアップを復元</button>
+          </div>
+          <p class="account-cloud-danger-note muted">完全バックアップの復元では、カード・デッキ・コレクション・画像・外観設定をまとめて置き換えます。復元前に現在の端末状態を完全バックアップZIPとして自動生成します。</p>
+        </div>
+
+        <div class="account-cloud-pane" data-account-cloud-pane="history" hidden>
+          <div class="account-cloud-section-title"><h3>履歴・復旧</h3><span class="pill">最大5世代</span></div>
+          <p class="muted">クラウドの保存履歴確認と巻き戻し、クラウド復元直前に端末へ退避したデータへの復旧をまとめています。</p>
+          <div class="actions account-actions account-cloud-actions">
+            <button class="btn" type="button" id="account-cloud-history">クラウド履歴を表示</button>
+            <button class="btn" type="button" id="account-cloud-restore-previous">クラウドを1世代前へ戻す</button>
+            <button class="btn" type="button" id="account-cloud-undo-restore">直前の端末データに戻す</button>
+          </div>
         </div>
         <div id="account-cloud-compare-detail" class="account-cloud-comparison muted" hidden></div>
-        <p class="muted" style="margin-top:10px">カード・デッキの通常同期はこれまで通り軽量データだけを扱います。復元直前の端末データはこの端末へ1世代だけ自動退避し、クラウド側は上書き前の保存内容を最大5世代保持します。</p>
-
-        <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
-        <div class="account-cloud-head">
-          <h3>画像・外観のクラウド完全バックアップ</h3>
-          <span id="account-full-cloud-state-pill" class="pill">未確認</span>
-        </div>
-        <p class="muted">カード画像、背景画像、カスタムフレーム、自作エフェクト、カードごとの外観・エフェクト設定、外観プリセットをカード・デッキと一緒に1つのZIPとして保存します。現在の盤面と盤面スナップショットはクラウド完全バックアップには含めません。</p>
-        <div id="account-full-cloud-detail" class="account-cloud-detail muted">v16.22用のSupabase Storage設定後に利用できます。</div>
-        <div class="actions account-actions account-cloud-actions">
-          <button class="btn" type="button" id="account-full-cloud-check">完全バックアップ状態を確認</button>
-          <button class="btn primary" type="button" id="account-full-cloud-upload">完全バックアップをクラウドへ保存</button>
-          <button class="btn" type="button" id="account-full-cloud-download">クラウド完全バックアップを復元</button>
-        </div>
-        <p class="muted" style="margin-top:10px">完全バックアップの復元はカード・デッキ・コレクション・画像・外観設定をまとめて置き換えます。復元前には現在の端末状態を完全バックアップZIPとして自動生成し、端末へ保存してから復元処理へ進みます。</p>
       </div>
 
       <div class="panel account-recovery-panel" id="account-recovery-panel" hidden>
@@ -20907,8 +20951,8 @@ h3 .minkai-ruby{margin-top:.45em}
       </div>
 
       <div class="panel account-local-note">
-        <h3 style="margin-top:0">v16.22での保存範囲</h3>
-        <p class="muted">軽量なカード・デッキ同期と、画像・外観まで含めるクラウド完全バックアップを用途別に分けています。どちらも手動実行で、自動マージや自動上書きは行いません。オンライン対戦のルーム用セッションはアカウントとは別のまま維持します。</p>
+        <h3 style="margin-top:0">v16.23 クラウド機能の扱い</h3>
+        <p class="muted">クラウド機能は概要 / カード・デッキ同期 / 完全バックアップ / 履歴・復旧に整理しました。自動マージ・自動上書きは行わず、オンライン対戦のルーム用セッションもアカウントとは別のまま維持します。</p>
       </div>
     </div>
     <div id="account-message" class="account-message muted" role="status" aria-live="polite"></div>
@@ -24381,7 +24425,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.22',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.23',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -34970,7 +35014,7 @@ async function accountCloudInitialize(){
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.22'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.23'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
@@ -34987,7 +35031,7 @@ function accountCloudLocalSnapshot(){
   const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
     schema_version:2,
-    app_version:'16.22',
+    app_version:'16.23',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
     decks:Array.isArray(decks)?decks:[],
@@ -35168,7 +35212,7 @@ function accountCloudMergeSelected(base,source,rows,indexes){
     }
     out[prop]=list;
   }
-  out.schema_version=2; out.app_version='16.22'; out.saved_at=new Date().toISOString();
+  out.schema_version=2; out.app_version='16.23'; out.saved_at=new Date().toISOString();
   return out;
 }
 async function accountCloudSelectedSync(direction){
@@ -35584,7 +35628,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='16.22';
+  manifest.appVersion='16.23';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -35625,7 +35669,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'16.22',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'16.23',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
@@ -35692,5 +35736,28 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 
+
+<script>
+// v16.23 cloud management UI
+(function(){
+  let currentCloudTab='overview';
+  function setAccountCloudTab(name){
+    const valid=['overview','sync','backup','history'];
+    currentCloudTab=valid.includes(name)?name:'overview';
+    document.querySelectorAll('[data-account-cloud-tab]').forEach(btn=>{
+      const active=btn.dataset.accountCloudTab===currentCloudTab;
+      btn.classList.toggle('active',active);
+      btn.setAttribute('aria-selected',active?'true':'false');
+    });
+    document.querySelectorAll('[data-account-cloud-pane]').forEach(pane=>{pane.hidden=pane.dataset.accountCloudPane!==currentCloudTab});
+  }
+  window.setAccountCloudTab=setAccountCloudTab;
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-account-cloud-tab]');
+    if(btn)setAccountCloudTab(btn.dataset.accountCloudTab);
+  });
+  document.addEventListener('DOMContentLoaded',()=>setAccountCloudTab(currentCloudTab));
+})();
+</script>
 </body>
 </html>
