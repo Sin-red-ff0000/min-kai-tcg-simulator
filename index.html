@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.33</title>
+<title>みん会TCG Simulator v16.35</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20679,6 +20679,138 @@ h3 .minkai-ruby{margin-top:.45em}
 }
 </style>
 
+
+<style id="v1634-whole-visual-quality-pass-2">
+/* v16.35: global quality pass 2.
+   No effect/frame IDs change. This pass adds micro-surface depth, material-specific
+   highlight behavior, stronger bright/dark-art resilience, and more coherent frame contact. */
+
+/* Global micro-contrast: avoid flat pasted overlays while preserving card artwork. */
+.card-fx-layer{
+  --v1634-micro-dark:calc(.035 * var(--fx-structure,1));
+  --v1634-micro-light:calc(.028 * var(--fx-reflection,1));
+  text-rendering:geometricPrecision;
+}
+.card-fx-layer:not(.fx-fog):not(.fx-rain-streak):not(.fx-petals){
+  outline:1px solid rgba(255,255,255,calc(.012 * var(--fx-reflection,1)));
+  outline-offset:-1px;
+}
+
+/* Facet / cut / crystal: facets read by opposing light and shadow, not white outlines. */
+.card-fx-layer:is(.fx-diamond-cut,.fx-diamond-cut-fine,.fx-diamond-cut-deep,.fx-diamond-cut-aurora,.fx-rainbow-facet,.fx-black-crystal,.fx-aurora-quartz,.fx-cracked-crystal){
+  box-shadow:inset 0 0 15px rgba(0,0,0,calc(.095*var(--fx-structure,1))),inset 0 0 5px rgba(255,255,255,calc(.065*var(--fx-reflection,1)));
+  background-blend-mode:soft-light,overlay;
+}
+.card-fx-layer:is(.fx-diamond-cut,.fx-diamond-cut-fine,.fx-diamond-cut-deep,.fx-diamond-cut-aurora,.fx-rainbow-facet,.fx-black-crystal,.fx-aurora-quartz,.fx-cracked-crystal)::after{
+  filter:contrast(calc(1 + .08*var(--fx-structure,1))) brightness(calc(.98 + .035*var(--fx-reflection,1)));
+}
+
+/* Glass / resin: strengthen surface-vs-internal separation without milky washout. */
+.card-fx-layer:is(.fx-clear-resin,.fx-crystal-resin,.fx-amber-resin,.fx-smoke-resin,.fx-ink-resin,.fx-glass-laminate,.fx-opal-glass,.fx-dichroic-glass,.fx-frosted-hologlass,.fx-lava-glass,.fx-ice-inclusion-resin,.fx-crystal-aggregate-resin){
+  box-shadow:inset 0 0 20px rgba(0,0,0,calc(.055*var(--fx-structure,1))),inset 0 0 7px rgba(255,255,255,calc(.048*var(--fx-reflection,1)));
+}
+.card-fx-layer:is(.fx-clear-resin,.fx-crystal-resin,.fx-amber-resin,.fx-smoke-resin,.fx-ink-resin,.fx-glass-laminate,.fx-opal-glass,.fx-dichroic-glass,.fx-frosted-hologlass,.fx-lava-glass,.fx-ice-inclusion-resin,.fx-crystal-aggregate-resin)::before{
+  filter:contrast(calc(1 + .055*var(--fx-structure,1))) saturate(.98);
+}
+
+/* Pearl / shell / organic optical layers: broad internal glow + narrow surface sheen. */
+.card-fx-layer:is(.fx-black-pearl,.fx-dark-mother-pearl,.fx-mother-pearl,.fx-raden,.fx-white-pearl,.fx-beetle-wing,.fx-morpho-wing){
+  box-shadow:inset 0 0 22px rgba(0,0,0,calc(.05*var(--fx-structure,1))),inset 0 0 8px rgba(255,255,255,calc(.045*var(--fx-reflection,1)));
+  background-blend-mode:soft-light,overlay;
+}
+
+/* Stone/mineral: low-gloss micro-grain. Avoid glitter. */
+.card-fx-layer:is(.fx-mineral-vein,.fx-labradorite,.fx-tiger-eye,.fx-black-opal,.fx-jade-gloss,.fx-azure-marble,.fx-obsidian){
+  box-shadow:inset 0 0 18px rgba(0,0,0,calc(.085*var(--fx-structure,1))),inset 0 0 4px rgba(255,255,255,calc(.035*var(--fx-reflection,1)));
+  filter:contrast(calc(1 + .03*var(--fx-structure,1)));
+}
+
+/* Metal family: keep a dark counter-reflection so bright source art still shows material. */
+.card-fx-layer:is(.fx-anodized-metal,.fx-black-chrome,.fx-gunmetal,.fx-burnished-copper,.fx-damascus,.fx-molten-metal,.fx-heat-titanium,.fx-titanium-spectrum,.fx-metal-foil,.fx-meteorite-crystal,.fx-hammered-forge,.fx-oxidized-silver){
+  box-shadow:inset 0 0 16px rgba(0,0,0,calc(.12*var(--fx-structure,1))),inset 0 0 5px rgba(255,255,255,calc(.055*var(--fx-reflection,1)));
+  filter:contrast(calc(1 + .04*var(--fx-structure,1)));
+}
+
+/* Lacquer / enamel / ceramic: deeper coating, softer highlight than metal. */
+.card-fx-layer:is(.fx-abyss-lacquer,.fx-red-lacquer,.fx-blue-enamel,.fx-enamel-coat,.fx-candy-coat,.fx-ceramic-gloss,.fx-crackle-glaze,.fx-cloisonne,.fx-mirror-coat){
+  box-shadow:inset 0 0 20px rgba(0,0,0,calc(.075*var(--fx-structure,1))),inset 0 0 8px rgba(255,255,255,calc(.052*var(--fx-reflection,1)));
+  background-blend-mode:soft-light,overlay;
+}
+
+/* Textile / paper: micro-contrast without plastic gloss. */
+.card-fx-layer:is(.fx-velvet-matte,.fx-royal-velvet,.fx-aurora-silk,.fx-carbon-iridescent,.fx-fiber-paper){
+  box-shadow:inset 0 0 13px rgba(0,0,0,calc(.045*var(--fx-structure,1)));
+  filter:contrast(calc(1 + .025*var(--fx-structure,1))) saturate(.985);
+}
+
+/* Emboss / pressed surfaces: stronger directional depth, still no luminous contour. */
+.card-fx-layer:is(.fx-scale-emboss,.fx-ripple-emboss){
+  box-shadow:inset 1px 1px 4px rgba(255,255,255,calc(.055*var(--fx-reflection,1))),inset -1px -1px 5px rgba(0,0,0,calc(.09*var(--fx-structure,1)));
+}
+
+/* Atmospheric / luminous family: reduce washout while maintaining recognizable body. */
+.card-fx-layer:is(.fx-fog,.fx-rain-streak,.fx-petals,.fx-fire,.fx-solar-flare,.fx-moonlight,.fx-dark-aura,.fx-curse-miasma,.fx-cosmos,.fx-aurora){
+  box-shadow:inset 0 0 17px rgba(0,0,0,calc(.05*var(--fx-structure,1)));
+}
+.card-fx-layer:is(.fx-fire,.fx-solar-flare,.fx-moonlight,.fx-dark-aura,.fx-curse-miasma)::after{
+  filter:contrast(calc(1 + .045*var(--fx-structure,1))) brightness(calc(.98 + .025*var(--fx-reflection,1)));
+}
+
+/* Digital / optical-tech: reduce floating-overlay feeling by giving the substrate a body. */
+.card-fx-layer:is(.fx-digital-code,.fx-polarized-lcd,.fx-neon-film){
+  box-shadow:inset 0 0 18px rgba(0,0,0,calc(.115*var(--fx-structure,1))),inset 0 0 5px rgba(180,245,240,calc(.035*var(--fx-reflection,1)));
+}
+
+/* Animation polish: fixed material, only tiny optical response. */
+.fx-animate .card-fx-layer{
+  animation-timing-function:ease-in-out;
+}
+@media(prefers-reduced-motion:reduce){
+  .fx-animate .card-fx-layer,.fx-animate .card-fx-layer::before,.fx-animate .card-fx-layer::after{animation-play-state:paused!important}
+}
+
+/* Frame pass: stronger edge seating and controlled highlights, no theme recolor. */
+.card-frame-overlay.frame-builtin-enhanced{
+  --v1634-contact:calc(.10 + var(--frame-depth,0)*.0014);
+  --v1634-inner:calc(.045 + var(--frame-depth,0)*.0009);
+}
+.card-frame-overlay.frame-builtin-enhanced{
+  filter:var(--frame-filter,none) drop-shadow(0 1px 1px rgba(0,0,0,var(--v1634-contact)));
+}
+.card-frame-overlay.frame-builtin-enhanced::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.065),transparent 27% 72%,rgba(0,0,0,.085));
+  opacity:calc(.20 + var(--frame-depth,0)*.0024);mix-blend-mode:soft-light;
+  -webkit-mask-image:var(--frame-mask-image);mask-image:var(--frame-mask-image);
+  -webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+}
+/* Material families receive distinct optical response rather than one universal gloss. */
+.card-frame-overlay:is([data-frame-id="builtin_royal_gold"],[data-frame-id="builtin_silver_prism"],[data-frame-id="builtin:material-05"]){--v1634-contact:.17;--v1634-inner:.07}
+.card-frame-overlay:is([data-frame-id="builtin_cyber_circuit"],[data-frame-id="builtin:gen2-04"],[data-frame-id="builtin:gen2-20"],[data-frame-id="builtin:material-01"]){--v1634-contact:.21;--v1634-inner:.055}
+.card-frame-overlay:is([data-frame-id="builtin_sakura_lacquer"],[data-frame-id="builtin:material-02"]){--v1634-contact:.12;--v1634-inner:.08}
+.card-frame-overlay:is([data-frame-id="builtin:material-03"],[data-frame-id="builtin:material-04"],[data-frame-id="builtin:gen2-06"],[data-frame-id="builtin:gen2-19"]){--v1634-contact:.19;--v1634-inner:.045}
+.card-frame-overlay:is([data-frame-id="builtin_arcane_halo"],[data-frame-id="builtin:gen2-02"],[data-frame-id="builtin:gen2-08"],[data-frame-id="builtin:gen2-10"]){--v1634-contact:.105;--v1634-inner:.065}
+.card-frame-overlay:is([data-frame-id="builtin:gen2-03"],[data-frame-id="builtin:gen2-09"],[data-frame-id="builtin:gen2-17"],[data-frame-id="builtin:gen2-18"],[data-frame-id="builtin:gen2-21"]){--v1634-contact:.24;--v1634-inner:.04}
+
+/* Mobile: keep material separation but avoid noisy tiny highlights. */
+@media(max-width:700px){
+  .card-fx-layer{outline-color:rgba(255,255,255,.008)}
+  .card-frame-overlay.frame-builtin-enhanced::before{opacity:calc(.15 + var(--frame-depth,0)*.0018)}
+}
+</style>
+
+
+<style id="v1635-detail-color-material-rebuild">
+/* v16.35: all new detail controls are wired to valid, direct CSS values. */
+.card-fx-layer>.fx-deco-c{
+ background:linear-gradient(var(--fx-reflection-angle,125deg),transparent 0 38%,rgba(var(--fx-reflection-rgb,255,255,255),var(--fx-reflection-alpha,.22)) 49%,transparent 61% 100%),linear-gradient(305deg,rgba(var(--fx-shadow-rgb,0,0,0),var(--fx-shadow-alpha,.10)),transparent 42% 70%,rgba(var(--fx-base-rgb,255,255,255),var(--fx-base-alpha,0)));
+ opacity:var(--fx-reflect-area,1);mix-blend-mode:soft-light;pointer-events:none;background-size:var(--fx-structure-scale-pct,100%) var(--fx-structure-scale-pct,100%);filter:contrast(var(--fx-structure-contrast,1));
+}
+.fx-animate .card-fx-layer>.fx-deco-c{animation:v1635MaterialLight var(--fx-duration,10s) ease-in-out infinite alternate}
+@keyframes v1635MaterialLight{0%{background-position:-3% -1%,0 0}100%{background-position:3% 1%,0 0}}
+.card-frame-overlay.frame-builtin-enhanced::before{background:linear-gradient(var(--frame-reflection-angle,125deg),rgba(var(--frame-reflection-rgb,255,255,255),var(--frame-reflection-alpha,.12)),transparent var(--frame-reflection-stop,46%) 68%,rgba(var(--frame-shadow-rgb,0,0,0),var(--frame-shadow-alpha,.10)));opacity:.34}
+.card-frame-overlay.frame-builtin-enhanced{box-shadow:0 var(--frame-outer-y,2px) var(--frame-outer-blur,5px) rgba(var(--frame-shadow-rgb,0,0,0),var(--frame-outer-alpha,.14))}
+</style>
 </head>
 <body>
 <div id="app-background-layer" aria-hidden="true">
@@ -20686,7 +20818,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.33 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.35 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22269,7 +22401,7 @@ function moveBoardToolPreset(kind,index,step){
  saveBoardToolPrefs();
 }
 
-function defaultCardFxPrefs(){return {maxLayers:2,collectionVisible:true,collectionAnimation:false,boardVisible:true,boardAnimation:false,boardQualityDesktop:'standard',boardQualityMobile:'standard',appearanceEditorMode:'simple',motionEngine:3,effectGeneration:3}}
+function defaultCardFxPrefs(){return {maxLayers:2,collectionVisible:true,collectionAnimation:false,boardVisible:true,boardAnimation:false,boardQualityDesktop:'standard',boardQualityMobile:'standard',appearanceEditorMode:'simple',motionEngine:3,effectGeneration:4}}
 function normalizeCardFxPrefs(raw={}){
  const motionV=Number(raw.motionEngine)||0,legacyMotion=motionV<3;
  const quality=v=>['high','standard','light'].includes(String(v||''))?String(v):'standard';
@@ -22283,7 +22415,7 @@ function normalizeCardFxPrefs(raw={}){
    boardQualityMobile:quality(raw.boardQualityMobile),
    appearanceEditorMode:['simple','advanced'].includes(String(raw.appearanceEditorMode||''))?String(raw.appearanceEditorMode):'simple',
    motionEngine:3,
-   effectGeneration:3
+   effectGeneration:4
  };
 }
 function normalizeCardVisualEffects(raw){
@@ -22313,6 +22445,14 @@ function normalizeCardVisualEffects(raw){
      reflection:num(x.reflection,100,0,180),
      reflectionArea:num(x.reflectionArea,100,20,180),
      colorInfluence:num(x.colorInfluence,100,0,100),
+     baseColor:/^#[0-9a-f]{6}$/i.test(String(x.baseColor||''))?String(x.baseColor):'#ffffff',
+     baseTint:num(x.baseTint,0,0,100),
+     reflectionColor:/^#[0-9a-f]{6}$/i.test(String(x.reflectionColor||''))?String(x.reflectionColor):'#ffffff',
+     shadowColor:/^#[0-9a-f]{6}$/i.test(String(x.shadowColor||''))?String(x.shadowColor):'#000000',
+     reflectionAngle:num(x.reflectionAngle,125,0,360),
+     reflectionHardness:num(x.reflectionHardness,55,0,100),
+     structureScale:num(x.structureScale,100,40,220),
+     structureContrast:num(x.structureContrast,100,40,220),
      mask:['full','center','outer','corners','top','bottom'].includes(x.mask)?x.mask:'full'
    });
  }
@@ -22745,6 +22885,7 @@ const FX_BASE_DURATIONS={
  'scale-emboss':6.8,
  'ripple-emboss':7.8,
  'meteorite-crystal':10.5,'hammered-forge':12,'oxidized-silver':11,'white-pearl':12,'layered-mica':13,'ice-inclusion-resin':11.5,'crystal-aggregate-resin':10.5,'fiber-paper':14};
+function fxHexRgb(hex,fallback='ffffff'){const m=/^#([0-9a-f]{6})$/i.exec(String(hex||'')),n=parseInt(m?m[1]:fallback,16);return `${(n>>16)&255},${(n>>8)&255},${n&255}`}
 function fxLayerStyle(x,v,power){
  const sat=v.sat*(x.saturation/100),bright=v.bright*(x.brightness/100),base=FX_BASE_DURATIONS[x.type]||5.5,duration=Math.max(.35,base/(x.speed/100));
  const sizeInset=-10-((x.size-100)*.34),densityScale=Math.max(.56,Math.min(1.55,100/x.density));
@@ -22752,7 +22893,10 @@ function fxLayerStyle(x,v,power){
  const rot=x.rotationDirection==='reverse'?'reverse':x.rotationDirection==='forward'?'normal':'';
  const structure=Math.max(0,Math.min(1.8,(Number(x.structure)||0)/100)),reflection=Math.max(0,Math.min(1.8,(Number(x.reflection)||0)/100)),reflectionArea=Math.max(.2,Math.min(1.8,(Number(x.reflectionArea)||100)/100)),colorInfluence=Math.max(0,Math.min(1,(Number(x.colorInfluence)||0)/100));
  const effectiveHue=(Number(x.hue)||0)*colorInfluence,effectiveSat=1+(sat-1)*colorInfluence;
- return `--fx-o:${x.opacity/100};--fx-sat:${effectiveSat.toFixed(3)};--fx-bright:${bright.toFixed(3)};--fx-power:${power};--fx-slot:${x.slot};--fx-hue:${effectiveHue.toFixed(2)}deg;--fx-size-inset:${sizeInset.toFixed(2)}%;--fx-density-scale:${densityScale.toFixed(3)};--fx-motion:${(x.motion/100).toFixed(3)};--fx-structure:${structure.toFixed(3)};--fx-reflection:${reflection.toFixed(3)};--fx-reflect-area:${reflectionArea.toFixed(3)};--fx-color-influence:${colorInfluence.toFixed(3)};--fx-duration:${duration.toFixed(3)}s;${dir?`--fx-direction:${dir};`:''}${rot?`--fx-rotation-direction:${rot};`:''}`;
+ const baseRgb=fxHexRgb(x.baseColor),reflectionRgb=fxHexRgb(x.reflectionColor),shadowRgb=fxHexRgb(x.shadowColor,'000000');
+ const baseTint=Math.max(0,Math.min(1,(Number(x.baseTint)||0)/100)),reflectionAngle=Math.max(0,Math.min(360,Number(x.reflectionAngle)||125)),reflectionHardness=Math.max(0,Math.min(1,(Number(x.reflectionHardness)||0)/100)),structureScale=Math.max(.4,Math.min(2.2,(Number(x.structureScale)||100)/100)),structureContrast=Math.max(.4,Math.min(2.2,(Number(x.structureContrast)||100)/100));
+ const reflectionAlpha=(.08+.28*reflection)*(.45+.55*reflectionHardness),shadowAlpha=(.035+.12*structure),baseAlpha=.22*baseTint;
+ return `--fx-base-rgb:${baseRgb};--fx-base-tint:${baseTint.toFixed(3)};--fx-base-alpha:${baseAlpha.toFixed(3)};--fx-reflection-rgb:${reflectionRgb};--fx-reflection-alpha:${reflectionAlpha.toFixed(3)};--fx-shadow-rgb:${shadowRgb};--fx-shadow-alpha:${shadowAlpha.toFixed(3)};--fx-reflection-angle:${reflectionAngle.toFixed(1)}deg;--fx-reflection-hardness:${reflectionHardness.toFixed(3)};--fx-structure-scale:${structureScale.toFixed(3)};--fx-structure-scale-pct:${(structureScale*100).toFixed(1)}%;--fx-structure-contrast:${structureContrast.toFixed(3)};--fx-duration:${duration.toFixed(3)}s;--fx-o:${x.opacity/100};--fx-sat:${effectiveSat.toFixed(3)};--fx-bright:${bright.toFixed(3)};--fx-power:${power};--fx-slot:${x.slot};--fx-hue:${effectiveHue.toFixed(2)}deg;--fx-size-inset:${sizeInset.toFixed(2)}%;--fx-density-scale:${densityScale.toFixed(3)};--fx-motion:${(x.motion/100).toFixed(3)};--fx-structure:${structure.toFixed(3)};--fx-reflection:${reflection.toFixed(3)};--fx-reflect-area:${reflectionArea.toFixed(3)};--fx-color-influence:${colorInfluence.toFixed(3)};${dir?`--fx-direction:${dir};`:''}${rot?`--fx-rotation-direction:${rot};`:''}`;
 }
 function cardFxStackHtmlFromLayers(layers,opt={}){
  const max=Math.max(1,Math.min(4,Number(opt.maxLayers)||4)),animate=opt.animate===true,visible=opt.visible!==false;
@@ -23502,7 +23646,7 @@ async function renameFrameAsset(frameId,newName){
  return next;
 }
 
-const FRAME_LINK_DEFAULTS={scale:100,x:0,y:0,opacity:100,fit:'stretch',flipX:false,flipY:false,rotate:0,motion:'none',motionEnabled:false,motionSpeed:100,fxSyncEnabled:false,fxSyncStrength:70,hue:0,saturation:100,brightness:100,glowColor:'#ffffff',glowStrength:0,partialGlow:'none',partialGlowStrength:60,finish:'none',finishStrength:55,colorInfluence:100,depthStrength:0};
+const FRAME_LINK_DEFAULTS={scale:100,x:0,y:0,opacity:100,fit:'stretch',flipX:false,flipY:false,rotate:0,motion:'none',motionEnabled:false,motionSpeed:100,fxSyncEnabled:false,fxSyncStrength:70,hue:0,saturation:100,brightness:100,glowColor:'#ffffff',glowStrength:0,partialGlow:'none',partialGlowStrength:60,finish:'none',finishStrength:55,colorInfluence:100,depthStrength:0,reflectionColor:'#ffffff',shadowColor:'#000000',reflectionAngle:125,reflectionHardness:55,outerShadow:35,innerShadow:25,edgeHighlight:35};
 const FRAME_MOTION_TYPES=new Set(['none','edge-light','corner-pulse','metal-sweep','gem-blink','rune-sequence']);
 function normalizeFrameVisual(raw={}){
  const clamp=(v,min,max,def)=>{v=Number(v);return Number.isFinite(v)?Math.max(min,Math.min(max,v)):def};
@@ -23526,7 +23670,11 @@ function normalizeFrameVisual(raw={}){
    finish:['none','foil','rainbow','polarized','glitter','pearl','metallic'].includes(String(raw.finish||''))?String(raw.finish):'none',
    finishStrength:clamp(raw.finishStrength,0,100,55),
    colorInfluence:clamp(raw.colorInfluence,0,100,100),
-   depthStrength:clamp(raw.depthStrength,0,100,0)
+   depthStrength:clamp(raw.depthStrength,0,100,0),
+   reflectionColor:/^#[0-9a-f]{6}$/i.test(String(raw.reflectionColor||''))?String(raw.reflectionColor):'#ffffff',
+   shadowColor:/^#[0-9a-f]{6}$/i.test(String(raw.shadowColor||''))?String(raw.shadowColor):'#000000',
+   reflectionAngle:clamp(raw.reflectionAngle,0,360,125),reflectionHardness:clamp(raw.reflectionHardness,0,100,55),
+   outerShadow:clamp(raw.outerShadow,0,100,35),innerShadow:clamp(raw.innerShadow,0,100,25),edgeHighlight:clamp(raw.edgeHighlight,0,100,35)
  };
 }
 function normalizeFrameLink(raw,cardId=raw?.cardId||''){
@@ -23605,7 +23753,9 @@ function applyFrameLinkVisual(el,raw,syncProfile=null){
    el.classList.add('frame-fx-synced');
  }else el.classList.remove('frame-fx-synced');
 
- const gc=hexToRgbFrame(link.glowColor),gk=link.glowStrength/100,ck=link.colorInfluence/100,depth=link.depthStrength/100;
+ const gc=hexToRgbFrame(link.glowColor),rc=hexToRgbFrame(link.reflectionColor),sc=hexToRgbFrame(link.shadowColor),gk=link.glowStrength/100,ck=link.colorInfluence/100,depth=link.depthStrength/100;
+ const fh=link.reflectionHardness/100,fo=link.outerShadow/100,fi=link.innerShadow/100,fe=link.edgeHighlight/100;
+ el.style.setProperty('--frame-reflection-rgb',`${rc.r},${rc.g},${rc.b}`);el.style.setProperty('--frame-shadow-rgb',`${sc.r},${sc.g},${sc.b}`);el.style.setProperty('--frame-reflection-angle',`${link.reflectionAngle}deg`);el.style.setProperty('--frame-reflection-alpha',String(.05+.20*fe));el.style.setProperty('--frame-shadow-alpha',String(.05+.22*fi));el.style.setProperty('--frame-reflection-stop',`${Math.round(34+22*(1-fh))}%`);el.style.setProperty('--frame-outer-y',`${(1+3*fo).toFixed(1)}px`);el.style.setProperty('--frame-outer-blur',`${(2+8*fo).toFixed(1)}px`);el.style.setProperty('--frame-outer-alpha',String(.05+.25*fo));
  const manualGlow=gk>0?` drop-shadow(0 0 ${(2+12*gk).toFixed(1)}px rgba(${gc.r},${gc.g},${gc.b},${(.12+.58*gk).toFixed(2)}))`:'';
  const depthShadow=depth>0?` drop-shadow(0 ${(1+3*depth).toFixed(1)}px ${(1+5*depth).toFixed(1)}px rgba(0,0,0,${(.08+.34*depth).toFixed(2)})) drop-shadow(0 -1px ${(1+2*depth).toFixed(1)}px rgba(255,255,255,${(.03+.10*depth).toFixed(2)}))`:'';
  const appliedHue=hue*ck,appliedSat=1+(sat-1)*ck;
@@ -26354,7 +26504,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
            <label>エフェクト連動強度<div class="frame-adjust-inline"><input id="frame-adjust-sync-strength" type="range" min="0" max="100" step="5" value="${frameConfig.fxSyncStrength??70}"><span id="frame-adjust-sync-strength-v" class="pill">${frameConfig.fxSyncStrength??70}%</span></div></label>
            <label data-appearance-advanced>色相<div class="frame-adjust-inline"><input id="frame-adjust-hue" type="range" min="-180" max="180" step="1" value="${frameConfig.hue??0}"><span id="frame-adjust-hue-v" class="pill">${frameConfig.hue??0}°</span></div></label>
            <label data-appearance-advanced>彩度<div class="frame-adjust-inline"><input id="frame-adjust-saturation" type="range" min="0" max="220" step="5" value="${frameConfig.saturation??100}"><span id="frame-adjust-saturation-v" class="pill">${frameConfig.saturation??100}%</span></div></label>
-           <label data-appearance-advanced>明るさ<div class="frame-adjust-inline"><input id="frame-adjust-brightness" type="range" min="40" max="180" step="5" value="${frameConfig.brightness??100}"><span id="frame-adjust-brightness-v" class="pill">${frameConfig.brightness??100}%</span></div></label><label data-appearance-advanced>色彩影響度<div class="frame-adjust-inline"><input id="frame-adjust-color-influence" type="range" min="0" max="100" step="5" value="${frameConfig.colorInfluence??100}"><span id="frame-adjust-color-influence-v" class="pill">${frameConfig.colorInfluence??100}%</span></div></label><label data-appearance-advanced>立体感<div class="frame-adjust-inline"><input id="frame-adjust-depth" type="range" min="0" max="100" step="5" value="${frameConfig.depthStrength??0}"><span id="frame-adjust-depth-v" class="pill">${frameConfig.depthStrength??0}%</span></div></label>
+           <label data-appearance-advanced>明るさ<div class="frame-adjust-inline"><input id="frame-adjust-brightness" type="range" min="40" max="180" step="5" value="${frameConfig.brightness??100}"><span id="frame-adjust-brightness-v" class="pill">${frameConfig.brightness??100}%</span></div></label><label data-appearance-advanced>色彩影響度<div class="frame-adjust-inline"><input id="frame-adjust-color-influence" type="range" min="0" max="100" step="5" value="${frameConfig.colorInfluence??100}"><span id="frame-adjust-color-influence-v" class="pill">${frameConfig.colorInfluence??100}%</span></div></label><label data-appearance-advanced>立体感<div class="frame-adjust-inline"><input id="frame-adjust-depth" type="range" min="0" max="100" step="5" value="${frameConfig.depthStrength??0}"><span id="frame-adjust-depth-v" class="pill">${frameConfig.depthStrength??0}%</span></div></label><label data-appearance-advanced>反射色<input id="frame-adjust-reflection-color" type="color" value="${frameConfig?.reflectionColor??'#ffffff'}"></label><label data-appearance-advanced>暗部色<input id="frame-adjust-shadow-color" type="color" value="${frameConfig?.shadowColor??'#000000'}"></label><label data-appearance-advanced>反射角度<div class="frame-adjust-inline"><input id="frame-adjust-reflection-angle" type="range" min="0" max="360" step="5" value="${frameConfig?.reflectionAngle??125}"><span id="frame-adjust-reflection-angle-v" class="pill">${frameConfig?.reflectionAngle??125}°</span></div></label><label data-appearance-advanced>反射の硬さ<div class="frame-adjust-inline"><input id="frame-adjust-reflection-hardness" type="range" min="0" max="100" step="5" value="${frameConfig?.reflectionHardness??55}"><span id="frame-adjust-reflection-hardness-v" class="pill">${frameConfig?.reflectionHardness??55}%</span></div></label><label data-appearance-advanced>外周影<div class="frame-adjust-inline"><input id="frame-adjust-outer-shadow" type="range" min="0" max="100" step="5" value="${frameConfig?.outerShadow??35}"><span id="frame-adjust-outer-shadow-v" class="pill">${frameConfig?.outerShadow??35}%</span></div></label><label data-appearance-advanced>内周影<div class="frame-adjust-inline"><input id="frame-adjust-inner-shadow" type="range" min="0" max="100" step="5" value="${frameConfig?.innerShadow??25}"><span id="frame-adjust-inner-shadow-v" class="pill">${frameConfig?.innerShadow??25}%</span></div></label><label data-appearance-advanced>縁ハイライト<div class="frame-adjust-inline"><input id="frame-adjust-edge-highlight" type="range" min="0" max="100" step="5" value="${frameConfig?.edgeHighlight??35}"><span id="frame-adjust-edge-highlight-v" class="pill">${frameConfig?.edgeHighlight??35}%</span></div></label>
            <label data-appearance-advanced>発光色<input id="frame-adjust-glow-color" type="color" value="${frameConfig.glowColor??'#ffffff'}"></label>
            <label data-appearance-advanced>発光強度<div class="frame-adjust-inline"><input id="frame-adjust-glow-strength" type="range" min="0" max="100" step="5" value="${frameConfig.glowStrength??0}"><span id="frame-adjust-glow-strength-v" class="pill">${frameConfig.glowStrength??0}%</span></div></label>
            <label data-appearance-advanced>部分発光<select id="frame-adjust-partial-glow"><option value="none" ${frameConfig.partialGlow==='none'?'selected':''}>なし</option><option value="outer" ${frameConfig.partialGlow==='outer'?'selected':''}>外周</option><option value="corners" ${frameConfig.partialGlow==='corners'?'selected':''}>四隅</option><option value="gems" ${frameConfig.partialGlow==='gems'?'selected':''}>宝石位置</option><option value="pattern" ${frameConfig.partialGlow==='pattern'?'selected':''}>模様</option></select></label>
@@ -26377,7 +26527,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
              <label>エフェクト連動強度<div class="frame-adjust-inline"><input id="frame2-sync-strength" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.fxSyncStrength??70}"><span id="frame2-sync-strength-v" class="pill">${frameConfig.layer2?.fxSyncStrength??70}%</span></div></label>
              <label data-appearance-advanced>色相<div class="frame-adjust-inline"><input id="frame2-hue" type="range" min="-180" max="180" step="1" value="${frameConfig.layer2?.hue??0}"><span id="frame2-hue-v" class="pill">${frameConfig.layer2?.hue??0}°</span></div></label>
              <label data-appearance-advanced>彩度<div class="frame-adjust-inline"><input id="frame2-saturation" type="range" min="0" max="220" step="5" value="${frameConfig.layer2?.saturation??100}"><span id="frame2-saturation-v" class="pill">${frameConfig.layer2?.saturation??100}%</span></div></label>
-             <label data-appearance-advanced>明るさ<div class="frame-adjust-inline"><input id="frame2-brightness" type="range" min="40" max="180" step="5" value="${frameConfig.layer2?.brightness??100}"><span id="frame2-brightness-v" class="pill">${frameConfig.layer2?.brightness??100}%</span></div></label><label data-appearance-advanced>色彩影響度<div class="frame-adjust-inline"><input id="frame2-color-influence" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.colorInfluence??100}"><span id="frame2-color-influence-v" class="pill">${frameConfig.layer2?.colorInfluence??100}%</span></div></label><label data-appearance-advanced>立体感<div class="frame-adjust-inline"><input id="frame2-depth" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.depthStrength??0}"><span id="frame2-depth-v" class="pill">${frameConfig.layer2?.depthStrength??0}%</span></div></label>
+             <label data-appearance-advanced>明るさ<div class="frame-adjust-inline"><input id="frame2-brightness" type="range" min="40" max="180" step="5" value="${frameConfig.layer2?.brightness??100}"><span id="frame2-brightness-v" class="pill">${frameConfig.layer2?.brightness??100}%</span></div></label><label data-appearance-advanced>色彩影響度<div class="frame-adjust-inline"><input id="frame2-color-influence" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.colorInfluence??100}"><span id="frame2-color-influence-v" class="pill">${frameConfig.layer2?.colorInfluence??100}%</span></div></label><label data-appearance-advanced>立体感<div class="frame-adjust-inline"><input id="frame2-depth" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.depthStrength??0}"><span id="frame2-depth-v" class="pill">${frameConfig.layer2?.depthStrength??0}%</span></div></label><label data-appearance-advanced>反射色<input id="frame2-reflection-color" type="color" value="${frameConfig.layer2?.reflectionColor??'#ffffff'}"></label><label data-appearance-advanced>暗部色<input id="frame2-shadow-color" type="color" value="${frameConfig.layer2?.shadowColor??'#000000'}"></label><label data-appearance-advanced>反射角度<div class="frame-adjust-inline"><input id="frame2-reflection-angle" type="range" min="0" max="360" step="5" value="${frameConfig.layer2?.reflectionAngle??125}"><span id="frame2-reflection-angle-v" class="pill">${frameConfig.layer2?.reflectionAngle??125}°</span></div></label><label data-appearance-advanced>反射の硬さ<div class="frame-adjust-inline"><input id="frame2-reflection-hardness" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.reflectionHardness??55}"><span id="frame2-reflection-hardness-v" class="pill">${frameConfig.layer2?.reflectionHardness??55}%</span></div></label><label data-appearance-advanced>外周影<div class="frame-adjust-inline"><input id="frame2-outer-shadow" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.outerShadow??35}"><span id="frame2-outer-shadow-v" class="pill">${frameConfig.layer2?.outerShadow??35}%</span></div></label><label data-appearance-advanced>内周影<div class="frame-adjust-inline"><input id="frame2-inner-shadow" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.innerShadow??25}"><span id="frame2-inner-shadow-v" class="pill">${frameConfig.layer2?.innerShadow??25}%</span></div></label><label data-appearance-advanced>縁ハイライト<div class="frame-adjust-inline"><input id="frame2-edge-highlight" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.edgeHighlight??35}"><span id="frame2-edge-highlight-v" class="pill">${frameConfig.layer2?.edgeHighlight??35}%</span></div></label>
              <label data-appearance-advanced>発光色<input id="frame2-glow-color" type="color" value="${frameConfig.layer2?.glowColor??'#ffffff'}"></label>
              <label data-appearance-advanced>発光強度<div class="frame-adjust-inline"><input id="frame2-glow-strength" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.glowStrength??0}"><span id="frame2-glow-strength-v" class="pill">${frameConfig.layer2?.glowStrength??0}%</span></div></label>
              <label data-appearance-advanced>部分発光<select id="frame2-partial-glow"><option value="none" ${frameConfig.layer2?.partialGlow==='none'?'selected':''}>なし</option><option value="outer" ${frameConfig.layer2?.partialGlow==='outer'?'selected':''}>外周</option><option value="corners" ${frameConfig.layer2?.partialGlow==='corners'?'selected':''}>四隅</option><option value="gems" ${frameConfig.layer2?.partialGlow==='gems'?'selected':''}>宝石位置</option><option value="pattern" ${frameConfig.layer2?.partialGlow==='pattern'?'selected':''}>模様</option></select></label>
@@ -26430,7 +26580,8 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
      if(motionOn)motionOn.onchange=()=>{workingFrame.motionEnabled=motionOn.checked;if(motionOn.checked&&workingFrame.motion==='none'){workingFrame.motion='edge-light';if(motion)motion.value='edge-light'}applyPreview();commitFrame()};
      bindRange('#frame-adjust-motion-speed','motionSpeed','#frame-adjust-motion-speed-v','%');
      bindRange('#frame-adjust-sync-strength','fxSyncStrength','#frame-adjust-sync-strength-v','%');
-     bindRange('#frame-adjust-hue','hue','#frame-adjust-hue-v','°');bindRange('#frame-adjust-saturation','saturation','#frame-adjust-saturation-v','%');bindRange('#frame-adjust-brightness','brightness','#frame-adjust-brightness-v','%');bindRange('#frame-adjust-color-influence','colorInfluence','#frame-adjust-color-influence-v','%');bindRange('#frame-adjust-depth','depthStrength','#frame-adjust-depth-v','%');bindRange('#frame-adjust-glow-strength','glowStrength','#frame-adjust-glow-strength-v','%');bindRange('#frame-adjust-partial-strength','partialGlowStrength','#frame-adjust-partial-strength-v','%');bindRange('#frame-adjust-finish-strength','finishStrength','#frame-adjust-finish-strength-v','%');
+     bindRange('#frame-adjust-hue','hue','#frame-adjust-hue-v','°');bindRange('#frame-adjust-saturation','saturation','#frame-adjust-saturation-v','%');bindRange('#frame-adjust-brightness','brightness','#frame-adjust-brightness-v','%');bindRange('#frame-adjust-color-influence','colorInfluence','#frame-adjust-color-influence-v','%');bindRange('#frame-adjust-depth','depthStrength','#frame-adjust-depth-v','%');bindRange('#frame-adjust-reflection-angle','reflectionAngle','#frame-adjust-reflection-angle-v','°');bindRange('#frame-adjust-reflection-hardness','reflectionHardness','#frame-adjust-reflection-hardness-v','%');bindRange('#frame-adjust-outer-shadow','outerShadow','#frame-adjust-outer-shadow-v','%');bindRange('#frame-adjust-inner-shadow','innerShadow','#frame-adjust-inner-shadow-v','%');bindRange('#frame-adjust-edge-highlight','edgeHighlight','#frame-adjust-edge-highlight-v','%');bindRange('#frame-adjust-glow-strength','glowStrength','#frame-adjust-glow-strength-v','%');bindRange('#frame-adjust-partial-strength','partialGlowStrength','#frame-adjust-partial-strength-v','%');bindRange('#frame-adjust-finish-strength','finishStrength','#frame-adjust-finish-strength-v','%');
+     const reflectionColor=$('#frame-adjust-reflection-color'),shadowColor=$('#frame-adjust-shadow-color');if(reflectionColor)reflectionColor.oninput=()=>{workingFrame.reflectionColor=reflectionColor.value;applyPreview();commitFrame()};if(shadowColor)shadowColor.oninput=()=>{workingFrame.shadowColor=shadowColor.value;applyPreview();commitFrame()};
      const glowColor=$('#frame-adjust-glow-color');if(glowColor)glowColor.oninput=()=>{workingFrame.glowColor=glowColor.value;applyPreview();commitFrame()};
      const partial=$('#frame-adjust-partial-glow');if(partial)partial.onchange=()=>{workingFrame.partialGlow=partial.value;applyPreview();commitFrame()};
      const finish=$('#frame-adjust-finish');if(finish)finish.onchange=()=>{workingFrame.finish=finish.value;applyPreview();commitFrame()};
@@ -26457,7 +26608,8 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
      const pick=$('#frame2-pick');if(pick)pick.onchange=()=>{working2.frameId=pick.value;applyPreview2();commit2()};
      const bind2=(id,key,outId,suffix='')=>{const el=$(id),out=$(outId);if(!el)return;el.oninput=()=>{working2[key]=Number(el.value);if(out)out.textContent=`${el.value}${suffix}`;applyPreview2();commit2()}};
      bind2('#frame2-scale','scale','#frame2-scale-v','%');bind2('#frame2-opacity','opacity','#frame2-opacity-v','%');bind2('#frame2-x','x','#frame2-x-v');bind2('#frame2-y','y','#frame2-y-v');bind2('#frame2-rotate','rotate','#frame2-rotate-v','°');bind2('#frame2-motion-speed','motionSpeed','#frame2-motion-speed-v','%');bind2('#frame2-sync-strength','fxSyncStrength','#frame2-sync-strength-v','%');
-     bind2('#frame2-hue','hue','#frame2-hue-v','°');bind2('#frame2-saturation','saturation','#frame2-saturation-v','%');bind2('#frame2-brightness','brightness','#frame2-brightness-v','%');bind2('#frame2-color-influence','colorInfluence','#frame2-color-influence-v','%');bind2('#frame2-depth','depthStrength','#frame2-depth-v','%');bind2('#frame2-glow-strength','glowStrength','#frame2-glow-strength-v','%');bind2('#frame2-partial-strength','partialGlowStrength','#frame2-partial-strength-v','%');bind2('#frame2-finish-strength','finishStrength','#frame2-finish-strength-v','%');
+     bind2('#frame2-hue','hue','#frame2-hue-v','°');bind2('#frame2-saturation','saturation','#frame2-saturation-v','%');bind2('#frame2-brightness','brightness','#frame2-brightness-v','%');bind2('#frame2-color-influence','colorInfluence','#frame2-color-influence-v','%');bind2('#frame2-depth','depthStrength','#frame2-depth-v','%');bind2('#frame2-reflection-angle','reflectionAngle','#frame2-reflection-angle-v','°');bind2('#frame2-reflection-hardness','reflectionHardness','#frame2-reflection-hardness-v','%');bind2('#frame2-outer-shadow','outerShadow','#frame2-outer-shadow-v','%');bind2('#frame2-inner-shadow','innerShadow','#frame2-inner-shadow-v','%');bind2('#frame2-edge-highlight','edgeHighlight','#frame2-edge-highlight-v','%');bind2('#frame2-glow-strength','glowStrength','#frame2-glow-strength-v','%');bind2('#frame2-partial-strength','partialGlowStrength','#frame2-partial-strength-v','%');bind2('#frame2-finish-strength','finishStrength','#frame2-finish-strength-v','%');
+     const reflection2=$('#frame2-reflection-color'),shadow2=$('#frame2-shadow-color');if(reflection2)reflection2.oninput=()=>{working2.reflectionColor=reflection2.value;applyPreview2();commit2()};if(shadow2)shadow2.oninput=()=>{working2.shadowColor=shadow2.value;applyPreview2();commit2()};
      const glow2=$('#frame2-glow-color');if(glow2)glow2.oninput=()=>{working2.glowColor=glow2.value;applyPreview2();commit2()};
      const partial2=$('#frame2-partial-glow');if(partial2)partial2.onchange=()=>{working2.partialGlow=partial2.value;applyPreview2();commit2()};
      const finish2=$('#frame2-finish');if(finish2)finish2.onchange=()=>{working2.finish=finish2.value;applyPreview2();commit2()};
@@ -26678,6 +26830,14 @@ function readFxEditorLayers(card){
      reflection:Number($(`#fx-detail-reflection-${slot}`)?.value)??100,
      reflectionArea:Number($(`#fx-detail-reflection-area-${slot}`)?.value)??100,
      colorInfluence:Number($(`#fx-detail-color-influence-${slot}`)?.value)??100,
+     baseColor:$(`#fx-detail-base-color-${slot}`)?.value||'#ffffff',
+     baseTint:Number($(`#fx-detail-base-tint-${slot}`)?.value)||0,
+     reflectionColor:$(`#fx-detail-reflection-color-${slot}`)?.value||'#ffffff',
+     shadowColor:$(`#fx-detail-shadow-color-${slot}`)?.value||'#000000',
+     reflectionAngle:Number($(`#fx-detail-reflection-angle-${slot}`)?.value)||125,
+     reflectionHardness:Number($(`#fx-detail-reflection-hardness-${slot}`)?.value)||55,
+     structureScale:Number($(`#fx-detail-structure-scale-${slot}`)?.value)||100,
+     structureContrast:Number($(`#fx-detail-structure-contrast-${slot}`)?.value)||100,
      mask:$(`#fx-detail-mask-${slot}`)?.value||'full'
    });
  }
@@ -26840,6 +27000,15 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
          <label>反射強度 <span id="fx-detail-reflection-label-${slot}">${Number.isFinite(Number(x.reflection))?Number(x.reflection):100}%</span><input id="fx-detail-reflection-${slot}" type="range" min="0" max="180" step="5" value="${Number.isFinite(Number(x.reflection))?Number(x.reflection):100}" ${dormant?'disabled':''}></label>
          <label>反射範囲 <span id="fx-detail-reflection-area-label-${slot}">${Number.isFinite(Number(x.reflectionArea))?Number(x.reflectionArea):100}%</span><input id="fx-detail-reflection-area-${slot}" type="range" min="20" max="180" step="5" value="${Number.isFinite(Number(x.reflectionArea))?Number(x.reflectionArea):100}" ${dormant?'disabled':''}></label>
          <label>色彩影響度 <span id="fx-detail-color-influence-label-${slot}">${Number.isFinite(Number(x.colorInfluence))?Number(x.colorInfluence):100}%</span><input id="fx-detail-color-influence-${slot}" type="range" min="0" max="100" step="5" value="${Number.isFinite(Number(x.colorInfluence))?Number(x.colorInfluence):100}" ${dormant?'disabled':''}></label>
+         <div class="fx-detail-control-note">色彩分離：素材本体・反射・暗部を別々に調整します。基調色は「基調色の強さ」を上げた時だけ元絵へ加わります。</div>
+         <label>基調色 <input id="fx-detail-base-color-${slot}" type="color" value="${x.baseColor||'#ffffff'}" ${dormant?'disabled':''}></label>
+         <label>基調色の強さ <span id="fx-detail-base-tint-label-${slot}">${Number(x.baseTint)||0}%</span><input id="fx-detail-base-tint-${slot}" type="range" min="0" max="100" step="5" value="${Number(x.baseTint)||0}" ${dormant?'disabled':''}></label>
+         <label>反射色 <input id="fx-detail-reflection-color-${slot}" type="color" value="${x.reflectionColor||'#ffffff'}" ${dormant?'disabled':''}></label>
+         <label>暗部色 <input id="fx-detail-shadow-color-${slot}" type="color" value="${x.shadowColor||'#000000'}" ${dormant?'disabled':''}></label>
+         <label>反射角度 <span id="fx-detail-reflection-angle-label-${slot}">${Number(x.reflectionAngle)||125}°</span><input id="fx-detail-reflection-angle-${slot}" type="range" min="0" max="360" step="5" value="${Number(x.reflectionAngle)||125}" ${dormant?'disabled':''}></label>
+         <label>反射の硬さ <span id="fx-detail-reflection-hardness-label-${slot}">${Number(x.reflectionHardness)||55}%</span><input id="fx-detail-reflection-hardness-${slot}" type="range" min="0" max="100" step="5" value="${Number(x.reflectionHardness)||55}" ${dormant?'disabled':''}></label>
+         <label>構造サイズ <span id="fx-detail-structure-scale-label-${slot}">${Number(x.structureScale)||100}%</span><input id="fx-detail-structure-scale-${slot}" type="range" min="40" max="220" step="5" value="${Number(x.structureScale)||100}" ${dormant?'disabled':''}></label>
+         <label>構造コントラスト <span id="fx-detail-structure-contrast-label-${slot}">${Number(x.structureContrast)||100}%</span><input id="fx-detail-structure-contrast-${slot}" type="range" min="40" max="220" step="5" value="${Number(x.structureContrast)||100}" ${dormant?'disabled':''}></label>
 
          <label>表示範囲<select id="fx-detail-mask-${slot}" ${dormant?'disabled':''}><option value="full">全面</option><option value="center">中央</option><option value="outer">外周</option><option value="corners">四隅</option><option value="top">上部</option><option value="bottom">下部</option></select></label>
          <div class="actions fx-layer-detail-actions"><button class="btn small" type="button" data-fx-detail-reset="${slot}" ${dormant?'disabled':''}>このレイヤーを標準に戻す</button></div>
@@ -26887,21 +27056,23 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
    }
    [`fx-edit-type-${slot}`,`fx-edit-intensity-${slot}`,`fx-edit-enabled-${slot}`,`fx-detail-direction-${slot}`,`fx-detail-rotation-${slot}`,`fx-detail-mask-${slot}`].forEach(id=>$('#'+id)?.addEventListener('change',()=>renderFxEditorPreview(card)));
    $(`#fx-edit-opacity-${slot}`)?.addEventListener('input',e=>{$(`#fx-edit-opacity-label-${slot}`).textContent=e.target.value+'%';renderFxEditorPreview(card)});
-   [['speed','%'],['size','%'],['hue','°'],['saturation','%'],['brightness','%'],['density','%'],['motion','%'],['structure','%'],['reflection','%'],['reflection-area','%'],['color-influence','%']].forEach(([key,suffix])=>{
+   [['speed','%'],['size','%'],['hue','°'],['saturation','%'],['brightness','%'],['density','%'],['motion','%'],['structure','%'],['reflection','%'],['reflection-area','%'],['color-influence','%'],['base-tint','%'],['reflection-angle','°'],['reflection-hardness','%'],['structure-scale','%'],['structure-contrast','%']].forEach(([key,suffix])=>{
      $(`#fx-detail-${key}-${slot}`)?.addEventListener('input',e=>{$(`#fx-detail-${key}-label-${slot}`).textContent=e.target.value+suffix;renderFxEditorPreview(card)});
    });
+   ['base-color','reflection-color','shadow-color'].forEach(key=>$(`#fx-detail-${key}-${slot}`)?.addEventListener('input',()=>renderFxEditorPreview(card)));
  }
- const fxControlKeys=['type','intensity','opacity','enabled','speed','size','direction','rotation','hue','saturation','brightness','density','motion','structure','reflection','reflection-area','color-influence','mask'];
+ const fxControlKeys=['type','intensity','opacity','enabled','speed','size','direction','rotation','hue','saturation','brightness','density','motion','structure','reflection','reflection-area','color-influence','base-color','base-tint','reflection-color','shadow-color','reflection-angle','reflection-hardness','structure-scale','structure-contrast','mask'];
  const fxCtl=(slot,key)=>key==='type'?$(`#fx-edit-type-${slot}`):key==='intensity'?$(`#fx-edit-intensity-${slot}`):key==='opacity'?$(`#fx-edit-opacity-${slot}`):key==='enabled'?$(`#fx-edit-enabled-${slot}`):$(`#fx-detail-${key}-${slot}`);
- const fxRefreshLabels=slot=>{[['opacity','%'],['speed','%'],['size','%'],['hue','°'],['saturation','%'],['brightness','%'],['density','%'],['motion','%'],['structure','%'],['reflection','%'],['reflection-area','%'],['color-influence','%']].forEach(([key,suffix])=>{const el=key==='opacity'?fxCtl(slot,'opacity'):fxCtl(slot,key),label=$(`#${key==='opacity'?'fx-edit-opacity':'fx-detail-'+key}-label-${slot}`);if(el&&label)label.textContent=el.value+suffix})};
+ const fxRefreshLabels=slot=>{[['opacity','%'],['speed','%'],['size','%'],['hue','°'],['saturation','%'],['brightness','%'],['density','%'],['motion','%'],['structure','%'],['reflection','%'],['reflection-area','%'],['color-influence','%'],['base-tint','%'],['reflection-angle','°'],['reflection-hardness','%'],['structure-scale','%'],['structure-contrast','%']].forEach(([key,suffix])=>{const el=key==='opacity'?fxCtl(slot,'opacity'):fxCtl(slot,key),label=$(`#${key==='opacity'?'fx-edit-opacity':'fx-detail-'+key}-label-${slot}`);if(el&&label)label.textContent=el.value+suffix})};
  const fxCopySlot=(from,to)=>{for(const key of fxControlKeys){const a=fxCtl(from,key),b=fxCtl(to,key);if(!a||!b||b.disabled)continue;if(a.type==='checkbox')b.checked=a.checked;else b.value=a.value}fxRefreshLabels(to)};
  const fxSwapSlots=(a,b)=>{const snap={};for(const key of fxControlKeys){const x=fxCtl(a,key);if(x)snap[key]=x.type==='checkbox'?x.checked:x.value}fxCopySlot(b,a);for(const key of fxControlKeys){const x=fxCtl(b,key);if(!x||x.disabled||!(key in snap))continue;if(x.type==='checkbox')x.checked=snap[key];else x.value=snap[key]}fxRefreshLabels(a);fxRefreshLabels(b);renderFxEditorPreview(card)};
  $$('[data-fx-move-up]').forEach(b=>b.onclick=()=>fxSwapSlots(Number(b.dataset.fxMoveUp),Number(b.dataset.fxMoveUp)-1));
  $$('[data-fx-move-down]').forEach(b=>b.onclick=()=>fxSwapSlots(Number(b.dataset.fxMoveDown),Number(b.dataset.fxMoveDown)+1));
  $$('[data-fx-duplicate]').forEach(b=>b.onclick=()=>{const from=Number(b.dataset.fxDuplicate),targets=[1,2,3,4].filter(n=>n!==from&&n<=cardFxPrefs.maxLayers&&!(fxCtl(n,'type')?.value));const to=targets[0]||([1,2,3,4].find(n=>n>from&&n<=cardFxPrefs.maxLayers));if(!to){toast('複製できる空きレイヤーがありません');return}fxCopySlot(from,to);renderFxEditorPreview(card);toast(`レイヤー${from}をレイヤー${to}へ複製しました`) });
  $$('[data-fx-detail-reset]').forEach(b=>b.onclick=()=>{
-   const slot=Number(b.dataset.fxDetailReset),vals={speed:100,size:100,hue:0,saturation:100,brightness:100,density:100,motion:100,structure:100,reflection:100,'reflection-area':100,'color-influence':100};
+   const slot=Number(b.dataset.fxDetailReset),vals={speed:100,size:100,hue:0,saturation:100,brightness:100,density:100,motion:100,structure:100,reflection:100,'reflection-area':100,'color-influence':100,'base-tint':0,'reflection-angle':125,'reflection-hardness':55,'structure-scale':100,'structure-contrast':100};
    Object.entries(vals).forEach(([k,v])=>{const el=$(`#fx-detail-${k}-${slot}`);if(el){el.value=String(v);el.dispatchEvent(new Event('input',{bubbles:true}))}});
+   const bc=$(`#fx-detail-base-color-${slot}`),rc=$(`#fx-detail-reflection-color-${slot}`),sc=$(`#fx-detail-shadow-color-${slot}`);if(bc)bc.value='#ffffff';if(rc)rc.value='#ffffff';if(sc)sc.value='#000000';
    const d=$(`#fx-detail-direction-${slot}`),r=$(`#fx-detail-rotation-${slot}`),mk=$(`#fx-detail-mask-${slot}`);if(d)d.value='default';if(r)r.value='default';if(mk)mk.value='full';renderFxEditorPreview(card);
  });
  $('#fx-preview-open').onclick=()=>openFxFloatingPreview(card);
