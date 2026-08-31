@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.37</title>
+<title>みん会TCG Simulator v16.38</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -15499,7 +15499,7 @@ body.album-direct-dragging *{cursor:grabbing!important}
 .card-frame-overlay[data-frame-finish="metallic"]::before,
 .card-frame-overlay[data-frame-finish="polarized"]::before,
 .card-frame-overlay[data-frame-finish="rainbow"]::before{
- animation:frameFinishSweep calc(6.4s / var(--frame-motion-speed,1)) ease-in-out infinite;
+ animation:frameFinishSweep var(--frame-optical-duration,8s) ease-in-out infinite;
 }
 .card-frame-overlay[data-frame-finish="glitter"]::before{animation:frameGlitter 2.8s steps(2,end) infinite}
 .card-frame-overlay[data-frame-finish="pearl"]::before{animation:framePearl 7.2s ease-in-out infinite}
@@ -15523,29 +15523,29 @@ body.album-direct-dragging *{cursor:grabbing!important}
  background:linear-gradient(115deg,transparent 0 39%,rgba(255,255,255,.08) 43%,rgba(255,255,255,.92) 49%,rgba(170,220,255,.42) 54%,transparent 60% 100%);
  background-size:260% 100%;filter:drop-shadow(0 0 5px rgba(170,220,255,.48));
 }
-.card-frame-overlay.frame-motion-enabled[data-frame-motion="edge-light"]::after{animation:frameEdgeLight calc(3.6s / var(--frame-motion-speed,1)) linear infinite}
+.card-frame-overlay.frame-motion-enabled[data-frame-motion="edge-light"]::after{animation:frameEdgeLight var(--frame-optical-duration,8s) linear infinite}
 @keyframes frameEdgeLight{0%{background-position:180% 0;opacity:.15}15%{opacity:.78}52%{opacity:.62}100%{background-position:-90% 0;opacity:.12}}
 .card-frame-overlay[data-frame-motion="corner-pulse"]::after{
  background:radial-gradient(circle at 7% 6%,rgba(255,255,255,.96),rgba(170,215,255,.34) 6%,transparent 15%),radial-gradient(circle at 93% 6%,rgba(255,255,255,.96),rgba(215,180,255,.30) 6%,transparent 15%),radial-gradient(circle at 7% 94%,rgba(255,255,255,.96),rgba(180,225,255,.30) 6%,transparent 15%),radial-gradient(circle at 93% 94%,rgba(255,255,255,.96),rgba(220,185,255,.30) 6%,transparent 15%);
 }
-.card-frame-overlay.frame-motion-enabled[data-frame-motion="corner-pulse"]::after{animation:frameCornerPulse calc(2.4s / var(--frame-motion-speed,1)) ease-in-out infinite}
+.card-frame-overlay.frame-motion-enabled[data-frame-motion="corner-pulse"]::after{animation:frameCornerPulse var(--frame-optical-duration,8s) ease-in-out infinite}
 @keyframes frameCornerPulse{0%,100%{opacity:.18;filter:blur(.1px)}48%{opacity:.88;filter:drop-shadow(0 0 7px rgba(210,225,255,.72))}}
 .card-frame-overlay[data-frame-motion="metal-sweep"]::after{
  background:linear-gradient(108deg,transparent 0 38%,rgba(255,255,255,.05) 43%,rgba(255,255,255,.88) 49%,rgba(255,245,205,.34) 53%,transparent 60% 100%);background-size:300% 100%;
 }
-.card-frame-overlay.frame-motion-enabled[data-frame-motion="metal-sweep"]::after{animation:frameMetalSweep calc(4.8s / var(--frame-motion-speed,1)) cubic-bezier(.4,0,.2,1) infinite}
+.card-frame-overlay.frame-motion-enabled[data-frame-motion="metal-sweep"]::after{animation:frameMetalSweep var(--frame-optical-duration,8s) cubic-bezier(.4,0,.2,1) infinite}
 @keyframes frameMetalSweep{0%,15%{background-position:170% 0;opacity:.08}42%{opacity:.68}68%,100%{background-position:-85% 0;opacity:.08}}
 .card-frame-overlay[data-frame-motion="gem-blink"]::after{
  background:radial-gradient(circle at 50% 3.2%,rgba(255,255,255,1) 0 1.2%,rgba(255,215,95,.62) 1.8%,transparent 5.5%),radial-gradient(circle at 5% 7%,rgba(255,255,255,.95) 0 1%,rgba(220,180,255,.45) 2%,transparent 6%),radial-gradient(circle at 95% 93%,rgba(255,255,255,.95) 0 1%,rgba(130,220,255,.45) 2%,transparent 6%);
 }
-.card-frame-overlay.frame-motion-enabled[data-frame-motion="gem-blink"]::after{animation:frameGemBlink calc(3.2s / var(--frame-motion-speed,1)) steps(1,end) infinite}
+.card-frame-overlay.frame-motion-enabled[data-frame-motion="gem-blink"]::after{animation:frameGemBlink var(--frame-optical-duration,8s) steps(1,end) infinite}
 @keyframes frameGemBlink{0%,18%,42%,66%,100%{opacity:.16}8%,35%,58%{opacity:.95;filter:drop-shadow(0 0 8px rgba(255,240,180,.8))}}
 .card-frame-overlay[data-frame-motion="rune-sequence"]::after{
  inset:1.5%;border:2px solid transparent;
  background:repeating-conic-gradient(from 0deg,rgba(170,220,255,0) 0 6deg,rgba(180,135,255,.72) 7deg 8.5deg,rgba(170,220,255,0) 9deg 18deg) border-box;
  -webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
 }
-.card-frame-overlay.frame-motion-enabled[data-frame-motion="rune-sequence"]::after{animation:frameRuneSequence calc(5.6s / var(--frame-motion-speed,1)) linear infinite}
+.card-frame-overlay.frame-motion-enabled[data-frame-motion="rune-sequence"]::after{animation:frameRuneSequence var(--frame-optical-duration,8s) linear infinite}
 @keyframes frameRuneSequence{0%{transform:rotate(0deg);opacity:.18;filter:hue-rotate(0deg)}45%{opacity:.72}100%{transform:rotate(360deg);opacity:.18;filter:hue-rotate(42deg)}}
 /* Board keeps frame motion modest; large collection/viewer surfaces retain full finish. */
 .pile>.card-frame-overlay.frame-motion-enabled::after{opacity:.48}
@@ -16891,7 +16891,7 @@ html{--visual-generation:"12.0"}
 .fx-animate .fx-holographic-film-soft{
   animation:
     fxHolographicFilmSoftDrift var(--fx-duration,10s) ease-in-out infinite,
-    fxHolographicFilmSoftPulse calc(var(--fx-duration,10s)*.7) ease-in-out infinite!important;
+    fxHolographicFilmSoftPulse var(--fx-duration,8s) ease-in-out infinite!important;
 }
 
 
@@ -17435,7 +17435,7 @@ html{--visual-generation:"12.0"}
 .fx-animate .fx-raden,
 .fx-animate .fx-cracked-crystal{
   animation-name:fxConceptMaterialShift,fxConceptMaterialPulse;
-  animation-duration:var(--fx-duration,7s),calc(var(--fx-duration,7s)*.62);
+  animation-duration:var(--fx-duration,7s),var(--fx-duration,8s);
   animation-timing-function:ease-in-out,ease-in-out;
   animation-iteration-count:infinite,infinite;
 }
@@ -20468,7 +20468,7 @@ h3 .minkai-ruby{margin-top:.45em}
 .card-frame-overlay.frame-builtin-enhanced[data-frame-finish="foil"]::before,
 .card-frame-overlay.frame-builtin-enhanced[data-frame-finish="metallic"]::before,
 .card-frame-overlay.frame-builtin-enhanced[data-frame-finish="polarized"]::before,
-.card-frame-overlay.frame-builtin-enhanced[data-frame-finish="rainbow"]::before{animation:v1631FrameFinishSweep calc(6.4s / var(--frame-motion-speed,1)) ease-in-out infinite}
+.card-frame-overlay.frame-builtin-enhanced[data-frame-finish="rainbow"]::before{animation:v1631FrameFinishSweep var(--frame-optical-duration,8s) ease-in-out infinite}
 @keyframes v1631FrameFinishSweep{0%,12%{background-position:center,center,150% 0}52%{background-position:center,center,48% 0}88%,100%{background-position:center,center,-60% 0}}
 
 @media(max-width:700px){
@@ -20834,7 +20834,7 @@ h3 .minkai-ruby{margin-top:.45em}
 .card-frame-overlay>.frame-grade{position:absolute;inset:0;pointer-events:none;z-index:2;-webkit-mask-image:var(--frame-mask-image);mask-image:var(--frame-mask-image);-webkit-mask-size:var(--frame-mask-size,100% 100%);mask-size:var(--frame-mask-size,100% 100%);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
 .card-frame-overlay>.frame-grade-tone{background:radial-gradient(70% 55% at 22% 18%,rgba(var(--frame-base-rgb,255,255,255),var(--frame-base-alpha,0)),transparent 68%),radial-gradient(58% 46% at 77% 73%,rgba(var(--frame-accent-rgb,127,220,255),var(--frame-accent-alpha,0)),transparent 70%),linear-gradient(145deg,transparent 30%,rgba(var(--frame-shadow-rgb,0,0,0),calc(var(--frame-shadow-alpha,.08)*.55)) 100%);mix-blend-mode:soft-light}
 .card-frame-overlay>.frame-grade-light{background:linear-gradient(var(--frame-reflection-angle,125deg),transparent 0 var(--frame-highlight-start,39%),rgba(var(--frame-reflection-rgb,255,255,255),calc(var(--frame-reflection-alpha,.18)*.35)) calc(var(--frame-highlight-start,39%) + 3%),rgba(var(--frame-reflection-rgb,255,255,255),var(--frame-reflection-alpha,.18)) 50%,rgba(var(--frame-reflection-rgb,255,255,255),calc(var(--frame-reflection-alpha,.18)*.30)) calc(var(--frame-highlight-end,61%) - 3%),transparent var(--frame-highlight-end,61%) 100%);mix-blend-mode:screen;filter:blur(calc((1 - var(--frame-reflection-hardness,.55))*3.5px));opacity:.78}
-.card-frame-overlay.frame-motion-enabled>.frame-grade-light{animation:v1636FrameOpticalSweep calc(7.5s / var(--frame-motion-speed,1)) ease-in-out infinite alternate}
+.card-frame-overlay.frame-motion-enabled>.frame-grade-light{animation:v1636FrameOpticalSweep var(--frame-optical-duration,8s) ease-in-out infinite alternate}
 @keyframes v1636FrameOpticalSweep{0%{transform:translate3d(-3%,0,0);opacity:.56}100%{transform:translate3d(3%,0,0);opacity:.90}}
 @media(max-width:700px){.card-fx-layer>.fx-material-grade{box-shadow:inset 0 0 14px rgba(var(--fx-shadow-rgb,0,0,0),calc(var(--fx-edge-shade,.07)*.8))}.card-frame-overlay>.frame-grade-light{filter:none}}
 
@@ -20871,6 +20871,105 @@ h3 .minkai-ruby{margin-top:.45em}
 @media(max-width:700px){.card-fx-layer>.fx-material-structure{opacity:calc(.10 + var(--fx-structure,.9)*.18)}.card-frame-overlay>.frame-material-surface{opacity:.30}}
 </style>
 
+
+<style id="v1638-optical-motion-round3">
+/* v16.38 / 3 of 4 — material-specific optical motion.
+   Static material structure never moves. Only reflected light/refraction/atmospheric energy is animated. */
+.card-fx-layer>.fx-optical-motion{position:absolute;inset:-8%;z-index:5;pointer-events:none;border-radius:inherit;overflow:hidden;opacity:calc(.22 + var(--fx-motion,.5)*.42);mix-blend-mode:screen;transform:translateZ(0);will-change:transform,opacity,background-position,filter}
+.fx-runtime-paused .card-fx-layer>.fx-optical-motion,.fx-offscreen .card-fx-layer>.fx-optical-motion{animation-play-state:paused!important}
+.card-fx-stack:not(.fx-animate) .card-fx-layer>.fx-optical-motion{animation:none!important;transform:none!important}
+
+/* Interference films: moving viewing-angle color, not moving film texture. */
+.card-fx-layer[data-fx-family="interference"]>.fx-optical-motion{background:conic-gradient(from calc(var(--fx-reflection-angle,125deg) - 55deg) at 50% 50%,transparent 0 14%,rgba(255,70,170,.16) 23%,rgba(80,220,255,.21) 35%,rgba(255,225,95,.17) 47%,rgba(120,95,255,.18) 59%,transparent 73% 100%),linear-gradient(var(--fx-reflection-angle,125deg),transparent 34%,rgba(var(--fx-reflection-rgb,255,255,255),.23) 49%,transparent 64%);filter:saturate(1.12) contrast(1.03)}
+.fx-animate .card-fx-layer[data-fx-family="interference"]>.fx-optical-motion{animation:v1638Interference var(--fx-duration,8s) ease-in-out infinite alternate;animation-direction:var(--fx-direction,alternate)}
+@keyframes v1638Interference{0%{transform:translate3d(-3%,-1%,0) rotate(-1.1deg);filter:hue-rotate(-12deg) saturate(1.08)}50%{opacity:calc(.28 + var(--fx-motion,.5)*.48)}100%{transform:translate3d(3%,1.5%,0) rotate(1deg);filter:hue-rotate(18deg) saturate(1.18)}}
+
+/* Metal: narrow specular travels across a fixed brushed/forged surface. */
+.card-fx-layer[data-fx-family="metal"]>.fx-optical-motion{background:linear-gradient(var(--fx-reflection-angle,125deg),transparent 0 37%,rgba(var(--fx-reflection-rgb,255,255,255),.06) 43%,rgba(var(--fx-reflection-rgb,255,255,255),.38) 49%,rgba(var(--fx-reflection-rgb,255,255,255),.10) 55%,transparent 63% 100%);mix-blend-mode:screen;filter:blur(calc((1 - var(--fx-reflection-hardness,.55))*2.1px))}
+.fx-animate .card-fx-layer[data-fx-family="metal"]>.fx-optical-motion{animation:v1638MetalSpec var(--fx-duration,8s) cubic-bezier(.45,.05,.55,.95) infinite alternate;animation-direction:var(--fx-direction,alternate)}
+@keyframes v1638MetalSpec{0%{transform:translate3d(-8%,-2%,0);opacity:.18}42%{opacity:.42}58%{opacity:.64}100%{transform:translate3d(8%,2%,0);opacity:.24}}
+
+/* Facets: several tiny highlights shift independently; polygon structure stays fixed. */
+.card-fx-layer[data-fx-family="facet"]>.fx-optical-motion{background:radial-gradient(circle at 20% 25%,rgba(var(--fx-reflection-rgb,255,255,255),.42) 0 1.3%,transparent 4%),radial-gradient(circle at 67% 37%,rgba(var(--fx-reflection-rgb,255,255,255),.28) 0 1%,transparent 3.6%),radial-gradient(circle at 43% 78%,rgba(var(--fx-accent-rgb,127,220,255),.22) 0 1.1%,transparent 4%),linear-gradient(var(--fx-reflection-angle,125deg),transparent 41%,rgba(var(--fx-reflection-rgb,255,255,255),.14) 50%,transparent 59%);background-size:101px 97px,137px 123px,163px 149px,100% 100%}
+.fx-animate .card-fx-layer[data-fx-family="facet"]>.fx-optical-motion{animation:v1638FacetGlint var(--fx-duration,8s) ease-in-out infinite alternate}
+@keyframes v1638FacetGlint{0%{background-position:0 0,8px -5px,-12px 9px,0 0;opacity:.24}48%{opacity:.66}100%{background-position:8px -4px,-6px 7px,9px -8px,0 0;opacity:.33}}
+
+/* Glass/resin: slow caustic and internal refraction, no large sliding stripe. */
+.card-fx-layer[data-fx-family="glass"]>.fx-optical-motion{background:radial-gradient(ellipse at 28% 18%,rgba(var(--fx-reflection-rgb,255,255,255),.23),transparent 31%),radial-gradient(ellipse at 71% 72%,rgba(var(--fx-accent-rgb,127,220,255),.13),transparent 34%),linear-gradient(calc(var(--fx-reflection-angle,125deg) + 18deg),transparent 34%,rgba(255,255,255,.12) 49%,transparent 65%);filter:blur(.55px)}
+.fx-animate .card-fx-layer[data-fx-family="glass"]>.fx-optical-motion{animation:v1638GlassCaustic var(--fx-duration,8s) ease-in-out infinite alternate}
+@keyframes v1638GlassCaustic{0%{transform:scale(1.015) translate3d(-1.6%,-1%,0);filter:blur(.7px)}50%{opacity:.58;filter:blur(.25px)}100%{transform:scale(1.035) translate3d(1.5%,1.2%,0);filter:blur(.9px)}}
+
+/* Coatings: broad curved gloss behaves like a coated card surface. */
+.card-fx-layer[data-fx-family="coating"]>.fx-optical-motion{background:radial-gradient(110% 52% at 22% 8%,rgba(var(--fx-reflection-rgb,255,255,255),.27),transparent 48%),radial-gradient(85% 44% at 80% 96%,rgba(var(--fx-accent-rgb,127,220,255),.10),transparent 52%);mix-blend-mode:soft-light}
+.fx-animate .card-fx-layer[data-fx-family="coating"]>.fx-optical-motion{animation:v1638CoatGloss var(--fx-duration,8s) ease-in-out infinite alternate}
+@keyframes v1638CoatGloss{0%{transform:translate3d(-2%,-1%,0) scale(1.01);opacity:.22}100%{transform:translate3d(2%,1%,0) scale(1.025);opacity:.55}}
+
+/* Fibers: satin sheen crosses the fixed weave along its grain. */
+.card-fx-layer[data-fx-family="fiber"]>.fx-optical-motion{background:linear-gradient(calc(var(--fx-reflection-angle,125deg) + 12deg),transparent 31%,rgba(var(--fx-reflection-rgb,255,255,255),.18) 45%,rgba(var(--fx-reflection-rgb,255,255,255),.28) 50%,rgba(var(--fx-reflection-rgb,255,255,255),.08) 57%,transparent 70%);mix-blend-mode:soft-light;filter:blur(1.1px)}
+.fx-animate .card-fx-layer[data-fx-family="fiber"]>.fx-optical-motion{animation:v1638FiberSheen var(--fx-duration,8s) ease-in-out infinite alternate}
+@keyframes v1638FiberSheen{0%{transform:translate3d(-5%,0,0);opacity:.16}100%{transform:translate3d(5%,0,0);opacity:.47}}
+
+/* Pearl/organic: interference blooms shift subtly inside a fixed surface. */
+.card-fx-layer[data-fx-family="organic"]>.fx-optical-motion{background:radial-gradient(ellipse at 25% 28%,rgba(255,172,218,.16),transparent 27%),radial-gradient(ellipse at 72% 34%,rgba(116,215,255,.17),transparent 29%),radial-gradient(ellipse at 54% 77%,rgba(255,231,153,.12),transparent 31%),linear-gradient(var(--fx-reflection-angle,125deg),transparent 38%,rgba(var(--fx-reflection-rgb,255,255,255),.17) 50%,transparent 62%)}
+.fx-animate .card-fx-layer[data-fx-family="organic"]>.fx-optical-motion{animation:v1638PearlBloom var(--fx-duration,8s) ease-in-out infinite alternate}
+@keyframes v1638PearlBloom{0%{transform:translate3d(-1.5%,1%,0) scale(1.01);filter:hue-rotate(-8deg);opacity:.30}100%{transform:translate3d(1.8%,-1%,0) scale(1.025);filter:hue-rotate(10deg);opacity:.56}}
+
+/* Minerals: sparse hard glints, preserving stone/crystal body. */
+.card-fx-layer[data-fx-family="mineral"]>.fx-optical-motion{background:radial-gradient(circle at 17% 31%,rgba(var(--fx-reflection-rgb,255,255,255),.42) 0 .7%,transparent 2.5%),radial-gradient(circle at 73% 23%,rgba(var(--fx-reflection-rgb,255,255,255),.26) 0 .8%,transparent 2.7%),radial-gradient(circle at 61% 72%,rgba(var(--fx-accent-rgb,127,220,255),.20) 0 .7%,transparent 2.6%);background-size:83px 89px,127px 117px,151px 143px}
+.fx-animate .card-fx-layer[data-fx-family="mineral"]>.fx-optical-motion{animation:v1638MineralGlint var(--fx-duration,8s) steps(6,end) infinite alternate}
+@keyframes v1638MineralGlint{0%{opacity:.18;background-position:0 0,0 0,0 0}50%{opacity:.57}100%{opacity:.27;background-position:5px -4px,-7px 6px,8px -5px}}
+
+/* Ceramic/lacquer: smooth glaze reflection only. */
+.card-fx-layer[data-fx-family="ceramic"]>.fx-optical-motion{background:radial-gradient(120% 48% at 30% 3%,rgba(var(--fx-reflection-rgb,255,255,255),.25),transparent 45%),linear-gradient(var(--fx-reflection-angle,125deg),transparent 39%,rgba(var(--fx-reflection-rgb,255,255,255),.11) 50%,transparent 61%);filter:blur(.7px)}
+.fx-animate .card-fx-layer[data-fx-family="ceramic"]>.fx-optical-motion{animation:v1638Glaze var(--fx-duration,8s) ease-in-out infinite alternate}
+@keyframes v1638Glaze{0%{transform:translate3d(-2%,-.8%,0);opacity:.20}100%{transform:translate3d(2%,.8%,0);opacity:.50}}
+
+/* Emboss: raking light moves over fixed relief. */
+.card-fx-layer[data-fx-family="emboss"]>.fx-optical-motion{background:linear-gradient(var(--fx-reflection-angle,125deg),transparent 0 42%,rgba(var(--fx-reflection-rgb,255,255,255),.24) 48%,rgba(var(--fx-shadow-rgb,0,0,0),.12) 53%,transparent 60% 100%);mix-blend-mode:overlay;filter:blur(.35px)}
+.fx-animate .card-fx-layer[data-fx-family="emboss"]>.fx-optical-motion{animation:v1638RakingLight var(--fx-duration,8s) ease-in-out infinite alternate}
+@keyframes v1638RakingLight{0%{transform:translate3d(-5%,-1%,0);opacity:.24}100%{transform:translate3d(5%,1%,0);opacity:.59}}
+
+/* Atmosphere: soft volumes drift; this family is allowed to represent moving matter. */
+.card-fx-layer[data-fx-family="atmosphere"]>.fx-optical-motion{background:radial-gradient(ellipse at 15% 35%,rgba(255,255,255,.13),transparent 37%),radial-gradient(ellipse at 76% 64%,rgba(var(--fx-accent-rgb,127,220,255),.09),transparent 40%);filter:blur(5px);mix-blend-mode:screen}
+.fx-animate .card-fx-layer[data-fx-family="atmosphere"]>.fx-optical-motion{animation:v1638Atmosphere var(--fx-duration,8s) ease-in-out infinite alternate;animation-direction:var(--fx-direction,alternate)}
+@keyframes v1638Atmosphere{0%{transform:translate3d(-4%,1.5%,0) scale(1.015);opacity:.20}100%{transform:translate3d(4%,-1.5%,0) scale(1.055);opacity:.48}}
+
+/* Energy: breathing emission, stronger near lower/central regions. */
+.card-fx-layer[data-fx-family="energy"]>.fx-optical-motion{background:radial-gradient(ellipse at 50% 106%,rgba(var(--fx-accent-rgb,255,160,70),.27),transparent 48%),radial-gradient(ellipse at 52% 44%,rgba(var(--fx-reflection-rgb,255,255,255),.11),transparent 38%);mix-blend-mode:screen}
+.fx-animate .card-fx-layer[data-fx-family="energy"]>.fx-optical-motion{animation:v1638EnergyBreath var(--fx-duration,8s) ease-in-out infinite alternate}
+@keyframes v1638EnergyBreath{0%{transform:translate3d(0,1.5%,0) scaleY(.99);opacity:.25;filter:brightness(.92)}50%{opacity:.62;filter:brightness(1.16)}100%{transform:translate3d(0,-1%,0) scaleY(1.025);opacity:.40;filter:brightness(1.04)}}
+
+/* Digital: scan energy moves while grid/trace structure remains static. */
+.card-fx-layer[data-fx-family="digital"]>.fx-optical-motion{background:linear-gradient(180deg,transparent 0 41%,rgba(var(--fx-accent-rgb,127,220,255),.24) 48%,rgba(var(--fx-reflection-rgb,255,255,255),.16) 50%,transparent 58% 100%),radial-gradient(circle at 20% 27%,rgba(var(--fx-accent-rgb,127,220,255),.21) 0 1px,transparent 3px);background-size:100% 100%,47px 43px;mix-blend-mode:screen}
+.fx-animate .card-fx-layer[data-fx-family="digital"]>.fx-optical-motion{animation:v1638DigitalScan var(--fx-duration,8s) linear infinite}
+@keyframes v1638DigitalScan{0%{transform:translate3d(0,-7%,0);opacity:.20}48%{opacity:.54}100%{transform:translate3d(0,7%,0);opacity:.28}}
+
+/* Frame optical motion: family-aware reflection on the original PNG mask. */
+.card-frame-overlay>.frame-optical-motion{position:absolute;inset:-5%;z-index:3;pointer-events:none;-webkit-mask-image:var(--frame-mask-image);mask-image:var(--frame-mask-image);-webkit-mask-size:var(--frame-mask-size,100% 100%);mask-size:var(--frame-mask-size,100% 100%);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;opacity:0;mix-blend-mode:screen;will-change:transform,opacity,filter}
+.card-frame-overlay.frame-motion-enabled>.frame-optical-motion{opacity:.52}
+.card-frame-overlay[data-frame-material="polished-metal"]>.frame-optical-motion{background:linear-gradient(var(--frame-reflection-angle,125deg),transparent 35%,rgba(var(--frame-reflection-rgb,255,255,255),.34) 49%,transparent 63%);filter:blur(calc((1 - var(--frame-reflection-hardness,.55))*1.8px))}
+.card-frame-overlay.frame-motion-enabled[data-frame-material="polished-metal"]>.frame-optical-motion{animation:v1638FrameMetal var(--frame-optical-duration,8s) ease-in-out infinite alternate}
+@keyframes v1638FrameMetal{0%{transform:translate3d(-6%,0,0);opacity:.18}52%{opacity:.62}100%{transform:translate3d(6%,0,0);opacity:.24}}
+.card-frame-overlay[data-frame-material="forged-metal"]>.frame-optical-motion{background:radial-gradient(ellipse at 24% 24%,rgba(var(--frame-reflection-rgb,255,255,255),.20),transparent 24%),linear-gradient(var(--frame-reflection-angle,125deg),transparent 40%,rgba(var(--frame-reflection-rgb,255,255,255),.20) 50%,transparent 60%)}
+.card-frame-overlay.frame-motion-enabled[data-frame-material="forged-metal"]>.frame-optical-motion{animation:v1638FrameForged var(--frame-optical-duration,8s) ease-in-out infinite alternate}
+@keyframes v1638FrameForged{0%{transform:translate3d(-2%,-1%,0);opacity:.22}100%{transform:translate3d(2%,1%,0);opacity:.48}}
+.card-frame-overlay:is([data-frame-material="lacquer"],[data-frame-material="porcelain"])>.frame-optical-motion{background:radial-gradient(100% 45% at 26% 4%,rgba(var(--frame-reflection-rgb,255,255,255),.27),transparent 46%);filter:blur(.6px)}
+.card-frame-overlay.frame-motion-enabled:is([data-frame-material="lacquer"],[data-frame-material="porcelain"])>.frame-optical-motion{animation:v1638FrameGlaze var(--frame-optical-duration,8s) ease-in-out infinite alternate}
+@keyframes v1638FrameGlaze{0%{transform:translate3d(-2%,0,0);opacity:.18}100%{transform:translate3d(2%,0,0);opacity:.43}}
+.card-frame-overlay[data-frame-material="leather"]>.frame-optical-motion,.card-frame-overlay[data-frame-material="organic"]>.frame-optical-motion{background:linear-gradient(calc(var(--frame-reflection-angle,125deg) + 14deg),transparent 37%,rgba(var(--frame-reflection-rgb,255,255,255),.13) 50%,transparent 63%);mix-blend-mode:soft-light;filter:blur(1px)}
+.card-frame-overlay.frame-motion-enabled:is([data-frame-material="leather"],[data-frame-material="organic"])>.frame-optical-motion{animation:v1638FrameSoftSheen var(--frame-optical-duration,8s) ease-in-out infinite alternate}
+@keyframes v1638FrameSoftSheen{0%{transform:translate3d(-3%,0,0);opacity:.13}100%{transform:translate3d(3%,0,0);opacity:.34}}
+.card-frame-overlay[data-frame-material="crystal"]>.frame-optical-motion,.card-frame-overlay[data-frame-material="arcane"]>.frame-optical-motion{background:conic-gradient(from var(--frame-reflection-angle,125deg) at 50% 50%,transparent 0 18%,rgba(var(--frame-accent-rgb,127,220,255),.18) 28%,rgba(var(--frame-reflection-rgb,255,255,255),.24) 38%,transparent 51% 100%)}
+.card-frame-overlay.frame-motion-enabled:is([data-frame-material="crystal"],[data-frame-material="arcane"])>.frame-optical-motion{animation:v1638FrameCrystal var(--frame-optical-duration,8s) ease-in-out infinite alternate}
+@keyframes v1638FrameCrystal{0%{transform:rotate(-1deg) scale(1.005);filter:hue-rotate(-7deg);opacity:.22}100%{transform:rotate(1deg) scale(1.015);filter:hue-rotate(9deg);opacity:.53}}
+.card-frame-overlay[data-frame-material="dark-stone"]>.frame-optical-motion{background:radial-gradient(ellipse at 24% 22%,rgba(var(--frame-reflection-rgb,255,255,255),.12),transparent 24%),radial-gradient(ellipse at 78% 76%,rgba(var(--frame-accent-rgb,127,220,255),.08),transparent 29%);mix-blend-mode:soft-light}
+.card-frame-overlay.frame-motion-enabled[data-frame-material="dark-stone"]>.frame-optical-motion{animation:v1638FrameStone var(--frame-optical-duration,8s) ease-in-out infinite alternate}
+@keyframes v1638FrameStone{0%{opacity:.11;transform:translate3d(-1%,0,0)}100%{opacity:.29;transform:translate3d(1%,0,0)}}
+
+@media(max-width:700px){.card-fx-layer>.fx-optical-motion{filter:none!important;opacity:calc(.16 + var(--fx-motion,.5)*.30)}.card-frame-overlay>.frame-optical-motion{filter:none!important}}
+@media(prefers-reduced-motion:reduce){.card-fx-layer>.fx-optical-motion,.card-frame-overlay>.frame-optical-motion{animation:none!important;transform:none!important}}
+</style>
+
 </head>
 <body>
 <div id="app-background-layer" aria-hidden="true">
@@ -20878,7 +20977,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.37 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.38 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22997,7 +23096,7 @@ function cardFxStackHtmlFromLayers(layers,opt={}){
    const v=fxIntensityVars(x.intensity),power=x.intensity==='weak'?.78:x.intensity==='strong'?1.28:1,customId=customFxIdFromType(x.type),style=fxLayerStyle(x,v,power),mask=`fx-mask-${x.mask||'full'}`,family=fxMaterialFamily(x.type);
    const tune=`data-fx-speed="${x.speed}" data-fx-direction="${x.direction}" data-fx-rotation="${x.rotationDirection}" data-fx-motion="${x.motion}" data-fx-density="${x.density}"`;
    if(customId)return `<span class="card-fx-layer fx-custom fx-intensity-${x.intensity} ${mask}" data-fx-type="${esc(x.type)}" data-custom-fx="${esc(customId)}" data-fx-slot="${x.slot}" ${tune} style="${style}"></span>`;
-   return `<span class="card-fx-layer fx-${x.type} fx-intensity-${x.intensity} ${mask}" data-fx-type="${x.type}" data-fx-family="${family}" data-fx-slot="${x.slot}" ${tune} style="${style}"><i class="fx-deco fx-deco-a"></i><i class="fx-deco fx-deco-b"></i><i class="fx-deco fx-deco-c"></i><i class="fx-material-structure"></i><i class="fx-material-grade"></i></span>`;
+   return `<span class="card-fx-layer fx-${x.type} fx-intensity-${x.intensity} ${mask}" data-fx-type="${x.type}" data-fx-family="${family}" data-fx-slot="${x.slot}" ${tune} style="${style}"><i class="fx-deco fx-deco-a"></i><i class="fx-deco fx-deco-b"></i><i class="fx-deco fx-deco-c"></i><i class="fx-material-structure"></i><i class="fx-material-grade"></i><i class="fx-optical-motion"></i></span>`;
  }).join('')}</div>`;
 }
 function currentBoardFxQuality(){
@@ -23824,6 +23923,7 @@ function applyFrameLinkVisual(el,raw,syncProfile=null){
  if(!el)return;const link=normalizeFrameVisual(raw||{});
  el.style.setProperty('--frame-opacity',String(link.opacity/100));
  el.style.setProperty('--frame-motion-speed',String(Math.max(.5,Math.min(1.8,link.motionSpeed/100))));
+ el.style.setProperty('--frame-optical-duration',`${(10/Math.max(.5,Math.min(1.8,link.motionSpeed/100))).toFixed(3)}s`);
  const frameFitSize=link.fit==='contain'?'contain':link.fit==='cover'?'cover':'100% 100%';
  el.style.backgroundSize=frameFitSize;
  el.style.backgroundPosition='center';
@@ -24090,7 +24190,7 @@ function cardFrameHtml(card){
  if(!primaryId)return '';
  const fallbackId=sourceId&&sourceId!==primaryId?sourceId:'';
  const attrs=`data-card-frame="${esc(primaryId)}"${fallbackId?` data-card-frame-fallback="${esc(fallbackId)}"`:''}`;
- return `<span class="card-frame-overlay visual-perf-node card-frame-layer-1" ${attrs} data-frame-layer="1" aria-hidden="true"><i class="frame-material-surface"></i><i class="frame-grade frame-grade-tone"></i><i class="frame-grade frame-grade-light"></i></span><span class="card-frame-overlay card-frame-layer-2" ${attrs} data-frame-layer="2" aria-hidden="true"><i class="frame-material-surface"></i><i class="frame-grade frame-grade-tone"></i><i class="frame-grade frame-grade-light"></i></span>`;
+ return `<span class="card-frame-overlay visual-perf-node card-frame-layer-1" ${attrs} data-frame-layer="1" aria-hidden="true"><i class="frame-material-surface"></i><i class="frame-grade frame-grade-tone"></i><i class="frame-grade frame-grade-light"></i><i class="frame-optical-motion"></i></span><span class="card-frame-overlay card-frame-layer-2" ${attrs} data-frame-layer="2" aria-hidden="true"><i class="frame-material-surface"></i><i class="frame-grade frame-grade-tone"></i><i class="frame-grade frame-grade-light"></i><i class="frame-optical-motion"></i></span>`;
 }
 async function hydrateCardFrame(el){
  if(!el?.isConnected||el.dataset.frameReady==='1')return;
@@ -25289,7 +25389,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.37',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.38',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -36089,7 +36189,7 @@ async function accountCloudInitialize(){
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.37'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.38'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
@@ -36106,7 +36206,7 @@ function accountCloudLocalSnapshot(){
   const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
     schema_version:2,
-    app_version:'16.37',
+    app_version:'16.38',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
     decks:Array.isArray(decks)?decks:[],
@@ -36747,7 +36847,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'16.37',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'16.38',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
