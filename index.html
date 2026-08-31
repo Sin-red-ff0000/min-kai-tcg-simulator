@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.20</title>
+<title>みん会TCG Simulator v16.22</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20121,6 +20121,7 @@ h3 .minkai-ruby{margin-top:.45em}
 .account-cloud-actions{margin-top:12px}
 .account-cloud-comparison{margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.025);line-height:1.6;white-space:pre-line;overflow-wrap:anywhere}
 .account-cloud-comparison .diff-section{margin-top:10px}.account-cloud-comparison .diff-section:first-child{margin-top:0}.account-cloud-comparison .diff-title{font-weight:700;color:var(--text)}.account-cloud-comparison .diff-list{margin:4px 0 0;padding-left:1.2em}.account-cloud-comparison .diff-more{opacity:.75}
+.account-cloud-select-row{display:flex;align-items:flex-start;gap:8px;margin:5px 0}.account-cloud-select-row input{margin-top:3px}.account-cloud-history-item{padding:8px 0;border-top:1px solid var(--line)}
 .account-recovery-panel{grid-column:1/-1}
 .account-local-note{grid-column:1/-1}
 @media(max-width:760px){
@@ -20137,7 +20138,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.20 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.22 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -20861,7 +20862,7 @@ h3 .minkai-ruby{margin-top:.45em}
           <h3>クラウド保存</h3>
           <span id="account-cloud-state-pill" class="pill">未確認</span>
         </div>
-        <p class="muted">v16.20では、端末と現在のクラウドの差分をカード名・デッキ名まで確認できるようにしました。保存や復元の前にも差分を確認できるため、どちら側のデータで置き換わるか判断しやすくなっています。同期は引き続き手動で、自動同期や自動上書きは行いません。</p>
+        <p class="muted">v16.22では、これまでのカード・デッキ同期に加えて、カード画像・背景画像・カスタムフレーム・自作エフェクト・カード外観設定をまとめて保存できるクラウド完全バックアップを追加しました。通常の選択同期とは分離されており、自動上書きは行いません。</p>
         <div id="account-cloud-detail" class="account-cloud-detail muted">クラウド保存領域への接続状態を確認できます。</div>
         <div class="actions account-actions account-cloud-actions">
           <button class="btn" type="button" id="account-cloud-check">接続を確認</button>
@@ -20869,11 +20870,28 @@ h3 .minkai-ruby{margin-top:.45em}
           <button class="btn" type="button" id="account-cloud-compare">端末とクラウドの差分を確認</button>
           <button class="btn primary" type="button" id="account-cloud-upload">端末データをクラウドへ保存</button>
           <button class="btn" type="button" id="account-cloud-download">クラウドデータで端末を復元</button>
+          <button class="btn" type="button" id="account-cloud-selected-upload">選択したカード・デッキをクラウドへ</button>
+          <button class="btn" type="button" id="account-cloud-selected-download">選択したカード・デッキを端末へ</button>
+          <button class="btn" type="button" id="account-cloud-history">クラウド履歴を表示</button>
           <button class="btn" type="button" id="account-cloud-restore-previous">クラウドを1世代前へ戻す</button>
           <button class="btn" type="button" id="account-cloud-undo-restore">直前の端末データに戻す</button>
         </div>
         <div id="account-cloud-compare-detail" class="account-cloud-comparison muted" hidden></div>
-        <p class="muted" style="margin-top:10px">復元は現在の端末内カード・デッキ・コレクション情報を置き換えます。復元直前の端末データはこの端末へ1世代だけ自動退避します。クラウド側も上書き前の保存内容を1世代だけ保持します。1世代前へ戻した場合は現在版と1世代前を入れ替えるため、もう一度押すと戻す前の版へ戻せます。カード画像・背景・端末表示設定・盤面データは同期しません。</p>
+        <p class="muted" style="margin-top:10px">カード・デッキの通常同期はこれまで通り軽量データだけを扱います。復元直前の端末データはこの端末へ1世代だけ自動退避し、クラウド側は上書き前の保存内容を最大5世代保持します。</p>
+
+        <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+        <div class="account-cloud-head">
+          <h3>画像・外観のクラウド完全バックアップ</h3>
+          <span id="account-full-cloud-state-pill" class="pill">未確認</span>
+        </div>
+        <p class="muted">カード画像、背景画像、カスタムフレーム、自作エフェクト、カードごとの外観・エフェクト設定、外観プリセットをカード・デッキと一緒に1つのZIPとして保存します。現在の盤面と盤面スナップショットはクラウド完全バックアップには含めません。</p>
+        <div id="account-full-cloud-detail" class="account-cloud-detail muted">v16.22用のSupabase Storage設定後に利用できます。</div>
+        <div class="actions account-actions account-cloud-actions">
+          <button class="btn" type="button" id="account-full-cloud-check">完全バックアップ状態を確認</button>
+          <button class="btn primary" type="button" id="account-full-cloud-upload">完全バックアップをクラウドへ保存</button>
+          <button class="btn" type="button" id="account-full-cloud-download">クラウド完全バックアップを復元</button>
+        </div>
+        <p class="muted" style="margin-top:10px">完全バックアップの復元はカード・デッキ・コレクション・画像・外観設定をまとめて置き換えます。復元前には現在の端末状態を完全バックアップZIPとして自動生成し、端末へ保存してから復元処理へ進みます。</p>
       </div>
 
       <div class="panel account-recovery-panel" id="account-recovery-panel" hidden>
@@ -20889,8 +20907,8 @@ h3 .minkai-ruby{margin-top:.45em}
       </div>
 
       <div class="panel account-local-note">
-        <h3 style="margin-top:0">v16.18での保存範囲</h3>
-        <p class="muted">登録カード、保存デッキ、コレクションのお気に入り・アルバム情報を手動でクラウド保存・復元できます。同期方向は毎回自分で選び、自動マージや自動上書きは行いません。カード画像、背景、端末表示設定、盤面データは端末側のままです。オンライン対戦のルーム用セッションもアカウントとは別のまま維持します。</p>
+        <h3 style="margin-top:0">v16.22での保存範囲</h3>
+        <p class="muted">軽量なカード・デッキ同期と、画像・外観まで含めるクラウド完全バックアップを用途別に分けています。どちらも手動実行で、自動マージや自動上書きは行いません。オンライン対戦のルーム用セッションはアカウントとは別のまま維持します。</p>
       </div>
     </div>
     <div id="account-message" class="account-message muted" role="status" aria-live="polite"></div>
@@ -24363,7 +24381,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.12',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.22',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -24386,7 +24404,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    frames:frameMeta,
    customFx:customFxMeta
  };
- entries.unshift({name:'manifest.json',data:zipEncoder.encode(JSON.stringify(manifest,null,2))});
+ entries.unshift({name:'manifest.json',data:window.minkaiZipEncoder.encode(JSON.stringify(manifest,null,2))});
  onProgress('ZIPを組み立て中…');
  const zipBytes=makeZipStored(entries);
  return {blob:new Blob([zipBytes],{type:'application/zip'}),manifest,zipBytes};
@@ -34612,6 +34630,15 @@ window.minkaiEmergencyModeSwitch=function(mode){
   document.getElementById('home-mode-online')?.classList.toggle('active',online);
 };
 
+// v16.22: reuse the existing verified full-backup engine for manual cloud backup.
+window.minkaiBuildFullBackupZip=buildFullBackupZip;
+window.minkaiReadZipStored=readZipStored;
+window.minkaiZipEncoder=zipEncoder;
+window.minkaiMakeZipStored=makeZipStored;
+window.minkaiParseFullBackupZip=parseFullBackupZip;
+window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
+window.minkaiDownloadBlob=downloadBlob;
+
 })();
 </script>
 
@@ -34788,7 +34815,7 @@ function accountSetMessage(text='',kind=''){
   el.classList.toggle('muted',!kind);
 }
 function accountSetBusy(busy){
-  ['account-login','account-signup','account-reset','account-save-profile','account-logout','account-save-recovery-password','account-cancel-recovery','account-cloud-check','account-cloud-init','account-cloud-compare','account-cloud-upload','account-cloud-download','account-cloud-restore-previous','account-cloud-undo-restore']
+  ['account-login','account-signup','account-reset','account-save-profile','account-logout','account-save-recovery-password','account-cancel-recovery','account-cloud-check','account-cloud-init','account-cloud-compare','account-cloud-upload','account-cloud-download','account-cloud-selected-upload','account-cloud-selected-download','account-cloud-history','account-cloud-restore-previous','account-cloud-undo-restore']
     .forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!!busy});
 }
 function accountRedirectUrl(){return location.href.split('#')[0]}
@@ -34840,7 +34867,7 @@ async function accountCloudRequest(path,{method='GET',body=null,prefer='',allowE
     if(allowError)return out;
     throw new Error(out.message);
   }
-  const headers={apikey:ACCOUNT_SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${session.access_token}`};
+  const headers={apikey:ACCOUNT_FULL_CLOUD_KEY,Authorization:`Bearer ${session.access_token}`};
   if(body!==null)headers['Content-Type']='application/json';
   if(prefer)headers.Prefer=prefer;
   let response;
@@ -34866,6 +34893,26 @@ async function accountCloudGet(storageKey){
   const result=await accountCloudRequest(`/rest/v1/minkai_user_storage?select=storage_key,payload,revision,updated_at&storage_key=eq.${key}&limit=1`,{allowError:true});
   if(!result.ok)return result;
   return {...result,row:Array.isArray(result.data)?(result.data[0]||null):null};
+}
+async function accountCloudListHistory(){
+  const result=await accountCloudRequest(`/rest/v1/minkai_user_storage?select=storage_key,payload,revision,updated_at&storage_key=like.cards_decks_history_%25&order=updated_at.desc&limit=5`,{allowError:true});
+  if(!result.ok)return result;
+  return {...result,rows:Array.isArray(result.data)?result.data:[]};
+}
+async function accountCloudPushHistory(payload,revision=1){
+  if(!payload)return {ok:true};
+  const history=await accountCloudListHistory();
+  if(!history.ok)return history;
+  const rows=history.rows||[];
+  for(let i=Math.min(rows.length,4);i>=1;i--){
+    const src=rows[i-1];
+    const r=await accountCloudUpsert(`cards_decks_history_${i+1}`,src.payload,src.revision||revision);
+    if(!r.ok)return r;
+  }
+  const first=await accountCloudUpsert('cards_decks_history_1',payload,revision);
+  if(!first.ok)return first;
+  if(rows.length>=5)await accountCloudDelete('cards_decks_history_6').catch(()=>{});
+  return {ok:true};
 }
 async function accountCloudUpsert(storageKey,payload,revision=1){
   const user=accountUser();
@@ -34923,7 +34970,7 @@ async function accountCloudInitialize(){
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.20'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.22'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
@@ -34940,7 +34987,7 @@ function accountCloudLocalSnapshot(){
   const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
     schema_version:2,
-    app_version:'16.20',
+    app_version:'16.22',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
     decks:Array.isArray(decks)?decks:[],
@@ -35088,6 +35135,70 @@ function accountCloudDiffConfirmText(local,cloud,direction){
   const side=direction==='upload'?'クラウド側が端末側の内容に置き換わります。':'端末側がクラウド側の内容に置き換わります。';
   return `${side}\nカード: 端末のみ ${c.onlyLocal.length} / クラウドのみ ${c.onlyCloud.length} / 内容違い ${c.changed.length}\nデッキ: 端末のみ ${d.onlyLocal.length} / クラウドのみ ${d.onlyCloud.length} / 内容違い ${d.changed.length}\nお気に入り差分: ${x.favoritesLocal.length+x.favoritesCloud.length}\nアルバム: 端末のみ ${a.onlyLocal.length} / クラウドのみ ${a.onlyCloud.length} / 内容違い ${a.changed.length}`;
 }
+function accountCloudSelectableRows(local,cloud){
+  const rows=[];
+  const add=(kind,a,b)=>{
+    const ma=new Map(),mb=new Map();
+    (Array.isArray(a)?a:[]).forEach((x,i)=>ma.set(accountCloudEntityKey(x,i,kind),x));
+    (Array.isArray(b)?b:[]).forEach((x,i)=>mb.set(accountCloudEntityKey(x,i,kind),x));
+    new Set([...ma.keys(),...mb.keys()]).forEach(k=>{
+      const l=ma.get(k),c=mb.get(k);
+      if(l&&c&&accountCloudStableText(l)===accountCloudStableText(c))return;
+      rows.push({kind,key:k,name:accountCloudEntityName(l||c,k),local:l||null,cloud:c||null});
+    });
+  };
+  add('card',local?.cards,cloud?.cards); add('deck',local?.decks,cloud?.decks);
+  return rows;
+}
+function accountCloudSelectionHtml(local,cloud){
+  const rows=accountCloudSelectableRows(local,cloud);
+  if(!rows.length)return '<div class="diff-section muted">選択同期できるカード・デッキ差分はありません。</div>';
+  return `<div class="diff-section"><div class="diff-title">選択同期</div><div class="muted">反映したいカード・デッキを選択してください。</div>${rows.map((r,i)=>`<label class="account-cloud-select-row"><input type="checkbox" class="account-cloud-select" data-index="${i}"><span>${escapeHTML(r.kind==='card'?'カード':'デッキ')}：${escapeHTML(r.name)} <span class="muted">(${r.local?'端末あり':'端末なし'} / ${r.cloud?'クラウドあり':'クラウドなし'})</span></span></label>`).join('')}</div>`;
+}
+function accountCloudSelectedIndexes(){return [...document.querySelectorAll('.account-cloud-select:checked')].map(x=>Number(x.dataset.index)).filter(Number.isFinite)}
+function accountCloudMergeSelected(base,source,rows,indexes){
+  const out=JSON.parse(JSON.stringify(base||{}));
+  for(const kind of ['card','deck']){
+    const prop=kind==='card'?'cards':'decks'; let list=Array.isArray(out[prop])?[...out[prop]]:[];
+    const selected=rows.map((r,i)=>({r,i})).filter(x=>x.r.kind===kind&&indexes.includes(x.i));
+    for(const {r} of selected){
+      const pos=list.findIndex((x,i)=>accountCloudEntityKey(x,i,kind)===r.key);
+      const value=source==='local'?r.local:r.cloud;
+      if(value){if(pos>=0)list[pos]=value;else list.push(value)}else if(pos>=0)list.splice(pos,1);
+    }
+    out[prop]=list;
+  }
+  out.schema_version=2; out.app_version='16.22'; out.saved_at=new Date().toISOString();
+  return out;
+}
+async function accountCloudSelectedSync(direction){
+  if(!accountUser()?.id){accountSetMessage('ログインが必要です。','error');return}
+  accountSetBusy(true); accountSetMessage('選択同期の差分を確認しています…');
+  try{
+    const current=await accountCloudGet('cards_decks'); if(!current.ok){accountSetMessage(current.message||'クラウドを確認できませんでした。','error');return}
+    const cloud=current.row?.payload||{cards:[],decks:[],collection:{}}; const local=accountCloudLocalSnapshot();
+    const rows=accountCloudSelectableRows(local,cloud), indexes=accountCloudSelectedIndexes();
+    if(!indexes.length){accountSetMessage('差分一覧で同期するカード・デッキを選択してください。','error');return}
+    if(direction==='upload'){
+      if(!confirm(`選択した${indexes.length}項目を端末からクラウドへ反映します。続けますか？`))return;
+      const hist=await accountCloudPushHistory(cloud,current.row?.revision||Date.now()); if(!hist.ok){accountSetMessage(hist.message||'履歴を保存できませんでした。','error');return}
+      const merged=accountCloudMergeSelected(cloud,'local',rows,indexes); const r=await accountCloudUpsert('cards_decks',merged,Date.now()); if(!r.ok){accountSetMessage(r.message||'選択同期に失敗しました。','error');return}
+      accountSetMessage(`${indexes.length}項目をクラウドへ反映しました。`,'ok');
+    }else{
+      if(!confirm(`選択した${indexes.length}項目をクラウドからこの端末へ反映します。続けますか？`))return;
+      accountSaveRestoreBackup(local); const merged=accountCloudMergeSelected(local,'cloud',rows,indexes); accountApplyCloudSnapshot(merged,{preserveCollectionWhenMissing:true});
+      accountSetMessage(`${indexes.length}項目を端末へ反映しました。`,'ok');
+    }
+    await accountCloudCompare();
+  }finally{accountSetBusy(false);accountRender()}
+}
+async function accountCloudShowHistory(){
+  const box=document.getElementById('account-cloud-compare-detail'); accountSetBusy(true); accountSetMessage('クラウド履歴を確認しています…');
+  try{const h=await accountCloudListHistory(); if(!h.ok){accountSetMessage(h.message||'履歴を取得できませんでした。','error');return}
+    const rows=h.rows||[]; if(box){box.hidden=false;box.innerHTML=`<div class="diff-title">クラウド履歴（最大5世代）</div>${rows.length?rows.map((r,i)=>{const x=accountCloudSnapshotSummary(r.payload);return `<div class="account-cloud-history-item">${i+1}世代前：${escapeHTML(accountCloudFormatTime(r.updated_at||r.payload?.saved_at))}<br>カード ${x.cardCount}枚 / デッキ ${x.deckCount}件 / お気に入り ${x.favoriteCount}枚 / アルバム ${x.albumCount}冊</div>`}).join(''):'<div class="muted">履歴はまだありません。</div>'}`}
+    accountSetMessage(rows.length?`クラウド履歴を${rows.length}世代表示しました。`:'クラウド履歴はまだありません。','ok');
+  }finally{accountSetBusy(false);accountRender()}
+}
 async function accountCloudCompare(){
   if(!accountUser()?.id){accountSetMessage('ログインが必要です。','error');return}
   const box=document.getElementById('account-cloud-compare-detail');
@@ -35106,7 +35217,7 @@ async function accountCloudCompare(){
     const detail=cloud?accountCloudDiffHtml(local,cloud):null;
     if(box){
       box.hidden=false;
-      box.innerHTML=`<div>${lines.map(esc).join('<br>')}</div>${detail?detail.html:'<div class="diff-section muted">現在のクラウドには比較できる保存データがありません。</div>'}`;
+      box.innerHTML=`<div>${lines.map(esc).join('<br>')}</div>${detail?detail.html:'<div class="diff-section muted">現在のクラウドには比較できる保存データがありません。</div>'}${cloud?accountCloudSelectionHtml(local,cloud):''}`;
     }
     accountSetMessage(detail?(detail.count?`端末とクラウドの差分 ${detail.count}件を確認しました。`:'端末とクラウドに差分はありません。'):'クラウドに比較対象の保存データがありません。','ok');
   }finally{accountSetBusy(false);accountRender()}
@@ -35158,8 +35269,9 @@ async function accountCloudUploadCardsDecks(){
     }
     accountSetMessage('端末データをクラウドへ保存しています…');
     if(existing.row?.payload){
-      const backup=await accountCloudUpsert('cards_decks_previous',existing.row.payload,Number(existing.row.revision)||Date.now());
-      if(!backup.ok){accountSetMessage(backup.message||'クラウドの旧データを退避できなかったため、上書きを中止しました。','error');return}
+      const backup=await accountCloudPushHistory(existing.row.payload,Number(existing.row.revision)||Date.now());
+      if(!backup.ok){accountSetMessage(backup.message||'クラウド履歴を保存できませんでした。','error');return}
+      await accountCloudUpsert('cards_decks_previous',existing.row.payload,Number(existing.row.revision)||Date.now());
     }
     const result=await accountCloudUpsert('cards_decks',local,Date.now());
     if(!result.ok){accountSetMessage(result.message||'クラウドへ保存できませんでした。','error');return}
@@ -35332,6 +35444,9 @@ function accountBindUi(){
   bind('account-cloud-compare',()=>accountCloudCompare().catch(err=>accountSetMessage(err.message||String(err),'error')));
   bind('account-cloud-upload',()=>accountCloudUploadCardsDecks().catch(err=>accountSetMessage(err.message||String(err),'error')));
   bind('account-cloud-download',()=>accountCloudDownloadCardsDecks().catch(err=>accountSetMessage(err.message||String(err),'error')));
+  bind('account-cloud-selected-upload',()=>accountCloudSelectedSync('upload').catch(err=>accountSetMessage(err.message||String(err),'error')));
+  bind('account-cloud-selected-download',()=>accountCloudSelectedSync('download').catch(err=>accountSetMessage(err.message||String(err),'error')));
+  bind('account-cloud-history',()=>accountCloudShowHistory().catch(err=>accountSetMessage(err.message||String(err),'error')));
   bind('account-cloud-restore-previous',()=>accountCloudRestorePrevious().catch(err=>accountSetMessage(err.message||String(err),'error')));
   bind('account-cloud-undo-restore',()=>accountCloudUndoRestore().catch(err=>accountSetMessage(err.message||String(err),'error')));
   const pass=document.getElementById('account-password');if(pass)pass.addEventListener('keydown',e=>{if(e.key==='Enter')accountLogin().catch(err=>accountSetMessage(err.message||String(err),'error'))});
@@ -35383,6 +35498,8 @@ window.accountCloudInitialize=accountCloudInitialize;
 window.accountCloudCompare=accountCloudCompare;
 window.accountCloudDiffSnapshot=accountCloudDiffSnapshot;
 window.accountCloudDiffHtml=accountCloudDiffHtml;
+window.accountCloudSelectedSync=accountCloudSelectedSync;
+window.accountCloudShowHistory=accountCloudShowHistory;
 window.accountCloudUploadCardsDecks=accountCloudUploadCardsDecks;
 window.accountCloudDownloadCardsDecks=accountCloudDownloadCardsDecks;
 window.accountCloudRestorePrevious=accountCloudRestorePrevious;
@@ -35392,6 +35509,183 @@ window.accountInit=accountInit;
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',accountInit,{once:true});
 else queueMicrotask(accountInit);
+})();
+</script>
+
+<script>
+(()=>{
+const ACCOUNT_FULL_CLOUD_BUCKET='minkai-user-backups';
+const ACCOUNT_FULL_CLOUD_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co';
+const ACCOUNT_FULL_CLOUD_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
+const ACCOUNT_FULL_CLOUD_META_KEY='full_backup_meta_v1622';
+let accountFullCloudBusy=false;
+
+function accountFullCloudSetBusy(busy){
+  accountFullCloudBusy=!!busy;
+  ['account-full-cloud-check','account-full-cloud-upload','account-full-cloud-download'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=accountFullCloudBusy});
+}
+function accountFullCloudSetState(text='未確認',detail=''){
+  const pill=document.getElementById('account-full-cloud-state-pill');
+  const out=document.getElementById('account-full-cloud-detail');
+  if(pill)pill.textContent=text;
+  if(out)out.textContent=detail||'';
+}
+function accountFullCloudHumanBytes(value){
+  const n=Math.max(0,Number(value)||0),units=['B','KB','MB','GB'];let x=n,i=0;
+  while(x>=1024&&i<units.length-1){x/=1024;i++}
+  return `${x>=100||i===0?Math.round(x):x.toFixed(1)} ${units[i]}`;
+}
+function accountFullCloudFormatTime(value){
+  if(!value)return '';
+  try{return new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(value))}catch(_){return String(value)}
+}
+function accountFullCloudObjectPath(){
+  const user=window.accountUser?.();
+  if(!user?.id)return '';
+  return `${user.id}/full-backup-current.zip`;
+}
+function accountFullCloudEncodePath(path=''){
+  return String(path).split('/').map(x=>encodeURIComponent(x)).join('/');
+}
+async function accountFullCloudStorageRequest(path,{method='GET',body=null,contentType='',upsert=false,expectBlob=false,allowError=false}={}){
+  const session=await window.accountEnsureSession?.();
+  if(!session?.access_token){const out={ok:false,status:401,data:null,message:'ログインが必要です。'};if(allowError)return out;throw new Error(out.message)}
+  const headers={apikey:ACCOUNT_FULL_CLOUD_KEY,Authorization:`Bearer ${session.access_token}`};
+  if(contentType)headers['Content-Type']=contentType;
+  if(upsert)headers['x-upsert']='true';
+  let response;
+  try{response=await fetch(`${ACCOUNT_FULL_CLOUD_URL}/storage/v1/${path}`,{method,headers,body:body===null?undefined:body})}
+  catch(_){const out={ok:false,status:0,data:null,message:'ネットワークに接続できませんでした。'};if(allowError)return out;throw new Error(out.message)}
+  if(response.ok){return {ok:true,status:response.status,data:expectBlob?await response.blob():(await response.text()),message:''}}
+  let data=null;const text=await response.text();if(text){try{data=JSON.parse(text)}catch(_){data={message:text}}}
+  let message=String(data?.message||data?.error||'クラウド画像保存領域を利用できませんでした。');
+  if(response.status===404||/bucket not found|not found/i.test(message))message='v16.22用のクラウド画像保存領域が見つかりません。SUPABASE_SETUP_v16_22.sqlを先に実行してください。';
+  else if(response.status===401||response.status===403)message='クラウド画像保存領域への権限を確認できませんでした。v16.22のStorage設定を確認してください。';
+  const out={ok:false,status:response.status,data,message};if(allowError)return out;throw new Error(message);
+}
+function accountFullCloudSummary(manifest,blob){
+  const d=manifest?.data||{};
+  return {
+    cards:Array.isArray(d.cards)?d.cards.length:0,
+    decks:Array.isArray(d.decks)?d.decks.length:0,
+    images:Array.isArray(manifest?.images)?manifest.images.length:0,
+    backgrounds:Array.isArray(manifest?.backgrounds)?manifest.backgrounds.length:0,
+    frames:Array.isArray(manifest?.frames)?manifest.frames.length:0,
+    customFx:Array.isArray(manifest?.customFx)?manifest.customFx.length:0,
+    bytes:Number(blob?.size)||0
+  };
+}
+function accountFullCloudSummaryText(s){
+  return `カード ${s.cards}枚・デッキ ${s.decks}件・カード画像 ${s.images}件・背景 ${s.backgrounds}件・カスタムフレーム ${s.frames}件・自作エフェクト ${s.customFx}件・${accountFullCloudHumanBytes(s.bytes)}`;
+}
+async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
+  const built=await window.minkaiBuildFullBackupZip(onProgress);
+  const files=window.minkaiReadZipStored(built.zipBytes);
+  const manifestBytes=files.get('manifest.json');
+  if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
+  const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
+  manifest.appVersion='16.22';
+  manifest.createdAt=new Date().toISOString();
+  if(manifest.data&&typeof manifest.data==='object'){
+    manifest.data.boardSession=null;
+    manifest.data.boardSnapshots=[];
+  }
+  const entries=[];
+  for(const [name,data] of files.entries())entries.push({name,data:name==='manifest.json'?window.minkaiZipEncoder.encode(JSON.stringify(manifest,null,2)):data});
+  const bytes=window.minkaiMakeZipStored(entries),blob=new Blob([bytes],{type:'application/zip'});
+  return {blob,manifest,zipBytes:bytes};
+}
+async function accountFullCloudReadMeta(){
+  const result=await window.accountCloudGet?.(ACCOUNT_FULL_CLOUD_META_KEY);
+  if(!result?.ok)return result||{ok:false,message:'クラウド情報を確認できませんでした。'};
+  return {...result,meta:result.row?.payload||null};
+}
+async function accountFullCloudCheck({quiet=false}={}){
+  if(!window.accountUser?.()?.id){accountFullCloudSetState('未確認','ログインすると完全バックアップの状態を確認できます。');return false}
+  accountFullCloudSetState('確認中','クラウド完全バックアップを確認しています…');
+  const metaResult=await accountFullCloudReadMeta();
+  if(!metaResult.ok){accountFullCloudSetState('確認失敗',metaResult.message||'完全バックアップ情報を確認できませんでした。');if(!quiet)window.accountSetMessage?.(metaResult.message||'完全バックアップ情報を確認できませんでした。','error');return false}
+  const meta=metaResult.meta;
+  if(!meta){accountFullCloudSetState('未保存','クラウド完全バックアップはまだ保存されていません。v16.22用Storage設定後に保存できます。');if(!quiet)window.accountSetMessage?.('クラウド完全バックアップはまだありません。');return true}
+  const s=meta.summary||{};
+  const when=meta.created_at?accountFullCloudFormatTime(meta.created_at):'';
+  accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(s)}${when?`　保存: ${when}`:''}`);
+  if(!quiet)window.accountSetMessage?.('クラウド完全バックアップの状態を確認しました。','ok');
+  return true;
+}
+async function accountFullCloudUpload(){
+  if(!window.accountUser?.()?.id){window.accountSetMessage?.('ログインが必要です。','error');return}
+  accountFullCloudSetBusy(true);window.accountSetMessage?.('画像・外観を含む完全バックアップを準備しています…');
+  try{
+    const built=await accountCloudBuildPortableFullBackup(text=>window.accountSetMessage?.(text));
+    const summary=accountFullCloudSummary(built.manifest,built.blob);
+    if(!confirm(`${accountFullCloudSummaryText(summary)}をクラウドへ保存します。\n\n既存のクラウド完全バックアップがある場合は置き換えます。カード・デッキの通常同期データは変更しません。続けますか？`)){window.accountSetMessage?.('完全バックアップの保存をキャンセルしました。');return}
+    window.accountSetMessage?.(`クラウドへ送信しています… ${accountFullCloudHumanBytes(built.blob.size)}`);
+    const objectPath=accountFullCloudObjectPath();
+    const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
+    if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
+    const createdAt=new Date().toISOString();
+    const meta={schema_version:1,app_version:'16.22',created_at:createdAt,storage_path:objectPath,summary};
+    const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
+    if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
+    accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
+    window.accountSetMessage?.('画像・外観を含む完全バックアップをクラウドへ保存しました。','ok');
+  }catch(err){window.accountSetMessage?.(err?.message||String(err),'error');accountFullCloudSetState('保存失敗',err?.message||String(err))}
+  finally{accountFullCloudSetBusy(false)}
+}
+async function accountFullCloudDownload(){
+  if(!window.accountUser?.()?.id){window.accountSetMessage?.('ログインが必要です。','error');return}
+  accountFullCloudSetBusy(true);window.accountSetMessage?.('クラウド完全バックアップを確認しています…');
+  try{
+    const metaResult=await accountFullCloudReadMeta();
+    if(!metaResult.ok){window.accountSetMessage?.(metaResult.message||'完全バックアップ情報を確認できませんでした。','error');return}
+    const meta=metaResult.meta;
+    if(!meta?.storage_path){window.accountSetMessage?.('クラウド完全バックアップがありません。','error');return}
+    const summary=meta.summary||{};
+    if(!confirm(`クラウド完全バックアップをこの端末へ復元します。\n${accountFullCloudSummaryText(summary)}\n\nカード・デッキ・コレクション・カード画像・背景・フレーム・自作エフェクト・外観設定が置き換わります。\n復元前に現在の端末状態を完全バックアップZIPとして保存します。続けますか？`)){window.accountSetMessage?.('完全バックアップの復元をキャンセルしました。');return}
+    window.accountSetMessage?.('復元前の端末バックアップを作成しています…');
+    const localBackup=await window.minkaiBuildFullBackupZip(text=>window.accountSetMessage?.(`復元前バックアップ: ${text}`));
+    const stamp=new Date().toISOString().replace(/[:.]/g,'-');
+    window.minkaiDownloadBlob(localBackup.blob,`min_kai_tcg_before_cloud_restore_${stamp}.zip`);
+    window.accountSetMessage?.('クラウド完全バックアップをダウンロードしています…');
+    const downloaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(meta.storage_path)}`,{expectBlob:true,allowError:true});
+    if(!downloaded.ok){window.accountSetMessage?.(downloaded.message,'error');return}
+    const bytes=new Uint8Array(await downloaded.data.arrayBuffer());
+    window.accountSetMessage?.('クラウド完全バックアップを検証しています…');
+    const parsed=window.minkaiParseFullBackupZip(bytes);
+    const result=await window.minkaiRestoreFullBackupZip(parsed);
+    accountFullCloudSetState('復元済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(meta.created_at||'')}`);
+    window.accountSetMessage?.(`クラウド完全バックアップを復元しました。カード ${result.cards}枚・デッキ ${result.decks}件・カード画像 ${result.images}件を復元しました。`,'ok');
+  }catch(err){window.accountSetMessage?.(err?.message||String(err),'error');accountFullCloudSetState('復元失敗',err?.message||String(err))}
+  finally{accountFullCloudSetBusy(false)}
+}
+function accountFullCloudBind(){
+  const bind=(id,fn)=>{const el=document.getElementById(id);if(el&&!el.dataset.fullCloudBound){el.dataset.fullCloudBound='1';el.addEventListener('click',fn)}};
+  bind('account-full-cloud-check',()=>accountFullCloudCheck().catch(err=>window.accountSetMessage?.(err?.message||String(err),'error')));
+  bind('account-full-cloud-upload',()=>accountFullCloudUpload());
+  bind('account-full-cloud-download',()=>accountFullCloudDownload());
+}
+function accountFullCloudInit(){
+  accountFullCloudBind();
+  const accountPill=document.getElementById('account-state-pill');
+  if(accountPill&&typeof MutationObserver!=='undefined'){
+    let lastUserId=window.accountUser?.()?.id||'';
+    new MutationObserver(()=>{
+      const userId=window.accountUser?.()?.id||'';
+      if(userId===lastUserId)return;
+      lastUserId=userId;
+      if(userId)accountFullCloudCheck({quiet:true}).catch(()=>{});
+      else accountFullCloudSetState('未確認','ログインすると完全バックアップの状態を確認できます。');
+    }).observe(accountPill,{childList:true,characterData:true,subtree:true});
+  }
+  if(window.accountUser?.()?.id)accountFullCloudCheck({quiet:true}).catch(()=>{});
+  else accountFullCloudSetState('未確認','ログインすると完全バックアップの状態を確認できます。');
+}
+window.accountFullCloudCheck=accountFullCloudCheck;
+window.accountFullCloudUpload=accountFullCloudUpload;
+window.accountFullCloudDownload=accountFullCloudDownload;
+window.accountCloudBuildPortableFullBackup=accountCloudBuildPortableFullBackup;
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',accountFullCloudInit,{once:true});else queueMicrotask(accountFullCloudInit);
 })();
 </script>
 
