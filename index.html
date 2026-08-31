@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.23</title>
+<title>みん会TCG Simulator v16.24</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20152,7 +20152,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.23 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.24 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -20876,7 +20876,7 @@ h3 .minkai-ruby{margin-top:.45em}
           <h3>クラウド管理</h3>
           <span id="account-cloud-state-pill" class="pill">未確認</span>
         </div>
-        <p class="muted">v16.23ではクラウド機能を用途別に整理しました。同期・履歴・完全バックアップはすべて手動実行のままで、ログインしただけでは端末データを変更しません。</p>
+        <p class="muted">v16.24ではクラウド機能を用途別に整理しました。同期・履歴・完全バックアップはすべて手動実行のままで、ログインしただけでは端末データを変更しません。</p>
         <div id="account-cloud-detail" class="account-cloud-detail muted">クラウド保存領域への接続状態を確認できます。</div>
 
         <div class="account-cloud-tabs" role="tablist" aria-label="クラウド管理">
@@ -20951,7 +20951,7 @@ h3 .minkai-ruby{margin-top:.45em}
       </div>
 
       <div class="panel account-local-note">
-        <h3 style="margin-top:0">v16.23 クラウド機能の扱い</h3>
+        <h3 style="margin-top:0">v16.24 クラウド機能の扱い</h3>
         <p class="muted">クラウド機能は概要 / カード・デッキ同期 / 完全バックアップ / 履歴・復旧に整理しました。自動マージ・自動上書きは行わず、オンライン対戦のルーム用セッションもアカウントとは別のまま維持します。</p>
       </div>
     </div>
@@ -24425,7 +24425,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.23',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.24',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -35014,7 +35014,7 @@ async function accountCloudInitialize(){
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.23'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.24'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
@@ -35031,7 +35031,7 @@ function accountCloudLocalSnapshot(){
   const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
     schema_version:2,
-    app_version:'16.23',
+    app_version:'16.24',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
     decks:Array.isArray(decks)?decks:[],
@@ -35212,7 +35212,7 @@ function accountCloudMergeSelected(base,source,rows,indexes){
     }
     out[prop]=list;
   }
-  out.schema_version=2; out.app_version='16.23'; out.saved_at=new Date().toISOString();
+  out.schema_version=2; out.app_version='16.24'; out.saved_at=new Date().toISOString();
   return out;
 }
 async function accountCloudSelectedSync(direction){
@@ -35230,7 +35230,10 @@ async function accountCloudSelectedSync(direction){
       accountSetMessage(`${indexes.length}項目をクラウドへ反映しました。`,'ok');
     }else{
       if(!confirm(`選択した${indexes.length}項目をクラウドからこの端末へ反映します。続けますか？`))return;
-      accountSaveRestoreBackup(local); const merged=accountCloudMergeSelected(local,'cloud',rows,indexes); accountApplyCloudSnapshot(merged,{preserveCollectionWhenMissing:true});
+      if(!accountSaveRestoreBackup(local)){
+        accountSetMessage('選択同期前の端末データを安全退避できなかったため、同期を中止しました。端末の空き容量を確認してください。','error');return;
+      }
+      const merged=accountCloudMergeSelected(local,'cloud',rows,indexes); accountApplyCloudSnapshot(merged,{preserveCollectionWhenMissing:true});
       accountSetMessage(`${indexes.length}項目を端末へ反映しました。`,'ok');
     }
     await accountCloudCompare();
@@ -35628,7 +35631,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='16.23';
+  manifest.appVersion='16.24';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -35669,7 +35672,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'16.23',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'16.24',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
@@ -35738,7 +35741,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <script>
-// v16.23 cloud management UI
+// v16.24 cloud management UI
 (function(){
   let currentCloudTab='overview';
   function setAccountCloudTab(name){
