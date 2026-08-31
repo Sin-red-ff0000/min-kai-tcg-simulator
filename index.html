@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.30</title>
+<title>みん会TCG Simulator v16.31</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20305,6 +20305,178 @@ h3 .minkai-ruby{margin-top:.45em}
 @media(max-width:700px){.frame-detail-v1630{grid-template-columns:1fr}}
 </style>
 
+
+<style id="v1631-existing-visual-quality-pass">
+/* ==========================================================
+   v16.31 Existing FX / frame quality pass
+   Existing IDs and saved settings stay compatible. This pass adds
+   material structure, dual-tone visibility and restrained light motion.
+   ========================================================== */
+
+/* Common legacy-surface lift: preserve art on both light and dark cards. */
+.card-fx-layer.fx-hologram,.card-fx-layer.fx-prism,.card-fx-layer.fx-aurora,.card-fx-layer.fx-rainbow,
+.card-fx-layer.fx-metal-foil,.card-fx-layer.fx-gunmetal,.card-fx-layer.fx-burnished-copper,
+.card-fx-layer.fx-dichroic-glass,.card-fx-layer.fx-opal-glass,.card-fx-layer.fx-crystal-resin,
+.card-fx-layer.fx-velvet-matte,.card-fx-layer.fx-aurora-silk,.card-fx-layer.fx-royal-velvet,
+.card-fx-layer.fx-petals,.card-fx-layer.fx-fog,.card-fx-layer.fx-rain-streak,
+.card-fx-layer.fx-fire,.card-fx-layer.fx-solar-flare,.card-fx-layer.fx-moonlight,.card-fx-layer.fx-digital-code{
+  isolation:isolate;
+  filter:hue-rotate(var(--fx-hue,0deg)) saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1));
+}
+
+/* Hologram: micro-emboss + spectral film, not a single rainbow stripe. */
+.fx-hologram{
+ background:
+   repeating-linear-gradient(132deg,rgba(255,255,255,.055) 0 1px,rgba(5,18,28,.055) 1px 3px,transparent 3px 10px),
+   radial-gradient(ellipse at 18% 20%,rgba(89,235,255,.18),transparent 33%),
+   radial-gradient(ellipse at 78% 72%,rgba(255,105,211,.15),transparent 38%),
+   linear-gradient(112deg,rgba(5,12,19,.16),rgba(255,255,255,.08) 35%,rgba(7,17,25,.11) 62%,rgba(255,255,255,.06))!important;
+ mix-blend-mode:soft-light!important;
+}
+.fx-hologram::before{inset:0!important;background:repeating-conic-gradient(from 17deg at 53% 48%,rgba(255,255,255,.12) 0 1.1deg,transparent 1.2deg 11deg)!important;background-size:72px 72px!important;opacity:calc(.28 * var(--fx-structure,1))!important;mix-blend-mode:overlay!important}
+.fx-hologram::after{inset:-18%!important;background:linear-gradient(111deg,transparent 34%,rgba(96,239,255,.10) 42%,rgba(255,255,255,.45) 49%,rgba(255,126,225,.10) 56%,transparent 65%)!important;opacity:calc(.46 * var(--fx-reflection,1))!important;mix-blend-mode:screen!important;transform:translateX(-22%)!important}
+.fx-animate .fx-hologram::after{animation:v1631FilmLight var(--fx-duration,7s) ease-in-out infinite!important}
+
+/* Prism: many shallow facets rather than one large conic colour wash. */
+.fx-prism{clip-path:none!important;background:linear-gradient(125deg,rgba(4,9,16,.16),rgba(255,255,255,.055) 48%,rgba(3,8,15,.12))!important;mix-blend-mode:soft-light!important}
+.fx-prism::before{inset:0!important;background:conic-gradient(from 12deg at 23% 31%,transparent 0 14deg,rgba(255,122,185,.19) 17deg 25deg,rgba(95,224,255,.16) 29deg 39deg,transparent 43deg 72deg),conic-gradient(from 198deg at 76% 67%,transparent 0 18deg,rgba(255,231,102,.15) 22deg 31deg,rgba(137,108,255,.17) 35deg 44deg,transparent 48deg 75deg)!important;opacity:calc(.74 * var(--fx-structure,1))!important;mix-blend-mode:screen!important;filter:none!important}
+.fx-prism::after{inset:0!important;background:repeating-linear-gradient(34deg,transparent 0 13%,rgba(255,255,255,.11) 13.4% 14%,rgba(8,16,25,.09) 14.5% 15.2%,transparent 16% 28%)!important;opacity:calc(.55 * var(--fx-reflection,1))!important;mix-blend-mode:overlay!important}
+.fx-animate .fx-prism::before{animation:v1631FacetLight var(--fx-duration,9s) ease-in-out infinite alternate!important}
+.fx-animate .fx-prism::after{animation:none!important}
+
+/* Aurora/rainbow: broad optical layers with dark counter-tone so bright art keeps the effect. */
+.fx-aurora{background:radial-gradient(ellipse at 17% 36%,rgba(42,250,191,.20),transparent 38%),radial-gradient(ellipse at 72% 48%,rgba(157,99,255,.20),transparent 41%),radial-gradient(ellipse at 49% 82%,rgba(64,176,255,.16),transparent 34%),linear-gradient(118deg,rgba(4,11,19,.14),transparent 38%,rgba(255,255,255,.055),rgba(5,10,18,.12))!important;mix-blend-mode:soft-light!important}
+.fx-aurora::before{inset:-8%!important;background:linear-gradient(108deg,transparent 18%,rgba(88,255,207,.13) 33%,rgba(104,183,255,.11) 49%,rgba(194,105,255,.13) 65%,transparent 82%)!important;filter:blur(12px)!important;opacity:calc(.8 * var(--fx-structure,1))!important}
+.fx-aurora::after{inset:-18%!important;background:linear-gradient(116deg,transparent 39%,rgba(255,255,255,.28) 48%,transparent 58%)!important;opacity:calc(.34 * var(--fx-reflection,1))!important;mix-blend-mode:screen!important}
+.fx-animate .fx-aurora::before{animation:v1631AuroraLight var(--fx-duration,10s) ease-in-out infinite alternate!important}
+.fx-rainbow{background:linear-gradient(112deg,rgba(255,65,112,.13),rgba(255,186,72,.12) 20%,rgba(235,241,92,.10) 34%,rgba(73,223,172,.11) 51%,rgba(72,181,255,.12) 68%,rgba(155,101,255,.13) 84%,rgba(255,91,195,.11)),linear-gradient(120deg,rgba(3,8,14,.16),transparent 45%,rgba(255,255,255,.05),rgba(4,8,14,.13))!important;mix-blend-mode:soft-light!important}
+.fx-rainbow::before{inset:0!important;background:repeating-linear-gradient(123deg,rgba(255,255,255,.05) 0 1px,transparent 1px 11px)!important;opacity:calc(.45 * var(--fx-structure,1))!important;mix-blend-mode:overlay!important}
+.fx-rainbow::after{inset:-20%!important;background:linear-gradient(108deg,transparent 38%,rgba(255,255,255,.35) 49%,transparent 60%)!important;opacity:calc(.38 * var(--fx-reflection,1))!important}
+.fx-animate .fx-rainbow::after{animation:v1631FilmLight var(--fx-duration,8s) ease-in-out infinite!important}
+
+/* Metal family: micro-brush + shadowed body + local reflection. */
+.fx-metal-foil,.fx-gunmetal,.fx-burnished-copper{background-blend-mode:overlay!important;mix-blend-mode:soft-light!important}
+.fx-metal-foil::before,.fx-gunmetal::before,.fx-burnished-copper::before{inset:0!important;background:repeating-linear-gradient(91deg,rgba(255,255,255,.07) 0 1px,rgba(0,0,0,.055) 1px 2px,transparent 2px 7px)!important;opacity:calc(.48 * var(--fx-structure,1))!important;mix-blend-mode:overlay!important}
+.fx-metal-foil::after,.fx-gunmetal::after,.fx-burnished-copper::after{inset:-16%!important;background:linear-gradient(111deg,transparent 35%,rgba(255,255,255,.08) 42%,rgba(255,255,255,.42) 49%,rgba(255,255,255,.08) 56%,transparent 64%)!important;opacity:calc(.33 * var(--fx-reflection,1))!important;mix-blend-mode:screen!important}
+.fx-gunmetal::before{background:repeating-linear-gradient(94deg,rgba(210,226,236,.05) 0 1px,rgba(0,0,0,.09) 1px 3px,transparent 3px 9px)!important;opacity:calc(.7 * var(--fx-structure,1))!important}
+.fx-burnished-copper::before{background:radial-gradient(ellipse at 21% 25%,rgba(255,230,187,.11),transparent 25%),radial-gradient(ellipse at 77% 72%,rgba(20,8,4,.17),transparent 31%),repeating-linear-gradient(96deg,rgba(255,255,255,.045) 0 1px,transparent 1px 8px)!important}
+.fx-animate .fx-metal-foil::after,.fx-animate .fx-gunmetal::after,.fx-animate .fx-burnished-copper::after{animation:v1631FilmLight var(--fx-duration,10s) ease-in-out infinite!important}
+
+/* Glass/resin: surface gloss + interior haze/refraction. */
+.fx-dichroic-glass,.fx-opal-glass,.fx-crystal-resin{mix-blend-mode:soft-light!important}
+.fx-dichroic-glass::before,.fx-opal-glass::before,.fx-crystal-resin::before{inset:1.5%!important;border:1px solid rgba(255,255,255,.10)!important;background:radial-gradient(ellipse at 30% 27%,rgba(255,255,255,.15),transparent 24%),radial-gradient(ellipse at 69% 72%,rgba(12,20,28,.12),transparent 35%)!important;box-shadow:inset 0 0 22px rgba(255,255,255,.05),inset 0 0 10px rgba(0,0,0,.08)!important;opacity:calc(.62 * var(--fx-structure,1))!important;mix-blend-mode:overlay!important}
+.fx-dichroic-glass::after,.fx-opal-glass::after,.fx-crystal-resin::after{inset:-18%!important;background:linear-gradient(112deg,transparent 37%,rgba(255,255,255,.30) 47%,rgba(185,226,255,.09) 52%,transparent 62%)!important;opacity:calc(.28 * var(--fx-reflection,1))!important;mix-blend-mode:screen!important}
+.fx-animate .fx-dichroic-glass::after,.fx-animate .fx-opal-glass::after,.fx-animate .fx-crystal-resin::after{animation:v1631FilmLight var(--fx-duration,11s) ease-in-out infinite!important}
+
+/* Fabric: fixed fibres/nap. Animation changes sheen only. */
+.fx-velvet-matte::before,.fx-royal-velvet::before{inset:0!important;background:repeating-linear-gradient(88deg,rgba(255,255,255,.026) 0 1px,rgba(0,0,0,.025) 1px 2px,transparent 2px 5px),repeating-linear-gradient(3deg,transparent 0 7px,rgba(255,255,255,.018) 7px 8px)!important;opacity:calc(.8 * var(--fx-structure,1))!important;mix-blend-mode:soft-light!important}
+.fx-aurora-silk::before{inset:0!important;background:repeating-linear-gradient(96deg,rgba(255,255,255,.055) 0 1px,transparent 1px 5px),linear-gradient(112deg,transparent 25%,rgba(160,235,255,.09) 40%,rgba(232,161,255,.08) 58%,transparent 75%)!important;opacity:calc(.7 * var(--fx-structure,1))!important;mix-blend-mode:overlay!important}
+.fx-velvet-matte::after,.fx-royal-velvet::after,.fx-aurora-silk::after{inset:-12%!important;background:linear-gradient(108deg,transparent 35%,rgba(255,255,255,.14) 48%,transparent 61%)!important;opacity:calc(.18 * var(--fx-reflection,1))!important;mix-blend-mode:soft-light!important}
+.fx-animate .fx-aurora-silk::after{animation:v1631SoftSheen var(--fx-duration,12s) ease-in-out infinite alternate!important}
+
+/* Petals: petal silhouettes instead of typographic diamonds. */
+.fx-petals{background:radial-gradient(ellipse at 21% 26%,rgba(255,171,199,.10),transparent 28%),radial-gradient(ellipse at 76% 71%,rgba(239,188,255,.08),transparent 32%),linear-gradient(120deg,rgba(8,9,15,.06),transparent 50%,rgba(255,255,255,.025))!important;mix-blend-mode:soft-light!important}
+.fx-petals::before{content:""!important;inset:0!important;background:radial-gradient(ellipse 8% 3.7% at 18% 21%,rgba(255,198,216,.34) 0 45%,transparent 52%),radial-gradient(ellipse 6% 3% at 69% 18%,rgba(255,176,206,.27) 0 45%,transparent 53%),radial-gradient(ellipse 7% 3.3% at 82% 58%,rgba(255,219,227,.29) 0 44%,transparent 52%),radial-gradient(ellipse 5% 2.6% at 34% 73%,rgba(244,183,221,.25) 0 44%,transparent 52%),radial-gradient(ellipse 7% 3.1% at 61% 87%,rgba(255,207,190,.23) 0 44%,transparent 52%)!important;background-size:100% 100%!important;transform:rotate(-8deg)!important;opacity:calc(.82 * var(--fx-structure,1))!important;text-shadow:none!important}
+.fx-petals::after{inset:-15%!important;background:linear-gradient(118deg,transparent 40%,rgba(255,242,247,.17) 49%,transparent 58%)!important;opacity:calc(.22 * var(--fx-reflection,1))!important}
+.fx-animate .fx-petals::before{animation:v1631PetalBreath var(--fx-duration,11s) ease-in-out infinite alternate!important}
+.fx-animate .fx-petals::after{animation:v1631SoftSheen var(--fx-duration,13s) ease-in-out infinite alternate!important}
+
+/* Fog: layered low-frequency haze, no whole-layer blur. */
+.fx-fog{filter:hue-rotate(var(--fx-hue,0deg)) saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1))!important;background:linear-gradient(180deg,rgba(8,13,18,.06),transparent 32%,rgba(224,233,239,.08) 58%,transparent 82%)!important;mix-blend-mode:soft-light!important}
+.fx-fog::before{inset:-12%!important;background:radial-gradient(ellipse 70% 23% at 20% 72%,rgba(225,234,240,.24),transparent 67%),radial-gradient(ellipse 72% 21% at 81% 48%,rgba(205,219,229,.20),transparent 70%),radial-gradient(ellipse 58% 18% at 48% 87%,rgba(242,246,248,.16),transparent 70%)!important;filter:blur(7px)!important;opacity:calc(.7 * var(--fx-structure,1))!important;mix-blend-mode:screen!important}
+.fx-fog::after{inset:-10%!important;background:radial-gradient(ellipse 62% 16% at 55% 28%,rgba(27,35,43,.12),transparent 70%),radial-gradient(ellipse 65% 15% at 24% 53%,rgba(255,255,255,.12),transparent 70%)!important;filter:blur(4px)!important;opacity:.55!important;mix-blend-mode:soft-light!important}
+.fx-animate .fx-fog::before{animation:v1631FogA var(--fx-duration,12s) ease-in-out infinite alternate!important}.fx-animate .fx-fog::after{animation:v1631FogB var(--fx-duration,12s) ease-in-out infinite alternate!important}
+
+/* Rain: depth-separated streaks, restrained highlights. */
+.fx-rain-streak{background:linear-gradient(112deg,rgba(7,17,26,.10),transparent 40%,rgba(185,224,245,.05),rgba(4,12,20,.10))!important;mix-blend-mode:soft-light!important}
+.fx-rain-streak::before{inset:-8%!important;background:repeating-linear-gradient(108deg,transparent 0 19px,rgba(205,235,249,.22) 20px 21px,transparent 22px 43px)!important;filter:blur(.25px)!important;opacity:calc(.62 * var(--fx-structure,1))!important}
+.fx-rain-streak::after{inset:-8%!important;background:repeating-linear-gradient(108deg,transparent 0 42px,rgba(255,255,255,.16) 43px 44px,transparent 45px 79px)!important;filter:blur(.7px)!important;opacity:calc(.42 * var(--fx-reflection,1))!important}
+.fx-animate .fx-rain-streak::before{animation:v1631Rain var(--fx-duration,7s) linear infinite!important}.fx-animate .fx-rain-streak::after{animation:v1631Rain var(--fx-duration,7s) linear infinite!important}
+
+/* Fire: heat glaze and ember reflection instead of opaque flame blob. */
+.fx-fire{background:radial-gradient(ellipse at 36% 105%,rgba(255,76,18,.24),transparent 47%),radial-gradient(ellipse at 71% 104%,rgba(255,189,65,.18),transparent 43%),linear-gradient(118deg,rgba(22,5,2,.11),transparent 44%,rgba(255,132,37,.07),rgba(20,5,2,.10))!important;mix-blend-mode:soft-light!important}
+.fx-fire::before{inset:-7%!important;background:radial-gradient(ellipse 18% 47% at 22% 96%,rgba(255,211,107,.26),rgba(255,89,21,.13) 43%,transparent 70%),radial-gradient(ellipse 16% 40% at 53% 102%,rgba(255,154,44,.22),rgba(255,62,17,.10) 48%,transparent 70%),radial-gradient(ellipse 14% 34% at 79% 99%,rgba(255,226,126,.19),rgba(255,83,16,.09) 48%,transparent 72%)!important;filter:blur(1.1px)!important;opacity:calc(.76 * var(--fx-structure,1))!important}
+.fx-fire::after{inset:-16%!important;background:linear-gradient(108deg,transparent 37%,rgba(255,225,152,.24) 47%,rgba(255,97,30,.10) 53%,transparent 63%)!important;opacity:calc(.28 * var(--fx-reflection,1))!important}
+.fx-animate .fx-fire::before{animation:v1631HeatLight var(--fx-duration,6s) ease-in-out infinite alternate!important}.fx-animate .fx-fire::after{animation:v1631SoftSheen var(--fx-duration,6s) ease-in-out infinite alternate!important}
+
+/* Solar / moon: optical surface light, with dark counter-shading for visibility on bright art. */
+.fx-solar-flare{background:radial-gradient(circle at 76% 18%,rgba(255,238,168,.24) 0 8%,rgba(255,174,64,.11) 15%,transparent 34%),linear-gradient(125deg,rgba(27,13,3,.10),transparent 45%,rgba(255,237,183,.08),rgba(20,10,2,.08))!important;mix-blend-mode:soft-light!important}
+.fx-solar-flare::before{inset:0!important;background:radial-gradient(circle at 76% 18%,transparent 0 12%,rgba(255,239,183,.18) 13% 14%,transparent 15% 21%,rgba(255,176,68,.09) 22% 23%,transparent 24%)!important;opacity:calc(.72 * var(--fx-structure,1))!important}
+.fx-solar-flare::after{inset:-18%!important;background:linear-gradient(132deg,transparent 40%,rgba(255,245,198,.27) 49%,transparent 58%)!important;opacity:calc(.26 * var(--fx-reflection,1))!important}.fx-animate .fx-solar-flare::after{animation:v1631SoftSheen var(--fx-duration,11s) ease-in-out infinite alternate!important}
+.fx-moonlight{background:radial-gradient(ellipse at 21% 19%,rgba(206,227,255,.20),transparent 31%),linear-gradient(120deg,rgba(7,12,25,.15),transparent 43%,rgba(208,225,255,.06),rgba(5,10,22,.13))!important;mix-blend-mode:soft-light!important}
+.fx-moonlight::before{inset:0!important;background:radial-gradient(circle at 20% 18%,rgba(247,250,255,.23) 0 6%,rgba(176,204,246,.08) 7% 13%,transparent 24%),linear-gradient(128deg,transparent 32%,rgba(174,207,255,.09) 44%,transparent 57%)!important;opacity:calc(.75 * var(--fx-structure,1))!important}
+.fx-moonlight::after{inset:-15%!important;background:linear-gradient(120deg,transparent 39%,rgba(229,239,255,.22) 49%,transparent 59%)!important;opacity:calc(.20 * var(--fx-reflection,1))!important}.fx-animate .fx-moonlight::after{animation:v1631SoftSheen var(--fx-duration,13s) ease-in-out infinite alternate!important}
+
+/* Digital code: glassy data traces, no large readable text string. */
+.fx-digital-code{background:linear-gradient(120deg,rgba(2,17,18,.13),transparent 40%,rgba(42,228,200,.045),rgba(2,14,17,.10))!important;mix-blend-mode:soft-light!important}
+.fx-digital-code::before{content:""!important;inset:0!important;background:repeating-linear-gradient(90deg,transparent 0 8%,rgba(83,238,213,.075) 8.4% 8.8%,transparent 9.2% 17%),repeating-linear-gradient(0deg,transparent 0 13%,rgba(75,216,198,.052) 13.4% 13.8%,transparent 14.2% 27%)!important;color:transparent!important;text-shadow:none!important;word-spacing:0!important;opacity:calc(.76 * var(--fx-structure,1))!important}
+.fx-digital-code::after{inset:0!important;background:radial-gradient(circle at 18% 24%,rgba(137,255,232,.34) 0 .6%,transparent 1.2%),radial-gradient(circle at 67% 38%,rgba(80,236,211,.30) 0 .55%,transparent 1.1%),radial-gradient(circle at 37% 77%,rgba(130,248,229,.24) 0 .55%,transparent 1.1%),linear-gradient(112deg,transparent 40%,rgba(146,255,236,.13) 49%,transparent 58%)!important;background-size:100% 100%!important;opacity:calc(.55 * var(--fx-reflection,1))!important;mix-blend-mode:screen!important}
+.fx-digital-code .fx-deco-a{inset:8%!important;background:repeating-linear-gradient(90deg,transparent 0 19%,rgba(95,251,225,.11) 19.5% 20%,transparent 20.5% 39%)!important;opacity:.42!important}
+.fx-animate .fx-digital-code::before{animation:v1631DataScan var(--fx-duration,10s) linear infinite!important}.fx-animate .fx-digital-code::after{animation:v1631SoftSheen var(--fx-duration,10s) ease-in-out infinite!important}
+
+@keyframes v1631FilmLight{0%,12%{transform:translateX(-30%)}52%{transform:translateX(7%)}88%,100%{transform:translateX(31%)}}
+@keyframes v1631FacetLight{0%{filter:brightness(.82);opacity:.42}50%{filter:brightness(1.18);opacity:.86}100%{filter:brightness(.94);opacity:.62}}
+@keyframes v1631AuroraLight{0%{transform:translateX(-4%) scaleX(.98);filter:blur(12px) brightness(.88)}100%{transform:translateX(5%) scaleX(1.03);filter:blur(13px) brightness(1.12)}}
+@keyframes v1631SoftSheen{0%,100%{transform:translateX(-11%);opacity:.12}50%{transform:translateX(10%);opacity:.42}}
+@keyframes v1631PetalBreath{0%{transform:rotate(-8deg) translate3d(-1%,1%,0);filter:brightness(.92)}100%{transform:rotate(-4deg) translate3d(1.2%,-1%,0);filter:brightness(1.08)}}
+@keyframes v1631FogA{0%{transform:translateX(-5%) scaleX(1.02)}100%{transform:translateX(5%) scaleX(1.08)}}
+@keyframes v1631FogB{0%{transform:translateX(4%)}100%{transform:translateX(-4%)}}
+@keyframes v1631Rain{from{background-position:0 -120px}to{background-position:0 120px}}
+@keyframes v1631HeatLight{0%{transform:translateY(1.5%) scaleY(.98);filter:blur(1.1px) brightness(.9)}100%{transform:translateY(-1%) scaleY(1.03);filter:blur(1.3px) brightness(1.12)}}
+@keyframes v1631DataScan{from{background-position:0 0,0 0}to{background-position:0 0,0 110px}}
+
+/* ----------------------------------------------------------
+   Built-in frame enhancement. No PNG is replaced: the existing alpha
+   silhouette is used as a mask while material light/depth is layered in.
+   ---------------------------------------------------------- */
+.card-frame-overlay.frame-builtin-enhanced::before{
+ display:block!important;
+ background-image:var(--frame-material-bg,none),var(--frame-partial-glow-bg,none),var(--frame-finish-bg,none)!important;
+ background-repeat:no-repeat!important;
+ background-size:100% 100%,100% 100%,220% 100%!important;
+ background-position:center,center,120% 0!important;
+ opacity:.92;
+}
+.card-frame-overlay.frame-builtin-enhanced{filter:var(--frame-filter,none)}
+/* Five original samples */
+.card-frame-overlay[data-frame-id="builtin_royal_gold"]{--frame-material-bg:linear-gradient(118deg,rgba(68,35,3,.18),transparent 28%,rgba(255,241,172,.26) 47%,transparent 61%,rgba(61,28,2,.16)),repeating-linear-gradient(92deg,rgba(255,255,255,.045) 0 1px,transparent 1px 8px);--frame-filter:drop-shadow(0 1px 1px rgba(0,0,0,.34)) contrast(1.04)}
+.card-frame-overlay[data-frame-id="builtin_silver_prism"]{--frame-material-bg:conic-gradient(from 35deg at 50% 50%,rgba(128,216,255,.14),rgba(255,166,226,.12),rgba(255,239,145,.12),rgba(151,179,255,.13),rgba(128,216,255,.14)),linear-gradient(118deg,rgba(8,18,26,.14),transparent 35%,rgba(255,255,255,.22) 49%,transparent 62%,rgba(6,14,22,.13));--frame-filter:drop-shadow(0 1px 1px rgba(0,0,0,.28)) contrast(1.05)}
+.card-frame-overlay[data-frame-id="builtin_sakura_lacquer"]{--frame-material-bg:linear-gradient(120deg,rgba(24,3,10,.18),transparent 35%,rgba(255,220,230,.17) 49%,transparent 61%,rgba(22,2,8,.15)),radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.10),transparent 25%);--frame-filter:drop-shadow(0 1px 1px rgba(0,0,0,.30)) saturate(1.04)}
+.card-frame-overlay[data-frame-id="builtin_arcane_halo"]{--frame-material-bg:radial-gradient(ellipse at 50% 50%,transparent 48%,rgba(159,217,255,.14) 58%,transparent 72%),linear-gradient(125deg,rgba(7,15,31,.15),transparent 39%,rgba(223,240,255,.16) 49%,transparent 61%,rgba(7,12,28,.14));--frame-filter:drop-shadow(0 0 2px rgba(116,184,255,.20)) contrast(1.04)}
+.card-frame-overlay[data-frame-id="builtin_cyber_circuit"]{--frame-material-bg:repeating-linear-gradient(90deg,transparent 0 12%,rgba(90,242,224,.07) 12.5% 13%,transparent 13.5% 25%),linear-gradient(120deg,rgba(2,19,23,.17),transparent 37%,rgba(116,255,232,.13) 49%,transparent 61%,rgba(1,13,18,.15));--frame-filter:drop-shadow(0 0 2px rgba(60,224,211,.18)) contrast(1.06)}
+
+/* Gen2 theme frames: material-aware light, kept subtle so the original art remains the design. */
+.card-frame-overlay[data-frame-id="builtin:gen2-01"],.card-frame-overlay[data-frame-id="builtin:gen2-16"]{--frame-material-bg:linear-gradient(122deg,rgba(38,8,5,.16),transparent 34%,rgba(255,222,170,.15) 49%,transparent 63%,rgba(30,4,4,.15));--frame-filter:drop-shadow(0 1px 1px rgba(0,0,0,.32)) contrast(1.04)}
+.card-frame-overlay[data-frame-id="builtin:gen2-02"],.card-frame-overlay[data-frame-id="builtin:gen2-05"]{--frame-material-bg:radial-gradient(circle at 26% 19%,rgba(203,218,255,.14),transparent 22%),radial-gradient(circle at 74% 79%,rgba(163,126,255,.12),transparent 28%),linear-gradient(120deg,rgba(5,7,22,.16),transparent 42%,rgba(226,232,255,.12) 50%,transparent 62%,rgba(4,6,19,.14));--frame-filter:drop-shadow(0 1px 2px rgba(8,5,30,.34)) contrast(1.04)}
+.card-frame-overlay[data-frame-id="builtin:gen2-03"],.card-frame-overlay[data-frame-id="builtin:gen2-09"],.card-frame-overlay[data-frame-id="builtin:gen2-21"]{--frame-material-bg:linear-gradient(118deg,rgba(0,0,0,.26),transparent 34%,rgba(196,186,226,.10) 49%,transparent 61%,rgba(0,0,0,.24)),radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(0,0,0,.14) 80%);--frame-filter:drop-shadow(0 1px 2px rgba(0,0,0,.48)) contrast(1.07)}
+.card-frame-overlay[data-frame-id="builtin:gen2-04"],.card-frame-overlay[data-frame-id="builtin:gen2-20"]{--frame-material-bg:repeating-linear-gradient(92deg,rgba(255,255,255,.045) 0 1px,rgba(0,0,0,.04) 1px 2px,transparent 2px 8px),linear-gradient(118deg,rgba(5,12,17,.18),transparent 36%,rgba(206,235,245,.18) 49%,transparent 61%,rgba(4,10,15,.16));--frame-filter:drop-shadow(0 1px 1px rgba(0,0,0,.40)) contrast(1.06)}
+.card-frame-overlay[data-frame-id="builtin:gen2-06"],.card-frame-overlay[data-frame-id="builtin:gen2-19"]{--frame-material-bg:radial-gradient(ellipse at 25% 20%,rgba(230,244,197,.10),transparent 28%),linear-gradient(120deg,rgba(7,20,9,.17),transparent 38%,rgba(233,242,205,.12) 49%,transparent 62%,rgba(7,18,8,.15));--frame-filter:drop-shadow(0 1px 1px rgba(4,18,7,.38)) contrast(1.04)}
+.card-frame-overlay[data-frame-id="builtin:gen2-07"]{--frame-material-bg:linear-gradient(118deg,rgba(70,38,4,.17),transparent 33%,rgba(255,243,182,.24) 49%,transparent 61%,rgba(65,31,3,.15)),radial-gradient(ellipse at 50% 16%,rgba(255,255,255,.09),transparent 22%);--frame-filter:drop-shadow(0 1px 1px rgba(0,0,0,.34)) contrast(1.05)}
+.card-frame-overlay[data-frame-id="builtin:gen2-08"]{--frame-material-bg:conic-gradient(from 12deg at 50% 50%,rgba(139,224,255,.10),rgba(255,177,230,.10),rgba(211,193,255,.11),rgba(139,224,255,.10)),linear-gradient(118deg,rgba(14,18,30,.10),transparent 36%,rgba(255,255,255,.18) 49%,transparent 62%,rgba(12,16,28,.10));--frame-filter:drop-shadow(0 0 2px rgba(175,202,255,.20)) contrast(1.03)}
+.card-frame-overlay[data-frame-id="builtin:gen2-10"]{--frame-material-bg:linear-gradient(120deg,rgba(65,50,20,.12),transparent 34%,rgba(255,250,216,.22) 49%,transparent 62%,rgba(52,42,18,.11)),radial-gradient(ellipse at 50% 50%,rgba(255,247,206,.06),transparent 70%);--frame-filter:drop-shadow(0 1px 1px rgba(58,45,20,.27)) contrast(1.03)}
+.card-frame-overlay[data-frame-id="builtin:gen2-17"]{--frame-material-bg:linear-gradient(120deg,rgba(1,17,27,.19),transparent 36%,rgba(169,226,244,.14) 49%,transparent 61%,rgba(1,13,23,.18)),radial-gradient(ellipse at 50% 72%,rgba(66,163,191,.08),transparent 43%);--frame-filter:drop-shadow(0 1px 2px rgba(0,19,28,.40)) contrast(1.05)}
+.card-frame-overlay[data-frame-id="builtin:gen2-18"]{--frame-material-bg:linear-gradient(120deg,rgba(39,5,2,.20),transparent 35%,rgba(255,173,83,.15) 49%,transparent 61%,rgba(31,3,1,.18));--frame-filter:drop-shadow(0 1px 2px rgba(36,4,0,.46)) contrast(1.06)}
+
+/* v16.29 material frames also receive a finer physical-light pass. */
+.card-frame-overlay[data-frame-id="builtin:material-01"]{--frame-material-bg:repeating-linear-gradient(96deg,rgba(255,255,255,.035) 0 1px,rgba(0,0,0,.06) 1px 3px,transparent 3px 9px),linear-gradient(118deg,rgba(0,0,0,.22),transparent 37%,rgba(211,225,231,.15) 49%,transparent 61%,rgba(0,0,0,.20));--frame-filter:drop-shadow(0 1px 2px rgba(0,0,0,.52)) contrast(1.08)}
+.card-frame-overlay[data-frame-id="builtin:material-02"]{--frame-material-bg:radial-gradient(ellipse at 29% 18%,rgba(255,255,255,.20),transparent 26%),linear-gradient(120deg,rgba(92,100,104,.08),transparent 38%,rgba(255,255,255,.20) 49%,transparent 63%,rgba(75,82,87,.07));--frame-filter:drop-shadow(0 1px 1px rgba(40,48,55,.26)) contrast(1.025)}
+.card-frame-overlay[data-frame-id="builtin:material-03"]{--frame-material-bg:radial-gradient(ellipse at 18% 72%,rgba(58,102,81,.10),transparent 24%),linear-gradient(120deg,rgba(48,28,7,.17),transparent 37%,rgba(236,203,132,.16) 49%,transparent 62%,rgba(39,22,6,.16));--frame-filter:drop-shadow(0 1px 2px rgba(35,22,8,.40)) contrast(1.06)}
+.card-frame-overlay[data-frame-id="builtin:material-04"]{--frame-material-bg:repeating-radial-gradient(ellipse at 50% 50%,rgba(255,255,255,.018) 0 1px,rgba(0,0,0,.018) 1px 2px,transparent 2px 6px),linear-gradient(120deg,rgba(20,10,5,.15),transparent 40%,rgba(243,210,166,.08) 49%,transparent 60%,rgba(17,8,4,.14));--frame-filter:drop-shadow(0 1px 2px rgba(20,9,3,.42)) contrast(1.05)}
+.card-frame-overlay[data-frame-id="builtin:material-05"]{--frame-material-bg:linear-gradient(118deg,rgba(5,10,14,.17),transparent 33%,rgba(255,246,202,.18) 45%,rgba(214,232,240,.14) 52%,transparent 64%,rgba(4,9,13,.16)),repeating-linear-gradient(90deg,transparent 0 15%,rgba(255,255,255,.04) 15.4% 15.8%,transparent 16.2% 31%);--frame-filter:drop-shadow(0 1px 1px rgba(0,0,0,.38)) contrast(1.06)}
+
+/* Keep finish animation working with the added first material layer. */
+.card-frame-overlay.frame-builtin-enhanced[data-frame-finish="foil"]::before,
+.card-frame-overlay.frame-builtin-enhanced[data-frame-finish="metallic"]::before,
+.card-frame-overlay.frame-builtin-enhanced[data-frame-finish="polarized"]::before,
+.card-frame-overlay.frame-builtin-enhanced[data-frame-finish="rainbow"]::before{animation:v1631FrameFinishSweep calc(6.4s / var(--frame-motion-speed,1)) ease-in-out infinite}
+@keyframes v1631FrameFinishSweep{0%,12%{background-position:center,center,150% 0}52%{background-position:center,center,48% 0}88%,100%{background-position:center,center,-60% 0}}
+
+@media(max-width:700px){
+ .card-frame-overlay.frame-builtin-enhanced::before{opacity:.78}
+ .collection-list-art .card-frame-overlay.frame-builtin-enhanced::before,.pile .card-frame-overlay.frame-builtin-enhanced::before{opacity:.62}
+}
+</style>
+
 </head>
 <body>
 <div id="app-background-layer" aria-hidden="true">
@@ -20312,7 +20484,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.30 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.31 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23497,6 +23669,7 @@ async function hydrateCardFrame(el){
    applyFrameLinkVisual(el,cfg,syncProfile);
    el.classList.add('frame-loaded');
    el.dataset.frameId=cfg.frameId;
+   el.classList.toggle('frame-builtin-enhanced',isBuiltinFrameId(cfg.frameId));
    el.dataset.frameReady='1';
  }catch(err){
    console.warn('カードフレーム読込失敗',err);
@@ -24660,7 +24833,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.30',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.31',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -26044,7 +26217,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
    el.style.webkitMaskRepeat='no-repeat';
    el.style.maskRepeat='no-repeat';
    el.style.webkitMaskPosition='center';
-   el.style.maskPosition='center';applyFrameLinkVisual(el,workingFrame,frameFxSyncProfile(card));el.classList.add('frame-loaded')}
+   el.style.maskPosition='center';el.dataset.frameId=workingFrame.frameId;el.classList.toggle('frame-builtin-enhanced',isBuiltinFrameId(workingFrame.frameId));applyFrameLinkVisual(el,workingFrame,frameFxSyncProfile(card));el.classList.add('frame-loaded')}
      };
      const commitFrame=()=>{clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{try{await putCardFrameLink(cardId,workingFrame);renderCollection();if(board)renderBoard();hydrateAllCardFrames()}catch(err){console.error(err);toast('フレーム詳細設定を保存できませんでした')}},100)};
      const bindRange=(id,key,valueId,suffix='')=>{const el=$(id),out=$(valueId);if(!el)return;el.oninput=()=>{workingFrame[key]=Number(el.value);if(out)out.textContent=`${el.value}${suffix}`;applyPreview();commitFrame()}};
@@ -26078,7 +26251,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
    el.style.webkitMaskRepeat='no-repeat';
    el.style.maskRepeat='no-repeat';
    el.style.webkitMaskPosition='center';
-   el.style.maskPosition='center';applyFrameLinkVisual(el,working2,frameFxSyncProfile(card));el.classList.add('frame-loaded')}};
+   el.style.maskPosition='center';el.dataset.frameId=working2.frameId;el.classList.toggle('frame-builtin-enhanced',isBuiltinFrameId(working2.frameId));applyFrameLinkVisual(el,working2,frameFxSyncProfile(card));el.classList.add('frame-loaded')}};
      const pick=$('#frame2-pick');if(pick)pick.onchange=()=>{working2.frameId=pick.value;applyPreview2();commit2()};
      const bind2=(id,key,outId,suffix='')=>{const el=$(id),out=$(outId);if(!el)return;el.oninput=()=>{working2[key]=Number(el.value);if(out)out.textContent=`${el.value}${suffix}`;applyPreview2();commit2()}};
      bind2('#frame2-scale','scale','#frame2-scale-v','%');bind2('#frame2-opacity','opacity','#frame2-opacity-v','%');bind2('#frame2-x','x','#frame2-x-v');bind2('#frame2-y','y','#frame2-y-v');bind2('#frame2-rotate','rotate','#frame2-rotate-v','°');bind2('#frame2-motion-speed','motionSpeed','#frame2-motion-speed-v','%');bind2('#frame2-sync-strength','fxSyncStrength','#frame2-sync-strength-v','%');
@@ -35411,7 +35584,7 @@ async function accountCloudInitialize(){
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.30'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.31'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
@@ -35428,7 +35601,7 @@ function accountCloudLocalSnapshot(){
   const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
     schema_version:2,
-    app_version:'16.30',
+    app_version:'16.31',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
     decks:Array.isArray(decks)?decks:[],
@@ -35609,7 +35782,7 @@ function accountCloudMergeSelected(base,source,rows,indexes){
     }
     out[prop]=list;
   }
-  out.schema_version=2; out.app_version='16.30'; out.saved_at=new Date().toISOString();
+  out.schema_version=2; out.app_version='16.31'; out.saved_at=new Date().toISOString();
   return out;
 }
 async function accountCloudSelectedSync(direction){
@@ -36028,7 +36201,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='16.30';
+  manifest.appVersion='16.31';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -36069,7 +36242,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'16.30',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'16.31',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
