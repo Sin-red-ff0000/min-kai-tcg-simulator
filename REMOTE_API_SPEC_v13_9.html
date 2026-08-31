@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>みん会TCG Simulator v13.9 Remote API additions | min-kai-tcg-simulator</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="みん会TCG Simulator v13.9 Remote API additions" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://sin-red-ff0000.github.io/min-kai-tcg-simulator/REMOTE_API_SPEC_v13_9.html" />
+<meta property="og:url" content="https://sin-red-ff0000.github.io/min-kai-tcg-simulator/REMOTE_API_SPEC_v13_9.html" />
+<meta property="og:site_name" content="min-kai-tcg-simulator" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="みん会TCG Simulator v13.9 Remote API additions" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"みん会TCG Simulator v13.9 Remote API additions","url":"https://sin-red-ff0000.github.io/min-kai-tcg-simulator/REMOTE_API_SPEC_v13_9.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/min-kai-tcg-simulator/assets/css/style.css?v=0075d88ce4bf6b99a83308bebc280059e4bb5c69">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/min-kai-tcg-simulator/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://sin-red-ff0000.github.io/min-kai-tcg-simulator/">min-kai-tcg-simulator</a></h1>
+      
+
+      <h1 id="みん会tcg-simulator-v139-remote-api-additions">みん会TCG Simulator v13.9 Remote API additions</h1>
+
+<p>v13.8仕様に加え session token を導入。</p>
+
+<p>create-room / join-room / watch-room 成功時:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"sessionToken"</span><span class="p">:</span><span class="s2">"opaque-token"</span><span class="p">,</span><span class="nl">"room"</span><span class="p">:{}}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>以後クライアントは Authorization: Bearer <sessionToken> と payload.sessionToken を送信する。
+clientId単独では権限判定しない。</sessionToken></p>
+
+<p>追加 action:</p>
+<ul>
+  <li>shuffle-deck</li>
+  <li>既存 draw</li>
+  <li>既存 random-pick</li>
+</ul>
+
+<p>v13.9クライアントは get-room を約2.5秒間隔でpollする。
+将来はWebSocket/SSE/Realtimeへ差し替える。</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

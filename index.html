@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.14</title>
+<title>みん会TCG Simulator v16.15</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20103,6 +20103,26 @@ h3 .minkai-ruby{margin-top:.45em}
   .deck-review-detail-nav{width:100%;order:3;justify-content:space-between}
 }
 
+
+/* v16.15 account foundation */
+.account-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.account-layout .panel{min-width:0}
+.account-layout label{display:block;margin-top:12px}
+.account-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.account-profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.account-value{margin-top:4px;overflow-wrap:anywhere}
+.account-id-value{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em}
+.account-message{margin-top:12px;min-height:1.4em}
+.account-message.account-message-ok{color:var(--ok)}
+.account-message.account-message-error{color:var(--danger)}
+.account-recovery-panel{grid-column:1/-1}
+.account-local-note{grid-column:1/-1}
+@media(max-width:760px){
+  .account-layout{grid-template-columns:1fr}
+  .account-profile-grid{grid-template-columns:1fr}
+  .account-recovery-panel,.account-local-note{grid-column:auto}
+}
+
 </style>
 </head>
 <body>
@@ -20111,13 +20131,14 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.14 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.15 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
   <button data-nav="collection">コレクション</button>
   <button data-nav="decks">デッキ</button>
   <button data-nav="setup">盤面開始</button>
+  <button data-nav="account">アカウント</button>
   <button data-nav="settings" class="settings-nav-button" aria-label="設定">⚙ 設定</button>
 </header>
 <main>
@@ -20791,6 +20812,64 @@ h3 .minkai-ruby{margin-top:.45em}
     </div>
   </section>
 
+
+  <section id="screen-account" class="screen">
+    <div class="section-head">
+      <h2>アカウント</h2>
+      <span id="account-state-pill" class="pill">未ログイン</span>
+    </div>
+
+    <div class="account-layout">
+      <div class="panel" id="account-logged-out-panel">
+        <h3 style="margin-top:0">ログイン / 新規登録</h3>
+        <p class="muted">メールアドレスとパスワードで利用できます。アカウントを作らなくても、これまで通りシミュレーターの機能は利用できます。</p>
+        <label>メールアドレス
+          <input id="account-email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com">
+        </label>
+        <label>パスワード
+          <input id="account-password" type="password" autocomplete="current-password" minlength="6" placeholder="6文字以上">
+        </label>
+        <div class="actions account-actions">
+          <button class="btn primary" type="button" id="account-login">ログイン</button>
+          <button class="btn" type="button" id="account-signup">新規登録</button>
+          <button class="btn small" type="button" id="account-reset">パスワード再設定メール</button>
+        </div>
+      </div>
+
+      <div class="panel" id="account-logged-in-panel" hidden>
+        <h3 style="margin-top:0">ログイン中</h3>
+        <div class="account-profile-grid">
+          <div><span class="muted">メールアドレス</span><div id="account-current-email" class="account-value">—</div></div>
+          <div><span class="muted">ユーザーID</span><div id="account-current-id" class="account-value account-id-value">—</div></div>
+        </div>
+        <label>表示名
+          <input id="account-display-name" type="text" maxlength="40" autocomplete="nickname" placeholder="表示名">
+        </label>
+        <div class="actions account-actions">
+          <button class="btn primary" type="button" id="account-save-profile">表示名を保存</button>
+          <button class="btn" type="button" id="account-logout">ログアウト</button>
+        </div>
+      </div>
+
+      <div class="panel account-recovery-panel" id="account-recovery-panel" hidden>
+        <h3 style="margin-top:0">新しいパスワードを設定</h3>
+        <p class="muted">再設定メールから開いた場合は、ここで新しいパスワードを設定できます。</p>
+        <label>新しいパスワード
+          <input id="account-recovery-password" type="password" autocomplete="new-password" minlength="6" placeholder="6文字以上">
+        </label>
+        <div class="actions account-actions">
+          <button class="btn primary" type="button" id="account-save-recovery-password">パスワードを変更</button>
+          <button class="btn" type="button" id="account-cancel-recovery">キャンセル</button>
+        </div>
+      </div>
+
+      <div class="panel account-local-note">
+        <h3 style="margin-top:0">v16.15での保存範囲</h3>
+        <p class="muted">今回のアカウント機能はログイン基盤のみです。登録済みカード、デッキ、設定などの端末内データは自動でクラウドへ送信・上書きしません。オンライン対戦のルーム用セッションも、アカウントのログインとは別のまま維持します。</p>
+      </div>
+    </div>
+    <div id="account-message" class="account-message muted" role="status" aria-live="polite"></div>
+  </section>
 
   <section id="screen-settings" class="screen">
     <div class="section-head">
@@ -23450,6 +23529,8 @@ function applyNavigationPrefs(theme){
  });
  const homeBtn=header.querySelector('[data-nav="home"]');
  if(homeBtn)homeBtn.hidden=false;
+ const accountBtn=header.querySelector('[data-nav="account"]');
+ if(accountBtn){header.insertBefore(accountBtn,settingsBtn);accountBtn.hidden=false}
  settingsBtn.hidden=false;
 }
 function applyHomeLayoutPrefs(theme){
@@ -23885,6 +23966,7 @@ function nav(name,opt={}){
    if(name==='collection'){renderCollection();setTimeout(()=>{try{maybeOpenCurrentCollectionCover()}catch(err){reportUiRuntimeError('コレクション表紙',err)}},0)}
    if(name==='decks')renderDecks();
    if(name==='setup')renderSetup();
+   if(name==='account')window.accountRender?.();
    if(name==='settings'){ensureThemeDraft();renderThemeSettings()}
  }catch(err){reportUiRuntimeError(`${THEME_SCREEN_LABELS[name]||name}の表示`,err)}
  syncMobileBoardToolsVisibility();
@@ -34569,6 +34651,298 @@ pauseVisualAnimationsForVisibility();
 
 </script>
 
+
+
+<script>
+/* ==========================================================
+   v16.15 Account / Supabase Auth foundation
+   - Existing local card/deck/settings storage is intentionally untouched.
+   - Online X-Minkai-Session remains a separate session mechanism.
+   ========================================================== */
+(() => {
+'use strict';
+const ACCOUNT_SUPABASE_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co';
+const ACCOUNT_SUPABASE_PUBLISHABLE_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
+const LS_ACCOUNT_SESSION='minkai_account_session_v1';
+let accountSession=null;
+let accountMessage={text:'',kind:''};
+let accountRecoverySession=null;
+
+function accountReadSession(){
+  try{
+    const raw=localStorage.getItem(LS_ACCOUNT_SESSION);
+    if(!raw)return null;
+    const parsed=JSON.parse(raw);
+    return parsed&&typeof parsed==='object'?parsed:null;
+  }catch(_){return null}
+}
+function accountWriteSession(session){
+  accountSession=session&&session.access_token?session:null;
+  try{
+    if(accountSession)localStorage.setItem(LS_ACCOUNT_SESSION,JSON.stringify(accountSession));
+    else localStorage.removeItem(LS_ACCOUNT_SESSION);
+  }catch(err){console.warn('Account session save failed',err)}
+  return accountSession;
+}
+function accountJwtPayload(token){
+  try{
+    const body=String(token||'').split('.')[1];
+    if(!body)return null;
+    const normalized=body.replace(/-/g,'+').replace(/_/g,'/');
+    const padded=normalized+'='.repeat((4-normalized.length%4)%4);
+    return JSON.parse(decodeURIComponent(Array.from(atob(padded),c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join('')));
+  }catch(_){return null}
+}
+function accountSessionExpired(session,leewaySeconds=60){
+  if(!session?.access_token)return true;
+  const exp=Number(session.expires_at||accountJwtPayload(session.access_token)?.exp||0);
+  return !!exp && (Date.now()/1000)>=exp-leewaySeconds;
+}
+function accountApiErrorMessage(data,status){
+  const raw=String(data?.msg||data?.message||data?.error_description||data?.error||'').trim();
+  const lower=raw.toLowerCase();
+  if(status===429||lower.includes('rate limit'))return 'しばらく時間を置いてから、もう一度お試しください。';
+  if(lower.includes('invalid login credentials'))return 'メールアドレスかパスワードが違います。';
+  if(lower.includes('email not confirmed'))return 'メールアドレスの確認がまだ完了していません。確認メールをご確認ください。';
+  if(lower.includes('user already registered')||lower.includes('already been registered'))return 'このメールアドレスはすでに登録されています。';
+  if(lower.includes('password')&&(lower.includes('6')||lower.includes('short')))return 'パスワードは6文字以上で入力してください。';
+  if(lower.includes('signup')&&lower.includes('disabled'))return '現在、新規登録が無効になっています。';
+  if(lower.includes('email')&&lower.includes('invalid'))return 'メールアドレスの形式を確認してください。';
+  return raw||`通信に失敗しました（${status||'network'}）`;
+}
+async function accountRequest(path,{method='GET',body=null,token='',allowError=false}={}){
+  const headers={apikey:ACCOUNT_SUPABASE_PUBLISHABLE_KEY};
+  if(body!==null)headers['Content-Type']='application/json';
+  if(token)headers.Authorization=`Bearer ${token}`;
+  let response;
+  try{
+    response=await fetch(`${ACCOUNT_SUPABASE_URL}${path}`,{method,headers,body:body===null?undefined:JSON.stringify(body)});
+  }catch(err){
+    const out={ok:false,status:0,data:null,message:'ネットワークに接続できませんでした。'};
+    if(allowError)return out;
+    throw new Error(out.message);
+  }
+  let data=null;
+  const text=await response.text();
+  if(text){try{data=JSON.parse(text)}catch(_){data={message:text}}}
+  if(!response.ok){
+    const out={ok:false,status:response.status,data,message:accountApiErrorMessage(data,response.status)};
+    if(allowError)return out;
+    throw new Error(out.message);
+  }
+  return {ok:true,status:response.status,data,message:''};
+}
+async function accountRefreshSession(){
+  const current=accountSession||accountReadSession();
+  if(!current?.refresh_token){accountWriteSession(null);return null}
+  const result=await accountRequest('/auth/v1/token?grant_type=refresh_token',{
+    method:'POST',body:{refresh_token:current.refresh_token},allowError:true
+  });
+  if(!result.ok||!result.data?.access_token){accountWriteSession(null);return null}
+  return accountWriteSession({...current,...result.data});
+}
+async function accountEnsureSession(){
+  let session=accountSession||accountReadSession();
+  if(!session?.access_token){accountSession=null;return null}
+  accountSession=session;
+  if(accountSessionExpired(session))session=await accountRefreshSession();
+  return session;
+}
+function accountUser(){return accountSession?.user||null}
+function accountDisplayName(user=accountUser()){
+  return String(user?.user_metadata?.display_name||user?.user_metadata?.name||'').trim();
+}
+function accountSetMessage(text='',kind=''){
+  accountMessage={text:String(text||''),kind:kind||''};
+  const el=document.getElementById('account-message');
+  if(!el)return;
+  el.textContent=accountMessage.text;
+  el.classList.toggle('account-message-ok',kind==='ok');
+  el.classList.toggle('account-message-error',kind==='error');
+  el.classList.toggle('muted',!kind);
+}
+function accountSetBusy(busy){
+  ['account-login','account-signup','account-reset','account-save-profile','account-logout','account-save-recovery-password','account-cancel-recovery']
+    .forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!!busy});
+}
+function accountRedirectUrl(){return location.href.split('#')[0]}
+function accountRender(){
+  const out=document.getElementById('account-logged-out-panel');
+  const logged=document.getElementById('account-logged-in-panel');
+  const recovery=document.getElementById('account-recovery-panel');
+  const pill=document.getElementById('account-state-pill');
+  if(!out||!logged)return;
+  const user=accountUser();
+  out.hidden=!!user;
+  logged.hidden=!user;
+  if(pill)pill.textContent=user?'ログイン中':'未ログイン';
+  if(user){
+    const email=document.getElementById('account-current-email');if(email)email.textContent=user.email||'—';
+    const id=document.getElementById('account-current-id');if(id)id.textContent=user.id||'—';
+    const name=document.getElementById('account-display-name');if(name&&document.activeElement!==name)name.value=accountDisplayName(user);
+  }
+  if(recovery)recovery.hidden=!accountRecoverySession?.access_token;
+  accountSetMessage(accountMessage.text,accountMessage.kind);
+}
+async function accountSyncUser({quiet=false}={}){
+  const session=await accountEnsureSession();
+  if(!session?.access_token){accountRender();return null}
+  const result=await accountRequest('/auth/v1/user',{token:session.access_token,allowError:true});
+  if(!result.ok){
+    if(result.status===401){accountWriteSession(null);if(!quiet)accountSetMessage('ログイン状態の有効期限が切れました。もう一度ログインしてください。','error')}
+    else if(!quiet)accountSetMessage(result.message,'error');
+    accountRender();return null;
+  }
+  accountWriteSession({...session,user:result.data});
+  accountRender();return result.data;
+}
+async function accountLogin(){
+  const email=String(document.getElementById('account-email')?.value||'').trim();
+  const password=String(document.getElementById('account-password')?.value||'');
+  if(!email||!password){accountSetMessage('メールアドレスとパスワードを入力してください。','error');return}
+  accountSetBusy(true);accountSetMessage('ログインしています…');
+  try{
+    const result=await accountRequest('/auth/v1/token?grant_type=password',{method:'POST',body:{email,password},allowError:true});
+    if(!result.ok||!result.data?.access_token){accountSetMessage(result.message||'ログインできませんでした。','error');return}
+    accountWriteSession(result.data);
+    const pass=document.getElementById('account-password');if(pass)pass.value='';
+    accountSetMessage('ログインしました。','ok');
+    await accountSyncUser({quiet:true});
+  }finally{accountSetBusy(false);accountRender()}
+}
+async function accountSignup(){
+  const email=String(document.getElementById('account-email')?.value||'').trim();
+  const password=String(document.getElementById('account-password')?.value||'');
+  if(!email||!password){accountSetMessage('メールアドレスとパスワードを入力してください。','error');return}
+  if(password.length<6){accountSetMessage('パスワードは6文字以上で入力してください。','error');return}
+  accountSetBusy(true);accountSetMessage('アカウントを登録しています…');
+  try{
+    const result=await accountRequest(`/auth/v1/signup?redirect_to=${encodeURIComponent(accountRedirectUrl())}`,{method:'POST',body:{email,password},allowError:true});
+    if(!result.ok){accountSetMessage(result.message,'error');return}
+    if(result.data?.access_token){
+      accountWriteSession(result.data);
+      accountSetMessage('アカウントを作成してログインしました。','ok');
+      await accountSyncUser({quiet:true});
+    }else{
+      accountSetMessage('登録を受け付けました。確認メールが届いた場合は、メール内のリンクから確認を完了してください。','ok');
+    }
+  }finally{accountSetBusy(false);accountRender()}
+}
+async function accountSendPasswordReset(){
+  const email=String(document.getElementById('account-email')?.value||accountUser()?.email||'').trim();
+  if(!email){accountSetMessage('再設定メールを送るメールアドレスを入力してください。','error');return}
+  accountSetBusy(true);accountSetMessage('再設定メールを送信しています…');
+  try{
+    const result=await accountRequest(`/auth/v1/recover?redirect_to=${encodeURIComponent(accountRedirectUrl())}`,{method:'POST',body:{email},allowError:true});
+    accountSetMessage(result.ok?'パスワード再設定メールを送信しました。メールをご確認ください。':result.message,result.ok?'ok':'error');
+  }finally{accountSetBusy(false)}
+}
+async function accountSaveProfile(){
+  const session=await accountEnsureSession();
+  if(!session?.access_token){accountSetMessage('ログインが必要です。','error');accountRender();return}
+  const displayName=String(document.getElementById('account-display-name')?.value||'').trim();
+  accountSetBusy(true);accountSetMessage('表示名を保存しています…');
+  try{
+    const result=await accountRequest('/auth/v1/user',{method:'PUT',token:session.access_token,body:{data:{display_name:displayName}},allowError:true});
+    if(!result.ok){accountSetMessage(result.message,'error');return}
+    accountWriteSession({...session,user:result.data});
+    accountSetMessage('表示名を保存しました。','ok');
+  }finally{accountSetBusy(false);accountRender()}
+}
+async function accountLogout(){
+  const session=accountSession||accountReadSession();
+  accountSetBusy(true);accountSetMessage('ログアウトしています…');
+  try{
+    if(session?.access_token)await accountRequest('/auth/v1/logout',{method:'POST',token:session.access_token,allowError:true});
+    accountWriteSession(null);
+    accountSetMessage('ログアウトしました。','ok');
+  }finally{accountSetBusy(false);accountRender()}
+}
+function accountRecoveryFromHash(){
+  try{
+    const params=new URLSearchParams(location.hash.replace(/^#/,''));
+    if(params.get('type')!=='recovery')return null;
+    const access_token=params.get('access_token'),refresh_token=params.get('refresh_token');
+    if(!access_token)return null;
+    return {access_token,refresh_token:refresh_token||'',expires_at:Number(params.get('expires_at')||0)||undefined,token_type:params.get('token_type')||'bearer'};
+  }catch(_){return null}
+}
+function accountClearRecoveryHash(){
+  accountRecoverySession=null;
+  if(location.hash){try{history.replaceState(null,'',location.pathname+location.search)}catch(_){location.hash=''}}
+}
+async function accountSaveRecoveryPassword(){
+  const password=String(document.getElementById('account-recovery-password')?.value||'');
+  if(password.length<6){accountSetMessage('新しいパスワードは6文字以上で入力してください。','error');return}
+  const token=accountRecoverySession?.access_token;
+  if(!token){accountSetMessage('パスワード再設定用のログイン情報が見つかりません。','error');return}
+  accountSetBusy(true);accountSetMessage('パスワードを変更しています…');
+  try{
+    const result=await accountRequest('/auth/v1/user',{method:'PUT',token,body:{password},allowError:true});
+    if(!result.ok){accountSetMessage(result.message,'error');return}
+    if(result.data?.id){
+      const current={...accountRecoverySession,user:result.data};
+      accountWriteSession(current);
+    }
+    const input=document.getElementById('account-recovery-password');if(input)input.value='';
+    accountClearRecoveryHash();
+    accountSetMessage('パスワードを変更しました。','ok');
+    await accountSyncUser({quiet:true});
+  }finally{accountSetBusy(false);accountRender()}
+}
+function accountBindUi(){
+  const bind=(id,fn)=>{const el=document.getElementById(id);if(el)el.onclick=fn};
+  bind('account-login',()=>accountLogin().catch(err=>accountSetMessage(err.message||String(err),'error')));
+  bind('account-signup',()=>accountSignup().catch(err=>accountSetMessage(err.message||String(err),'error')));
+  bind('account-reset',()=>accountSendPasswordReset().catch(err=>accountSetMessage(err.message||String(err),'error')));
+  bind('account-save-profile',()=>accountSaveProfile().catch(err=>accountSetMessage(err.message||String(err),'error')));
+  bind('account-logout',()=>accountLogout().catch(err=>accountSetMessage(err.message||String(err),'error')));
+  bind('account-save-recovery-password',()=>accountSaveRecoveryPassword().catch(err=>accountSetMessage(err.message||String(err),'error')));
+  bind('account-cancel-recovery',()=>{accountClearRecoveryHash();accountSetMessage('パスワード再設定をキャンセルしました。');accountRender()});
+  const pass=document.getElementById('account-password');if(pass)pass.addEventListener('keydown',e=>{if(e.key==='Enter')accountLogin().catch(err=>accountSetMessage(err.message||String(err),'error'))});
+}
+async function accountInit(){
+  accountSession=accountReadSession();
+  accountRecoverySession=accountRecoveryFromHash();
+  accountBindUi();
+  accountRender();
+  if(accountRecoverySession){
+    accountSetMessage('新しいパスワードを入力してください。');
+    try{if(typeof nav==='function')nav('account')}catch(_){document.getElementById('screen-account')?.classList.add('active')}
+    accountRender();
+    return;
+  }
+  if(accountSession){
+    try{await accountSyncUser({quiet:true})}catch(err){console.warn('Account session restore failed',err);accountRender()}
+  }
+}
+
+window.accountReadSession=accountReadSession;
+window.accountWriteSession=accountWriteSession;
+window.accountJwtPayload=accountJwtPayload;
+window.accountSessionExpired=accountSessionExpired;
+window.accountApiErrorMessage=accountApiErrorMessage;
+window.accountRequest=accountRequest;
+window.accountRefreshSession=accountRefreshSession;
+window.accountEnsureSession=accountEnsureSession;
+window.accountUser=accountUser;
+window.accountDisplayName=accountDisplayName;
+window.accountSetMessage=accountSetMessage;
+window.accountRender=accountRender;
+window.accountSyncUser=accountSyncUser;
+window.accountLogin=accountLogin;
+window.accountSignup=accountSignup;
+window.accountSendPasswordReset=accountSendPasswordReset;
+window.accountSaveProfile=accountSaveProfile;
+window.accountSaveRecoveryPassword=accountSaveRecoveryPassword;
+window.accountLogout=accountLogout;
+window.accountBindUi=accountBindUi;
+window.accountInit=accountInit;
+
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',accountInit,{once:true});
+else queueMicrotask(accountInit);
+})();
+</script>
 
 
 

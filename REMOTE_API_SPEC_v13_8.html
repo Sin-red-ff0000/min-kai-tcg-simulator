@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>みん会TCG Simulator v13.8 Remote API Contract | min-kai-tcg-simulator</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="みん会TCG Simulator v13.8 Remote API Contract" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://sin-red-ff0000.github.io/min-kai-tcg-simulator/REMOTE_API_SPEC_v13_8.html" />
+<meta property="og:url" content="https://sin-red-ff0000.github.io/min-kai-tcg-simulator/REMOTE_API_SPEC_v13_8.html" />
+<meta property="og:site_name" content="min-kai-tcg-simulator" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="みん会TCG Simulator v13.8 Remote API Contract" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"みん会TCG Simulator v13.8 Remote API Contract","url":"https://sin-red-ff0000.github.io/min-kai-tcg-simulator/REMOTE_API_SPEC_v13_8.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/min-kai-tcg-simulator/assets/css/style.css?v=0075d88ce4bf6b99a83308bebc280059e4bb5c69">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/min-kai-tcg-simulator/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://sin-red-ff0000.github.io/min-kai-tcg-simulator/">min-kai-tcg-simulator</a></h1>
+      
+
+      <h1 id="みん会tcg-simulator-v138-remote-api-contract">みん会TCG Simulator v13.8 Remote API Contract</h1>
+
+<p>クライアントは <code class="language-plaintext highlighter-rouge">POST &lt;Endpoint&gt;</code> に JSON を送信する。
+共通形式:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"create-room"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"payload"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+  </span><span class="nl">"projectId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"minkai-tcg"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>サーバーは成功時 <code class="language-plaintext highlighter-rouge">200</code> + JSON を返す。
+ルーム系レスポンスは原則として以下のどちらか。</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w"> </span><span class="nl">"room"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"..."</span><span class="p">:</span><span class="w"> </span><span class="s2">"sanitized room state"</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="nl">"clientId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>または room オブジェクトそのもの。</p>
+
+<p>重要:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">serverOnlyState</code> のデッキ順は通常クライアントへ返さない。</li>
+  <li>P1にはP2の owner-only 情報を返さない。</li>
+  <li>P2にはP1の owner-only 情報を返さない。</li>
+  <li>観戦者には owner-only / server-only を一切返さない。</li>
+  <li>auditLog はサーバー側を正本とする。</li>
+  <li>shuffle / random / draw はサーバー側で実行する。</li>
+</ul>
+
+<h2 id="actions">actions</h2>
+
+<h3 id="ping">ping</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"at"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="create-room">create-room</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"clientId"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">,</span><span class="nl">"requestedRole"</span><span class="p">:</span><span class="s2">"host"</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>出力:</p>
+<ul>
+  <li>room</li>
+  <li>clientId</li>
+</ul>
+
+<h3 id="join-room">join-room</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"code"</span><span class="p">:</span><span class="s2">"ABC123"</span><span class="p">,</span><span class="nl">"role"</span><span class="p">:</span><span class="s2">"guest"</span><span class="p">,</span><span class="nl">"clientId"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="watch-room">watch-room</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"code"</span><span class="p">:</span><span class="s2">"ABC123"</span><span class="p">,</span><span class="nl">"role"</span><span class="p">:</span><span class="s2">"spectator"</span><span class="p">,</span><span class="nl">"clientId"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="heartbeat">heartbeat</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"roomCode"</span><span class="p">:</span><span class="s2">"ABC123"</span><span class="p">,</span><span class="nl">"clientId"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">,</span><span class="nl">"role"</span><span class="p">:</span><span class="s2">"host|guest|spectator"</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>出力:</p>
+<ul>
+  <li>sanitized room snapshot</li>
+</ul>
+
+<h3 id="get-room">get-room</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"roomCode"</span><span class="p">:</span><span class="s2">"ABC123"</span><span class="p">,</span><span class="nl">"clientId"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">,</span><span class="nl">"role"</span><span class="p">:</span><span class="s2">"host|guest|spectator"</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="leave-room">leave-room</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"roomCode"</span><span class="p">:</span><span class="s2">"ABC123"</span><span class="p">,</span><span class="nl">"clientId"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">,</span><span class="nl">"role"</span><span class="p">:</span><span class="s2">"host|guest|spectator"</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="player-setup">player-setup</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"roomCode"</span><span class="p">:</span><span class="s2">"ABC123"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"clientId"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"role"</span><span class="p">:</span><span class="s2">"host|guest"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"ready"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"deckId"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"deckName"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"deckTotal"</span><span class="p">:</span><span class="mi">40</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"oshiiCardId"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"deckHash"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"lockedDeck"</span><span class="p">:{</span><span class="nl">"entries"</span><span class="p">:[]}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>lockedDeck はサーバー内部で server-only deck order 作成に利用し、
+相手や観戦者へ返さない。</p>
+
+<h3 id="start-match">start-match</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"roomCode"</span><span class="p">:</span><span class="s2">"ABC123"</span><span class="p">,</span><span class="nl">"clientId"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>ホストのみ許可。</p>
+
+<h3 id="sync-public-board">sync-public-board</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"roomCode"</span><span class="p">:</span><span class="s2">"ABC123"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"clientId"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"slot"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"publicBoard"</span><span class="p">:{},</span><span class="w">
+  </span><span class="nl">"revision"</span><span class="p">:</span><span class="mi">12</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>P1はslot 1、P2はslot 2のみ更新可。</p>
+
+<h3 id="shuffle">shuffle</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"cardIds"</span><span class="p">:[</span><span class="s2">"a"</span><span class="p">,</span><span class="s2">"b"</span><span class="p">,</span><span class="s2">"c"</span><span class="p">],</span><span class="nl">"roomCode"</span><span class="p">:</span><span class="s2">"ABC123"</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="random-pick">random-pick</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"candidateIds"</span><span class="p">:[</span><span class="s2">"a"</span><span class="p">,</span><span class="s2">"b"</span><span class="p">,</span><span class="s2">"c"</span><span class="p">],</span><span class="nl">"count"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="nl">"roomCode"</span><span class="p">:</span><span class="s2">"ABC123"</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="set-deck-order">set-deck-order</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"roomCode"</span><span class="p">:</span><span class="s2">"ABC123"</span><span class="p">,</span><span class="nl">"slot"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="nl">"cardIds"</span><span class="p">:[</span><span class="s2">"..."</span><span class="p">]}</span><span class="w">
+</span></code></pre></div></div>
+<p>通常クライアントへ順序を返さないこと。</p>
+
+<h3 id="draw">draw</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"roomCode"</span><span class="p">:</span><span class="s2">"ABC123"</span><span class="p">,</span><span class="nl">"slot"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="nl">"count"</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>返却される <code class="language-plaintext highlighter-rouge">drawn</code> は所有者にのみ返す。</p>
+
+<h3 id="deck-count">deck-count</h3>
+<p>入力:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"roomCode"</span><span class="p">:</span><span class="s2">"ABC123"</span><span class="p">,</span><span class="nl">"slot"</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>枚数のみ返す。</p>
+
+<h2 id="security-requirements">Security requirements</h2>
+<ul>
+  <li>clientIdだけを信用して権限判定しない。</li>
+  <li>実運用ではroom session token等を発行する。</li>
+  <li>host / guest / spectator権限はサーバー側で固定する。</li>
+  <li>shuffle/randomには暗号学的乱数を使用する。</li>
+  <li>auditLogはクライアント要求で削除・改変不可。</li>
+  <li>room更新にはrevisionまたはサーバー時刻による競合制御を入れる。</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
