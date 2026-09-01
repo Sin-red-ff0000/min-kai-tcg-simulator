@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v21.12</title>
+<title>みん会TCG Simulator v21.13</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21430,12 +21430,13 @@ h3 .minkai-ruby{margin-top:.45em}
 </style>
 </style>
 
-<style id="v2112-decor-logical-canvas">
-/* v21.12: render all decoration detail in a fixed 420x588 design space, then scale once. */
-.card-decor-stack{position:absolute;inset:0;overflow:hidden;pointer-events:none;container-type:normal!important;--decor-u:1px!important}
-.card-decor-canvas{position:absolute;left:0;top:0;width:420px;height:588px;transform-origin:0 0;pointer-events:none;overflow:visible}
-.card-decor-canvas>.card-decor-layer:not(.locked){pointer-events:auto}
-.card-decor-layer{max-width:none}
+<style id="v2113-decor-direct-metric">
+/* v21.13: direct metric renderer. No nested fixed-size canvas; every layer is sized against the actual card stack. */
+.card-decor-stack{position:absolute!important;left:0!important;top:0!important;right:0!important;bottom:0!important;width:100%!important;height:100%!important;overflow:hidden;pointer-events:none;container-type:normal!important;--decor-u:1px!important}
+.card-decor-stack>.card-decor-layer{position:absolute;max-width:none;box-sizing:border-box}
+.card-decor-stack>.card-decor-layer:not(.locked){pointer-events:auto}
+.card-decor-layer.decor-cheki-layer{left:0!important;top:0!important;right:0!important;bottom:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;transform:none!important}
+.card-decor-layer.decor-cheki-layer>.decor-cheki-frame{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;box-sizing:border-box}
 .card-decor-layer.decor-text-nowrap,.card-decor-layer.decor-text-nowrap .decor-text-composite,.card-decor-layer.decor-text-nowrap .decor-text-stroke,.card-decor-layer.decor-text-nowrap .decor-text-fill{width:max-content!important;min-width:max-content!important;max-width:none!important;white-space:pre!important;overflow-wrap:normal!important;word-break:normal!important}
 .card-decor-layer.decor-text-wrap .decor-text-composite{white-space:pre-wrap!important}
 </style>
@@ -21447,7 +21448,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v21.12 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v21.13 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22605,7 +22606,7 @@ h3 .minkai-ruby{margin-top:.45em}
     </div>
 
     <div class="online-duel-wrap">
-      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：v16.41で実装。統計画面からカード種類・レベル・パワー・種族を棒グラフ／ドーナツで確認<br>・カスタムレーダーチャート：v16.42で自由入力を強化。3～8軸で表示名・自動集計指標・基準値に加え、完全手動の数値軸も作成可能。将来は複数デッキ比較を拡張予定<br>・外観編集：v21.12で装飾・サイン文字描画を420×588の論理キャンバス方式へ再構築。文字サイズ・縁・影・発光・背景・曲線文字を同じ座標系で描画し、プレビュー／コレクション間の比率差と詳細設定が反映されない問題を修正。</p></section></main>
+      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：v16.41で実装。統計画面からカード種類・レベル・パワー・種族を棒グラフ／ドーナツで確認<br>・カスタムレーダーチャート：v16.42で自由入力を強化。3～8軸で表示名・自動集計指標・基準値に加え、完全手動の数値軸も作成可能。将来は複数デッキ比較を拡張予定<br>・外観編集：v21.13で装飾・サイン描画を実寸追従方式へ再構築。v21.12の固定420×588キャンバス拡縮を廃止し、各カード表示領域の実幅から文字・縁・影・発光・背景・曲線文字を直接px換算。チェキフレームの縮小表示と文字詳細設定の未反映を修正。</p></section></main>
 
       <aside class="online-duel-tools">
         <div class="panel">
@@ -24038,7 +24039,7 @@ function multiTokenIncludes(value,query){
 
 let handScrollPositions=[0,0], zoneScrollPositions={}, pendingHandFollow=new Set();
 let board=null, detailCtx=null, detailNav=null, inspectSession=null, browseSession=null, boardZoom=1;
-const $=s=>document.querySelector(s), $$=(s,root=document)=>[...(root||document).querySelectorAll(s)];
+const $=(s,root=document)=>(root||document).querySelector(s), $$=(s,root=document)=>[...(root||document).querySelectorAll(s)];
 function uid(p='id'){return p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
 function load(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
@@ -27941,28 +27942,57 @@ function decorLayerContentHtml(l){
 }
 function cardDecorHtml(card,region='front'){
  const layers=cardDecorLayers(card).filter(l=>l.visible&&l.zRegion===region);if(!layers.length)return '';
- return `<div class="card-decor-stack decor-${region}" data-card-decor-stack="${esc(card.id)}"><div class="card-decor-canvas" data-decor-canvas>${layers.map(l=>`<div class="card-decor-layer ${l.type==='text'?`decor-text-layer ${l.wrapText?'decor-text-wrap':'decor-text-nowrap'}`:l.type==='stamp'?'decor-stamp-layer':l.type==='cheki'?'decor-cheki-layer':''}" data-card-decor-layer="${esc(l.id)}" style="${decorLayerStyle(l)}">${decorLayerContentHtml(l)}</div>`).join('')}</div></div>`
+ return `<div class="card-decor-stack decor-${region}" data-card-decor-stack="${esc(card.id)}">${layers.map(l=>`<div class="card-decor-layer ${l.type==='text'?`decor-text-layer ${l.wrapText?'decor-text-wrap':'decor-text-nowrap'}`:l.type==='stamp'?'decor-stamp-layer':l.type==='cheki'?'decor-cheki-layer':''}" data-card-decor-layer="${esc(l.id)}" style="${decorLayerStyle(l,1)}">${decorLayerContentHtml(l)}</div>`).join('')}</div>`
 }
-async function hydrateDecorStampElements(root,sourceLayers){for(const el of $$('[data-decor-custom-stamp]',root)){const id=el.dataset.decorCustomStamp,l=sourceLayers.find(x=>x.id===id);if(!l)continue;const url=await decorStampUrl(l);if(!url||!el.isConnected)continue;el.src=url;const wrap=el.closest('[data-decor-custom-stamp-wrap]');if(wrap&&l.stampColorize){wrap.style.background=l.stampColor;wrap.style.webkitMaskImage=`url("${url}")`;wrap.style.maskImage=`url("${url}")`}}for(const el of $$('[data-decor-curved]',root)){const l=sourceLayers.find(x=>x.id===el.dataset.decorCurved);if(l)renderCurvedDecorText(el,l)}}
+async function hydrateDecorStampElements(root,sourceLayers){
+ for(const el of $$('[data-decor-custom-stamp]',root)){
+  const id=el.dataset.decorCustomStamp,l=sourceLayers.find(x=>String(x.id)===String(id));if(!l)continue;
+  const url=await decorStampUrl(l);if(!url||!el.isConnected)continue;el.src=url;
+  const wrap=el.closest('[data-decor-custom-stamp-wrap]');if(wrap&&l.stampColorize){wrap.style.background=l.stampColor;wrap.style.webkitMaskImage=`url("${url}")`;wrap.style.maskImage=`url("${url}")`}
+ }
+ for(const el of $$('[data-decor-curved]',root)){
+  const l=sourceLayers.find(x=>String(x.id)===String(el.dataset.decorCurved));if(!l)continue;
+  const stack=el.closest('[data-card-decor-stack]');const unit=Math.max(.05,Number(stack?.dataset.decorUnit)||1);renderCurvedDecorText(el,l,unit);
+ }
+}
 let decorStackResizeObserver=null;
-function updateDecorStackMetric(stack){
- if(!stack||!stack.isConnected)return;
- const rect=stack.getBoundingClientRect?.();
- const w=Number(rect?.width)||0,h=Number(rect?.height)||0;
- const canvas=stack.querySelector?.('[data-decor-canvas]');
- if(!canvas||w<=0)return;
- const sx=w/420,sy=(h>0?h/588:sx);
- // Keep one logical coordinate space and scale the finished composition. This makes every text detail deterministic.
- canvas.style.transform=`scale(${sx},${sy})`;
- canvas.dataset.decorScaleX=String(sx);
- canvas.dataset.decorScaleY=String(sy);
+function decorLayersForStack(stack){
+ if(stack?.closest?.('#decor-preview')&&decorEditorState?.layers)return decorEditorState.layers.map(normalizeDecorLayer);
+ const card=cards.find(c=>String(c.id)===String(stack?.dataset?.cardDecorStack));return card?cardDecorLayers(card):[];
 }
-function hydrateDecorStackMetrics(root=document){
+function applyDecorRenderedLayer(el,l,unit){
+ if(!el||!l)return;
+ el.style.cssText=decorLayerStyle(l,unit);
+ el.classList.toggle('decor-text-wrap',l.type==='text'&&!!l.wrapText);
+ el.classList.toggle('decor-text-nowrap',l.type==='text'&&!l.wrapText);
+ if(l.type==='stamp'){
+  const base=64*unit;el.style.width=`${base}px`;el.style.height=`${base}px`;
+  el.style.setProperty('--decor-stamp-repeat-unit',String(unit));
+ }
+ if(l.type==='text'&&['arch','reverse-arch','wave','circle'].includes(l.transformType)){
+  const host=el.querySelector('[data-decor-curved]');if(host)renderCurvedDecorText(host,l,unit);
+ }
+}
+function updateDecorStackMetric(stack,sourceLayers=null){
+ if(!stack||!stack.isConnected)return;
+ const rect=stack.getBoundingClientRect?.();const w=Number(rect?.width)||0;if(w<=0)return;
+ const unit=w/420;stack.dataset.decorUnit=String(unit);
+ const layers=(sourceLayers||decorLayersForStack(stack)).map(normalizeDecorLayer);
+ for(const el of $$('[data-card-decor-layer]',stack)){
+  const l=layers.find(x=>String(x.id)===String(el.dataset.cardDecorLayer));if(l)applyDecorRenderedLayer(el,l,unit);
+ }
+}
+function hydrateDecorStackMetrics(root=document,sourceLayers=null){
  const stacks=$$('[data-card-decor-stack]',root);
  if(typeof ResizeObserver==='function'&&!decorStackResizeObserver){decorStackResizeObserver=new ResizeObserver(entries=>{for(const e of entries)updateDecorStackMetric(e.target)})}
- for(const stack of stacks){updateDecorStackMetric(stack);if(decorStackResizeObserver)decorStackResizeObserver.observe(stack)}
+ for(const stack of stacks){updateDecorStackMetric(stack,sourceLayers);if(decorStackResizeObserver)decorStackResizeObserver.observe(stack)}
 }
-async function hydrateAllCardDecor(root=document){hydrateDecorStackMetrics(root);for(const stack of $$('[data-card-decor-stack]',root)){const card=cards.find(c=>String(c.id)===String(stack.dataset.cardDecorStack));if(card)await hydrateDecorStampElements(stack,cardDecorLayers(card))}hydrateDecorStackMetrics(root)}
+async function hydrateAllCardDecor(root=document){
+ hydrateDecorStackMetrics(root);
+ for(const stack of $$('[data-card-decor-stack]',root)){
+  const layers=decorLayersForStack(stack);await hydrateDecorStampElements(stack,layers);updateDecorStackMetric(stack,layers);
+ }
+}
 function normalizeDecorLayer(x={}){
  const type=x.type==='stamp'?'stamp':x.type==='cheki'?'cheki':'text';
  const blend=['normal','screen','multiply','overlay','soft-light'].includes(x.blendMode)?x.blendMode:'normal';
@@ -27985,9 +28015,10 @@ function decorFontFamilyCss(value){
  if(v==='monospace')return '"BIZ UDゴシック","MS Gothic",ui-monospace,monospace';
  return '"Yu Gothic UI","Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,system-ui,sans-serif';
 }
-function decorPenCss(l){
+function decorPenCss(l,unit=1){
  const fill=String(l.fill||'#ffffff');
- const px=v=>`${Number.isFinite(Number(v))?Number(v):0}px`;
+ unit=Math.max(.05,Number(unit)||1);
+ const px=v=>`${(Number.isFinite(Number(v))?Number(v):0)*unit}px`;
  const preset=String(l.penPreset||'standard');
  let filter='';
  const shadows=[`${px(l.shadowX)} ${px(l.shadowY)} ${px(Math.max(0,Number(l.shadowBlur)||0))} ${l.shadowColor||'#000000'}`];
@@ -28005,9 +28036,10 @@ function decorTextHtml(l){
  return `<span class="decor-text-composite ${l.textBgEnabled?'has-backing':''}"><span class="decor-text-stroke" aria-hidden="true">${text}</span><span class="decor-text-fill ${l.useGradient?'has-gradient':''}">${text}</span></span>`;
 }
 function hexToRgba(hex,a=1){const h=String(hex||'#000').replace('#','');const v=h.length===3?h.split('').map(x=>x+x).join(''):h.padEnd(6,'0').slice(0,6);const n=parseInt(v,16);if(!Number.isFinite(n))return `rgba(0,0,0,${a})`;return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${Math.max(0,Math.min(1,a))})`}
-function decorLayerStyle(l){
- if(l.type==='cheki')return `left:0;top:0;width:100%;height:100%;opacity:${Math.max(0,Math.min(1,(Number(l.opacity)||0)/100))};transform:none;mix-blend-mode:${l.blendMode||'normal'};`;
- const pen=decorPenCss(l),px=v=>`${Number.isFinite(Number(v))?Number(v):0}px`;
+function decorLayerStyle(l,unit=1){
+ unit=Math.max(.05,Number(unit)||1);
+ if(l.type==='cheki')return `left:0;top:0;right:0;bottom:0;width:100%;height:100%;opacity:${Math.max(0,Math.min(1,(Number(l.opacity)||0)/100))};transform:none;mix-blend-mode:${l.blendMode||'normal'};`;
+ const pen=decorPenCss(l,unit),px=v=>`${(Number.isFinite(Number(v))?Number(v):0)*unit}px`;
  let sx=l.flipX?-1:1,sy=l.flipY?-1:1;
  const slant=Math.max(-24,Math.min(24,Number(l.fontSlant)||0))+(l.transformType==='italic'?-12:0);
  if(l.transformType==='tall')sy*=1.28;if(l.transformType==='wide')sx*=1.28;
@@ -28020,13 +28052,13 @@ function decorLayerStyle(l){
  return `left:${Number(l.x)||0}%;top:${Number(l.y)||0}%;opacity:${Math.max(0,Math.min(1,(Number(l.opacity)||0)/100))};transform:${transforms};${mix}${textStyle}${stampStyle}`;
 }
 async function decorStampUrl(l){if(!l.customStampId)return '';try{const rec=await imageDbGet('customStamps',l.customStampId);if(!rec?.blob)return '';return URL.createObjectURL(rec.blob)}catch{return ''}}
-function renderCurvedDecorText(host,l){
+function renderCurvedDecorText(host,l,unit=1){
  if(!host)return;host.innerHTML='';
  const chars=[...String(l.text||'')];if(!chars.length)return;
- const unit=1;
+ unit=Math.max(.05,Number(unit)||1);
  const root=document.createElement('span');root.style.cssText='position:relative;display:block;width:1px;height:1px';host.appendChild(root);
  const stroke=document.createElement('span'),fill=document.createElement('span');stroke.className='decor-curved-stroke';fill.className='decor-curved-fill';root.append(stroke,fill);
- const n=Math.max(1,chars.length-1),pen=decorPenCss(l),baseFont=Math.max(1,l.fontSize*unit),spacing=(Number(l.letterSpacing)||0)*unit;
+ const n=Math.max(1,chars.length-1),pen=decorPenCss(l,unit),baseFont=Math.max(1,l.fontSize*unit),spacing=(Number(l.letterSpacing)||0)*unit;
  const place=(parent,ch,i,isStroke)=>{const c=document.createElement('span');c.className='decor-char';c.textContent=ch;c.style.fontFamily=decorFontFamilyCss(l.fontFamily);c.style.fontSize=`${baseFont}px`;c.style.fontWeight=String(l.fontWeight||500);c.style.letterSpacing=`${spacing}px`;const shadows=[`${(Number(l.shadowX)||0)*unit}px ${(Number(l.shadowY)||0)*unit}px ${Math.max(0,Number(l.shadowBlur)||0)*unit}px ${l.shadowColor||'#000000'}`];const glow=Math.max(0,Number(l.glow)||0);if(l.penPreset==='fluorescent'||glow>0)shadows.push(`0 0 ${Math.max(l.penPreset==='fluorescent'?5:0,glow||0)*unit}px ${pen.fill}`);c.style.textShadow=shadows.join(',');
   if(isStroke){c.style.color='transparent';c.style.webkitTextFillColor='transparent';c.style.webkitTextStroke=`${Math.max(0,l.strokeWidth)*unit}px ${l.stroke}`;}else{c.style.webkitTextStroke='0';if(l.useGradient){c.style.color='transparent';c.style.webkitTextFillColor='transparent';c.style.background=`linear-gradient(${Number(l.gradientAngle)||90}deg,${l.fill||'#fff'},${l.fill2||'#ff8ac8'})`;c.style.webkitBackgroundClip='text';c.style.backgroundClip='text'}else{c.style.color=pen.fill;c.style.webkitTextFillColor=pen.fill;}}
   let x=0,y=0,a=0;
@@ -28046,9 +28078,9 @@ async function hydrateDecorPreview(card,{forceImage=false}={}){
   if(seq!==decorPreviewHydrateSeq||!preview.isConnected||!base.isConnected)return;
   const fallback=$('#decor-preview-fallback');if(fallback)fallback.hidden=!!result?.ok;
   hydrateAllCardFrames(preview);hydrateAllCustomFx(preview);applyFxRuntimeTuning(preview);
-  hydrateDecorStackMetrics(preview);
+  hydrateDecorStackMetrics(preview,decorEditorState.layers.map(normalizeDecorLayer));
   await hydrateDecorStampElements(preview,decorEditorState.layers.map(normalizeDecorLayer));
-  hydrateDecorStackMetrics(preview);
+  hydrateDecorStackMetrics(preview,decorEditorState.layers.map(normalizeDecorLayer));
   if(seq!==decorPreviewHydrateSeq||!preview.isConnected)return;
   if(status)status.textContent=result?.ok?'カード画像・エフェクト・フレームを表示中':(result?.reason==='none'?'カード画像未登録：装飾のみ表示':'カード画像の読み込みに失敗：再読込できます');
  }catch(err){
@@ -28065,7 +28097,7 @@ function renderDecorPreview(card){
   const liveLayers=decorEditorState.layers.map(normalizeDecorLayer);
   const liveCard={...card,decorLayers:liveLayers};
   back.innerHTML=cardDecorHtml(liveCard,'back');front.innerHTML=cardDecorHtml(liveCard,'front');
-  hydrateDecorStackMetrics(host);
+  hydrateDecorStackMetrics(host,liveLayers);
   Promise.resolve(hydrateDecorStampElements(back,liveLayers)).catch(err=>console.warn('decor back hydrate failed',err));
   Promise.resolve(hydrateDecorStampElements(front,liveLayers)).catch(err=>console.warn('decor front hydrate failed',err));
   for(const el of $$('[data-card-decor-layer]',host)){
@@ -28108,8 +28140,8 @@ function decorControlsHtml(l){
 async function openCardDecorationEditor(cardId,returnTo='manager'){const card=cards.find(c=>c.id===cardId);if(!card)return;try{decorEditorState={cardId:String(cardId),layers:cardDecorLayers(card),selectedId:'',returnTo};if(decorEditorState.layers.length)decorEditorState.selectedId=decorEditorState.layers[0].id;await renderDecorEditor(card,returnTo)}catch(err){console.error('decoration editor open failed',err);toast('装飾・サイン画面の読み込みに失敗しました');}}
 async function renderDecorEditor(card,returnTo=decorEditorState.returnTo||'manager'){
  const l=decorSelected();let custom=[];try{custom=await imageDbGetAll('customStamps')}catch{}
- openModal(`<div class="modal-head"><h3>装飾・サイン</h3><button class="btn primary" id="decor-save-top">保存</button><button class="btn" id="decor-close">閉じる</button></div><div class="decor-editor"><div class="decor-preview-panel"><div id="decor-preview" class="decor-preview"><div id="decor-preview-base" class="decor-preview-base"><span id="decor-preview-fallback">${esc(card.name)}</span></div><div id="decor-preview-fx" class="decor-preview-fx">${cardFxHtml(card,'collection')}</div><div id="decor-preview-back" class="decor-preview-region decor-preview-back"></div><div id="decor-preview-frame" class="decor-preview-frame">${cardFrameHtml(card)}</div><div id="decor-preview-front" class="decor-preview-region decor-preview-front"></div></div><div class="decor-help">文字描画を420×588の共通キャンバスへ統一しました。プレビューとコレクション表示で文字サイズ・縁・影・発光・背景・曲線文字を同じ描画結果から拡縮します。選択中の文字・スタンプはドラッグ移動できます。折返しOFFの横書き文字は右端へ移動しても一行を維持します。矢印キーで1、Shift＋矢印で5ずつ微調整できます。</div><div class="decor-preview-status-row"><div id="decor-preview-status" class="decor-preview-status">プレビューを準備中…</div><button class="btn small" type="button" id="decor-preview-reload">画像を再読込</button></div></div><div><div class="decor-toolbar"><button class="btn primary" id="decor-add-text">文字を追加</button><button class="btn" id="decor-add-stamp">スタンプを追加</button><button class="btn" id="decor-add-cheki">チェキ風フレーム</button><label class="btn">マイスタンプ追加<input id="decor-custom-file" type="file" accept="image/png,image/webp,image/jpeg,.png,.webp,.jpg,.jpeg" hidden></label></div><div class="decor-stamp-grid" id="decor-stamp-choices" hidden>${BUILTIN_DECOR_STAMPS.map(st=>`<button class="btn decor-stamp-choice" data-decor-stamp-choice="${st.id}" title="${st.name}"><span>${st.glyph}</span><small>${st.name}</small></button>`).join('')}${custom.map(st=>`<button class="btn decor-stamp-choice" data-decor-custom-choice="${esc(st.id)}" title="${esc(st.name||'マイスタンプ')}">画像</button>`).join('')}</div><div class="decor-custom-manager">${custom.length?`<div class="decor-section-title">マイスタンプ管理</div>${custom.map(st=>`<div class="decor-custom-row"><span>${esc(st.name||'マイスタンプ')}</span><button class="btn small" data-decor-custom-rename="${esc(st.id)}">名前変更</button><button class="btn small danger" data-decor-custom-delete="${esc(st.id)}">削除</button></div>`).join('')}`:''}</div><div class="decor-layer-list">${decorLayerListHtml()}</div><div class="decor-editor-statusbar"><span class="pill">${decorEditorState.layers.length} レイヤー</span><span class="pill">文字 ${decorEditorState.layers.filter(x=>x.type==='text').length}/8</span><span class="pill">スタンプ ${decorEditorState.layers.filter(x=>x.type==='stamp').length}</span><span class="muted">選択中：${l?esc(l.name||'レイヤー'):'なし'}</span></div><div class="decor-toolbar"><button class="btn small" id="decor-reset-transform" ${l&&l.type!=='cheki'?'':'disabled'}>配置を初期化</button><button class="btn small" id="decor-up" ${l?'':'disabled'}>上へ</button><button class="btn small" id="decor-down" ${l?'':'disabled'}>下へ</button><button class="btn small" id="decor-top" ${l?'':'disabled'}>最前面</button><button class="btn small" id="decor-bottom" ${l?'':'disabled'}>最背面</button><button class="btn small" id="decor-duplicate" ${l?'':'disabled'}>複製</button><button class="btn small" id="decor-copy-style" ${l&&l.type!=='cheki'?'':'disabled'}>見た目コピー</button><button class="btn small" id="decor-paste-style" ${l&&l.type!=='cheki'?'':'disabled'}>見た目貼付</button><button class="btn small" id="decor-revert-layer" ${l?'':'disabled'}>保存時に戻す</button><button class="btn small danger" id="decor-delete" ${l?'':'disabled'}>削除</button></div><div id="decor-live-apply" class="decor-live-apply">詳細設定は変更と同時にプレビューへ反映されます</div><div class="decor-controls">${decorControlsHtml(l)}</div></div></div><div class="actions"><button class="btn primary" id="decor-save">保存</button><button class="btn" id="decor-cancel">キャンセル</button></div>`);
- bindDecorEditor(card,returnTo);enhanceDecorRangeControls($('#modal'));syncDecorConditionalControls();renderDecorPreview(card);
+ openModal(`<div class="modal-head"><h3>装飾・サイン</h3><button class="btn primary" id="decor-save-top">保存</button><button class="btn" id="decor-close">閉じる</button></div><div class="decor-editor"><div class="decor-preview-panel"><div id="decor-preview" class="decor-preview"><div id="decor-preview-base" class="decor-preview-base"><span id="decor-preview-fallback">${esc(card.name)}</span></div><div id="decor-preview-fx" class="decor-preview-fx">${cardFxHtml(card,'collection')}</div><div id="decor-preview-back" class="decor-preview-region decor-preview-back"></div><div id="decor-preview-frame" class="decor-preview-frame">${cardFrameHtml(card)}</div><div id="decor-preview-front" class="decor-preview-region decor-preview-front"></div></div><div class="decor-help">文字・スタンプ・チェキをカードの実表示サイズへ直接合わせる方式に変更しました。文字サイズ・縁・影・発光・背景・曲線文字は各カード幅からその場でpx換算し、固定キャンバスの二重縮小を行いません。選択中の文字・スタンプはドラッグ移動できます。折返しOFFの横書き文字は右端へ移動しても一行を維持します。矢印キーで1、Shift＋矢印で5ずつ微調整できます。</div><div class="decor-preview-status-row"><div id="decor-preview-status" class="decor-preview-status">プレビューを準備中…</div><button class="btn small" type="button" id="decor-preview-reload">画像を再読込</button></div></div><div><div class="decor-toolbar"><button class="btn primary" id="decor-add-text">文字を追加</button><button class="btn" id="decor-add-stamp">スタンプを追加</button><button class="btn" id="decor-add-cheki">チェキ風フレーム</button><label class="btn">マイスタンプ追加<input id="decor-custom-file" type="file" accept="image/png,image/webp,image/jpeg,.png,.webp,.jpg,.jpeg" hidden></label></div><div class="decor-stamp-grid" id="decor-stamp-choices" hidden>${BUILTIN_DECOR_STAMPS.map(st=>`<button class="btn decor-stamp-choice" data-decor-stamp-choice="${st.id}" title="${st.name}"><span>${st.glyph}</span><small>${st.name}</small></button>`).join('')}${custom.map(st=>`<button class="btn decor-stamp-choice" data-decor-custom-choice="${esc(st.id)}" title="${esc(st.name||'マイスタンプ')}">画像</button>`).join('')}</div><div class="decor-custom-manager">${custom.length?`<div class="decor-section-title">マイスタンプ管理</div>${custom.map(st=>`<div class="decor-custom-row"><span>${esc(st.name||'マイスタンプ')}</span><button class="btn small" data-decor-custom-rename="${esc(st.id)}">名前変更</button><button class="btn small danger" data-decor-custom-delete="${esc(st.id)}">削除</button></div>`).join('')}`:''}</div><div class="decor-layer-list">${decorLayerListHtml()}</div><div class="decor-editor-statusbar"><span class="pill">${decorEditorState.layers.length} レイヤー</span><span class="pill">文字 ${decorEditorState.layers.filter(x=>x.type==='text').length}/8</span><span class="pill">スタンプ ${decorEditorState.layers.filter(x=>x.type==='stamp').length}</span><span class="muted">選択中：${l?esc(l.name||'レイヤー'):'なし'}</span></div><div class="decor-toolbar"><button class="btn small" id="decor-reset-transform" ${l&&l.type!=='cheki'?'':'disabled'}>配置を初期化</button><button class="btn small" id="decor-up" ${l?'':'disabled'}>上へ</button><button class="btn small" id="decor-down" ${l?'':'disabled'}>下へ</button><button class="btn small" id="decor-top" ${l?'':'disabled'}>最前面</button><button class="btn small" id="decor-bottom" ${l?'':'disabled'}>最背面</button><button class="btn small" id="decor-duplicate" ${l?'':'disabled'}>複製</button><button class="btn small" id="decor-copy-style" ${l&&l.type!=='cheki'?'':'disabled'}>見た目コピー</button><button class="btn small" id="decor-paste-style" ${l&&l.type!=='cheki'?'':'disabled'}>見た目貼付</button><button class="btn small" id="decor-revert-layer" ${l?'':'disabled'}>保存時に戻す</button><button class="btn small danger" id="decor-delete" ${l?'':'disabled'}>削除</button></div><div id="decor-live-apply" class="decor-live-apply">詳細設定は変更と同時にプレビューへ反映されます</div><div class="decor-controls">${decorControlsHtml(l)}</div></div></div><div class="actions"><button class="btn primary" id="decor-save">保存</button><button class="btn" id="decor-cancel">キャンセル</button></div>`);
+ enhanceDecorRangeControls($('#modal'));bindDecorEditor(card,returnTo);syncDecorConditionalControls();renderDecorPreview(card);
 }
 function enhanceDecorRangeControls(root=document){
  for(const r of $$('input[type="range"]',root)){
@@ -28178,7 +28210,7 @@ function bindDecorEditor(card,returnTo='manager'){
    // Keep the state object authoritative. Preview reads this same object on every control change.
    syncDecorConditionalControls(l);
    renderDecorPreview(card);
-   const live=$('#decor-live-apply');if(live){live.classList.remove('warn');live.classList.add('ok');live.textContent=`反映済み：${key}`}
+   const live=$('#decor-live-apply');if(live){live.classList.remove('warn');live.classList.add('ok');const rendered=$(`[data-card-decor-layer=\"${CSS.escape(String(l.id))}\"]`,$('#decor-preview'));const computed=(l.type==='text'&&rendered)?getComputedStyle(rendered).fontSize:'';live.textContent=`反映済み：${key}${computed?` / 描画 ${computed}`:''}`}
    return true;
   }catch(err){
    console.error('decor delegated control update failed',el?.id,key,err);
@@ -28186,11 +28218,12 @@ function bindDecorEditor(card,returnTo='manager'){
    return false;
   }
  };
- const controls=$('.decor-controls');
- if(controls){
-  // One delegated path for every detail setting. This avoids lost oninput handlers after range enhancement / UI refresh.
-  controls.addEventListener('input',e=>{const el=e.target;if(el?.id&&decorControlMap[el.id])applyDecorControl(el)});
-  controls.addEventListener('change',e=>{const el=e.target;if(el?.id&&decorControlMap[el.id])applyDecorControl(el)});
+ // Bind every existing detail control directly. v21.11/12 delegated-only handling was too fragile on iOS modal/range DOM updates.
+ for(const id of Object.keys(decorControlMap)){
+  const el=$('#'+id);if(!el)continue;
+  const fire=()=>applyDecorControl(el);
+  if(el.tagName==='SELECT'||el.type==='checkbox')el.addEventListener('change',fire);
+  else{el.addEventListener('input',fire);if(el.type==='color')el.addEventListener('change',fire)}
  }
  if(l.type==='text'){
   $$('[data-decor-font-quick]').forEach(b=>b.onclick=()=>{l.fontFamily=b.dataset.decorFontQuick;renderDecorPreview(card);rer()});
