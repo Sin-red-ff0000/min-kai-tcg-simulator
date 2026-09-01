@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minkai-tcg-simulator-v21-10';
+const CACHE_NAME = 'minkai-tcg-simulator-v21-11';
 const APP_SHELL = [
   './',
   './index.html',
