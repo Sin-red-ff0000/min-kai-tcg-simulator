@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.44</title>
+<title>みん会TCG Simulator v16.45</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17394,6 +17394,19 @@ html{--visual-generation:"12.0"}
  border:none!important;outline:none!important;box-shadow:none!important;
 }
 .fx-ripple-emboss>.fx-deco{display:none!important}
+.fx-heart-emboss{
+ background-image:url('effects/surface-heart-emboss.png')!important;
+ background-size:calc(100%*var(--fx-density-scale,1)) calc(100%*var(--fx-density-scale,1))!important;
+ background-position:center!important;
+ opacity:calc(.34 + .46*var(--fx-structure,1));
+ filter:contrast(var(--fx-structure-contrast,1)) brightness(var(--fx-bright,1));
+ mix-blend-mode:overlay!important;
+}
+.fx-heart-emboss>.fx-deco{display:none!important}
+.card-fx-layer[data-fx-type="heart-emboss"]{--fx-signature-bg:linear-gradient(var(--fx-reflection-angle,125deg),rgba(255,255,255,.08),transparent 34% 64%,rgba(0,0,0,.10));--fx-signature-blend:overlay;--fx-signature-opacity:.58;}
+.card-fx-layer[data-fx-type="heart-emboss"]::before{content:"";position:absolute;inset:0;background:url('effects/surface-heart-emboss.png') center/cover no-repeat;opacity:calc(.22 + .55*var(--fx-structure,1));mix-blend-mode:soft-light;filter:contrast(var(--fx-structure-contrast,1));pointer-events:none}
+.fx-animate .fx-heart-emboss{animation:v1638RakingLight var(--fx-duration,8s) ease-in-out infinite alternate}
+
 @keyframes fxConceptMaterialShift{
   0%{background-position:46% 48%;transform:scale(1.01);filter:hue-rotate(calc(var(--fx-hue,0deg) - 8deg)) saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1))}
   50%{background-position:54% 52%;transform:scale(1.035);filter:hue-rotate(calc(var(--fx-hue,0deg) + 14deg)) saturate(calc(var(--fx-sat,1)*1.08)) brightness(calc(var(--fx-bright,1)*1.06))}
@@ -20171,6 +20184,39 @@ h3 .minkai-ruby{margin-top:.45em}
  .modal-layer.board-detail-live .modal{width:100%;max-width:none;max-height:52dvh;border-radius:16px 16px 0 0;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));box-shadow:0 -12px 34px rgba(0,0,0,.45)}
  .modal-layer.board-detail-live .detail-grid{grid-template-columns:1fr}
 }
+
+/* v16.45 Night family differentiation pass */
+.fx-erotic-black-lace-veil>.fx-material-structure{background:url('effects/erotic-black-lace-veil.png') center/cover no-repeat!important;opacity:calc(.18 + var(--fx-structure,.55)*.98)!important;mix-blend-mode:multiply!important;filter:contrast(calc(.92 + .55*var(--fx-structure-contrast,1))) saturate(calc(.8 + .35*var(--fx-sat,1))) hue-rotate(var(--fx-hue,0deg))!important}
+.fx-erotic-black-lace-veil>.fx-material-grade{background:radial-gradient(ellipse at 8% 18%,rgba(82,12,55,.22),transparent 35%),radial-gradient(ellipse at 94% 76%,rgba(70,7,48,.18),transparent 34%)!important;mix-blend-mode:multiply!important;opacity:calc(.25 + .42*var(--fx-color-influence,.2))!important}
+.fx-erotic-black-lace-veil>.fx-optical-motion{background:linear-gradient(var(--fx-reflection-angle,20deg),transparent 0 37%,rgba(var(--fx-reflection-rgb,255,224,242),.32) 44%,transparent 50% 100%)!important;opacity:calc(.12 + var(--fx-reflection,.25)*.62)!important;mix-blend-mode:screen!important}
+
+.fx-erotic-satin-sheen>.fx-material-structure{background:url('effects/erotic-satin-sheen.png') center/cover no-repeat!important;opacity:calc(.28 + var(--fx-structure,.45)*.84)!important;mix-blend-mode:soft-light!important;filter:contrast(calc(1 + .42*var(--fx-structure-contrast,1))) saturate(calc(.9 + .45*var(--fx-sat,1))) hue-rotate(var(--fx-hue,0deg))!important}
+.fx-erotic-satin-sheen>.fx-material-grade{background:linear-gradient(112deg,rgba(70,0,38,.22),transparent 34%,rgba(146,32,99,.18) 68%,transparent)!important;mix-blend-mode:color!important;opacity:calc(.18 + .42*var(--fx-color-influence,.35))!important}
+.fx-erotic-satin-sheen>.fx-optical-motion{background:linear-gradient(var(--fx-reflection-angle,125deg),transparent 0 27%,rgba(var(--fx-reflection-rgb,255,195,225),.08) 36%,rgba(var(--fx-reflection-rgb,255,225,240),.40) 46%,rgba(var(--fx-reflection-rgb,255,195,225),.10) 58%,transparent 70% 100%)!important;filter:blur(calc(2px + 7px*var(--fx-highlight-width,.7)))!important;opacity:calc(.18 + .72*var(--fx-reflection,.6))!important;mix-blend-mode:screen!important}
+
+.fx-erotic-rouge-gloss>.fx-material-structure{background:url('effects/erotic-rouge-gloss.png') center/cover no-repeat!important;opacity:calc(.22 + var(--fx-structure,.25)*.82)!important;mix-blend-mode:overlay!important;filter:contrast(calc(1 + .38*var(--fx-structure-contrast,1))) saturate(calc(1 + .55*var(--fx-sat,1))) hue-rotate(var(--fx-hue,0deg))!important}
+.fx-erotic-rouge-gloss>.fx-material-grade{background:linear-gradient(140deg,rgba(125,0,36,.32),rgba(210,10,68,.10) 43%,transparent 70%),radial-gradient(ellipse at 70% 74%,rgba(86,0,28,.26),transparent 42%)!important;mix-blend-mode:color-burn!important;opacity:calc(.18 + .58*var(--fx-color-influence,.45))!important}
+.fx-erotic-rouge-gloss>.fx-optical-motion{background:radial-gradient(ellipse at 28% 20%,rgba(var(--fx-reflection-rgb,255,224,236),.38),transparent 26%),linear-gradient(var(--fx-reflection-angle,125deg),transparent 38%,rgba(var(--fx-reflection-rgb,255,240,245),.32) 47%,transparent 57%)!important;filter:blur(calc(1px + 3px*var(--fx-highlight-width,.4)))!important;opacity:calc(.20 + .68*var(--fx-reflection,.65))!important;mix-blend-mode:screen!important}
+
+.fx-erotic-black-velvet>.fx-material-structure{background:url('effects/erotic-black-velvet.png') center/cover no-repeat!important;opacity:calc(.25 + var(--fx-structure,.65)*.95)!important;mix-blend-mode:multiply!important;filter:contrast(calc(1.05 + .55*var(--fx-structure-contrast,1))) saturate(calc(.8 + .3*var(--fx-sat,1)))!important}
+.fx-erotic-black-velvet>.fx-material-grade{background:radial-gradient(ellipse at 28% 32%,rgba(44,37,85,.25),transparent 42%),radial-gradient(ellipse at 74% 68%,rgba(20,12,45,.34),transparent 48%)!important;mix-blend-mode:multiply!important;opacity:calc(.28 + .45*var(--fx-shadow-depth,.65))!important}
+.fx-erotic-black-velvet>.fx-optical-motion{background:linear-gradient(var(--fx-reflection-angle,135deg),transparent 20%,rgba(130,108,164,.18) 44%,rgba(181,153,198,.12) 49%,transparent 69%)!important;filter:blur(calc(7px + 13px*var(--fx-highlight-width,.8)))!important;opacity:calc(.12 + .48*var(--fx-reflection,.3))!important;mix-blend-mode:screen!important}
+
+.fx-erotic-perfume-mist>.fx-material-structure{background:url('effects/erotic-perfume-mist.png') center/cover no-repeat!important;opacity:calc(.22 + .86*var(--fx-structure,.2))!important;mix-blend-mode:screen!important;filter:contrast(calc(1 + .55*var(--fx-structure-contrast,1))) saturate(calc(.8 + .35*var(--fx-sat,1)))!important}
+.fx-erotic-perfume-mist>.fx-material-grade{background:radial-gradient(ellipse at 15% 20%,rgba(255,220,238,.17),transparent 23%),radial-gradient(ellipse at 85% 72%,rgba(218,174,210,.13),transparent 28%)!important;mix-blend-mode:screen!important;opacity:calc(.12 + .34*var(--fx-color-influence,.2))!important}
+.fx-erotic-perfume-mist>.fx-optical-motion{background:radial-gradient(circle at 18% 72%,rgba(255,255,255,.22) 0 1%,transparent 3%),radial-gradient(circle at 82% 18%,rgba(255,224,242,.18) 0 1.5%,transparent 4%),radial-gradient(circle at 72% 78%,rgba(218,197,255,.16) 0 1%,transparent 3%)!important;opacity:calc(.18 + .50*var(--fx-reflection,.35))!important;mix-blend-mode:screen!important}
+
+.fx-erotic-night-neon>.fx-material-structure{background:radial-gradient(ellipse at -8% 22%,rgba(240,16,160,calc(.20 + var(--fx-reflection,.6)*.45)),transparent calc(36%*var(--fx-reflect-area,1))),radial-gradient(ellipse at 108% 77%,rgba(68,82,255,calc(.20 + var(--fx-reflection,.6)*.48)),transparent calc(38%*var(--fx-reflect-area,1))),linear-gradient(128deg,rgba(255,24,171,.08),transparent 38% 62%,rgba(59,80,255,.09))!important;mix-blend-mode:screen!important;opacity:calc(.50 + var(--fx-reflection,.6)*.48)!important;filter:saturate(1.25)!important}
+.fx-erotic-night-neon>.fx-material-grade{background:linear-gradient(105deg,rgba(222,0,128,.20),transparent 36% 64%,rgba(52,64,230,.20))!important;mix-blend-mode:color!important;opacity:calc(.22 + .55*var(--fx-color-influence,.4))!important}
+.fx-erotic-night-neon>.fx-optical-motion{background:linear-gradient(var(--fx-reflection-angle,15deg),transparent 0 42%,rgba(255,255,255,.18) 48%,transparent 56% 100%)!important;filter:blur(calc(8px + 10px*var(--fx-highlight-width,.9)))!important;opacity:calc(.15 + .45*var(--fx-reflection,.6))!important}
+
+.fx-erotic-sheer>.fx-material-structure{background:url('effects/erotic-sheer.png') center/cover no-repeat!important;opacity:calc(.20 + var(--fx-structure,.4)*.86)!important;mix-blend-mode:soft-light!important;filter:contrast(calc(.95 + .45*var(--fx-structure-contrast,1))) saturate(calc(.85 + .25*var(--fx-sat,1)))!important}
+.fx-erotic-sheer>.fx-material-grade{background:linear-gradient(135deg,rgba(238,216,232,.17),transparent 35% 65%,rgba(184,132,171,.12))!important;mix-blend-mode:screen!important;opacity:calc(.15 + .40*var(--fx-color-influence,.2))!important}
+.fx-erotic-sheer>.fx-optical-motion{background:linear-gradient(var(--fx-reflection-angle,125deg),transparent 16%,rgba(255,245,252,.16) 43%,transparent 68%)!important;filter:blur(calc(7px + 11px*var(--fx-highlight-width,.75)))!important;opacity:calc(.10 + .38*var(--fx-reflection,.25))!important;mix-blend-mode:screen!important}
+
+.fx-erotic-sensual-glow>.fx-material-structure{background:radial-gradient(ellipse at 34% 28%,rgba(255,216,177,calc(.10 + var(--fx-reflection,.5)*.28)),transparent 35%),radial-gradient(ellipse at 72% 72%,rgba(224,122,145,calc(.08 + var(--fx-accent-alpha,.16)*1.2)),transparent 38%),linear-gradient(var(--fx-reflection-angle,125deg),transparent 20%,rgba(255,231,195,calc(.06 + var(--fx-reflection,.5)*.17)) 48%,transparent 72%)!important;mix-blend-mode:soft-light!important;opacity:calc(.52 + var(--fx-reflection,.5)*.38)!important}
+.fx-erotic-sensual-glow>.fx-material-grade{background:radial-gradient(ellipse at 50% 45%,rgba(255,183,137,.12),transparent 55%)!important;mix-blend-mode:color!important;opacity:calc(.16 + .40*var(--fx-color-influence,.25))!important}
+
 </style>
 
 <style>
@@ -21141,7 +21187,7 @@ h3 .minkai-ruby{margin-top:.45em}
 @media(max-width:700px){.deck-radar-row{grid-template-columns:1fr 1fr}.deck-radar-row .deck-radar-label{grid-column:1/-1}.deck-radar-row .deck-radar-delete{grid-column:2}}
 
 /* ==========================================================
-   v16.44 Sexy / Erotic appearance pack
+   v16.45 Sexy / Erotic appearance pack
    Non-explicit material, light and asymmetrical surface design.
    ========================================================== */
 .fx-erotic-black-lace-veil,.fx-erotic-satin-sheen,.fx-erotic-rouge-gloss,.fx-erotic-black-velvet,.fx-erotic-perfume-mist,.fx-erotic-sheer,.fx-erotic-night-neon,.fx-erotic-sensual-glow{background:none!important;border:none!important;outline:none!important;box-shadow:none!important}
@@ -21172,7 +21218,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.44 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.45 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22330,7 +22376,7 @@ h3 .minkai-ruby{margin-top:.45em}
     </div>
 
     <div class="online-duel-wrap">
-      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：v16.41で実装。統計画面からカード種類・レベル・パワー・種族を棒グラフ／ドーナツで確認<br>・カスタムレーダーチャート：v16.42で自由入力を強化。3～8軸で表示名・自動集計指標・基準値に加え、完全手動の数値軸も作成可能。将来は複数デッキ比較を拡張予定<br>・セクシー／エロティック外観：v16.44で非露骨な官能・素材表現を中心に、エフェクト8種と非対称フレーム6種を追加</p></section></main>
+      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：v16.41で実装。統計画面からカード種類・レベル・パワー・種族を棒グラフ／ドーナツで確認<br>・カスタムレーダーチャート：v16.42で自由入力を強化。3～8軸で表示名・自動集計指標・基準値に加え、完全手動の数値軸も作成可能。将来は複数デッキ比較を拡張予定<br>・セクシー／エロティック外観：v16.45で非露骨な官能・素材表現を中心に、エフェクト8種と非対称フレーム6種を追加</p></section></main>
 
       <aside class="online-duel-tools">
         <div class="panel">
@@ -22670,6 +22716,7 @@ const CARD_VISUAL_EFFECTS=[
  {id:"ink-resin",name:"インクレジン",category:"ガラス・樹脂"},
  {id:"scale-emboss",name:"鱗エンボス",category:"エンボス・型押し"},
  {id:"ripple-emboss",name:"波紋エンボス",category:"エンボス・型押し"},
+ {id:"heart-emboss",name:"ハートエンボス",category:"エンボス・型押し"},
  {id:"petals",name:"花吹雪",category:"自然・天候"},
  {id:"fog",name:"霧",category:"自然・天候"},
  {id:"rain-streak",name:"降雨",category:"自然・天候"},
@@ -23251,7 +23298,7 @@ const FX_BASE_DURATIONS={
  'smoke-resin':10.0,
  'ink-resin':9.0,
  'scale-emboss':6.8,
- 'ripple-emboss':7.8,
+ 'ripple-emboss':7.8,'heart-emboss':8.4,
  'meteorite-crystal':10.5,'hammered-forge':12,'oxidized-silver':11,'white-pearl':12,'layered-mica':13,'ice-inclusion-resin':11.5,'crystal-aggregate-resin':10.5,'fiber-paper':14,'erotic-black-lace-veil':14,'erotic-satin-sheen':12,'erotic-rouge-gloss':13,'erotic-black-velvet':16,'erotic-perfume-mist':15,'erotic-night-neon':14,'erotic-sheer':18,'erotic-sensual-glow':20};
 function fxHexRgb(hex,fallback='ffffff'){const m=/^#([0-9a-f]{6})$/i.exec(String(hex||'')),n=parseInt(m?m[1]:fallback,16);return `${(n>>16)&255},${(n>>8)&255},${n&255}`}
 function fxLayerStyle(x,v,power){
@@ -23280,7 +23327,7 @@ const FX_MATERIAL_FAMILY={
  organic:new Set(['black-pearl','dark-mother-pearl','white-pearl']),
  mineral:new Set(['cracked-crystal','black-crystal','aurora-quartz','labradorite','tiger-eye','black-opal','mineral-vein','lava-glass','layered-mica']),
  ceramic:new Set(['abyss-lacquer','raden','cloisonne','crackle-glaze']),
- emboss:new Set(['scale-emboss','ripple-emboss']),
+ emboss:new Set(['scale-emboss','ripple-emboss','heart-emboss']),
  atmosphere:new Set(['petals','fog','rain-streak','erotic-perfume-mist','erotic-night-neon']),
  energy:new Set(['fire','solar-flare','moonlight']),
  digital:new Set(['digital-code'])
@@ -25598,7 +25645,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.44',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.45',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -36491,7 +36538,7 @@ async function accountCloudInitialize(){
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.44'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.45'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
@@ -36508,7 +36555,7 @@ function accountCloudLocalSnapshot(){
   const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
     schema_version:2,
-    app_version:'16.44',
+    app_version:'16.45',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
     decks:Array.isArray(decks)?decks:[],
@@ -37149,7 +37196,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'16.44',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'16.45',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
