@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minkai-tcg-simulator-v16-46';
+const CACHE_NAME = 'minkai-tcg-simulator-v16-47';
 const APP_SHELL = [
   './',
   './index.html',
@@ -97,6 +97,7 @@ const APP_SHELL = [
   './frames/night-neon-lounge.png',
   './frames/night-crystal-dresser.png',
   './effects/surface-heart-emboss.png',
+  './effects/surface-heart-emboss-dense.png',
   './effects/erotic-black-lace-veil.png',
   './effects/erotic-satin-sheen.png',
   './effects/erotic-rouge-gloss.png',
