@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.47</title>
+<title>みん会TCG Simulator v16.48</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20173,7 +20173,7 @@ h3 .minkai-ruby{margin-top:.45em}
 }
 
 /* ==========================================================================
-   v16.47 Night full-surface rebuild + heart emboss expansion
+   v16.48 Night full-surface rebuild + heart emboss expansion
    ========================================================================== */
 .fx-heart-emboss>.fx-material-structure{background:url('effects/surface-heart-emboss.png') center/cover repeat!important;mix-blend-mode:overlay!important;opacity:calc(.18 + var(--fx-structure,.9)*.58)!important;transform:none!important}
 .fx-heart-emboss-dense>.fx-material-structure{background:url('effects/surface-heart-emboss-dense.png') center/cover repeat!important;mix-blend-mode:overlay!important;opacity:calc(.20 + var(--fx-structure,.9)*.64)!important;transform:none!important}
@@ -20195,6 +20195,55 @@ h3 .minkai-ruby{margin-top:.45em}
 .fx-erotic-sensual-glow>.fx-material-grade{background:linear-gradient(145deg,rgba(115,38,47,.09),transparent 45%,rgba(155,74,37,.08))!important;mix-blend-mode:soft-light!important;opacity:.55!important}
 /* keep night neon and satin sheen visual identity unchanged */
 
+
+/* ==========================================================
+   v16.48 FX preview reliability rebuild
+   - dedicated art base layer: blend modes match the real card stack
+   - full 5:7 sizing without layout collapse
+   - image/effect/frame toggles do not mutate the effect stack
+   ========================================================== */
+#fx-editor-preview{
+  width:100%;
+  min-height:250px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  box-sizing:border-box;
+}
+#fx-editor-preview .fx-editor-preview-card{
+  position:relative!important;
+  width:var(--fx-preview-width,189px)!important;
+  aspect-ratio:5/7!important;
+  height:auto!important;
+  min-width:150px!important;
+  max-width:none!important;
+  flex:0 0 auto!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+  background:#0b0e13!important;
+}
+.fx-editor-preview-base{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background-image:var(--card-bg-image);
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+.fx-editor-preview-base.has-image{background-color:#0b0e13}
+#fx-editor-preview-effects{position:absolute!important;inset:0!important;z-index:3!important;overflow:hidden;border-radius:inherit}
+#fx-editor-preview-effects>.card-fx-stack{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border-radius:inherit}
+#fx-editor-preview-effects .card-fx-layer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;box-sizing:border-box}
+#fx-editor-preview-frame{position:absolute;inset:0;z-index:4;pointer-events:none}
+#fx-editor-preview-frame>.card-frame-overlay{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
+.fx-editor-preview-card.fx-preview-image-hidden .fx-editor-preview-base{display:none!important}
+.fx-editor-preview-card.fx-preview-image-hidden::before{content:none!important}
+.fx-editor-preview-fallback{z-index:2}
+@media(max-width:520px){
+ #fx-editor-preview{min-height:225px;padding:8px}
+ #fx-editor-preview .fx-editor-preview-card{min-width:140px!important}
+}
 </style>
 
 <style>
@@ -21165,7 +21214,7 @@ h3 .minkai-ruby{margin-top:.45em}
 @media(max-width:700px){.deck-radar-row{grid-template-columns:1fr 1fr}.deck-radar-row .deck-radar-label{grid-column:1/-1}.deck-radar-row .deck-radar-delete{grid-column:2}}
 
 /* ==========================================================
-   v16.47 Sexy / Erotic appearance pack
+   v16.48 Sexy / Erotic appearance pack
    Non-explicit material, light and asymmetrical surface design.
    ========================================================== */
 .fx-erotic-black-lace-veil,.fx-erotic-satin-sheen,.fx-erotic-rouge-gloss,.fx-erotic-black-velvet,.fx-erotic-perfume-mist,.fx-erotic-sheer,.fx-erotic-night-neon,.fx-erotic-sensual-glow{background:none!important;border:none!important;outline:none!important;box-shadow:none!important}
@@ -21196,7 +21245,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.47 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.48 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22354,7 +22403,7 @@ h3 .minkai-ruby{margin-top:.45em}
     </div>
 
     <div class="online-duel-wrap">
-      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：v16.41で実装。統計画面からカード種類・レベル・パワー・種族を棒グラフ／ドーナツで確認<br>・カスタムレーダーチャート：v16.42で自由入力を強化。3～8軸で表示名・自動集計指標・基準値に加え、完全手動の数値軸も作成可能。将来は複数デッキ比較を拡張予定<br>・セクシー／エロティック外観：v16.47で非露骨な官能・素材表現を中心に、エフェクト8種と非対称フレーム6種を追加</p></section></main>
+      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：v16.41で実装。統計画面からカード種類・レベル・パワー・種族を棒グラフ／ドーナツで確認<br>・カスタムレーダーチャート：v16.42で自由入力を強化。3～8軸で表示名・自動集計指標・基準値に加え、完全手動の数値軸も作成可能。将来は複数デッキ比較を拡張予定<br>・ナイト系外観：v16.48でエフェクト編集プレビューの描画・追従・画像切替を再構築。ナイト系エフェクトと四角型フレームの調整を継続</p></section></main>
 
       <aside class="online-duel-tools">
         <div class="panel">
@@ -25624,7 +25673,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.47',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.48',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -26990,7 +27039,17 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
 
    applyAppearanceEditorMode(document);
    bindAppearanceEditorToggle(document);
-   enhanceAppearanceRangeInputs($('#modal'));addAppearanceDetailToolbar($('#modal'));
+   const fxModalRoot=$('#modal');
+ if(fxModalRoot&&!fxModalRoot.dataset.fxPreviewLiveBound){
+   fxModalRoot.dataset.fxPreviewLiveBound='1';
+   const livePreview=e=>{
+     const t=e.target;if(!t?.id)return;
+     if(/^fx-(?:edit|detail)-/.test(t.id)||t.classList?.contains('appearance-range-number'))scheduleFxEditorPreview(card);
+   };
+   fxModalRoot.addEventListener('input',livePreview);
+   fxModalRoot.addEventListener('change',livePreview);
+ }
+ enhanceAppearanceRangeInputs($('#modal'));addAppearanceDetailToolbar($('#modal'));
    $('#frame-editor-back').onclick=back;
    $('#frame-open-library-manager').onclick=()=>openFrameLibraryManager(()=>openCardFrameEditor(cardId,returnTo));
    $('#frame-preview-open').onclick=()=>openFrameFloatingPreview(cardId);
@@ -27329,15 +27388,17 @@ async function hydrateCardArtBackground(el,cardId,quality='full',force=false){
    return {ok:false,reason:'error'};
  }
 }
+let fxPreviewRenderRaf=0,fxPreviewRenderSeq=0,fxPreviewImageSeq=0;
 function ensureFxEditorPreviewShell(card){
  const host=$('#fx-editor-preview');if(!host)return null;
  const cardId=String(card?.id||'');
  let art=$('#fx-editor-preview-art');
  if(!art||art.dataset.cardId!==cardId){
    host.innerHTML=`<div id="fx-editor-preview-art" data-card-id="${esc(cardId)}" class="fx-editor-preview-card">
+     <div id="fx-editor-preview-base" class="fx-editor-preview-base" aria-hidden="true"></div>
      <span id="fx-editor-preview-fallback" class="fx-editor-preview-fallback">${esc(card.name)}</span>
      <div id="fx-editor-preview-effects"></div>
-     ${cardFrameHtml(card)}
+     <div id="fx-editor-preview-frame">${cardFrameHtml(card)}</div>
      <div class="fx-editor-preview-name">${esc(card.name)}</div>
      <div id="fx-editor-preview-status" class="fx-editor-preview-status pill">プレビュー準備中</div>
    </div>`;
@@ -27348,11 +27409,15 @@ function ensureFxEditorPreviewShell(card){
 async function hydrateFxEditorPreviewImage(cardId,force=false){
  const card=cards.find(c=>c.id===cardId);if(!card)return;
  if(!(floatingPreviewOpen&&floatingPreviewOwner===`modal:fx:${cardId}`))return;
- const art=ensureFxEditorPreviewShell(card),fallback=$('#fx-editor-preview-fallback'),status=$('#fx-editor-preview-status');
- if(!art)return;
+ const art=ensureFxEditorPreviewShell(card),base=$('#fx-editor-preview-base'),fallback=$('#fx-editor-preview-fallback'),status=$('#fx-editor-preview-status');
+ if(!art||!base)return;
+ const seq=++fxPreviewImageSeq;
  if(status)status.textContent='画像を確認中…';
- const result=await hydrateCardArtBackground(art,cardId,'full',force);
- if(!art.isConnected)return;
+ if(force){base.dataset.imageReady='';base.classList.remove('has-image');base.style.backgroundImage=''}
+ const result=await hydrateCardArtBackground(base,cardId,'full',force);
+ if(seq!==fxPreviewImageSeq||!art.isConnected||!base.isConnected)return;
+ art.dataset.imageReady=base.dataset.imageReady||'1';
+ art.classList.toggle('has-image',!!result.ok);
  if(result.ok){
    if(fallback)fallback.hidden=true;
    if(status)status.textContent='カード画像あり';
@@ -27364,38 +27429,53 @@ async function hydrateFxEditorPreviewImage(cardId,force=false){
        result.reason==='detached'?'プレビュー再表示待ち':'画像読込失敗';
    }
  }
+ applyFxPreviewControls(card);
 }
 function applyFxPreviewControls(card){
- const art=$('#fx-editor-preview-art'),host=$('#fx-editor-preview');if(!art||!host)return;
- const bg=$('#fx-preview-background')?.value||'dark',zoom=Number($('#fx-preview-zoom')?.value)||100;
+ const art=$('#fx-editor-preview-art'),host=$('#fx-editor-preview'),base=$('#fx-editor-preview-base');if(!art||!host)return;
+ const bg=$('#fx-preview-background')?.value||'dark',zoom=Math.max(70,Math.min(150,Number($('#fx-preview-zoom')?.value)||70));
  host.dataset.previewBg=bg;
  const previewWidth=Math.round(270*zoom/100);
  art.style.setProperty('--fx-preview-width',`${previewWidth}px`);
- art.style.width=`${previewWidth}px`;
- art.style.maxWidth='none';
- art.style.minWidth='150px';
- art.classList.toggle('fx-preview-image-hidden',$('#fx-preview-show-image')?.checked===false);
+ const showImage=$('#fx-preview-show-image')?.checked!==false;
+ if(base)base.hidden=!showImage;
+ art.classList.toggle('fx-preview-image-hidden',!showImage);
  const effects=$('#fx-editor-preview-effects');if(effects)effects.hidden=$('#fx-preview-show-effects')?.checked===false;
- art.querySelectorAll('[data-card-frame]').forEach(el=>el.hidden=$('#fx-preview-show-frame')?.checked===false);
- const fallback=$('#fx-editor-preview-fallback');if(fallback&&$('#fx-preview-show-image')?.checked===false)fallback.hidden=false;
+ const frameHost=$('#fx-editor-preview-frame');if(frameHost)frameHost.hidden=$('#fx-preview-show-frame')?.checked===false;
+ const fallback=$('#fx-editor-preview-fallback');
+ if(fallback){
+   const imageReady=art.classList.contains('has-image');
+   fallback.hidden=showImage&&imageReady;
+ }
 }
 function renderFxEditorPreview(card,{forceImage=false}={}){
  if(!(floatingPreviewOpen&&floatingPreviewOwner===`modal:fx:${card.id}`))return;
- const art=ensureFxEditorPreviewShell(card);if(!art)return;
+ const seq=++fxPreviewRenderSeq,art=ensureFxEditorPreviewShell(card);if(!art)return;
  const layers=readFxEditorLayers(card),animate=$('#fx-preview-animate')?.checked===true,effects=$('#fx-editor-preview-effects');
- if(effects){effects.innerHTML=cardFxStackHtmlFromLayers(layers,{maxLayers:cardFxPrefs.maxLayers,visible:true,animate,forceAnimation:animate,quality:'high'});hydrateAllCustomFx(effects);if(animate)requestAnimationFrame(()=>{stopCardFxMotionEngine();kickCardFxMotionEngine()})}
- art.querySelectorAll('[data-card-frame]').forEach(frame=>{frame.dataset.frameReady='';hydrateCardFrame(frame)});
+ if(effects){
+   effects.innerHTML=cardFxStackHtmlFromLayers(layers,{maxLayers:cardFxPrefs.maxLayers,visible:true,animate,forceAnimation:animate,quality:'high'});
+   hydrateAllCustomFx(effects);
+   applyFxRuntimeTuning(effects);
+ }
+ const frameHost=$('#fx-editor-preview-frame');
+ if(frameHost){
+   frameHost.innerHTML=cardFrameHtml(card);
+   frameHost.querySelectorAll('[data-card-frame]').forEach(frame=>{frame.dataset.frameReady='';hydrateCardFrame(frame)});
+ }
  applyFxPreviewControls(card);
  requestAnimationFrame(()=>{
-   if(!art.isConnected)return;
-   const box=art.getBoundingClientRect();
-   if(box.width<100||box.height<140){
-     art.style.width='270px';
-     art.style.maxWidth='100%';
-     art.style.minWidth='150px';
-   }
+   if(seq!==fxPreviewRenderSeq||!art.isConnected)return;
+   applyFxRuntimeTuning(effects||art);
+   if(animate){stopCardFxMotionEngine();kickCardFxMotionEngine()}
  });
- if(forceImage||art.dataset.imageReady!=='1')hydrateFxEditorPreviewImage(card.id,forceImage).then(()=>applyFxPreviewControls(card));
+ const base=$('#fx-editor-preview-base');
+ if(forceImage||base?.dataset.imageReady!=='1')hydrateFxEditorPreviewImage(card.id,forceImage);
+}
+function scheduleFxEditorPreview(card,opt={}){
+ if(!(floatingPreviewOpen&&floatingPreviewOwner===`modal:fx:${card.id}`))return;
+ const forceImage=!!opt.forceImage;
+ if(fxPreviewRenderRaf)cancelAnimationFrame(fxPreviewRenderRaf);
+ fxPreviewRenderRaf=requestAnimationFrame(()=>{fxPreviewRenderRaf=0;renderFxEditorPreview(card,{forceImage})});
 }
 function enhanceAppearanceRangeInputs(root=document){
  if(!root)return;
@@ -27429,11 +27509,11 @@ function openFxFloatingPreview(card){
    <label>拡大 <span id="fx-preview-zoom-label" class="pill">70%</span><input id="fx-preview-zoom" type="range" min="70" max="150" step="5" value="70"></label>
    <button class="btn small" type="button" id="fx-preview-reload-image">画像を再読込</button>
  </div><div class="muted floating-preview-caption">画像を最上段に固定し、初期表示は最小サイズです。表示項目は個別に切り替えられます。</div>`);
- ['fx-preview-show-image','fx-preview-show-effects','fx-preview-show-frame','fx-preview-background'].forEach(id=>$('#'+id)?.addEventListener('change',()=>renderFxEditorPreview(card)));
- $('#fx-preview-animate')?.addEventListener('change',()=>{renderFxEditorPreview(card);requestAnimationFrame(()=>{stopCardFxMotionEngine();applyFxRuntimeTuning($('#fx-editor-preview-effects'));if($('#fx-preview-animate')?.checked)kickCardFxMotionEngine()})});
+ ['fx-preview-show-image','fx-preview-show-effects','fx-preview-show-frame','fx-preview-background'].forEach(id=>$('#'+id)?.addEventListener('change',()=>scheduleFxEditorPreview(card)));
+ $('#fx-preview-animate')?.addEventListener('change',()=>scheduleFxEditorPreview(card));
  $('#fx-preview-zoom').oninput=e=>{const out=$('#fx-preview-zoom-label');if(out)out.textContent=e.target.value+'%';applyFxPreviewControls(card)};
- $('#fx-preview-reload-image').onclick=()=>{applyAppearanceEditorMode(document);bindAppearanceEditorToggle(document);renderFxEditorPreview(card,{forceImage:true})};
- renderFxEditorPreview(card,{forceImage:true});
+ $('#fx-preview-reload-image').onclick=()=>{applyAppearanceEditorMode(document);bindAppearanceEditorToggle(document);scheduleFxEditorPreview(card,{forceImage:true})};
+ requestAnimationFrame(()=>scheduleFxEditorPreview(card,{forceImage:true}));
 }
 async function hydrateCustomFxManagerThumbs(){for(const el of $$('[data-custom-fx-thumb]')){const url=await getCustomFxObjectUrl(el.dataset.customFxThumb);if(url&&el.isConnected)el.style.backgroundImage=`url("${url}")`}}
 async function openCustomFxManager(cardId,returnTo='manager'){
@@ -36520,7 +36600,7 @@ async function accountCloudInitialize(){
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.47'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.48'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
@@ -36537,7 +36617,7 @@ function accountCloudLocalSnapshot(){
   const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
     schema_version:2,
-    app_version:'16.47',
+    app_version:'16.48',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
     decks:Array.isArray(decks)?decks:[],
@@ -37178,7 +37258,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'16.47',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'16.48',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
