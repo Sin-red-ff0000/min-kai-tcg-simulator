@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.39</title>
+<title>みん会TCG Simulator v16.40</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20971,7 +20971,7 @@ h3 .minkai-ruby{margin-top:.45em}
 </style>
 
 <style id="v1639-individual-finish-round4">
-/* v16.39 / 4 of 4 — per-effect and per-frame individual finishing. */
+/* v16.40 / 4 of 4 — per-effect and per-frame individual finishing. */
 .card-fx-layer>.fx-signature{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;overflow:hidden;background:var(--fx-signature-bg,none);mix-blend-mode:var(--fx-signature-blend,soft-light);opacity:calc(var(--fx-signature-opacity,.52)*(0.56 + var(--fx-structure,.9)*.36));filter:contrast(calc(.88 + var(--fx-structure-contrast,1)*.14)) saturate(calc(.92 + var(--fx-color-influence,1)*.12));}
 .fx-quality-light .card-fx-layer>.fx-signature{opacity:calc(var(--fx-signature-opacity,.52)*.72);filter:none}
 .card-fx-stack:not(.fx-animate) .card-fx-layer>.fx-signature{transform:none!important;animation:none!important}
@@ -21097,6 +21097,33 @@ h3 .minkai-ruby{margin-top:.45em}
 .card-fx-layer[data-fx-type="white-pearl"]>.fx-signature{filter:contrast(1.02) saturate(1.08)}
 .card-fx-layer[data-fx-type="meteorite-crystal"]>.fx-signature{background-size:49px 53px,93px 87px,131px 143px}
 @media(max-width:700px){.card-fx-layer>.fx-signature{opacity:calc(var(--fx-signature-opacity,.52)*.78)}.card-frame-overlay>.frame-signature{opacity:calc(var(--frame-signature-opacity,.52)*.80)}}
+
+/* v16.40: screenshot-driven quality pass + appearance editor usability. */
+.appearance-range-direct{display:inline-flex;vertical-align:middle;margin-left:7px}.appearance-range-number{width:68px!important;min-width:68px!important;padding:5px 6px!important;font-size:12px!important;font-variant-numeric:tabular-nums}.appearance-detail-toolbar{position:sticky;top:0;z-index:8;padding:6px 0;background:linear-gradient(var(--panel,#111820) 72%,transparent)}
+.fx-layer-detail-grid>label,.frame-adjust-grid>label{min-width:0}.fx-layer-detail-grid input[type="range"],.frame-adjust-grid input[type="range"]{width:min(100%,240px)}
+.fx-preview-first{display:flex;justify-content:center;align-items:flex-start;margin-bottom:8px;min-height:0}.fx-preview-first .fx-editor-preview-art{margin-top:0!important}
+@media(max-width:600px){.floating-preview-content{display:flex;flex-direction:column}.fx-preview-first{order:-10;position:sticky;top:0;z-index:4;background:rgba(18,24,32,.97);padding:2px 0 7px}.fx-preview-toolbar-v2{margin-top:2px}.appearance-range-number{width:62px!important;min-width:62px!important}.appearance-detail-toolbar{top:0}}
+
+/* Replace the weakest ceramic/mineral assets with a calmer material finish. The source PNG remains underneath as detail only. */
+.card-fx-layer[data-fx-type="mineral-vein"]{mix-blend-mode:overlay!important;filter:saturate(.92) contrast(1.08) brightness(.94)!important}
+.card-fx-layer[data-fx-type="mineral-vein"]>.fx-signature{--fx-signature-opacity:.68;--fx-signature-blend:soft-light;background-image:radial-gradient(ellipse at 18% 24%,rgba(185,225,226,.10),transparent 25%),radial-gradient(ellipse at 78% 66%,rgba(130,175,168,.10),transparent 28%),repeating-linear-gradient(117deg,transparent 0 39px,rgba(197,221,213,.06) 40px,transparent 41px 83px);background-size:100% 100%,100% 100%,137px 137px!important}
+.card-fx-layer[data-fx-type="lava-glass"]{mix-blend-mode:screen!important;filter:saturate(1.04) contrast(1.12) brightness(.90)!important}
+.card-fx-layer[data-fx-type="lava-glass"]>.fx-signature{--fx-signature-opacity:.65;--fx-signature-blend:screen;background-image:radial-gradient(ellipse at 23% 20%,rgba(255,119,33,.13),transparent 24%),radial-gradient(ellipse at 72% 73%,rgba(255,70,15,.12),transparent 30%),linear-gradient(133deg,transparent 0 36%,rgba(255,126,32,.16) 37%,rgba(255,214,115,.10) 38%,transparent 39% 100%);background-size:100% 100%,100% 100%,173px 191px!important}
+.card-fx-layer[data-fx-type="abyss-lacquer"]{mix-blend-mode:soft-light!important;filter:saturate(.90) contrast(1.08) brightness(.88)!important}
+.card-fx-layer[data-fx-type="abyss-lacquer"]>.fx-signature{--fx-signature-opacity:.72;--fx-signature-blend:soft-light;background-image:radial-gradient(120% 38% at 22% 4%,rgba(226,205,255,.15),transparent 39%),radial-gradient(90% 34% at 80% 96%,rgba(104,42,150,.15),transparent 45%),linear-gradient(105deg,rgba(4,1,12,.18),transparent 34%,rgba(106,49,142,.08) 49%,transparent 63%,rgba(2,0,8,.20));background-size:100% 100%!important}
+.card-fx-layer[data-fx-type="cloisonne"]{mix-blend-mode:overlay!important;filter:saturate(.88) contrast(1.06) brightness(.90)!important}
+.card-fx-layer[data-fx-type="cloisonne"]>.fx-signature{--fx-signature-opacity:.58;--fx-signature-blend:overlay;background-image:linear-gradient(118deg,rgba(255,216,108,.08),transparent 25% 70%,rgba(255,216,108,.07)),radial-gradient(ellipse at 24% 24%,rgba(30,126,116,.12),transparent 26%),radial-gradient(ellipse at 72% 68%,rgba(115,44,106,.11),transparent 31%);background-size:100% 100%!important}
+.card-fx-layer[data-fx-type="crackle-glaze"]{mix-blend-mode:overlay!important;filter:saturate(.76) contrast(1.08) brightness(.96)!important}
+.card-fx-layer[data-fx-type="crackle-glaze"]>.fx-signature{--fx-signature-opacity:.66;--fx-signature-blend:multiply;background-image:repeating-linear-gradient(18deg,transparent 0 43px,rgba(20,32,38,.075) 44px,transparent 45px 91px),repeating-linear-gradient(141deg,transparent 0 57px,rgba(24,37,43,.07) 58px,transparent 59px 113px);background-size:137px 151px,181px 167px!important}
+.card-fx-layer[data-fx-type="raden"]{filter:saturate(.96) contrast(1.06)!important}.card-fx-layer[data-fx-type="raden"]>.fx-signature{--fx-signature-opacity:.62}
+
+/* Frame library thumbnails now preview the same material-light logic instead of raw PNG only. */
+.frame-library-thumb.frame-thumb-enhanced::after{content:"";position:absolute;inset:0;pointer-events:none;-webkit-mask-image:var(--frame-thumb-mask);mask-image:var(--frame-thumb-mask);-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;background:linear-gradient(122deg,rgba(0,0,0,.26),transparent 34%,rgba(255,255,255,.28) 48%,transparent 61%,rgba(0,0,0,.20));mix-blend-mode:overlay;opacity:.78}
+.frame-library-thumb[data-frame-material="polished-metal"]::after{background:linear-gradient(118deg,rgba(0,0,0,.26),transparent 32%,rgba(255,249,220,.42) 47%,rgba(255,255,255,.20) 51%,transparent 64%,rgba(0,0,0,.24));mix-blend-mode:overlay}
+.frame-library-thumb[data-frame-material="forged-metal"]::after{background:radial-gradient(ellipse at 28% 25%,rgba(255,255,255,.14),transparent 22%),linear-gradient(126deg,rgba(0,0,0,.34),transparent 40%,rgba(210,225,230,.20) 50%,transparent 61%,rgba(0,0,0,.31));mix-blend-mode:overlay}
+.frame-library-thumb:is([data-frame-material="lacquer"],[data-frame-material="porcelain"])::after{background:radial-gradient(110% 40% at 28% 5%,rgba(255,255,255,.36),transparent 47%),linear-gradient(130deg,rgba(0,0,0,.12),transparent 60%);mix-blend-mode:soft-light}
+.frame-library-thumb:is([data-frame-material="crystal"],[data-frame-material="arcane"])::after{background:conic-gradient(from 20deg at 50% 50%,rgba(110,220,255,.18),rgba(220,150,255,.17),rgba(255,235,150,.12),rgba(110,220,255,.18));mix-blend-mode:screen;opacity:.62}
+.frame-library-thumb:is([data-frame-material="dark-stone"],[data-frame-material="void"])::after{background:linear-gradient(135deg,rgba(0,0,0,.38),transparent 42%,rgba(115,90,160,.10) 50%,transparent 58%,rgba(0,0,0,.38));mix-blend-mode:overlay}
 </style>
 </head>
 <body>
@@ -21105,7 +21132,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.39 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.40 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22263,7 +22290,7 @@ h3 .minkai-ruby{margin-top:.45em}
     </div>
 
     <div class="online-duel-wrap">
-      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー</p></section></main>
+      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：将来実装予定。カード種類・レベル・パワー・種族などを棒グラフ／円グラフ等で視覚化し、デッキ傾向を比較しやすくする</p></section></main>
 
       <aside class="online-duel-tools">
         <div class="panel">
@@ -22688,7 +22715,7 @@ function moveBoardToolPreset(kind,index,step){
  saveBoardToolPrefs();
 }
 
-function defaultCardFxPrefs(){return {maxLayers:2,collectionVisible:true,collectionAnimation:false,boardVisible:true,boardAnimation:false,boardQualityDesktop:'standard',boardQualityMobile:'standard',appearanceEditorMode:'simple',motionEngine:3,effectGeneration:7}}
+function defaultCardFxPrefs(){return {maxLayers:2,collectionVisible:true,collectionAnimation:false,boardVisible:true,boardAnimation:false,boardQualityDesktop:'standard',boardQualityMobile:'standard',appearanceEditorMode:'simple',motionEngine:3,effectGeneration:8}}
 function normalizeCardFxPrefs(raw={}){
  const motionV=Number(raw.motionEngine)||0,legacyMotion=motionV<3;
  const quality=v=>['high','standard','light'].includes(String(v||''))?String(v):'standard';
@@ -22702,7 +22729,7 @@ function normalizeCardFxPrefs(raw={}){
    boardQualityMobile:quality(raw.boardQualityMobile),
    appearanceEditorMode:['simple','advanced'].includes(String(raw.appearanceEditorMode||''))?String(raw.appearanceEditorMode):'simple',
    motionEngine:3,
-   effectGeneration:7
+   effectGeneration:8
  };
 }
 function normalizeCardVisualEffects(raw){
@@ -25517,7 +25544,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.39',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.40',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -26883,6 +26910,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
 
    applyAppearanceEditorMode(document);
    bindAppearanceEditorToggle(document);
+   enhanceAppearanceRangeInputs($('#modal'));addAppearanceDetailToolbar($('#modal'));
    $('#frame-editor-back').onclick=back;
    $('#frame-open-library-manager').onclick=()=>openFrameLibraryManager(()=>openCardFrameEditor(cardId,returnTo));
    $('#frame-preview-open').onclick=()=>openFrameFloatingPreview(cardId);
@@ -26959,7 +26987,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
    const thumbs=$$('[data-frame-thumb]');
    for(const el of thumbs){
      const url=await getFrameObjectUrl(el.dataset.frameThumb);
-     if(url&&el.isConnected){el.style.backgroundImage=`url("${url}")`;el.classList.add('frame-loaded')}
+     if(url&&el.isConnected){el.style.backgroundImage=`url("${url}")`;el.style.setProperty('--frame-thumb-mask',`url("${url}")`);el.dataset.frameId=el.dataset.frameThumb;el.dataset.frameMaterial=frameMaterialFamily(el.dataset.frameThumb);el.classList.add('frame-loaded','frame-thumb-enhanced')}
    }
 
    $$('[data-frame-pick]').forEach(b=>b.onclick=async()=>{
@@ -27284,16 +27312,38 @@ function renderFxEditorPreview(card,{forceImage=false}={}){
  });
  if(forceImage||art.dataset.imageReady!=='1')hydrateFxEditorPreviewImage(card.id,forceImage).then(()=>applyFxPreviewControls(card));
 }
+function enhanceAppearanceRangeInputs(root=document){
+ if(!root)return;
+ root.querySelectorAll('input[type="range"]').forEach(range=>{
+   if(range.dataset.directInputBound==='1'||range.disabled)return;
+   range.dataset.directInputBound='1';
+   const wrap=document.createElement('span');wrap.className='appearance-range-direct';
+   const num=document.createElement('input');num.type='number';num.className='appearance-range-number';num.min=range.min;num.max=range.max;num.step=range.step||'1';num.value=range.value;num.setAttribute('aria-label','数値を直接入力');
+   const syncFromRange=()=>{if(document.activeElement!==num)num.value=range.value};
+   range.addEventListener('input',syncFromRange);
+   num.addEventListener('input',()=>{let v=Number(num.value);if(!Number.isFinite(v))return;const mn=Number(range.min),mx=Number(range.max);if(Number.isFinite(mn))v=Math.max(mn,v);if(Number.isFinite(mx))v=Math.min(mx,v);range.value=String(v);range.dispatchEvent(new Event('input',{bubbles:true}))});
+   num.addEventListener('change',()=>{num.value=range.value});wrap.appendChild(num);range.insertAdjacentElement('afterend',wrap);
+ });
+}
+function addAppearanceDetailToolbar(root=document){
+ if(!root||root.querySelector('.appearance-detail-toolbar'))return;
+ const details=[...root.querySelectorAll('.fx-layer-detail,.frame-adjust-details,.frame-layer2-details')];if(!details.length)return;
+ const toolbar=document.createElement('div');toolbar.className='appearance-detail-toolbar actions';toolbar.innerHTML='<button class="btn small" type="button" data-detail-open-all>詳細をすべて開く</button><button class="btn small" type="button" data-detail-close-all>詳細をすべて閉じる</button>';
+ const anchor=root.querySelector('.fx-editor-row,.frame-editor-layout,.frame-editor-layout-floating');if(anchor)anchor.insertAdjacentElement('beforebegin',toolbar);else root.prepend(toolbar);
+ toolbar.querySelector('[data-detail-open-all]').onclick=()=>details.forEach(d=>d.open=true);
+ toolbar.querySelector('[data-detail-close-all]').onclick=()=>details.forEach(d=>d.open=false);
+}
 function openFxFloatingPreview(card){
- openFloatingPreview('エフェクトプレビュー',`modal:fx:${card.id}`,`<div class="fx-preview-toolbar fx-preview-toolbar-v2">
+ openFloatingPreview('エフェクトプレビュー',`modal:fx:${card.id}`,`<div id="fx-editor-preview" class="fx-preview-first"></div>
+ <div class="fx-preview-toolbar fx-preview-toolbar-v2">
    <label class="board-follow-row fx-preview-animation-toggle"><input id="fx-preview-animate" type="checkbox">アニメーション</label>
    <label class="board-follow-row"><input id="fx-preview-show-image" type="checkbox" checked>カード画像</label>
    <label class="board-follow-row"><input id="fx-preview-show-effects" type="checkbox" checked>エフェクト</label>
    <label class="board-follow-row"><input id="fx-preview-show-frame" type="checkbox" checked>フレーム</label>
    <label>背景<select id="fx-preview-background"><option value="dark">黒</option><option value="gray">グレー</option><option value="white">白</option><option value="checker">透過確認</option></select></label>
-   <label>拡大 <span id="fx-preview-zoom-label" class="pill">100%</span><input id="fx-preview-zoom" type="range" min="70" max="150" step="5" value="100"></label>
+   <label>拡大 <span id="fx-preview-zoom-label" class="pill">70%</span><input id="fx-preview-zoom" type="range" min="70" max="150" step="5" value="70"></label>
    <button class="btn small" type="button" id="fx-preview-reload-image">画像を再読込</button>
- </div><div id="fx-editor-preview"></div><div class="muted floating-preview-caption">表示項目を個別に切り替えて、エフェクトだけ／フレームだけでも確認できます。</div>`);
+ </div><div class="muted floating-preview-caption">画像を最上段に固定し、初期表示は最小サイズです。表示項目は個別に切り替えられます。</div>`);
  ['fx-preview-show-image','fx-preview-show-effects','fx-preview-show-frame','fx-preview-background'].forEach(id=>$('#'+id)?.addEventListener('change',()=>renderFxEditorPreview(card)));
  $('#fx-preview-animate')?.addEventListener('change',()=>{renderFxEditorPreview(card);requestAnimationFrame(()=>{stopCardFxMotionEngine();applyFxRuntimeTuning($('#fx-editor-preview-effects'));if($('#fx-preview-animate')?.checked)kickCardFxMotionEngine()})});
  $('#fx-preview-zoom').oninput=e=>{const out=$('#fx-preview-zoom-label');if(out)out.textContent=e.target.value+'%';applyFxPreviewControls(card)};
@@ -27435,6 +27485,7 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
    const bc=$(`#fx-detail-base-color-${slot}`),rc=$(`#fx-detail-reflection-color-${slot}`),sc=$(`#fx-detail-shadow-color-${slot}`),ac=$(`#fx-detail-accent-color-${slot}`);if(bc)bc.value='#ffffff';if(rc)rc.value='#ffffff';if(sc)sc.value='#000000';if(ac)ac.value='#7fdcff';
    const d=$(`#fx-detail-direction-${slot}`),r=$(`#fx-detail-rotation-${slot}`),mk=$(`#fx-detail-mask-${slot}`);if(d)d.value='default';if(r)r.value='default';if(mk)mk.value='full';renderFxEditorPreview(card);
  });
+ enhanceAppearanceRangeInputs($('#modal'));addAppearanceDetailToolbar($('#modal'));
  $('#fx-preview-open').onclick=()=>openFxFloatingPreview(card);
  $('#fx-mobile-preview').onclick=()=>openFxFloatingPreview(card);
  $('#fx-mobile-preview-bottom').onclick=()=>openFxFloatingPreview(card);
@@ -30113,18 +30164,21 @@ function deckStatBarsHtml(title,items,total){
 function openDeckStatistics(){
  const source=deckReviewSourceDeck(),rows=deckStatsRows(),total=rows.reduce((a,x)=>a+x.n,0),unique=rows.length;
  const typeRows=deckStatCount(rows,c=>normalizeCardType(c.type||'種類未設定'));
- const levelRows=deckStatCount(rows,c=>c.level!==''&&c.level!=null?`Lv${c.level}`:'Lvなし').sort((a,b)=>{const an=Number(String(a[0]).replace(/^Lv/,'')),bn=Number(String(b[0]).replace(/^Lv/,''));if(Number.isFinite(an)&&Number.isFinite(bn))return an-bn;if(Number.isFinite(an))return -1;if(Number.isFinite(bn))return 1;return a[0].localeCompare(b[0],'ja')});
- const powerRows=deckStatCount(rows,c=>c.power!==''&&c.power!=null?`PW ${c.power}`:'PWなし').sort((a,b)=>{const an=Number(String(a[0]).replace(/^PW\s*/,'')),bn=Number(String(b[0]).replace(/^PW\s*/,''));if(Number.isFinite(an)&&Number.isFinite(bn))return an-bn;if(Number.isFinite(an))return -1;if(Number.isFinite(bn))return 1;return a[0].localeCompare(b[0],'ja')});
- const raceRows=deckStatCount(rows,c=>{const raw=String(c.race||'').trim();if(!raw)return ['種族なし'];const parts=raw.split(/[／,、・\s\/]+/).map(x=>x.trim()).filter(Boolean);return parts.length?parts:['種族なし']});
+ const levelEligible=rows.filter(x=>x.card.level!==''&&x.card.level!=null&&Number.isFinite(Number(x.card.level))),levelTotal=levelEligible.reduce((a,x)=>a+x.n,0);
+ const levelRows=deckStatCount(levelEligible,c=>`Lv${c.level}`).sort((a,b)=>Number(String(a[0]).replace(/^Lv/,''))-Number(String(b[0]).replace(/^Lv/,'')));
+ const powerEligible=rows.filter(x=>x.card.power!==''&&x.card.power!=null&&Number.isFinite(Number(x.card.power))),powerTotal=powerEligible.reduce((a,x)=>a+x.n,0);
+ const powerRows=deckStatCount(powerEligible,c=>`PW ${c.power}`).sort((a,b)=>Number(String(a[0]).replace(/^PW\s*/,''))-Number(String(b[0]).replace(/^PW\s*/,'')));
+ const raceEligible=rows.filter(x=>String(x.card.race||'').trim()),raceTotal=raceEligible.reduce((a,x)=>a+x.n,0);
+ const raceRows=deckStatCount(raceEligible,c=>String(c.race||'').trim().split(/[／,、・\s\/]+/).map(x=>x.trim()).filter(Boolean));
  const charRows=rows.filter(x=>normalizeCardType(x.card.type||'').startsWith('キャラクター'));
  const numericLevels=charRows.flatMap(x=>{const n=Number(x.card.level);return Number.isFinite(n)?Array(x.n).fill(n):[]});
  const numericPowers=charRows.flatMap(x=>{const n=Number(x.card.power);return Number.isFinite(n)?Array(x.n).fill(n):[]});
  const avg=arr=>arr.length?Math.round(arr.reduce((a,b)=>a+b,0)/arr.length*10)/10:'－';
  openModal(`<div class="modal-head"><h3>${esc(source?.name?.trim()||'名称未設定デッキ')} / 統計</h3><button class="btn" id="deck-stats-close">閉じる</button></div>
-   <p class="muted">デッキ総枚数を母数に集計します。40枚・60枚など、デッキ枚数は固定していません。</p>
+   <p class="muted">カード種類はデッキ総枚数を母数に集計します。レベル・パワー・種族は、その項目が設定されているカードだけを対象に集計します。</p>
    ${deckTagHtml(source)}
    <div class="deck-stat-grid"><div class="deck-stat-card"><b>${total}枚</b><span>総枚数</span></div><div class="deck-stat-card"><b>${unique}種類</b><span>カード種類数</span></div><div class="deck-stat-card"><b>${avg(numericLevels)}</b><span>キャラクター平均Lv</span></div><div class="deck-stat-card"><b>${avg(numericPowers)}</b><span>キャラクター平均POWER</span></div></div>
-   ${deckStatBarsHtml('カード種類',typeRows,total)}${deckStatBarsHtml('レベル分布',levelRows,total)}${deckStatBarsHtml('パワー分布',powerRows,total)}${deckStatBarsHtml('種族分布',raceRows,total)}`);
+   ${deckStatBarsHtml('カード種類',typeRows,total)}${deckStatBarsHtml('レベル分布',levelRows,levelTotal)}${deckStatBarsHtml('パワー分布',powerRows,powerTotal)}${deckStatBarsHtml('種族分布',raceRows,raceTotal)}`);
  $('#deck-stats-close').onclick=closeModal;
 }
 
@@ -36317,7 +36371,7 @@ async function accountCloudInitialize(){
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.39'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.40'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
@@ -36334,7 +36388,7 @@ function accountCloudLocalSnapshot(){
   const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
     schema_version:2,
-    app_version:'16.39',
+    app_version:'16.40',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
     decks:Array.isArray(decks)?decks:[],
@@ -36975,7 +37029,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'16.39',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'16.40',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
