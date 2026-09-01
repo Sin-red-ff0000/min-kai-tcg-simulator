@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v21.17</title>
+<title>みん会TCG Simulator v21.18</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21452,7 +21452,7 @@ h3 .minkai-ruby{margin-top:.45em}
 </style>
 
 <style id="v2117-decor-audit-ui">
-/* v21.17 text bug audit: curved chars must be positioned elements or CSS transforms on inline spans are ignored/inconsistent (notably WebKit). */
+/* v21.18 text bug audit: curved chars must be positioned elements or CSS transforms on inline spans are ignored/inconsistent (notably WebKit). */
 .decor-curved-root{position:relative!important;display:block!important;width:1px!important;height:1px!important;overflow:visible!important;isolation:isolate}
 .decor-curved-root .decor-curved-stroke,.decor-curved-root .decor-curved-fill{position:absolute!important;left:0!important;top:0!important;width:1px!important;height:1px!important;overflow:visible!important;z-index:2}
 .decor-curved-root .decor-char{position:absolute!important;left:0!important;top:0!important;display:block!important;white-space:pre!important;transform-origin:50% 50%!important;will-change:transform}
@@ -21472,6 +21472,20 @@ h3 .minkai-ruby{margin-top:.45em}
 .cheki-cute{color:#de5e98;background:linear-gradient(#fff4fa,#fff4fa) top/100% 6.5%,linear-gradient(#fff4fa,#fff4fa) left/6.5% 100%,linear-gradient(#fff4fa,#fff4fa) right/6.5% 100%,linear-gradient(#fff4fa,#fff4fa) bottom/100% 18%;box-shadow:inset 0 0 0 2px #ffc1dc}
 .cheki-cute::before{content:'♡  ✦  ♡  ✦  ♡';position:absolute;left:8%;right:8%;bottom:13%;font-size:3.2cqw;letter-spacing:.8cqw;text-align:center;color:#e96aa2;opacity:.58}
 .cheki-retro{color:#7f694c;background:linear-gradient(#eee1c6,#eee1c6) top/100% 6.5%,linear-gradient(#eee1c6,#eee1c6) left/6.5% 100%,linear-gradient(#eee1c6,#eee1c6) right/6.5% 100%,linear-gradient(#eee1c6,#eee1c6) bottom/100% 18%;box-shadow:inset 0 0 0 1px #927858,inset 0 0 25px rgba(91,59,26,.12);filter:sepia(.08)}
+
+/* v21.18 board appearance parity + cheki containment */
+.board-main .pile>.card-decor-stack{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ overflow:hidden!important;border-radius:inherit!important;pointer-events:none!important;
+}
+.board-main .pile>.card-decor-stack.decor-back{z-index:3!important}
+.board-main .pile>.card-decor-stack.decor-front{z-index:6!important}
+.board-main .pile.rested:not(.face-down)>.card-decor-stack{
+ inset:0!important;top:0!important;right:0!important;bottom:0!important;left:0!important;
+ width:auto!important;height:auto!important;border-radius:9px!important;
+}
+.board-detail-image>.card-decor-stack{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border-radius:inherit!important;overflow:hidden!important}
+.decor-cheki-layer>.decor-cheki-frame{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;box-sizing:border-box!important;pointer-events:none!important}
 </style>
 </head>
 <body>
@@ -21480,7 +21494,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v21.17 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v21.18 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -27957,15 +27971,7 @@ const BUILTIN_DECOR_STAMPS=[
  {id:'note',name:'音符',glyph:'♪'},
  {id:'light',name:'光',glyph:'✦'},
  {id:'circle',name:'丸',glyph:'●'},
- {id:'bar',name:'横棒',glyph:'━'},
- {id:'diamond',name:'ダイヤ',glyph:'◆'},
- {id:'moon',name:'月',glyph:'☾'},
- {id:'crown',name:'王冠',glyph:'♛'},
- {id:'flower',name:'花',glyph:'✿'},
- {id:'ribbon',name:'リボン',glyph:'🎀'},
- {id:'check',name:'チェック',glyph:'✓'},
- {id:'cross',name:'クロス',glyph:'×'},
- {id:'paw',name:'肉球',glyph:'●'}
+ {id:'bar',name:'横棒',glyph:'━'}
 ];
 function decorBuiltinStampSvg(id,variant='solid'){
  const common=`viewBox="0 0 100 100" class="decor-stamp-svg stamp-${esc(variant)} stamp-id-${esc(id)}" aria-hidden="true"`;
@@ -27977,14 +27983,6 @@ function decorBuiltinStampSvg(id,variant='solid'){
   light:`<path d="M50 5l8 30 28-14-14 28 28 8-30 8 14 28-28-14-8 30-8-30-28 14 14-28-28-8 30-8-14-28 28 14z"/><circle cx="50" cy="50" r="8"/>`,
   circle:`<circle cx="50" cy="50" r="31"/>`,
   bar:`<rect x="8" y="41" width="84" height="18" rx="9"/>`,
-  diamond:`<path d="M50 8L91 50 50 92 9 50z"/>`,
-  moon:`<path d="M67 10c-26 5-39 36-25 58 9 14 27 20 43 12-10 11-25 17-41 13C18 87 4 61 12 36 20 13 44 2 67 10z"/>`,
-  crown:`<path d="M13 29l20 18 17-30 17 30 20-18-8 48H21z"/><rect x="23" y="78" width="54" height="9" rx="4"/>`,
-  flower:`<circle cx="50" cy="50" r="13"/><circle cx="50" cy="23" r="16"/><circle cx="77" cy="50" r="16"/><circle cx="50" cy="77" r="16"/><circle cx="23" cy="50" r="16"/>`,
-  ribbon:`<path d="M18 27c13-8 25-4 32 7 7-11 19-15 32-7v31c-13 8-25 4-32-7-7 11-19 15-32 7z"/><path d="M42 52L27 91l23-11 23 11-15-39z"/>`,
-  check:`<path d="M13 52l22 23 52-55" fill="none" stroke="currentColor" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>`,
-  cross:`<path d="M22 22l56 56M78 22L22 78" fill="none" stroke="currentColor" stroke-width="15" stroke-linecap="round"/>`,
-  paw:`<ellipse cx="50" cy="66" rx="26" ry="20"/><circle cx="23" cy="41" r="11"/><circle cx="42" cy="27" r="11"/><circle cx="62" cy="27" r="11"/><circle cx="80" cy="42" r="11"/>`
  };
  const body=bodies[id]||bodies.heart;
  if(variant==='outline')return `<svg ${common}><g class="stamp-core stamp-outline-core">${body}</g></svg>`;
@@ -28004,7 +28002,7 @@ function decorStampRepeatedHtml(l){
 }
 function decorLayerContentHtml(l){
  if(l.type==='text')return decorTextHtml(l);
- if(l.type==='cheki')return `<div class="decor-section-title">チェキ風フレーム</div><div class="decor-cheki-quick">${[['classic','白'],['black','黒'],['pink','桃'],['blue','青'],['holo','ホロ'],['cream','生成'],['mint','ミント'],['lavender','藤'],['gold','金'],['film','フィルム'],['cute','キュート'],['retro','レトロ']].map(([v,n])=>`<button class="btn small ${l.chekiStyle===v?'primary':''}" data-decor-cheki-quick="${v}">${n}</button>`).join('')}</div><div class="decor-grid"><label>種類<select id="decor-cheki-style">${[['classic','クラシック白'],['black','ブラック'],['pink','ピンク'],['blue','ブルー'],['holo','ホログラム'],['cream','クリーム紙'],['mint','ミント'],['lavender','ラベンダー'],['gold','ゴールド'],['film','黒フィルム'],['cute','キュート'],['retro','レトロ写真']].map(([v,n])=>`<option value="${v}" ${l.chekiStyle===v?'selected':''}>${n}</option>`).join('')}</select></label><label>不透明度<input id="decor-opacity" type="range" min="20" max="100" value="${l.opacity}"></label></div><div class="decor-help">12種類のチェキ枠。写真面を邪魔しにくい標準系から、ホロ・フィルム・レトロまで切り替えできます。枠は常にカード全体へ追従します。</div>`;
+ if(l.type==='cheki')return `<span class="decor-cheki-frame cheki-${esc(l.chekiStyle)}"><i></i></span>`;
  return decorStampRepeatedHtml(l);
 }
 function cardDecorHtml(card,region='front'){
@@ -28077,12 +28075,16 @@ function normalizeDecorLayer(x={}){
  const type=x.type==='stamp'?'stamp':x.type==='cheki'?'cheki':'text';
  const blend=['normal','screen','multiply','overlay','soft-light'].includes(x.blendMode)?x.blendMode:'normal';
  const defaultName=type==='text'?'文字':type==='cheki'?'チェキフレーム':'スタンプ';
- const stampIds=['heart','star','wave','note','light','circle','bar','diamond','moon','crown','flower','ribbon','check','cross','paw'];
+ const stampIds=['heart','star','wave','note','light','circle','bar'];
  const variants=['solid','outline','double','doodle','sticker'];
  const chekiStyles=['classic','black','pink','blue','holo','cream','mint','lavender','gold','film','cute','retro'];
  return {id:String(x.id||uid('decor')),type,name:String(x.name||defaultName).slice(0,50),visible:x.visible!==false,locked:x.locked===true,zRegion:type==='cheki'?'front':(x.zRegion==='back'?'back':'front'),x:type==='cheki'?50:(Number.isFinite(Number(x.x))?Number(x.x):50),y:type==='cheki'?50:(Number.isFinite(Number(x.y))?Number(x.y):50),scale:type==='cheki'?100:(Number.isFinite(Number(x.scale))?Number(x.scale):100),rotation:type==='cheki'?0:(Number.isFinite(Number(x.rotation))?Number(x.rotation):0),opacity:Number.isFinite(Number(x.opacity))?Number(x.opacity):100,blendMode:blend,text:String(x.text??'サイン'),fontFamily:String(x.fontFamily||'cursive'),fontSize:Number.isFinite(Number(x.fontSize))?Number(x.fontSize):42,letterSpacing:Number.isFinite(Number(x.letterSpacing))?Number(x.letterSpacing):0,lineHeight:Number.isFinite(Number(x.lineHeight))?Number(x.lineHeight):1.05,textAlign:['left','center','right'].includes(x.textAlign)?x.textAlign:'center',writingMode:x.writingMode==='vertical'?'vertical':'horizontal',fill:String(x.fill||'#ffffff'),fill2:String(x.fill2||'#ff8ac8'),useGradient:x.useGradient===true,gradientAngle:Number.isFinite(Number(x.gradientAngle))?Number(x.gradientAngle):90,stroke:String(x.stroke||'#202020'),strokeWidth:Number.isFinite(Number(x.strokeWidth))?Number(x.strokeWidth):1,shadowColor:String(x.shadowColor||'#000000'),shadowBlur:Number.isFinite(Number(x.shadowBlur))?Number(x.shadowBlur):4,shadowX:Number.isFinite(Number(x.shadowX))?Number(x.shadowX):0,shadowY:Number.isFinite(Number(x.shadowY))?Number(x.shadowY):2,glow:Number.isFinite(Number(x.glow))?Number(x.glow):0,textBgEnabled:x.textBgEnabled===true,textBgColor:String(x.textBgColor||'#000000'),textBgOpacity:Number.isFinite(Number(x.textBgOpacity))?Number(x.textBgOpacity):45,textBgPadding:Number.isFinite(Number(x.textBgPadding))?Number(x.textBgPadding):8,textBgRadius:Number.isFinite(Number(x.textBgRadius))?Number(x.textBgRadius):10,maxWidth:Number.isFinite(Number(x.maxWidth))?Number(x.maxWidth):560,wrapText:x.wrapText===true,transformType:['normal','italic','tall','wide','arch','reverse-arch','wave','circle'].includes(x.transformType)?x.transformType:'normal',curve:Number.isFinite(Number(x.curve))?Number(x.curve):35,waveAmp:Number.isFinite(Number(x.waveAmp))?Number(x.waveAmp):12,wavePeriod:Number.isFinite(Number(x.wavePeriod))?Number(x.wavePeriod):2,radius:Number.isFinite(Number(x.radius))?Number(x.radius):80,startAngle:Number.isFinite(Number(x.startAngle))?Number(x.startAngle):-90,penPreset:String(x.penPreset||'standard'),fontWeight:Number.isFinite(Number(x.fontWeight))?Math.max(300,Math.min(900,Math.round(Number(x.fontWeight)/100)*100)):500,fontSlant:Number.isFinite(Number(x.fontSlant))?Math.max(-24,Math.min(24,Number(x.fontSlant))):0,stampId:stampIds.includes(x.stampId)?x.stampId:'heart',stampVariant:variants.includes(x.stampVariant)?x.stampVariant:'solid',customStampId:String(x.customStampId||''),stampColor:String(x.stampColor||'#ff4f9a'),stampColorize:x.stampColorize===true,stampOutlineColor:String(x.stampOutlineColor||'#ffffff'),stampOutlineWidth:Number.isFinite(Number(x.stampOutlineWidth))?Number(x.stampOutlineWidth):0,stampShadowColor:String(x.stampShadowColor||'#000000'),stampShadowBlur:Number.isFinite(Number(x.stampShadowBlur))?Number(x.stampShadowBlur):3,stampGlow:Number.isFinite(Number(x.stampGlow))?Number(x.stampGlow):0,stampRepeat:Number.isFinite(Number(x.stampRepeat))?Math.max(1,Math.min(8,Number(x.stampRepeat))):1,stampRepeatSpacing:Number.isFinite(Number(x.stampRepeatSpacing))?Number(x.stampRepeatSpacing):34,stampRepeatArc:Number.isFinite(Number(x.stampRepeatArc))?Number(x.stampRepeatArc):0,flipX:x.flipX===true,flipY:x.flipY===true,chekiStyle:chekiStyles.includes(x.chekiStyle)?x.chekiStyle:'classic'};
 }
-function cardDecorLayers(card){return Array.isArray(card?.decorLayers)?card.decorLayers.map(normalizeDecorLayer):[]}
+function decorSourceCard(card){
+ const sourceId=String(card?.imageSourceCardId||card?.id||'');
+ return cards.find(x=>String(x.id)===sourceId)||card;
+}
+function cardDecorLayers(card){const source=decorSourceCard(card);return Array.isArray(source?.decorLayers)?source.decorLayers.map(normalizeDecorLayer):[]}
 function isDecorHandFont(value){return ['cursive','hand','hand-soft','hand-round','hand-pen','school','script'].includes(String(value||''))}
 function decorFontFamilyCss(value){
  const v=String(value||'hand-soft');
@@ -28263,7 +28265,7 @@ function renderDecorPreview(card){
 function decorLayerListHtml(){return decorEditorState.layers.map((l,i)=>`<div class="decor-layer-row ${l.id===decorEditorState.selectedId?'active':''}"><input type="checkbox" data-decor-visible="${esc(l.id)}" ${l.visible?'checked':''} title="表示"><button class="btn small" data-decor-select="${esc(l.id)}">${l.type==='text'?'文字':l.type==='cheki'?'チェキ':'スタンプ'}：${esc(l.name||'レイヤー')}</button><button class="btn small" data-decor-lock="${esc(l.id)}">${l.locked?'🔒':'🔓'}</button>${l.type==='cheki'?'<span class="pill">最前面</span>':`<select data-decor-region="${esc(l.id)}"><option value="front" ${l.zRegion==='front'?'selected':''}>フレーム前</option><option value="back" ${l.zRegion==='back'?'selected':''}>フレーム後</option></select>`}</div>`).join('')||'<div class="muted">装飾レイヤーはまだありません。</div>'}
 function decorControlsHtml(l){
  if(!l)return '<div class="muted">文字・スタンプ・チェキフレームを追加してください。</div>';
- if(l.type==='cheki')return `<div class="decor-section-title">チェキ風フレーム</div><div class="decor-grid"><label>種類<select id="decor-cheki-style">${[['classic','クラシック白'],['black','ブラック'],['pink','ピンク'],['blue','ブルー'],['holo','ホログラム']].map(([v,n])=>`<option value="${v}" ${l.chekiStyle===v?'selected':''}>${n}</option>`).join('')}</select></label><label>不透明度<input id="decor-opacity" type="range" min="20" max="100" value="${l.opacity}"></label></div><div class="decor-help">カード全体をインスタント写真風に囲みます。下余白を広めにしたチェキ型です。</div>`;
+ if(l.type==='cheki')return `<div class="decor-section-title">チェキ風フレーム</div><div class="decor-cheki-quick">${[['classic','白'],['black','黒'],['pink','桃'],['blue','青'],['holo','ホロ'],['cream','生成'],['mint','ミント'],['lavender','藤'],['gold','金'],['film','フィルム'],['cute','キュート'],['retro','レトロ']].map(([v,n])=>`<button class="btn small ${l.chekiStyle===v?'primary':''}" data-decor-cheki-quick="${v}">${n}</button>`).join('')}</div><div class="decor-grid"><label>種類<select id="decor-cheki-style">${[['classic','クラシック白'],['black','ブラック'],['pink','ピンク'],['blue','ブルー'],['holo','ホログラム'],['cream','クリーム紙'],['mint','ミント'],['lavender','ラベンダー'],['gold','ゴールド'],['film','黒フィルム'],['cute','キュート'],['retro','レトロ写真']].map(([v,n])=>`<option value="${v}" ${l.chekiStyle===v?'selected':''}>${n}</option>`).join('')}</select></label><label>不透明度<input id="decor-opacity" type="range" min="20" max="100" value="${l.opacity}"></label></div><div class="decor-help">フレーム本体だけをカード全体へ重ねます。編集UIがカード上へ混入しない描画経路へ分離済みです。</div>`;
  const common=`<div class="decor-grid"><label>名前<input id="decor-name" value="${esc(l.name)}"></label><label>不透明度<input id="decor-opacity" type="range" min="0" max="100" value="${l.opacity}"></label><label>X<input id="decor-x" type="number" min="-25" max="125" step="1" value="${l.x}"></label><label>Y<input id="decor-y" type="number" min="-25" max="125" step="1" value="${l.y}"></label><label>サイズ<input id="decor-scale" type="range" min="10" max="400" value="${l.scale}"></label><label>回転<input id="decor-rotation" type="range" min="-180" max="180" value="${l.rotation}"></label><label>合成<select id="decor-blend"><option value="normal" ${l.blendMode==='normal'?'selected':''}>通常</option><option value="screen" ${l.blendMode==='screen'?'selected':''}>スクリーン</option><option value="multiply" ${l.blendMode==='multiply'?'selected':''}>乗算</option><option value="overlay" ${l.blendMode==='overlay'?'selected':''}>オーバーレイ</option><option value="soft-light" ${l.blendMode==='soft-light'?'selected':''}>ソフトライト</option></select></label></div><div class="decor-nudge"><span class="muted">配置</span><button class="btn small" data-decor-position="center">中央</button><button class="btn small" data-decor-position="hcenter">左右中央</button><button class="btn small" data-decor-position="vcenter">上下中央</button><button class="btn small" data-decor-position="tl">左上</button><button class="btn small" data-decor-position="tr">右上</button><button class="btn small" data-decor-position="bl">左下</button><button class="btn small" data-decor-position="br">右下</button></div><div class="decor-nudge"><span class="muted">位置</span>${[-5,-1,1,5].map(v=>`<button class="btn small" data-decor-nudge-x="${v}">X ${v>0?'+':''}${v}</button>`).join('')}${[-5,-1,1,5].map(v=>`<button class="btn small" data-decor-nudge-y="${v}">Y ${v>0?'+':''}${v}</button>`).join('')}</div><div class="decor-nudge"><span class="muted">回転</span>${[-5,-1,1,5].map(v=>`<button class="btn small" data-decor-rotate="${v}">${v>0?'+':''}${v}°</button>`).join('')}<button class="btn small" data-decor-rotation-reset="1">0°</button></div>`;
  if(l.type==='stamp')return common+`<div class="decor-section-title">スタンプ仕上げ</div>${l.customStampId?'':`<div class="decor-nudge decor-variant-quick"><span class="muted">形</span>${[['solid','ベタ'],['outline','線画'],['double','二重'],['doodle','手描き'],['sticker','ステッカー']].map(([v,n])=>`<button class="btn small ${l.stampVariant===v?'primary':''}" data-decor-stamp-variant-quick="${v}">${n}</button>`).join('')}</div><div class="decor-grid"><label>バリエーション<select id="decor-stamp-variant">${[['solid','ベタ'],['outline','線画'],['double','二重'],['doodle','手描き'],['sticker','ステッカー']].map(([v,n])=>`<option value="${v}" ${l.stampVariant===v?'selected':''}>${n}</option>`).join('')}</select></label></div>`}<div class="decor-color-row"><label>スタンプ色<input id="decor-stamp-color" type="color" value="${esc(l.stampColor)}"></label>${l.customStampId?`<label><input id="decor-stamp-colorize" type="checkbox" ${l.stampColorize?'checked':''}>画像を単色化</label>`:'<div class="muted">15系統すべて選択色で描画</div>'}</div><div class="decor-grid"><label>輪郭色<input id="decor-stamp-outline-color" type="color" value="${esc(l.stampOutlineColor)}"></label><label>輪郭幅<input id="decor-stamp-outline-width" type="range" min="0" max="10" step="1" value="${l.stampOutlineWidth}"></label><label>影色<input id="decor-stamp-shadow-color" type="color" value="${esc(l.stampShadowColor)}"></label><label>影の強さ<input id="decor-stamp-shadow-blur" type="range" min="0" max="20" step="1" value="${l.stampShadowBlur}"></label><label>発光<input id="decor-stamp-glow" type="range" min="0" max="32" step="1" value="${l.stampGlow}"></label><label><input id="decor-flip-x" type="checkbox" ${l.flipX?'checked':''}>左右反転</label><label><input id="decor-flip-y" type="checkbox" ${l.flipY?'checked':''}>上下反転</label><label>連続数<input id="decor-stamp-repeat" type="range" min="1" max="8" step="1" value="${l.stampRepeat}"></label><label>連続間隔<input id="decor-stamp-repeat-spacing" type="range" min="0" max="110" step="2" value="${l.stampRepeatSpacing}"></label><label>連続カーブ<input id="decor-stamp-repeat-arc" type="range" min="-90" max="90" step="5" value="${l.stampRepeatArc}"></label></div><div class="decor-nudge"><span class="muted">サイズ</span><button class="btn small" data-decor-stamp-scale="55">小</button><button class="btn small" data-decor-stamp-scale="80">中</button><button class="btn small" data-decor-stamp-scale="120">大</button><button class="btn small" data-decor-stamp-scale="180">特大</button></div><div class="decor-nudge"><span class="muted">並べ方</span><button class="btn small" data-decor-stamp-repeat-preset="single">1個</button><button class="btn small" data-decor-stamp-repeat-preset="row">横3</button><button class="btn small" data-decor-stamp-repeat-preset="arc">弧5</button><button class="btn small" data-decor-stamp-repeat-preset="fan">扇5</button></div><div class="decor-nudge"><span class="muted">仕上げ</span><button class="btn small" data-decor-stamp-preset="solid">くっきり</button><button class="btn small" data-decor-stamp-preset="neon">ネオン</button><button class="btn small" data-decor-stamp-preset="soft">やわらか</button><button class="btn small" data-decor-stamp-preset="sticker">ステッカー</button></div>`;
  const curveFields=`<label ${['arch','reverse-arch'].includes(l.transformType)?'':'hidden'}>曲率<input id="decor-curve" type="range" min="0" max="180" value="${l.curve}"></label><label ${l.transformType==='wave'?'':'hidden'}>波の高さ<input id="decor-wave-amp" type="range" min="0" max="50" value="${l.waveAmp}"></label><label ${l.transformType==='wave'?'':'hidden'}>波の回数<input id="decor-wave-period" type="range" min="0.5" max="5" step="0.25" value="${l.wavePeriod}"></label><label ${l.transformType==='circle'?'':'hidden'}>円の半径<input id="decor-radius" type="range" min="30" max="220" value="${l.radius}"></label><label ${l.transformType==='circle'?'':'hidden'}>開始角度<input id="decor-start-angle" type="range" min="-180" max="180" value="${l.startAngle}"></label>`;
@@ -31628,6 +31630,17 @@ function currentNamePosition(){
  return boardDisplayPrefs.orientation==='portrait'?boardDisplayPrefs.namePositionPortrait:boardDisplayPrefs.namePositionLandscape;
 }
 function saveBoardDisplayPrefs(){save(LS_BOARD_DISPLAY,boardDisplayPrefs)}
+async function hydrateBoardVisuals(root=$('#board-main')){
+ if(!root)return;
+ try{
+  await Promise.allSettled([
+   Promise.resolve(hydrateBoardImages()),
+   Promise.resolve(hydrateAllCardFrames(root)),
+   Promise.resolve(hydrateAllCustomFx(root)),
+   Promise.resolve(hydrateAllCardDecor(root))
+  ]);
+ }catch(err){console.warn('盤面外観の読み込みに失敗',err)}
+}
 function applyBoardDisplaySettings(){
  const root=$('#board-main');if(!root)return;
  const portrait=boardDisplayPrefs.orientation==='portrait',namePos=currentNamePosition();
@@ -31638,7 +31651,7 @@ function applyBoardDisplaySettings(){
  root.classList.toggle('card-images-off',boardDisplayPrefs.showCardImages===false);
  const status=$('#board-display-status');
  if(status)status.textContent=`表示：${portrait?'縦長':'横長'} / 名前：${namePos==='bar'?'下部名前欄':'画像上'} / 画像：${boardDisplayPrefs.showCardImages===false?'OFF':'ON'}`;
- hydrateBoardImages();
+ hydrateBoardVisuals(root);
 }
 function applyBoardZoom(){
   const root=$('#board-main');
@@ -32226,7 +32239,7 @@ function renderPile(pile,pi,z,index){
  const markers=renderCardMarkers(c),sizeClass=boardNameSizeClass(c);
  if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${markers}<div class="back-title">裏向きカード</div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;
  const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';
- return `<div class="pile ${sizeClass} ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}${cardFxHtml(c,'board')}${cardFrameHtml(c)}${markers}<div class="name">${(()=>{try{return rubyTextHtml(c.name,cardRubySpec(c))}catch{return esc(c.name||'名称未設定')}})()}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div>${c.token?'<span class="pill" style="position:absolute;left:4px;bottom:4px;font-size:10px">TOKEN</span>':''}${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;
+ return `<div class="pile ${sizeClass} ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}">${art}${cardFxHtml(c,'board')}${cardDecorHtml(c,'back')}${cardFrameHtml(c)}${cardDecorHtml(c,'front')}${markers}<div class="name">${(()=>{try{return rubyTextHtml(c.name,cardRubySpec(c))}catch{return esc(c.name||'名称未設定')}})()}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div>${c.token?'<span class="pill" style="position:absolute;left:4px;bottom:4px;font-size:10px">TOKEN</span>':''}${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;
 }
 
 async function hydrateBoardImages(){
@@ -32255,7 +32268,9 @@ async function hydrateBoardImages(){
 }
 
 async function hydrateBoardDetailImage(cardId){
- const el=$('#board-detail-image');if(!el||!cardId)return;
+ const el=$('#board-detail-image');if(!el)return;
+ await Promise.allSettled([Promise.resolve(hydrateAllCardFrames(el)),Promise.resolve(hydrateAllCustomFx(el)),Promise.resolve(hydrateAllCardDecor(el))]);
+ if(!cardId)return;
  await imageReadyPromise;
  const link=getCachedImageLink(cardId)||await getCardImageLink(cardId);if(!link||!el.isConnected)return;
  const url=await getImageObjectUrl(link.imageId,'thumb');if(!url||!el.isConnected)return;
@@ -33177,7 +33192,7 @@ function openOnlineReadOnlyDetail(pi,z,index,cardIndex=0,navIds){
     <div class="card-full">
       ${c.faceDown
         ?'<div class="muted">このカードは裏向きのため、カード内容は公開されていません。</div>'
-        :`<div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div>
+        :`<div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardDecorHtml(c,'back')}${cardFrameHtml(c)}${cardDecorHtml(c,'front')}</div>
           <h3>${collectionNameHtml(c)}</h3>
           <div class="actions"><span class="pill">${esc(c.type||'-')}</span><span class="pill">Lv ${esc(levelNow)}</span><span class="pill">POWER ${esc(powerNow)}</span></div>
           ${c.rarity?`<div class="muted">レアリティ：${esc(c.rarity)}</div>`:''}
@@ -33241,7 +33256,7 @@ function openDetail(pi,z,index,cardIndex=0,navIds){if(onlineOpponentReadOnly(pi)
  const helperOpen=(Number(c.powerMod)||0)!==0||(Number(c.levelModPersistent)||0)!==0||(Number(c.levelModTemporary)||0)!==0||c.counters.length||c.markers.length;
  const stackOpen=pile.cards.length>1;
  const relatedHtml=renderBoardRelatedLinks(c);
- openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardFrameHtml(c)}</div><h3>${collectionNameHtml(c)}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(levelNow)}</span><span class="pill">POWER ${pow===null?'-':esc(pow)}</span></div>${levelBreakdown}${powerBreakdown}<div class="muted">${rubyTextHtml(c.race||'種族なし',cardRubySpec(c))}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${rubyTextHtml(c.effect||'効果テキストなし',cardRubySpec(c))}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="reset-card-corrections" ${((Number(c.powerMod)||0)===0&&(Number(c.levelModPersistent)||0)===0&&(Number(c.levelModTemporary)||0)===0)?'disabled':''}>POWER/Lv修正をリセット</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><details class="board-detail-fold board-helper-fold" ${helperOpen?'open':''}><summary>補助情報 <span class="pill">${(Number(c.powerMod)||0)!==0?'PW':''}${((Number(c.levelModPersistent)||0)!==0||(Number(c.levelModTemporary)||0)!==0)?`${(Number(c.powerMod)||0)!==0?' / ':''}LV`:''}${c.counters.length?`${(Number(c.powerMod)||0)!==0?' / ':''}C${c.counters.length}`:''}${c.markers.length?`${((Number(c.powerMod)||0)!==0||c.counters.length)?' / ':''}M${c.markers.length}`:''}${!helperOpen?'なし':''}</span></summary><div class="board-detail-fold-body"><label>POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h4>レベル補正</h4><div class="level-mod-grid"><label>常時<input id="level-mod-persistent" type="number" value="${Number(c.levelModPersistent)||0}"></label><label>一時<input id="level-mod-temporary" type="number" value="${Number(c.levelModTemporary)||0}"></label></div><div class="muted">元Lvが数値なら合算して現在Lvとして扱います。？やXなどの場合は補正値だけを別表示します。</div><h4>カウンター</h4><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button><h4>一時マーカー</h4><div id="detail-marker-list">${renderDetailMarkers(c)}</div>${Array.isArray(c.markers)&&c.markers.length?'<button class="btn small" id="clear-temp-markers">すべて外す</button>':''}</div></details><details class="board-detail-fold" ${stackOpen?'open':''}><summary>重なり <span class="pill">${pile.cards.length}</span></summary><div class="board-detail-fold-body">${pile.cards.length>1?`<div class="actions stack-quick-actions"><button class="btn small" id="stack-move-top">一番上だけ移動</button><button class="btn small" id="stack-move-bottom">一番下だけ移動</button><button class="btn small" id="stack-move-all">全部まとめて移動</button><button class="btn small danger" id="stack-split-all">ばらす</button></div>`:''}<div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item stack-item-rich ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span class="stack-order">${i+1}</span><div class="stack-mini-art">${boardMiniArtHtml(x)}</div><div class="stack-item-copy"><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}${x.faceDown?' / 裏向き':''}${x.rested?' / レスト':''}</div></div><div class="stack-item-actions"><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div></div></details>${relatedHtml}</div></div>`);
+ openModal(`<div class="modal-head"><h3>カード詳細</h3><div class="actions"><button class="btn small" id="detail-prev" ${navPos<=0?'disabled':''}>← 前</button><span class="pill">${navTotal?navPos+1:1}/${navTotal||1}</span><button class="btn small" id="detail-next" ${navPos<0||navPos>=navTotal-1?'disabled':''}>次 →</button></div><button class="btn" id="detail-close">閉じる</button></div><div class="detail-grid"><div class="card-full"><div id="board-detail-image" class="board-detail-image ${cardFxLayersFor(c).length?'has-fx':''}">${cardFxHtml(c,'board')}${cardDecorHtml(c,'back')}${cardFrameHtml(c)}${cardDecorHtml(c,'front')}</div><h3>${collectionNameHtml(c)}</h3><div class="actions"><span class="pill">${esc(c.type||'トークン')}</span><span class="pill">Lv ${esc(levelNow)}</span><span class="pill">POWER ${pow===null?'-':esc(pow)}</span></div>${levelBreakdown}${powerBreakdown}<div class="muted">${rubyTextHtml(c.race||'種族なし',cardRubySpec(c))}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="effect">${rubyTextHtml(c.effect||'効果テキストなし',cardRubySpec(c))}</div><label style="margin-top:12px">メモ<textarea id="detail-memo">${esc(c.memo||'')}</textarea></label></div><div><h3 style="margin-top:0">操作</h3><div class="actions"><button class="btn primary" id="move-card">移動</button><button class="btn" id="stack-card">他カードに重ねる</button><button class="btn" id="toggle-face">${c.faceDown?'表向きにする':'裏向きにする'}</button><button class="btn" id="toggle-rest">${c.rested?'アクティブにする':'レストする'}</button><button class="btn" id="reset-card-corrections" ${((Number(c.powerMod)||0)===0&&(Number(c.levelModPersistent)||0)===0&&(Number(c.levelModTemporary)||0)===0)?'disabled':''}>POWER/Lv修正をリセット</button><button class="btn" id="token-from-card">このカードを元にトークン作成</button></div><div class="actions" style="margin-top:8px"><button class="btn" data-quick-move="hand">手札へ</button><button class="btn" data-quick-move="grave">墓地へ</button><button class="btn" data-quick-move="banish">消失へ</button><button class="btn" data-quick-move="deckTop">デッキ上へ</button><button class="btn" data-quick-move="deckBottom">デッキ下へ</button></div><details class="board-detail-fold board-helper-fold" ${helperOpen?'open':''}><summary>補助情報 <span class="pill">${(Number(c.powerMod)||0)!==0?'PW':''}${((Number(c.levelModPersistent)||0)!==0||(Number(c.levelModTemporary)||0)!==0)?`${(Number(c.powerMod)||0)!==0?' / ':''}LV`:''}${c.counters.length?`${(Number(c.powerMod)||0)!==0?' / ':''}C${c.counters.length}`:''}${c.markers.length?`${((Number(c.powerMod)||0)!==0||c.counters.length)?' / ':''}M${c.markers.length}`:''}${!helperOpen?'なし':''}</span></summary><div class="board-detail-fold-body"><label>POWER補正<input id="power-mod" type="number" value="${Number(c.powerMod)||0}"></label><h4>レベル補正</h4><div class="level-mod-grid"><label>常時<input id="level-mod-persistent" type="number" value="${Number(c.levelModPersistent)||0}"></label><label>一時<input id="level-mod-temporary" type="number" value="${Number(c.levelModTemporary)||0}"></label></div><div class="muted">元Lvが数値なら合算して現在Lvとして扱います。？やXなどの場合は補正値だけを別表示します。</div><h4>カウンター</h4><div id="counter-list">${renderCounters(c)}</div><button class="btn small" id="add-counter">カウンター追加</button><h4>一時マーカー</h4><div id="detail-marker-list">${renderDetailMarkers(c)}</div>${Array.isArray(c.markers)&&c.markers.length?'<button class="btn small" id="clear-temp-markers">すべて外す</button>':''}</div></details><details class="board-detail-fold" ${stackOpen?'open':''}><summary>重なり <span class="pill">${pile.cards.length}</span></summary><div class="board-detail-fold-body">${pile.cards.length>1?`<div class="actions stack-quick-actions"><button class="btn small" id="stack-move-top">一番上だけ移動</button><button class="btn small" id="stack-move-bottom">一番下だけ移動</button><button class="btn small" id="stack-move-all">全部まとめて移動</button><button class="btn small danger" id="stack-split-all">ばらす</button></div>`:''}<div class="stack-list">${pile.cards.map((x,i)=>`<div class="stack-item stack-item-rich ${i===cardIndex?'selected':''}" data-stack-select="${i}"><span class="stack-order">${i+1}</span><div class="stack-mini-art">${boardMiniArtHtml(x)}</div><div class="stack-item-copy"><b>${esc(x.name)}</b><div class="muted">${i===0?'一番上':i===pile.cards.length-1?'一番下':''}${x.faceDown?' / 裏向き':''}${x.rested?' / レスト':''}</div></div><div class="stack-item-actions"><button class="btn small" data-stack-up="${i}">↑</button><button class="btn small" data-stack-down="${i}">↓</button></div></div>`).join('')}</div></div></details>${relatedHtml}</div></div>`);
  enableLiveBoardDetail('own',c.instanceId);
  const liveNote=document.createElement('div');liveNote.className='board-detail-live-note';liveNote.textContent='詳細を開いたまま盤面を操作できます。';$('#modal').insertBefore(liveNote,$('#modal').firstChild?.nextSibling||$('#modal').firstChild);
  hydrateBoardDetailImage(cardImageSourceId(c));
