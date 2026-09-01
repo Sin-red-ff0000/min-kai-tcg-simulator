@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minkai-tcg-simulator-v16-42';
+const CACHE_NAME = 'minkai-tcg-simulator-v16-43';
 const APP_SHELL = [
   './',
   './index.html',
@@ -31,7 +31,14 @@ const APP_SHELL = [
   './frames/material-white-porcelain.png',
   './frames/material-ancient-bronze.png',
   './frames/material-leather-binding.png',
-  './frames/material-metal-inlay.png',  './effects/holographic-film-soft.png',
+  './frames/material-metal-inlay.png',
+  './frames/erotic-black-lace-corset.png',
+  './frames/erotic-rose-veil.png',
+  './frames/erotic-satin-ribbon.png',
+  './frames/erotic-luxury-night.png',
+  './frames/erotic-neon-heart.png',
+  './frames/erotic-sheer-drape.png',
+  './effects/holographic-film-soft.png',
   './effects/surface-diamond-cut.png',  './effects/surface-anodized-metal.png',  './effects/surface-carbon-iridescent.png',
   './effects/surface-velvet-matte.png',
   './effects/surface-diamond-cut-fine.png',
@@ -83,6 +90,13 @@ const APP_SHELL = [
   './effects/surface-ink-resin.png',
   './effects/surface-scale-emboss.png',
   './effects/surface-ripple-emboss.png',
+  './effects/erotic-black-lace-veil.png',
+  './effects/erotic-satin-sheen.png',
+  './effects/erotic-rouge-gloss.png',
+  './effects/erotic-black-velvet.png',
+  './effects/erotic-perfume-mist.png',
+  './effects/erotic-sheer.png',
+
 ];
 
 self.addEventListener('install', event => {
