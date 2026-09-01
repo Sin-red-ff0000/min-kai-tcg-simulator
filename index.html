@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v21.13</title>
+<title>みん会TCG Simulator v21.14</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21431,7 +21431,7 @@ h3 .minkai-ruby{margin-top:.45em}
 </style>
 
 <style id="v2113-decor-direct-metric">
-/* v21.13: direct metric renderer. No nested fixed-size canvas; every layer is sized against the actual card stack. */
+/* v21.14: direct metric renderer + measured curved-text geometry. Preview and saved cards share cardDecorHtml/updateDecorStackMetric/renderCurvedDecorText. */
 .card-decor-stack{position:absolute!important;left:0!important;top:0!important;right:0!important;bottom:0!important;width:100%!important;height:100%!important;overflow:hidden;pointer-events:none;container-type:normal!important;--decor-u:1px!important}
 .card-decor-stack>.card-decor-layer{position:absolute;max-width:none;box-sizing:border-box}
 .card-decor-stack>.card-decor-layer:not(.locked){pointer-events:auto}
@@ -21448,7 +21448,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v21.13 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v21.14 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22606,7 +22606,7 @@ h3 .minkai-ruby{margin-top:.45em}
     </div>
 
     <div class="online-duel-wrap">
-      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：v16.41で実装。統計画面からカード種類・レベル・パワー・種族を棒グラフ／ドーナツで確認<br>・カスタムレーダーチャート：v16.42で自由入力を強化。3～8軸で表示名・自動集計指標・基準値に加え、完全手動の数値軸も作成可能。将来は複数デッキ比較を拡張予定<br>・外観編集：v21.13で装飾・サイン描画を実寸追従方式へ再構築。v21.12の固定420×588キャンバス拡縮を廃止し、各カード表示領域の実幅から文字・縁・影・発光・背景・曲線文字を直接px換算。チェキフレームの縮小表示と文字詳細設定の未反映を修正。</p></section></main>
+      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：v16.41で実装。統計画面からカード種類・レベル・パワー・種族を棒グラフ／ドーナツで確認<br>・カスタムレーダーチャート：v16.42で自由入力を強化。3～8軸で表示名・自動集計指標・基準値に加え、完全手動の数値軸も作成可能。将来は複数デッキ比較を拡張予定<br>・外観編集：v21.14で曲線文字を実測文字幅ベースへ再構築。アーチ／逆アーチ／波／円形はプレビューと保存表示で同じ配置計算を使用し、大きな文字でも文字同士が潰れにくい。装飾プレビューと実表示のメトリクス経路も共通化。</p></section></main>
 
       <aside class="online-duel-tools">
         <div class="panel">
@@ -27982,6 +27982,11 @@ function updateDecorStackMetric(stack,sourceLayers=null){
   const l=layers.find(x=>String(x.id)===String(el.dataset.cardDecorLayer));if(l)applyDecorRenderedLayer(el,l,unit);
  }
 }
+function decorStackDebugSnapshot(stack){
+ if(!stack)return null;
+ const r=stack.getBoundingClientRect?.(),unit=Math.max(.05,Number(stack.dataset.decorUnit)||((Number(r?.width)||420)/420));
+ return {width:Number(r?.width)||0,unit,layers:$$('[data-card-decor-layer]',stack).map(el=>({id:String(el.dataset.cardDecorLayer||''),fontSize:getComputedStyle(el).fontSize,transform:getComputedStyle(el).transform}))};
+}
 function hydrateDecorStackMetrics(root=document,sourceLayers=null){
  const stacks=$$('[data-card-decor-stack]',root);
  if(typeof ResizeObserver==='function'&&!decorStackResizeObserver){decorStackResizeObserver=new ResizeObserver(entries=>{for(const e of entries)updateDecorStackMetric(e.target)})}
@@ -28052,22 +28057,70 @@ function decorLayerStyle(l,unit=1){
  return `left:${Number(l.x)||0}%;top:${Number(l.y)||0}%;opacity:${Math.max(0,Math.min(1,(Number(l.opacity)||0)/100))};transform:${transforms};${mix}${textStyle}${stampStyle}`;
 }
 async function decorStampUrl(l){if(!l.customStampId)return '';try{const rec=await imageDbGet('customStamps',l.customStampId);if(!rec?.blob)return '';return URL.createObjectURL(rec.blob)}catch{return ''}}
+function decorCurvedLayoutMetrics(l,unit=1){
+ unit=Math.max(.05,Number(unit)||1);
+ const chars=[...String(l?.text||'')];
+ const fontPx=Math.max(1,(Number(l?.fontSize)||42)*unit);
+ const spacing=(Number(l?.letterSpacing)||0)*unit;
+ let ctx=null;
+ try{const canvas=decorCurvedLayoutMetrics._canvas||(decorCurvedLayoutMetrics._canvas=document.createElement('canvas'));ctx=canvas.getContext('2d');if(ctx)ctx.font=`${Number(l?.fontWeight)||500} ${fontPx}px ${decorFontFamilyCss(l?.fontFamily)}`;}catch{}
+ const widths=chars.map(ch=>Math.max(fontPx*.2,Number(ctx?.measureText?.(ch)?.width)||fontPx*.82));
+ const advances=widths.map((w,i)=>w+(i<chars.length-1?spacing:0));
+ const total=Math.max(1,advances.reduce((a,b)=>a+b,0));
+ const centers=[];let cursor=0;for(let i=0;i<chars.length;i++){centers.push(cursor+widths[i]/2);cursor+=advances[i]}
+ return {chars,fontPx,spacing,widths,advances,total,centers};
+}
 function renderCurvedDecorText(host,l,unit=1){
  if(!host)return;host.innerHTML='';
- const chars=[...String(l.text||'')];if(!chars.length)return;
  unit=Math.max(.05,Number(unit)||1);
+ const m=decorCurvedLayoutMetrics(l,unit),chars=m.chars;if(!chars.length)return;
  const root=document.createElement('span');root.style.cssText='position:relative;display:block;width:1px;height:1px';host.appendChild(root);
  const stroke=document.createElement('span'),fill=document.createElement('span');stroke.className='decor-curved-stroke';fill.className='decor-curved-fill';root.append(stroke,fill);
- const n=Math.max(1,chars.length-1),pen=decorPenCss(l,unit),baseFont=Math.max(1,l.fontSize*unit),spacing=(Number(l.letterSpacing)||0)*unit;
- const place=(parent,ch,i,isStroke)=>{const c=document.createElement('span');c.className='decor-char';c.textContent=ch;c.style.fontFamily=decorFontFamilyCss(l.fontFamily);c.style.fontSize=`${baseFont}px`;c.style.fontWeight=String(l.fontWeight||500);c.style.letterSpacing=`${spacing}px`;const shadows=[`${(Number(l.shadowX)||0)*unit}px ${(Number(l.shadowY)||0)*unit}px ${Math.max(0,Number(l.shadowBlur)||0)*unit}px ${l.shadowColor||'#000000'}`];const glow=Math.max(0,Number(l.glow)||0);if(l.penPreset==='fluorescent'||glow>0)shadows.push(`0 0 ${Math.max(l.penPreset==='fluorescent'?5:0,glow||0)*unit}px ${pen.fill}`);c.style.textShadow=shadows.join(',');
-  if(isStroke){c.style.color='transparent';c.style.webkitTextFillColor='transparent';c.style.webkitTextStroke=`${Math.max(0,l.strokeWidth)*unit}px ${l.stroke}`;}else{c.style.webkitTextStroke='0';if(l.useGradient){c.style.color='transparent';c.style.webkitTextFillColor='transparent';c.style.background=`linear-gradient(${Number(l.gradientAngle)||90}deg,${l.fill||'#fff'},${l.fill2||'#ff8ac8'})`;c.style.webkitBackgroundClip='text';c.style.backgroundClip='text'}else{c.style.color=pen.fill;c.style.webkitTextFillColor=pen.fill;}}
+ const pen=decorPenCss(l,unit),count=Math.max(1,chars.length);
+ const archCurve=Math.max(0,Math.min(120,Number(l.curve)||0));
+ // The old implementation used a fixed radius and a fixed angle per character. Large fonts therefore collapsed into one another.
+ // v21.14 derives the radius from the actual measured text advance, so increasing font size enlarges the whole arch without changing character spacing.
+ const archSpanDeg=archCurve<=0?0:Math.max(8,Math.min(150,archCurve*1.65));
+ const archSpanRad=archSpanDeg*Math.PI/180;
+ const archRadius=archSpanRad>0?Math.max(m.fontPx*.7,m.total/archSpanRad):1e9;
+ const circleRequested=Math.max(10,(Number(l.radius)||80)*unit);
+ const circleMinRadius=Math.max(m.fontPx*.7,m.total/(Math.PI*2)*1.12);
+ const circleRadius=Math.max(circleRequested,circleMinRadius);
+ const place=(parent,ch,i,isStroke)=>{
+  const c=document.createElement('span');c.className='decor-char';c.textContent=ch;
+  c.style.fontFamily=decorFontFamilyCss(l.fontFamily);c.style.fontSize=`${m.fontPx}px`;c.style.fontWeight=String(l.fontWeight||500);c.style.letterSpacing='0px';
+  const shadows=[`${(Number(l.shadowX)||0)*unit}px ${(Number(l.shadowY)||0)*unit}px ${Math.max(0,Number(l.shadowBlur)||0)*unit}px ${l.shadowColor||'#000000'}`];
+  const glow=Math.max(0,Number(l.glow)||0);if(l.penPreset==='fluorescent'||glow>0)shadows.push(`0 0 ${Math.max(l.penPreset==='fluorescent'?5:0,glow||0)*unit}px ${pen.fill}`);c.style.textShadow=shadows.join(',');
+  if(isStroke){c.style.color='transparent';c.style.webkitTextFillColor='transparent';c.style.webkitTextStroke=`${Math.max(0,Number(l.strokeWidth)||0)*unit}px ${l.stroke}`;}
+  else{c.style.webkitTextStroke='0';if(l.useGradient){c.style.color='transparent';c.style.webkitTextFillColor='transparent';c.style.background=`linear-gradient(${Number(l.gradientAngle)||90}deg,${l.fill||'#fff'},${l.fill2||'#ff8ac8'})`;c.style.webkitBackgroundClip='text';c.style.backgroundClip='text'}else{c.style.color=pen.fill;c.style.webkitTextFillColor=pen.fill;}}
   let x=0,y=0,a=0;
-  if(l.transformType==='wave'){x=(i-(chars.length-1)/2)*(baseFont*.62+spacing);y=Math.sin((i/n)*Math.PI*2*l.wavePeriod)*(l.waveAmp*unit);a=Math.cos((i/n)*Math.PI*2*l.wavePeriod)*8}
-  else if(l.transformType==='circle'){a=l.startAngle+(i/Math.max(1,chars.length))*360;const rad=a*Math.PI/180;x=Math.cos(rad)*(l.radius*unit);y=Math.sin(rad)*(l.radius*unit);a+=90}
-  else{const spread=Math.min(150,8*chars.length);a=chars.length===1?0:-spread/2+(i/n)*spread;const rad=a*Math.PI/180;const r=Math.max(45,170-l.curve)*unit;x=Math.sin(rad)*r;y=(1-Math.cos(rad))*r*(l.transformType==='reverse-arch'?-1:1);if(l.transformType==='reverse-arch')a=-a}
-  const slant=(Number(l.fontSlant)||0);c.style.transform=`translate(${x}px,${y}px) rotate(${a}deg)${slant?` skewX(${slant}deg)`:''}`;parent.appendChild(c)};
+  const centerOffset=m.centers[i]-m.total/2;
+  if(l.transformType==='wave'){
+   x=centerOffset;
+   const phase=count<=1?0:i/(count-1);
+   const wavePeriod=Math.max(.25,Number(l.wavePeriod)||2),amp=(Number(l.waveAmp)||0)*unit;
+   y=Math.sin(phase*Math.PI*2*wavePeriod)*amp;
+   // tangent angle follows the wave but stays readable at extreme settings.
+   const dx=Math.max(1,m.advances[i]||m.fontPx),slope=(Math.PI*2*wavePeriod*amp/Math.max(m.total,1))*Math.cos(phase*Math.PI*2*wavePeriod);
+   a=Math.max(-38,Math.min(38,Math.atan2(slope,1)*180/Math.PI));
+  }else if(l.transformType==='circle'){
+   const start=(Number(l.startAngle)||-90)*Math.PI/180;
+   const theta=start+(centerOffset/circleRadius);
+   x=Math.cos(theta)*circleRadius;y=Math.sin(theta)*circleRadius;a=theta*180/Math.PI+90;
+  }else{
+   if(archSpanDeg<=0){x=centerOffset;y=0;a=0}
+   else{
+    const theta=centerOffset/archRadius;
+    x=Math.sin(theta)*archRadius;
+    const sag=(1-Math.cos(theta))*archRadius;
+    const reverse=l.transformType==='reverse-arch';y=reverse?-sag:sag;a=(reverse?-theta:theta)*180/Math.PI;
+   }
+  }
+  const slant=Number(l.fontSlant)||0;c.style.transform=`translate(${x}px,${y}px) rotate(${a}deg)${slant?` skewX(${slant}deg)`:''}`;parent.appendChild(c);
+ };
  chars.forEach((ch,i)=>place(stroke,ch,i,true));chars.forEach((ch,i)=>place(fill,ch,i,false));
 }
+
 let decorPreviewHydrateSeq=0;
 async function hydrateDecorPreview(card,{forceImage=false}={}){
  const preview=$('#decor-preview'),base=$('#decor-preview-base'),status=$('#decor-preview-status');if(!preview||!base)return;
