@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.40</title>
+<title>みん会TCG Simulator v16.41</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20843,7 +20843,7 @@ h3 .minkai-ruby{margin-top:.45em}
 <style id="v1637-material-structure-round2">
 /* v16.37 / 2 of 4 — material structure rebuild.
    Structural layers stay static; only v16.36 optical grading is animated. */
-.card-fx-layer>.fx-material-structure{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;overflow:hidden;opacity:calc(.16 + var(--fx-structure,.9)*.26);mix-blend-mode:soft-light;filter:contrast(var(--fx-structure-contrast,1));transform:scale(var(--fx-structure-scale,1));transform-origin:center}
+.card-fx-layer>.fx-material-structure{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;overflow:hidden;opacity:calc(var(--fx-structure,.9)*.46);mix-blend-mode:soft-light;filter:contrast(var(--fx-structure-contrast,1));transform:scale(var(--fx-structure-scale,1));transform-origin:center}
 .card-fx-layer[data-fx-family="interference"]>.fx-material-structure{background:repeating-linear-gradient(104deg,rgba(255,255,255,.10) 0 1px,transparent 1px 11px),repeating-linear-gradient(16deg,rgba(20,40,70,.12) 0 1px,transparent 1px 17px);background-size:calc(24px*var(--fx-density-scale,1)) calc(24px*var(--fx-density-scale,1)),calc(38px*var(--fx-density-scale,1)) calc(38px*var(--fx-density-scale,1));opacity:calc(.12 + var(--fx-structure,.9)*.20)}
 .card-fx-layer[data-fx-family="metal"]>.fx-material-structure{background:repeating-linear-gradient(92deg,rgba(255,255,255,.11) 0 1px,rgba(0,0,0,.09) 1px 2px,transparent 2px 7px),radial-gradient(ellipse at 18% 26%,rgba(255,255,255,.10),transparent 22%),radial-gradient(ellipse at 72% 68%,rgba(0,0,0,.13),transparent 28%);background-size:calc(17px*var(--fx-density-scale,1)) 100%,100% 100%,100% 100%;mix-blend-mode:overlay}
 .card-fx-layer[data-fx-family="facet"]>.fx-material-structure{background:conic-gradient(from 18deg at 24% 28%,rgba(255,255,255,.13) 0 9deg,rgba(0,0,0,.10) 9deg 20deg,transparent 20deg 36deg,rgba(255,255,255,.07) 36deg 49deg,transparent 49deg 72deg),conic-gradient(from 192deg at 72% 66%,rgba(0,0,0,.12) 0 14deg,rgba(255,255,255,.11) 14deg 28deg,transparent 28deg 52deg);background-size:calc(94px*var(--fx-density-scale,1)) calc(94px*var(--fx-density-scale,1)),calc(118px*var(--fx-density-scale,1)) calc(118px*var(--fx-density-scale,1));mix-blend-mode:overlay}
@@ -20868,7 +20868,7 @@ h3 .minkai-ruby{margin-top:.45em}
 .card-frame-overlay[data-frame-material="organic"]>.frame-material-surface{background:repeating-linear-gradient(13deg,transparent 0 11px,rgba(255,255,255,.055) 12px,transparent 14px 25px),radial-gradient(ellipse at 30% 30%,rgba(0,0,0,.07),transparent 38%);opacity:.31}
 .card-frame-overlay[data-frame-material="dark-stone"]>.frame-material-surface{background:radial-gradient(circle at 21% 27%,rgba(255,255,255,.055) 0 1px,transparent 2px),radial-gradient(circle at 69% 63%,rgba(0,0,0,.11) 0 2px,transparent 4px),linear-gradient(145deg,rgba(255,255,255,.035),transparent 44%,rgba(0,0,0,.10));background-size:31px 29px,47px 43px,100% 100%;mix-blend-mode:overlay}
 .card-frame-overlay[data-frame-material="arcane"]>.frame-material-surface{background:repeating-conic-gradient(from 9deg,transparent 0 18deg,rgba(255,255,255,.055) 19deg 20deg,transparent 21deg 37deg),radial-gradient(circle at 50% 50%,rgba(255,255,255,.08),transparent 42%);opacity:.28;mix-blend-mode:screen}
-@media(max-width:700px){.card-fx-layer>.fx-material-structure{opacity:calc(.10 + var(--fx-structure,.9)*.18)}.card-frame-overlay>.frame-material-surface{opacity:.30}}
+@media(max-width:700px){.card-fx-layer>.fx-material-structure{opacity:calc(var(--fx-structure,.9)*.34)}.card-frame-overlay>.frame-material-surface{opacity:.42}}
 </style>
 
 
@@ -20971,7 +20971,7 @@ h3 .minkai-ruby{margin-top:.45em}
 </style>
 
 <style id="v1639-individual-finish-round4">
-/* v16.40 / 4 of 4 — per-effect and per-frame individual finishing. */
+/* v16.41 / 4 of 4 — per-effect and per-frame individual finishing. */
 .card-fx-layer>.fx-signature{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;overflow:hidden;background:var(--fx-signature-bg,none);mix-blend-mode:var(--fx-signature-blend,soft-light);opacity:calc(var(--fx-signature-opacity,.52)*(0.56 + var(--fx-structure,.9)*.36));filter:contrast(calc(.88 + var(--fx-structure-contrast,1)*.14)) saturate(calc(.92 + var(--fx-color-influence,1)*.12));}
 .fx-quality-light .card-fx-layer>.fx-signature{opacity:calc(var(--fx-signature-opacity,.52)*.72);filter:none}
 .card-fx-stack:not(.fx-animate) .card-fx-layer>.fx-signature{transform:none!important;animation:none!important}
@@ -21015,7 +21015,7 @@ h3 .minkai-ruby{margin-top:.45em}
 .card-fx-layer[data-fx-type="jade-gloss"]{--fx-signature-bg:radial-gradient(ellipse at 28% 30%,rgba(215,255,225,.11),transparent 30%),radial-gradient(ellipse at 68% 72%,rgba(25,80,55,.13),transparent 34%),linear-gradient(125deg,rgba(55,160,110,.13),transparent 55%);--fx-signature-blend:soft-light;--fx-signature-opacity:.60;}
 .card-fx-layer[data-fx-type="azure-marble"]{--fx-signature-bg:radial-gradient(ellipse at 25% 28%,rgba(75,165,220,.14),transparent 24%),radial-gradient(ellipse at 72% 62%,rgba(225,245,255,.10),transparent 25%),repeating-linear-gradient(135deg,transparent 0 22px,rgba(20,75,120,.08) 23px,transparent 25px 48px);--fx-signature-blend:overlay;--fx-signature-opacity:.58;}
 .card-fx-layer[data-fx-type="stained-film"]{--fx-signature-bg:linear-gradient(35deg,rgba(255,70,90,.14) 0 22%,transparent 23% 39%,rgba(75,165,255,.15) 40% 58%,transparent 59% 72%,rgba(255,205,70,.13) 73% 100%),linear-gradient(125deg,rgba(255,255,255,.08),transparent 55%);--fx-signature-blend:overlay;--fx-signature-opacity:.56;}
-.card-fx-layer[data-fx-type="stained-glass-material"]{--fx-signature-bg:linear-gradient(27deg,rgba(255,75,85,.16) 0 18%,rgba(20,20,25,.14) 19% 21%,rgba(70,155,255,.16) 22% 42%,rgba(20,20,25,.14) 43% 45%,rgba(255,205,70,.15) 46% 66%,rgba(20,20,25,.14) 67% 69%,rgba(95,210,145,.15) 70% 100%);--fx-signature-blend:overlay;--fx-signature-opacity:.62;}
+.card-fx-layer[data-fx-type="stained-glass-material"]{--fx-signature-bg:radial-gradient(circle at 18% 22%,rgba(255,255,255,.10) 0 1px,transparent 3px),radial-gradient(circle at 74% 68%,rgba(255,235,190,.08) 0 1px,transparent 3px),linear-gradient(126deg,rgba(115,210,230,.09),transparent 32%,rgba(230,130,180,.08) 50%,transparent 68%,rgba(235,205,115,.07));--fx-signature-blend:soft-light;--fx-signature-opacity:.48;}
 .card-fx-layer[data-fx-type="dichroic-mosaic"]{--fx-signature-bg:conic-gradient(from 12deg at 30% 30%,rgba(90,225,255,.17) 0 24deg,rgba(255,105,205,.17) 25deg 48deg,rgba(255,225,105,.14) 49deg 72deg,transparent 73deg 100deg),conic-gradient(from 190deg at 72% 70%,rgba(145,105,255,.15),rgba(80,215,205,.16),transparent 55%);--fx-signature-blend:screen;--fx-signature-opacity:.60;}
 .card-fx-layer[data-fx-type="smoke-resin"]{--fx-signature-bg:radial-gradient(ellipse at 25% 35%,rgba(30,30,40,.18),transparent 34%),radial-gradient(ellipse at 70% 62%,rgba(95,100,120,.13),transparent 38%),linear-gradient(128deg,rgba(255,255,255,.05),transparent 50%,rgba(0,0,0,.12));--fx-signature-blend:soft-light;--fx-signature-opacity:.62;}
 .card-fx-layer[data-fx-type="ink-resin"]{--fx-signature-bg:radial-gradient(ellipse at 28% 28%,rgba(70,25,90,.18),transparent 30%),radial-gradient(ellipse at 65% 55%,rgba(20,85,120,.17),transparent 34%),radial-gradient(ellipse at 48% 82%,rgba(130,35,65,.14),transparent 28%);--fx-signature-blend:overlay;--fx-signature-opacity:.60;}
@@ -21098,7 +21098,7 @@ h3 .minkai-ruby{margin-top:.45em}
 .card-fx-layer[data-fx-type="meteorite-crystal"]>.fx-signature{background-size:49px 53px,93px 87px,131px 143px}
 @media(max-width:700px){.card-fx-layer>.fx-signature{opacity:calc(var(--fx-signature-opacity,.52)*.78)}.card-frame-overlay>.frame-signature{opacity:calc(var(--frame-signature-opacity,.52)*.80)}}
 
-/* v16.40: screenshot-driven quality pass + appearance editor usability. */
+/* v16.41: screenshot-driven quality pass + appearance editor usability. */
 .appearance-range-direct{display:inline-flex;vertical-align:middle;margin-left:7px}.appearance-range-number{width:68px!important;min-width:68px!important;padding:5px 6px!important;font-size:12px!important;font-variant-numeric:tabular-nums}.appearance-detail-toolbar{position:sticky;top:0;z-index:8;padding:6px 0;background:linear-gradient(var(--panel,#111820) 72%,transparent)}
 .fx-layer-detail-grid>label,.frame-adjust-grid>label{min-width:0}.fx-layer-detail-grid input[type="range"],.frame-adjust-grid input[type="range"]{width:min(100%,240px)}
 .fx-preview-first{display:flex;justify-content:center;align-items:flex-start;margin-bottom:8px;min-height:0}.fx-preview-first .fx-editor-preview-art{margin-top:0!important}
@@ -21125,6 +21125,11 @@ h3 .minkai-ruby{margin-top:.45em}
 .frame-library-thumb:is([data-frame-material="crystal"],[data-frame-material="arcane"])::after{background:conic-gradient(from 20deg at 50% 50%,rgba(110,220,255,.18),rgba(220,150,255,.17),rgba(255,235,150,.12),rgba(110,220,255,.18));mix-blend-mode:screen;opacity:.62}
 .frame-library-thumb:is([data-frame-material="dark-stone"],[data-frame-material="void"])::after{background:linear-gradient(135deg,rgba(0,0,0,.38),transparent 42%,rgba(115,90,160,.10) 50%,transparent 58%,rgba(0,0,0,.38));mix-blend-mode:overlay}
 </style>
+
+<style id="v1641-graph-radar-appearance-audit">
+.deck-chart-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.deck-chart-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:10px}.deck-chart-stage{border:1px solid var(--line);border-radius:14px;background:#0d131b;padding:10px;overflow:auto}.deck-chart-stage svg{display:block;width:100%;height:auto;min-height:260px}.deck-radar-list{display:grid;gap:8px;margin:10px 0}.deck-radar-row{display:grid;grid-template-columns:minmax(90px,1fr) minmax(120px,1.3fr) 90px auto;gap:7px;align-items:end;border:1px solid var(--line);border-radius:10px;padding:8px;background:rgba(255,255,255,.025)}.deck-radar-row label{margin:0}.deck-radar-row .btn{min-height:42px}.deck-radar-actions{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}.fx-visual-score{margin-left:5px;font-size:10px}.fx-layer-detail-actions{flex-wrap:wrap}.appearance-audit-note{margin:7px 0;padding:8px 10px;border:1px solid rgba(126,173,221,.24);border-radius:10px;background:rgba(84,126,173,.08);font-size:11px;color:var(--muted)}
+@media(max-width:700px){.deck-chart-controls{grid-template-columns:1fr}.deck-radar-row{grid-template-columns:1fr 1fr}.deck-radar-row .deck-radar-label{grid-column:1/-1}.deck-radar-row .deck-radar-delete{grid-column:2}.frame-library-thumb.frame-thumb-enhanced::after{opacity:.92}}
+</style>
 </head>
 <body>
 <div id="app-background-layer" aria-hidden="true">
@@ -21132,7 +21137,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.40 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.41 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22290,7 +22295,7 @@ h3 .minkai-ruby{margin-top:.45em}
     </div>
 
     <div class="online-duel-wrap">
-      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：将来実装予定。カード種類・レベル・パワー・種族などを棒グラフ／円グラフ等で視覚化し、デッキ傾向を比較しやすくする</p></section></main>
+      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：v16.41で実装。統計画面からカード種類・レベル・パワー・種族を棒グラフ／ドーナツで確認<br>・カスタムレーダーチャート：v16.41で実装。統計画面から3～8軸を追加し、表示名・参照指標・基準値をユーザーが編集可能。将来は複数デッキ比較を拡張予定</p></section></main>
 
       <aside class="online-duel-tools">
         <div class="panel">
@@ -22715,7 +22720,7 @@ function moveBoardToolPreset(kind,index,step){
  saveBoardToolPrefs();
 }
 
-function defaultCardFxPrefs(){return {maxLayers:2,collectionVisible:true,collectionAnimation:false,boardVisible:true,boardAnimation:false,boardQualityDesktop:'standard',boardQualityMobile:'standard',appearanceEditorMode:'simple',motionEngine:3,effectGeneration:8}}
+function defaultCardFxPrefs(){return {maxLayers:2,collectionVisible:true,collectionAnimation:false,boardVisible:true,boardAnimation:false,boardQualityDesktop:'standard',boardQualityMobile:'standard',appearanceEditorMode:'simple',motionEngine:3,effectGeneration:9}}
 function normalizeCardFxPrefs(raw={}){
  const motionV=Number(raw.motionEngine)||0,legacyMotion=motionV<3;
  const quality=v=>['high','standard','light'].includes(String(v||''))?String(v):'standard';
@@ -22729,7 +22734,7 @@ function normalizeCardFxPrefs(raw={}){
    boardQualityMobile:quality(raw.boardQualityMobile),
    appearanceEditorMode:['simple','advanced'].includes(String(raw.appearanceEditorMode||''))?String(raw.appearanceEditorMode):'simple',
    motionEngine:3,
-   effectGeneration:8
+   effectGeneration:9
  };
 }
 function normalizeCardVisualEffects(raw){
@@ -23216,10 +23221,10 @@ function fxLayerStyle(x,v,power){
  const baseRgb=fxHexRgb(x.baseColor),reflectionRgb=fxHexRgb(x.reflectionColor),shadowRgb=fxHexRgb(x.shadowColor,'000000'),accentRgb=fxHexRgb(x.accentColor,'7fdcff');
  const baseTint=Math.max(0,Math.min(1,(Number(x.baseTint)||0)/100)),reflectionAngle=Math.max(0,Math.min(360,Number(x.reflectionAngle)||125)),reflectionHardness=Math.max(0,Math.min(1,(Number(x.reflectionHardness)||0)/100)),structureScale=Math.max(.4,Math.min(2.2,(Number(x.structureScale)||100)/100)),structureContrast=Math.max(.4,Math.min(2.2,(Number(x.structureContrast)||100)/100));
  const highlightWidth=Math.max(.10,Math.min(.90,(Number(x.highlightWidth)||48)/100)),shadowDepth=Math.max(0,Math.min(1,(Number(x.shadowDepth)||0)/100)),artProtect=Math.max(0,Math.min(1,(Number(x.artProtect)||0)/100)),temperature=Math.max(-1,Math.min(1,(Number(x.temperature)||0)/100)),accentStrength=Math.max(0,Math.min(1,(Number(x.accentStrength)||0)/100));
- const reflectionAlpha=(.075+.30*reflection)*(.42+.58*reflectionHardness)*(1-.42*artProtect),shadowAlpha=(.025+.20*structure)*(.35+.65*shadowDepth)*(1-.28*artProtect),baseAlpha=.28*baseTint*(1-.35*artProtect),accentAlpha=.24*accentStrength*(1-.25*artProtect);
+ const reflectionAlpha=(.38*reflection)*(.24+.76*reflectionHardness)*(1-.42*artProtect),shadowAlpha=(.24*structure)*shadowDepth*(1-.28*artProtect),baseAlpha=.34*baseTint*(1-.35*artProtect),accentAlpha=.30*accentStrength*(1-.25*artProtect);
  const hiCenter=50,hiHalf=Math.max(4,Math.round(3+20*highlightWidth)),hiStart=Math.max(4,hiCenter-hiHalf),hiEnd=Math.min(96,hiCenter+hiHalf);
  const warmAlpha=Math.max(0,temperature)*.13*(1-.35*artProtect),coolAlpha=Math.max(0,-temperature)*.13*(1-.35*artProtect);
- const gradeOpacity=Math.max(.18,1-.63*artProtect),edgeShade=(.035+.16*shadowDepth)*(1-.35*artProtect);
+ const gradeOpacity=Math.max(.08,1-.72*artProtect),edgeShade=(.20*shadowDepth)*(1-.35*artProtect);
  return `--fx-base-rgb:${baseRgb};--fx-base-tint:${baseTint.toFixed(3)};--fx-base-alpha:${baseAlpha.toFixed(3)};--fx-reflection-rgb:${reflectionRgb};--fx-reflection-alpha:${reflectionAlpha.toFixed(3)};--fx-shadow-rgb:${shadowRgb};--fx-shadow-alpha:${shadowAlpha.toFixed(3)};--fx-accent-rgb:${accentRgb};--fx-accent-alpha:${accentAlpha.toFixed(3)};--fx-reflection-angle:${reflectionAngle.toFixed(1)}deg;--fx-reflection-hardness:${reflectionHardness.toFixed(3)};--fx-highlight-start:${hiStart}%;--fx-highlight-end:${hiEnd}%;--fx-structure-scale:${structureScale.toFixed(3)};--fx-structure-scale-pct:${(structureScale*100).toFixed(1)}%;--fx-structure-contrast:${structureContrast.toFixed(3)};--fx-grade-opacity:${gradeOpacity.toFixed(3)};--fx-edge-shade:${edgeShade.toFixed(3)};--fx-warm-alpha:${warmAlpha.toFixed(3)};--fx-cool-alpha:${coolAlpha.toFixed(3)};--fx-duration:${duration.toFixed(3)}s;--fx-o:${x.opacity/100};--fx-sat:${effectiveSat.toFixed(3)};--fx-bright:${bright.toFixed(3)};--fx-power:${power};--fx-slot:${x.slot};--fx-hue:${effectiveHue.toFixed(2)}deg;--fx-size-inset:${sizeInset.toFixed(2)}%;--fx-density-scale:${densityScale.toFixed(3)};--fx-motion:${(x.motion/100).toFixed(3)};--fx-structure:${structure.toFixed(3)};--fx-reflection:${reflection.toFixed(3)};--fx-reflect-area:${reflectionArea.toFixed(3)};--fx-color-influence:${colorInfluence.toFixed(3)};${dir?`--fx-direction:${dir};`:''}${rot?`--fx-rotation-direction:${rot};`:''}`;
 }
 const FX_MATERIAL_FAMILY={
@@ -24103,7 +24108,7 @@ function applyFrameLinkVisual(el,raw,syncProfile=null){
  const fh=link.reflectionHardness/100,fw=link.reflectionWidth/100,fo=link.outerShadow/100,fi=link.innerShadow/100,fe=link.edgeHighlight/100,bt=link.baseTint/100,as=link.accentStrength/100;
  const hHalf=Math.max(4,Math.round(3+20*fw));
  el.style.setProperty('--frame-base-rgb',`${bc.r},${bc.g},${bc.b}`);el.style.setProperty('--frame-base-alpha',String(.30*bt));el.style.setProperty('--frame-accent-rgb',`${ac.r},${ac.g},${ac.b}`);el.style.setProperty('--frame-accent-alpha',String(.22*as));
- el.style.setProperty('--frame-reflection-rgb',`${rc.r},${rc.g},${rc.b}`);el.style.setProperty('--frame-shadow-rgb',`${sc.r},${sc.g},${sc.b}`);el.style.setProperty('--frame-reflection-angle',`${link.reflectionAngle}deg`);el.style.setProperty('--frame-reflection-alpha',String(.05+.24*fe));el.style.setProperty('--frame-shadow-alpha',String(.05+.24*fi));el.style.setProperty('--frame-reflection-stop',`${Math.round(34+22*(1-fh))}%`);el.style.setProperty('--frame-highlight-start',`${50-hHalf}%`);el.style.setProperty('--frame-highlight-end',`${50+hHalf}%`);el.style.setProperty('--frame-outer-y',`${(1+3*fo).toFixed(1)}px`);el.style.setProperty('--frame-outer-blur',`${(2+8*fo).toFixed(1)}px`);el.style.setProperty('--frame-outer-alpha',String(.05+.25*fo));
+ el.style.setProperty('--frame-reflection-rgb',`${rc.r},${rc.g},${rc.b}`);el.style.setProperty('--frame-shadow-rgb',`${sc.r},${sc.g},${sc.b}`);el.style.setProperty('--frame-reflection-angle',`${link.reflectionAngle}deg`);el.style.setProperty('--frame-reflection-alpha',String(.34*fe));el.style.setProperty('--frame-shadow-alpha',String(.32*fi));el.style.setProperty('--frame-reflection-stop',`${Math.round(30+28*(1-fh))}%`);el.style.setProperty('--frame-highlight-start',`${50-hHalf}%`);el.style.setProperty('--frame-highlight-end',`${50+hHalf}%`);el.style.setProperty('--frame-outer-y',`${(4*fo).toFixed(1)}px`);el.style.setProperty('--frame-outer-blur',`${(10*fo).toFixed(1)}px`);el.style.setProperty('--frame-outer-alpha',String(.32*fo));
  const manualGlow=gk>0?` drop-shadow(0 0 ${(2+12*gk).toFixed(1)}px rgba(${gc.r},${gc.g},${gc.b},${(.12+.58*gk).toFixed(2)}))`:'';
  const depthShadow=depth>0?` drop-shadow(0 ${(1+3*depth).toFixed(1)}px ${(1+5*depth).toFixed(1)}px rgba(0,0,0,${(.08+.34*depth).toFixed(2)})) drop-shadow(0 -1px ${(1+2*depth).toFixed(1)}px rgba(255,255,255,${(.03+.10*depth).toFixed(2)}))`:'';
  const appliedHue=hue*ck,appliedSat=1+(sat-1)*ck;
@@ -25544,7 +25549,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.40',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.41',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -26870,7 +26875,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
            <label data-appearance-advanced>部分発光強度<div class="frame-adjust-inline"><input id="frame-adjust-partial-strength" type="range" min="0" max="100" step="5" value="${frameConfig.partialGlowStrength??60}"><span id="frame-adjust-partial-strength-v" class="pill">${frameConfig.partialGlowStrength??60}%</span></div></label>
            <label data-appearance-advanced>特殊仕上げ<select id="frame-adjust-finish"><option value="none" ${frameConfig.finish==='none'?'selected':''}>なし</option><option value="foil" ${frameConfig.finish==='foil'?'selected':''}>箔押し</option><option value="rainbow" ${frameConfig.finish==='rainbow'?'selected':''}>虹箔</option><option value="polarized" ${frameConfig.finish==='polarized'?'selected':''}>偏光</option><option value="glitter" ${frameConfig.finish==='glitter'?'selected':''}>ラメ</option><option value="pearl" ${frameConfig.finish==='pearl'?'selected':''}>パール</option><option value="metallic" ${frameConfig.finish==='metallic'?'selected':''}>メタリック</option></select></label>
            <label data-appearance-advanced>仕上げ強度<div class="frame-adjust-inline"><input id="frame-adjust-finish-strength" type="range" min="0" max="100" step="5" value="${frameConfig.finishStrength??55}"><span id="frame-adjust-finish-strength-v" class="pill">${frameConfig.finishStrength??55}%</span></div></label>
-           <div class="frame-wide frame-adjust-checks"><label class="board-follow-row"><input id="frame-adjust-fx-sync" type="checkbox" ${frameConfig.fxSyncEnabled?'checked':''}>エフェクトの色・発光と連動</label><label class="board-follow-row"><input id="frame-adjust-motion-enabled" type="checkbox" ${frameConfig.motionEnabled?'checked':''}>フレームアニメーションを再生</label><label class="board-follow-row"><input id="frame-adjust-flip-x" type="checkbox" ${frameConfig.flipX?'checked':''}>左右反転</label><label class="board-follow-row"><input id="frame-adjust-flip-y" type="checkbox" ${frameConfig.flipY?'checked':''}>上下反転</label><button class="btn small" type="button" id="frame-copy-to-layer2">第1→第2へコピー</button><button class="btn small" type="button" id="frame-swap-layers">第1・第2を入れ替え</button><button class="btn small" type="button" id="frame-adjust-reset">標準に戻す</button></div>
+           <div class="frame-wide frame-adjust-checks"><label class="board-follow-row"><input id="frame-adjust-fx-sync" type="checkbox" ${frameConfig.fxSyncEnabled?'checked':''}>エフェクトの色・発光と連動</label><label class="board-follow-row"><input id="frame-adjust-motion-enabled" type="checkbox" ${frameConfig.motionEnabled?'checked':''}>フレームアニメーションを再生</label><label class="board-follow-row"><input id="frame-adjust-flip-x" type="checkbox" ${frameConfig.flipX?'checked':''}>左右反転</label><label class="board-follow-row"><input id="frame-adjust-flip-y" type="checkbox" ${frameConfig.flipY?'checked':''}>上下反転</label><button class="btn small" type="button" id="frame-copy-to-layer2">第1→第2へコピー</button><button class="btn small" type="button" id="frame-swap-layers">第1・第2を入れ替え</button><button class="btn small" type="button" data-frame-reset-group="position" data-frame-reset-layer="1">位置だけ標準</button><button class="btn small" type="button" data-frame-reset-group="color" data-frame-reset-layer="1">色彩だけ標準</button><button class="btn small" type="button" data-frame-reset-group="optical" data-frame-reset-layer="1">立体・反射だけ標準</button><button class="btn small" type="button" id="frame-adjust-reset">全体を標準</button></div>
          </div></details>
          <details class="frame-adjust-details" id="frame-layer2-details"><summary>第2フレームレイヤー</summary>
            <div class="frame-adjust-grid">
@@ -26893,7 +26898,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
              <label data-appearance-advanced>部分発光強度<div class="frame-adjust-inline"><input id="frame2-partial-strength" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.partialGlowStrength??60}"><span id="frame2-partial-strength-v" class="pill">${frameConfig.layer2?.partialGlowStrength??60}%</span></div></label>
              <label data-appearance-advanced>特殊仕上げ<select id="frame2-finish"><option value="none" ${frameConfig.layer2?.finish==='none'?'selected':''}>なし</option><option value="foil" ${frameConfig.layer2?.finish==='foil'?'selected':''}>箔押し</option><option value="rainbow" ${frameConfig.layer2?.finish==='rainbow'?'selected':''}>虹箔</option><option value="polarized" ${frameConfig.layer2?.finish==='polarized'?'selected':''}>偏光</option><option value="glitter" ${frameConfig.layer2?.finish==='glitter'?'selected':''}>ラメ</option><option value="pearl" ${frameConfig.layer2?.finish==='pearl'?'selected':''}>パール</option><option value="metallic" ${frameConfig.layer2?.finish==='metallic'?'selected':''}>メタリック</option></select></label>
              <label data-appearance-advanced>仕上げ強度<div class="frame-adjust-inline"><input id="frame2-finish-strength" type="range" min="0" max="100" step="5" value="${frameConfig.layer2?.finishStrength??55}"><span id="frame2-finish-strength-v" class="pill">${frameConfig.layer2?.finishStrength??55}%</span></div></label>
-             <div class="frame-wide frame-adjust-checks"><label class="board-follow-row"><input id="frame2-fx-sync" type="checkbox" ${frameConfig.layer2?.fxSyncEnabled?'checked':''}>エフェクトの色・発光と連動</label><label class="board-follow-row"><input id="frame2-motion-enabled" type="checkbox" ${frameConfig.layer2?.motionEnabled?'checked':''}>フレームアニメーションを再生</label><label class="board-follow-row"><input id="frame2-flip-x" type="checkbox" ${frameConfig.layer2?.flipX?'checked':''}>左右反転</label><label class="board-follow-row"><input id="frame2-flip-y" type="checkbox" ${frameConfig.layer2?.flipY?'checked':''}>上下反転</label><button class="btn small" type="button" id="frame-copy-to-layer1">第2→第1へコピー</button><button class="btn small" type="button" id="frame2-reset">第2レイヤーを標準に戻す</button></div>
+             <div class="frame-wide frame-adjust-checks"><label class="board-follow-row"><input id="frame2-fx-sync" type="checkbox" ${frameConfig.layer2?.fxSyncEnabled?'checked':''}>エフェクトの色・発光と連動</label><label class="board-follow-row"><input id="frame2-motion-enabled" type="checkbox" ${frameConfig.layer2?.motionEnabled?'checked':''}>フレームアニメーションを再生</label><label class="board-follow-row"><input id="frame2-flip-x" type="checkbox" ${frameConfig.layer2?.flipX?'checked':''}>左右反転</label><label class="board-follow-row"><input id="frame2-flip-y" type="checkbox" ${frameConfig.layer2?.flipY?'checked':''}>上下反転</label><button class="btn small" type="button" id="frame-copy-to-layer1">第2→第1へコピー</button><button class="btn small" type="button" data-frame-reset-group="position" data-frame-reset-layer="2">位置だけ標準</button><button class="btn small" type="button" data-frame-reset-group="color" data-frame-reset-layer="2">色彩だけ標準</button><button class="btn small" type="button" data-frame-reset-group="optical" data-frame-reset-layer="2">立体・反射だけ標準</button><button class="btn small" type="button" id="frame2-reset">第2全体を標準</button></div>
            </div>
          </details>
          <div class="section-head"><h3>フレームライブラリ</h3><div class="actions"><span class="pill">サンプル5種 + カスタム${customFrames.length}個</span><button class="btn small" type="button" id="frame-open-library-manager">ライブラリ管理</button></div></div>
@@ -26980,9 +26985,11 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
      const reset2=$('#frame2-reset');if(reset2)reset2.onclick=()=>{working2={...FRAME_LINK_DEFAULTS,frameId:working2.frameId};if(pick)pick.value=working2.frameId;['scale','opacity','x','y','rotate'].forEach(k=>{});commit2();openCardFrameEditor(cardId,returnTo)};
    }
 
-   const copyTo2=$('#frame-copy-to-layer2');if(copyTo2)copyTo2.onclick=async()=>{const latest=normalizeFrameLink((await getCardFrameLink(cardId))||workingFrame,cardId);latest.layer2=normalizeFrameVisual({...workingFrame,frameId:workingFrame.frameId});await putCardFrameLink(cardId,latest);toast('第1フレーム設定を第2へコピーしました');openCardFrameEditor(cardId,returnTo)};
-   const copyTo1=$('#frame-copy-to-layer1');if(copyTo1)copyTo1.onclick=async()=>{const latest=normalizeFrameLink((await getCardFrameLink(cardId))||workingFrame,cardId);const src=normalizeFrameVisual(latest.layer2||{});if(!src.frameId){toast('第2フレームが設定されていません');return}const next=normalizeFrameLink({...src,cardId,layer2:latest.layer2},cardId);await putCardFrameLink(cardId,next);toast('第2フレーム設定を第1へコピーしました');openCardFrameEditor(cardId,returnTo)};
-   const swapFrames=$('#frame-swap-layers');if(swapFrames)swapFrames.onclick=async()=>{const latest=normalizeFrameLink((await getCardFrameLink(cardId))||workingFrame,cardId),a=normalizeFrameVisual(latest),b=normalizeFrameVisual(latest.layer2||{});const next=normalizeFrameLink({...b,cardId,layer2:a},cardId);await putCardFrameLink(cardId,next);toast('第1・第2フレームを入れ替えました');openCardFrameEditor(cardId,returnTo)};
+   const FRAME_RESET_GROUPS={position:{scale:100,x:0,y:0,rotate:0,fit:'stretch',flipX:false,flipY:false},color:{hue:0,saturation:100,brightness:100,colorInfluence:100,baseColor:'#ffffff',baseTint:0,accentColor:'#7fdcff',accentStrength:0},optical:{depthStrength:0,reflectionColor:'#ffffff',shadowColor:'#000000',reflectionAngle:125,reflectionHardness:55,reflectionWidth:48,outerShadow:35,innerShadow:25,edgeHighlight:35,glowColor:'#ffffff',glowStrength:0,partialGlow:'none',partialGlowStrength:60,finish:'none',finishStrength:55}};
+   $$('[data-frame-reset-group]').forEach(b=>b.onclick=async()=>{const layer=Number(b.dataset.frameResetLayer),group=b.dataset.frameResetGroup,vals=FRAME_RESET_GROUPS[group]||{},latest=normalizeFrameLink((await getCardFrameLink(cardId))||workingFrame,cardId);if(layer===2){const cur=normalizeFrameVisual(latest.layer2||{});if(!cur.frameId){toast('第2フレームが設定されていません');return}latest.layer2=normalizeFrameVisual({...cur,...vals,frameId:cur.frameId})}else{const primary=normalizeFrameVisual(latest);Object.assign(latest,normalizeFrameVisual({...primary,...vals,frameId:primary.frameId}));latest.layer2=normalizeFrameVisual((await getCardFrameLink(cardId))?.layer2||latest.layer2||{})}await putCardFrameLink(cardId,latest);toast(`${group==='position'?'位置':group==='color'?'色彩':'立体・反射'}設定を標準に戻しました`);openCardFrameEditor(cardId,returnTo)});
+   const copyTo2=$('#frame-copy-to-layer2');if(copyTo2)copyTo2.onclick=async()=>{const latest=normalizeFrameLink((await getCardFrameLink(cardId))||workingFrame,cardId),src=normalizeFrameVisual(latest);latest.layer2=normalizeFrameVisual({...src,frameId:src.frameId});await putCardFrameLink(cardId,latest);toast('第1フレーム設定を第2へコピーしました');openCardFrameEditor(cardId,returnTo)};
+   const copyTo1=$('#frame-copy-to-layer1');if(copyTo1)copyTo1.onclick=async()=>{const latest=normalizeFrameLink((await getCardFrameLink(cardId))||workingFrame,cardId),src=normalizeFrameVisual(latest.layer2||{});if(!src.frameId){toast('第2フレームが設定されていません');return}const oldPrimary=normalizeFrameVisual(latest),next=normalizeFrameLink({...src,cardId,layer2:latest.layer2},cardId);await putCardFrameLink(cardId,next);toast('第2フレーム設定を第1へコピーしました');openCardFrameEditor(cardId,returnTo)};
+   const swapFrames=$('#frame-swap-layers');if(swapFrames)swapFrames.onclick=async()=>{const latest=normalizeFrameLink((await getCardFrameLink(cardId))||workingFrame,cardId),a=normalizeFrameVisual(latest),b=normalizeFrameVisual(latest.layer2||{});if(!b.frameId){toast('第2フレームが設定されていません');return}const next=normalizeFrameLink({...b,cardId,layer2:a},cardId);await putCardFrameLink(cardId,next);toast('第1・第2フレームを入れ替えました');openCardFrameEditor(cardId,returnTo)};
 
    const thumbs=$$('[data-frame-thumb]');
    for(const el of thumbs){
@@ -27366,7 +27373,7 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
  const rowHtml=slot=>{
    const x=existing.find(y=>y.slot===slot)||{},dormant=slot>cardFxPrefs.maxLayers;
    return `<div class="fx-editor-row ${dormant?'dormant':''}" id="fx-editor-layer-${slot}" data-fx-editor-layer="${slot}">
-     <div class="fx-editor-slot"><b>レイヤー${slot}</b>${dormant?'<span class="pill">休止中</span>':''}<span class="fx-layer-quick-actions">${slot>1?`<button class="btn small" type="button" data-fx-move-up="${slot}" ${dormant?'disabled':''}>↑</button>`:''}${slot<4?`<button class="btn small" type="button" data-fx-move-down="${slot}" ${dormant?'disabled':''}>↓</button>`:''}<button class="btn small" type="button" data-fx-duplicate="${slot}" ${dormant?'disabled':''}>複製</button></span></div>
+     <div class="fx-editor-slot"><b>レイヤー${slot}</b>${dormant?'<span class="pill">休止中</span>':''}<span class="pill fx-visual-score" id="fx-visual-score-${slot}">変化量 0</span><span class="fx-layer-quick-actions">${slot>1?`<button class="btn small" type="button" data-fx-move-up="${slot}" ${dormant?'disabled':''}>↑</button>`:''}${slot<4?`<button class="btn small" type="button" data-fx-move-down="${slot}" ${dormant?'disabled':''}>↓</button>`:''}<button class="btn small" type="button" data-fx-duplicate="${slot}" ${dormant?'disabled':''}>複製</button></span></div>
      <label>種類<select id="fx-edit-type-${slot}" ${dormant?'disabled':''}>${fxTypeOptionsHtml(x.type||'')}</select></label>
      <label>強さ<select id="fx-edit-intensity-${slot}" ${dormant?'disabled':''}><option value="weak">弱</option><option value="standard">標準</option><option value="strong">強</option></select></label>
      <label>不透明度 <span id="fx-edit-opacity-label-${slot}">${Number(x.opacity)||70}%</span><input id="fx-edit-opacity-${slot}" type="range" min="20" max="100" step="5" value="${Number(x.opacity)||70}" ${dormant?'disabled':''}></label>
@@ -27407,7 +27414,7 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
          <label>色彩プリセット<select id="fx-detail-color-preset-${slot}" ${dormant?'disabled':''}><option value="">手動設定</option><option value="silver">銀</option><option value="gold">金</option><option value="copper">赤銅</option><option value="blue-steel">青鋼</option><option value="black-iron">黒鉄</option><option value="pearl">真珠白</option><option value="crimson">深紅</option><option value="azure">蒼</option><option value="violet">紫</option><option value="jade">翡翠</option><option value="iridescent">虹偏光</option></select></label>
 
          <label>表示範囲<select id="fx-detail-mask-${slot}" ${dormant?'disabled':''}><option value="full">全面</option><option value="center">中央</option><option value="outer">外周</option><option value="corners">四隅</option><option value="top">上部</option><option value="bottom">下部</option></select></label>
-         <div class="actions fx-layer-detail-actions"><button class="btn small" type="button" data-fx-detail-reset="${slot}" ${dormant?'disabled':''}>このレイヤーを標準に戻す</button></div>
+         <div class="appearance-audit-note">0%系の設定は実際に効果が0になるよう再調整済み。色彩・素材・光学を分けて戻せます。</div><div class="actions fx-layer-detail-actions"><button class="btn small" type="button" data-fx-reset-group="color" data-fx-reset-slot="${slot}" ${dormant?'disabled':''}>色彩だけ標準</button><button class="btn small" type="button" data-fx-reset-group="material" data-fx-reset-slot="${slot}" ${dormant?'disabled':''}>素材だけ標準</button><button class="btn small" type="button" data-fx-reset-group="optical" data-fx-reset-slot="${slot}" ${dormant?'disabled':''}>光学だけ標準</button><button class="btn small" type="button" data-fx-detail-reset="${slot}" ${dormant?'disabled':''}>このレイヤーを標準に戻す</button></div>
        </div>
      </details>
    </div>`;
@@ -27460,8 +27467,14 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
  const fxControlKeys=['type','intensity','opacity','enabled','speed','size','direction','rotation','hue','saturation','brightness','density','motion','structure','reflection','reflection-area','color-influence','base-color','base-tint','reflection-color','shadow-color','reflection-angle','reflection-hardness','structure-scale','structure-contrast','highlight-width','shadow-depth','art-protect','temperature','accent-color','accent-strength','mask'];
  const fxCtl=(slot,key)=>key==='type'?$(`#fx-edit-type-${slot}`):key==='intensity'?$(`#fx-edit-intensity-${slot}`):key==='opacity'?$(`#fx-edit-opacity-${slot}`):key==='enabled'?$(`#fx-edit-enabled-${slot}`):$(`#fx-detail-${key}-${slot}`);
  const fxRefreshLabels=slot=>{[['opacity','%'],['speed','%'],['size','%'],['hue','°'],['saturation','%'],['brightness','%'],['density','%'],['motion','%'],['structure','%'],['reflection','%'],['reflection-area','%'],['color-influence','%'],['base-tint','%'],['reflection-angle','°'],['reflection-hardness','%'],['structure-scale','%'],['structure-contrast','%'],['highlight-width','%'],['shadow-depth','%'],['art-protect','%'],['temperature',''],['accent-strength','%']].forEach(([key,suffix])=>{const el=key==='opacity'?fxCtl(slot,'opacity'):fxCtl(slot,key),label=$(`#${key==='opacity'?'fx-edit-opacity':'fx-detail-'+key}-label-${slot}`);if(el&&label)label.textContent=el.value+suffix})};
- const fxCopySlot=(from,to)=>{for(const key of fxControlKeys){const a=fxCtl(from,key),b=fxCtl(to,key);if(!a||!b||b.disabled)continue;if(a.type==='checkbox')b.checked=a.checked;else b.value=a.value}fxRefreshLabels(to)};
- const fxSwapSlots=(a,b)=>{const snap={};for(const key of fxControlKeys){const x=fxCtl(a,key);if(x)snap[key]=x.type==='checkbox'?x.checked:x.value}fxCopySlot(b,a);for(const key of fxControlKeys){const x=fxCtl(b,key);if(!x||x.disabled||!(key in snap))continue;if(x.type==='checkbox')x.checked=snap[key];else x.value=snap[key]}fxRefreshLabels(a);fxRefreshLabels(b);renderFxEditorPreview(card)};
+ const fxSyncDirectNumbers=slot=>{for(const el of $$(`#fx-editor-layer-${slot} input[type=\"range\"]`)){const n=el.nextElementSibling?.querySelector?.('.appearance-range-number');if(n)n.value=el.value}};
+ const fxCopySlot=(from,to)=>{for(const key of fxControlKeys){const a=fxCtl(from,key),b=fxCtl(to,key);if(!a||!b)continue;if(a.type==='checkbox')b.checked=a.checked;else b.value=a.value}fxRefreshLabels(to);fxSyncDirectNumbers(to);fxUpdateVisualScore(to)};
+ const fxSwapSlots=(a,b)=>{const snap={};for(const key of fxControlKeys){const x=fxCtl(a,key);if(x)snap[key]=x.type==='checkbox'?x.checked:x.value}fxCopySlot(b,a);for(const key of fxControlKeys){const x=fxCtl(b,key);if(!x||!(key in snap))continue;if(x.type==='checkbox')x.checked=snap[key];else x.value=snap[key]}fxRefreshLabels(a);fxRefreshLabels(b);fxSyncDirectNumbers(a);fxSyncDirectNumbers(b);fxUpdateVisualScore(a);fxUpdateVisualScore(b);renderFxEditorPreview(card)};
+ const FX_SCORE_DEFAULTS={opacity:70,speed:100,size:100,hue:0,saturation:100,brightness:100,density:100,motion:100,structure:100,reflection:100,'reflection-area':100,'color-influence':100,'base-tint':0,'reflection-angle':125,'reflection-hardness':55,'structure-scale':100,'structure-contrast':100,'highlight-width':48,'shadow-depth':35,'art-protect':60,temperature:0,'accent-strength':0};
+ const fxUpdateVisualScore=slot=>{let score=0,parts=0;for(const [key,def] of Object.entries(FX_SCORE_DEFAULTS)){const el=fxCtl(slot,key);if(!el)continue;const min=Number(el.min),max=Number(el.max),span=Number.isFinite(min)&&Number.isFinite(max)&&max>min?max-min:Math.max(100,Math.abs(def)||100),v=Number(el.value);if(Number.isFinite(v)){score+=Math.min(1,Math.abs(v-def)/span)*100;parts++}}for(const key of ['base-color','reflection-color','shadow-color','accent-color']){const el=fxCtl(slot,key);if(el){const def=key==='shadow-color'?'#000000':key==='accent-color'?'#7fdcff':'#ffffff';if(String(el.value).toLowerCase()!==def)score+=18;parts++}}const out=$(`#fx-visual-score-${slot}`);if(out)out.textContent=`変化量 ${Math.min(100,Math.round(score/Math.max(1,parts)*3.2))}`};
+ const FX_RESET_GROUPS={color:{hue:0,saturation:100,brightness:100,'color-influence':100,'base-tint':0,temperature:0,'accent-strength':0},material:{size:100,density:100,structure:100,'structure-scale':100,'structure-contrast':100},optical:{speed:100,motion:100,reflection:100,'reflection-area':100,'reflection-angle':125,'reflection-hardness':55,'highlight-width':48,'shadow-depth':35,'art-protect':60}};
+ $$('[data-fx-reset-group]').forEach(b=>b.onclick=()=>{const slot=Number(b.dataset.fxResetSlot),group=b.dataset.fxResetGroup,vals=FX_RESET_GROUPS[group]||{};for(const [k,v] of Object.entries(vals)){const el=fxCtl(slot,k);if(el){el.value=String(v);el.dispatchEvent(new Event('input',{bubbles:true}))}}if(group==='color'){const colors={['base-color']:'#ffffff',['reflection-color']:'#ffffff',['shadow-color']:'#000000',['accent-color']:'#7fdcff'};for(const [k,v] of Object.entries(colors)){const el=fxCtl(slot,k);if(el){el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}))}}}fxRefreshLabels(slot);fxSyncDirectNumbers(slot);fxUpdateVisualScore(slot);renderFxEditorPreview(card)});
+ for(let slot=1;slot<=4;slot++){const row=$(`#fx-editor-layer-${slot}`);row?.addEventListener('input',()=>fxUpdateVisualScore(slot));row?.addEventListener('change',()=>fxUpdateVisualScore(slot));fxUpdateVisualScore(slot)};
  $$('[data-fx-move-up]').forEach(b=>b.onclick=()=>fxSwapSlots(Number(b.dataset.fxMoveUp),Number(b.dataset.fxMoveUp)-1));
  $$('[data-fx-move-down]').forEach(b=>b.onclick=()=>fxSwapSlots(Number(b.dataset.fxMoveDown),Number(b.dataset.fxMoveDown)+1));
  $$('[data-fx-duplicate]').forEach(b=>b.onclick=()=>{const from=Number(b.dataset.fxDuplicate),targets=[1,2,3,4].filter(n=>n!==from&&n<=cardFxPrefs.maxLayers&&!(fxCtl(n,'type')?.value));const to=targets[0]||([1,2,3,4].find(n=>n>from&&n<=cardFxPrefs.maxLayers));if(!to){toast('複製できる空きレイヤーがありません');return}fxCopySlot(from,to);renderFxEditorPreview(card);toast(`レイヤー${from}をレイヤー${to}へ複製しました`) });
@@ -30161,7 +30174,7 @@ function deckStatBarsHtml(title,items,total){
  const max=Math.max(...items.map(x=>x[1]),1);
  return `<div class="deck-stat-section"><b>${esc(title)}</b><div class="deck-stat-bars">${items.map(([name,count])=>`<div class="deck-stat-bar"><span>${esc(name)}</span><span class="deck-stat-track"><span class="deck-stat-fill" style="display:block;width:${Math.max(3,count/max*100)}%"></span></span><span class="deck-stat-value">${count}枚 / ${total?Math.round(count/total*1000)/10:0}%</span></div>`).join('')}</div></div>`;
 }
-function openDeckStatistics(){
+function deckStatsData(){
  const source=deckReviewSourceDeck(),rows=deckStatsRows(),total=rows.reduce((a,x)=>a+x.n,0),unique=rows.length;
  const typeRows=deckStatCount(rows,c=>normalizeCardType(c.type||'種類未設定'));
  const levelEligible=rows.filter(x=>x.card.level!==''&&x.card.level!=null&&Number.isFinite(Number(x.card.level))),levelTotal=levelEligible.reduce((a,x)=>a+x.n,0);
@@ -30173,13 +30186,47 @@ function openDeckStatistics(){
  const charRows=rows.filter(x=>normalizeCardType(x.card.type||'').startsWith('キャラクター'));
  const numericLevels=charRows.flatMap(x=>{const n=Number(x.card.level);return Number.isFinite(n)?Array(x.n).fill(n):[]});
  const numericPowers=charRows.flatMap(x=>{const n=Number(x.card.power);return Number.isFinite(n)?Array(x.n).fill(n):[]});
+ return {source,rows,total,unique,typeRows,levelEligible,levelTotal,levelRows,powerEligible,powerTotal,powerRows,raceEligible,raceTotal,raceRows,charRows,numericLevels,numericPowers};
+}
+function deckGraphItems(metric,data=deckStatsData()){
+ if(metric==='level')return {title:'レベル分布',items:data.levelRows,total:data.levelTotal};
+ if(metric==='power')return {title:'パワー分布',items:data.powerRows,total:data.powerTotal};
+ if(metric==='race')return {title:'種族分布',items:data.raceRows,total:data.raceTotal};
+ return {title:'カード種類',items:data.typeRows,total:data.total};
+}
+function deckGraphSvg(items,type='bar'){
+ const rows=items.slice(0,18);if(!rows.length)return '<div class="muted">集計できるデータがありません。</div>';
+ const width=720,height=Math.max(300,type==='bar'?70+rows.length*30:420);
+ if(type==='donut'){
+   const total=rows.reduce((a,x)=>a+x[1],0)||1,cx=240,cy=205,r=125,c=2*Math.PI*r;let offset=0;
+   const seg=rows.slice(0,8).map(([name,count],i)=>{const frac=count/total,dash=frac*c,gap=c-dash,rot=-90+offset*360;offset+=frac;return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="hsl(${(i*47+195)%360} 66% 62%)" stroke-width="54" stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}" transform="rotate(${rot.toFixed(2)} ${cx} ${cy})"/>`}).join('');
+   const legend=rows.slice(0,8).map(([name,count],i)=>`<g transform="translate(420 ${72+i*38})"><rect width="14" height="14" rx="3" fill="hsl(${(i*47+195)%360} 66% 62%)"/><text x="24" y="12" fill="currentColor" font-size="14">${esc(name)} ${count}枚</text></g>`).join('');
+   return `<svg viewBox="0 0 720 420" role="img"><g style="color:#dfe8f2">${seg}<circle cx="${cx}" cy="${cy}" r="82" fill="#0d131b"/><text x="${cx}" y="${cy-4}" text-anchor="middle" fill="currentColor" font-size="30" font-weight="800">${total}</text><text x="${cx}" y="${cy+24}" text-anchor="middle" fill="#98a7b8" font-size="13">集計枚数</text>${legend}</g></svg>`;
+ }
+ const max=Math.max(...rows.map(x=>x[1]),1),left=150,right=35,top=32,rowH=30,plot=width-left-right;
+ const bars=rows.map(([name,count],i)=>{const y=top+i*rowH,w=Math.max(2,count/max*plot);return `<text x="${left-10}" y="${y+17}" text-anchor="end" fill="#cfd9e5" font-size="12">${esc(name)}</text><rect x="${left}" y="${y+4}" width="${w}" height="17" rx="4" fill="hsl(${(i*31+205)%360} 62% 60%)" opacity=".8"/><text x="${Math.min(width-28,left+w+7)}" y="${y+17}" fill="#dfe8f2" font-size="12">${count}</text>`}).join('');
+ return `<svg viewBox="0 0 ${width} ${height}" role="img">${bars}</svg>`;
+}
+function openDeckGraphs(){
+ const data=deckStatsData();openModal(`<div class="modal-head"><h3>${esc(data.source?.name?.trim()||'名称未設定デッキ')} / グラフ</h3><button class="btn" id="deck-graph-close">閉じる</button></div><div class="deck-chart-controls"><label>集計項目<select id="deck-graph-metric"><option value="type">カード種類</option><option value="level">レベル</option><option value="power">パワー</option><option value="race">種族</option></select></label><label>表示<select id="deck-graph-kind"><option value="bar">棒グラフ</option><option value="donut">ドーナツ</option></select></label></div><div id="deck-graph-title" class="muted"></div><div id="deck-graph-stage" class="deck-chart-stage"></div>`);
+ const render=()=>{const g=deckGraphItems($('#deck-graph-metric').value,data);$('#deck-graph-title').textContent=`${g.title} / 対象 ${g.total}枚`;$('#deck-graph-stage').innerHTML=deckGraphSvg(g.items,$('#deck-graph-kind').value)};$('#deck-graph-metric').onchange=render;$('#deck-graph-kind').onchange=render;$('#deck-graph-close').onclick=openDeckStatistics;render();
+}
+const DECK_RADAR_METRICS={characterRate:{name:'キャラクター比率',value:d=>d.total?d.charRows.reduce((a,x)=>a+x.n,0)/d.total*100:0,defaultMax:100},roomRate:{name:'ルーム比率',value:d=>d.total?d.rows.filter(x=>normalizeCardType(x.card.type||'').startsWith('ルーム')).reduce((a,x)=>a+x.n,0)/d.total*100:0,defaultMax:100},roleRate:{name:'ロール比率',value:d=>d.total?d.rows.filter(x=>normalizeCardType(x.card.type||'').startsWith('ロール')).reduce((a,x)=>a+x.n,0)/d.total*100:0,defaultMax:100},avgLevel:{name:'平均レベル',value:d=>d.numericLevels.length?d.numericLevels.reduce((a,b)=>a+b,0)/d.numericLevels.length:0,defaultMax:12},avgPower:{name:'平均POWER',value:d=>d.numericPowers.length?d.numericPowers.reduce((a,b)=>a+b,0)/d.numericPowers.length:0,defaultMax:15000},raceKinds:{name:'種族種類数',value:d=>d.raceRows.length,defaultMax:20},cardKinds:{name:'カード種類数',value:d=>d.unique,defaultMax:40},deckSize:{name:'デッキ枚数',value:d=>d.total,defaultMax:40},highLevelRate:{name:'Lv6以上率',value:d=>{const eligible=d.levelEligible.reduce((a,x)=>a+x.n,0);return eligible?d.levelEligible.filter(x=>Number(x.card.level)>=6).reduce((a,x)=>a+x.n,0)/eligible*100:0},defaultMax:100},highPowerRate:{name:'POWER7000以上率',value:d=>{const eligible=d.powerEligible.reduce((a,x)=>a+x.n,0);return eligible?d.powerEligible.filter(x=>Number(x.card.power)>=7000).reduce((a,x)=>a+x.n,0)/eligible*100:0},defaultMax:100}};
+function defaultDeckRadarConfig(){return [{label:'キャラクター',metric:'characterRate',max:100},{label:'平均Lv',metric:'avgLevel',max:12},{label:'平均POWER',metric:'avgPower',max:15000},{label:'種族幅',metric:'raceKinds',max:20},{label:'カード種類',metric:'cardKinds',max:40}]}
+function loadDeckRadarConfig(){try{const x=JSON.parse(localStorage.getItem('minkaiDeckRadarConfigV1')||'null');if(Array.isArray(x)&&x.length>=3)return x.slice(0,8)}catch{}return defaultDeckRadarConfig()}
+function saveDeckRadarConfig(cfg){try{localStorage.setItem('minkaiDeckRadarConfigV1',JSON.stringify(cfg))}catch{}}
+function deckRadarSvg(cfg,data){const W=620,H=500,cx=310,cy=250,R=178,n=cfg.length;if(n<3)return '<div class="muted">3項目以上にしてください。</div>';const pt=(i,r)=>{const a=-Math.PI/2+i*Math.PI*2/n;return [cx+Math.cos(a)*R*r,cy+Math.sin(a)*R*r]};let grid='';for(let lv=1;lv<=5;lv++){grid+=`<polygon points="${cfg.map((_,i)=>pt(i,lv/5).join(',')).join(' ')}" fill="none" stroke="rgba(160,185,210,.18)"/>`}const axes=cfg.map((_,i)=>{const [x,y]=pt(i,1);return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(160,185,210,.22)"/>`}).join('');const vals=cfg.map(row=>{const metric=DECK_RADAR_METRICS[row.metric]||DECK_RADAR_METRICS.characterRate,v=metric.value(data),max=Math.max(.0001,Number(row.max)||metric.defaultMax);return {v,max,r:Math.max(0,Math.min(1,v/max))}});const poly=vals.map((v,i)=>pt(i,v.r).join(',')).join(' ');const labels=cfg.map((row,i)=>{const [x,y]=pt(i,1.17),v=vals[i].v;return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" fill="#dce7f2" font-size="12"><tspan x="${x}" dy="0">${esc(row.label||DECK_RADAR_METRICS[row.metric]?.name||'項目')}</tspan><tspan x="${x}" dy="15" fill="#8fa3b8">${Math.round(v*10)/10}</tspan></text>`}).join('');return `<svg viewBox="0 0 ${W} ${H}" role="img">${grid}${axes}<polygon points="${poly}" fill="rgba(86,159,230,.24)" stroke="#71b9f5" stroke-width="3"/>${vals.map((v,i)=>{const [x,y]=pt(i,v.r);return `<circle cx="${x}" cy="${y}" r="4" fill="#d9f1ff"/>`}).join('')}${labels}</svg>`}
+function openDeckRadar(){let cfg=loadDeckRadarConfig(),data=deckStatsData();openModal(`<div class="modal-head"><h3>${esc(data.source?.name?.trim()||'名称未設定デッキ')} / レーダーチャート</h3><button class="btn" id="deck-radar-close">閉じる</button></div><p class="muted">軸の名前・参照項目・100%になる基準値を自分で変更できます。3～8軸。</p><div class="deck-radar-actions"><button class="btn small" id="deck-radar-add">項目を追加</button><button class="btn small" id="deck-radar-reset">標準構成</button></div><div id="deck-radar-list" class="deck-radar-list"></div><div id="deck-radar-stage" class="deck-chart-stage"></div>`);const render=()=>{const list=$('#deck-radar-list');list.innerHTML=cfg.map((r,i)=>`<div class="deck-radar-row" data-radar-row="${i}"><label class="deck-radar-label">表示名<input data-radar-label="${i}" value="${esc(r.label||'')}"></label><label>参照<select data-radar-metric="${i}">${Object.entries(DECK_RADAR_METRICS).map(([k,m])=>`<option value="${k}" ${k===r.metric?'selected':''}>${esc(m.name)}</option>`).join('')}</select></label><label>基準値<input type="number" min="0.1" step="0.1" data-radar-max="${i}" value="${Number(r.max)||DECK_RADAR_METRICS[r.metric]?.defaultMax||100}"></label><button class="btn small danger deck-radar-delete" data-radar-delete="${i}" ${cfg.length<=3?'disabled':''}>削除</button></div>`).join('');$('#deck-radar-stage').innerHTML=deckRadarSvg(cfg,data);list.querySelectorAll('[data-radar-label]').forEach(el=>el.oninput=()=>{cfg[Number(el.dataset.radarLabel)].label=el.value;saveDeckRadarConfig(cfg);$('#deck-radar-stage').innerHTML=deckRadarSvg(cfg,data)});list.querySelectorAll('[data-radar-metric]').forEach(el=>el.onchange=()=>{const i=Number(el.dataset.radarMetric),m=DECK_RADAR_METRICS[el.value];cfg[i].metric=el.value;cfg[i].label=m.name;cfg[i].max=m.defaultMax;saveDeckRadarConfig(cfg);render()});list.querySelectorAll('[data-radar-max]').forEach(el=>el.oninput=()=>{const i=Number(el.dataset.radarMax),v=Number(el.value);if(v>0){cfg[i].max=v;saveDeckRadarConfig(cfg);$('#deck-radar-stage').innerHTML=deckRadarSvg(cfg,data)}});list.querySelectorAll('[data-radar-delete]').forEach(el=>el.onclick=()=>{if(cfg.length<=3)return;cfg.splice(Number(el.dataset.radarDelete),1);saveDeckRadarConfig(cfg);render()})};$('#deck-radar-add').onclick=()=>{if(cfg.length>=8){toast('レーダーは最大8項目です');return}const metric='characterRate',m=DECK_RADAR_METRICS[metric];cfg.push({label:m.name,metric,max:m.defaultMax});saveDeckRadarConfig(cfg);render()};$('#deck-radar-reset').onclick=()=>{cfg=defaultDeckRadarConfig();saveDeckRadarConfig(cfg);render()};$('#deck-radar-close').onclick=openDeckStatistics;render()}
+function openDeckStatistics(){
+ const data=deckStatsData(),{source,rows,total,unique,typeRows,levelEligible,levelTotal,levelRows,powerEligible,powerTotal,powerRows,raceEligible,raceTotal,raceRows,charRows,numericLevels,numericPowers}=data;
  const avg=arr=>arr.length?Math.round(arr.reduce((a,b)=>a+b,0)/arr.length*10)/10:'－';
  openModal(`<div class="modal-head"><h3>${esc(source?.name?.trim()||'名称未設定デッキ')} / 統計</h3><button class="btn" id="deck-stats-close">閉じる</button></div>
    <p class="muted">カード種類はデッキ総枚数を母数に集計します。レベル・パワー・種族は、その項目が設定されているカードだけを対象に集計します。</p>
    ${deckTagHtml(source)}
+   <div class="deck-chart-actions"><button class="btn" id="deck-stats-graphs">グラフ機能</button><button class="btn" id="deck-stats-radar">レーダーチャート</button></div>
    <div class="deck-stat-grid"><div class="deck-stat-card"><b>${total}枚</b><span>総枚数</span></div><div class="deck-stat-card"><b>${unique}種類</b><span>カード種類数</span></div><div class="deck-stat-card"><b>${avg(numericLevels)}</b><span>キャラクター平均Lv</span></div><div class="deck-stat-card"><b>${avg(numericPowers)}</b><span>キャラクター平均POWER</span></div></div>
    ${deckStatBarsHtml('カード種類',typeRows,total)}${deckStatBarsHtml('レベル分布',levelRows,levelTotal)}${deckStatBarsHtml('パワー分布',powerRows,powerTotal)}${deckStatBarsHtml('種族分布',raceRows,raceTotal)}`);
- $('#deck-stats-close').onclick=closeModal;
+ $('#deck-stats-close').onclick=closeModal;$('#deck-stats-graphs').onclick=openDeckGraphs;$('#deck-stats-radar').onclick=openDeckRadar;
 }
 
 function deckReviewDetailHtml(c,index,total){
@@ -36371,7 +36418,7 @@ async function accountCloudInitialize(){
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.40'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.41'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
@@ -36388,7 +36435,7 @@ function accountCloudLocalSnapshot(){
   const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
     schema_version:2,
-    app_version:'16.40',
+    app_version:'16.41',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
     decks:Array.isArray(decks)?decks:[],
@@ -37029,7 +37076,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'16.40',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'16.41',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
