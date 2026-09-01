@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.41</title>
+<title>みん会TCG Simulator v16.42</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17448,13 +17448,13 @@ html{--visual-generation:"12.0"}
    ========================================================== */
 .fx-cracked-crystal{mix-blend-mode:screen!important}
 .fx-black-crystal{mix-blend-mode:hard-light!important}
-.fx-mineral-vein{mix-blend-mode:screen!important}
-.fx-lava-glass{mix-blend-mode:screen!important}
+.fx-mineral-vein{mix-blend-mode:soft-light!important}
+.fx-lava-glass{mix-blend-mode:overlay!important}
 .fx-abyss-lacquer{mix-blend-mode:overlay!important}
 .fx-raden{mix-blend-mode:screen!important}
 .fx-cloisonne{mix-blend-mode:overlay!important}
-.fx-stained-glass-material{mix-blend-mode:soft-light!important}
-.fx-dichroic-mosaic{mix-blend-mode:screen!important}
+.fx-stained-glass-material{mix-blend-mode:overlay!important}
+.fx-dichroic-mosaic{mix-blend-mode:soft-light!important}
 .fx-scale-emboss{mix-blend-mode:overlay!important}
 .fx-ripple-emboss{mix-blend-mode:soft-light!important}
 
@@ -21130,6 +21130,16 @@ h3 .minkai-ruby{margin-top:.45em}
 .deck-chart-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.deck-chart-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:10px}.deck-chart-stage{border:1px solid var(--line);border-radius:14px;background:#0d131b;padding:10px;overflow:auto}.deck-chart-stage svg{display:block;width:100%;height:auto;min-height:260px}.deck-radar-list{display:grid;gap:8px;margin:10px 0}.deck-radar-row{display:grid;grid-template-columns:minmax(90px,1fr) minmax(120px,1.3fr) 90px auto;gap:7px;align-items:end;border:1px solid var(--line);border-radius:10px;padding:8px;background:rgba(255,255,255,.025)}.deck-radar-row label{margin:0}.deck-radar-row .btn{min-height:42px}.deck-radar-actions{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}.fx-visual-score{margin-left:5px;font-size:10px}.fx-layer-detail-actions{flex-wrap:wrap}.appearance-audit-note{margin:7px 0;padding:8px 10px;border:1px solid rgba(126,173,221,.24);border-radius:10px;background:rgba(84,126,173,.08);font-size:11px;color:var(--muted)}
 @media(max-width:700px){.deck-chart-controls{grid-template-columns:1fr}.deck-radar-row{grid-template-columns:1fr 1fr}.deck-radar-row .deck-radar-label{grid-column:1/-1}.deck-radar-row .deck-radar-delete{grid-column:2}.frame-library-thumb.frame-thumb-enhanced::after{opacity:.92}}
 </style>
+
+<style id="v1642-radar-fx-audit">
+.deck-radar-row{grid-template-columns:minmax(110px,1.1fr) minmax(130px,1.2fr) minmax(92px,.8fr) minmax(92px,.8fr) auto}
+/* Detail-control audit: these generic layers guarantee visible response even for image-based effects. */
+.card-fx-layer{transform-origin:center}
+.card-fx-layer>.fx-material-structure{filter:contrast(var(--fx-structure-contrast,1));background-size:var(--fx-structure-scale-pct,100%) var(--fx-structure-scale-pct,100%)}
+.card-fx-layer>.fx-material-grade{opacity:calc(var(--fx-grade-opacity,1) * (.42 + .58 * var(--fx-reflection,1)))}
+.card-fx-layer>.fx-optical-motion{opacity:calc(.18 + .62 * var(--fx-reflection,1));}
+@media(max-width:700px){.deck-radar-row{grid-template-columns:1fr 1fr}.deck-radar-row .deck-radar-label{grid-column:1/-1}.deck-radar-row .deck-radar-delete{grid-column:2}}
+</style>
 </head>
 <body>
 <div id="app-background-layer" aria-hidden="true">
@@ -21137,7 +21147,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.41 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.42 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22295,7 +22305,7 @@ h3 .minkai-ruby{margin-top:.45em}
     </div>
 
     <div class="online-duel-wrap">
-      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：v16.41で実装。統計画面からカード種類・レベル・パワー・種族を棒グラフ／ドーナツで確認<br>・カスタムレーダーチャート：v16.41で実装。統計画面から3～8軸を追加し、表示名・参照指標・基準値をユーザーが編集可能。将来は複数デッキ比較を拡張予定</p></section></main>
+      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：v16.41で実装。統計画面からカード種類・レベル・パワー・種族を棒グラフ／ドーナツで確認<br>・カスタムレーダーチャート：v16.42で自由入力を強化。3～8軸で表示名・自動集計指標・基準値に加え、完全手動の数値軸も作成可能。将来は複数デッキ比較を拡張予定</p></section></main>
 
       <aside class="online-duel-tools">
         <div class="panel">
@@ -22720,7 +22730,7 @@ function moveBoardToolPreset(kind,index,step){
  saveBoardToolPrefs();
 }
 
-function defaultCardFxPrefs(){return {maxLayers:2,collectionVisible:true,collectionAnimation:false,boardVisible:true,boardAnimation:false,boardQualityDesktop:'standard',boardQualityMobile:'standard',appearanceEditorMode:'simple',motionEngine:3,effectGeneration:9}}
+function defaultCardFxPrefs(){return {maxLayers:2,collectionVisible:true,collectionAnimation:false,boardVisible:true,boardAnimation:false,boardQualityDesktop:'standard',boardQualityMobile:'standard',appearanceEditorMode:'simple',motionEngine:3,effectGeneration:10}}
 function normalizeCardFxPrefs(raw={}){
  const motionV=Number(raw.motionEngine)||0,legacyMotion=motionV<3;
  const quality=v=>['high','standard','light'].includes(String(v||''))?String(v):'standard';
@@ -22734,7 +22744,7 @@ function normalizeCardFxPrefs(raw={}){
    boardQualityMobile:quality(raw.boardQualityMobile),
    appearanceEditorMode:['simple','advanced'].includes(String(raw.appearanceEditorMode||''))?String(raw.appearanceEditorMode):'simple',
    motionEngine:3,
-   effectGeneration:9
+   effectGeneration:10
  };
 }
 function normalizeCardVisualEffects(raw){
@@ -23219,7 +23229,7 @@ function fxLayerStyle(x,v,power){
  const structure=Math.max(0,Math.min(1.8,(Number(x.structure)||0)/100)),reflection=Math.max(0,Math.min(1.8,(Number(x.reflection)||0)/100)),reflectionArea=Math.max(.2,Math.min(1.8,(Number(x.reflectionArea)||100)/100)),colorInfluence=Math.max(0,Math.min(1,(Number(x.colorInfluence)||0)/100));
  const effectiveHue=(Number(x.hue)||0)*colorInfluence,effectiveSat=1+(sat-1)*colorInfluence;
  const baseRgb=fxHexRgb(x.baseColor),reflectionRgb=fxHexRgb(x.reflectionColor),shadowRgb=fxHexRgb(x.shadowColor,'000000'),accentRgb=fxHexRgb(x.accentColor,'7fdcff');
- const baseTint=Math.max(0,Math.min(1,(Number(x.baseTint)||0)/100)),reflectionAngle=Math.max(0,Math.min(360,Number(x.reflectionAngle)||125)),reflectionHardness=Math.max(0,Math.min(1,(Number(x.reflectionHardness)||0)/100)),structureScale=Math.max(.4,Math.min(2.2,(Number(x.structureScale)||100)/100)),structureContrast=Math.max(.4,Math.min(2.2,(Number(x.structureContrast)||100)/100));
+ const baseTint=Math.max(0,Math.min(1,(Number(x.baseTint)||0)/100)),reflectionAngle=Math.max(0,Math.min(360,Number.isFinite(Number(x.reflectionAngle))?Number(x.reflectionAngle):125)),reflectionHardness=Math.max(0,Math.min(1,(Number.isFinite(Number(x.reflectionHardness))?Number(x.reflectionHardness):55)/100)),structureScale=Math.max(.4,Math.min(2.2,(Number(x.structureScale)||100)/100)),structureContrast=Math.max(.4,Math.min(2.2,(Number(x.structureContrast)||100)/100));
  const highlightWidth=Math.max(.10,Math.min(.90,(Number(x.highlightWidth)||48)/100)),shadowDepth=Math.max(0,Math.min(1,(Number(x.shadowDepth)||0)/100)),artProtect=Math.max(0,Math.min(1,(Number(x.artProtect)||0)/100)),temperature=Math.max(-1,Math.min(1,(Number(x.temperature)||0)/100)),accentStrength=Math.max(0,Math.min(1,(Number(x.accentStrength)||0)/100));
  const reflectionAlpha=(.38*reflection)*(.24+.76*reflectionHardness)*(1-.42*artProtect),shadowAlpha=(.24*structure)*shadowDepth*(1-.28*artProtect),baseAlpha=.34*baseTint*(1-.35*artProtect),accentAlpha=.30*accentStrength*(1-.25*artProtect);
  const hiCenter=50,hiHalf=Math.max(4,Math.round(3+20*highlightWidth)),hiStart=Math.max(4,hiCenter-hiHalf),hiEnd=Math.min(96,hiCenter+hiHalf);
@@ -23930,20 +23940,20 @@ const BUILTIN_CARD_FRAMES=[
 ,
    {id:'builtin:gen2-01',name:'和風・神社',path:'frames/second-japanese-shrine.png'},
    {id:'builtin:gen2-02',name:'神話・星座',path:'frames/second-mythic-constellation.png'},
-   {id:'builtin:gen2-03',name:'ゴシックホラー',path:'frames/second-gothic-horror.png'},
+   {id:'builtin:gen2-03',name:'黒銀聖櫃',path:'frames/rework-black-silver-reliquary.png'},
    {id:'builtin:gen2-04',name:'機械・リアクター',path:'frames/second-mechanical-reactor.png'},
    {id:'builtin:gen2-05',name:'宇宙・星雲',path:'frames/second-cosmic-nebula.png'},
    {id:'builtin:gen2-06',name:'自然・翠緑',path:'frames/second-verdant-nature.png'},
-   {id:'builtin:gen2-07',name:'王族・クラウン',path:'frames/second-royal-crown.png'},
+   {id:'builtin:gen2-07',name:'王家金章',path:'frames/rework-royal-gold-crest.png'},
    {id:'builtin:gen2-08',name:'魔法少女・クリスタル',path:'frames/second-magical-crystal.png'},
-   {id:'builtin:gen2-09',name:'ダーク・アビス',path:'frames/second-dark-abyss.png'},
-   {id:'builtin:gen2-10',name:'聖属性・カテドラル',path:'frames/second-sacred-cathedral.png'},
- {id:'builtin:gen2-16',name:'妖怪・灯火',path:'frames/second-yokai-lantern.png'},
- {id:'builtin:gen2-17',name:'海洋・深淵',path:'frames/second-ocean-abyss.png'},
- {id:'builtin:gen2-18',name:'地獄・魔印',path:'frames/second-infernal-sigil.png'},
+   {id:'builtin:gen2-09',name:'黒曜装甲',path:'frames/rework-obsidian-armor.png'},
+   {id:'builtin:gen2-10',name:'白金聖環',path:'frames/rework-platinum-sanctum.png'},
+ {id:'builtin:gen2-16',name:'妖紋朱漆',path:'frames/rework-yokai-vermilion-lacquer.png'},
+ {id:'builtin:gen2-17',name:'深海真珠装飾',path:'frames/rework-deepsea-pearl.png'},
+ {id:'builtin:gen2-18',name:'灼鉄鎖環',path:'frames/rework-scorched-iron-chain.png'},
  {id:'builtin:gen2-19',name:'古森・神殿',path:'frames/second-ancient-forest-temple.png'},
  {id:'builtin:gen2-20',name:'高級サイバー',path:'frames/second-luxury-cyber.png'},
- {id:'builtin:gen2-21',name:'虚無・断裂',path:'frames/second-void-fracture.png'},
+ {id:'builtin:gen2-21',name:'紫晶断層',path:'frames/rework-amethyst-fault.png'},
  {id:'builtin:material-01',name:'鍛造黒鉄',path:'frames/material-forged-black-iron.png'},
  {id:'builtin:material-02',name:'白磁装飾',path:'frames/material-white-porcelain.png'},
  {id:'builtin:material-03',name:'古代青銅彫刻',path:'frames/material-ancient-bronze.png'},
@@ -25549,7 +25559,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.41',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.42',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -26998,6 +27008,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
    }
 
    $$('[data-frame-pick]').forEach(b=>b.onclick=async()=>{
+     const frameEditorScroll=$('#modal')?.scrollTop||0;
      try{
        await putCardFrameLink(cardId,b.dataset.framePick);
        renderCollection();if(board)renderBoard();hydrateAllCardFrames();
@@ -27007,6 +27018,7 @@ async function openCardFrameEditor(cardId,returnTo='manager'){
        const reopenPreview=floatingPreviewOpen&&floatingPreviewOwner===`modal:frame:${cardId}`;
        toast('フレームを設定しました');
        await openCardFrameEditor(cardId,returnTo);
+       requestAnimationFrame(()=>{const modal=$('#modal');if(modal)modal.scrollTop=frameEditorScroll});
        if(reopenPreview)openFrameFloatingPreview(cardId);
      }catch(err){console.error(err);toast(err?.message||'フレームを設定できませんでした')}
    });
@@ -27174,6 +27186,7 @@ async function openFrameLibraryManager(backFn=null){
 
 function readFxEditorLayers(card){
  const old=normalizeCardVisualEffects(card.visualEffects),result=[];
+ const num=(selector,fallback)=>{const el=$(selector),n=Number(el?.value);return Number.isFinite(n)?n:fallback};
  for(let slot=1;slot<=4;slot++){
    const oldLayer=old.find(x=>x.slot===slot)||null;
    if(slot>cardFxPrefs.maxLayers){if(oldLayer)result.push(oldLayer);continue}
@@ -27182,35 +27195,35 @@ function readFxEditorLayers(card){
    result.push({
      slot,type,
      intensity:$(`#fx-edit-intensity-${slot}`)?.value||'standard',
-     opacity:Number($(`#fx-edit-opacity-${slot}`)?.value)||70,
+     opacity:num(`#fx-edit-opacity-${slot}`,70),
      enabled:$(`#fx-edit-enabled-${slot}`)?.checked!==false,
-     speed:Number($(`#fx-detail-speed-${slot}`)?.value)||100,
-     size:Number($(`#fx-detail-size-${slot}`)?.value)||100,
+     speed:num(`#fx-detail-speed-${slot}`,100),
+     size:num(`#fx-detail-size-${slot}`,100),
      direction:$(`#fx-detail-direction-${slot}`)?.value||'default',
      rotationDirection:$(`#fx-detail-rotation-${slot}`)?.value||'default',
-     hue:Number($(`#fx-detail-hue-${slot}`)?.value)||0,
-     saturation:Number($(`#fx-detail-saturation-${slot}`)?.value)||100,
-     brightness:Number($(`#fx-detail-brightness-${slot}`)?.value)||100,
-     density:Number($(`#fx-detail-density-${slot}`)?.value)||100,
-     motion:Number($(`#fx-detail-motion-${slot}`)?.value)||100,
-     structure:Number($(`#fx-detail-structure-${slot}`)?.value)??100,
-     reflection:Number($(`#fx-detail-reflection-${slot}`)?.value)??100,
-     reflectionArea:Number($(`#fx-detail-reflection-area-${slot}`)?.value)??100,
-     colorInfluence:Number($(`#fx-detail-color-influence-${slot}`)?.value)??100,
+     hue:num(`#fx-detail-hue-${slot}`,0),
+     saturation:num(`#fx-detail-saturation-${slot}`,100),
+     brightness:num(`#fx-detail-brightness-${slot}`,100),
+     density:num(`#fx-detail-density-${slot}`,100),
+     motion:num(`#fx-detail-motion-${slot}`,100),
+     structure:num(`#fx-detail-structure-${slot}`,100),
+     reflection:num(`#fx-detail-reflection-${slot}`,100),
+     reflectionArea:num(`#fx-detail-reflection-area-${slot}`,100),
+     colorInfluence:num(`#fx-detail-color-influence-${slot}`,100),
      baseColor:$(`#fx-detail-base-color-${slot}`)?.value||'#ffffff',
-     baseTint:Number($(`#fx-detail-base-tint-${slot}`)?.value)||0,
+     baseTint:num(`#fx-detail-base-tint-${slot}`,0),
      reflectionColor:$(`#fx-detail-reflection-color-${slot}`)?.value||'#ffffff',
      shadowColor:$(`#fx-detail-shadow-color-${slot}`)?.value||'#000000',
-     reflectionAngle:Number($(`#fx-detail-reflection-angle-${slot}`)?.value)||125,
-     reflectionHardness:Number($(`#fx-detail-reflection-hardness-${slot}`)?.value)||55,
-     structureScale:Number($(`#fx-detail-structure-scale-${slot}`)?.value)||100,
-     structureContrast:Number($(`#fx-detail-structure-contrast-${slot}`)?.value)||100,
-     highlightWidth:Number($(`#fx-detail-highlight-width-${slot}`)?.value)||48,
-     shadowDepth:Number($(`#fx-detail-shadow-depth-${slot}`)?.value)||35,
-     artProtect:Number($(`#fx-detail-art-protect-${slot}`)?.value)||60,
-     temperature:Number($(`#fx-detail-temperature-${slot}`)?.value)||0,
+     reflectionAngle:num(`#fx-detail-reflection-angle-${slot}`,125),
+     reflectionHardness:num(`#fx-detail-reflection-hardness-${slot}`,55),
+     structureScale:num(`#fx-detail-structure-scale-${slot}`,100),
+     structureContrast:num(`#fx-detail-structure-contrast-${slot}`,100),
+     highlightWidth:num(`#fx-detail-highlight-width-${slot}`,48),
+     shadowDepth:num(`#fx-detail-shadow-depth-${slot}`,35),
+     artProtect:num(`#fx-detail-art-protect-${slot}`,60),
+     temperature:num(`#fx-detail-temperature-${slot}`,0),
      accentColor:$(`#fx-detail-accent-color-${slot}`)?.value||'#7fdcff',
-     accentStrength:Number($(`#fx-detail-accent-strength-${slot}`)?.value)||0,
+     accentStrength:num(`#fx-detail-accent-strength-${slot}`,0),
      mask:$(`#fx-detail-mask-${slot}`)?.value||'full'
    });
  }
@@ -30212,11 +30225,13 @@ function openDeckGraphs(){
  const render=()=>{const g=deckGraphItems($('#deck-graph-metric').value,data);$('#deck-graph-title').textContent=`${g.title} / 対象 ${g.total}枚`;$('#deck-graph-stage').innerHTML=deckGraphSvg(g.items,$('#deck-graph-kind').value)};$('#deck-graph-metric').onchange=render;$('#deck-graph-kind').onchange=render;$('#deck-graph-close').onclick=openDeckStatistics;render();
 }
 const DECK_RADAR_METRICS={characterRate:{name:'キャラクター比率',value:d=>d.total?d.charRows.reduce((a,x)=>a+x.n,0)/d.total*100:0,defaultMax:100},roomRate:{name:'ルーム比率',value:d=>d.total?d.rows.filter(x=>normalizeCardType(x.card.type||'').startsWith('ルーム')).reduce((a,x)=>a+x.n,0)/d.total*100:0,defaultMax:100},roleRate:{name:'ロール比率',value:d=>d.total?d.rows.filter(x=>normalizeCardType(x.card.type||'').startsWith('ロール')).reduce((a,x)=>a+x.n,0)/d.total*100:0,defaultMax:100},avgLevel:{name:'平均レベル',value:d=>d.numericLevels.length?d.numericLevels.reduce((a,b)=>a+b,0)/d.numericLevels.length:0,defaultMax:12},avgPower:{name:'平均POWER',value:d=>d.numericPowers.length?d.numericPowers.reduce((a,b)=>a+b,0)/d.numericPowers.length:0,defaultMax:15000},raceKinds:{name:'種族種類数',value:d=>d.raceRows.length,defaultMax:20},cardKinds:{name:'カード種類数',value:d=>d.unique,defaultMax:40},deckSize:{name:'デッキ枚数',value:d=>d.total,defaultMax:40},highLevelRate:{name:'Lv6以上率',value:d=>{const eligible=d.levelEligible.reduce((a,x)=>a+x.n,0);return eligible?d.levelEligible.filter(x=>Number(x.card.level)>=6).reduce((a,x)=>a+x.n,0)/eligible*100:0},defaultMax:100},highPowerRate:{name:'POWER7000以上率',value:d=>{const eligible=d.powerEligible.reduce((a,x)=>a+x.n,0);return eligible?d.powerEligible.filter(x=>Number(x.card.power)>=7000).reduce((a,x)=>a+x.n,0)/eligible*100:0},defaultMax:100}};
-function defaultDeckRadarConfig(){return [{label:'キャラクター',metric:'characterRate',max:100},{label:'平均Lv',metric:'avgLevel',max:12},{label:'平均POWER',metric:'avgPower',max:15000},{label:'種族幅',metric:'raceKinds',max:20},{label:'カード種類',metric:'cardKinds',max:40}]}
-function loadDeckRadarConfig(){try{const x=JSON.parse(localStorage.getItem('minkaiDeckRadarConfigV1')||'null');if(Array.isArray(x)&&x.length>=3)return x.slice(0,8)}catch{}return defaultDeckRadarConfig()}
-function saveDeckRadarConfig(cfg){try{localStorage.setItem('minkaiDeckRadarConfigV1',JSON.stringify(cfg))}catch{}}
-function deckRadarSvg(cfg,data){const W=620,H=500,cx=310,cy=250,R=178,n=cfg.length;if(n<3)return '<div class="muted">3項目以上にしてください。</div>';const pt=(i,r)=>{const a=-Math.PI/2+i*Math.PI*2/n;return [cx+Math.cos(a)*R*r,cy+Math.sin(a)*R*r]};let grid='';for(let lv=1;lv<=5;lv++){grid+=`<polygon points="${cfg.map((_,i)=>pt(i,lv/5).join(',')).join(' ')}" fill="none" stroke="rgba(160,185,210,.18)"/>`}const axes=cfg.map((_,i)=>{const [x,y]=pt(i,1);return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(160,185,210,.22)"/>`}).join('');const vals=cfg.map(row=>{const metric=DECK_RADAR_METRICS[row.metric]||DECK_RADAR_METRICS.characterRate,v=metric.value(data),max=Math.max(.0001,Number(row.max)||metric.defaultMax);return {v,max,r:Math.max(0,Math.min(1,v/max))}});const poly=vals.map((v,i)=>pt(i,v.r).join(',')).join(' ');const labels=cfg.map((row,i)=>{const [x,y]=pt(i,1.17),v=vals[i].v;return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" fill="#dce7f2" font-size="12"><tspan x="${x}" dy="0">${esc(row.label||DECK_RADAR_METRICS[row.metric]?.name||'項目')}</tspan><tspan x="${x}" dy="15" fill="#8fa3b8">${Math.round(v*10)/10}</tspan></text>`}).join('');return `<svg viewBox="0 0 ${W} ${H}" role="img">${grid}${axes}<polygon points="${poly}" fill="rgba(86,159,230,.24)" stroke="#71b9f5" stroke-width="3"/>${vals.map((v,i)=>{const [x,y]=pt(i,v.r);return `<circle cx="${x}" cy="${y}" r="4" fill="#d9f1ff"/>`}).join('')}${labels}</svg>`}
-function openDeckRadar(){let cfg=loadDeckRadarConfig(),data=deckStatsData();openModal(`<div class="modal-head"><h3>${esc(data.source?.name?.trim()||'名称未設定デッキ')} / レーダーチャート</h3><button class="btn" id="deck-radar-close">閉じる</button></div><p class="muted">軸の名前・参照項目・100%になる基準値を自分で変更できます。3～8軸。</p><div class="deck-radar-actions"><button class="btn small" id="deck-radar-add">項目を追加</button><button class="btn small" id="deck-radar-reset">標準構成</button></div><div id="deck-radar-list" class="deck-radar-list"></div><div id="deck-radar-stage" class="deck-chart-stage"></div>`);const render=()=>{const list=$('#deck-radar-list');list.innerHTML=cfg.map((r,i)=>`<div class="deck-radar-row" data-radar-row="${i}"><label class="deck-radar-label">表示名<input data-radar-label="${i}" value="${esc(r.label||'')}"></label><label>参照<select data-radar-metric="${i}">${Object.entries(DECK_RADAR_METRICS).map(([k,m])=>`<option value="${k}" ${k===r.metric?'selected':''}>${esc(m.name)}</option>`).join('')}</select></label><label>基準値<input type="number" min="0.1" step="0.1" data-radar-max="${i}" value="${Number(r.max)||DECK_RADAR_METRICS[r.metric]?.defaultMax||100}"></label><button class="btn small danger deck-radar-delete" data-radar-delete="${i}" ${cfg.length<=3?'disabled':''}>削除</button></div>`).join('');$('#deck-radar-stage').innerHTML=deckRadarSvg(cfg,data);list.querySelectorAll('[data-radar-label]').forEach(el=>el.oninput=()=>{cfg[Number(el.dataset.radarLabel)].label=el.value;saveDeckRadarConfig(cfg);$('#deck-radar-stage').innerHTML=deckRadarSvg(cfg,data)});list.querySelectorAll('[data-radar-metric]').forEach(el=>el.onchange=()=>{const i=Number(el.dataset.radarMetric),m=DECK_RADAR_METRICS[el.value];cfg[i].metric=el.value;cfg[i].label=m.name;cfg[i].max=m.defaultMax;saveDeckRadarConfig(cfg);render()});list.querySelectorAll('[data-radar-max]').forEach(el=>el.oninput=()=>{const i=Number(el.dataset.radarMax),v=Number(el.value);if(v>0){cfg[i].max=v;saveDeckRadarConfig(cfg);$('#deck-radar-stage').innerHTML=deckRadarSvg(cfg,data)}});list.querySelectorAll('[data-radar-delete]').forEach(el=>el.onclick=()=>{if(cfg.length<=3)return;cfg.splice(Number(el.dataset.radarDelete),1);saveDeckRadarConfig(cfg);render()})};$('#deck-radar-add').onclick=()=>{if(cfg.length>=8){toast('レーダーは最大8項目です');return}const metric='characterRate',m=DECK_RADAR_METRICS[metric];cfg.push({label:m.name,metric,max:m.defaultMax});saveDeckRadarConfig(cfg);render()};$('#deck-radar-reset').onclick=()=>{cfg=defaultDeckRadarConfig();saveDeckRadarConfig(cfg);render()};$('#deck-radar-close').onclick=openDeckStatistics;render()}
+function defaultDeckRadarConfig(){return [{label:'キャラクター',metric:'characterRate',max:100,value:50},{label:'平均Lv',metric:'avgLevel',max:12,value:6},{label:'平均POWER',metric:'avgPower',max:15000,value:7500},{label:'種族幅',metric:'raceKinds',max:20,value:10},{label:'カード種類',metric:'cardKinds',max:40,value:20}]}
+function manualDeckRadarConfig(){return ['強さ','持久戦','対応力','安定','難易度'].map(label=>({label,metric:'manual',max:100,value:50}))}
+function loadDeckRadarConfig(){try{const x=JSON.parse(localStorage.getItem('minkaiDeckRadarConfigV2')||localStorage.getItem('minkaiDeckRadarConfigV1')||'null');if(Array.isArray(x)&&x.length>=3)return x.slice(0,8).map(r=>({...r,value:Number.isFinite(Number(r.value))?Number(r.value):50}))}catch{}return defaultDeckRadarConfig()}
+function saveDeckRadarConfig(cfg){localStorage.setItem('minkaiDeckRadarConfigV2',JSON.stringify(cfg.slice(0,8)))}
+function deckRadarValue(row,data){if(row.metric==='manual')return Number.isFinite(Number(row.value))?Number(row.value):0;const metric=DECK_RADAR_METRICS[row.metric]||DECK_RADAR_METRICS.characterRate;return metric.value(data)}
+function deckRadarSvg(cfg,data){const W=620,H=500,cx=310,cy=250,R=178,n=cfg.length;if(n<3)return '<div class="muted">3項目以上にしてください。</div>';const pt=(i,r)=>{const a=-Math.PI/2+i*Math.PI*2/n;return [cx+Math.cos(a)*R*r,cy+Math.sin(a)*R*r]};let grid='';for(let lv=1;lv<=5;lv++){grid+=`<polygon points="${cfg.map((_,i)=>pt(i,lv/5).join(',')).join(' ')}" fill="none" stroke="rgba(160,185,210,.18)"/>`}const axes=cfg.map((_,i)=>{const [x,y]=pt(i,1);return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(160,185,210,.22)"/>`}).join('');const vals=cfg.map(row=>{const metric=DECK_RADAR_METRICS[row.metric]||DECK_RADAR_METRICS.characterRate,v=deckRadarValue(row,data),max=Math.max(.0001,Number(row.max)||(row.metric==='manual'?100:metric.defaultMax));return {v,max,r:Math.max(0,Math.min(1,v/max))}});const poly=vals.map((v,i)=>pt(i,v.r).join(',')).join(' ');const labels=cfg.map((row,i)=>{const [x,y]=pt(i,1.17),v=vals[i].v;return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" fill="#dce7f2" font-size="12"><tspan x="${x}" dy="0">${esc(row.label||(row.metric==='manual'?'自由項目':DECK_RADAR_METRICS[row.metric]?.name)||'項目')}</tspan><tspan x="${x}" dy="15" fill="#8fa3b8">${Math.round(v*10)/10}</tspan></text>`}).join('');return `<svg viewBox="0 0 ${W} ${H}" role="img">${grid}${axes}<polygon points="${poly}" fill="rgba(86,159,230,.24)" stroke="#71b9f5" stroke-width="3"/>${vals.map((v,i)=>{const [x,y]=pt(i,v.r);return `<circle cx="${x}" cy="${y}" r="4" fill="#d9f1ff"/>`}).join('')}${labels}</svg>`}
+function openDeckRadar(){let cfg=loadDeckRadarConfig(),data=deckStatsData();openModal(`<div class="modal-head"><h3>${esc(data.source?.name?.trim()||'名称未設定デッキ')} / レーダーチャート</h3><button class="btn" id="deck-radar-close">閉じる</button></div><p class="muted">3～8軸。デッキ統計から自動計算する軸と、自分で名前・数値を完全自由入力する軸を混在できます。</p><div class="deck-radar-actions"><button class="btn small" id="deck-radar-add">項目を追加</button><button class="btn small" id="deck-radar-manual">自由入力5軸</button><button class="btn small" id="deck-radar-reset">統計ベースに戻す</button></div><div id="deck-radar-list" class="deck-radar-list"></div><div id="deck-radar-stage" class="deck-chart-stage"></div>`);const render=()=>{const list=$('#deck-radar-list');list.innerHTML=cfg.map((r,i)=>{const manual=r.metric==='manual',metric=DECK_RADAR_METRICS[r.metric];return `<div class="deck-radar-row" data-radar-row="${i}"><label class="deck-radar-label">表示名<input data-radar-label="${i}" value="${esc(r.label||'')}"></label><label>参照<select data-radar-metric="${i}"><option value="manual" ${manual?'selected':''}>手動入力</option>${Object.entries(DECK_RADAR_METRICS).map(([k,m])=>`<option value="${k}" ${k===r.metric?'selected':''}>${esc(m.name)}</option>`).join('')}</select></label><label>現在値<input type="number" step="0.1" data-radar-value="${i}" value="${manual?(Number.isFinite(Number(r.value))?Number(r.value):50):Math.round(deckRadarValue(r,data)*10)/10}" ${manual?'':'disabled'}></label><label>満点値<input type="number" min="0.1" step="0.1" data-radar-max="${i}" value="${Number(r.max)||(manual?100:metric?.defaultMax||100)}"></label><button class="btn small danger deck-radar-delete" data-radar-delete="${i}" ${cfg.length<=3?'disabled':''}>削除</button></div>`}).join('');$('#deck-radar-stage').innerHTML=deckRadarSvg(cfg,data);list.querySelectorAll('[data-radar-label]').forEach(el=>el.oninput=()=>{cfg[Number(el.dataset.radarLabel)].label=el.value;saveDeckRadarConfig(cfg);$('#deck-radar-stage').innerHTML=deckRadarSvg(cfg,data)});list.querySelectorAll('[data-radar-metric]').forEach(el=>el.onchange=()=>{const i=Number(el.dataset.radarMetric);if(el.value==='manual'){cfg[i].metric='manual';cfg[i].label=cfg[i].label||'自由項目';cfg[i].value=Number.isFinite(Number(cfg[i].value))?Number(cfg[i].value):50;cfg[i].max=Number(cfg[i].max)||100}else{const m=DECK_RADAR_METRICS[el.value];cfg[i].metric=el.value;cfg[i].label=m.name;cfg[i].max=m.defaultMax}saveDeckRadarConfig(cfg);render()});list.querySelectorAll('[data-radar-value]').forEach(el=>el.oninput=()=>{const i=Number(el.dataset.radarValue),v=Number(el.value);if(cfg[i].metric==='manual'&&Number.isFinite(v)){cfg[i].value=v;saveDeckRadarConfig(cfg);$('#deck-radar-stage').innerHTML=deckRadarSvg(cfg,data)}});list.querySelectorAll('[data-radar-max]').forEach(el=>el.oninput=()=>{const i=Number(el.dataset.radarMax),v=Number(el.value);if(v>0){cfg[i].max=v;saveDeckRadarConfig(cfg);$('#deck-radar-stage').innerHTML=deckRadarSvg(cfg,data)}});list.querySelectorAll('[data-radar-delete]').forEach(el=>el.onclick=()=>{if(cfg.length<=3)return;cfg.splice(Number(el.dataset.radarDelete),1);saveDeckRadarConfig(cfg);render()})};$('#deck-radar-add').onclick=()=>{if(cfg.length>=8){toast('レーダーは最大8項目です');return}cfg.push({label:'自由項目',metric:'manual',max:100,value:50});saveDeckRadarConfig(cfg);render()};$('#deck-radar-manual').onclick=()=>{cfg=manualDeckRadarConfig();saveDeckRadarConfig(cfg);render()};$('#deck-radar-reset').onclick=()=>{cfg=defaultDeckRadarConfig();saveDeckRadarConfig(cfg);render()};$('#deck-radar-close').onclick=openDeckStatistics;render()}
 function openDeckStatistics(){
  const data=deckStatsData(),{source,rows,total,unique,typeRows,levelEligible,levelTotal,levelRows,powerEligible,powerTotal,powerRows,raceEligible,raceTotal,raceRows,charRows,numericLevels,numericPowers}=data;
  const avg=arr=>arr.length?Math.round(arr.reduce((a,b)=>a+b,0)/arr.length*10)/10:'－';
@@ -36418,7 +36433,7 @@ async function accountCloudInitialize(){
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.41'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.42'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
@@ -36435,7 +36450,7 @@ function accountCloudLocalSnapshot(){
   const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
     schema_version:2,
-    app_version:'16.41',
+    app_version:'16.42',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
     decks:Array.isArray(decks)?decks:[],
@@ -37076,7 +37091,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'16.41',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'16.42',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
