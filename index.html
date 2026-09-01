@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v16.45</title>
+<title>みん会TCG Simulator v16.44</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -17394,19 +17394,6 @@ html{--visual-generation:"12.0"}
  border:none!important;outline:none!important;box-shadow:none!important;
 }
 .fx-ripple-emboss>.fx-deco{display:none!important}
-.fx-heart-emboss{
- background-image:url('effects/surface-heart-emboss.png')!important;
- background-size:calc(100%*var(--fx-density-scale,1)) calc(100%*var(--fx-density-scale,1))!important;
- background-position:center!important;
- opacity:calc(.34 + .46*var(--fx-structure,1));
- filter:contrast(var(--fx-structure-contrast,1)) brightness(var(--fx-bright,1));
- mix-blend-mode:overlay!important;
-}
-.fx-heart-emboss>.fx-deco{display:none!important}
-.card-fx-layer[data-fx-type="heart-emboss"]{--fx-signature-bg:linear-gradient(var(--fx-reflection-angle,125deg),rgba(255,255,255,.08),transparent 34% 64%,rgba(0,0,0,.10));--fx-signature-blend:overlay;--fx-signature-opacity:.58;}
-.card-fx-layer[data-fx-type="heart-emboss"]::before{content:"";position:absolute;inset:0;background:url('effects/surface-heart-emboss.png') center/cover no-repeat;opacity:calc(.22 + .55*var(--fx-structure,1));mix-blend-mode:soft-light;filter:contrast(var(--fx-structure-contrast,1));pointer-events:none}
-.fx-animate .fx-heart-emboss{animation:v1638RakingLight var(--fx-duration,8s) ease-in-out infinite alternate}
-
 @keyframes fxConceptMaterialShift{
   0%{background-position:46% 48%;transform:scale(1.01);filter:hue-rotate(calc(var(--fx-hue,0deg) - 8deg)) saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1))}
   50%{background-position:54% 52%;transform:scale(1.035);filter:hue-rotate(calc(var(--fx-hue,0deg) + 14deg)) saturate(calc(var(--fx-sat,1)*1.08)) brightness(calc(var(--fx-bright,1)*1.06))}
@@ -20184,39 +20171,6 @@ h3 .minkai-ruby{margin-top:.45em}
  .modal-layer.board-detail-live .modal{width:100%;max-width:none;max-height:52dvh;border-radius:16px 16px 0 0;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));box-shadow:0 -12px 34px rgba(0,0,0,.45)}
  .modal-layer.board-detail-live .detail-grid{grid-template-columns:1fr}
 }
-
-/* v16.45 Night family differentiation pass */
-.fx-erotic-black-lace-veil>.fx-material-structure{background:url('effects/erotic-black-lace-veil.png') center/cover no-repeat!important;opacity:calc(.18 + var(--fx-structure,.55)*.98)!important;mix-blend-mode:multiply!important;filter:contrast(calc(.92 + .55*var(--fx-structure-contrast,1))) saturate(calc(.8 + .35*var(--fx-sat,1))) hue-rotate(var(--fx-hue,0deg))!important}
-.fx-erotic-black-lace-veil>.fx-material-grade{background:radial-gradient(ellipse at 8% 18%,rgba(82,12,55,.22),transparent 35%),radial-gradient(ellipse at 94% 76%,rgba(70,7,48,.18),transparent 34%)!important;mix-blend-mode:multiply!important;opacity:calc(.25 + .42*var(--fx-color-influence,.2))!important}
-.fx-erotic-black-lace-veil>.fx-optical-motion{background:linear-gradient(var(--fx-reflection-angle,20deg),transparent 0 37%,rgba(var(--fx-reflection-rgb,255,224,242),.32) 44%,transparent 50% 100%)!important;opacity:calc(.12 + var(--fx-reflection,.25)*.62)!important;mix-blend-mode:screen!important}
-
-.fx-erotic-satin-sheen>.fx-material-structure{background:url('effects/erotic-satin-sheen.png') center/cover no-repeat!important;opacity:calc(.28 + var(--fx-structure,.45)*.84)!important;mix-blend-mode:soft-light!important;filter:contrast(calc(1 + .42*var(--fx-structure-contrast,1))) saturate(calc(.9 + .45*var(--fx-sat,1))) hue-rotate(var(--fx-hue,0deg))!important}
-.fx-erotic-satin-sheen>.fx-material-grade{background:linear-gradient(112deg,rgba(70,0,38,.22),transparent 34%,rgba(146,32,99,.18) 68%,transparent)!important;mix-blend-mode:color!important;opacity:calc(.18 + .42*var(--fx-color-influence,.35))!important}
-.fx-erotic-satin-sheen>.fx-optical-motion{background:linear-gradient(var(--fx-reflection-angle,125deg),transparent 0 27%,rgba(var(--fx-reflection-rgb,255,195,225),.08) 36%,rgba(var(--fx-reflection-rgb,255,225,240),.40) 46%,rgba(var(--fx-reflection-rgb,255,195,225),.10) 58%,transparent 70% 100%)!important;filter:blur(calc(2px + 7px*var(--fx-highlight-width,.7)))!important;opacity:calc(.18 + .72*var(--fx-reflection,.6))!important;mix-blend-mode:screen!important}
-
-.fx-erotic-rouge-gloss>.fx-material-structure{background:url('effects/erotic-rouge-gloss.png') center/cover no-repeat!important;opacity:calc(.22 + var(--fx-structure,.25)*.82)!important;mix-blend-mode:overlay!important;filter:contrast(calc(1 + .38*var(--fx-structure-contrast,1))) saturate(calc(1 + .55*var(--fx-sat,1))) hue-rotate(var(--fx-hue,0deg))!important}
-.fx-erotic-rouge-gloss>.fx-material-grade{background:linear-gradient(140deg,rgba(125,0,36,.32),rgba(210,10,68,.10) 43%,transparent 70%),radial-gradient(ellipse at 70% 74%,rgba(86,0,28,.26),transparent 42%)!important;mix-blend-mode:color-burn!important;opacity:calc(.18 + .58*var(--fx-color-influence,.45))!important}
-.fx-erotic-rouge-gloss>.fx-optical-motion{background:radial-gradient(ellipse at 28% 20%,rgba(var(--fx-reflection-rgb,255,224,236),.38),transparent 26%),linear-gradient(var(--fx-reflection-angle,125deg),transparent 38%,rgba(var(--fx-reflection-rgb,255,240,245),.32) 47%,transparent 57%)!important;filter:blur(calc(1px + 3px*var(--fx-highlight-width,.4)))!important;opacity:calc(.20 + .68*var(--fx-reflection,.65))!important;mix-blend-mode:screen!important}
-
-.fx-erotic-black-velvet>.fx-material-structure{background:url('effects/erotic-black-velvet.png') center/cover no-repeat!important;opacity:calc(.25 + var(--fx-structure,.65)*.95)!important;mix-blend-mode:multiply!important;filter:contrast(calc(1.05 + .55*var(--fx-structure-contrast,1))) saturate(calc(.8 + .3*var(--fx-sat,1)))!important}
-.fx-erotic-black-velvet>.fx-material-grade{background:radial-gradient(ellipse at 28% 32%,rgba(44,37,85,.25),transparent 42%),radial-gradient(ellipse at 74% 68%,rgba(20,12,45,.34),transparent 48%)!important;mix-blend-mode:multiply!important;opacity:calc(.28 + .45*var(--fx-shadow-depth,.65))!important}
-.fx-erotic-black-velvet>.fx-optical-motion{background:linear-gradient(var(--fx-reflection-angle,135deg),transparent 20%,rgba(130,108,164,.18) 44%,rgba(181,153,198,.12) 49%,transparent 69%)!important;filter:blur(calc(7px + 13px*var(--fx-highlight-width,.8)))!important;opacity:calc(.12 + .48*var(--fx-reflection,.3))!important;mix-blend-mode:screen!important}
-
-.fx-erotic-perfume-mist>.fx-material-structure{background:url('effects/erotic-perfume-mist.png') center/cover no-repeat!important;opacity:calc(.22 + .86*var(--fx-structure,.2))!important;mix-blend-mode:screen!important;filter:contrast(calc(1 + .55*var(--fx-structure-contrast,1))) saturate(calc(.8 + .35*var(--fx-sat,1)))!important}
-.fx-erotic-perfume-mist>.fx-material-grade{background:radial-gradient(ellipse at 15% 20%,rgba(255,220,238,.17),transparent 23%),radial-gradient(ellipse at 85% 72%,rgba(218,174,210,.13),transparent 28%)!important;mix-blend-mode:screen!important;opacity:calc(.12 + .34*var(--fx-color-influence,.2))!important}
-.fx-erotic-perfume-mist>.fx-optical-motion{background:radial-gradient(circle at 18% 72%,rgba(255,255,255,.22) 0 1%,transparent 3%),radial-gradient(circle at 82% 18%,rgba(255,224,242,.18) 0 1.5%,transparent 4%),radial-gradient(circle at 72% 78%,rgba(218,197,255,.16) 0 1%,transparent 3%)!important;opacity:calc(.18 + .50*var(--fx-reflection,.35))!important;mix-blend-mode:screen!important}
-
-.fx-erotic-night-neon>.fx-material-structure{background:radial-gradient(ellipse at -8% 22%,rgba(240,16,160,calc(.20 + var(--fx-reflection,.6)*.45)),transparent calc(36%*var(--fx-reflect-area,1))),radial-gradient(ellipse at 108% 77%,rgba(68,82,255,calc(.20 + var(--fx-reflection,.6)*.48)),transparent calc(38%*var(--fx-reflect-area,1))),linear-gradient(128deg,rgba(255,24,171,.08),transparent 38% 62%,rgba(59,80,255,.09))!important;mix-blend-mode:screen!important;opacity:calc(.50 + var(--fx-reflection,.6)*.48)!important;filter:saturate(1.25)!important}
-.fx-erotic-night-neon>.fx-material-grade{background:linear-gradient(105deg,rgba(222,0,128,.20),transparent 36% 64%,rgba(52,64,230,.20))!important;mix-blend-mode:color!important;opacity:calc(.22 + .55*var(--fx-color-influence,.4))!important}
-.fx-erotic-night-neon>.fx-optical-motion{background:linear-gradient(var(--fx-reflection-angle,15deg),transparent 0 42%,rgba(255,255,255,.18) 48%,transparent 56% 100%)!important;filter:blur(calc(8px + 10px*var(--fx-highlight-width,.9)))!important;opacity:calc(.15 + .45*var(--fx-reflection,.6))!important}
-
-.fx-erotic-sheer>.fx-material-structure{background:url('effects/erotic-sheer.png') center/cover no-repeat!important;opacity:calc(.20 + var(--fx-structure,.4)*.86)!important;mix-blend-mode:soft-light!important;filter:contrast(calc(.95 + .45*var(--fx-structure-contrast,1))) saturate(calc(.85 + .25*var(--fx-sat,1)))!important}
-.fx-erotic-sheer>.fx-material-grade{background:linear-gradient(135deg,rgba(238,216,232,.17),transparent 35% 65%,rgba(184,132,171,.12))!important;mix-blend-mode:screen!important;opacity:calc(.15 + .40*var(--fx-color-influence,.2))!important}
-.fx-erotic-sheer>.fx-optical-motion{background:linear-gradient(var(--fx-reflection-angle,125deg),transparent 16%,rgba(255,245,252,.16) 43%,transparent 68%)!important;filter:blur(calc(7px + 11px*var(--fx-highlight-width,.75)))!important;opacity:calc(.10 + .38*var(--fx-reflection,.25))!important;mix-blend-mode:screen!important}
-
-.fx-erotic-sensual-glow>.fx-material-structure{background:radial-gradient(ellipse at 34% 28%,rgba(255,216,177,calc(.10 + var(--fx-reflection,.5)*.28)),transparent 35%),radial-gradient(ellipse at 72% 72%,rgba(224,122,145,calc(.08 + var(--fx-accent-alpha,.16)*1.2)),transparent 38%),linear-gradient(var(--fx-reflection-angle,125deg),transparent 20%,rgba(255,231,195,calc(.06 + var(--fx-reflection,.5)*.17)) 48%,transparent 72%)!important;mix-blend-mode:soft-light!important;opacity:calc(.52 + var(--fx-reflection,.5)*.38)!important}
-.fx-erotic-sensual-glow>.fx-material-grade{background:radial-gradient(ellipse at 50% 45%,rgba(255,183,137,.12),transparent 55%)!important;mix-blend-mode:color!important;opacity:calc(.16 + .40*var(--fx-color-influence,.25))!important}
-
 </style>
 
 <style>
@@ -20649,8 +20603,8 @@ h3 .minkai-ruby{margin-top:.45em}
 @keyframes v1633MetalAngle{0%{transform:translateX(-2%);filter:brightness(.94)}100%{transform:translateX(2%);filter:brightness(1.07)}}
 
 /* Embossing: make the relief readable through light AND shadow; no glowing outlines. */
-.card-fx-layer:is(.fx-scale-emboss,.fx-ripple-emboss)::before{filter:contrast(calc(1 + .16*var(--fx-structure,1)));opacity:calc(.72*var(--fx-structure,1));mix-blend-mode:soft-light}
-.card-fx-layer:is(.fx-scale-emboss,.fx-ripple-emboss)::after{content:"";position:absolute;inset:0;background:linear-gradient(132deg,rgba(255,255,255,calc(.08*var(--fx-reflection,1))),transparent 34% 64%,rgba(0,0,0,calc(.10*var(--fx-structure,1))));opacity:.58;mix-blend-mode:overlay;pointer-events:none}
+.card-fx-layer:is(.fx-scale-emboss,.fx-ripple-emboss,.fx-heart-emboss)::before{filter:contrast(calc(1 + .16*var(--fx-structure,1)));opacity:calc(.72*var(--fx-structure,1));mix-blend-mode:soft-light}
+.card-fx-layer:is(.fx-scale-emboss,.fx-ripple-emboss,.fx-heart-emboss)::after{content:"";position:absolute;inset:0;background:linear-gradient(132deg,rgba(255,255,255,calc(.08*var(--fx-reflection,1))),transparent 34% 64%,rgba(0,0,0,calc(.10*var(--fx-structure,1))));opacity:.58;mix-blend-mode:overlay;pointer-events:none}
 
 /* Fabric / paper / carbon: low gloss, fixed weave/fibres, directional sheen only. */
 .card-fx-layer:is(.fx-carbon-iridescent,.fx-velvet-matte,.fx-aurora-silk,.fx-royal-velvet,.fx-fiber-paper){isolation:isolate}
@@ -20790,7 +20744,7 @@ h3 .minkai-ruby{margin-top:.45em}
 }
 
 /* Emboss / pressed surfaces: stronger directional depth, still no luminous contour. */
-.card-fx-layer:is(.fx-scale-emboss,.fx-ripple-emboss){
+.card-fx-layer:is(.fx-scale-emboss,.fx-ripple-emboss,.fx-heart-emboss){
   box-shadow:inset 1px 1px 4px rgba(255,255,255,calc(.055*var(--fx-reflection,1))),inset -1px -1px 5px rgba(0,0,0,calc(.09*var(--fx-structure,1)));
 }
 
@@ -21186,20 +21140,26 @@ h3 .minkai-ruby{margin-top:.45em}
 .card-fx-layer>.fx-optical-motion{opacity:calc(.18 + .62 * var(--fx-reflection,1));}
 @media(max-width:700px){.deck-radar-row{grid-template-columns:1fr 1fr}.deck-radar-row .deck-radar-label{grid-column:1/-1}.deck-radar-row .deck-radar-delete{grid-column:2}}
 
+
+/* v16.46 large-relief heart emboss */
+.fx-heart-emboss{background-image:url('effects/surface-heart-emboss.png')!important;background-size:cover!important;background-position:center!important;mix-blend-mode:soft-light!important;opacity:calc(.38 + .54*var(--fx-structure,1))!important;filter:contrast(var(--fx-structure-contrast,1)) brightness(var(--fx-bright,1))!important}
+.fx-heart-emboss>.fx-deco{display:none!important}
+.card-fx-layer[data-fx-type="heart-emboss"]>.fx-signature{background:radial-gradient(ellipse at 26% 24%,rgba(255,255,255,calc(.11*var(--fx-reflection,1))),transparent 27%),linear-gradient(var(--fx-reflection-angle,132deg),rgba(255,255,255,calc(.08*var(--fx-reflection,1))),transparent 28% 72%,rgba(0,0,0,calc(.08*var(--fx-structure,1))))!important;mix-blend-mode:overlay!important;opacity:.72!important}
+
 /* ==========================================================
-   v16.45 Sexy / Erotic appearance pack
+   v16.46 Night appearance pack
    Non-explicit material, light and asymmetrical surface design.
    ========================================================== */
 .fx-erotic-black-lace-veil,.fx-erotic-satin-sheen,.fx-erotic-rouge-gloss,.fx-erotic-black-velvet,.fx-erotic-perfume-mist,.fx-erotic-sheer,.fx-erotic-night-neon,.fx-erotic-sensual-glow{background:none!important;border:none!important;outline:none!important;box-shadow:none!important}
 .fx-erotic-black-lace-veil>.fx-deco,.fx-erotic-satin-sheen>.fx-deco,.fx-erotic-rouge-gloss>.fx-deco,.fx-erotic-black-velvet>.fx-deco,.fx-erotic-perfume-mist>.fx-deco,.fx-erotic-sheer>.fx-deco,.fx-erotic-night-neon>.fx-deco,.fx-erotic-sensual-glow>.fx-deco{display:none!important}
-.fx-erotic-black-lace-veil>.fx-material-structure{background:url('effects/erotic-black-lace-veil.png') center/var(--fx-structure-scale-pct,100%) var(--fx-structure-scale-pct,100%) no-repeat!important;opacity:calc(var(--fx-structure,.55)*.98);mix-blend-mode:multiply;filter:contrast(var(--fx-structure-contrast,1)) saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1)) hue-rotate(var(--fx-hue,0deg))}
+.fx-erotic-black-lace-veil>.fx-material-structure{background:url('effects/erotic-black-lace-veil.png') center/cover no-repeat!important;opacity:calc(.16 + var(--fx-structure,.55)*.86);mix-blend-mode:multiply;filter:contrast(calc(var(--fx-structure-contrast,1)*1.10)) saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1)) hue-rotate(var(--fx-hue,0deg))}
 .fx-erotic-satin-sheen>.fx-material-structure{background:url('effects/erotic-satin-sheen.png') center/cover no-repeat!important;opacity:calc(var(--fx-structure,.45)*.72);mix-blend-mode:soft-light;filter:contrast(var(--fx-structure-contrast,1)) saturate(var(--fx-sat,1)) hue-rotate(var(--fx-hue,0deg))}
-.fx-erotic-rouge-gloss>.fx-material-structure{background:url('effects/erotic-rouge-gloss.png') center/cover no-repeat!important;opacity:calc(var(--fx-structure,.25)*.76 + .08);mix-blend-mode:overlay;filter:contrast(var(--fx-structure-contrast,1)) saturate(var(--fx-sat,1)) hue-rotate(var(--fx-hue,0deg))}
-.fx-erotic-black-velvet>.fx-material-structure{background:url('effects/erotic-black-velvet.png') center/cover no-repeat!important;opacity:calc(var(--fx-structure,.65)*.70);mix-blend-mode:multiply;filter:contrast(var(--fx-structure-contrast,1)) saturate(var(--fx-sat,1)) hue-rotate(var(--fx-hue,0deg))}
-.fx-erotic-perfume-mist>.fx-material-structure{background:url('effects/erotic-perfume-mist.png') center/cover no-repeat!important;opacity:calc(.08 + var(--fx-structure,.20)*.62);mix-blend-mode:screen;filter:contrast(var(--fx-structure-contrast,1)) saturate(var(--fx-sat,1)) hue-rotate(var(--fx-hue,0deg))}
-.fx-erotic-sheer>.fx-material-structure{background:url('effects/erotic-sheer.png') center/var(--fx-structure-scale-pct,100%) var(--fx-structure-scale-pct,100%) no-repeat!important;opacity:calc(.06 + var(--fx-structure,.40)*.54);mix-blend-mode:soft-light;filter:contrast(var(--fx-structure-contrast,1)) saturate(var(--fx-sat,1)) hue-rotate(var(--fx-hue,0deg))}
+.fx-erotic-rouge-gloss>.fx-material-structure{background:url('effects/erotic-rouge-gloss.png') center/cover no-repeat!important;opacity:calc(.18 + var(--fx-structure,.25)*.92);mix-blend-mode:overlay;filter:contrast(calc(var(--fx-structure-contrast,1)*1.12)) saturate(var(--fx-sat,1)) hue-rotate(var(--fx-hue,0deg))}
+.fx-erotic-black-velvet>.fx-material-structure{background:url('effects/erotic-black-velvet.png') center/cover no-repeat!important;opacity:calc(.18 + var(--fx-structure,.65)*.82);mix-blend-mode:multiply;filter:contrast(calc(var(--fx-structure-contrast,1)*1.18)) saturate(var(--fx-sat,1)) hue-rotate(var(--fx-hue,0deg))}
+.fx-erotic-perfume-mist>.fx-material-structure{background:url('effects/erotic-perfume-mist.png') center/cover no-repeat!important;opacity:calc(.18 + var(--fx-structure,.20)*.92);mix-blend-mode:screen;filter:contrast(calc(var(--fx-structure-contrast,1)*1.10)) saturate(var(--fx-sat,1)) hue-rotate(var(--fx-hue,0deg))}
+.fx-erotic-sheer>.fx-material-structure{background:url('effects/erotic-sheer.png') center/cover no-repeat!important;opacity:calc(.14 + var(--fx-structure,.40)*.76);mix-blend-mode:soft-light;filter:contrast(calc(var(--fx-structure-contrast,1)*1.08)) saturate(var(--fx-sat,1)) hue-rotate(var(--fx-hue,0deg))}
 .fx-erotic-night-neon>.fx-material-structure{background:radial-gradient(ellipse at 0% 18%,rgba(212,39,134,calc(.10 + var(--fx-reflection,.6)*.32)),transparent calc(30%*var(--fx-reflect-area,1))),radial-gradient(ellipse at 100% 78%,rgba(81,76,255,calc(.10 + var(--fx-reflection,.6)*.34)),transparent calc(32%*var(--fx-reflect-area,1))),radial-gradient(ellipse at 74% 8%,rgba(var(--fx-accent-rgb,81,76,255),var(--fx-accent-alpha,.18)),transparent 30%)!important;mix-blend-mode:screen;opacity:calc(.35 + var(--fx-reflection,.6)*.45)}
-.fx-erotic-sensual-glow>.fx-material-structure{background:radial-gradient(ellipse at 35% 32%,rgba(255,207,165,calc(.04 + var(--fx-reflection,.5)*.16)),transparent 36%),radial-gradient(ellipse at 70% 72%,rgba(214,124,142,calc(.03 + var(--fx-accent-alpha,.16))),transparent 34%),linear-gradient(var(--fx-reflection-angle,125deg),transparent 15%,rgba(255,226,190,calc(.03 + var(--fx-reflection,.5)*.11)) 45%,transparent 74%)!important;mix-blend-mode:soft-light;opacity:calc(.35 + var(--fx-reflection,.5)*.35)}
+.fx-erotic-sensual-glow>.fx-material-structure{background:url('effects/erotic-sensual-glow.png') center/cover no-repeat!important;mix-blend-mode:soft-light;opacity:calc(.20 + var(--fx-reflection,.5)*.62);filter:saturate(var(--fx-sat,1)) hue-rotate(var(--fx-hue,0deg))}
 .fx-erotic-black-lace-veil>.fx-optical-motion,.fx-erotic-satin-sheen>.fx-optical-motion,.fx-erotic-rouge-gloss>.fx-optical-motion,.fx-erotic-black-velvet>.fx-optical-motion,.fx-erotic-sheer>.fx-optical-motion{opacity:calc(var(--fx-reflection,.4)*.55);mix-blend-mode:screen}
 .fx-erotic-perfume-mist>.fx-optical-motion{opacity:calc(var(--fx-reflection,.35)*.32);mix-blend-mode:screen}
 .fx-erotic-night-neon>.fx-optical-motion{opacity:calc(var(--fx-reflection,.6)*.65);mix-blend-mode:screen}
@@ -21218,7 +21178,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v16.45 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v16.44 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22376,7 +22336,7 @@ h3 .minkai-ruby{margin-top:.45em}
     </div>
 
     <div class="online-duel-wrap">
-      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：v16.41で実装。統計画面からカード種類・レベル・パワー・種族を棒グラフ／ドーナツで確認<br>・カスタムレーダーチャート：v16.42で自由入力を強化。3～8軸で表示名・自動集計指標・基準値に加え、完全手動の数値軸も作成可能。将来は複数デッキ比較を拡張予定<br>・セクシー／エロティック外観：v16.45で非露骨な官能・素材表現を中心に、エフェクト8種と非対称フレーム6種を追加</p></section></main>
+      <main id="online-duel-main" class="online-duel-main"><section class="panel"><h3>ロードマップ</h3><p class="muted">・ルビ機能：v16.1で実装済み。語句ごとの読み仮名をカード名・種族・効果・フレーバーへ表示<br>・一括選択からの一括テキストコピー：v16.10で実装済み。カード管理の一括選択とデッキ確認のデッキコピーから、テキスト登録へそのまま貼り戻せる形式でコピー<br>・デッキ統計グラフ：v16.41で実装。統計画面からカード種類・レベル・パワー・種族を棒グラフ／ドーナツで確認<br>・カスタムレーダーチャート：v16.42で自由入力を強化。3～8軸で表示名・自動集計指標・基準値に加え、完全手動の数値軸も作成可能。将来は複数デッキ比較を拡張予定<br>・セクシー／エロティック外観：v16.44で非露骨な官能・素材表現を中心に、エフェクト8種と非対称フレーム6種を追加</p></section></main>
 
       <aside class="online-duel-tools">
         <div class="panel">
@@ -23298,7 +23258,8 @@ const FX_BASE_DURATIONS={
  'smoke-resin':10.0,
  'ink-resin':9.0,
  'scale-emboss':6.8,
- 'ripple-emboss':7.8,'heart-emboss':8.4,
+ 'ripple-emboss':7.8,
+ 'heart-emboss':8.6,
  'meteorite-crystal':10.5,'hammered-forge':12,'oxidized-silver':11,'white-pearl':12,'layered-mica':13,'ice-inclusion-resin':11.5,'crystal-aggregate-resin':10.5,'fiber-paper':14,'erotic-black-lace-veil':14,'erotic-satin-sheen':12,'erotic-rouge-gloss':13,'erotic-black-velvet':16,'erotic-perfume-mist':15,'erotic-night-neon':14,'erotic-sheer':18,'erotic-sensual-glow':20};
 function fxHexRgb(hex,fallback='ffffff'){const m=/^#([0-9a-f]{6})$/i.exec(String(hex||'')),n=parseInt(m?m[1]:fallback,16);return `${(n>>16)&255},${(n>>8)&255},${n&255}`}
 function fxLayerStyle(x,v,power){
@@ -24039,12 +24000,12 @@ const BUILTIN_CARD_FRAMES=[
  {id:'builtin:material-03',name:'古代青銅彫刻',path:'frames/material-ancient-bronze.png'},
  {id:'builtin:material-04',name:'革装丁',path:'frames/material-leather-binding.png'},
  {id:'builtin:material-05',name:'象嵌金属',path:'frames/material-metal-inlay.png'},
- {id:'builtin:erotic-01',name:'黒レース・コルセット',path:'frames/erotic-black-lace-corset.png'},
- {id:'builtin:erotic-02',name:'ローズ・ヴェール',path:'frames/erotic-rose-veil.png'},
- {id:'builtin:erotic-03',name:'サテン・リボン',path:'frames/erotic-satin-ribbon.png'},
- {id:'builtin:erotic-04',name:'ラグジュアリー・ナイト',path:'frames/erotic-luxury-night.png'},
- {id:'builtin:erotic-05',name:'ネオン・ハート',path:'frames/erotic-neon-heart.png'},
- {id:'builtin:erotic-06',name:'シアー・ドレープ',path:'frames/erotic-sheer-drape.png'}
+ {id:'builtin:erotic-01',name:'ミッドナイト・オーキッド',path:'frames/night-midnight-orchid.png'},
+ {id:'builtin:erotic-02',name:'ブラック・ダイヤモンド',path:'frames/night-black-diamond.png'},
+ {id:'builtin:erotic-03',name:'ベルベット・カーテン',path:'frames/night-velvet-curtain.png'},
+ {id:'builtin:erotic-04',name:'ムーン・チェーン',path:'frames/night-moon-chain.png'},
+ {id:'builtin:erotic-05',name:'ネオン・ラウンジ',path:'frames/night-neon-lounge.png'},
+ {id:'builtin:erotic-06',name:'クリスタル・ドレッサー',path:'frames/night-crystal-dresser.png'}
 ];
 function builtinFrameById(frameId){return BUILTIN_CARD_FRAMES.find(x=>x.id===String(frameId||''))||null}
 function isBuiltinFrameId(frameId){return !!builtinFrameById(frameId)}
@@ -25645,7 +25606,7 @@ async function buildFullBackupZip(onProgress=()=>{}){
    const rec=allCustomFx[i];if(!rec?.id||!rec.blob)continue;onProgress(`自作エフェクトを準備中 ${i+1}/${allCustomFx.length}…`);const bytes=new Uint8Array(await rec.blob.arrayBuffer()),ext=mimeExtension(rec.blob.type),path=`custom-fx/${rec.id}/effect.${ext}`;entries.push({name:path,data:bytes});customFxMeta.push({id:String(rec.id),name:String(rec.name||'自作エフェクト'),originalName:String(rec.originalName||''),width:Number(rec.width)||0,height:Number(rec.height)||0,motion:rec.motion==='animated'?'animated':'static',createdAt:String(rec.createdAt||''),file:{path,mime:rec.blob.type||'image/png',size:bytes.length}})
  }
  const manifest={
-   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.45',
+   format:FULL_BACKUP_FORMAT,version:FULL_BACKUP_VERSION,createdAt:new Date().toISOString(),appVersion:'16.44',
    data:exportBackupObject(),
    schema:{
      normalBackupVersion:9,
@@ -27565,14 +27526,15 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
    ['base-color','reflection-color','shadow-color','accent-color'].forEach(key=>$(`#fx-detail-${key}-${slot}`)?.addEventListener('input',()=>renderFxEditorPreview(card)));
  }
  const FX_RECOMMENDED_DEFAULTS={
-  'erotic-black-lace-veil':{opacity:40,structure:55,reflection:25,'color-influence':20,'structure-scale':45,'structure-contrast':60,'shadow-depth':45,'art-protect':70,'reflection-angle':20,'base-color':'#160b13','base-tint':28,'reflection-color':'#c49aaa','shadow-color':'#09050a','accent-color':'#731b3f','accent-strength':12,density:100,motion:35},
+  'heart-emboss':{opacity:58,structure:72,reflection:44,'color-influence':6,'structure-scale':82,'structure-contrast':78,'highlight-width':42,'shadow-depth':58,'art-protect':72,'reflection-angle':132,'reflection-hardness':48,'base-color':'#b8a6b7','base-tint':8,'reflection-color':'#fff4ff','shadow-color':'#271c2b','accent-color':'#b55383','accent-strength':10,motion:0},
+  'erotic-black-lace-veil':{opacity:52,structure:72,reflection:25,'color-influence':20,'structure-scale':45,'structure-contrast':60,'shadow-depth':45,'art-protect':70,'reflection-angle':20,'base-color':'#160b13','base-tint':28,'reflection-color':'#c49aaa','shadow-color':'#09050a','accent-color':'#731b3f','accent-strength':12,density:100,motion:35},
   'erotic-satin-sheen':{opacity:45,structure:45,reflection:60,'color-influence':35,'structure-scale':60,'structure-contrast':45,'highlight-width':70,'shadow-depth':35,'art-protect':60,'reflection-hardness':38,'base-color':'#4b102f','base-tint':36,'reflection-color':'#ffb7d8','shadow-color':'#160714','accent-color':'#9a356f','accent-strength':18,motion:35},
-  'erotic-rouge-gloss':{opacity:35,structure:25,reflection:65,'color-influence':45,'structure-scale':50,'structure-contrast':30,'highlight-width':40,'shadow-depth':40,'art-protect':70,'reflection-hardness':68,'base-color':'#7d0b28','base-tint':42,'reflection-color':'#ffc1cf','shadow-color':'#2e020d','accent-color':'#d62a59','accent-strength':20,motion:25},
-  'erotic-black-velvet':{opacity:40,structure:65,reflection:30,'color-influence':15,'structure-scale':55,'structure-contrast':55,'highlight-width':80,'shadow-depth':65,'art-protect':65,'reflection-angle':135,'reflection-hardness':20,'base-color':'#0d1020','base-tint':26,'reflection-color':'#82709f','shadow-color':'#030307','accent-color':'#432858','accent-strength':14,motion:20},
-  'erotic-perfume-mist':{opacity:30,structure:20,reflection:35,'color-influence':20,size:90,density:70,motion:35,'structure-contrast':70,'art-protect':75,'reflection-hardness':30,'base-color':'#f0dfe6','base-tint':12,'reflection-color':'#fff7fb','shadow-color':'#5c4252','accent-color':'#e6a7c5','accent-strength':18},
+  'erotic-rouge-gloss':{opacity:48,structure:54,reflection:65,'color-influence':45,'structure-scale':50,'structure-contrast':30,'highlight-width':40,'shadow-depth':40,'art-protect':70,'reflection-hardness':68,'base-color':'#7d0b28','base-tint':42,'reflection-color':'#ffc1cf','shadow-color':'#2e020d','accent-color':'#d62a59','accent-strength':20,motion:25},
+  'erotic-black-velvet':{opacity:50,structure:76,reflection:30,'color-influence':15,'structure-scale':55,'structure-contrast':55,'highlight-width':80,'shadow-depth':65,'art-protect':65,'reflection-angle':135,'reflection-hardness':20,'base-color':'#0d1020','base-tint':26,'reflection-color':'#82709f','shadow-color':'#030307','accent-color':'#432858','accent-strength':14,motion:20},
+  'erotic-perfume-mist':{opacity:48,structure:58,reflection:35,'color-influence':20,size:90,density:70,motion:35,'structure-contrast':70,'art-protect':75,'reflection-hardness':30,'base-color':'#f0dfe6','base-tint':12,'reflection-color':'#fff7fb','shadow-color':'#5c4252','accent-color':'#e6a7c5','accent-strength':18},
   'erotic-night-neon':{opacity:35,structure:15,reflection:60,'reflection-area':125,'color-influence':40,'highlight-width':90,temperature:-15,'accent-strength':50,'art-protect':65,'reflection-angle':15,'reflection-hardness':25,'base-color':'#d42786','base-tint':28,'reflection-color':'#8c6cff','shadow-color':'#16051d','accent-color':'#514cff',motion:25},
-  'erotic-sheer':{opacity:30,structure:40,reflection:25,'color-influence':20,'structure-scale':55,'structure-contrast':70,'highlight-width':75,'shadow-depth':20,'art-protect':80,'reflection-hardness':22,'base-color':'#d8becd','base-tint':18,'reflection-color':'#fff3f8','shadow-color':'#493642','accent-color':'#c78bab','accent-strength':12,motion:15},
-  'erotic-sensual-glow':{opacity:25,structure:5,reflection:50,'color-influence':25,temperature:70,'accent-strength':45,'highlight-width':55,'art-protect':85,'reflection-hardness':35,'base-color':'#d89a62','base-tint':18,'reflection-color':'#ffd7b0','shadow-color':'#5b2632','accent-color':'#d47c8e',motion:0}
+  'erotic-sheer':{opacity:44,structure:62,reflection:25,'color-influence':20,'structure-scale':55,'structure-contrast':70,'highlight-width':75,'shadow-depth':20,'art-protect':80,'reflection-hardness':22,'base-color':'#d8becd','base-tint':18,'reflection-color':'#fff3f8','shadow-color':'#493642','accent-color':'#c78bab','accent-strength':12,motion:15},
+  'erotic-sensual-glow':{opacity:42,structure:38,reflection:50,'color-influence':25,temperature:70,'accent-strength':45,'highlight-width':55,'art-protect':85,'reflection-hardness':35,'base-color':'#d89a62','base-tint':18,'reflection-color':'#ffd7b0','shadow-color':'#5b2632','accent-color':'#d47c8e',motion:0}
  };
  const applyFxRecommendedDefaults=(slot,type)=>{
    const vals=FX_RECOMMENDED_DEFAULTS[String(type||'')];if(!vals)return false;
@@ -36538,7 +36500,7 @@ async function accountCloudInitialize(){
       return;
     }
     const now=new Date().toISOString();
-    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.45'},1);
+    const result=await accountCloudUpsert('_meta',{schema_version:1,initialized_at:now,app_version:'16.44'},1);
     if(!result.ok){
       accountSetCloudState('error','初期化失敗',result.message||'クラウド保存を初期化できませんでした。');
       accountSetMessage(result.message||'クラウド保存を初期化できませんでした。','error');
@@ -36555,7 +36517,7 @@ function accountCloudLocalSnapshot(){
   const validIds=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c?.id||'')));
   return {
     schema_version:2,
-    app_version:'16.45',
+    app_version:'16.44',
     saved_at:new Date().toISOString(),
     cards:Array.isArray(cards)?cards:[],
     decks:Array.isArray(decks)?decks:[],
@@ -37196,7 +37158,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'16.45',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'16.44',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
