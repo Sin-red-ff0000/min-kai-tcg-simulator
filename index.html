@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v21.18</title>
+<title>みん会TCG Simulator v21.19</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21486,6 +21486,14 @@ h3 .minkai-ruby{margin-top:.45em}
 }
 .board-detail-image>.card-decor-stack{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border-radius:inherit!important;overflow:hidden!important}
 .decor-cheki-layer>.decor-cheki-frame{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;box-sizing:border-box!important;pointer-events:none!important}
+
+/* v21.19: live cheki preview + board decoration metric safety */
+.board-main .pile>.card-decor-stack:not([data-decor-ready="1"]){visibility:hidden!important}
+.board-main .pile>.card-decor-stack[data-decor-ready="1"]{visibility:visible!important}
+.decor-preview .card-decor-stack{visibility:visible!important}
+/* Cheki is a full-card overlay only; editor controls never participate in its paint tree. */
+.card-decor-layer.decor-cheki-layer{overflow:hidden!important;pointer-events:none!important}
+.card-decor-layer.decor-cheki-layer>.decor-cheki-frame{left:0!important;top:0!important;right:0!important;bottom:0!important;max-width:none!important;max-height:none!important}
 </style>
 </head>
 <body>
@@ -21494,7 +21502,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v21.18 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v21.19 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -28045,13 +28053,15 @@ function decorStackLayoutWidth(stack){
  return client>0?client:offset>0?offset:css;
 }
 function updateDecorStackMetric(stack,sourceLayers=null){
- if(!stack||!stack.isConnected)return;
- const w=decorStackLayoutWidth(stack);if(w<=0)return;
- const unit=w/420;stack.dataset.decorUnit=String(unit);
+ if(!stack||!stack.isConnected)return false;
+ const w=decorStackLayoutWidth(stack);if(w<=0){stack.removeAttribute('data-decor-ready');return false}
+ const unit=Math.max(.05,w/420);stack.dataset.decorUnit=String(unit);
  const layers=(sourceLayers||decorLayersForStack(stack)).map(normalizeDecorLayer);
  for(const el of $$('[data-card-decor-layer]',stack)){
   const l=layers.find(x=>String(x.id)===String(el.dataset.cardDecorLayer));if(l)applyDecorRenderedLayer(el,l,unit);
  }
+ stack.dataset.decorReady='1';
+ return true;
 }
 function decorStackDebugSnapshot(stack){
  if(!stack)return null;
@@ -28065,10 +28075,14 @@ function hydrateDecorStackMetrics(root=document,sourceLayers=null){
 }
 async function hydrateAllCardDecor(root=document){
  const stacks=$$('[data-card-decor-stack]',root),allLayers=stacks.flatMap(stack=>decorLayersForStack(stack));
- await ensureDecorFontsForLayers(allLayers);
+ // Size every stack before waiting for IndexedDB/font work. Small board cards must never sit at the 420px editor scale.
  hydrateDecorStackMetrics(root);
+ for(const stack of stacks)updateDecorStackMetric(stack);
+ try{await ensureDecorFontsForLayers(allLayers)}catch(err){console.warn('装飾フォントの読み込みを継続できませんでした',err)}
  for(const stack of stacks){
-  const layers=decorLayersForStack(stack);await hydrateDecorStampElements(stack,layers);updateDecorStackMetric(stack,layers);
+  const layers=decorLayersForStack(stack);
+  try{await hydrateDecorStampElements(stack,layers)}catch(err){console.warn('装飾スタンプの読み込みを継続できませんでした',err)}
+  updateDecorStackMetric(stack,layers);
  }
 }
 function normalizeDecorLayer(x={}){
@@ -28081,6 +28095,8 @@ function normalizeDecorLayer(x={}){
  return {id:String(x.id||uid('decor')),type,name:String(x.name||defaultName).slice(0,50),visible:x.visible!==false,locked:x.locked===true,zRegion:type==='cheki'?'front':(x.zRegion==='back'?'back':'front'),x:type==='cheki'?50:(Number.isFinite(Number(x.x))?Number(x.x):50),y:type==='cheki'?50:(Number.isFinite(Number(x.y))?Number(x.y):50),scale:type==='cheki'?100:(Number.isFinite(Number(x.scale))?Number(x.scale):100),rotation:type==='cheki'?0:(Number.isFinite(Number(x.rotation))?Number(x.rotation):0),opacity:Number.isFinite(Number(x.opacity))?Number(x.opacity):100,blendMode:blend,text:String(x.text??'サイン'),fontFamily:String(x.fontFamily||'cursive'),fontSize:Number.isFinite(Number(x.fontSize))?Number(x.fontSize):42,letterSpacing:Number.isFinite(Number(x.letterSpacing))?Number(x.letterSpacing):0,lineHeight:Number.isFinite(Number(x.lineHeight))?Number(x.lineHeight):1.05,textAlign:['left','center','right'].includes(x.textAlign)?x.textAlign:'center',writingMode:x.writingMode==='vertical'?'vertical':'horizontal',fill:String(x.fill||'#ffffff'),fill2:String(x.fill2||'#ff8ac8'),useGradient:x.useGradient===true,gradientAngle:Number.isFinite(Number(x.gradientAngle))?Number(x.gradientAngle):90,stroke:String(x.stroke||'#202020'),strokeWidth:Number.isFinite(Number(x.strokeWidth))?Number(x.strokeWidth):1,shadowColor:String(x.shadowColor||'#000000'),shadowBlur:Number.isFinite(Number(x.shadowBlur))?Number(x.shadowBlur):4,shadowX:Number.isFinite(Number(x.shadowX))?Number(x.shadowX):0,shadowY:Number.isFinite(Number(x.shadowY))?Number(x.shadowY):2,glow:Number.isFinite(Number(x.glow))?Number(x.glow):0,textBgEnabled:x.textBgEnabled===true,textBgColor:String(x.textBgColor||'#000000'),textBgOpacity:Number.isFinite(Number(x.textBgOpacity))?Number(x.textBgOpacity):45,textBgPadding:Number.isFinite(Number(x.textBgPadding))?Number(x.textBgPadding):8,textBgRadius:Number.isFinite(Number(x.textBgRadius))?Number(x.textBgRadius):10,maxWidth:Number.isFinite(Number(x.maxWidth))?Number(x.maxWidth):560,wrapText:x.wrapText===true,transformType:['normal','italic','tall','wide','arch','reverse-arch','wave','circle'].includes(x.transformType)?x.transformType:'normal',curve:Number.isFinite(Number(x.curve))?Number(x.curve):35,waveAmp:Number.isFinite(Number(x.waveAmp))?Number(x.waveAmp):12,wavePeriod:Number.isFinite(Number(x.wavePeriod))?Number(x.wavePeriod):2,radius:Number.isFinite(Number(x.radius))?Number(x.radius):80,startAngle:Number.isFinite(Number(x.startAngle))?Number(x.startAngle):-90,penPreset:String(x.penPreset||'standard'),fontWeight:Number.isFinite(Number(x.fontWeight))?Math.max(300,Math.min(900,Math.round(Number(x.fontWeight)/100)*100)):500,fontSlant:Number.isFinite(Number(x.fontSlant))?Math.max(-24,Math.min(24,Number(x.fontSlant))):0,stampId:stampIds.includes(x.stampId)?x.stampId:'heart',stampVariant:variants.includes(x.stampVariant)?x.stampVariant:'solid',customStampId:String(x.customStampId||''),stampColor:String(x.stampColor||'#ff4f9a'),stampColorize:x.stampColorize===true,stampOutlineColor:String(x.stampOutlineColor||'#ffffff'),stampOutlineWidth:Number.isFinite(Number(x.stampOutlineWidth))?Number(x.stampOutlineWidth):0,stampShadowColor:String(x.stampShadowColor||'#000000'),stampShadowBlur:Number.isFinite(Number(x.stampShadowBlur))?Number(x.stampShadowBlur):3,stampGlow:Number.isFinite(Number(x.stampGlow))?Number(x.stampGlow):0,stampRepeat:Number.isFinite(Number(x.stampRepeat))?Math.max(1,Math.min(8,Number(x.stampRepeat))):1,stampRepeatSpacing:Number.isFinite(Number(x.stampRepeatSpacing))?Number(x.stampRepeatSpacing):34,stampRepeatArc:Number.isFinite(Number(x.stampRepeatArc))?Number(x.stampRepeatArc):0,flipX:x.flipX===true,flipY:x.flipY===true,chekiStyle:chekiStyles.includes(x.chekiStyle)?x.chekiStyle:'classic'};
 }
 function decorSourceCard(card){
+ // Editor previews intentionally carry unsaved live layers. Never resolve those back to the saved card.
+ if(card?._decorUseLocal===true)return card;
  const sourceId=String(card?.imageSourceCardId||card?.id||'');
  return cards.find(x=>String(x.id)===sourceId)||card;
 }
@@ -28229,7 +28245,7 @@ function renderDecorPreview(card){
  try{
   const host=$('#decor-preview'),back=$('#decor-preview-back'),front=$('#decor-preview-front');if(!host||!back||!front)return;
   const liveLayers=decorEditorState.layers.map(normalizeDecorLayer);
-  const liveCard={...card,decorLayers:liveLayers};
+  const liveCard={...card,decorLayers:liveLayers,_decorUseLocal:true};
   back.innerHTML=cardDecorHtml(liveCard,'back');front.innerHTML=cardDecorHtml(liveCard,'front');
   hydrateDecorStackMetrics(host,liveLayers);
   Promise.resolve(hydrateDecorStampElements(back,liveLayers)).catch(err=>console.warn('decor back hydrate failed',err));
@@ -32025,7 +32041,7 @@ function renderBoard(){
    onlineScheduleAutoSync();
    return;
  }
- if(!board)return;ensureBoardUiState();captureHandScroll();captureFixedZoneScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardDisplaySettings();applyBoardZoom();renderHomePowerControls();renderBoardPanelState();syncBoardTrayFields();renderBoardToolPresets();syncBoardRandomTools();hydratePlayerBoardBackgrounds();restoreBoardScroll();refreshMobileBoardToolWindow();syncMobileBoardToolsVisibility();commitBoardHistory();updateBoardHistoryControls();scheduleBoardAutosave()}
+ if(!board)return;ensureBoardUiState();captureHandScroll();captureFixedZoneScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardDisplaySettings();applyBoardZoom();hydrateDecorStackMetrics(root);requestAnimationFrame(()=>{if(root?.isConnected){hydrateDecorStackMetrics(root);Promise.resolve(hydrateBoardVisuals(root)).catch(err=>console.warn('盤面外観の再読込に失敗',err))}});renderHomePowerControls();renderBoardPanelState();syncBoardTrayFields();renderBoardToolPresets();syncBoardRandomTools();hydratePlayerBoardBackgrounds();restoreBoardScroll();refreshMobileBoardToolWindow();syncMobileBoardToolsVisibility();commitBoardHistory();updateBoardHistoryControls();scheduleBoardAutosave()}
 function zoneHeader(pi,z){const p=board.players[pi], n=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button><button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;else if(['hand','grave','banish'].includes(z))controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll';controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button></span>`}return `<div class="zone-head"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
 
 function signedNumber(n){
