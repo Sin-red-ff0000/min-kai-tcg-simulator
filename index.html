@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v21.28</title>
+<title>みん会TCG Simulator v21.29</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21551,7 +21551,7 @@ h3 .minkai-ruby{margin-top:.45em}
     grid-column:1/-1!important;
   }
   .decor-mobile-pager{
-    position:sticky;top:0;z-index:12;display:grid;grid-template-columns:1fr auto 1fr;
+    position:sticky;top:0;z-index:12;display:grid;grid-template-columns:minmax(0,1fr) auto auto minmax(0,1fr);
     align-items:center;gap:7px;margin:0 0 8px;padding:7px;
     border:1px solid var(--line);border-radius:11px;background:rgba(18,24,32,.96);
     backdrop-filter:blur(10px);
@@ -21576,7 +21576,7 @@ h3 .minkai-ruby{margin-top:.45em}
     position:relative!important;top:auto!important;z-index:1!important;background:transparent!important;
   }
   .decor-editor>.decor-editor-controls-page{padding-inline:7px!important}
-  .decor-editor .decor-preview{width:min(94%,420px)!important;max-width:420px!important}
+  .decor-editor .decor-preview{width:min(94vw,420px)!important;max-width:100%!important;min-width:0!important;margin-inline:auto!important;overflow:hidden!important}
   .decor-editor .decor-preview-panel>.decor-help{display:none!important}
   .decor-editor .decor-preview-status-row{margin-top:8px!important}
   .decor-editor .decor-toolbar{gap:7px!important}
@@ -21625,6 +21625,18 @@ h3 .minkai-ruby{margin-top:.45em}
 .decor-flat-gradient-stage{position:relative!important;display:block!important;width:1px!important;height:1px!important;overflow:visible!important}
 .decor-flat-gradient-canvas{display:block!important}
 </style>
+
+<style id="v2129-mobile-preview-hardening">
+/* v21.29: mobile preview parity. Canvas-based text renderers need explicit bitmap cloning in the live mini preview. */
+@media(max-width:600px){
+  .decor-editor>.decor-preview-panel{min-width:100%!important}
+  .decor-editor .decor-preview{aspect-ratio:5/7!important;height:auto!important;contain:layout paint style}
+  .decor-mini-preview-clone{transform:none!important;transform-origin:0 0!important}
+  .decor-mini-preview-clone canvas{display:block!important}
+  .decor-mobile-pager>#decor-page-preview,.decor-mobile-pager>#decor-page-controls{min-width:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .decor-mobile-pager>#decor-mini-toggle{white-space:nowrap!important}
+}
+</style>
 </head>
 <body>
 <div id="app-background-layer" aria-hidden="true">
@@ -21632,7 +21644,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v21.28 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v21.29 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -28553,14 +28565,41 @@ function updateDecorMiniVisibility(){
  win.hidden=!show;if(toggle){toggle.setAttribute('aria-pressed',decorMiniPreviewWanted?'true':'false');toggle.classList.toggle('primary',decorMiniPreviewWanted)}
 }
 function stripDecorMiniIds(root){root.removeAttribute('id');for(const el of $$('[id]',root))el.removeAttribute('id');for(const el of $$('[data-card-decor-layer]',root)){el.classList.remove('selected');el.classList.remove('locked');el.onpointerdown=null}}
+function copyDecorPreviewCanvasBitmaps(source,clone){
+ const srcCanvases=$$('canvas',source),dstCanvases=$$('canvas',clone),count=Math.min(srcCanvases.length,dstCanvases.length);
+ for(let i=0;i<count;i++){
+  const src=srcCanvases[i],dst=dstCanvases[i];
+  try{
+   dst.width=src.width;dst.height=src.height;
+   dst.style.width=src.style.width||getComputedStyle(src).width;dst.style.height=src.style.height||getComputedStyle(src).height;
+   const ctx=dst.getContext('2d');if(ctx&&src.width>0&&src.height>0)ctx.drawImage(src,0,0);
+   dst.dataset.miniCanvasCopied='1';
+  }catch(err){console.warn('decor mini canvas copy failed',err);dst.dataset.miniCanvasCopied='0'}
+ }
+ return {source:srcCanvases.length,clone:dstCanvases.length,copied:count};
+}
+function decorMiniPreviewSelfCheck(source,clone){
+ const issues=[];if(!source||!clone)return ['小窓DOMなし'];
+ const sc=$$('canvas',source),cc=$$('canvas',clone);if(sc.length!==cc.length)issues.push(`Canvas数不一致 ${sc.length}/${cc.length}`);
+ cc.forEach((c,i)=>{if((c.width<2||c.height<2)&&sc[i]&&(sc[i].width>=2&&sc[i].height>=2))issues.push(`Canvas${i+1}寸法不正`);if(sc[i]&&c.dataset.miniCanvasCopied!=='1')issues.push(`Canvas${i+1}未コピー`)});
+ return issues;
+}
 function syncDecorMiniPreview(){
  const source=$('#decor-preview'),viewport=$('#decor-mini-preview-viewport'),stage=$('#decor-mini-preview-stage'),win=$('#decor-mini-preview-window');
  if(!source||!viewport||!stage||!win||win.hidden)return;
- const sw=Math.max(1,source.getBoundingClientRect().width),sh=Math.max(1,source.getBoundingClientRect().height),vw=Math.max(1,viewport.clientWidth);
+ const sr=source.getBoundingClientRect(),sw=Math.max(1,sr.width),sh=Math.max(1,sr.height),vw=Math.max(1,viewport.clientWidth);
  const clone=source.cloneNode(true);stripDecorMiniIds(clone);clone.classList.add('decor-mini-preview-clone');clone.style.width=sw+'px';clone.style.height=sh+'px';clone.style.maxWidth='none';clone.style.margin='0';clone.style.pointerEvents='none';
- stage.replaceChildren(clone);stage.style.width=sw+'px';stage.style.height=sh+'px';stage.style.transform=`scale(${vw/sw})`;
+ stage.replaceChildren(clone);copyDecorPreviewCanvasBitmaps(source,clone);stage.style.width=sw+'px';stage.style.height=sh+'px';stage.style.transform=`scale(${vw/sw})`;
+ const issues=decorMiniPreviewSelfCheck(source,clone);win.dataset.previewParity=issues.length?'error':'ok';if(issues.length)console.warn('decor mini preview parity',issues);
 }
 function scheduleDecorMiniPreview(){if(decorMiniPreviewRaf)return;decorMiniPreviewRaf=requestAnimationFrame(()=>{decorMiniPreviewRaf=0;syncDecorMiniPreview()})}
+let decorMobilePreviewViewportBound=false;
+function bindDecorMobilePreviewViewportSync(){
+ if(decorMobilePreviewViewportBound)return;decorMobilePreviewViewportBound=true;
+ const sync=()=>{const root=$('#decor-preview');if(root){hydrateDecorStackMetrics(root,decorEditorState.layers);for(const st of $$('[data-card-decor-stack]',root))updateDecorStackMetric(st,decorEditorState.layers)}scheduleDecorMiniPreview()};
+ window.addEventListener('orientationchange',()=>setTimeout(sync,80),{passive:true});window.addEventListener('resize',()=>requestAnimationFrame(sync),{passive:true});
+}
+
 function bindDecorMiniDrag(){
  const win=$('#decor-mini-preview-window'),head=$('#decor-mini-preview-drag');if(!win||!head||head.dataset.bound)return;head.dataset.bound='1';
  head.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;e.preventDefault();const r=win.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,ox=r.left,oy=r.top;win.style.right='auto';win.style.bottom='auto';
@@ -28642,7 +28681,7 @@ async function renderDecorEditor(card,returnTo=decorEditorState.returnTo||'manag
  $('#decor-mini-toggle')?.addEventListener('click',()=>{decorMiniPreviewWanted=!decorMiniPreviewWanted;updateDecorMiniVisibility();if(decorMiniPreviewWanted)scheduleDecorMiniPreview()});
  $('#decor-mini-close')?.addEventListener('click',()=>{decorMiniPreviewWanted=false;updateDecorMiniVisibility()});
  $('#decor-mini-size')?.addEventListener('click',()=>{const win=$('#decor-mini-preview-window');if(!win)return;if(win.classList.contains('size-small')){win.classList.remove('size-small');win.classList.add('size-large')}else if(win.classList.contains('size-large'))win.classList.remove('size-large');else win.classList.add('size-small');scheduleDecorMiniPreview()});
- bindDecorMiniDrag();
+ bindDecorMiniDrag();bindDecorMobilePreviewViewportSync();
  if(decorPages){let decorPageRaf=0;decorPages.addEventListener('scroll',()=>{if(decorPageRaf)return;decorPageRaf=requestAnimationFrame(()=>{decorPageRaf=0;const w=Math.max(1,decorPages.clientWidth),page=Math.max(0,Math.min(1,Math.round(decorPages.scrollLeft/w)));if(decorPageState)decorPageState.textContent=`${page+1} / 2`;syncMiniForPage(page)})},{passive:true});}
  enhanceDecorRangeControls($('#modal'));bindDecorEditor(card,returnTo);syncDecorConditionalControls();renderDecorPreview(card);updateDecorMiniVisibility();if(matchMedia('(max-width:600px)').matches&&decorMobileCurrentPage===1)requestAnimationFrame(()=>setDecorPage(1,false));
 }
