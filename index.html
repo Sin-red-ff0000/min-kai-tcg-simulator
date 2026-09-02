@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v24.1</title>
+<title>みん会TCG Simulator v24.2</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21652,6 +21652,41 @@ h3 .minkai-ruby{margin-top:.45em}
   .decor-mobile-pager>#decor-mini-toggle{white-space:nowrap!important}
 }
 </style>
+
+<style id="v242-mobile-fx-mini-preview">
+/* v24.2: smartphone FX preview is a compact draggable mini window. Desktop preview remains unchanged. */
+@media(max-width:600px){
+  .floating-preview-window.floating-preview-fx{
+    width:148px!important;max-width:148px!important;max-height:none!important;border-radius:13px!important;
+    box-shadow:0 12px 34px rgba(0,0,0,.48)!important;
+  }
+  .floating-preview-window.floating-preview-fx.fx-mini-small{width:112px!important;max-width:112px!important}
+  .floating-preview-window.floating-preview-fx.fx-mini-large{width:188px!important;max-width:188px!important}
+  .floating-preview-window.floating-preview-fx .floating-preview-head{padding:5px 6px!important;min-height:32px!important}
+  .floating-preview-window.floating-preview-fx #floating-preview-title{font-size:11px!important}
+  .floating-preview-window.floating-preview-fx .floating-preview-content{
+    max-height:none!important;padding:5px!important;overflow:visible!important;display:block!important;
+  }
+  .floating-preview-window.floating-preview-fx .fx-preview-first{
+    position:relative!important;top:auto!important;z-index:1!important;padding:0!important;margin:0!important;
+    overflow:hidden!important;display:flex!important;justify-content:center!important;align-items:flex-start!important;
+  }
+  .floating-preview-window.floating-preview-fx #fx-editor-preview .fx-editor-preview-card{
+    width:100%!important;max-width:none!important;min-width:0!important;flex:0 0 auto!important;margin:0!important;
+  }
+  .floating-preview-window.floating-preview-fx .fx-preview-toolbar-v2,
+  .floating-preview-window.floating-preview-fx .floating-preview-caption{display:none!important}
+  .floating-preview-window.floating-preview-fx .fx-mobile-mini-controls{
+    display:grid!important;grid-template-columns:1fr 1fr;gap:4px;margin-top:5px;
+  }
+  .floating-preview-window.floating-preview-fx .fx-mobile-mini-controls .btn{
+    min-height:28px!important;padding:3px 5px!important;font-size:10px!important;
+  }
+  .floating-preview-window.floating-preview-fx .fx-editor-preview-name,
+  .floating-preview-window.floating-preview-fx .fx-editor-preview-status{font-size:9px!important}
+}
+@media(min-width:601px){.fx-mobile-mini-controls{display:none!important}}
+</style>
 </head>
 <body>
 <div id="app-background-layer" aria-hidden="true">
@@ -21659,7 +21694,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v24.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v24.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -27869,7 +27904,7 @@ function applyFxPreviewControls(card){
  const art=$('#fx-editor-preview-art'),host=$('#fx-editor-preview'),base=$('#fx-editor-preview-base');if(!art||!host)return;
  const bg=$('#fx-preview-background')?.value||'dark',isMobile=matchMedia('(max-width:600px)').matches,zoom=Math.max(70,Math.min(150,Number($('#fx-preview-zoom')?.value)||(isMobile?100:70)));
  host.dataset.previewBg=bg;
- const baseWidth=isMobile?Math.min(360,Math.max(300,window.innerWidth-34)):270;
+ const baseWidth=isMobile?270:270;
  const previewWidth=Math.round(baseWidth*zoom/100);
  art.style.setProperty('--fx-preview-width',`${previewWidth}px`);
  const showImage=$('#fx-preview-show-image')?.checked!==false;
@@ -27935,6 +27970,7 @@ function addAppearanceDetailToolbar(root=document){
 }
 function openFxFloatingPreview(card){
  openFloatingPreview('エフェクトプレビュー',`modal:fx:${card.id}`,`<div id="fx-editor-preview" class="fx-preview-first"></div>
+ <div class="fx-mobile-mini-controls"><button class="btn small" type="button" id="fx-preview-mini-size">大きさ</button><button class="btn small" type="button" id="fx-preview-mini-motion">動き OFF</button></div>
  <div class="fx-preview-toolbar fx-preview-toolbar-v2">
    <label class="board-follow-row fx-preview-animation-toggle"><input id="fx-preview-animate" type="checkbox">アニメーション</label>
    <label class="board-follow-row"><input id="fx-preview-show-image" type="checkbox" checked>カード画像</label>
@@ -27945,6 +27981,9 @@ function openFxFloatingPreview(card){
    <button class="btn small" type="button" id="fx-preview-reload-image">画像を再読込</button>
  </div><div class="muted floating-preview-caption">スマホではカードを大きく表示します。拡大率と表示項目は個別に切り替えられます。</div>`);
  const fxZoom=$('#fx-preview-zoom');if(fxZoom&&matchMedia('(max-width:600px)').matches){fxZoom.value='100';const fxZoomLabel=$('#fx-preview-zoom-label');if(fxZoomLabel)fxZoomLabel.textContent='100%'}
+ const fxMiniSize=$('#fx-preview-mini-size'),fxMiniMotion=$('#fx-preview-mini-motion'),fxMiniWin=$('#floating-preview-window');
+ if(fxMiniSize)fxMiniSize.onclick=()=>{if(!fxMiniWin)return;if(fxMiniWin.classList.contains('fx-mini-small')){fxMiniWin.classList.remove('fx-mini-small');fxMiniWin.classList.add('fx-mini-large')}else if(fxMiniWin.classList.contains('fx-mini-large'))fxMiniWin.classList.remove('fx-mini-large');else fxMiniWin.classList.add('fx-mini-small');requestAnimationFrame(applyFloatingPreviewPosition)};
+ if(fxMiniMotion)fxMiniMotion.onclick=()=>{const a=$('#fx-preview-animate');if(!a)return;a.checked=!a.checked;fxMiniMotion.textContent=a.checked?'動き ON':'動き OFF';renderFxEditorPreview(card)};
  ['fx-preview-show-image','fx-preview-show-effects','fx-preview-show-frame','fx-preview-background'].forEach(id=>$('#'+id)?.addEventListener('change',()=>scheduleFxEditorPreview(card)));
  $('#fx-preview-animate')?.addEventListener('change',()=>scheduleFxEditorPreview(card));
  $('#fx-preview-zoom').oninput=e=>{const out=$('#fx-preview-zoom-label');if(out)out.textContent=e.target.value+'%';applyFxPreviewControls(card)};
@@ -28023,7 +28062,7 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      <button class="btn small" type="button" data-mobile-fx-jump="2">L2</button>
      <button class="btn small" type="button" data-mobile-fx-jump="3">L3</button>
      <button class="btn small" type="button" data-mobile-fx-jump="4">L4</button>
-     <button class="btn small" type="button" id="fx-mobile-preview">プレビュー</button>
+     <button class="btn small" type="button" id="fx-mobile-preview">小窓</button>
    </div>
    <div class="muted">最大 ${cardFxPrefs.maxLayers}レイヤー${cardFxPrefs.maxLayers>2?' / 高負荷設定':''}</div>
    <div class="fx-editor-list">
@@ -28038,7 +28077,7 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
    <div class="actions fx-editor-desktop-actions" style="margin-top:12px"><button class="btn primary" id="fx-editor-save">保存</button><button class="btn" id="fx-editor-global-settings">全体設定を開く</button></div>
    <div class="appearance-mobile-actionbar">
      <button class="btn" type="button" id="fx-mobile-close">戻る</button>
-     <button class="btn" type="button" id="fx-mobile-preview-bottom">プレビュー</button>
+     <button class="btn" type="button" id="fx-mobile-preview-bottom">小窓</button>
      <button class="btn primary" type="button" id="fx-mobile-save">保存</button>
    </div>
  </div>`);
