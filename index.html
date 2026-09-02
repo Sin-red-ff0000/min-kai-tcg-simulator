@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v21.27</title>
+<title>みん会TCG Simulator v21.28</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21618,6 +21618,13 @@ h3 .minkai-ruby{margin-top:.45em}
 .decor-curved-glyph{position:absolute!important;left:0!important;top:0!important;width:1px!important;height:1px!important;overflow:visible!important;transform-origin:0 0!important;will-change:transform}
 .decor-curved-glyph>.decor-char-face{position:absolute!important;left:0!important;top:0!important;display:block!important;width:max-content!important;max-width:none!important;white-space:pre!important;transform:translate(-50%,-50%)!important;transform-origin:50% 50%!important;line-height:1!important}
 </style>
+
+<style id="v2128-text-gradient-rootfix">
+/* v21.28: no text gradient uses background-clip. iOS/WebKit + custom FontFace can collapse that paint to glyph 1. */
+.decor-text-fill.has-gradient{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;color:var(--decor-fill,#fff)!important;-webkit-text-fill-color:var(--decor-fill,#fff)!important}
+.decor-flat-gradient-stage{position:relative!important;display:block!important;width:1px!important;height:1px!important;overflow:visible!important}
+.decor-flat-gradient-canvas{display:block!important}
+</style>
 </head>
 <body>
 <div id="app-background-layer" aria-hidden="true">
@@ -21625,7 +21632,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v21.27 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v21.28 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -28152,6 +28159,10 @@ async function hydrateDecorStampElements(root,sourceLayers){
   const l=sourceLayers.find(x=>String(x.id)===String(el.dataset.decorCurved));if(!l)continue;
   const stack=el.closest('[data-card-decor-stack]');const unit=Math.max(.05,Number(stack?.dataset.decorUnit)||1);renderCurvedDecorText(el,l,unit);
  }
+ for(const el of $$('[data-decor-flat-gradient]',root)){
+  const l=sourceLayers.find(x=>String(x.id)===String(el.dataset.decorFlatGradient));if(!l)continue;
+  const stack=el.closest('[data-card-decor-stack]');const unit=Math.max(.05,Number(stack?.dataset.decorUnit)||1);renderFlatGradientDecorText(el,l,unit);
+ }
 }
 let decorStackResizeObserver=null;
 function decorLayersForStack(stack){
@@ -28169,6 +28180,9 @@ function applyDecorRenderedLayer(el,l,unit){
  }
  if(l.type==='text'&&['arch','reverse-arch','wave','circle'].includes(l.transformType)){
   const host=el.querySelector('[data-decor-curved]');if(host)renderCurvedDecorText(host,l,unit);
+ }
+ if(l.type==='text'&&l.useGradient&&!['arch','reverse-arch','wave','circle'].includes(l.transformType)){
+  const host=el.querySelector('[data-decor-flat-gradient]');if(host)renderFlatGradientDecorText(host,l,unit);
  }
 }
 function decorStackLayoutWidth(stack){
@@ -28300,9 +28314,12 @@ function decorTextLineDecorationHtml(l){
 }
 function decorTextHtml(l){
  if(['arch','reverse-arch','wave','circle'].includes(l.transformType))return `<span class="decor-text-stage" data-decor-curved="${esc(l.id)}"></span>`;
+ // v21.28: WebKit + custom FontFace can corrupt background-clip:text and collapse the gradient paint onto glyph 1.
+ // Gradient text therefore uses the same Canvas paint pipeline as curved text. Non-gradient text keeps the lightweight DOM renderer.
+ if(l.useGradient)return `<span class="decor-text-stage decor-flat-gradient-stage" data-decor-flat-gradient="${esc(l.id)}"></span>`;
  const stroke=decorInlineTextContentHtml(l,true),fill=decorInlineTextContentHtml(l,false);
  const outer=l.secondStrokeEnabled?`<span class="decor-text-stroke decor-text-stroke-outer" aria-hidden="true" style="--decor-stroke:var(--decor-stroke2);--decor-stroke-width:var(--decor-stroke2-width)">${stroke}</span>`:'';
- return `<span class="decor-text-composite ${l.textBgEnabled?'has-backing':''}">${outer}<span class="decor-text-stroke" aria-hidden="true">${stroke}</span><span class="decor-text-fill ${l.useGradient?'has-gradient':''}">${fill}</span>${decorTextLineDecorationHtml(l)}</span>`;
+ return `<span class="decor-text-composite ${l.textBgEnabled?'has-backing':''}">${outer}<span class="decor-text-stroke" aria-hidden="true">${stroke}</span><span class="decor-text-fill">${fill}</span>${decorTextLineDecorationHtml(l)}</span>`;
 }
 function hexToRgba(hex,a=1){const h=String(hex||'#000').replace('#','');const v=h.length===3?h.split('').map(x=>x+x).join(''):h.padEnd(6,'0').slice(0,6);const n=parseInt(v,16);if(!Number.isFinite(n))return `rgba(0,0,0,${a})`;return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${Math.max(0,Math.min(1,a))})`}
 function decorLayerStyle(l,unit=1){
@@ -28410,6 +28427,44 @@ function decorCanvasDrawLines(ctx,l,m,geo,unit=1){
   if(l.lineStyle==='swoosh')ctx.lineWidth*=1.6;ctx.stroke();ctx.restore();};
  if(l.underlineEnabled)draw(false);if(l.strikeEnabled)draw(true);
 }
+function decorFlatGradientLayout(l,unit=1){
+ unit=Math.max(.05,Number(unit)||1);
+ const raw=[...String(l?.text||'')],base=Math.max(1,(Number(l?.fontSize)||42)*unit),lineStep=base*Math.max(.55,Number(l?.lineHeight)||1.05),maxWidth=Math.max(40,(Number(l?.maxWidth)||560)*unit);
+ const glyphs=[];let lines=[[]],lineWidths=[0],logicalIndex=0;
+ const ctx=(decorFlatGradientLayout._canvas||(decorFlatGradientLayout._canvas=document.createElement('canvas'))).getContext('2d');
+ const measure=(ch,fs)=>{decorCanvasApplyFont(ctx,l,fs);return Math.max(fs*.2,Number(ctx.measureText(ch).width)||fs*.82)};
+ if(l.writingMode==='vertical'){
+  let y=0,col=0;for(const ch of raw){if(ch==='\n'){col++;y=0;continue}const a=decorCharAdvanced(l,logicalIndex++,Math.max(1,raw.filter(c=>c!=='\n').length)),fs=Math.max(1,base*a.sizePct/100),h=fs+((Number(l.letterSpacing)||0)+a.spacingDelta)*unit;glyphs.push({ch,x:col*lineStep,y,fs,a});y+=Math.max(fs*.15,h)}
+  const cols=Math.max(1,col+1),height=Math.max(base,...glyphs.map(g=>g.y+g.fs));glyphs.forEach(g=>{g.x-=(cols-1)*lineStep/2;g.y-=height/2-g.fs/2});return {glyphs,width:cols*lineStep,height};
+ }
+ const visibleCount=Math.max(1,raw.filter(c=>c!=='\n').length);let line=0;
+ for(const ch of raw){if(ch==='\n'){line++;lines[line]=[];lineWidths[line]=0;continue}const a=decorCharAdvanced(l,logicalIndex++,visibleCount),fs=Math.max(1,base*a.sizePct/100),w=measure(ch,fs),sp=((Number(l.letterSpacing)||0)+a.spacingDelta)*unit,adv=Math.max(fs*.08,w+sp);
+  if(l.wrapText&&lineWidths[line]>0&&lineWidths[line]+adv>maxWidth){line++;lines[line]=[];lineWidths[line]=0}
+  const g={ch,fs,w,adv,a};lines[line].push(g);lineWidths[line]+=adv;
+ }
+ const totalH=Math.max(lineStep,lines.length*lineStep),maxW=Math.max(1,...lineWidths);
+ lines.forEach((arr,li)=>{const lw=lineWidths[li],align=l.textAlign||'center';let start=align==='left'?-maxW/2:align==='right'?maxW/2-lw:-lw/2;for(const g of arr){g.x=start+g.w/2;g.y=(li-(lines.length-1)/2)*lineStep;start+=g.adv;glyphs.push(g)}});
+ return {glyphs,width:maxW,height:totalH};
+}
+function decorCanvasLinearGradient(ctx,l,b){
+ const ang=(Number.isFinite(Number(l.gradientAngle))?Number(l.gradientAngle):90)*Math.PI/180,dx=Math.sin(ang),dy=-Math.cos(ang),cx=(b.minX+b.maxX)/2,cy=(b.minY+b.maxY)/2,span=Math.max(1,Math.abs(dx)*(b.maxX-b.minX)+Math.abs(dy)*(b.maxY-b.minY));
+ const g=ctx.createLinearGradient(cx-dx*span/2,cy-dy*span/2,cx+dx*span/2,cy+dy*span/2);g.addColorStop(0,l.fill||'#ffffff');g.addColorStop(1,l.fill2||'#ff8ac8');return g;
+}
+function renderFlatGradientDecorText(host,l,unit=1){
+ if(!host)return;host.replaceChildren();unit=Math.max(.05,Number(unit)||1);const layout=decorFlatGradientLayout(l,unit),glyphs=layout.glyphs;if(!glyphs.length)return;
+ const padBase=(Math.max(0,Number(l.strokeWidth)||0)+Math.max(0,Number(l.secondStrokeWidth)||0)+Math.max(0,Number(l.shadowBlur)||0)+Math.abs(Number(l.shadowX)||0)+Math.abs(Number(l.shadowY)||0)+Math.max(0,Number(l.glow)||0)+18)*unit;
+ let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;glyphs.forEach(g=>{const sc=Math.max(.2,Number(g.a?.scale)||1),hw=Math.max(g.w,g.fs*.25)*.65*sc,hh=g.fs*.7*sc;minX=Math.min(minX,g.x-hw);maxX=Math.max(maxX,g.x+hw);minY=Math.min(minY,g.y-hh);maxY=Math.max(maxY,g.y+hh)});minX-=padBase;maxX+=padBase;minY-=padBase;maxY+=padBase;
+ const width=Math.max(2,maxX-minX),height=Math.max(2,maxY-minY),dpr=Math.max(1,Math.min(3,Number(window.devicePixelRatio)||1)),canvas=document.createElement('canvas');canvas.className='decor-flat-gradient-canvas';canvas.dataset.renderer='canvas-gradient-v4';canvas.width=Math.ceil(width*dpr);canvas.height=Math.ceil(height*dpr);canvas.style.cssText=`position:absolute;left:${minX}px;top:${minY}px;width:${width}px;height:${height}px;pointer-events:none;overflow:visible`;
+ host.appendChild(canvas);const ctx=canvas.getContext('2d');if(!ctx)return;ctx.scale(dpr,dpr);ctx.translate(-minX,-minY);const gradient=decorCanvasLinearGradient(ctx,l,{minX,minY,maxX,maxY});
+ const strokeBalance=Math.max(-100,Math.min(100,Number(l.strokeBalance)||0)),mainStroke=Math.max(0,(Number(l.strokeWidth)||0)*(1+strokeBalance/200))*unit,secondStroke=l.secondStrokeEnabled?Math.max(0,Number(l.secondStrokeWidth)||0)*unit:0,glow=Math.max(0,Number(l.glow)||0)*unit;
+ if(l.textBgEnabled){const pad=Math.max(0,Number(l.textBgPadding)||0)*unit,r=Math.max(0,Number(l.textBgRadius)||0)*unit;ctx.save();ctx.fillStyle=hexToRgba(l.textBgColor,(Number(l.textBgOpacity)||0)/100);ctx.beginPath();const x=minX+padBase-pad,y=minY+padBase-pad,w=Math.max(1,maxX-minX-2*padBase+2*pad),h=Math.max(1,maxY-minY-2*padBase+2*pad);if(ctx.roundRect)ctx.roundRect(x,y,w,h,r);else ctx.rect(x,y,w,h);ctx.fill();ctx.restore()}
+ glyphs.forEach((g)=>{ctx.save();const a=g.a||{},fc=a.emphasis?l.emphasisFill:gradient;ctx.translate(g.x,g.y+(Number(a.dy)||0)*unit);ctx.rotate((Number(a.rot)||0)*Math.PI/180);ctx.scale(Math.max(.05,Number(a.scale)||1),Math.max(.05,Number(a.scale)||1));ctx.globalAlpha=Math.max(0,Math.min(1,Number(a.opacity)||1));decorCanvasApplyFont(ctx,l,g.fs);
+  const sx=(Number(l.shadowX)||0)*unit,sy=(Number(l.shadowY)||0)*unit,sb=Math.max(0,Number(l.shadowBlur)||0)*unit;if(sb>0||sx||sy){ctx.shadowColor=l.shadowColor||'#000';ctx.shadowBlur=sb;ctx.shadowOffsetX=sx;ctx.shadowOffsetY=sy}
+  if(secondStroke>0){ctx.lineWidth=Math.max(.1,(mainStroke+secondStroke)*2);ctx.strokeStyle=l.secondStrokeColor||'#fff';ctx.strokeText(g.ch,0,0)}if(mainStroke>0){ctx.lineWidth=Math.max(.1,mainStroke*2);ctx.strokeStyle=l.stroke||'#202020';ctx.strokeText(g.ch,0,0)}ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;
+  if(glow>0&&(l.glowMode==='outer'||l.glowMode==='both'||!l.glowMode)){ctx.save();ctx.shadowColor=a.emphasis?(l.emphasisFill||l.fill):(l.fill||'#fff');ctx.shadowBlur=glow;ctx.fillStyle=fc;ctx.fillText(g.ch,0,0);ctx.restore()}ctx.fillStyle=fc;ctx.fillText(g.ch,0,0);ctx.restore()});
+ host.dataset.flatGradientRenderer='canvas-gradient-v4';host.dataset.glyphCount=String(glyphs.length);
+}
+
 function renderCurvedDecorText(host,l,unit=1){
  if(!host)return;host.replaceChildren();unit=Math.max(.05,Number(unit)||1);
  const m=decorCurvedLayoutMetrics(l,unit),chars=m.chars;if(!chars.length)return;
@@ -28441,7 +28496,7 @@ function renderCurvedDecorText(host,l,unit=1){
 
 
 
-const DECOR_CODE_TREE=Object.freeze({schema:'normalizeDecorLayer',render:{normal:'decorTextHtml',curved:'renderCurvedDecorText/canvas-v3',curvedGradient:'decorCurvedGradientColors',geometry:'decorCurvedGeometry',metrics:'decorCurvedLayoutMetrics'},editor:{ui:'decorControlsHtml',events:'bindDecorEditor',conditional:'syncDecorConditionalControls',preview:'renderDecorPreview',guide:'renderDecorCurveGuide'},hydrate:{all:'hydrateAllCardDecor',stack:'hydrateDecorStackMetrics'},storage:{fonts:'IndexedDB/customFonts',stamps:'IndexedDB/customStamps'}});
+const DECOR_CODE_TREE=Object.freeze({schema:'normalizeDecorLayer',render:{normal:'decorTextHtml',normalGradient:'renderFlatGradientDecorText/canvas-gradient-v4',curved:'renderCurvedDecorText/canvas-v3',curvedGradient:'decorCurvedGradientColors',geometry:'decorCurvedGeometry',metrics:'decorCurvedLayoutMetrics'},editor:{ui:'decorControlsHtml',events:'bindDecorEditor',conditional:'syncDecorConditionalControls',preview:'renderDecorPreview',guide:'renderDecorCurveGuide'},hydrate:{all:'hydrateAllCardDecor',stack:'hydrateDecorStackMetrics'},storage:{fonts:'IndexedDB/customFonts',stamps:'IndexedDB/customStamps'}});
 function decorTextSelfCheck(l=decorSelected()){
  const issues=[];if(!l||l.type!=='text')return issues;for(const k of ['fontSize','gradientAngle','curveWidth','tangentFollow','curveAsymmetry','curveTilt','fontSizeEnd','letterSpacingEnd','baselineJitter','handJitter','randomSeed','strokeWidth','secondStrokeWidth','inkDistress','lineOffset','startAngle'])if(!Number.isFinite(Number(l[k])))issues.push(`${k}:数値不正`);const n=[...String(l.text||'')].length;if(l.emphasisEnabled&&(l.emphasisStart<1||l.emphasisEnd<1||l.emphasisStart>Math.max(1,n)||l.emphasisEnd>Math.max(1,n)))issues.push('部分強調範囲が文字数外');if(l.useGradient&&(!/^#[0-9a-f]{6}$/i.test(String(l.fill||''))||!/^#[0-9a-f]{6}$/i.test(String(l.fill2||''))))issues.push('グラデーション色不正');if(['arch','reverse-arch','wave','circle'].includes(l.transformType)){try{const m=decorCurvedLayoutMetrics(l,1),g=decorCurvedGeometry(l,m,1);if(g.length!==m.chars.length||g.some(p=>![p.x,p.y,p.a,p.scale,p.opacity].every(Number.isFinite)))issues.push('曲線座標不正')}catch(e){issues.push('曲線計算例外')}}return issues;
 }
@@ -28456,6 +28511,13 @@ function decorRenderedTextSelfCheck(root=document){
   if(canvas&&(canvas.width<2||canvas.height<2))issues.push(`${l.name||layerId}:Canvas寸法不正`);
   if($$('.decor-curved-svg,.decor-svg-glyph,.decor-curved-glyph,.decor-char-face,.decor-char-fill,.decor-char-stroke',host).length)issues.push(`${l.name||layerId}:旧曲線文字DOMが残存`);
   if(expected>1){try{const m=decorCurvedLayoutMetrics(l,1),g=decorCurvedGeometry(l,m,1),unique=new Set(g.map(v=>`${v.x.toFixed(3)},${v.y.toFixed(3)}`));if(unique.size<=1)issues.push(`${l.name||layerId}:全字形座標が同一点`)}catch{issues.push(`${l.name||layerId}:曲線座標検査失敗`)}}
+ }
+ for(const host of $$('[data-decor-flat-gradient]',root)){
+  const layerId=String(host.dataset.decorFlatGradient||''),l=(decorEditorState?.layers||[]).find(x=>String(x.id)===layerId)||cards.flatMap(c=>cardDecorLayers(c)).find(x=>String(x.id)===layerId);if(!l||l.type!=='text'||!l.useGradient)continue;
+  const canvas=$('.decor-flat-gradient-canvas',host),expected=[...String(l.text||'')].filter(ch=>ch!=='\n').length;
+  if(!canvas||canvas.dataset.renderer!=='canvas-gradient-v4'||host.dataset.flatGradientRenderer!=='canvas-gradient-v4')issues.push(`${l.name||layerId}:通常文字グラデーションが旧描画`);
+  if(Number(host.dataset.glyphCount)!==expected)issues.push(`${l.name||layerId}:通常文字グラデーション字形数不一致`);
+  if($$('.decor-text-fill.has-gradient',host).length)issues.push(`${l.name||layerId}:background-clipグラデーション残存`);
  }
  return issues;
 }
