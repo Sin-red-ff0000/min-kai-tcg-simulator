@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v21.25</title>
+<title>みん会TCG Simulator v21.26</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20267,6 +20267,14 @@ h3 .minkai-ruby{margin-top:.45em}
 .decor-color-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end}
 .collection-card-art>.card-decor-stack,.collection-list-art>.card-decor-stack,.collection-detail-art>.card-decor-stack,.collection-viewer-art>.card-decor-stack{display:block}
 
+
+/* v21.26 curved text renderer V2: SVG-native glyph positioning.
+   HTML glyph transforms/background-clip are intentionally not used. */
+.decor-curved-svg{position:absolute;overflow:visible;pointer-events:none;display:block}
+.decor-curved-svg text{font-kerning:normal;text-rendering:geometricPrecision;dominant-baseline:central}
+.decor-curved-svg .decor-svg-glyph{isolation:isolate}
+.decor-curved-svg .decor-svg-face{white-space:pre}
+.decor-curved-svg .decor-svg-backing{pointer-events:none}
 </style>
 
 <style>
@@ -21604,7 +21612,7 @@ h3 .minkai-ruby{margin-top:.45em}
 </style>
 
 <style id="v2125-curved-glyph-wrapper-fix">
-/* v21.25: one transformed wrapper per glyph. Stroke/fill faces never own curve transforms. */
+/* v21.25 legacy HTML glyph CSS retained for migration safety; v21.26 renderer does not emit these nodes. */
 .decor-curved-glyph-layer{position:absolute!important;left:0!important;top:0!important;width:1px!important;height:1px!important;overflow:visible!important}
 .decor-curved-glyph{position:absolute!important;left:0!important;top:0!important;width:1px!important;height:1px!important;overflow:visible!important;transform-origin:0 0!important;will-change:transform}
 .decor-curved-glyph>.decor-char-face{position:absolute!important;left:0!important;top:0!important;display:block!important;width:max-content!important;max-width:none!important;white-space:pre!important;transform:translate(-50%,-50%)!important;transform-origin:50% 50%!important;line-height:1!important}
@@ -21616,7 +21624,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v21.25 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v21.26 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -28346,9 +28354,32 @@ function decorCurvedGeometry(l,m,unit=1){
  });
 }
 
-function renderDecorCurvedLines(root,l,m,geo,unit){
- if(!l.underlineEnabled&&!l.strikeEnabled||!geo.length)return;const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');svg.classList.add('decor-curved-lines');let minX=Math.min(...geo.map(g=>g.x))-40*unit,maxX=Math.max(...geo.map(g=>g.x))+40*unit,minY=Math.min(...geo.map(g=>g.y))-60*unit,maxY=Math.max(...geo.map(g=>g.y))+60*unit;svg.setAttribute('viewBox',`${minX} ${minY} ${Math.max(1,maxX-minX)} ${Math.max(1,maxY-minY)}`);svg.style.cssText=`position:absolute;left:${minX}px;top:${minY}px;width:${maxX-minX}px;height:${maxY-minY}px;overflow:visible;pointer-events:none`;
- const mk=(strike=false)=>{const p=document.createElementNS(ns,'path'),off=(strike?-m.fontPx*.28:(Number.isFinite(Number(l.lineOffset))?Number(l.lineOffset):8)*unit),pts=geo.map((g,i)=>`${i?'L':'M'} ${g.x} ${g.y+off}`);p.setAttribute('d',pts.join(' '));p.setAttribute('fill','none');p.setAttribute('stroke',l.lineColor||l.fill||'#fff');p.setAttribute('stroke-width',String(Math.max(1,Number(l.lineThickness)||2)*unit));p.setAttribute('stroke-linecap','round');if(l.lineStyle==='double')p.setAttribute('stroke-dasharray',`${6*unit} ${2*unit}`);if(l.lineStyle==='wave')p.setAttribute('stroke-dasharray',`${2*unit} ${3*unit}`);if(l.lineStyle==='swoosh')p.setAttribute('stroke-width',String(Math.max(1,Number(l.lineThickness)||2)*unit*1.6));svg.appendChild(p)};if(l.underlineEnabled)mk(false);if(l.strikeEnabled)mk(true);root.appendChild(svg);
+function decorCurveSvgBounds(l,m,geo,unit=1){
+ unit=Math.max(.05,Number(unit)||1);if(!geo.length)return {minX:-1,minY:-1,maxX:1,maxY:1,width:2,height:2};
+ let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+ geo.forEach((g,i)=>{
+  const fs=Math.max(1,m.fontPxs[i]||m.fontPx||1),w=Math.max(fs*.25,m.widths[i]||fs*.82),halfW=w*.72*Math.max(.25,Number(g.scale)||1),halfH=fs*.82*Math.max(.25,Number(g.scale)||1);
+  minX=Math.min(minX,g.x-halfW);maxX=Math.max(maxX,g.x+halfW);minY=Math.min(minY,g.y-halfH);maxY=Math.max(maxY,g.y+halfH);
+ });
+ const stroke=Math.max(0,Number(l.strokeWidth)||0)+((l.secondStrokeEnabled?Math.max(0,Number(l.secondStrokeWidth)||0):0));
+ const shadowPad=Math.max(Math.abs(Number(l.shadowX)||0),Math.abs(Number(l.shadowY)||0))+Math.max(0,Number(l.shadowBlur)||0)*2+Math.max(0,Number(l.glow)||0)*2+stroke*2+18;
+ const pad=Math.max(18,shadowPad)*unit;minX-=pad;maxX+=pad;minY-=pad;maxY+=pad;
+ return {minX,minY,maxX,maxY,width:Math.max(2,maxX-minX),height:Math.max(2,maxY-minY)};
+}
+function decorSvgTextFace(ns,ch,cls,attrs={}){
+ const t=document.createElementNS(ns,'text');t.classList.add('decor-svg-face',cls);t.textContent=ch;t.setAttribute('x','0');t.setAttribute('y','0');t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','central');
+ for(const [k,v] of Object.entries(attrs)){if(v!==undefined&&v!==null)t.setAttribute(k,String(v))}return t;
+}
+function decorSvgDropShadowCss(l,fc,unit=1){
+ unit=Math.max(.05,Number(unit)||1);const parts=[];const sx=(Number(l.shadowX)||0)*unit,sy=(Number(l.shadowY)||0)*unit,sb=Math.max(0,Number(l.shadowBlur)||0)*unit;
+ if(sb>0||sx||sy)parts.push(`drop-shadow(${sx}px ${sy}px ${Math.max(.1,sb)}px ${l.shadowColor||'#000000'})`);
+ const glow=Math.max(0,Number(l.glow)||0)*unit;if(glow>0&&(l.glowMode==='outer'||l.glowMode==='both'||!l.glowMode))parts.push(`drop-shadow(0 0 ${Math.max(.1,glow)}px ${fc})`);
+ return parts.join(' ');
+}
+function renderDecorCurvedLines(svg,l,m,geo,unit,bounds){
+ if((!l.underlineEnabled&&!l.strikeEnabled)||!geo.length)return;const ns='http://www.w3.org/2000/svg';
+ const mk=(strike=false)=>{const p=document.createElementNS(ns,'path'),off=(strike?-m.fontPx*.28:(Number.isFinite(Number(l.lineOffset))?Number(l.lineOffset):8)*unit),pts=geo.map((g,i)=>`${i?'L':'M'} ${g.x} ${g.y+off}`);p.setAttribute('d',pts.join(' '));p.setAttribute('fill','none');p.setAttribute('stroke',l.lineColor||l.fill||'#fff');p.setAttribute('stroke-width',String(Math.max(1,Number(l.lineThickness)||2)*unit));p.setAttribute('stroke-linecap','round');p.setAttribute('stroke-linejoin','round');if(l.lineStyle==='double')p.setAttribute('stroke-dasharray',`${6*unit} ${2*unit}`);if(l.lineStyle==='wave')p.setAttribute('stroke-dasharray',`${2*unit} ${3*unit}`);if(l.lineStyle==='swoosh')p.setAttribute('stroke-width',String(Math.max(1,Number(l.lineThickness)||2)*unit*1.6));svg.appendChild(p)};
+ if(l.underlineEnabled)mk(false);if(l.strikeEnabled)mk(true);
 }
 function decorHexRgb(hex){
  const h=String(hex||'').trim().replace('#','');const v=h.length===3?h.split('').map(x=>x+x).join(''):h;
@@ -28361,33 +28392,32 @@ function decorMixHexColor(a,b,t){
 function decorCurvedGradientColors(l,geo){
  if(!Array.isArray(geo)||!geo.length)return [];
  const angle=(Number.isFinite(Number(l.gradientAngle))?Number(l.gradientAngle):90)*Math.PI/180;
- // CSS linear-gradient の向きに近い投影軸。曲線文字では background-clip:text を使わず、
- // 文字ごとの確定色へ変換する。iOS/WebKit + マイフォントでも色面が矩形にはみ出さない。
  const vx=Math.sin(angle),vy=-Math.cos(angle);const proj=geo.map(g=>g.x*vx+g.y*vy),lo=Math.min(...proj),hi=Math.max(...proj),span=Math.max(1e-6,hi-lo);
  return proj.map(v=>decorMixHexColor(l.fill||'#ffffff',l.fill2||'#ff8ac8',(v-lo)/span));
 }
 function renderCurvedDecorText(host,l,unit=1){
- if(!host)return;host.innerHTML='';unit=Math.max(.05,Number(unit)||1);const m=decorCurvedLayoutMetrics(l,unit),chars=m.chars;if(!chars.length)return;const geo=decorCurvedGeometry(l,m,unit);
- const root=document.createElement('span');root.className='decor-curved-root';root.style.cssText='position:relative;display:block;width:1px;height:1px;overflow:visible';host.appendChild(root);const pen=decorPenCss(l,unit),gradientColors=l.useGradient?decorCurvedGradientColors(l,geo):[];
- if(l.textBgEnabled){let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;geo.forEach((g,i)=>{const r=Math.max(m.fontPxs[i]*.62,m.widths[i]*.62);minX=Math.min(minX,g.x-r);maxX=Math.max(maxX,g.x+r);minY=Math.min(minY,g.y-r);maxY=Math.max(maxY,g.y+r)});const pad=Math.max(0,Number(l.textBgPadding)||0)*unit,bg=document.createElement('span');bg.className='decor-curved-backing';bg.style.left=`${minX-pad}px`;bg.style.top=`${minY-pad}px`;bg.style.width=`${Math.max(1,maxX-minX+pad*2)}px`;bg.style.height=`${Math.max(1,maxY-minY+pad*2)}px`;bg.style.borderRadius=`${Math.max(0,Number(l.textBgRadius)||0)*unit}px`;bg.style.background=hexToRgba(l.textBgColor,(Number(l.textBgOpacity)||0)/100);root.appendChild(bg)}
- // v21.25: WebKit では「同じ transform を持つ別レイヤーの文字」を重ねると、
- // マイフォント + stroke/fill の合成時に塗り文字だけ先頭字形へ集約されることがある。
- // 位置/回転/拡縮は 1 文字につき wrapper 1 個だけが担当し、縁・塗りは wrapper 内で重ねる。
- const glyphLayer=document.createElement('span');glyphLayer.className='decor-curved-glyph-layer';glyphLayer.style.cssText='position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible';root.appendChild(glyphLayer);
- const makeFace=(wrapper,ch,kind,fc)=>{const face=document.createElement('span');face.className=`decor-char-face decor-char-${kind}`;face.textContent=ch;face.style.position='absolute';face.style.left='0';face.style.top='0';face.style.display='block';face.style.width='max-content';face.style.whiteSpace='pre';face.style.transform='translate(-50%,-50%)';face.style.transformOrigin='50% 50%';face.style.lineHeight='1';
-  if(kind==='outer'){face.style.color='transparent';face.style.webkitTextFillColor='transparent';face.style.webkitTextStroke=`${Math.max(0,Number(l.secondStrokeWidth)||0)*unit}px ${l.secondStrokeColor}`}
-  else if(kind==='stroke'){face.style.color='transparent';face.style.webkitTextFillColor='transparent';face.style.webkitTextStroke=`${Math.max(0,Number(l.strokeWidth)||0)*unit}px ${l.stroke}`}
-  else{face.style.color=fc;face.style.webkitTextFillColor=fc;face.style.webkitTextStroke=(l.glowMode==='inner'||l.glowMode==='both')&&Math.max(0,Number(l.glow)||0)>0?`${Math.max(.4,Math.max(0,Number(l.glow)||0)*.12)*unit}px ${hexToRgba(fc,.55)}`:'0';if(l.useGradient){face.dataset.gradientMode='solid-interpolated';face.dataset.gradientColor=fc}}
-  wrapper.appendChild(face);return face};
- chars.forEach((ch,i)=>{const g=geo[i],glyph=document.createElement('span');glyph.className='decor-curved-glyph';glyph.dataset.glyphIndex=String(i);glyph.style.position='absolute';glyph.style.left='0';glyph.style.top='0';glyph.style.display='block';glyph.style.width='1px';glyph.style.height='1px';glyph.style.overflow='visible';glyph.style.transformOrigin='0 0';glyph.style.fontFamily=decorFontFamilyCss(l.fontFamily);glyph.style.fontSize=`${m.fontPxs[i]}px`;glyph.style.fontWeight=String(l.fontWeight||500);glyph.style.letterSpacing='0';glyph.style.lineHeight='1';glyph.style.opacity=String(g.opacity);glyph.style.isolation='isolate';glyph.style.transform=`translate(${g.x}px,${g.y}px) rotate(${g.a}deg) scale(${g.scale})`;
-  const fc=g.emphasis?l.emphasisFill:(l.useGradient?(gradientColors[i]||pen.fill):pen.fill),shadows=[`${(Number(l.shadowX)||0)*unit}px ${(Number(l.shadowY)||0)*unit}px ${Math.max(0,Number(l.shadowBlur)||0)*unit}px ${l.shadowColor||'#000000'}`],glow=Math.max(0,Number(l.glow)||0);if((l.glowMode==='outer'||l.glowMode==='both'||!l.glowMode)&&(l.penPreset==='fluorescent'||glow>0))shadows.push(`0 0 ${Math.max(l.penPreset==='fluorescent'?5:0,glow||0)*unit}px ${g.emphasis?l.emphasisFill:pen.fill}`);
-  if(l.secondStrokeEnabled)makeFace(glyph,ch,'outer',fc);makeFace(glyph,ch,'stroke',fc);const fillFace=makeFace(glyph,ch,'fill',fc);fillFace.style.textShadow=shadows.join(',');fillFace.style.filter=pen.filter||'';glyphLayer.appendChild(glyph)});
- renderDecorCurvedLines(root,l,m,geo,unit);host.dataset.curveApplied=String(Number(l.curve)||0);host.dataset.fontSizeApplied=String(Number(l.fontSize)||42);host.dataset.gradientApplied=l.useGradient?'solid-interpolated':'solid';host.dataset.gradientAngleApplied=String(Number.isFinite(Number(l.gradientAngle))?Number(l.gradientAngle):90);host.dataset.curvedGeometry=`${l.transformType}:${geo.length}:${geo.map(g=>`${g.x.toFixed(2)},${g.y.toFixed(2)},${g.a.toFixed(2)}`).join('|')}`;
+ if(!host)return;host.replaceChildren();unit=Math.max(.05,Number(unit)||1);
+ const m=decorCurvedLayoutMetrics(l,unit),chars=m.chars;if(!chars.length)return;const geo=decorCurvedGeometry(l,m,unit),bounds=decorCurveSvgBounds(l,m,geo,unit),ns='http://www.w3.org/2000/svg';
+ const svg=document.createElementNS(ns,'svg');svg.classList.add('decor-curved-svg');svg.dataset.renderer='svg-v2';svg.setAttribute('viewBox',`${bounds.minX} ${bounds.minY} ${bounds.width} ${bounds.height}`);svg.setAttribute('width',String(bounds.width));svg.setAttribute('height',String(bounds.height));svg.style.left=`${bounds.minX}px`;svg.style.top=`${bounds.minY}px`;svg.style.width=`${bounds.width}px`;svg.style.height=`${bounds.height}px`;svg.style.overflow='visible';host.appendChild(svg);
+ const pen=decorPenCss(l,unit),gradientColors=l.useGradient?decorCurvedGradientColors(l,geo):[];
+ if(l.textBgEnabled){const pad=Math.max(0,Number(l.textBgPadding)||0)*unit;let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;geo.forEach((g,i)=>{const fs=Math.max(1,m.fontPxs[i]||1),w=Math.max(fs*.25,m.widths[i]||fs*.82),scale=Math.max(.25,Number(g.scale)||1);minX=Math.min(minX,g.x-w*.58*scale);maxX=Math.max(maxX,g.x+w*.58*scale);minY=Math.min(minY,g.y-fs*.62*scale);maxY=Math.max(maxY,g.y+fs*.62*scale)});const r=document.createElementNS(ns,'rect');r.classList.add('decor-svg-backing');r.setAttribute('x',String(minX-pad));r.setAttribute('y',String(minY-pad));r.setAttribute('width',String(Math.max(1,maxX-minX+pad*2)));r.setAttribute('height',String(Math.max(1,maxY-minY+pad*2)));r.setAttribute('rx',String(Math.max(0,Number(l.textBgRadius)||0)*unit));r.setAttribute('ry',String(Math.max(0,Number(l.textBgRadius)||0)*unit));r.setAttribute('fill',hexToRgba(l.textBgColor,(Number(l.textBgOpacity)||0)/100));svg.appendChild(r)}
+ const strokeBalance=Math.max(-100,Math.min(100,Number(l.strokeBalance)||0)),mainStroke=Math.max(0,(Number(l.strokeWidth)||0)*(1+strokeBalance/200))*unit,secondStroke=l.secondStrokeEnabled?Math.max(0,Number(l.secondStrokeWidth)||0)*unit:0;
+ chars.forEach((ch,i)=>{
+  const g=geo[i],grp=document.createElementNS(ns,'g');grp.classList.add('decor-svg-glyph');grp.dataset.glyphIndex=String(i);grp.dataset.x=String(g.x);grp.dataset.y=String(g.y);grp.dataset.angle=String(g.a);grp.setAttribute('transform',`translate(${g.x} ${g.y}) rotate(${g.a}) scale(${g.scale})`);grp.setAttribute('opacity',String(g.opacity));
+  const fs=Math.max(1,m.fontPxs[i]||m.fontPx||1),fc=g.emphasis?l.emphasisFill:(l.useGradient?(gradientColors[i]||pen.fill):pen.fill),family=decorFontFamilyCss(l.fontFamily),common={'font-family':family,'font-size':fs,'font-weight':Number(l.fontWeight)||500,'letter-spacing':'0'};
+  if(secondStroke>0){const outer=decorSvgTextFace(ns,ch,'decor-svg-outer',{...common,fill:'none',stroke:l.secondStrokeColor||'#fff','stroke-width':Math.max(.1,(mainStroke+secondStroke)*2),'stroke-linejoin':'round','paint-order':'stroke fill'});grp.appendChild(outer)}
+  if(mainStroke>0){const st=decorSvgTextFace(ns,ch,'decor-svg-stroke',{...common,fill:'none',stroke:l.stroke||'#202020','stroke-width':Math.max(.1,mainStroke*2),'stroke-linejoin':'round','paint-order':'stroke fill'});grp.appendChild(st)}
+  const fill=decorSvgTextFace(ns,ch,'decor-svg-fill',{...common,fill:fc});fill.dataset.gradientMode=l.useGradient?'solid-interpolated':'solid';fill.dataset.gradientColor=fc;const f=decorSvgDropShadowCss(l,fc,unit);if(f)fill.style.filter=f;
+  if((l.glowMode==='inner'||l.glowMode==='both')&&Math.max(0,Number(l.glow)||0)>0){fill.setAttribute('stroke',hexToRgba(fc,.5));fill.setAttribute('stroke-width',String(Math.max(.35,Math.max(0,Number(l.glow)||0)*.12)*unit));fill.setAttribute('paint-order','stroke fill')}
+  if(pen.filter)fill.style.filter=[fill.style.filter,pen.filter].filter(Boolean).join(' ');grp.appendChild(fill);svg.appendChild(grp);
+ });
+ renderDecorCurvedLines(svg,l,m,geo,unit,bounds);
+ host.dataset.curveApplied=String(Number(l.curve)||0);host.dataset.fontSizeApplied=String(Number(l.fontSize)||42);host.dataset.gradientApplied=l.useGradient?'solid-interpolated':'solid';host.dataset.gradientAngleApplied=String(Number.isFinite(Number(l.gradientAngle))?Number(l.gradientAngle):90);host.dataset.curvedGeometry=`${l.transformType}:${geo.length}:${geo.map(g=>`${g.x.toFixed(2)},${g.y.toFixed(2)},${g.a.toFixed(2)}`).join('|')}`;host.dataset.curvedRenderer='svg-v2';
 }
 
 
 
-const DECOR_CODE_TREE=Object.freeze({schema:'normalizeDecorLayer',render:{normal:'decorTextHtml',curved:'renderCurvedDecorText',curvedGradient:'decorCurvedGradientColors',geometry:'decorCurvedGeometry',metrics:'decorCurvedLayoutMetrics'},editor:{ui:'decorControlsHtml',events:'bindDecorEditor',conditional:'syncDecorConditionalControls',preview:'renderDecorPreview',guide:'renderDecorCurveGuide'},hydrate:{all:'hydrateAllCardDecor',stack:'hydrateDecorStackMetrics'},storage:{fonts:'IndexedDB/customFonts',stamps:'IndexedDB/customStamps'}});
+const DECOR_CODE_TREE=Object.freeze({schema:'normalizeDecorLayer',render:{normal:'decorTextHtml',curved:'renderCurvedDecorText/svg-v2',curvedGradient:'decorCurvedGradientColors',geometry:'decorCurvedGeometry',metrics:'decorCurvedLayoutMetrics'},editor:{ui:'decorControlsHtml',events:'bindDecorEditor',conditional:'syncDecorConditionalControls',preview:'renderDecorPreview',guide:'renderDecorCurveGuide'},hydrate:{all:'hydrateAllCardDecor',stack:'hydrateDecorStackMetrics'},storage:{fonts:'IndexedDB/customFonts',stamps:'IndexedDB/customStamps'}});
 function decorTextSelfCheck(l=decorSelected()){
  const issues=[];if(!l||l.type!=='text')return issues;for(const k of ['fontSize','gradientAngle','curveWidth','tangentFollow','curveAsymmetry','curveTilt','fontSizeEnd','letterSpacingEnd','baselineJitter','handJitter','randomSeed','strokeWidth','secondStrokeWidth','inkDistress','lineOffset','startAngle'])if(!Number.isFinite(Number(l[k])))issues.push(`${k}:数値不正`);const n=[...String(l.text||'')].length;if(l.emphasisEnabled&&(l.emphasisStart<1||l.emphasisEnd<1||l.emphasisStart>Math.max(1,n)||l.emphasisEnd>Math.max(1,n)))issues.push('部分強調範囲が文字数外');if(l.useGradient&&(!/^#[0-9a-f]{6}$/i.test(String(l.fill||''))||!/^#[0-9a-f]{6}$/i.test(String(l.fill2||''))))issues.push('グラデーション色不正');if(['arch','reverse-arch','wave','circle'].includes(l.transformType)){try{const m=decorCurvedLayoutMetrics(l,1),g=decorCurvedGeometry(l,m,1);if(g.length!==m.chars.length||g.some(p=>![p.x,p.y,p.a,p.scale,p.opacity].every(Number.isFinite)))issues.push('曲線座標不正')}catch(e){issues.push('曲線計算例外')}}return issues;
 }
@@ -28395,16 +28425,18 @@ function decorEditorTextSelfCheck(){return decorEditorState.layers.filter(x=>x.t
 function decorRenderedTextSelfCheck(root=document){
  const issues=[];
  for(const host of $$('[data-decor-curved]',root)){
-  const layerId=String(host.dataset.decorCurved||''),l=(decorEditorState?.layers||[]).find(x=>String(x.id)===layerId)||cards.flatMap(c=>cardDecorLayers(c)).find(x=>String(x.id)===layerId);
-  if(!l||l.type!=='text')continue;
-  const glyphs=$$('.decor-curved-glyph',host),chars=$$('.decor-char-fill',host);
-  const expected=[...String(l.text||'')].length;if(glyphs.length!==expected||chars.length!==expected)issues.push(`${l.name||layerId}:曲線文字DOM数不一致`);
-  if(glyphs.some(g=>!String(g.style.transform||'').includes('translate(')))issues.push(`${l.name||layerId}:字形wrapper座標未適用`);
-  if($$('.decor-curved-fill > .decor-char,.decor-curved-stroke > .decor-char',host).length)issues.push(`${l.name||layerId}:旧分離レイヤー字形が残存`);
-  if(l.useGradient){for(const c of chars){if(c.dataset.gradientMode!=='solid-interpolated'||!/^rgb\(/.test(String(c.dataset.gradientColor||''))){issues.push(`${l.name||layerId}:曲線グラデーション色未適用`);break}if(c.style.background||c.style.backgroundImage||c.style.webkitBackgroundClip||c.style.backgroundClip||c.querySelector('.decor-char-gradient-fill')){issues.push(`${l.name||layerId}:曲線文字に旧gradient clipが残存`);break}}}
+  const layerId=String(host.dataset.decorCurved||''),l=(decorEditorState?.layers||[]).find(x=>String(x.id)===layerId)||cards.flatMap(c=>cardDecorLayers(c)).find(x=>String(x.id)===layerId);if(!l||l.type!=='text')continue;
+  const expected=[...String(l.text||'')].length,svg=$('.decor-curved-svg',host),glyphs=$$('.decor-svg-glyph',host),fills=$$('.decor-svg-fill',host);
+  if(!svg||svg.dataset.renderer!=='svg-v2'||host.dataset.curvedRenderer!=='svg-v2')issues.push(`${l.name||layerId}:旧曲線レンダラーを検出`);
+  if(glyphs.length!==expected||fills.length!==expected)issues.push(`${l.name||layerId}:SVG字形数不一致`);
+  const coords=glyphs.map(g=>[Number(g.dataset.x),Number(g.dataset.y)]);if(coords.some(v=>!v.every(Number.isFinite)))issues.push(`${l.name||layerId}:SVG字形座標不正`);
+  if(expected>1){const unique=new Set(coords.map(v=>`${v[0].toFixed(3)},${v[1].toFixed(3)}`));if(unique.size<=1)issues.push(`${l.name||layerId}:全字形が同一点に重複`)}
+  if($$('.decor-curved-glyph,.decor-char-face,.decor-char-fill,.decor-char-stroke',host).length)issues.push(`${l.name||layerId}:旧HTML曲線字形DOMが残存`);
+  if(l.useGradient){for(const c of fills){if(c.dataset.gradientMode!=='solid-interpolated'||!/^rgb\(/.test(String(c.dataset.gradientColor||''))){issues.push(`${l.name||layerId}:曲線グラデーション色未適用`);break}if(c.style.background||c.style.backgroundImage||c.style.webkitBackgroundClip||c.style.backgroundClip){issues.push(`${l.name||layerId}:曲線文字にgradient clipが残存`);break}}}
  }
  return issues;
 }
+
 let decorPreviewHydrateSeq=0;
 async function hydrateDecorPreview(card,{forceImage=false}={}){
  const preview=$('#decor-preview'),base=$('#decor-preview-base'),status=$('#decor-preview-status');if(!preview||!base)return;
