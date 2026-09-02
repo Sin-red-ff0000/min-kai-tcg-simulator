@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v21.23</title>
+<title>みん会TCG Simulator v21.24</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21609,7 +21609,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v21.23 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v21.24 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -28343,36 +28343,39 @@ function renderDecorCurvedLines(root,l,m,geo,unit){
  if(!l.underlineEnabled&&!l.strikeEnabled||!geo.length)return;const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');svg.classList.add('decor-curved-lines');let minX=Math.min(...geo.map(g=>g.x))-40*unit,maxX=Math.max(...geo.map(g=>g.x))+40*unit,minY=Math.min(...geo.map(g=>g.y))-60*unit,maxY=Math.max(...geo.map(g=>g.y))+60*unit;svg.setAttribute('viewBox',`${minX} ${minY} ${Math.max(1,maxX-minX)} ${Math.max(1,maxY-minY)}`);svg.style.cssText=`position:absolute;left:${minX}px;top:${minY}px;width:${maxX-minX}px;height:${maxY-minY}px;overflow:visible;pointer-events:none`;
  const mk=(strike=false)=>{const p=document.createElementNS(ns,'path'),off=(strike?-m.fontPx*.28:(Number.isFinite(Number(l.lineOffset))?Number(l.lineOffset):8)*unit),pts=geo.map((g,i)=>`${i?'L':'M'} ${g.x} ${g.y+off}`);p.setAttribute('d',pts.join(' '));p.setAttribute('fill','none');p.setAttribute('stroke',l.lineColor||l.fill||'#fff');p.setAttribute('stroke-width',String(Math.max(1,Number(l.lineThickness)||2)*unit));p.setAttribute('stroke-linecap','round');if(l.lineStyle==='double')p.setAttribute('stroke-dasharray',`${6*unit} ${2*unit}`);if(l.lineStyle==='wave')p.setAttribute('stroke-dasharray',`${2*unit} ${3*unit}`);if(l.lineStyle==='swoosh')p.setAttribute('stroke-width',String(Math.max(1,Number(l.lineThickness)||2)*unit*1.6));svg.appendChild(p)};if(l.underlineEnabled)mk(false);if(l.strikeEnabled)mk(true);root.appendChild(svg);
 }
-function decorCurvedGradientInner(ch,l){
- const inner=document.createElement('span');inner.className='decor-char-gradient-fill';inner.textContent=ch;
- inner.style.display='inline-block';inner.style.whiteSpace='pre';inner.style.lineHeight='1';
- const angle=Number.isFinite(Number(l.gradientAngle))?Number(l.gradientAngle):90;
- inner.style.color='transparent';inner.style.webkitTextFillColor='transparent';
- inner.style.backgroundImage=`linear-gradient(${angle}deg,${l.fill||'#fff'},${l.fill2||'#ff8ac8'})`;
- inner.style.backgroundRepeat='no-repeat';inner.style.backgroundSize='100% 100%';
- inner.style.webkitBackgroundClip='text';inner.style.backgroundClip='text';
- // iOS/WebKit: background-clip:text と transform を同じ要素に置くと、マイフォントで色面が飛び出すことがある。
- // 外側 .decor-char だけを transform し、gradient clip は未変形の子要素へ分離する。
- inner.style.webkitTransform='translateZ(0)';inner.style.transform='translateZ(0)';
- return inner;
+function decorHexRgb(hex){
+ const h=String(hex||'').trim().replace('#','');const v=h.length===3?h.split('').map(x=>x+x).join(''):h;
+ if(!/^[0-9a-f]{6}$/i.test(v))return null;const n=parseInt(v,16);return [(n>>16)&255,(n>>8)&255,n&255];
+}
+function decorMixHexColor(a,b,t){
+ const A=decorHexRgb(a)||[255,255,255],B=decorHexRgb(b)||[255,138,200],q=Math.max(0,Math.min(1,Number(t)||0));
+ const c=A.map((v,i)=>Math.round(v+(B[i]-v)*q));return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
+function decorCurvedGradientColors(l,geo){
+ if(!Array.isArray(geo)||!geo.length)return [];
+ const angle=(Number.isFinite(Number(l.gradientAngle))?Number(l.gradientAngle):90)*Math.PI/180;
+ // CSS linear-gradient の向きに近い投影軸。曲線文字では background-clip:text を使わず、
+ // 文字ごとの確定色へ変換する。iOS/WebKit + マイフォントでも色面が矩形にはみ出さない。
+ const vx=Math.sin(angle),vy=-Math.cos(angle);const proj=geo.map(g=>g.x*vx+g.y*vy),lo=Math.min(...proj),hi=Math.max(...proj),span=Math.max(1e-6,hi-lo);
+ return proj.map(v=>decorMixHexColor(l.fill||'#ffffff',l.fill2||'#ff8ac8',(v-lo)/span));
 }
 function renderCurvedDecorText(host,l,unit=1){
  if(!host)return;host.innerHTML='';unit=Math.max(.05,Number(unit)||1);const m=decorCurvedLayoutMetrics(l,unit),chars=m.chars;if(!chars.length)return;const geo=decorCurvedGeometry(l,m,unit);
- const root=document.createElement('span');root.className='decor-curved-root';root.style.cssText='position:relative;display:block;width:1px;height:1px;overflow:visible';host.appendChild(root);const pen=decorPenCss(l,unit);
+ const root=document.createElement('span');root.className='decor-curved-root';root.style.cssText='position:relative;display:block;width:1px;height:1px;overflow:visible';host.appendChild(root);const pen=decorPenCss(l,unit),gradientColors=l.useGradient?decorCurvedGradientColors(l,geo):[];
  if(l.textBgEnabled){let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;geo.forEach((g,i)=>{const r=Math.max(m.fontPxs[i]*.62,m.widths[i]*.62);minX=Math.min(minX,g.x-r);maxX=Math.max(maxX,g.x+r);minY=Math.min(minY,g.y-r);maxY=Math.max(maxY,g.y+r)});const pad=Math.max(0,Number(l.textBgPadding)||0)*unit,bg=document.createElement('span');bg.className='decor-curved-backing';bg.style.left=`${minX-pad}px`;bg.style.top=`${minY-pad}px`;bg.style.width=`${Math.max(1,maxX-minX+pad*2)}px`;bg.style.height=`${Math.max(1,maxY-minY+pad*2)}px`;bg.style.borderRadius=`${Math.max(0,Number(l.textBgRadius)||0)*unit}px`;bg.style.background=hexToRgba(l.textBgColor,(Number(l.textBgOpacity)||0)/100);root.appendChild(bg)}
  const outer=document.createElement('span'),stroke=document.createElement('span'),fill=document.createElement('span');outer.className='decor-curved-stroke decor-curved-outer';stroke.className='decor-curved-stroke';fill.className='decor-curved-fill';for(const x of [outer,stroke,fill])x.style.cssText='position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible';if(l.secondStrokeEnabled)root.appendChild(outer);root.append(stroke,fill);
  const place=(parent,ch,i,kind)=>{const c=document.createElement('span'),g=geo[i];c.className='decor-char';c.style.position='absolute';c.style.left='0';c.style.top='0';c.style.display='block';c.style.whiteSpace='pre';c.style.transformOrigin='50% 50%';c.style.fontFamily=decorFontFamilyCss(l.fontFamily);c.style.fontSize=`${m.fontPxs[i]}px`;c.style.fontWeight=String(l.fontWeight||500);c.style.letterSpacing='0';c.style.lineHeight='1';c.style.opacity=String(g.opacity);c.style.isolation='isolate';
  const shadows=[`${(Number(l.shadowX)||0)*unit}px ${(Number(l.shadowY)||0)*unit}px ${Math.max(0,Number(l.shadowBlur)||0)*unit}px ${l.shadowColor||'#000000'}`],glow=Math.max(0,Number(l.glow)||0);if((l.glowMode==='outer'||l.glowMode==='both'||!l.glowMode)&&(l.penPreset==='fluorescent'||glow>0))shadows.push(`0 0 ${Math.max(l.penPreset==='fluorescent'?5:0,glow||0)*unit}px ${g.emphasis?l.emphasisFill:pen.fill}`);c.style.textShadow=shadows.join(',');
  if(kind==='outer'){c.textContent=ch;c.style.color='transparent';c.style.webkitTextFillColor='transparent';c.style.webkitTextStroke=`${Math.max(0,Number(l.secondStrokeWidth)||0)*unit}px ${l.secondStrokeColor}`}
  else if(kind==='stroke'){c.textContent=ch;c.style.color='transparent';c.style.webkitTextFillColor='transparent';c.style.webkitTextStroke=`${Math.max(0,Number(l.strokeWidth)||0)*unit}px ${l.stroke}`}
- else{const fc=g.emphasis?l.emphasisFill:pen.fill;c.style.webkitTextStroke=(l.glowMode==='inner'||l.glowMode==='both')&&glow>0?`${Math.max(.4,glow*.12)*unit}px ${hexToRgba(fc,.55)}`:'0';if(l.useGradient&&!g.emphasis){c.appendChild(decorCurvedGradientInner(ch,l));c.dataset.gradientMode='nested-clip'}else{c.textContent=ch;c.style.color=fc;c.style.webkitTextFillColor=fc}}
+ else{const fc=g.emphasis?l.emphasisFill:(l.useGradient?(gradientColors[i]||pen.fill):pen.fill);c.style.webkitTextStroke=(l.glowMode==='inner'||l.glowMode==='both')&&glow>0?`${Math.max(.4,glow*.12)*unit}px ${hexToRgba(fc,.55)}`:'0';c.textContent=ch;c.style.color=fc;c.style.webkitTextFillColor=fc;if(l.useGradient&&!g.emphasis){c.dataset.gradientMode='solid-interpolated';c.dataset.gradientColor=fc}}
  c.style.transform=`translate(${g.x}px,${g.y}px) translate(-50%,-50%) rotate(${g.a}deg) scale(${g.scale})`;parent.appendChild(c)};
  if(l.secondStrokeEnabled)chars.forEach((ch,i)=>place(outer,ch,i,'outer'));chars.forEach((ch,i)=>place(stroke,ch,i,'stroke'));chars.forEach((ch,i)=>place(fill,ch,i,'fill'));
- renderDecorCurvedLines(root,l,m,geo,unit);host.dataset.curveApplied=String(Number(l.curve)||0);host.dataset.fontSizeApplied=String(Number(l.fontSize)||42);host.dataset.gradientApplied=l.useGradient?'nested-clip':'solid';host.dataset.gradientAngleApplied=String(Number.isFinite(Number(l.gradientAngle))?Number(l.gradientAngle):90);host.dataset.curvedGeometry=`${l.transformType}:${geo.length}:${geo.map(g=>`${g.x.toFixed(2)},${g.y.toFixed(2)},${g.a.toFixed(2)}`).join('|')}`;
+ renderDecorCurvedLines(root,l,m,geo,unit);host.dataset.curveApplied=String(Number(l.curve)||0);host.dataset.fontSizeApplied=String(Number(l.fontSize)||42);host.dataset.gradientApplied=l.useGradient?'solid-interpolated':'solid';host.dataset.gradientAngleApplied=String(Number.isFinite(Number(l.gradientAngle))?Number(l.gradientAngle):90);host.dataset.curvedGeometry=`${l.transformType}:${geo.length}:${geo.map(g=>`${g.x.toFixed(2)},${g.y.toFixed(2)},${g.a.toFixed(2)}`).join('|')}`;
 }
 
 
-const DECOR_CODE_TREE=Object.freeze({schema:'normalizeDecorLayer',render:{normal:'decorTextHtml',curved:'renderCurvedDecorText',geometry:'decorCurvedGeometry',metrics:'decorCurvedLayoutMetrics'},editor:{ui:'decorControlsHtml',events:'bindDecorEditor',conditional:'syncDecorConditionalControls',preview:'renderDecorPreview',guide:'renderDecorCurveGuide'},hydrate:{all:'hydrateAllCardDecor',stack:'hydrateDecorStackMetrics'},storage:{fonts:'IndexedDB/customFonts',stamps:'IndexedDB/customStamps'}});
+const DECOR_CODE_TREE=Object.freeze({schema:'normalizeDecorLayer',render:{normal:'decorTextHtml',curved:'renderCurvedDecorText',curvedGradient:'decorCurvedGradientColors',geometry:'decorCurvedGeometry',metrics:'decorCurvedLayoutMetrics'},editor:{ui:'decorControlsHtml',events:'bindDecorEditor',conditional:'syncDecorConditionalControls',preview:'renderDecorPreview',guide:'renderDecorCurveGuide'},hydrate:{all:'hydrateAllCardDecor',stack:'hydrateDecorStackMetrics'},storage:{fonts:'IndexedDB/customFonts',stamps:'IndexedDB/customStamps'}});
 function decorTextSelfCheck(l=decorSelected()){
  const issues=[];if(!l||l.type!=='text')return issues;for(const k of ['fontSize','gradientAngle','curveWidth','tangentFollow','curveAsymmetry','curveTilt','fontSizeEnd','letterSpacingEnd','baselineJitter','handJitter','randomSeed','strokeWidth','secondStrokeWidth','inkDistress','lineOffset','startAngle'])if(!Number.isFinite(Number(l[k])))issues.push(`${k}:数値不正`);const n=[...String(l.text||'')].length;if(l.emphasisEnabled&&(l.emphasisStart<1||l.emphasisEnd<1||l.emphasisStart>Math.max(1,n)||l.emphasisEnd>Math.max(1,n)))issues.push('部分強調範囲が文字数外');if(l.useGradient&&(!/^#[0-9a-f]{6}$/i.test(String(l.fill||''))||!/^#[0-9a-f]{6}$/i.test(String(l.fill2||''))))issues.push('グラデーション色不正');if(['arch','reverse-arch','wave','circle'].includes(l.transformType)){try{const m=decorCurvedLayoutMetrics(l,1),g=decorCurvedGeometry(l,m,1);if(g.length!==m.chars.length||g.some(p=>![p.x,p.y,p.a,p.scale,p.opacity].every(Number.isFinite)))issues.push('曲線座標不正')}catch(e){issues.push('曲線計算例外')}}return issues;
 }
@@ -28384,7 +28387,7 @@ function decorRenderedTextSelfCheck(root=document){
   if(!l||l.type!=='text')continue;
   const chars=$$('.decor-curved-fill > .decor-char',host);
   if(chars.length!==[...String(l.text||'')].length)issues.push(`${l.name||layerId}:曲線文字DOM数不一致`);
-  if(l.useGradient){for(const c of chars){if(c.dataset.gradientMode!=='nested-clip'||!c.querySelector('.decor-char-gradient-fill')){issues.push(`${l.name||layerId}:曲線グラデーション描画未適用`);break}if(c.style.background||c.style.webkitBackgroundClip){issues.push(`${l.name||layerId}:変形要素にgradient clipが残存`);break}}}
+  if(l.useGradient){for(const c of chars){if(c.dataset.gradientMode!=='solid-interpolated'||!/^rgb\(/.test(String(c.dataset.gradientColor||''))){issues.push(`${l.name||layerId}:曲線グラデーション色未適用`);break}if(c.style.background||c.style.backgroundImage||c.style.webkitBackgroundClip||c.style.backgroundClip||c.querySelector('.decor-char-gradient-fill')){issues.push(`${l.name||layerId}:曲線文字に旧gradient clipが残存`);break}}}
  }
  return issues;
 }
