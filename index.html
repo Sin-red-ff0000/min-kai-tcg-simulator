@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v21.19</title>
+<title>みん会TCG Simulator v21.20</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21495,6 +21495,86 @@ h3 .minkai-ruby{margin-top:.45em}
 .card-decor-layer.decor-cheki-layer{overflow:hidden!important;pointer-events:none!important}
 .card-decor-layer.decor-cheki-layer>.decor-cheki-frame{left:0!important;top:0!important;right:0!important;bottom:0!important;max-width:none!important;max-height:none!important}
 </style>
+
+<style id="v2120-mobile-preview-ui">
+/* v21.20: mobile FX preview enlargement + swipe-paged decor editor */
+.decor-mobile-pager{display:none}
+@media(max-width:600px){
+  .floating-preview-window.floating-preview-fx{
+    width:calc(100vw - 12px)!important;
+    max-width:none!important;
+    max-height:88dvh!important;
+    border-radius:16px!important;
+  }
+  .floating-preview-window.floating-preview-fx .floating-preview-content{
+    max-height:calc(88dvh - 46px)!important;
+    padding:10px!important;
+    display:block!important;
+  }
+  .floating-preview-window.floating-preview-fx .fx-preview-first{
+    position:relative!important;
+    top:auto!important;
+    z-index:1!important;
+    padding:0 0 10px!important;
+    background:transparent!important;
+    overflow-x:auto!important;
+    justify-content:flex-start!important;
+    scroll-snap-type:x proximity;
+  }
+  .floating-preview-window.floating-preview-fx #fx-editor-preview .fx-editor-preview-card{
+    width:var(--fx-preview-width,min(84vw,360px))!important;
+    max-width:none!important;
+    flex:0 0 auto!important;
+    margin-inline:auto!important;
+  }
+  .floating-preview-window.floating-preview-fx .fx-preview-toolbar-v2{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:9px!important;
+    width:100%!important;
+  }
+  .floating-preview-window.floating-preview-fx .fx-preview-toolbar-v2>label,
+  .floating-preview-window.floating-preview-fx .fx-preview-toolbar-v2>.btn{
+    min-width:0!important;
+    width:100%!important;
+  }
+  .floating-preview-window.floating-preview-fx .fx-preview-toolbar-v2 .btn{
+    grid-column:1/-1!important;
+  }
+  .decor-mobile-pager{
+    position:sticky;top:0;z-index:12;display:grid;grid-template-columns:1fr auto 1fr;
+    align-items:center;gap:7px;margin:0 0 8px;padding:7px;
+    border:1px solid var(--line);border-radius:11px;background:rgba(18,24,32,.96);
+    backdrop-filter:blur(10px);
+  }
+  .decor-mobile-pager .decor-page-state{font-size:11px;color:var(--muted);white-space:nowrap;text-align:center}
+  .decor-mobile-pager .btn{min-height:38px;padding:7px 9px}
+  .decor-editor{
+    display:flex!important;grid-template-columns:none!important;gap:0!important;
+    width:100%!important;max-width:100%!important;overflow-x:auto!important;overflow-y:hidden!important;
+    scroll-snap-type:x mandatory!important;scroll-behavior:smooth!important;
+    overscroll-behavior-x:contain!important;-webkit-overflow-scrolling:touch!important;
+    touch-action:pan-x pan-y;
+  }
+  .decor-editor>.decor-preview-panel,
+  .decor-editor>.decor-editor-controls-page{
+    flex:0 0 100%!important;width:100%!important;min-width:100%!important;max-width:100%!important;
+    box-sizing:border-box!important;scroll-snap-align:start!important;scroll-snap-stop:always!important;
+    max-height:calc(100dvh - 190px)!important;overflow-y:auto!important;overflow-x:hidden!important;
+    padding:2px 3px 14px!important;
+  }
+  .decor-editor>.decor-preview-panel{
+    position:relative!important;top:auto!important;z-index:1!important;background:transparent!important;
+  }
+  .decor-editor>.decor-editor-controls-page{padding-inline:7px!important}
+  .decor-editor .decor-preview{width:min(94%,420px)!important;max-width:420px!important}
+  .decor-editor .decor-preview-panel>.decor-help{display:none!important}
+  .decor-editor .decor-preview-status-row{margin-top:8px!important}
+  .decor-editor .decor-toolbar{gap:7px!important}
+  .decor-editor .decor-toolbar>.btn,.decor-editor .decor-toolbar>label.btn{min-height:40px}
+}
+</style>
+
 </head>
 <body>
 <div id="app-background-layer" aria-hidden="true">
@@ -21502,7 +21582,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v21.19 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v21.20 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -27710,9 +27790,10 @@ async function hydrateFxEditorPreviewImage(cardId,force=false){
 }
 function applyFxPreviewControls(card){
  const art=$('#fx-editor-preview-art'),host=$('#fx-editor-preview'),base=$('#fx-editor-preview-base');if(!art||!host)return;
- const bg=$('#fx-preview-background')?.value||'dark',zoom=Math.max(70,Math.min(150,Number($('#fx-preview-zoom')?.value)||70));
+ const bg=$('#fx-preview-background')?.value||'dark',isMobile=matchMedia('(max-width:600px)').matches,zoom=Math.max(70,Math.min(150,Number($('#fx-preview-zoom')?.value)||(isMobile?100:70)));
  host.dataset.previewBg=bg;
- const previewWidth=Math.round(270*zoom/100);
+ const baseWidth=isMobile?Math.min(360,Math.max(300,window.innerWidth-34)):270;
+ const previewWidth=Math.round(baseWidth*zoom/100);
  art.style.setProperty('--fx-preview-width',`${previewWidth}px`);
  const showImage=$('#fx-preview-show-image')?.checked!==false;
  if(base)base.hidden=!showImage;
@@ -27785,7 +27866,8 @@ function openFxFloatingPreview(card){
    <label>背景<select id="fx-preview-background"><option value="dark">黒</option><option value="gray">グレー</option><option value="white">白</option><option value="checker">透過確認</option></select></label>
    <label>拡大 <span id="fx-preview-zoom-label" class="pill">70%</span><input id="fx-preview-zoom" type="range" min="70" max="150" step="5" value="70"></label>
    <button class="btn small" type="button" id="fx-preview-reload-image">画像を再読込</button>
- </div><div class="muted floating-preview-caption">画像を最上段に固定し、初期表示は最小サイズです。表示項目は個別に切り替えられます。</div>`);
+ </div><div class="muted floating-preview-caption">スマホではカードを大きく表示します。拡大率と表示項目は個別に切り替えられます。</div>`);
+ const fxZoom=$('#fx-preview-zoom');if(fxZoom&&matchMedia('(max-width:600px)').matches){fxZoom.value='100';const fxZoomLabel=$('#fx-preview-zoom-label');if(fxZoomLabel)fxZoomLabel.textContent='100%'}
  ['fx-preview-show-image','fx-preview-show-effects','fx-preview-show-frame','fx-preview-background'].forEach(id=>$('#'+id)?.addEventListener('change',()=>scheduleFxEditorPreview(card)));
  $('#fx-preview-animate')?.addEventListener('change',()=>scheduleFxEditorPreview(card));
  $('#fx-preview-zoom').oninput=e=>{const out=$('#fx-preview-zoom-label');if(out)out.textContent=e.target.value+'%';applyFxPreviewControls(card)};
@@ -28290,7 +28372,12 @@ function decorControlsHtml(l){
 async function openCardDecorationEditor(cardId,returnTo='manager'){const card=cards.find(c=>c.id===cardId);if(!card)return;try{decorEditorState={cardId:String(cardId),layers:cardDecorLayers(card),selectedId:'',returnTo};if(decorEditorState.layers.length)decorEditorState.selectedId=decorEditorState.layers[0].id;await renderDecorEditor(card,returnTo)}catch(err){console.error('decoration editor open failed',err);toast('装飾・サイン画面の読み込みに失敗しました');}}
 async function renderDecorEditor(card,returnTo=decorEditorState.returnTo||'manager'){
  const l=decorSelected();let custom=[];try{custom=await imageDbGetAll('customStamps')}catch{};await reloadDecorMyFontList();await ensureDecorFontsForLayers(decorEditorState.layers)
- openModal(`<div class="modal-head"><h3>装飾・サイン</h3><button class="btn primary" id="decor-save-top">保存</button><button class="btn" id="decor-close">閉じる</button></div><div class="decor-editor"><div class="decor-preview-panel"><div id="decor-preview" class="decor-preview"><div id="decor-preview-base" class="decor-preview-base"><span id="decor-preview-fallback">${esc(card.name)}</span></div><div id="decor-preview-fx" class="decor-preview-fx">${cardFxHtml(card,'collection')}</div><div id="decor-preview-back" class="decor-preview-region decor-preview-back"></div><div id="decor-preview-frame" class="decor-preview-frame">${cardFrameHtml(card)}</div><div id="decor-preview-front" class="decor-preview-region decor-preview-front"></div></div><div class="decor-help">文字・スタンプ・チェキをカードの実表示サイズへ直接合わせる方式に変更しました。文字サイズ・縁・影・発光・背景・曲線文字は各カード幅からその場でpx換算し、固定キャンバスの二重縮小を行いません。選択中の文字・スタンプはドラッグ移動できます。折返しOFFの横書き文字は右端へ移動しても一行を維持します。矢印キーで1、Shift＋矢印で5ずつ微調整できます。</div><div class="decor-preview-status-row"><div id="decor-preview-status" class="decor-preview-status">プレビューを準備中…</div><button class="btn small" type="button" id="decor-preview-reload">画像を再読込</button></div></div><div><div class="decor-toolbar"><button class="btn primary" id="decor-add-text">文字を追加</button><button class="btn" id="decor-add-stamp">スタンプを追加</button><button class="btn" id="decor-add-cheki">チェキ風フレーム</button><label class="btn">マイスタンプ追加<input id="decor-custom-file" type="file" accept="image/png,image/webp,image/jpeg,.png,.webp,.jpg,.jpeg" hidden></label></div><div class="decor-stamp-grid" id="decor-stamp-choices" hidden>${BUILTIN_DECOR_STAMPS.map(st=>`<button class="btn decor-stamp-choice" data-decor-stamp-choice="${st.id}" title="${st.name}"><span>${st.glyph}</span><small>${st.name}</small></button>`).join('')}${custom.map(st=>`<button class="btn decor-stamp-choice" data-decor-custom-choice="${esc(st.id)}" title="${esc(st.name||'マイスタンプ')}">画像</button>`).join('')}</div><div class="decor-custom-manager">${custom.length?`<div class="decor-section-title">マイスタンプ管理</div>${custom.map(st=>`<div class="decor-custom-row"><span>${esc(st.name||'マイスタンプ')}</span><button class="btn small" data-decor-custom-rename="${esc(st.id)}">名前変更</button><button class="btn small danger" data-decor-custom-delete="${esc(st.id)}">削除</button></div>`).join('')}`:''}</div><div class="decor-myfont-manager"><div class="decor-section-title">マイフォント</div><div class="actions"><label class="btn small">TTF / OTFを追加<input id="decor-myfont-file" type="file" accept=".ttf,.otf,font/ttf,font/otf,application/x-font-ttf,application/x-font-opentype" hidden></label><span class="muted">端末内だけに保存。フォントファイルはPWAへ同梱しません。</span></div>${decorMyFontList.length?decorMyFontList.map(f=>`<div class="decor-custom-row"><span>${esc(f.name||'マイフォント')}</span><button class="btn small" data-decor-myfont-use="${esc(f.id)}">選択中の文字に使用</button><button class="btn small" data-decor-myfont-rename="${esc(f.id)}">名前変更</button><button class="btn small danger" data-decor-myfont-delete="${esc(f.id)}">削除</button></div>`).join(''):'<div class="muted">登録フォントなし</div>'}</div><div class="decor-layer-list">${decorLayerListHtml()}</div><div class="decor-editor-statusbar"><span class="pill">${decorEditorState.layers.length} レイヤー</span><span class="pill">文字 ${decorEditorState.layers.filter(x=>x.type==='text').length}/8</span><span class="pill">スタンプ ${decorEditorState.layers.filter(x=>x.type==='stamp').length}</span><span class="muted">選択中：${l?esc(l.name||'レイヤー'):'なし'}</span></div><div class="decor-toolbar"><button class="btn small" id="decor-reset-transform" ${l&&l.type!=='cheki'?'':'disabled'}>配置を初期化</button><button class="btn small" id="decor-up" ${l?'':'disabled'}>上へ</button><button class="btn small" id="decor-down" ${l?'':'disabled'}>下へ</button><button class="btn small" id="decor-top" ${l?'':'disabled'}>最前面</button><button class="btn small" id="decor-bottom" ${l?'':'disabled'}>最背面</button><button class="btn small" id="decor-duplicate" ${l?'':'disabled'}>複製</button><button class="btn small" id="decor-copy-style" ${l&&l.type!=='cheki'?'':'disabled'}>見た目コピー</button><button class="btn small" id="decor-paste-style" ${l&&l.type!=='cheki'?'':'disabled'}>見た目貼付</button><button class="btn small" id="decor-revert-layer" ${l?'':'disabled'}>保存時に戻す</button><button class="btn small danger" id="decor-delete" ${l?'':'disabled'}>削除</button></div><div id="decor-live-apply" class="decor-live-apply">詳細設定は変更と同時にプレビューへ反映されます</div><div class="decor-controls">${decorControlsHtml(l)}</div></div></div><div class="actions"><button class="btn primary" id="decor-save">保存</button><button class="btn" id="decor-cancel">キャンセル</button></div>`);
+ openModal(`<div class="modal-head"><h3>装飾・サイン</h3><button class="btn primary" id="decor-save-top">保存</button><button class="btn" id="decor-close">閉じる</button></div><div class="decor-mobile-pager" id="decor-mobile-pager"><button class="btn small" type="button" id="decor-page-preview">← プレビュー</button><span class="decor-page-state" id="decor-page-state">1 / 2</span><button class="btn small" type="button" id="decor-page-controls">設定 →</button></div><div class="decor-editor" id="decor-editor-pages"><div class="decor-preview-panel"><div id="decor-preview" class="decor-preview"><div id="decor-preview-base" class="decor-preview-base"><span id="decor-preview-fallback">${esc(card.name)}</span></div><div id="decor-preview-fx" class="decor-preview-fx">${cardFxHtml(card,'collection')}</div><div id="decor-preview-back" class="decor-preview-region decor-preview-back"></div><div id="decor-preview-frame" class="decor-preview-frame">${cardFrameHtml(card)}</div><div id="decor-preview-front" class="decor-preview-region decor-preview-front"></div></div><div class="decor-help">文字・スタンプ・チェキをカードの実表示サイズへ直接合わせる方式に変更しました。文字サイズ・縁・影・発光・背景・曲線文字は各カード幅からその場でpx換算し、固定キャンバスの二重縮小を行いません。選択中の文字・スタンプはドラッグ移動できます。折返しOFFの横書き文字は右端へ移動しても一行を維持します。矢印キーで1、Shift＋矢印で5ずつ微調整できます。</div><div class="decor-preview-status-row"><div id="decor-preview-status" class="decor-preview-status">プレビューを準備中…</div><button class="btn small" type="button" id="decor-preview-reload">画像を再読込</button></div></div><div class="decor-editor-controls-page"><div class="decor-toolbar"><button class="btn primary" id="decor-add-text">文字を追加</button><button class="btn" id="decor-add-stamp">スタンプを追加</button><button class="btn" id="decor-add-cheki">チェキ風フレーム</button><label class="btn">マイスタンプ追加<input id="decor-custom-file" type="file" accept="image/png,image/webp,image/jpeg,.png,.webp,.jpg,.jpeg" hidden></label></div><div class="decor-stamp-grid" id="decor-stamp-choices" hidden>${BUILTIN_DECOR_STAMPS.map(st=>`<button class="btn decor-stamp-choice" data-decor-stamp-choice="${st.id}" title="${st.name}"><span>${st.glyph}</span><small>${st.name}</small></button>`).join('')}${custom.map(st=>`<button class="btn decor-stamp-choice" data-decor-custom-choice="${esc(st.id)}" title="${esc(st.name||'マイスタンプ')}">画像</button>`).join('')}</div><div class="decor-custom-manager">${custom.length?`<div class="decor-section-title">マイスタンプ管理</div>${custom.map(st=>`<div class="decor-custom-row"><span>${esc(st.name||'マイスタンプ')}</span><button class="btn small" data-decor-custom-rename="${esc(st.id)}">名前変更</button><button class="btn small danger" data-decor-custom-delete="${esc(st.id)}">削除</button></div>`).join('')}`:''}</div><div class="decor-myfont-manager"><div class="decor-section-title">マイフォント</div><div class="actions"><label class="btn small">TTF / OTFを追加<input id="decor-myfont-file" type="file" accept=".ttf,.otf,font/ttf,font/otf,application/x-font-ttf,application/x-font-opentype" hidden></label><span class="muted">端末内だけに保存。フォントファイルはPWAへ同梱しません。</span></div>${decorMyFontList.length?decorMyFontList.map(f=>`<div class="decor-custom-row"><span>${esc(f.name||'マイフォント')}</span><button class="btn small" data-decor-myfont-use="${esc(f.id)}">選択中の文字に使用</button><button class="btn small" data-decor-myfont-rename="${esc(f.id)}">名前変更</button><button class="btn small danger" data-decor-myfont-delete="${esc(f.id)}">削除</button></div>`).join(''):'<div class="muted">登録フォントなし</div>'}</div><div class="decor-layer-list">${decorLayerListHtml()}</div><div class="decor-editor-statusbar"><span class="pill">${decorEditorState.layers.length} レイヤー</span><span class="pill">文字 ${decorEditorState.layers.filter(x=>x.type==='text').length}/8</span><span class="pill">スタンプ ${decorEditorState.layers.filter(x=>x.type==='stamp').length}</span><span class="muted">選択中：${l?esc(l.name||'レイヤー'):'なし'}</span></div><div class="decor-toolbar"><button class="btn small" id="decor-reset-transform" ${l&&l.type!=='cheki'?'':'disabled'}>配置を初期化</button><button class="btn small" id="decor-up" ${l?'':'disabled'}>上へ</button><button class="btn small" id="decor-down" ${l?'':'disabled'}>下へ</button><button class="btn small" id="decor-top" ${l?'':'disabled'}>最前面</button><button class="btn small" id="decor-bottom" ${l?'':'disabled'}>最背面</button><button class="btn small" id="decor-duplicate" ${l?'':'disabled'}>複製</button><button class="btn small" id="decor-copy-style" ${l&&l.type!=='cheki'?'':'disabled'}>見た目コピー</button><button class="btn small" id="decor-paste-style" ${l&&l.type!=='cheki'?'':'disabled'}>見た目貼付</button><button class="btn small" id="decor-revert-layer" ${l?'':'disabled'}>保存時に戻す</button><button class="btn small danger" id="decor-delete" ${l?'':'disabled'}>削除</button></div><div id="decor-live-apply" class="decor-live-apply">詳細設定は変更と同時にプレビューへ反映されます</div><div class="decor-controls">${decorControlsHtml(l)}</div></div></div><div class="actions"><button class="btn primary" id="decor-save">保存</button><button class="btn" id="decor-cancel">キャンセル</button></div>`);
+ const decorPages=$('#decor-editor-pages'),decorPageState=$('#decor-page-state');
+ const setDecorPage=(page,smooth=true)=>{if(!decorPages)return;const w=Math.max(1,decorPages.clientWidth);decorPages.scrollTo({left:page*w,behavior:smooth?'smooth':'auto'});if(decorPageState)decorPageState.textContent=`${page+1} / 2`};
+ $('#decor-page-preview')?.addEventListener('click',()=>setDecorPage(0));
+ $('#decor-page-controls')?.addEventListener('click',()=>setDecorPage(1));
+ if(decorPages){let decorPageRaf=0;decorPages.addEventListener('scroll',()=>{if(decorPageRaf)return;decorPageRaf=requestAnimationFrame(()=>{decorPageRaf=0;const w=Math.max(1,decorPages.clientWidth),page=Math.max(0,Math.min(1,Math.round(decorPages.scrollLeft/w)));if(decorPageState)decorPageState.textContent=`${page+1} / 2`})},{passive:true});}
  enhanceDecorRangeControls($('#modal'));bindDecorEditor(card,returnTo);syncDecorConditionalControls();renderDecorPreview(card);
 }
 function enhanceDecorRangeControls(root=document){
@@ -32398,8 +32485,8 @@ function applyFloatingPreviewPosition(){
  left=Math.max(offX+6,Math.min(maxLeft,left));top=Math.max(offY+6,Math.min(maxTop,top));
  win.style.left=`${left}px`;win.style.top=`${top}px`
 }
-function openFloatingPreview(title,owner,contentHtml){const root=$('#floating-preview-root'),content=$('#floating-preview-content');if(!root||!content)return;floatingPreviewOpen=true;floatingPreviewOwner=String(owner||'');$('#floating-preview-title').textContent=String(title||'プレビュー');content.innerHTML=contentHtml;root.hidden=false;root.setAttribute('aria-hidden','false');requestAnimationFrame(applyFloatingPreviewPosition)}
-function closeFloatingPreview(){floatingPreviewOpen=false;floatingPreviewOwner='';const root=$('#floating-preview-root');if(root){root.hidden=true;root.setAttribute('aria-hidden','true')}const content=$('#floating-preview-content');if(content)content.innerHTML=''}
+function openFloatingPreview(title,owner,contentHtml){const root=$('#floating-preview-root'),content=$('#floating-preview-content'),win=$('#floating-preview-window');if(!root||!content)return;floatingPreviewOpen=true;floatingPreviewOwner=String(owner||'');if(win)win.classList.toggle('floating-preview-fx',floatingPreviewOwner.startsWith('modal:fx:'));$('#floating-preview-title').textContent=String(title||'プレビュー');content.innerHTML=contentHtml;root.hidden=false;root.setAttribute('aria-hidden','false');requestAnimationFrame(applyFloatingPreviewPosition)}
+function closeFloatingPreview(){floatingPreviewOpen=false;floatingPreviewOwner='';const root=$('#floating-preview-root'),win=$('#floating-preview-window');if(win)win.classList.remove('floating-preview-fx');if(root){root.hidden=true;root.setAttribute('aria-hidden','true')}const content=$('#floating-preview-content');if(content)content.innerHTML=''}
 function initFloatingPreviewWindow(){const handle=$('#floating-preview-handle'),win=$('#floating-preview-window'),close=$('#floating-preview-close');if(!handle||!win)return;close.onclick=closeFloatingPreview;handle.onpointerdown=e=>{if(e.target.closest('button')||e.button>0)return;const r=win.getBoundingClientRect();floatingPreviewDrag={id:e.pointerId,dx:e.clientX-r.left,dy:e.clientY-r.top};handle.setPointerCapture?.(e.pointerId);e.preventDefault()};handle.onpointermove=e=>{const s=floatingPreviewDrag;if(!s||s.id!==e.pointerId)return;const pos=clampFloatingPreview(e.clientX-s.dx,e.clientY-s.dy);win.style.left=`${pos.left}px`;win.style.top=`${pos.top}px`;e.preventDefault()};const end=e=>{const s=floatingPreviewDrag;if(!s||s.id!==e.pointerId)return;floatingPreviewDrag=null;const r=win.getBoundingClientRect();floatingPreviewPrefs.x=(r.left+r.width/2)/window.innerWidth;floatingPreviewPrefs.y=(r.top+r.height/2)/window.innerHeight;if(matchMedia('(max-width:600px)').matches&&floatingPreviewOwner.startsWith('modal:'))floatingPreviewPrefs.mobileAppearancePlaced=true;saveFloatingPreviewPrefs();e.preventDefault()};handle.onpointerup=end;handle.onpointercancel=e=>{if(floatingPreviewDrag?.id===e.pointerId)floatingPreviewDrag=null};window.addEventListener('resize',()=>requestAnimationFrame(applyFloatingPreviewPosition));window.visualViewport?.addEventListener('resize',()=>requestAnimationFrame(applyFloatingPreviewPosition));window.visualViewport?.addEventListener('scroll',()=>requestAnimationFrame(applyFloatingPreviewPosition));}
 
 let mobileBoardToolWindowOpen=false,mobileBoardToolSection='menu',mobileBoardToolButtonDrag=null;
