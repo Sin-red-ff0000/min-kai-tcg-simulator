@@ -35284,6 +35284,11 @@ function onlineRenderDuelBoard(){
   const room=onlineLoadRooms()[onlineSessionState.joinCode];
   if(!host||!room||!onlineDuelBoard)return;
 
+  // 同期による再描画の前に、手札・各ゾーンの横スクロール位置を保存する。
+  board=onlineDuelBoard;
+  captureHandScroll();
+  captureFixedZoneScroll();
+
   onlineMergeRemotePublicIntoDuel(room);
   board=onlineDuelBoard;
 
@@ -35344,6 +35349,9 @@ function onlineRenderDuelBoard(){
   for(const slot of [1,2]){
     if(onlineToolWindowState[slot]?.open)onlineRenderToolWindow(slot,onlineToolWindowState[slot].section);
   }
+
+  // DOM再生成後に、同期前のスクロール位置を復元する。
+  restoreBoardScroll();
 }
 function onlineUpdateDuelToolbar(room){
   if(!room)return;
@@ -37898,7 +37906,7 @@ async function accountCloudRequest(path,{method='GET',body=null,prefer='',allowE
     if(allowError)return out;
     throw new Error(out.message);
   }
-  const headers={apikey:ACCOUNT_FULL_CLOUD_KEY,Authorization:`Bearer ${session.access_token}`};
+  const headers={apikey:ACCOUNT_SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${session.access_token}`};
   if(body!==null)headers['Content-Type']='application/json';
   if(prefer)headers.Prefer=prefer;
   let response;
@@ -38379,7 +38387,10 @@ async function accountLogin(){
     const pass=document.getElementById('account-password');if(pass)pass.value='';
     accountSetMessage('ログインしました。','ok');
     await accountSyncUser({quiet:true});
-    if(accountUser()?.id)await accountCloudCheck({quiet:true});
+    if(accountUser()?.id){
+      try{await accountCloudCheck({quiet:true})}
+      catch(err){console.warn('Account cloud check failed after login',err)}
+    }
   }finally{accountSetBusy(false);accountRender()}
 }
 async function accountSignup(){
@@ -38395,7 +38406,10 @@ async function accountSignup(){
       accountWriteSession(result.data);
       accountSetMessage('アカウントを作成してログインしました。','ok');
       await accountSyncUser({quiet:true});
-      if(accountUser()?.id)await accountCloudCheck({quiet:true});
+      if(accountUser()?.id){
+        try{await accountCloudCheck({quiet:true})}
+        catch(err){console.warn('Account cloud check failed after signup',err)}
+      }
     }else{
       accountSetMessage('登録を受け付けました。確認メールが届いた場合は、メール内のリンクから確認を完了してください。','ok');
     }
@@ -38499,7 +38513,10 @@ async function accountInit(){
   if(accountSession){
     try{
       await accountSyncUser({quiet:true});
-      if(accountUser()?.id)await accountCloudCheck({quiet:true});
+      if(accountUser()?.id){
+        try{await accountCloudCheck({quiet:true})}
+        catch(err){console.warn('Account cloud check failed after session restore',err)}
+      }
     }catch(err){console.warn('Account session restore failed',err);accountRender()}
   }
 }
