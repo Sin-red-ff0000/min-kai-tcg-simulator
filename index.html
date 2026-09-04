@@ -22553,9 +22553,6 @@ h3 .minkai-ruby{margin-top:.45em}
           <div class="section-head"><h3 style="margin:0">登録前プレビュー</h3><span class="pill">画像は公開しません</span></div>
           <div id="public-register-preview" class="public-card-preview muted">左からカードを選んでください。</div>
           <div class="public-register-meta">
-            <label>作者名
-              <input id="public-card-author" maxlength="80" placeholder="例：Aさん">
-            </label>
             <label>ひとこと
               <textarea id="public-card-description" maxlength="500" placeholder="任意。カードの説明や補足など"></textarea>
             </label>
@@ -22638,6 +22635,13 @@ h3 .minkai-ruby{margin-top:.45em}
       <div class="public-key-grid">
         <div class="panel">
           <div class="section-head"><h3 style="margin:0">自分の管理キー</h3><span class="pill">この端末に保存</span></div>
+          <label>作者名
+            <input id="public-saved-author-name" maxlength="80" autocomplete="off" placeholder="例：Aさん">
+          </label>
+          <div class="actions" style="margin-bottom:10px">
+            <button class="btn" type="button" id="public-author-save">作者名をこの端末に保存</button>
+          </div>
+          <div id="public-author-status" class="muted" style="margin-bottom:10px"></div>
           <p class="muted">あなたが公開する全カードに共通で使う管理キーです。ここで設定したキーは端末に保存され、新しく公開するカードへ自動設定されます。</p>
           <label>保存管理キー
             <div class="public-key-input-row">
@@ -22669,13 +22673,64 @@ h3 .minkai-ruby{margin-top:.45em}
 
       <div class="panel">
         <div class="section-head"><h3 style="margin:0">自分の公開カード</h3><span class="pill">保存管理キー</span></div>
-        <div id="public-managed-status" class="muted"></div>
+        <details class="card-manager-filter-details" open>
+          <summary class="collapsible-panel-summary card-manager-filter-summary">
+            <span>検索・絞り込み</span><span id="public-managed-filter-count" class="pill">0条件</span>
+          </summary>
+          <div class="collapsible-panel-body">
+            <div class="form-grid card-manager-search-grid">
+              <label class="wide">カード名<input id="public-managed-search" type="search" placeholder="カード名の一部" autocomplete="off"></label>
+              <label>種類<select id="public-managed-type">
+                <option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option>
+                <option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option>アームド</option><option value="other">その他</option>
+              </select></label>
+              <label id="public-managed-custom-type-wrap" hidden>その他の種類<input id="public-managed-custom-type" autocomplete="off"></label>
+              <label>Lv<input id="public-managed-level" inputmode="numeric" placeholder="完全一致"></label>
+              <label>種族<input id="public-managed-race" placeholder="複数語はすべて含む" autocomplete="off"></label>
+              <label>レアリティ<input id="public-managed-rarity" placeholder="部分一致" autocomplete="off"></label>
+              <label>効果内テキスト<input id="public-managed-effect" placeholder="含まれる文字" autocomplete="off"></label>
+              <label>公開カードID<input id="public-managed-id" placeholder="IDの一部" autocomplete="off"></label>
+              <label>作者名<input id="public-managed-author" placeholder="作者名の一部" autocomplete="off"></label>
+              <label>DL数 最小<input id="public-managed-dl-min" type="number" min="0" inputmode="numeric"></label>
+              <label>DL数 最大<input id="public-managed-dl-max" type="number" min="0" inputmode="numeric"></label>
+              <label>更新日 From<input id="public-managed-updated-from" type="date"></label>
+              <label>更新日 To<input id="public-managed-updated-to" type="date"></label>
+              <label class="wide">並び順<select id="public-managed-sort">
+                <option value="updated">更新順</option><option value="new">新着順</option><option value="downloads">DL数順</option>
+                <option value="name">カード名順</option><option value="type">種類順</option><option value="levelAsc">Lv昇順</option><option value="levelDesc">Lv降順</option>
+              </select></label>
+            </div>
+            <div class="actions">
+              <button class="btn small" type="button" id="public-managed-clear">検索条件をクリア</button>
+            </div>
+          </div>
+        </details>
+        <div class="section-head" style="margin-top:10px">
+          <div id="public-managed-status" class="muted"></div>
+          <span id="public-managed-visible-count" class="pill">0件</span>
+        </div>
         <div id="public-managed-list" class="public-cards-list"></div>
+        <div class="manager-pagination" style="margin-top:10px">
+          <span id="public-managed-page-info" class="muted"></span>
+          <div class="actions">
+            <button class="btn small" id="public-managed-prev" type="button">前の30件</button>
+            <button class="btn small" id="public-managed-next" type="button">次の30件</button>
+          </div>
+        </div>
       </div>
 
       <div class="panel">
         <div class="section-head"><h3 style="margin:0">臨時管理中の公開カード</h3><span class="pill">このページのみ</span></div>
-        <div id="public-temp-managed-status" class="muted"></div>
+        <div class="form-grid card-manager-search-grid">
+          <label class="wide">カード名<input id="public-temp-search" type="search" placeholder="カード名の一部" autocomplete="off"></label>
+          <label>種類<select id="public-temp-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option>アームド</option></select></label>
+          <label>Lv<input id="public-temp-level" inputmode="numeric"></label>
+          <label>種族<input id="public-temp-race" autocomplete="off"></label>
+          <label>効果内テキスト<input id="public-temp-effect" autocomplete="off"></label>
+          <label>公開カードID<input id="public-temp-id" autocomplete="off"></label>
+          <label class="wide">並び順<select id="public-temp-sort"><option value="updated">更新順</option><option value="name">カード名順</option><option value="downloads">DL数順</option></select></label>
+        </div>
+        <div id="public-temp-managed-status" class="muted" style="margin-top:8px"></div>
         <div id="public-temp-managed-list" class="public-cards-list"></div>
       </div>
 
@@ -22689,6 +22744,7 @@ h3 .minkai-ruby{margin-top:.45em}
             <button class="btn small" type="button" id="public-master-managed-refresh">全カード取得</button>
           </div>
         </label>
+        <div class="form-grid card-manager-search-grid" style="margin-top:10px"><label class="wide">カード名<input id="public-master-search" type="search" placeholder="カード名の一部" autocomplete="off"></label><label>種類<select id="public-master-type"><option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option><option>トラップロール</option><option>ルールプラス</option><option>アナザーゲート</option><option>アームド</option></select></label><label>公開カードID<input id="public-master-id" autocomplete="off"></label></div>
         <div id="public-master-management-status" class="muted" style="margin-top:8px"></div>
         <div id="public-master-managed-list" class="public-cards-list" style="margin-top:10px"></div>
       </details>
@@ -37971,10 +38027,11 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v24.6 public card repository UI revision 4
+// v24.6 public card repository UI revision 5
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
+const LS_PUBLIC_AUTHOR_NAME='minkai_public_author_name_v246r5';
 const PUBLIC_PAGE_SIZE=30;
 
 let publicRows=[];
@@ -37989,11 +38046,14 @@ let publicSessionTemporaryKey='';
 let publicSessionMasterKey='';
 let publicActiveTab='register';
 let publicLocalPage=0;
+let publicManagedPage=0;
 let publicLocalSelectedIds=new Set();
 let publicBrowseSelectedIds=new Set();
 
 function publicStoredManagementKey(){return String(localStorage.getItem(LS_PUBLIC_MANAGEMENT_KEY)||'')}
 function publicSaveManagementKey(v){localStorage.setItem(LS_PUBLIC_MANAGEMENT_KEY,String(v||''))}
+function publicStoredAuthorName(){return String(localStorage.getItem(LS_PUBLIC_AUTHOR_NAME)||'')}
+function publicSaveAuthorName(v){localStorage.setItem(LS_PUBLIC_AUTHOR_NAME,String(v||''))}
 function publicRandomKey(prefix='MGMT'){
   const bytes=new Uint8Array(18);crypto.getRandomValues(bytes);
   const raw=Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
@@ -38070,6 +38130,8 @@ function publicSwitchTab(tab){
 }
 function publicRenderKeyFields(){
   const saved=publicStoredManagementKey();
+  const author=publicStoredAuthorName();
+  const authorEl=document.getElementById('public-saved-author-name');if(authorEl)authorEl.value=author;
   const a=document.getElementById('public-default-management-key');if(a)a.value=saved;
   const b=document.getElementById('public-temporary-management-key');if(b)b.value=publicSessionTemporaryKey;
   const c=document.getElementById('public-developer-master-key');if(c)c.value=publicSessionMasterKey;
@@ -38282,6 +38344,52 @@ async function publicFetchManaged(mode){
   if(listTarget==='own')publicManagedRows=rows;if(listTarget==='temporary')publicTempManagedRows=rows;if(listTarget==='master')publicMasterManagedRows=rows;
   publicSetStatus(statusId,`${rows.length}件を管理できます。`);publicRenderManagedLists();publicRenderCards();
 }
+
+function publicManagedFilterCount(){
+  let n=0;
+  ['public-managed-search','public-managed-level','public-managed-race','public-managed-rarity','public-managed-effect','public-managed-id','public-managed-author','public-managed-dl-min','public-managed-dl-max','public-managed-updated-from','public-managed-updated-to'].forEach(id=>{if(String(document.getElementById(id)?.value||'').trim())n++});
+  if((document.getElementById('public-managed-type')?.value||'all')!=='all')n++;
+  return n;
+}
+function publicFilterManagedRows(rows,prefix='public-managed'){
+  const q=String(document.getElementById(`${prefix}-search`)?.value||'').trim().toLocaleLowerCase();
+  const type=document.getElementById(`${prefix}-type`)?.value||'all';
+  const custom=String(document.getElementById(`${prefix}-custom-type`)?.value||'').trim();
+  const level=String(document.getElementById(`${prefix}-level`)?.value||'').trim();
+  const race=String(document.getElementById(`${prefix}-race`)?.value||'').trim();
+  const rarity=String(document.getElementById(`${prefix}-rarity`)?.value||'').trim().toLocaleLowerCase();
+  const effect=String(document.getElementById(`${prefix}-effect`)?.value||'').trim().toLocaleLowerCase();
+  const idq=String(document.getElementById(`${prefix}-id`)?.value||'').trim().toLocaleLowerCase();
+  const author=String(document.getElementById(`${prefix}-author`)?.value||'').trim().toLocaleLowerCase();
+  const dlMin=String(document.getElementById(`${prefix}-dl-min`)?.value||'').trim();
+  const dlMax=String(document.getElementById(`${prefix}-dl-max`)?.value||'').trim();
+  const from=String(document.getElementById(`${prefix}-updated-from`)?.value||'').trim();
+  const to=String(document.getElementById(`${prefix}-updated-to`)?.value||'').trim();
+  const sort=document.getElementById(`${prefix}-sort`)?.value||'updated';
+  let out=[...(rows||[])];
+  if(q)out=out.filter(r=>String(r.card_name||'').toLocaleLowerCase().includes(q));
+  if(type!=='all')out=out.filter(r=>publicTypeMatches(r.card_data?.type,type,custom));
+  if(level)out=out.filter(r=>String(r.card_data?.level??'').trim()===level);
+  if(race)out=out.filter(r=>publicTokenIncludes(r.card_data?.race,race));
+  if(rarity)out=out.filter(r=>String(r.card_data?.rarity||'').toLocaleLowerCase().includes(rarity));
+  if(effect)out=out.filter(r=>String(r.card_data?.effect||'').toLocaleLowerCase().includes(effect));
+  if(idq)out=out.filter(r=>String(r.id||'').toLocaleLowerCase().includes(idq));
+  if(author)out=out.filter(r=>String(r.author_name||'').toLocaleLowerCase().includes(author));
+  if(dlMin)out=out.filter(r=>(Number(r.download_count)||0)>=Number(dlMin));
+  if(dlMax)out=out.filter(r=>(Number(r.download_count)||0)<=Number(dlMax));
+  if(from)out=out.filter(r=>new Date(r.updated_at||r.created_at).getTime()>=new Date(`${from}T00:00:00`).getTime());
+  if(to)out=out.filter(r=>new Date(r.updated_at||r.created_at).getTime()<=new Date(`${to}T23:59:59`).getTime());
+  out.sort((a,b)=>{
+    if(sort==='new')return new Date(b.created_at)-new Date(a.created_at);
+    if(sort==='downloads')return (Number(b.download_count)||0)-(Number(a.download_count)||0);
+    if(sort==='name')return String(a.card_name||'').localeCompare(String(b.card_name||''),'ja');
+    if(sort==='type')return String(a.card_data?.type||'').localeCompare(String(b.card_data?.type||''),'ja');
+    if(sort==='levelAsc')return (Number(a.card_data?.level)||0)-(Number(b.card_data?.level)||0);
+    if(sort==='levelDesc')return (Number(b.card_data?.level)||0)-(Number(a.card_data?.level)||0);
+    return new Date(b.updated_at||b.created_at)-new Date(a.updated_at||a.created_at);
+  });
+  return out;
+}
 function publicManagedCardHtml(row,mode){
   const canDelete=mode==='own'||mode==='master';
   return `<div class="public-card-row" data-managed-mode="${mode}" data-public-managed-id="${esc(String(row.id))}">
@@ -38293,10 +38401,26 @@ function publicManagedCardHtml(row,mode){
     <div class="public-id-chip" style="margin-top:7px">ID: ${esc(String(row.id))}</div></div>`;
 }
 function publicRenderManagedLists(){
-  const pairs=[['public-managed-list',publicManagedRows,'own','自分の管理キーで管理できるカードはありません。'],
-    ['public-temp-managed-list',publicTempManagedRows,'temporary','臨時管理キーで取得したカードはありません。'],
-    ['public-master-managed-list',publicMasterManagedRows,'master','マスターキーで取得したカードはありません。']];
-  for(const [id,rows,mode,empty] of pairs){const box=document.getElementById(id);if(box)box.innerHTML=rows.length?rows.map(r=>publicManagedCardHtml(r,mode)).join(''):`<div class="muted">${empty}</div>`}
+  const ownAll=publicFilterManagedRows(publicManagedRows,'public-managed');
+  const maxPage=Math.max(0,Math.ceil(ownAll.length/PUBLIC_PAGE_SIZE)-1);
+  if(publicManagedPage>maxPage)publicManagedPage=maxPage;
+  const start=publicManagedPage*PUBLIC_PAGE_SIZE;
+  const own=ownAll.slice(start,start+PUBLIC_PAGE_SIZE);
+  const ownBox=document.getElementById('public-managed-list');
+  if(ownBox)ownBox.innerHTML=own.length?own.map(r=>publicManagedCardHtml(r,'own')).join(''):'<div class="muted">条件に一致するカードはありません。</div>';
+  const fp=document.getElementById('public-managed-filter-count');if(fp)fp.textContent=`${publicManagedFilterCount()}条件`;
+  const vc=document.getElementById('public-managed-visible-count');if(vc)vc.textContent=`${ownAll.length}件`;
+  const pi=document.getElementById('public-managed-page-info');if(pi)pi.textContent=ownAll.length?`表示 ${start+1}〜${Math.min(start+PUBLIC_PAGE_SIZE,ownAll.length)} / ${ownAll.length}件`:'表示 0 / 0件';
+  const prev=document.getElementById('public-managed-prev'),next=document.getElementById('public-managed-next');
+  if(prev)prev.disabled=publicManagedPage<=0;if(next)next.disabled=start+PUBLIC_PAGE_SIZE>=ownAll.length;
+
+  const temp=publicFilterManagedRows(publicTempManagedRows,'public-temp');
+  const tempBox=document.getElementById('public-temp-managed-list');
+  if(tempBox)tempBox.innerHTML=temp.length?temp.map(r=>publicManagedCardHtml(r,'temporary')).join(''):'<div class="muted">条件に一致するカードはありません。</div>';
+
+  const master=publicFilterManagedRows(publicMasterManagedRows,'public-master');
+  const masterBox=document.getElementById('public-master-managed-list');
+  if(masterBox)masterBox.innerHTML=master.length?master.map(r=>publicManagedCardHtml(r,'master')).join(''):'<div class="muted">条件に一致するカードはありません。</div>';
 }
 async function publicPublishOne(card,author,description){
   const managementKey=publicStoredManagementKey();
@@ -38306,7 +38430,7 @@ async function publicPublishOne(card,author,description){
 async function publicPublish(){
   const card=publicSelectedLocalCard();if(!card){publicSetStatus('public-card-publish-status','公開するカードを選んでください。',true);return}
   if(!publicStoredManagementKey()){publicSetStatus('public-card-publish-status','自分の管理キーを先に設定してください。',true);publicSwitchTab('keys');return}
-  const author=String(document.getElementById('public-card-author')?.value||'').trim(),description=String(document.getElementById('public-card-description')?.value||'').trim();
+  const author=publicStoredAuthorName(),description=String(document.getElementById('public-card-description')?.value||'').trim();
   if(!confirm(`「${card.name||'(名称なし)'}」を公開します。\n画像は送信されません。続けますか？`))return;
   publicSetBusy(true);publicSetStatus('public-card-publish-status','公開しています…');
   try{
@@ -38321,7 +38445,7 @@ async function publicBulkPublish(){
   if(!ids.length){toast('公開するカードを選択してください');return}
   if(!publicStoredManagementKey()){publicSwitchTab('keys');toast('自分の管理キーを先に設定してください');return}
   const selected=(Array.isArray(cards)?cards:[]).filter(c=>ids.includes(String(c.id)));
-  const author=String(document.getElementById('public-card-author')?.value||'').trim(),description=String(document.getElementById('public-card-description')?.value||'').trim();
+  const author=publicStoredAuthorName(),description=String(document.getElementById('public-card-description')?.value||'').trim();
   if(!confirm(`${selected.length}枚をまとめて公開します。\n作者名・ひとことは現在の入力内容を共通で使用します。続けますか？`))return;
   publicSetBusy(true);let ok=0,fail=0;
   try{
@@ -38465,6 +38589,24 @@ function publicBind(){
     const a=btn.dataset.publicAction;if(a==='detail')publicDetail(row);if(a==='download')publicDownload(row);if(a==='copy-id')publicCopyText(row.id);if(a==='edit')publicOpenEdit(row);if(a==='delete')publicDelete(row);
   })}
 
+  on('public-author-save','click',()=>{
+    const name=String(document.getElementById('public-saved-author-name')?.value||'').trim();
+    publicSaveAuthorName(name);publicSetStatus('public-author-status',name?'作者名をこの端末へ保存しました。':'作者名を空欄で保存しました。');
+  });
+  ['public-managed-search','public-managed-level','public-managed-race','public-managed-rarity','public-managed-effect','public-managed-id','public-managed-author','public-managed-dl-min','public-managed-dl-max','public-managed-updated-from','public-managed-updated-to','public-managed-custom-type'].forEach(id=>on(id,'input',()=>{publicManagedPage=0;publicRenderManagedLists()}));
+  ['public-managed-type','public-managed-sort'].forEach(id=>on(id,'change',()=>{publicManagedPage=0;publicRenderManagedLists()}));
+  on('public-managed-clear','click',()=>{
+    ['public-managed-search','public-managed-level','public-managed-race','public-managed-rarity','public-managed-effect','public-managed-id','public-managed-author','public-managed-dl-min','public-managed-dl-max','public-managed-updated-from','public-managed-updated-to','public-managed-custom-type'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+    const type=document.getElementById('public-managed-type');if(type)type.value='all';
+    const sort=document.getElementById('public-managed-sort');if(sort)sort.value='updated';
+    publicManagedPage=0;publicRenderManagedLists();
+  });
+  on('public-managed-prev','click',()=>{if(publicManagedPage>0){publicManagedPage--;publicRenderManagedLists()}});
+  on('public-managed-next','click',()=>{const total=publicFilterManagedRows(publicManagedRows,'public-managed').length;if((publicManagedPage+1)*PUBLIC_PAGE_SIZE<total){publicManagedPage++;publicRenderManagedLists()}});
+  ['public-temp-search','public-temp-level','public-temp-race','public-temp-effect','public-temp-id'].forEach(id=>on(id,'input',publicRenderManagedLists));
+  ['public-temp-type','public-temp-sort'].forEach(id=>on(id,'change',publicRenderManagedLists));
+  ['public-master-search','public-master-id'].forEach(id=>on(id,'input',publicRenderManagedLists));
+  ['public-master-type'].forEach(id=>on(id,'change',publicRenderManagedLists));
   on('public-management-generate','click',()=>{document.getElementById('public-default-management-key').value=publicRandomKey('MGMT')});
   on('public-management-copy','click',()=>publicCopyText(document.getElementById('public-default-management-key')?.value||''));
   on('public-management-save','click',()=>{const key=String(document.getElementById('public-default-management-key')?.value||'').trim();
