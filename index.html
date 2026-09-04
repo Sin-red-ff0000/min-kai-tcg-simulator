@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v25.2</title>
+<title>みん会TCG Simulator v25.3</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21754,13 +21754,18 @@ h3 .minkai-ruby{margin-top:.45em}
 
 .public-confirm-body{white-space:pre-wrap;line-height:1.6}
 .public-confirm-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.public-source-state{font-size:11px;padding:2px 7px;border:1px solid currentColor;border-radius:999px}
+.public-card-hidden{opacity:.72}
+.public-card-history-list{display:grid;gap:8px;margin-top:10px}
+.public-card-history-row{border:1px solid var(--line,#3b4353);border-radius:9px;padding:9px}
+.public-tag-button{cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 @media(max-width:760px){
   #screen-public-cards{padding-left:8px;padding-right:8px}
   .public-register-layout{display:block}
   .public-register-layout>.panel{width:100%;min-width:0;box-sizing:border-box}
   .public-register-preview-panel{position:static;margin-top:10px}
   .public-local-search-grid,.card-manager-search-grid{grid-template-columns:1fr!important}
-  .public-local-list{width:100%;overflow-x:hidden}
+  .public-local-list{width:100%;overflow-x:hidden;max-height:none}
   .public-local-row{grid-template-columns:auto minmax(0,1fr);width:100%;box-sizing:border-box}
   .public-local-row-main,.public-local-row-summary{min-width:0;max-width:100%}
   .public-local-row-summary{display:flex;flex-wrap:wrap}
@@ -21783,7 +21788,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v25.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v25.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22580,7 +22585,6 @@ h3 .minkai-ruby{margin-top:.45em}
               <textarea id="public-card-description" maxlength="500" placeholder="任意。カードの説明や補足など"></textarea>
             </label>
           </div>
-          <div class="muted" id="public-register-author-display" style="margin-top:8px"></div>
           <div id="public-register-key-warning" class="public-key-warning" hidden>自分の管理キーが未設定です。先に管理キータブで設定してください。</div>
           <div class="actions public-register-actions">
             <button class="btn primary" type="button" id="public-card-publish">選択カードを公開</button>
@@ -22601,6 +22605,7 @@ h3 .minkai-ruby{margin-top:.45em}
           <div class="collapsible-panel-body">
             <div class="form-grid card-manager-search-grid">
               <label class="wide">カード名<input id="public-cards-search" type="search" placeholder="カード名の一部を入力" autocomplete="off"></label>
+              <label>カードID<input id="public-cards-direct-id" placeholder="公開カードIDを直接検索" autocomplete="off"></label>
               <label>作者名<input id="public-cards-author-search" placeholder="作者名の一部" autocomplete="off"></label>
               <label>種類<select id="public-cards-type-filter">
                 <option value="all">すべて</option><option>キャラクター</option><option>ルーム</option><option>ロール</option>
@@ -22618,6 +22623,7 @@ h3 .minkai-ruby{margin-top:.45em}
             </div>
             <div class="actions card-manager-filter-actions">
               <button class="btn small" type="button" id="public-cards-search-run">検索</button>
+              <button class="btn small primary" type="button" id="public-cards-open-id">カードIDで開く</button>
               <button class="btn small" type="button" id="public-cards-search-clear">検索条件をクリア</button>
               <button class="btn small" type="button" id="public-cards-refresh">更新</button>
             </div>
@@ -22719,6 +22725,7 @@ h3 .minkai-ruby{margin-top:.45em}
               <label>DL数 最大<input id="public-managed-dl-max" type="number" min="0" inputmode="numeric"></label>
               <label>更新日 From<input id="public-managed-updated-from" type="date"></label>
               <label>更新日 To<input id="public-managed-updated-to" type="date"></label>
+              <label>公開状態<select id="public-managed-status-filter"><option value="all">すべて</option><option value="public">公開中</option><option value="hidden">非公開</option></select></label>
               <label class="wide">並び順<select id="public-managed-sort">
                 <option value="updated">更新順</option><option value="new">新着順</option><option value="downloads">DL数順</option>
                 <option value="name">カード名順</option><option value="type">種類順</option><option value="levelAsc">Lv昇順</option><option value="levelDesc">Lv降順</option>
@@ -22732,6 +22739,14 @@ h3 .minkai-ruby{margin-top:.45em}
         <div class="section-head" style="margin-top:10px">
           <div id="public-managed-status" class="muted"></div>
           <span id="public-managed-visible-count" class="pill">0件</span>
+        </div>
+        <div class="actions public-bulk-toolbar" style="margin:8px 0">
+          <button class="btn small" type="button" id="public-managed-select-page">このページを全選択</button>
+          <button class="btn small" type="button" id="public-managed-clear-selection">選択解除</button>
+          <span id="public-managed-selected-count" class="pill">選択 0枚</span>
+          <button class="btn small" type="button" id="public-managed-bulk-hide">一括非公開</button>
+          <button class="btn small" type="button" id="public-managed-bulk-show">一括再公開</button>
+          <button class="btn small danger" type="button" id="public-managed-bulk-delete">一括削除</button>
         </div>
         <div id="public-managed-list" class="public-cards-list"></div>
         <div class="manager-pagination" style="margin-top:10px">
@@ -34848,7 +34863,7 @@ $('#image-storage-cleanup').onclick=async()=>{
 
 // initialize
 // v24.4 startup repair: a single optional UI failure must never abort the whole app bootstrap.
-// v25.2 online top-X repair: server-managed deck inspection is routed through provider/vault APIs.
+// v24.5 online top-X repair: server-managed deck inspection is routed through provider/vault APIs.
 function safeInitialUiStep(label,fn){
  try{return fn()}
  catch(err){console.error(`[startup:${label}]`,err);reportUiRuntimeError(`起動処理（${label}）`,err);return null}
@@ -37149,7 +37164,7 @@ async function onlineServerPeekCount(slot){
 }
 
 
-/* v25.2 server-managed top-X inspection.
+/* v24.5 server-managed top-X inspection.
    The normal online board intentionally does not own the authoritative deck order.
    Therefore top-X must be resolved against the provider/vault rather than the local shadow deck. */
 let onlineTopInspectSession=null;
@@ -38047,7 +38062,11 @@ window.minkaiReadZipStored=readZipStored;
 window.minkaiZipEncoder=zipEncoder;
 window.minkaiMakeZipStored=makeZipStored;
 window.minkaiParseFullBackupZip=parseFullBackupZip;
-win// v25.2 public card repository UI revision 1
+window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
+window.minkaiDownloadBlob=downloadBlob;
+
+
+// v25.3 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -38067,6 +38086,7 @@ let publicSessionMasterKey='';
 let publicActiveTab='register';
 let publicLocalPage=0;
 let publicManagedPage=0;
+let publicManagedSelectedIds=new Set();
 let publicLocalSelectedIds=new Set();
 let publicBrowseSelectedIds=new Set();
 
@@ -38090,10 +38110,8 @@ function publicConfirmDialog(title,message,okLabel='実行する',danger=false){
       </div>`);
     let done=false;
     const finish=v=>{if(done)return;done=true;closeModal();resolve(v)};
-    const ok=document.getElementById('public-confirm-ok');
-    const cancel=document.getElementById('public-confirm-cancel');
-    if(ok)ok.onclick=()=>finish(true);
-    if(cancel)cancel.onclick=()=>finish(false);
+    document.getElementById('public-confirm-ok')?.addEventListener('click',()=>finish(true));
+    document.getElementById('public-confirm-cancel')?.addEventListener('click',()=>finish(false));
   });
 }
 async function publicCopyText(text){
@@ -38131,9 +38149,14 @@ function publicCardForUpload(card){
   if(Array.isArray(out.visualEffects))out.visualEffects=out.visualEffects.filter(x=>!String(x?.type||'').startsWith('custom:'));
   return out;
 }
-function publicNormalizeDownloaded(raw){
+function publicNormalizeDownloaded(raw,sourceRow=null){
   const c=publicSanitize(raw||{});c.id=uid('card');c.cardLinks=[];delete c.imageSourceCardId;
   if(!Array.isArray(c.visualEffects))c.visualEffects=[];
+  if(sourceRow){
+    c.source_public_card_id=String(sourceRow.id||'');
+    c.source_public_updated_at=String(sourceRow.updated_at||sourceRow.created_at||'');
+    c.source_public_author_name=String(sourceRow.author_name||'');
+  }
   return c;
 }
 async function publicApi(action,payload={}){
@@ -38156,6 +38179,14 @@ function publicMeta(card){
   if(card?.race)parts.push(String(card.race));return parts;
 }
 function publicMetaHtml(card){return publicMeta(card).map(x=>`<span class="pill">${esc(x)}</span>`).join('')}
+function publicClickableMetaHtml(card){
+  const out=[];
+  if(card?.type)out.push(`<button class="pill public-tag-button" type="button" data-public-filter-type="${esc(String(card.type))}">${esc(String(card.type))}</button>`);
+  if(card?.level!==undefined&&String(card.level)!=='')out.push(`<span class="pill">Lv ${esc(String(card.level))}</span>`);
+  if(card?.power!==undefined&&String(card.power)!=='')out.push(`<span class="pill">POWER ${esc(String(card.power))}</span>`);
+  if(card?.race)out.push(`<button class="pill public-tag-button" type="button" data-public-filter-race="${esc(String(card.race))}">${esc(String(card.race))}</button>`);
+  return out.join('');
+}
 function publicDate(v){try{return v?new Date(v).toLocaleString('ja-JP'):''}catch(_){return String(v||'')}}
 function publicSwitchTab(tab){
   publicActiveTab=['register','browse','keys'].includes(tab)?tab:'register';
@@ -38169,8 +38200,6 @@ function publicRenderKeyFields(){
   const saved=publicStoredManagementKey();
   const author=publicStoredAuthorName();
   const authorEl=document.getElementById('public-saved-author-name');if(authorEl)authorEl.value=author;
-  const authorDisplay=document.getElementById('public-register-author-display');
-  if(authorDisplay)authorDisplay.textContent=author?`作者名：${author}`:'作者名：未設定（管理キーから設定）';
   const a=document.getElementById('public-default-management-key');if(a)a.value=saved;
   const b=document.getElementById('public-temporary-management-key');if(b)b.value=publicSessionTemporaryKey;
   const c=document.getElementById('public-developer-master-key');if(c)c.value=publicSessionMasterKey;
@@ -38312,6 +38341,22 @@ function publicFilters(){
     sort:String(document.getElementById('public-cards-sort')?.value||'new')
   }
 }
+
+function publicLocalSourceCard(row){
+  return (Array.isArray(cards)?cards:[]).find(c=>String(c.source_public_card_id||'')===String(row.id||''))||null;
+}
+function publicSourceState(row){
+  const local=publicLocalSourceCard(row);
+  if(!local)return '';
+  const remote=new Date(row.updated_at||row.created_at||0).getTime();
+  const saved=new Date(local.source_public_updated_at||0).getTime();
+  return remote>saved?'update':'downloaded';
+}
+async function publicCheckDuplicate(card){
+  const key=publicStoredManagementKey();
+  if(!key||!card)return {ok:true,rows:[]};
+  return await publicApi('duplicate-check',{management_key:key,card_name:String(card.name||''),card_data:publicCardForUpload(card)});
+}
 function publicRoleFor(row){
   const id=String(row.id);
   if(publicMasterManagedRows.some(x=>String(x.id)===id))return 'master';
@@ -38337,9 +38382,10 @@ function publicRenderCards(){
           <input class="public-browse-select" type="checkbox" data-public-browse-check="${esc(String(row.id))}" ${publicBrowseSelectedIds.has(String(row.id))?'checked':''} aria-label="選択">
           <div>
             <div class="public-card-row-title">${esc(String(row.card_name||'(名称なし)'))}</div>
-            <div class="public-card-row-meta">${publicMetaHtml(c)}
-              <span class="pill">作者 ${esc(String(row.author_name||'未設定'))}</span><span class="pill">DL ${Number(row.download_count)||0}</span>
+            <div class="public-card-row-meta">${publicClickableMetaHtml(c)}
+              <button class="pill public-tag-button" type="button" data-public-filter-author="${esc(String(row.author_name||''))}">作者 ${esc(String(row.author_name||'未設定'))}</button><span class="pill">DL ${Number(row.download_count)||0}</span>
               ${role?`<span class="public-card-owner-badge">${role==='master'?'マスター管理':role==='own'?'自分の管理':'臨時管理'}</span>`:''}
+              ${publicSourceState(row)==='downloaded'?'<span class="public-source-state">ダウンロード済み</span>':publicSourceState(row)==='update'?'<span class="public-source-state">最新版あり</span>':''}
             </div>
           </div>
         </div>
@@ -38352,7 +38398,8 @@ function publicRenderCards(){
         <button class="btn small primary" type="button" data-public-action="download">このカードをダウンロード</button>
         <button class="btn small" type="button" data-public-action="copy-id">カードIDをコピー</button>
         ${role?'<button class="btn small" type="button" data-public-action="edit">公開内容を編集</button>':''}
-        ${role==='own'||role==='master'?'<button class="btn small danger" type="button" data-public-action="delete">削除</button>':''}
+        ${role==='own'||role==='master'?'<button class="btn small" type="button" data-public-action="history">更新履歴</button>':''}
+        ${role==='own'||role==='master'?'<button class="btn small" type="button" data-public-action="hide">非公開</button><button class="btn small danger" type="button" data-public-action="delete">削除</button>':''}
       </div>
       <div class="public-id-chip" style="margin-top:7px">ID: ${esc(String(row.id))}</div>
     </div>`;
@@ -38387,7 +38434,7 @@ async function publicFetchManaged(mode){
 function publicManagedFilterCount(){
   let n=0;
   ['public-managed-search','public-managed-level','public-managed-race','public-managed-rarity','public-managed-effect','public-managed-id','public-managed-author','public-managed-dl-min','public-managed-dl-max','public-managed-updated-from','public-managed-updated-to'].forEach(id=>{if(String(document.getElementById(id)?.value||'').trim())n++});
-  if((document.getElementById('public-managed-type')?.value||'all')!=='all')n++;
+  if((document.getElementById('public-managed-type')?.value||'all')!=='all')n++;if((document.getElementById('public-managed-status-filter')?.value||'all')!=='all')n++;
   return n;
 }
 function publicFilterManagedRows(rows,prefix='public-managed'){
@@ -38405,7 +38452,10 @@ function publicFilterManagedRows(rows,prefix='public-managed'){
   const from=String(document.getElementById(`${prefix}-updated-from`)?.value||'').trim();
   const to=String(document.getElementById(`${prefix}-updated-to`)?.value||'').trim();
   const sort=document.getElementById(`${prefix}-sort`)?.value||'updated';
+  const statusFilter=prefix==='public-managed'?(document.getElementById('public-managed-status-filter')?.value||'all'):'all';
   let out=[...(rows||[])];
+  if(statusFilter==='public')out=out.filter(r=>r.is_public!==false);
+  if(statusFilter==='hidden')out=out.filter(r=>r.is_public===false);
   if(q)out=out.filter(r=>String(r.card_name||'').toLocaleLowerCase().includes(q));
   if(type!=='all')out=out.filter(r=>publicTypeMatches(r.card_data?.type,type,custom));
   if(level)out=out.filter(r=>String(r.card_data?.level??'').trim()===level);
@@ -38431,12 +38481,17 @@ function publicFilterManagedRows(rows,prefix='public-managed'){
 }
 function publicManagedCardHtml(row,mode){
   const canDelete=mode==='own'||mode==='master';
-  return `<div class="public-card-row" data-managed-mode="${mode}" data-public-managed-id="${esc(String(row.id))}">
-    <div class="public-card-row-head"><div><div class="public-card-row-title">${esc(String(row.card_name||'(名称なし)'))}</div>
-    <div class="public-card-row-meta">${publicMetaHtml(row.card_data||{})}<span class="pill">DL ${Number(row.download_count)||0}</span></div></div>
+  return `<div class="public-card-row ${row.is_public===false?'public-card-hidden':''}" data-managed-mode="${mode}" data-public-managed-id="${esc(String(row.id))}">
+    <div class="public-card-row-head"><div style="display:flex;gap:9px;align-items:flex-start">
+    ${mode==='own'?`<input type="checkbox" class="public-managed-select" data-public-managed-check="${esc(String(row.id))}" ${publicManagedSelectedIds.has(String(row.id))?'checked':''}>`:''}
+    <div><div class="public-card-row-title">${esc(String(row.card_name||'(名称なし)'))}</div>
+    <div class="public-card-row-meta">${publicMetaHtml(row.card_data||{})}<span class="pill">DL ${Number(row.download_count)||0}</span><span class="pill">${row.is_public===false?'非公開':'公開中'}</span></div></div></div>
     <div class="muted">${esc(publicDate(row.updated_at||row.created_at))}</div></div>
     <div class="actions public-managed-card-actions"><button class="btn small" data-managed-action="edit">公開内容を編集</button>
-    <button class="btn small" data-managed-action="copy-id">カードIDをコピー</button>${canDelete?'<button class="btn small danger" data-managed-action="delete">削除</button>':''}</div>
+    <button class="btn small" data-managed-action="copy-id">カードIDをコピー</button>
+    ${canDelete?'<button class="btn small" data-managed-action="history">更新履歴</button>':''}
+    ${canDelete?`<button class="btn small" data-managed-action="toggle">${row.is_public===false?'再公開':'非公開'}</button>`:''}
+    ${canDelete?'<button class="btn small danger" data-managed-action="delete">削除</button>':''}</div>
     <div class="public-id-chip" style="margin-top:7px">ID: ${esc(String(row.id))}</div></div>`;
 }
 function publicRenderManagedLists(){
@@ -38452,6 +38507,7 @@ function publicRenderManagedLists(){
   const pi=document.getElementById('public-managed-page-info');if(pi)pi.textContent=ownAll.length?`表示 ${start+1}〜${Math.min(start+PUBLIC_PAGE_SIZE,ownAll.length)} / ${ownAll.length}件`:'表示 0 / 0件';
   const prev=document.getElementById('public-managed-prev'),next=document.getElementById('public-managed-next');
   if(prev)prev.disabled=publicManagedPage<=0;if(next)next.disabled=start+PUBLIC_PAGE_SIZE>=ownAll.length;
+  const sc=document.getElementById('public-managed-selected-count');if(sc)sc.textContent=`選択 ${publicManagedSelectedIds.size}枚`;
 
   const temp=publicFilterManagedRows(publicTempManagedRows,'public-temp');
   const tempBox=document.getElementById('public-temp-managed-list');
@@ -38470,6 +38526,15 @@ async function publicPublish(){
   const card=publicSelectedLocalCard();if(!card){publicSetStatus('public-card-publish-status','公開するカードを選んでください。',true);return}
   if(!publicStoredManagementKey()){publicSetStatus('public-card-publish-status','自分の管理キーを先に設定してください。',true);publicSwitchTab('keys');return}
   const author=publicStoredAuthorName(),description=String(document.getElementById('public-card-description')?.value||'').trim();
+  const dup=await publicCheckDuplicate(card);
+  if(dup.ok&&Array.isArray(dup.rows)&&dup.rows.length){
+    const existing=dup.rows[0];
+    const replace=await publicConfirmDialog('重複する公開カードがあります',`同じ管理キーで「${card.name||'(名称なし)'}」が既に公開されています。\n既存カードを現在の内容で更新しますか？\nキャンセルすると新規公開もしません。`,'既存を更新');
+    if(!replace)return;
+    const r=await publicApi('update',{id:existing.id,management_key:publicStoredManagementKey(),author_name:publicStoredAuthorName(),description:String(document.getElementById('public-card-description')?.value||'').trim(),card_data:publicCardForUpload(card)});
+    if(!r.ok){publicSetStatus('public-card-publish-status',r.message,true);return}
+    publicSetStatus('public-card-publish-status','既存の公開カードを更新しました。');await publicFetchManaged('own');await publicFetchCards();return;
+  }
   if(!await publicConfirmDialog('カードを公開',`「${card.name||'(名称なし)'}」を公開します。\n画像は送信されません。`,'公開する'))return;
   publicSetBusy(true);publicSetStatus('public-card-publish-status','公開しています…');
   try{
@@ -38485,7 +38550,7 @@ async function publicBulkPublish(){
   if(!publicStoredManagementKey()){publicSwitchTab('keys');toast('自分の管理キーを先に設定してください');return}
   const selected=(Array.isArray(cards)?cards:[]).filter(c=>ids.includes(String(c.id)));
   const author=publicStoredAuthorName(),description=String(document.getElementById('public-card-description')?.value||'').trim();
-  if(!await publicConfirmDialog('まとめて公開',`${selected.length}枚をまとめて公開します。\n保存済みの作者名と現在のひとことを共通で使用します。`,'まとめて公開'))return;
+  if(!await publicConfirmDialog('まとめて公開',`${selected.length}枚をまとめて公開します。\n保存済み作者名と現在のひとことを共通で使用します。`,'まとめて公開'))return;
   publicSetBusy(true);let ok=0,fail=0;
   try{
     for(let i=0;i<selected.length;i++){
@@ -38510,7 +38575,7 @@ function publicDetail(row){
 }
 async function publicDownloadIntoLocal(row,{skipDuplicatePrompt=false}={}){
   const r=await publicApi('download',{id:row.id});if(!r.ok)return {ok:false,message:r.message};
-  const incoming=publicNormalizeDownloaded(r.card.card_data||{});
+  const incoming=publicNormalizeDownloaded(r.card.card_data||{},r.card);
   const same=(Array.isArray(cards)?cards:[]).find(c=>String(c.name||'')===String(incoming.name||''));
   if(same&&!skipDuplicatePrompt){
     const choice=window.prompt(`同名カード「${incoming.name}」があります。\n1: 別カードとして追加\n2: 既存カードを上書き\n3: キャンセル`,'1');
@@ -38544,6 +38609,66 @@ async function publicBulkDownload(){
     try{if(added.length){touchRecentCards(added);touchRegisteredCards(added)}renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup()}catch(_){}
     publicBrowseSelectedIds.clear();publicRenderCards();publicSetStatus('public-cards-status',`${ok}枚をダウンロードしました${fail?` / ${fail}枚失敗`:''}`,!!fail);
   }finally{publicSetBusy(false)}
+}
+
+async function publicToggleVisibility(row,makePublic,mode=''){
+  const r=await publicApi('set-public',{id:row.id,...publicAuthFor(row,mode),is_public:!!makePublic});
+  if(!r.ok){toast(r.message);return false}
+  row.is_public=!!makePublic;toast(makePublic?'再公開しました':'非公開にしました');
+  if(mode==='master')await publicFetchManaged('master');else await publicFetchManaged('own');
+  await publicFetchCards();return true;
+}
+async function publicOpenHistory(row,mode=''){
+  const r=await publicApi('history-list',{id:row.id,...publicAuthFor(row,mode)});
+  if(!r.ok){toast(r.message);return}
+  const histories=Array.isArray(r.rows)?r.rows:[];
+  openModal(`<div class="modal-head"><h3>更新履歴</h3><button class="btn" id="public-history-close">閉じる</button></div>
+    <div class="muted">「${esc(String(row.card_name||''))}」の直近3世代</div>
+    <div class="public-card-history-list">${histories.length?histories.map(h=>`<div class="public-card-history-row" data-history-id="${esc(String(h.id))}">
+      <div><b>${esc(publicDate(h.created_at))}</b></div>
+      <div class="muted">${esc(String(h.card_name||''))} / 作者 ${esc(String(h.author_name||''))}</div>
+      <div class="actions" style="margin-top:7px"><button class="btn small" data-history-action="restore">この状態へ戻す</button></div>
+    </div>`).join(''):'<div class="muted">履歴はまだありません。</div>'}</div>`);
+  document.getElementById('public-history-close').onclick=closeModal;
+  document.querySelector('.public-card-history-list')?.addEventListener('click',async e=>{
+    const btn=e.target.closest('[data-history-action]');if(!btn)return;
+    const host=btn.closest('[data-history-id]');if(!host)return;
+    if(!await publicConfirmDialog('履歴を復元',`このカードを ${publicDate(histories.find(h=>String(h.id)===String(host.dataset.historyId))?.created_at)} 時点へ戻します。`,'復元する'))return;
+    const rr=await publicApi('history-restore',{id:row.id,history_id:host.dataset.historyId,...publicAuthFor(row,mode)});
+    if(!rr.ok){toast(rr.message);return}
+    toast('履歴から復元しました');closeModal();
+    if(mode==='master')await publicFetchManaged('master');else await publicFetchManaged('own');
+    await publicFetchCards();
+  });
+}
+async function publicOpenDirectId(){
+  const id=String(document.getElementById('public-cards-direct-id')?.value||'').trim();
+  if(!id){toast('カードIDを入力してください');return}
+  const r=await publicApi('get',{id});
+  if(!r.ok){toast(r.message);return}
+  publicDetail(r.card);
+}
+async function publicManagedBulkSet(makePublic){
+  const ids=[...publicManagedSelectedIds];if(!ids.length){toast('カードを選択してください');return}
+  if(!await publicConfirmDialog(makePublic?'一括再公開':'一括非公開',`${ids.length}枚を${makePublic?'再公開':'非公開'}にします。`,makePublic?'再公開する':'非公開にする'))return;
+  let ok=0,fail=0;
+  for(const id of ids){
+    const row=publicManagedRows.find(x=>String(x.id)===id);if(!row)continue;
+    const r=await publicApi('set-public',{id,...publicAuthFor(row,'own'),is_public:!!makePublic});
+    if(r.ok)ok++;else fail++;
+  }
+  publicManagedSelectedIds.clear();await publicFetchManaged('own');await publicFetchCards();toast(`${ok}枚を更新しました${fail?` / ${fail}枚失敗`:''}`);
+}
+async function publicManagedBulkDelete(){
+  const ids=[...publicManagedSelectedIds];if(!ids.length){toast('カードを選択してください');return}
+  if(!await publicConfirmDialog('一括削除',`${ids.length}枚の公開カードを削除します。\\nこの操作は元に戻せません。`,'削除する',true))return;
+  let ok=0,fail=0;
+  for(const id of ids){
+    const row=publicManagedRows.find(x=>String(x.id)===id);if(!row)continue;
+    const r=await publicApi('delete',{id,...publicAuthFor(row,'own')});
+    if(r.ok)ok++;else fail++;
+  }
+  publicManagedSelectedIds.clear();await publicFetchManaged('own');await publicFetchCards();toast(`${ok}枚を削除しました${fail?` / ${fail}枚失敗`:''}`);
 }
 function publicAuthFor(row,mode=''){
   const role=mode||publicRoleFor(row);if(role==='master')return {master_key:publicSessionMasterKey};
@@ -38605,9 +38730,10 @@ function publicBind(){
     const row=e.target.closest('[data-public-local-id]');if(!row)return;publicSelectedLocalCardId=String(row.dataset.publicLocalId||'');publicRenderLocalCards();
   })}
 
-  on('public-cards-refresh','click',publicFetchCards);on('public-cards-search-run','click',()=>{publicPage=0;publicFetchCards()});
+  on('public-cards-refresh','click',publicFetchCards);
+  on('public-cards-open-id','click',()=>publicOpenDirectId());on('public-cards-search-run','click',()=>{publicPage=0;publicFetchCards()});
   on('public-cards-search-clear','click',()=>{
-    ['public-cards-search','public-cards-author-search','public-cards-custom-type','public-cards-level','public-cards-race','public-cards-rarity','public-cards-effect'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+    ['public-cards-search','public-cards-direct-id','public-cards-author-search','public-cards-custom-type','public-cards-level','public-cards-race','public-cards-rarity','public-cards-effect'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
     const type=document.getElementById('public-cards-type-filter');if(type)type.value='all';const sort=document.getElementById('public-cards-sort');if(sort)sort.value='new';
     publicPage=0;publicFetchCards();
   });
@@ -38622,21 +38748,24 @@ function publicBind(){
 
   const browse=document.getElementById('public-cards-list');
   if(browse&&!browse.dataset.publicBound){browse.dataset.publicBound='1';browse.addEventListener('click',e=>{
+    const authorTag=e.target.closest('[data-public-filter-author]');if(authorTag){document.getElementById('public-cards-author-search').value=authorTag.dataset.publicFilterAuthor||'';publicPage=0;publicFetchCards();return}
+    const typeTag=e.target.closest('[data-public-filter-type]');if(typeTag){const sel=document.getElementById('public-cards-type-filter');if(sel)sel.value=typeTag.dataset.publicFilterType||'all';publicPage=0;publicFetchCards();return}
+    const raceTag=e.target.closest('[data-public-filter-race]');if(raceTag){document.getElementById('public-cards-race').value=raceTag.dataset.publicFilterRace||'';publicPage=0;publicFetchCards();return}
     const check=e.target.closest('[data-public-browse-check]');
     if(check){const id=String(check.dataset.publicBrowseCheck||'');if(check.checked)publicBrowseSelectedIds.add(id);else publicBrowseSelectedIds.delete(id);const s=document.getElementById('public-browse-selected-count');if(s)s.textContent=`選択 ${publicBrowseSelectedIds.size}枚`;e.stopPropagation();return}
     const btn=e.target.closest('[data-public-action]');if(!btn)return;const host=btn.closest('[data-public-card-id]'),row=publicRows.find(x=>String(x.id)===String(host?.dataset.publicCardId));if(!row)return;
-    const a=btn.dataset.publicAction;if(a==='detail')publicDetail(row);if(a==='download')publicDownload(row);if(a==='copy-id')publicCopyText(row.id);if(a==='edit')publicOpenEdit(row);if(a==='delete')publicDelete(row);
+    const a=btn.dataset.publicAction;if(a==='detail')publicDetail(row);if(a==='download')publicDownload(row);if(a==='copy-id')publicCopyText(row.id);if(a==='edit')publicOpenEdit(row);if(a==='history')publicOpenHistory(row);if(a==='hide')publicToggleVisibility(row,false);if(a==='delete')publicDelete(row);
   })}
 
   on('public-author-save','click',()=>{
     const name=String(document.getElementById('public-saved-author-name')?.value||'').trim();
-    publicSaveAuthorName(name);publicSetStatus('public-author-status',name?'作者名をこの端末へ保存しました。':'作者名を空欄で保存しました。');publicRenderKeyFields();
+    publicSaveAuthorName(name);publicSetStatus('public-author-status',name?'作者名をこの端末へ保存しました。':'作者名を空欄で保存しました。');
   });
   ['public-managed-search','public-managed-level','public-managed-race','public-managed-rarity','public-managed-effect','public-managed-id','public-managed-author','public-managed-dl-min','public-managed-dl-max','public-managed-updated-from','public-managed-updated-to','public-managed-custom-type'].forEach(id=>on(id,'input',()=>{publicManagedPage=0;publicRenderManagedLists()}));
-  ['public-managed-type','public-managed-sort'].forEach(id=>on(id,'change',()=>{publicManagedPage=0;publicRenderManagedLists()}));
+  ['public-managed-type','public-managed-sort','public-managed-status-filter'].forEach(id=>on(id,'change',()=>{publicManagedPage=0;publicRenderManagedLists()}));
   on('public-managed-clear','click',()=>{
     ['public-managed-search','public-managed-level','public-managed-race','public-managed-rarity','public-managed-effect','public-managed-id','public-managed-author','public-managed-dl-min','public-managed-dl-max','public-managed-updated-from','public-managed-updated-to','public-managed-custom-type'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
-    const type=document.getElementById('public-managed-type');if(type)type.value='all';
+    const type=document.getElementById('public-managed-type');if(type)type.value='all';const st=document.getElementById('public-managed-status-filter');if(st)st.value='all';
     const sort=document.getElementById('public-managed-sort');if(sort)sort.value='updated';
     publicManagedPage=0;publicRenderManagedLists();
   });
@@ -38657,10 +38786,23 @@ function publicBind(){
   on('public-master-clear','click',()=>{publicSessionMasterKey='';const el=document.getElementById('public-developer-master-key');if(el)el.value='';publicMasterManagedRows=[];publicRenderManagedLists();publicSetStatus('public-master-management-status','クリアしました。')});
   on('public-master-managed-refresh','click',()=>publicFetchManaged('master'));
 
-  const managedClick=e=>{const btn=e.target.closest('[data-managed-action]');if(!btn)return;const host=btn.closest('[data-public-managed-id]');if(!host)return;
+  on('public-managed-select-page','click',()=>{publicFilterManagedRows(publicManagedRows,'public-managed').slice(publicManagedPage*PUBLIC_PAGE_SIZE,(publicManagedPage+1)*PUBLIC_PAGE_SIZE).forEach(r=>publicManagedSelectedIds.add(String(r.id)));publicRenderManagedLists()});
+  on('public-managed-clear-selection','click',()=>{publicManagedSelectedIds.clear();publicRenderManagedLists()});
+  on('public-managed-bulk-hide','click',()=>publicManagedBulkSet(false));
+  on('public-managed-bulk-show','click',()=>publicManagedBulkSet(true));
+  on('public-managed-bulk-delete','click',()=>publicManagedBulkDelete());
+
+  const managedClick=e=>{
+    const check=e.target.closest('[data-public-managed-check]');
+    if(check){const id=String(check.dataset.publicManagedCheck||'');if(check.checked)publicManagedSelectedIds.add(id);else publicManagedSelectedIds.delete(id);publicRenderManagedLists();e.stopPropagation();return}
+    const btn=e.target.closest('[data-managed-action]');if(!btn)return;const host=btn.closest('[data-public-managed-id]');if(!host)return;
     const mode=String(host.dataset.managedMode||'own'),rows=mode==='temporary'?publicTempManagedRows:mode==='master'?publicMasterManagedRows:publicManagedRows;
     const row=rows.find(x=>String(x.id)===String(host.dataset.publicManagedId));if(!row)return;
-    if(btn.dataset.managedAction==='edit')publicOpenEdit(row,mode);if(btn.dataset.managedAction==='copy-id')publicCopyText(row.id);if(btn.dataset.managedAction==='delete')publicDelete(row,mode)};
+    if(btn.dataset.managedAction==='edit')publicOpenEdit(row,mode);if(btn.dataset.managedAction==='copy-id')publicCopyText(row.id);
+    if(btn.dataset.managedAction==='history')publicOpenHistory(row,mode);
+    if(btn.dataset.managedAction==='toggle')publicToggleVisibility(row,row.is_public===false,mode);
+    if(btn.dataset.managedAction==='delete')publicDelete(row,mode)
+  };
   ['public-managed-list','public-temp-managed-list','public-master-managed-list'].forEach(id=>{const box=document.getElementById(id);if(box&&!box.dataset.publicBound){box.dataset.publicBound='1';box.addEventListener('click',managedClick)}});
 }
 async function publicCardsRender(){
@@ -38669,7 +38811,6 @@ async function publicCardsRender(){
 }
 window.publicCardsRender=publicCardsRender;
 window.publicCardsFetch=publicFetchCards;
-publicBind();publicRenderKeyFields();publicRenderLocalCards();publicRenderManagedLists();ards;
 publicBind();publicRenderKeyFields();publicRenderLocalCards();publicRenderManagedLists();
 })();
 </script>
