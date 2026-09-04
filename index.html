@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v24.6</title>
+<title>みん会TCG Simulator v25.2</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21751,6 +21751,29 @@ h3 .minkai-ruby{margin-top:.45em}
 .public-register-layout{grid-template-columns:minmax(0,1fr) minmax(340px,.8fr)}
 .public-local-list{max-height:none}
 .public-local-row-effect{display:none}
+
+.public-confirm-body{white-space:pre-wrap;line-height:1.6}
+.public-confirm-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+@media(max-width:760px){
+  #screen-public-cards{padding-left:8px;padding-right:8px}
+  .public-register-layout{display:block}
+  .public-register-layout>.panel{width:100%;min-width:0;box-sizing:border-box}
+  .public-register-preview-panel{position:static;margin-top:10px}
+  .public-local-search-grid,.card-manager-search-grid{grid-template-columns:1fr!important}
+  .public-local-list{width:100%;overflow-x:hidden}
+  .public-local-row{grid-template-columns:auto minmax(0,1fr);width:100%;box-sizing:border-box}
+  .public-local-row-main,.public-local-row-summary{min-width:0;max-width:100%}
+  .public-local-row-summary{display:flex;flex-wrap:wrap}
+  .public-local-row-title{white-space:normal;overflow-wrap:anywhere;word-break:break-word;max-width:100%}
+  .public-bulk-toolbar{display:flex;flex-wrap:wrap;gap:6px}
+  .public-bulk-toolbar .btn{flex:1 1 auto}
+  .manager-pagination{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .manager-pagination .actions{display:flex;flex-wrap:wrap}
+  .manager-pagination label{display:flex;align-items:center;gap:6px}
+  .manager-pagination input[type="number"]{max-width:88px}
+  .public-register-meta textarea{min-height:90px}
+  .public-card-preview{min-height:auto}
+}
 </style>
 
 </head>
@@ -21760,7 +21783,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v24.6 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v25.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22557,6 +22580,7 @@ h3 .minkai-ruby{margin-top:.45em}
               <textarea id="public-card-description" maxlength="500" placeholder="任意。カードの説明や補足など"></textarea>
             </label>
           </div>
+          <div class="muted" id="public-register-author-display" style="margin-top:8px"></div>
           <div id="public-register-key-warning" class="public-key-warning" hidden>自分の管理キーが未設定です。先に管理キータブで設定してください。</div>
           <div class="actions public-register-actions">
             <button class="btn primary" type="button" id="public-card-publish">選択カードを公開</button>
@@ -34824,7 +34848,7 @@ $('#image-storage-cleanup').onclick=async()=>{
 
 // initialize
 // v24.4 startup repair: a single optional UI failure must never abort the whole app bootstrap.
-// v24.5 online top-X repair: server-managed deck inspection is routed through provider/vault APIs.
+// v25.2 online top-X repair: server-managed deck inspection is routed through provider/vault APIs.
 function safeInitialUiStep(label,fn){
  try{return fn()}
  catch(err){console.error(`[startup:${label}]`,err);reportUiRuntimeError(`起動処理（${label}）`,err);return null}
@@ -37125,7 +37149,7 @@ async function onlineServerPeekCount(slot){
 }
 
 
-/* v24.5 server-managed top-X inspection.
+/* v25.2 server-managed top-X inspection.
    The normal online board intentionally does not own the authoritative deck order.
    Therefore top-X must be resolved against the provider/vault rather than the local shadow deck. */
 let onlineTopInspectSession=null;
@@ -38023,11 +38047,7 @@ window.minkaiReadZipStored=readZipStored;
 window.minkaiZipEncoder=zipEncoder;
 window.minkaiMakeZipStored=makeZipStored;
 window.minkaiParseFullBackupZip=parseFullBackupZip;
-window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
-window.minkaiDownloadBlob=downloadBlob;
-
-
-// v24.6 public card repository UI revision 5
+win// v25.2 public card repository UI revision 1
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -38058,6 +38078,23 @@ function publicRandomKey(prefix='MGMT'){
   const bytes=new Uint8Array(18);crypto.getRandomValues(bytes);
   const raw=Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
   return `${prefix}-${raw.slice(0,8)}-${raw.slice(8,16)}-${raw.slice(16,24)}-${raw.slice(24)}`;
+}
+
+function publicConfirmDialog(title,message,okLabel='実行する',danger=false){
+  return new Promise(resolve=>{
+    openModal(`<div class="modal-head"><h3>${esc(String(title||'確認'))}</h3></div>
+      <div class="public-confirm-body">${esc(String(message||''))}</div>
+      <div class="public-confirm-actions">
+        <button class="btn" type="button" id="public-confirm-cancel">キャンセル</button>
+        <button class="btn ${danger?'danger':'primary'}" type="button" id="public-confirm-ok">${esc(String(okLabel||'実行する'))}</button>
+      </div>`);
+    let done=false;
+    const finish=v=>{if(done)return;done=true;closeModal();resolve(v)};
+    const ok=document.getElementById('public-confirm-ok');
+    const cancel=document.getElementById('public-confirm-cancel');
+    if(ok)ok.onclick=()=>finish(true);
+    if(cancel)cancel.onclick=()=>finish(false);
+  });
 }
 async function publicCopyText(text){
   try{await navigator.clipboard.writeText(String(text||''));toast('コピーしました')}
@@ -38132,6 +38169,8 @@ function publicRenderKeyFields(){
   const saved=publicStoredManagementKey();
   const author=publicStoredAuthorName();
   const authorEl=document.getElementById('public-saved-author-name');if(authorEl)authorEl.value=author;
+  const authorDisplay=document.getElementById('public-register-author-display');
+  if(authorDisplay)authorDisplay.textContent=author?`作者名：${author}`:'作者名：未設定（管理キーから設定）';
   const a=document.getElementById('public-default-management-key');if(a)a.value=saved;
   const b=document.getElementById('public-temporary-management-key');if(b)b.value=publicSessionTemporaryKey;
   const c=document.getElementById('public-developer-master-key');if(c)c.value=publicSessionMasterKey;
@@ -38431,7 +38470,7 @@ async function publicPublish(){
   const card=publicSelectedLocalCard();if(!card){publicSetStatus('public-card-publish-status','公開するカードを選んでください。',true);return}
   if(!publicStoredManagementKey()){publicSetStatus('public-card-publish-status','自分の管理キーを先に設定してください。',true);publicSwitchTab('keys');return}
   const author=publicStoredAuthorName(),description=String(document.getElementById('public-card-description')?.value||'').trim();
-  if(!confirm(`「${card.name||'(名称なし)'}」を公開します。\n画像は送信されません。続けますか？`))return;
+  if(!await publicConfirmDialog('カードを公開',`「${card.name||'(名称なし)'}」を公開します。\n画像は送信されません。`,'公開する'))return;
   publicSetBusy(true);publicSetStatus('public-card-publish-status','公開しています…');
   try{
     const r=await publicPublishOne(card,author,description);
@@ -38446,7 +38485,7 @@ async function publicBulkPublish(){
   if(!publicStoredManagementKey()){publicSwitchTab('keys');toast('自分の管理キーを先に設定してください');return}
   const selected=(Array.isArray(cards)?cards:[]).filter(c=>ids.includes(String(c.id)));
   const author=publicStoredAuthorName(),description=String(document.getElementById('public-card-description')?.value||'').trim();
-  if(!confirm(`${selected.length}枚をまとめて公開します。\n作者名・ひとことは現在の入力内容を共通で使用します。続けますか？`))return;
+  if(!await publicConfirmDialog('まとめて公開',`${selected.length}枚をまとめて公開します。\n保存済みの作者名と現在のひとことを共通で使用します。`,'まとめて公開'))return;
   publicSetBusy(true);let ok=0,fail=0;
   try{
     for(let i=0;i<selected.length;i++){
@@ -38493,7 +38532,7 @@ async function publicDownload(row){
 async function publicBulkDownload(){
   const ids=[...publicBrowseSelectedIds],targets=publicRows.filter(r=>ids.includes(String(r.id)));
   if(!targets.length){toast('ダウンロードするカードを選択してください');return}
-  if(!confirm(`${targets.length}枚をまとめてダウンロードします。\n同名カードがある場合も別カードとして追加します。続けますか？`))return;
+  if(!await publicConfirmDialog('まとめてダウンロード',`${targets.length}枚をまとめてダウンロードします。\n同名カードがある場合も別カードとして追加します。`,'まとめてダウンロード'))return;
   publicSetBusy(true);let ok=0,fail=0,added=[];
   try{
     for(let i=0;i<targets.length;i++){
@@ -38535,7 +38574,7 @@ function publicOpenEdit(row,mode=''){
   };
 }
 async function publicDelete(row,mode=''){
-  if(!confirm(`公開カード「${row.card_name}」を削除します。\n既にダウンロードされたコピーには影響しません。`))return;
+  if(!await publicConfirmDialog('公開カードを削除',`公開カード「${row.card_name}」を削除します。\n既にダウンロードされたコピーには影響しません。`,'削除する',true))return;
   const r=await publicApi('delete',{id:row.id,...publicAuthFor(row,mode)});if(!r.ok){toast(r.message);return}
   toast('公開カードを削除しました');if(mode==='master')await publicFetchManaged('master');else await publicFetchManaged('own');await publicFetchCards();
 }
@@ -38591,7 +38630,7 @@ function publicBind(){
 
   on('public-author-save','click',()=>{
     const name=String(document.getElementById('public-saved-author-name')?.value||'').trim();
-    publicSaveAuthorName(name);publicSetStatus('public-author-status',name?'作者名をこの端末へ保存しました。':'作者名を空欄で保存しました。');
+    publicSaveAuthorName(name);publicSetStatus('public-author-status',name?'作者名をこの端末へ保存しました。':'作者名を空欄で保存しました。');publicRenderKeyFields();
   });
   ['public-managed-search','public-managed-level','public-managed-race','public-managed-rarity','public-managed-effect','public-managed-id','public-managed-author','public-managed-dl-min','public-managed-dl-max','public-managed-updated-from','public-managed-updated-to','public-managed-custom-type'].forEach(id=>on(id,'input',()=>{publicManagedPage=0;publicRenderManagedLists()}));
   ['public-managed-type','public-managed-sort'].forEach(id=>on(id,'change',()=>{publicManagedPage=0;publicRenderManagedLists()}));
@@ -38630,6 +38669,7 @@ async function publicCardsRender(){
 }
 window.publicCardsRender=publicCardsRender;
 window.publicCardsFetch=publicFetchCards;
+publicBind();publicRenderKeyFields();publicRenderLocalCards();publicRenderManagedLists();ards;
 publicBind();publicRenderKeyFields();publicRenderLocalCards();publicRenderManagedLists();
 })();
 </script>
