@@ -26,3 +26,8 @@
 v24.6公開所を使うには以下の2点が必要。
 1. SUPABASE_PUBLIC_CARDS_v24_6.sql を SQL Editor で実行
 2. Edge Function `minkai-public-cards` を作成し、supabase/functions/minkai-public-cards/index.ts を配置してDeploy
+
+## v24.6 初回配布版からの修正
+- 公開所JSをメインアプリIIFE内へ移動し、内部のcards/save/uid等へ正しくアクセスできるよう修正
+- 画面左上のバージョン表示をv24.6へ更新
+- 起動直後の公開所初期化によるランタイムエラーを解消
