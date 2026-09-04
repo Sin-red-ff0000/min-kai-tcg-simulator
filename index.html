@@ -21689,20 +21689,57 @@ h3 .minkai-ruby{margin-top:.45em}
 </style>
 
 <style>
-.public-cards-intro{margin-bottom:12px}
-.public-cards-grid{align-items:start;margin-bottom:12px}
-.public-cards-filters{display:grid;grid-template-columns:2fr 1.3fr 1fr 1fr;gap:8px;margin-bottom:8px}
-.public-cards-list{display:grid;gap:10px;margin-top:10px}
+.public-cards-tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.public-cards-tab.active{background:var(--accent,#577fb9);border-color:var(--accent,#577fb9)}
+.public-tab-pane{display:none}
+.public-tab-pane.active{display:block}
+.public-register-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr);gap:12px;align-items:start}
+.public-local-search-grid{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:10px}
+.public-local-list{display:grid;gap:7px;max-height:620px;overflow:auto;padding-right:4px}
+.public-local-row{border:1px solid var(--line,#3b4353);border-radius:10px;padding:10px;cursor:pointer;background:rgba(255,255,255,.02)}
+.public-local-row:hover{background:rgba(255,255,255,.045)}
+.public-local-row.active{outline:2px solid var(--accent,#577fb9);background:rgba(87,127,185,.13)}
+.public-local-row-title{font-weight:700}
+.public-local-row-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+.public-register-preview-panel{position:sticky;top:62px}
+.public-card-preview{border:1px solid var(--line,#3b4353);border-radius:12px;padding:14px;min-height:210px;background:rgba(255,255,255,.02)}
+.public-preview-name{font-size:21px;font-weight:800;margin-bottom:7px}
+.public-preview-meta{display:flex;gap:6px;flex-wrap:wrap}
+.public-preview-effect{white-space:pre-wrap;margin-top:12px;border-top:1px solid var(--line,#3b4353);padding-top:10px}
+.public-register-meta{margin-top:12px}
+.public-register-actions{margin-top:10px}
+.public-key-warning{margin-top:10px;border:1px solid #9a7b34;border-radius:9px;padding:9px;background:rgba(154,123,52,.12)}
+.public-cards-filters{display:grid;grid-template-columns:2fr 1.2fr 1fr 1fr;gap:8px;margin-bottom:8px}
+.public-browse-actions{align-items:center;margin-bottom:10px}
+.public-cards-list{display:grid;gap:9px}
 .public-card-row{border:1px solid var(--line,#3b4353);border-radius:12px;padding:12px;background:rgba(255,255,255,.025)}
 .public-card-row-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-.public-card-row-title{font-size:16px;font-weight:700}
-.public-card-row-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.public-card-row-title{font-size:17px;font-weight:800}
+.public-card-row-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .public-card-row-desc{white-space:pre-wrap;margin-top:8px}
+.public-card-row-effect{white-space:pre-wrap;margin-top:8px;padding-top:8px;border-top:1px solid var(--line,#3b4353);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .public-card-owner-badge{font-size:11px;padding:2px 7px;border:1px solid currentColor;border-radius:999px}
-.public-card-detail-effect{white-space:pre-wrap;border-top:1px solid var(--line,#3b4353);padding-top:10px;margin-top:10px}
+.public-key-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.public-key-input-row{display:grid;grid-template-columns:1fr auto auto;gap:6px}
+.public-temp-access-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .public-card-management-key{word-break:break-all;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;padding:8px;border-radius:8px;background:rgba(0,0,0,.18)}
-@media(max-width:900px){.public-cards-filters{grid-template-columns:1fr 1fr}.public-card-row-head{display:block}}
-@media(max-width:600px){.public-cards-filters{grid-template-columns:1fr}}
+.public-managed-card-actions{margin-top:8px}
+.public-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.public-edit-source-list{max-height:220px;overflow:auto;border:1px solid var(--line,#3b4353);border-radius:10px;padding:6px}
+@media(max-width:1000px){
+  .public-register-layout{grid-template-columns:1fr}
+  .public-register-preview-panel{position:static}
+  .public-cards-filters{grid-template-columns:1fr 1fr}
+  .public-key-grid{grid-template-columns:1fr}
+}
+@media(max-width:650px){
+  .public-local-search-grid,.public-cards-filters,.public-temp-access-grid,.public-edit-grid{grid-template-columns:1fr}
+  .public-key-input-row{grid-template-columns:1fr 1fr 1fr}
+  .public-card-row-head{display:block}
+}
+
+.public-id-chip{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;opacity:.8}
+.public-managed-section-note{margin-bottom:8px}
 </style>
 
 </head>
@@ -22425,95 +22462,177 @@ h3 .minkai-ruby{margin-top:.45em}
 
 
 
+
+
   <section id="screen-public-cards" class="screen">
     <div class="section-head">
       <h2>カード公開所</h2>
       <span id="public-cards-count-pill" class="pill">未取得</span>
     </div>
 
-    <div class="panel public-cards-intro">
-      <p style="margin-top:0">登録カードのデータだけを公開・共有できます。カード画像はアップロードされません。公開カードをダウンロードすると、この端末の登録カードへ独立したコピーとして追加されます。</p>
-      <div class="muted">閲覧・公開・ダウンロードはログイン不要です。公開時に発行される管理キーを持つ端末だけが、その公開カードを更新・削除できます。</div>
+    <div class="public-cards-tabs" role="tablist" aria-label="カード公開所">
+      <button class="btn public-cards-tab active" type="button" data-public-tab="register">カードを登録</button>
+      <button class="btn public-cards-tab" type="button" data-public-tab="browse">公開所</button>
+      <button class="btn public-cards-tab" type="button" data-public-tab="keys">管理キー</button>
     </div>
 
-    <div class="grid2 public-cards-grid">
-      <div class="panel">
-        <div class="section-head"><h3 style="margin:0">カードを公開</h3><span class="pill">画像なし</span></div>
-        <label>公開する登録カード
-          <select id="public-card-local-select"></select>
-        </label>
-        <label>作者名
-          <input id="public-card-author" maxlength="80" placeholder="例：Aさん">
-        </label>
-        <label>ひとこと
-          <textarea id="public-card-description" maxlength="500" placeholder="任意。カードの説明や補足など"></textarea>
-        </label>
-        <div class="actions">
-          <button class="btn primary" type="button" id="public-card-publish">このカードを公開</button>
+    <div id="public-tab-register" class="public-tab-pane active">
+      <div class="public-register-layout">
+        <div class="panel">
+          <div class="section-head"><h3 style="margin:0">登録カードを選ぶ</h3><span id="public-local-count" class="pill">0件</span></div>
+          <div class="public-local-search-grid">
+            <label>検索
+              <input id="public-local-search" placeholder="カード名・種族・効果など" autocomplete="off">
+            </label>
+            <label>種類
+              <select id="public-local-type">
+                <option value="">すべて</option>
+                <option>キャラクター</option>
+                <option>ルーム</option>
+                <option>ロール</option>
+                <option>トラップロール</option>
+                <option>ルールプラス</option>
+                <option>アナザーゲート</option>
+              </select>
+            </label>
+          </div>
+          <div id="public-local-list" class="public-local-list"></div>
         </div>
-        <div id="public-card-publish-status" class="muted" style="margin-top:8px"></div>
-      </div>
 
-      <div class="panel">
-        <div class="section-head"><h3 style="margin:0">管理キー</h3><span class="pill">端末保存</span></div>
-        <p class="muted">公開した端末では管理キーを自動保存します。ブラウザデータを消した場合や別端末で管理したい場合は、公開カードIDと管理キーを登録してください。</p>
-        <label>公開カードID
-          <input id="public-card-manage-id" autocomplete="off" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
-        </label>
-        <label>管理キー
-          <input id="public-card-manage-key" autocomplete="off" placeholder="公開時に発行されたキー">
-        </label>
-        <div class="actions">
-          <button class="btn" type="button" id="public-card-register-key">管理キーを登録</button>
+        <div class="panel public-register-preview-panel">
+          <div class="section-head"><h3 style="margin:0">登録前プレビュー</h3><span class="pill">画像は公開しません</span></div>
+          <div id="public-register-preview" class="public-card-preview muted">左からカードを選んでください。</div>
+          <div class="public-register-meta">
+            <label>作者名
+              <input id="public-card-author" maxlength="80" placeholder="例：Aさん">
+            </label>
+            <label>ひとこと
+              <textarea id="public-card-description" maxlength="500" placeholder="任意。カードの説明や補足など"></textarea>
+            </label>
+          </div>
+          <div id="public-register-key-warning" class="public-key-warning" hidden>
+            自分の管理キーが未設定です。先に管理キータブで設定してください。
+          </div>
+          <div class="actions public-register-actions">
+            <button class="btn primary" type="button" id="public-card-publish">選択カードを公開</button>
+            <button class="btn" type="button" id="public-go-keys">管理キーを設定</button>
+          </div>
+          <div id="public-card-publish-status" class="muted" style="margin-top:8px"></div>
         </div>
-        <div id="public-card-key-status" class="muted" style="margin-top:8px"></div>
       </div>
     </div>
 
-    <div class="panel">
-      <div class="section-head">
-        <h3 style="margin:0">公開カード一覧</h3>
-        <button class="btn small" type="button" id="public-cards-refresh">更新</button>
-      </div>
-      <div class="public-cards-filters">
-        <label>カード名検索
-          <input id="public-cards-search" placeholder="カード名を入力" autocomplete="off">
-        </label>
-        <label>作者名検索
-          <input id="public-cards-author-search" placeholder="作者名を入力" autocomplete="off">
-        </label>
-        <label>種類
-          <select id="public-cards-type-filter">
-            <option value="">すべて</option>
-            <option>キャラクター</option>
-            <option>ルーム</option>
-            <option>ロール</option>
-            <option>トラップロール</option>
-            <option>ルールプラス</option>
-            <option>アナザーゲート</option>
-          </select>
-        </label>
-        <label>並び順
-          <select id="public-cards-sort">
-            <option value="new">新着順</option>
-            <option value="downloads">ダウンロード数順</option>
-            <option value="name">カード名順</option>
-          </select>
-        </label>
-      </div>
-      <div class="actions" style="margin-bottom:10px">
-        <button class="btn small primary" type="button" id="public-cards-search-run">検索</button>
-        <button class="btn small" type="button" id="public-cards-search-clear">検索条件をクリア</button>
-      </div>
-      <div id="public-cards-status" class="muted">公開カードを取得してください。</div>
-      <div id="public-cards-list" class="public-cards-list"></div>
-      <div class="manager-pagination" style="margin-top:12px">
-        <span id="public-cards-page-info" class="muted"></span>
-        <div class="actions">
-          <button class="btn small" type="button" id="public-cards-prev">前へ</button>
-          <button class="btn small" type="button" id="public-cards-next">次へ</button>
+    <div id="public-tab-browse" class="public-tab-pane">
+      <div class="panel">
+        <div class="section-head">
+          <h3 style="margin:0">公開カード一覧</h3>
+          <button class="btn small" type="button" id="public-cards-refresh">更新</button>
+        </div>
+
+        <div class="public-cards-filters">
+          <label>カード名・効果検索
+            <input id="public-cards-search" placeholder="カード名や効果文" autocomplete="off">
+          </label>
+          <label>作者名
+            <input id="public-cards-author-search" placeholder="作者名" autocomplete="off">
+          </label>
+          <label>種類
+            <select id="public-cards-type-filter">
+              <option value="">すべて</option>
+              <option>キャラクター</option>
+              <option>ルーム</option>
+              <option>ロール</option>
+              <option>トラップロール</option>
+              <option>ルールプラス</option>
+              <option>アナザーゲート</option>
+            </select>
+          </label>
+          <label>並び順
+            <select id="public-cards-sort">
+              <option value="new">新着順</option>
+              <option value="updated">更新順</option>
+              <option value="downloads">ダウンロード数順</option>
+              <option value="name">カード名順</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="actions public-browse-actions">
+          <button class="btn small primary" type="button" id="public-cards-search-run">検索</button>
+          <button class="btn small" type="button" id="public-cards-search-clear">条件をクリア</button>
+          <span id="public-cards-status" class="muted"></span>
+        </div>
+
+        <div id="public-cards-list" class="public-cards-list"></div>
+
+        <div class="manager-pagination" style="margin-top:12px">
+          <span id="public-cards-page-info" class="muted"></span>
+          <div class="actions">
+            <button class="btn small" type="button" id="public-cards-prev">前へ</button>
+            <button class="btn small" type="button" id="public-cards-next">次へ</button>
+          </div>
         </div>
       </div>
+    </div>
+
+    <div id="public-tab-keys" class="public-tab-pane">
+      <div class="public-key-grid">
+        <div class="panel">
+          <div class="section-head"><h3 style="margin:0">自分の管理キー</h3><span class="pill">この端末に保存</span></div>
+          <p class="muted">あなたが公開する全カードに共通で使う管理キーです。ここで設定したキーは端末に保存され、新しく公開するカードへ自動設定されます。</p>
+          <label>保存管理キー
+            <div class="public-key-input-row">
+              <input id="public-default-management-key" autocomplete="off" spellcheck="false">
+              <button class="btn small" type="button" id="public-management-generate">生成</button>
+              <button class="btn small" type="button" id="public-management-copy">コピー</button>
+            </div>
+          </label>
+          <div class="actions">
+            <button class="btn primary" type="button" id="public-management-save">この端末に保存</button>
+            <button class="btn" type="button" id="public-managed-refresh">自分の公開カードを取得</button>
+          </div>
+          <div id="public-management-status" class="muted" style="margin-top:8px"></div>
+        </div>
+
+        <div class="panel">
+          <div class="section-head"><h3 style="margin:0">臨時管理キー</h3><span class="pill">保存しません</span></div>
+          <p class="muted">他の人から管理を許可された場合、その人の管理キーをここへ入力します。この欄はブラウザへ保存せず、ページを閉じると消えます。</p>
+          <label>他人の管理キー
+            <div class="public-key-input-row">
+              <input id="public-temporary-management-key" autocomplete="off" spellcheck="false" placeholder="他の人から受け取った管理キー">
+              <button class="btn small" type="button" id="public-temp-clear">クリア</button>
+              <button class="btn small" type="button" id="public-temp-managed-refresh">対象カード取得</button>
+            </div>
+          </label>
+          <div id="public-temp-management-status" class="muted" style="margin-top:8px"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-head"><h3 style="margin:0">自分の公開カード</h3><span class="pill">保存管理キー</span></div>
+        <div id="public-managed-status" class="muted"></div>
+        <div id="public-managed-list" class="public-cards-list"></div>
+      </div>
+
+      <div class="panel">
+        <div class="section-head"><h3 style="margin:0">臨時管理中の公開カード</h3><span class="pill">このページのみ</span></div>
+        <div id="public-temp-managed-status" class="muted"></div>
+        <div id="public-temp-managed-list" class="public-cards-list"></div>
+      </div>
+
+      <details class="panel" style="margin-top:12px">
+        <summary>開発者用マスターキー</summary>
+        <p class="muted">全公開カードにアクセスできる非常用キーです。アプリには保存されません。Supabase側に設定した開発者用マスターキーと一致した場合だけ有効です。</p>
+        <label>開発者マスターキー
+          <div class="public-key-input-row">
+            <input id="public-developer-master-key" type="password" autocomplete="off" spellcheck="false">
+            <button class="btn small" type="button" id="public-master-clear">クリア</button>
+            <button class="btn small" type="button" id="public-master-managed-refresh">全カード取得</button>
+          </div>
+        </label>
+        <div id="public-master-management-status" class="muted" style="margin-top:8px"></div>
+        <div id="public-master-managed-list" class="public-cards-list" style="margin-top:10px"></div>
+      </details>
     </div>
   </section>
 
@@ -37793,74 +37912,72 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v24.6 public card repository
+// v24.6 public card repository UI revision 3
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
-const LS_PUBLIC_CARD_KEYS='minkai_public_card_management_keys_v246';
+const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
 const PUBLIC_PAGE_SIZE=30;
+
 let publicRows=[];
 let publicPage=0;
 let publicTotal=0;
 let publicBusy=false;
+let publicSelectedLocalCardId='';
+let publicManagedRows=[];
+let publicTempManagedRows=[];
+let publicMasterManagedRows=[];
+let publicSessionTemporaryKey='';
+let publicSessionMasterKey='';
+let publicActiveTab='register';
 
-function publicCardLoadKeys(){
-  try{
-    const x=JSON.parse(localStorage.getItem(LS_PUBLIC_CARD_KEYS)||'{}');
-    return x&&typeof x==='object'&&!Array.isArray(x)?x:{};
-  }catch(_){return {}}
+function publicStoredManagementKey(){return String(localStorage.getItem(LS_PUBLIC_MANAGEMENT_KEY)||'')}
+function publicSaveManagementKey(v){localStorage.setItem(LS_PUBLIC_MANAGEMENT_KEY,String(v||''))}
+function publicRandomKey(prefix='MGMT'){
+  const bytes=new Uint8Array(18);crypto.getRandomValues(bytes);
+  const raw=Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+  return `${prefix}-${raw.slice(0,8)}-${raw.slice(8,16)}-${raw.slice(16,24)}-${raw.slice(24)}`;
 }
-function publicCardSaveKeys(keys){
-  localStorage.setItem(LS_PUBLIC_CARD_KEYS,JSON.stringify(keys||{}));
+async function publicCopyText(text){
+  try{await navigator.clipboard.writeText(String(text||''));toast('コピーしました')}
+  catch(_){window.prompt('コピーしてください',String(text||''))}
 }
-function publicCardGetKey(id){return String(publicCardLoadKeys()[String(id)]||'')}
-function publicCardRememberKey(id,key){
-  if(!id||!key)return;
-  const keys=publicCardLoadKeys();keys[String(id)]=String(key);publicCardSaveKeys(keys);
-}
-function publicCardForgetKey(id){
-  const keys=publicCardLoadKeys();delete keys[String(id)];publicCardSaveKeys(keys);
-}
-function publicCardSetStatus(id,text,isError=false){
+function publicSetStatus(id,text,isError=false){
   const el=document.getElementById(id);if(!el)return;
   el.textContent=text||'';el.style.color=isError?'var(--danger,#ff6969)':'';
 }
-function publicCardSetBusy(v){
+function publicSetBusy(v){
   publicBusy=!!v;
-  ['public-card-publish','public-card-register-key','public-cards-refresh','public-cards-search-run','public-cards-search-clear','public-cards-prev','public-cards-next'].forEach(id=>{
-    const el=document.getElementById(id);if(el)el.disabled=publicBusy;
+  document.querySelectorAll('#screen-public-cards button').forEach(btn=>{
+    if(btn.dataset.publicTab||btn.id==='public-go-keys')return;
+    btn.disabled=publicBusy;
   });
 }
-function publicCardSanitize(value,depth=0){
+function publicSanitize(value,depth=0){
   if(depth>18)return null;
-  if(Array.isArray(value))return value.map(x=>publicCardSanitize(x,depth+1));
+  if(Array.isArray(value))return value.map(x=>publicSanitize(x,depth+1));
   if(value&&typeof value==='object'){
     const out={};
     for(const [k,v] of Object.entries(value)){
       if(['id','image','imageData','imageUrl','imageSourceCardId','cardLinks'].includes(k))continue;
-      out[k]=publicCardSanitize(v,depth+1);
+      out[k]=publicSanitize(v,depth+1);
     }
     return out;
   }
   return value;
 }
 function publicCardForUpload(card){
-  const out=publicCardSanitize(card||{});
+  const out=publicSanitize(card||{});
   if(!out||typeof out!=='object')return {};
-  delete out.id;
-  delete out.imageSourceCardId;
-  out.cardLinks=[];
+  delete out.id;delete out.imageSourceCardId;out.cardLinks=[];
   if(Array.isArray(out.visualEffects))out.visualEffects=out.visualEffects.filter(x=>!String(x?.type||'').startsWith('custom:'));
   return out;
 }
-function publicCardNormalizeDownloaded(raw){
-  const c=publicCardSanitize(raw||{});
-  c.id=uid('card');
-  c.cardLinks=[];
-  delete c.imageSourceCardId;
+function publicNormalizeDownloaded(raw){
+  const c=publicSanitize(raw||{});c.id=uid('card');c.cardLinks=[];delete c.imageSourceCardId;
   if(!Array.isArray(c.visualEffects))c.visualEffects=[];
   return c;
 }
-async function publicCardApi(action,payload={}){
+async function publicApi(action,payload={}){
   let res;
   try{
     res=await fetch(PUBLIC_CARDS_URL,{
@@ -37868,227 +37985,323 @@ async function publicCardApi(action,payload={}){
       headers:{'Content-Type':'application/json',apikey:PUBLIC_CARDS_KEY,Authorization:`Bearer ${PUBLIC_CARDS_KEY}`},
       body:JSON.stringify({action,...payload})
     });
-  }catch(err){
-    return {ok:false,message:'公開所サーバーへ接続できませんでした。'};
-  }
-  let data=null;
-  try{data=await res.json()}catch(_){}
+  }catch(_){return {ok:false,message:'公開所サーバーへ接続できませんでした。'}}
+  let data=null;try{data=await res.json()}catch(_){}
   if(!res.ok||!data?.ok)return {ok:false,message:data?.message||`公開所サーバーエラー (${res.status})`,status:res.status,data};
   return data;
 }
-function publicCardLocalOptions(){
-  const sel=document.getElementById('public-card-local-select');if(!sel)return;
-  const previous=sel.value;
-  const list=Array.isArray(cards)?cards:[];
-  sel.innerHTML=list.length?list.map(c=>`<option value="${esc(String(c.id||''))}">${esc(String(c.name||'(名称なし)'))}</option>`).join(''):'<option value="">登録カードがありません</option>';
-  if(previous&&list.some(c=>String(c.id)===previous))sel.value=previous;
+function publicMeta(card){
+  const parts=[];if(card?.type)parts.push(String(card.type));
+  if(card?.level!==undefined&&String(card.level)!=='')parts.push(`Lv ${String(card.level)}`);
+  if(card?.power!==undefined&&String(card.power)!=='')parts.push(`POWER ${String(card.power)}`);
+  if(card?.race)parts.push(String(card.race));return parts;
 }
-function publicCardFilters(){
-  return {
-    search:String(document.getElementById('public-cards-search')?.value||'').trim(),
-    author:String(document.getElementById('public-cards-author-search')?.value||'').trim(),
-    type:String(document.getElementById('public-cards-type-filter')?.value||'').trim(),
-    sort:String(document.getElementById('public-cards-sort')?.value||'new')
-  };
+function publicMetaHtml(card){return publicMeta(card).map(x=>`<span class="pill">${esc(x)}</span>`).join('')}
+function publicDate(v){try{return v?new Date(v).toLocaleString('ja-JP'):''}catch(_){return String(v||'')}}
+function publicCardSearchText(card){return [card?.name,card?.type,card?.race,card?.effect,card?.flavor,card?.rarity].map(x=>String(x||'').toLowerCase()).join('\n')}
+function publicSwitchTab(tab){
+  publicActiveTab=['register','browse','keys'].includes(tab)?tab:'register';
+  document.querySelectorAll('.public-cards-tab').forEach(b=>b.classList.toggle('active',b.dataset.publicTab===publicActiveTab));
+  document.querySelectorAll('.public-tab-pane').forEach(p=>p.classList.toggle('active',p.id===`public-tab-${publicActiveTab}`));
+  if(publicActiveTab==='register')publicRenderLocalCards();
+  if(publicActiveTab==='browse'&&!publicRows.length)publicFetchCards();
+  if(publicActiveTab==='keys')publicRenderKeyFields();
 }
-function publicCardDate(v){
-  if(!v)return '';
-  try{return new Date(v).toLocaleString('ja-JP')}catch(_){return String(v)}
+function publicRenderKeyFields(){
+  const saved=publicStoredManagementKey();
+  const a=document.getElementById('public-default-management-key');if(a)a.value=saved;
+  const b=document.getElementById('public-temporary-management-key');if(b)b.value=publicSessionTemporaryKey;
+  const c=document.getElementById('public-developer-master-key');if(c)c.value=publicSessionMasterKey;
+  const warning=document.getElementById('public-register-key-warning');if(warning)warning.hidden=!!saved;
 }
-function publicCardSummaryHtml(row){
-  const c=row?.card_data||{};
-  const parts=[];
-  if(c.type)parts.push(String(c.type));
-  if(c.level!==undefined&&String(c.level)!=='')parts.push(`Lv ${String(c.level)}`);
-  if(c.power!==undefined&&String(c.power)!=='')parts.push(`POWER ${String(c.power)}`);
-  if(c.race)parts.push(String(c.race));
-  return parts.map(x=>`<span class="pill">${esc(x)}</span>`).join('');
+function publicFilteredLocalCards(){
+  const q=String(document.getElementById('public-local-search')?.value||'').trim().toLowerCase();
+  const type=String(document.getElementById('public-local-type')?.value||'').trim();
+  return (Array.isArray(cards)?cards:[]).filter(c=>{
+    if(type&&String(c.type||'')!==type)return false;
+    return !q||publicCardSearchText(c).includes(q);
+  }).slice(0,500);
 }
-function publicCardRenderList(){
-  const box=document.getElementById('public-cards-list');
-  const pill=document.getElementById('public-cards-count-pill');
-  const info=document.getElementById('public-cards-page-info');
+function publicRenderLocalCards(){
+  const list=publicFilteredLocalCards(),box=document.getElementById('public-local-list'),pill=document.getElementById('public-local-count');
+  if(pill)pill.textContent=`${list.length}件`;if(!box)return;
+  if(!list.length){box.innerHTML='<div class="muted">条件に一致する登録カードがありません。</div>';publicSelectedLocalCardId='';publicRenderRegisterPreview();return}
+  if(!publicSelectedLocalCardId||!list.some(c=>String(c.id)===String(publicSelectedLocalCardId)))publicSelectedLocalCardId=String(list[0].id||'');
+  box.innerHTML=list.map(c=>`<div class="public-local-row ${String(c.id)===String(publicSelectedLocalCardId)?'active':''}" data-public-local-id="${esc(String(c.id||''))}">
+    <div class="public-local-row-title">${esc(String(c.name||'(名称なし)'))}</div>
+    <div class="public-local-row-meta">${publicMetaHtml(c)}</div>
+    ${c.effect?`<div class="muted" style="margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(String(c.effect))}</div>`:''}
+  </div>`).join('');
+  publicRenderRegisterPreview();
+}
+function publicSelectedLocalCard(){return (Array.isArray(cards)?cards:[]).find(c=>String(c.id)===String(publicSelectedLocalCardId))||null}
+function publicRenderRegisterPreview(){
+  const box=document.getElementById('public-register-preview');if(!box)return;const c=publicSelectedLocalCard();
+  if(!c){box.className='public-card-preview muted';box.textContent='左からカードを選んでください。';return}
+  box.className='public-card-preview';
+  box.innerHTML=`<div class="public-preview-name">${esc(String(c.name||'(名称なし)'))}</div>
+    <div class="public-preview-meta">${publicMetaHtml(c)}</div>
+    ${c.effect?`<div class="public-preview-effect"><b>効果</b><div>${esc(String(c.effect))}</div></div>`:''}
+    ${c.flavor?`<div class="public-preview-effect"><b>フレーバー</b><div>${esc(String(c.flavor))}</div></div>`:''}`;
+}
+function publicFilters(){return {
+  search:String(document.getElementById('public-cards-search')?.value||'').trim(),
+  author:String(document.getElementById('public-cards-author-search')?.value||'').trim(),
+  type:String(document.getElementById('public-cards-type-filter')?.value||'').trim(),
+  sort:String(document.getElementById('public-cards-sort')?.value||'new')
+}}
+function publicRoleFor(row){
+  const id=String(row.id);
+  if(publicMasterManagedRows.some(x=>String(x.id)===id))return 'master';
+  if(publicManagedRows.some(x=>String(x.id)===id))return 'own';
+  if(publicTempManagedRows.some(x=>String(x.id)===id))return 'temporary';
+  return '';
+}
+function publicRenderCards(){
+  const box=document.getElementById('public-cards-list'),pill=document.getElementById('public-cards-count-pill'),info=document.getElementById('public-cards-page-info');
   if(pill)pill.textContent=`${publicTotal}件`;
-  if(info){
-    const max=Math.max(1,Math.ceil(publicTotal/PUBLIC_PAGE_SIZE));
-    info.textContent=publicTotal?`${publicPage+1} / ${max}ページ`:'0件';
-  }
-  if(!box)return;
-  if(!publicRows.length){
-    box.innerHTML='<div class="muted">条件に一致する公開カードはありません。</div>';
-    return;
-  }
+  if(info){const max=Math.max(1,Math.ceil(publicTotal/PUBLIC_PAGE_SIZE));info.textContent=publicTotal?`${publicPage+1} / ${max}ページ`:'0件'}
+  if(!box)return;if(!publicRows.length){box.innerHTML='<div class="muted">条件に一致する公開カードはありません。</div>';return}
   box.innerHTML=publicRows.map(row=>{
-    const owned=!!publicCardGetKey(row.id);
+    const c=row.card_data||{},role=publicRoleFor(row);
     return `<div class="public-card-row" data-public-card-id="${esc(String(row.id))}">
       <div class="public-card-row-head">
         <div>
           <div class="public-card-row-title">${esc(String(row.card_name||'(名称なし)'))}</div>
-          <div class="public-card-row-meta">
-            ${publicCardSummaryHtml(row)}
+          <div class="public-card-row-meta">${publicMetaHtml(c)}
             <span class="pill">作者 ${esc(String(row.author_name||'未設定'))}</span>
             <span class="pill">DL ${Number(row.download_count)||0}</span>
-            ${owned?'<span class="public-card-owner-badge">管理可能</span>':''}
+            ${role?`<span class="public-card-owner-badge">${role==='master'?'マスター管理':role==='own'?'自分の管理':'臨時管理'}</span>`:''}
           </div>
         </div>
-        <div class="muted">${esc(publicCardDate(row.created_at))}</div>
+        <div class="muted">更新 ${esc(publicDate(row.updated_at||row.created_at))}</div>
       </div>
       ${row.description?`<div class="public-card-row-desc">${esc(String(row.description))}</div>`:''}
+      ${c.effect?`<div class="public-card-row-effect">${esc(String(c.effect))}</div>`:''}
       <div class="actions" style="margin-top:10px">
         <button class="btn small" type="button" data-public-action="detail">詳細</button>
-        <button class="btn small primary" type="button" data-public-action="download">ダウンロード</button>
-        ${owned?'<button class="btn small" type="button" data-public-action="update">公開内容を更新</button><button class="btn small danger" type="button" data-public-action="delete">削除</button>':''}
+        <button class="btn small primary" type="button" data-public-action="download">このカードをダウンロード</button>
+        <button class="btn small" type="button" data-public-action="copy-id">カードIDをコピー</button>
+        ${role?'<button class="btn small" type="button" data-public-action="edit">公開内容を編集</button>':''}
+        ${role==='own'||role==='master'?'<button class="btn small danger" type="button" data-public-action="delete">削除</button>':''}
       </div>
+      <div class="public-id-chip" style="margin-top:7px">ID: ${esc(String(row.id))}</div>
     </div>`;
   }).join('');
 }
-async function publicCardsFetch(){
-  if(publicBusy)return;
-  publicCardSetBusy(true);publicCardSetStatus('public-cards-status','公開カードを取得しています…');
+async function publicFetchCards(){
+  if(publicBusy)return;publicSetBusy(true);publicSetStatus('public-cards-status','取得中…');
   try{
-    const f=publicCardFilters();
-    const r=await publicCardApi('list',{...f,limit:PUBLIC_PAGE_SIZE,offset:publicPage*PUBLIC_PAGE_SIZE});
-    if(!r.ok){publicCardSetStatus('public-cards-status',r.message,true);return}
-    publicRows=Array.isArray(r.rows)?r.rows:[];
-    publicTotal=Number(r.total)||0;
+    const r=await publicApi('list',{...publicFilters(),limit:PUBLIC_PAGE_SIZE,offset:publicPage*PUBLIC_PAGE_SIZE});
+    if(!r.ok){publicSetStatus('public-cards-status',r.message,true);return}
+    publicRows=Array.isArray(r.rows)?r.rows:[];publicTotal=Number(r.total)||0;
     const maxPage=Math.max(0,Math.ceil(publicTotal/PUBLIC_PAGE_SIZE)-1);
-    if(publicPage>maxPage){publicPage=maxPage;return publicCardsFetch()}
-    publicCardRenderList();
-    publicCardSetStatus('public-cards-status',`公開カード ${publicTotal}件`);
-  }finally{publicCardSetBusy(false)}
+    if(publicPage>maxPage){publicPage=maxPage;publicSetBusy(false);return publicFetchCards()}
+    publicRenderCards();publicSetStatus('public-cards-status',`${publicTotal}件`);
+  }finally{publicSetBusy(false)}
 }
-async function publicCardPublish(){
-  const id=String(document.getElementById('public-card-local-select')?.value||'');
-  const card=(Array.isArray(cards)?cards:[]).find(c=>String(c.id)===id);
-  if(!card){publicCardSetStatus('public-card-publish-status','公開するカードを選んでください。',true);return}
+async function publicFetchManaged(mode){
+  let key='',master_key='',statusId='',listTarget='';
+  if(mode==='own'){key=publicStoredManagementKey();statusId='public-managed-status';listTarget='own'}
+  if(mode==='temporary'){publicSessionTemporaryKey=String(document.getElementById('public-temporary-management-key')?.value||'').trim();key=publicSessionTemporaryKey;statusId='public-temp-managed-status';listTarget='temporary'}
+  if(mode==='master'){publicSessionMasterKey=String(document.getElementById('public-developer-master-key')?.value||'').trim();master_key=publicSessionMasterKey;statusId='public-master-management-status';listTarget='master'}
+  if(!key&&!master_key){publicSetStatus(statusId,'キーを入力してください。',true);return}
+  publicSetStatus(statusId,'取得しています…');
+  const r=await publicApi('managed-list',{management_key:key,master_key});
+  if(!r.ok){publicSetStatus(statusId,r.message,true);return}
+  const rows=Array.isArray(r.rows)?r.rows:[];
+  if(listTarget==='own')publicManagedRows=rows;
+  if(listTarget==='temporary')publicTempManagedRows=rows;
+  if(listTarget==='master')publicMasterManagedRows=rows;
+  publicSetStatus(statusId,`${rows.length}件を管理できます。`);
+  publicRenderManagedLists();publicRenderCards();
+}
+function publicManagedCardHtml(row,mode){
+  const canDelete=mode==='own'||mode==='master';
+  return `<div class="public-card-row" data-managed-mode="${mode}" data-public-managed-id="${esc(String(row.id))}">
+    <div class="public-card-row-head"><div>
+      <div class="public-card-row-title">${esc(String(row.card_name||'(名称なし)'))}</div>
+      <div class="public-card-row-meta">${publicMetaHtml(row.card_data||{})}<span class="pill">DL ${Number(row.download_count)||0}</span></div>
+    </div><div class="muted">${esc(publicDate(row.updated_at||row.created_at))}</div></div>
+    <div class="actions public-managed-card-actions">
+      <button class="btn small" data-managed-action="edit">公開内容を編集</button>
+      <button class="btn small" data-managed-action="copy-id">カードIDをコピー</button>
+      ${canDelete?'<button class="btn small danger" data-managed-action="delete">削除</button>':''}
+    </div>
+    <div class="public-id-chip" style="margin-top:7px">ID: ${esc(String(row.id))}</div>
+  </div>`;
+}
+function publicRenderManagedLists(){
+  const pairs=[
+    ['public-managed-list',publicManagedRows,'own','自分の管理キーで管理できるカードはありません。'],
+    ['public-temp-managed-list',publicTempManagedRows,'temporary','臨時管理キーで取得したカードはありません。'],
+    ['public-master-managed-list',publicMasterManagedRows,'master','マスターキーで取得したカードはありません。']
+  ];
+  for(const [id,rows,mode,empty] of pairs){
+    const box=document.getElementById(id);if(!box)continue;
+    box.innerHTML=rows.length?rows.map(r=>publicManagedCardHtml(r,mode)).join(''):`<div class="muted">${empty}</div>`;
+  }
+}
+async function publicPublish(){
+  const card=publicSelectedLocalCard();if(!card){publicSetStatus('public-card-publish-status','公開するカードを選んでください。',true);return}
+  const managementKey=publicStoredManagementKey();
+  if(!managementKey){publicSetStatus('public-card-publish-status','自分の管理キーを先に設定してください。',true);publicSwitchTab('keys');return}
   const author=String(document.getElementById('public-card-author')?.value||'').trim();
   const description=String(document.getElementById('public-card-description')?.value||'').trim();
-  if(!confirm(`「${card.name||'(名称なし)'}」を公開所へアップロードします。\nカード画像は送信されません。続けますか？`))return;
-  publicCardSetBusy(true);publicCardSetStatus('public-card-publish-status','公開しています…');
+  if(!confirm(`「${card.name||'(名称なし)'}」を公開します。\n画像は送信されません。続けますか？`))return;
+  publicSetBusy(true);publicSetStatus('public-card-publish-status','公開しています…');
   try{
-    const r=await publicCardApi('publish',{card_data:publicCardForUpload(card),author_name:author,description});
-    if(!r.ok){publicCardSetStatus('public-card-publish-status',r.message,true);return}
-    publicCardRememberKey(r.card.id,r.edit_token);
-    publicCardSetStatus('public-card-publish-status',`公開しました。公開カードID: ${r.card.id}`);
-    openModal(`<div class="modal-head"><h3>公開しました</h3><button class="btn" id="public-publish-done">閉じる</button></div>
-      <p>「${esc(String(card.name||''))}」を公開所へ登録しました。</p>
-      <p class="muted">この端末には管理キーを保存済みです。別端末で管理する場合に備えて、必要なら下のキーも控えてください。</p>
-      <div><b>公開カードID</b><div class="public-card-management-key">${esc(String(r.card.id))}</div></div>
-      <div style="margin-top:8px"><b>管理キー</b><div class="public-card-management-key">${esc(String(r.edit_token))}</div></div>`);
-    const done=document.getElementById('public-publish-done');if(done)done.onclick=closeModal;
-    publicPage=0;await publicCardsFetch();
-  }finally{publicCardSetBusy(false)}
+    const r=await publicApi('publish',{card_data:publicCardForUpload(card),author_name:author,description,management_key:managementKey});
+    if(!r.ok){publicSetStatus('public-card-publish-status',r.message,true);return}
+    publicSetStatus('public-card-publish-status',`公開しました。公開カードID: ${r.card.id}`);
+    toast('公開所へ登録しました');publicPage=0;await publicFetchManaged('own');await publicFetchCards();
+  }finally{publicSetBusy(false)}
 }
-function publicCardFindRow(id){return publicRows.find(x=>String(x.id)===String(id))}
-function publicCardDetail(row){
+function publicDetail(row){
   const c=row?.card_data||{};
   openModal(`<div class="modal-head"><h3>${esc(String(row.card_name||'(名称なし)'))}</h3><button class="btn" id="public-detail-close">閉じる</button></div>
-    <div class="muted">作者 ${esc(String(row.author_name||'未設定'))} / DL ${Number(row.download_count)||0} / 公開 ${esc(publicCardDate(row.created_at))}</div>
-    <div class="public-card-row-meta" style="margin-top:8px">${publicCardSummaryHtml(row)}</div>
+    <div class="muted">作者 ${esc(String(row.author_name||'未設定'))} / DL ${Number(row.download_count)||0} / 更新 ${esc(publicDate(row.updated_at||row.created_at))}</div>
+    <div class="public-id-chip" style="margin-top:7px">ID: ${esc(String(row.id))}</div>
+    <div class="public-card-row-meta" style="margin-top:8px">${publicMetaHtml(c)}</div>
     ${row.description?`<p>${esc(String(row.description))}</p>`:''}
-    ${c.effect?`<div class="public-card-detail-effect"><b>効果</b><div>${esc(String(c.effect))}</div></div>`:''}
-    ${c.flavor?`<div class="public-card-detail-effect"><b>フレーバー</b><div>${esc(String(c.flavor))}</div></div>`:''}
-    <div class="actions" style="margin-top:12px"><button class="btn primary" id="public-detail-download">このカードをダウンロード</button></div>`);
-  const close=document.getElementById('public-detail-close');if(close)close.onclick=closeModal;
-  const dl=document.getElementById('public-detail-download');if(dl)dl.onclick=()=>{closeModal();publicCardDownload(row)};
+    ${c.effect?`<div class="public-preview-effect"><b>効果</b><div>${esc(String(c.effect))}</div></div>`:''}
+    ${c.flavor?`<div class="public-preview-effect"><b>フレーバー</b><div>${esc(String(c.flavor))}</div></div>`:''}
+    <div class="actions" style="margin-top:12px">
+      <button class="btn primary" id="public-detail-download">このカードをダウンロード</button>
+      <button class="btn" id="public-detail-copy-id">カードIDをコピー</button>
+    </div>`);
+  document.getElementById('public-detail-close').onclick=closeModal;
+  document.getElementById('public-detail-download').onclick=()=>{closeModal();publicDownload(row)};
+  document.getElementById('public-detail-copy-id').onclick=()=>publicCopyText(row.id);
 }
-async function publicCardDownload(row){
-  const r=await publicCardApi('download',{id:row.id});
-  if(!r.ok){toast(r.message||'ダウンロードできませんでした');return}
-  const incoming=publicCardNormalizeDownloaded(r.card.card_data||{});
+async function publicDownload(row){
+  const r=await publicApi('download',{id:row.id});if(!r.ok){toast(r.message||'ダウンロードできませんでした');return}
+  const incoming=publicNormalizeDownloaded(r.card.card_data||{});
   const same=(Array.isArray(cards)?cards:[]).find(c=>String(c.name||'')===String(incoming.name||''));
   if(same){
-    const choice=window.prompt(`同名カード「${incoming.name}」が登録されています。\n1: 別カードとして追加\n2: 既存カードを上書き\n3: キャンセル`,'1');
+    const choice=window.prompt(`同名カード「${incoming.name}」があります。\n1: 別カードとして追加\n2: 既存カードを上書き\n3: キャンセル`,'1');
     if(choice===null||String(choice).trim()==='3')return;
-    if(String(choice).trim()==='2'){
-      const keepId=same.id;
-      Object.keys(same).forEach(k=>delete same[k]);
-      Object.assign(same,incoming,{id:keepId});
-    }else if(String(choice).trim()==='1'){
-      cards.push(incoming);
-    }else{
-      toast('1、2、3のいずれかを入力してください');return;
-    }
+    if(String(choice).trim()==='2'){const keepId=same.id;Object.keys(same).forEach(k=>delete same[k]);Object.assign(same,incoming,{id:keepId})}
+    else if(String(choice).trim()==='1')cards.push(incoming);else {toast('1、2、3のいずれかを入力してください');return}
   }else cards.push(incoming);
   save(LS_CARDS,cards);
   try{touchRecentCards([incoming.id]);touchRegisteredCards([incoming.id])}catch(_){}
   try{renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup()}catch(_){}
-  row.download_count=(Number(row.download_count)||0)+1;
-  publicCardRenderList();
-  toast(`「${incoming.name||'(名称なし)'}」を登録しました`);
+  row.download_count=(Number(row.download_count)||0)+1;publicRenderCards();toast(`「${incoming.name||'(名称なし)'}」を登録しました`);
 }
-async function publicCardUpdate(row){
-  const key=publicCardGetKey(row.id);if(!key){toast('このカードの管理キーがありません');return}
-  const sameName=(Array.isArray(cards)?cards:[]).find(c=>String(c.name||'')===String(row.card_name||''));
-  const selectedId=String(document.getElementById('public-card-local-select')?.value||'');
-  const selected=(Array.isArray(cards)?cards:[]).find(c=>String(c.id)===selectedId);
-  const local=sameName||selected;
-  if(!local){toast('更新に使える登録カードがありません');return}
-  const author=window.prompt('作者名',String(row.author_name||''));if(author===null)return;
-  const desc=window.prompt('ひとこと',String(row.description||''));if(desc===null)return;
-  if(!confirm(`公開カード「${row.card_name}」を、登録カード「${local.name}」の現在内容で更新します。続けますか？`))return;
-  const r=await publicCardApi('update',{id:row.id,edit_token:key,card_data:publicCardForUpload(local),author_name:author,description:desc});
-  if(!r.ok){toast(r.message);return}
-  toast('公開カードを更新しました');await publicCardsFetch();
+function publicAuthFor(row,mode=''){
+  const role=mode||publicRoleFor(row);
+  if(role==='master')return {master_key:publicSessionMasterKey};
+  if(role==='temporary')return {management_key:publicSessionTemporaryKey};
+  return {management_key:publicStoredManagementKey()};
 }
-async function publicCardDelete(row){
-  const key=publicCardGetKey(row.id);if(!key){toast('このカードの管理キーがありません');return}
-  if(!confirm(`公開カード「${row.card_name}」を削除します。\n既に他の人がダウンロードしたコピーには影響しません。削除しますか？`))return;
-  const r=await publicCardApi('delete',{id:row.id,edit_token:key});
-  if(!r.ok){toast(r.message);return}
-  publicCardForgetKey(row.id);toast('公開カードを削除しました');await publicCardsFetch();
-}
-async function publicCardRegisterKey(){
-  const id=String(document.getElementById('public-card-manage-id')?.value||'').trim();
-  const key=String(document.getElementById('public-card-manage-key')?.value||'').trim();
-  if(!id||!key){publicCardSetStatus('public-card-key-status','公開カードIDと管理キーを入力してください。',true);return}
-  publicCardSetBusy(true);publicCardSetStatus('public-card-key-status','管理キーを確認しています…');
-  try{
-    const r=await publicCardApi('verify',{id,edit_token:key});
-    if(!r.ok){publicCardSetStatus('public-card-key-status',r.message||'管理キーが一致しません。',true);return}
-    publicCardRememberKey(id,key);
-    publicCardSetStatus('public-card-key-status',`「${r.card?.card_name||id}」の管理キーを登録しました。`);
-    publicCardRenderList();
-  }finally{publicCardSetBusy(false)}
-}
-function publicCardBind(){
-  const on=(id,fn)=>{const el=document.getElementById(id);if(el&&!el.dataset.publicBound){el.dataset.publicBound='1';el.addEventListener('click',fn)}};
-  on('public-card-publish',()=>publicCardPublish().catch(err=>publicCardSetStatus('public-card-publish-status',err?.message||String(err),true)));
-  on('public-card-register-key',()=>publicCardRegisterKey().catch(err=>publicCardSetStatus('public-card-key-status',err?.message||String(err),true)));
-  on('public-cards-refresh',()=>publicCardsFetch());
-  on('public-cards-search-run',()=>{publicPage=0;publicCardsFetch()});
-  on('public-cards-search-clear',()=>{
-    ['public-cards-search','public-cards-author-search'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
-    const t=document.getElementById('public-cards-type-filter');if(t)t.value='';
-    const s=document.getElementById('public-cards-sort');if(s)s.value='new';
-    publicPage=0;publicCardsFetch();
-  });
-  on('public-cards-prev',()=>{if(publicPage>0){publicPage--;publicCardsFetch()}});
-  on('public-cards-next',()=>{if((publicPage+1)*PUBLIC_PAGE_SIZE<publicTotal){publicPage++;publicCardsFetch()}});
-  const list=document.getElementById('public-cards-list');
-  if(list&&!list.dataset.publicBound){
-    list.dataset.publicBound='1';
-    list.addEventListener('click',e=>{
-      const btn=e.target.closest('[data-public-action]');if(!btn)return;
-      const host=btn.closest('[data-public-card-id]');const row=publicCardFindRow(host?.dataset.publicCardId);if(!row)return;
-      const a=btn.dataset.publicAction;
-      if(a==='detail')publicCardDetail(row);
-      if(a==='download')publicCardDownload(row);
-      if(a==='update')publicCardUpdate(row);
-      if(a==='delete')publicCardDelete(row);
+function publicOpenEdit(row,mode=''){
+  const local=(Array.isArray(cards)?cards:[]);
+  const options=local.map(c=>`<option value="${esc(String(c.id||''))}" ${String(c.name||'')===String(row.card_name||'')?'selected':''}>${esc(String(c.name||'(名称なし)'))}</option>`).join('');
+  openModal(`<div class="modal-head"><h3>公開内容を編集</h3><button class="btn" id="public-edit-close">閉じる</button></div>
+    <div class="public-edit-grid">
+      <label>作者名<input id="public-edit-author" maxlength="80" value="${esc(String(row.author_name||''))}"></label>
+      <label>更新に使う登録カード<select id="public-edit-source">${options}</select></label>
+    </div>
+    <label>ひとこと<textarea id="public-edit-description" maxlength="500">${esc(String(row.description||''))}</textarea></label>
+    <label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="public-edit-replace-card" checked> 登録カードの現在内容でカード本体も更新する</label>
+    <div id="public-edit-preview" class="public-card-preview" style="margin-top:10px"></div>
+    <div class="actions" style="margin-top:10px"><button class="btn primary" id="public-edit-save">更新を保存</button><button class="btn" id="public-edit-copy-id">カードIDをコピー</button></div>
+    <div id="public-edit-status" class="muted" style="margin-top:8px"></div>`);
+  const render=()=>{
+    const id=String(document.getElementById('public-edit-source')?.value||''),c=local.find(x=>String(x.id)===id)||row.card_data||{};
+    document.getElementById('public-edit-preview').innerHTML=`<div class="public-preview-name">${esc(String(c.name||'(名称なし)'))}</div><div class="public-preview-meta">${publicMetaHtml(c)}</div>${c.effect?`<div class="public-preview-effect">${esc(String(c.effect))}</div>`:''}`;
+  };
+  document.getElementById('public-edit-close').onclick=closeModal;
+  document.getElementById('public-edit-source').onchange=render;render();
+  document.getElementById('public-edit-copy-id').onclick=()=>publicCopyText(row.id);
+  document.getElementById('public-edit-save').onclick=async()=>{
+    const id=String(document.getElementById('public-edit-source')?.value||''),c=local.find(x=>String(x.id)===id),replace=!!document.getElementById('public-edit-replace-card')?.checked;
+    const r=await publicApi('update',{
+      id:row.id,...publicAuthFor(row,mode),
+      author_name:String(document.getElementById('public-edit-author')?.value||'').trim(),
+      description:String(document.getElementById('public-edit-description')?.value||'').trim(),
+      card_data:replace?publicCardForUpload(c||row.card_data):(row.card_data||{})
     });
-  }
+    if(!r.ok){publicSetStatus('public-edit-status',r.message,true);return}
+    toast('公開カードを更新しました');closeModal();
+    if(mode==='temporary')await publicFetchManaged('temporary');
+    else if(mode==='master')await publicFetchManaged('master');
+    else await publicFetchManaged('own');
+    await publicFetchCards();
+  };
+}
+async function publicDelete(row,mode=''){
+  if(!confirm(`公開カード「${row.card_name}」を削除します。\n既にダウンロードされたコピーには影響しません。`))return;
+  const r=await publicApi('delete',{id:row.id,...publicAuthFor(row,mode)});
+  if(!r.ok){toast(r.message);return}
+  toast('公開カードを削除しました');
+  if(mode==='master')await publicFetchManaged('master');else await publicFetchManaged('own');
+  await publicFetchCards();
+}
+function publicBind(){
+  const on=(id,evt,fn)=>{const el=document.getElementById(id);if(el&&!el.dataset.publicBound){el.dataset.publicBound='1';el.addEventListener(evt,fn)}};
+  document.querySelectorAll('.public-cards-tab').forEach(btn=>{if(!btn.dataset.publicBound){btn.dataset.publicBound='1';btn.addEventListener('click',()=>publicSwitchTab(btn.dataset.publicTab))}});
+  on('public-go-keys','click',()=>publicSwitchTab('keys'));
+  on('public-card-publish','click',()=>publicPublish().catch(e=>publicSetStatus('public-card-publish-status',e?.message||String(e),true)));
+  on('public-local-search','input',publicRenderLocalCards);on('public-local-type','change',publicRenderLocalCards);
+  const localList=document.getElementById('public-local-list');
+  if(localList&&!localList.dataset.publicBound){localList.dataset.publicBound='1';localList.addEventListener('click',e=>{const row=e.target.closest('[data-public-local-id]');if(!row)return;publicSelectedLocalCardId=String(row.dataset.publicLocalId||'');publicRenderLocalCards()})}
+
+  on('public-cards-refresh','click',publicFetchCards);on('public-cards-search-run','click',()=>{publicPage=0;publicFetchCards()});
+  on('public-cards-search-clear','click',()=>{
+    ['public-cards-search','public-cards-author-search'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+    const type=document.getElementById('public-cards-type-filter');if(type)type.value='';
+    const sort=document.getElementById('public-cards-sort');if(sort)sort.value='new';
+    publicPage=0;publicFetchCards();
+  });
+  on('public-cards-prev','click',()=>{if(publicPage>0){publicPage--;publicFetchCards()}});
+  on('public-cards-next','click',()=>{if((publicPage+1)*PUBLIC_PAGE_SIZE<publicTotal){publicPage++;publicFetchCards()}});
+  on('public-cards-sort','change',()=>{publicPage=0;publicFetchCards()});on('public-cards-type-filter','change',()=>{publicPage=0;publicFetchCards()});
+  ['public-cards-search','public-cards-author-search'].forEach(id=>on(id,'keydown',e=>{if(e.key==='Enter'){publicPage=0;publicFetchCards()}}));
+
+  const browse=document.getElementById('public-cards-list');
+  if(browse&&!browse.dataset.publicBound){browse.dataset.publicBound='1';browse.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-public-action]');if(!btn)return;
+    const host=btn.closest('[data-public-card-id]'),row=publicRows.find(x=>String(x.id)===String(host?.dataset.publicCardId));if(!row)return;
+    const a=btn.dataset.publicAction;if(a==='detail')publicDetail(row);if(a==='download')publicDownload(row);if(a==='copy-id')publicCopyText(row.id);if(a==='edit')publicOpenEdit(row);if(a==='delete')publicDelete(row);
+  })}
+
+  on('public-management-generate','click',()=>{document.getElementById('public-default-management-key').value=publicRandomKey('MGMT')});
+  on('public-management-copy','click',()=>publicCopyText(document.getElementById('public-default-management-key')?.value||''));
+  on('public-management-save','click',()=>{
+    const key=String(document.getElementById('public-default-management-key')?.value||'').trim();
+    if(!key){publicSetStatus('public-management-status','管理キーを入力してください。',true);return}
+    publicSaveManagementKey(key);publicSetStatus('public-management-status','この端末へ保存しました。以後の公開カードに自動設定されます。');publicRenderKeyFields();
+  });
+  on('public-managed-refresh','click',()=>publicFetchManaged('own'));
+
+  on('public-temp-clear','click',()=>{publicSessionTemporaryKey='';const el=document.getElementById('public-temporary-management-key');if(el)el.value='';publicTempManagedRows=[];publicRenderManagedLists();publicSetStatus('public-temp-management-status','クリアしました。')});
+  on('public-temp-managed-refresh','click',()=>publicFetchManaged('temporary'));
+  on('public-master-clear','click',()=>{publicSessionMasterKey='';const el=document.getElementById('public-developer-master-key');if(el)el.value='';publicMasterManagedRows=[];publicRenderManagedLists();publicSetStatus('public-master-management-status','クリアしました。')});
+  on('public-master-managed-refresh','click',()=>publicFetchManaged('master'));
+
+  const managedClick=e=>{
+    const btn=e.target.closest('[data-managed-action]');if(!btn)return;
+    const host=btn.closest('[data-public-managed-id]');if(!host)return;
+    const mode=String(host.dataset.managedMode||'own');
+    const rows=mode==='temporary'?publicTempManagedRows:mode==='master'?publicMasterManagedRows:publicManagedRows;
+    const row=rows.find(x=>String(x.id)===String(host.dataset.publicManagedId));if(!row)return;
+    if(btn.dataset.managedAction==='edit')publicOpenEdit(row,mode);
+    if(btn.dataset.managedAction==='copy-id')publicCopyText(row.id);
+    if(btn.dataset.managedAction==='delete')publicDelete(row,mode);
+  };
+  ['public-managed-list','public-temp-managed-list','public-master-managed-list'].forEach(id=>{
+    const box=document.getElementById(id);if(box&&!box.dataset.publicBound){box.dataset.publicBound='1';box.addEventListener('click',managedClick)}
+  });
 }
 async function publicCardsRender(){
-  publicCardLocalOptions();publicCardBind();
-  if(!publicRows.length&&!publicBusy)await publicCardsFetch();
-  else publicCardRenderList();
+  publicBind();publicRenderKeyFields();publicRenderLocalCards();publicRenderManagedLists();publicSwitchTab(publicActiveTab||'register');
+  if(publicStoredManagementKey()&&!publicManagedRows.length)publicFetchManaged('own');
 }
 window.publicCardsRender=publicCardsRender;
-window.publicCardsFetch=publicCardsFetch;
-publicCardBind();
-publicCardLocalOptions();
-
+window.publicCardsFetch=publicFetchCards;
+publicBind();publicRenderKeyFields();publicRenderLocalCards();publicRenderManagedLists();
 })();
 </script>
 
