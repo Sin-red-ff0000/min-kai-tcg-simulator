@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v24.4</title>
+<title>みん会TCG Simulator v24.5</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21694,7 +21694,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v24.4 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v24.5 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -34145,6 +34145,7 @@ function takeTopXCards(pi,z,n){
  return out;
 }
 function batchMoveTopX(pi,z,n,dest,faceDown=false){
+ if(onlineServerDeckGuardActive(pi,z)){onlineBatchMoveTopX(pi,z,n,dest,faceDown);return}
  const arr=takeTopXCards(pi,z,n);if(!arr.length)return;
  for(const c of arr){
    c.faceDown=!!faceDown;c.rested=false;
@@ -34155,6 +34156,7 @@ function batchMoveTopX(pi,z,n,dest,faceDown=false){
  closeModal();
 }
 function lookTopX(pi,z='deck'){
+ if(onlineServerDeckGuardActive(pi,z)){onlineLookTopX(pi,z);return}
  const max=physicalCount(board.players[pi][z]);if(!max){toast(`${ZONE_LABELS[z]}が空です`);return}
  openModal(`<div class="modal-head"><h3>${ZONE_LABELS[z]} / 上からX枚</h3><button class="btn" id="lookx-cancel">閉じる</button></div>
    <label>枚数<input id="lookx-count" type="number" inputmode="numeric" min="1" max="${max}" value="${Math.min(5,max)}"></label>
@@ -34474,6 +34476,7 @@ $('#image-storage-cleanup').onclick=async()=>{
 
 // initialize
 // v24.4 startup repair: a single optional UI failure must never abort the whole app bootstrap.
+// v24.5 online top-X repair: server-managed deck inspection is routed through provider/vault APIs.
 function safeInitialUiStep(label,fn){
  try{return fn()}
  catch(err){console.error(`[startup:${label}]`,err);reportUiRuntimeError(`起動処理（${label}）`,err);return null}
@@ -35313,13 +35316,15 @@ function onlineRenderDuelBoard(){
       const raw=String(btn.dataset.deckAction||'').split('|');
       const action=raw[0],pi=Number(raw[1]),z=raw[2]||'deck';
       if(pi===ownPi&&z==='deck'){
-        const supported=['draw','shuffle','browse','painFace','painBack'].includes(action);
+        const supported=['draw','shuffle','browse','painFace','painBack','look'].includes(action);
         btn.disabled=!supported;
         if(supported){
           btn.removeAttribute('aria-disabled');
           btn.title=action==='browse'
             ?'残りカード内容を確認します（デッキ順はサーバー管理のため非表示）'
-            :'サーバー管理のメインデッキを操作します';
+            :action==='look'
+              ?'サーバー管理のデッキ上から指定枚数だけ所有者に確認します'
+              :'サーバー管理のメインデッキを操作します';
         }else{
           btn.setAttribute('aria-disabled','true');
           btn.title='この操作はサーバー連携対応後に使用できます';
@@ -36761,6 +36766,189 @@ async function onlineServerPeekCount(slot){
     return await onlineProviderRequest('deck-count',{roomCode:onlineSessionState.joinCode,slot});
   }
   return {count:onlineVaultGetDeckOrder(onlineSessionState.joinCode,slot).length,provider:'local-test'};
+}
+
+
+/* v24.5 server-managed top-X inspection.
+   The normal online board intentionally does not own the authoritative deck order.
+   Therefore top-X must be resolved against the provider/vault rather than the local shadow deck. */
+let onlineTopInspectSession=null;
+
+function onlineOwnPiForDeckAction(pi){
+  const own=onlineOwnSlot();
+  return own!=null&&Number(pi)===Number(own)-1?Number(own):null;
+}
+function onlineMasterCardFromId(cardId){
+  return cards.find(c=>String(c?.id||'')===String(cardId||''))||null;
+}
+function onlineCloneCardFromServerId(cardId){
+  const master=onlineMasterCardFromId(cardId);
+  return master?cloneInstance(master):null;
+}
+function onlineTopMultisetFits(whole,part){
+  const counts=new Map();
+  for(const id of whole||[])counts.set(String(id),(counts.get(String(id))||0)+1);
+  for(const id of part||[]){
+    const key=String(id),n=counts.get(key)||0;
+    if(n<=0)return false;
+    counts.set(key,n-1);
+  }
+  return true;
+}
+function onlineDeckTopSignature(order){
+  let h=2166136261>>>0;
+  for(const id of order||[]){
+    const text=String(id)+'\u0000';
+    for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)>>>0}
+  }
+  return `${(order||[]).length}:${h.toString(16).padStart(8,'0')}`;
+}
+async function onlineServerPeekTop(slot,count=1){
+  count=Math.max(1,Math.min(20,Number(count)||1));
+  if(onlineUsingRemoteProvider()){
+    return await onlineProviderRequest('peek-top',onlineRemoteRequestPayload({
+      roomCode:onlineSessionState.joinCode,slot,count
+    }));
+  }
+  const order=onlineVaultGetDeckOrder(onlineSessionState.joinCode,slot);
+  const peeked=order.slice(0,count);
+  return {peeked,remaining:Math.max(0,order.length-peeked.length),deckSignature:onlineDeckTopSignature(order),provider:'local-test'};
+}
+async function onlineServerCommitTopInspection(slot,peekedIds,returnTop,returnBottom,deckSignature=''){
+  const peeked=(peekedIds||[]).map(String);
+  const top=(returnTop||[]).map(String);
+  const bottom=(returnBottom||[]).map(String);
+  if(!onlineTopMultisetFits(peeked,[...top,...bottom]))throw new Error('戻すカードの指定が確認したカード範囲を超えています');
+  if(onlineUsingRemoteProvider()){
+    return await onlineProviderRequest('commit-top-inspection',onlineRemoteRequestPayload({
+      roomCode:onlineSessionState.joinCode,slot,peekedIds:peeked,returnTop:top,returnBottom:bottom,deckSignature:String(deckSignature||'')
+    }));
+  }
+  const code=onlineSessionState.joinCode,order=onlineVaultGetDeckOrder(code,slot);
+  if(deckSignature&&onlineDeckTopSignature(order)!==String(deckSignature))throw new Error('確認中にデッキ順が変更されました。もう一度やり直してください');
+  const currentTop=order.slice(0,peeked.length).map(String);
+  if(currentTop.length!==peeked.length||currentTop.some((id,i)=>id!==peeked[i]))throw new Error('確認中にデッキ上部が変更されました。もう一度やり直してください');
+  const rest=order.slice(peeked.length);
+  const next=[...top,...rest,...bottom];
+  onlineVaultSetDeckOrder(code,slot,next);
+  return {remaining:next.length,provider:'local-test'};
+}
+function onlineApplyTakenCardToZone(pi,card,dest,faceDown=false,opt={}){
+  if(!card)return;
+  card.faceDown=!!faceDown;card.rested=false;
+  if(dest==='deck'||dest==='otherDeck')addAsPile(pi,dest,card,{position:opt.position==='bottom'?'bottom':'top'});
+  else addAsPile(pi,dest,card,opt);
+}
+async function onlineBatchMoveTopX(pi,z,n,dest,faceDown=false){
+  const slot=onlineOwnPiForDeckAction(pi);
+  if(!slot||z!=='deck'){toast('オンラインでは自分のメインデッキのみ操作できます');return}
+  const room=onlineLoadRooms()[onlineSessionState.joinCode];
+  if(!onlineCanOperateCurrentBoard(room)){toast('オンライン対戦が開始されていません');return}
+  const count=Math.max(1,Math.min(20,Number(n)||1));
+  try{
+    /* draw is the existing server primitive that atomically removes the top N cards and returns their IDs to the owner only. */
+    const res=await onlineServerDraw(slot,count),ids=(res?.drawn||[]).map(String);
+    if(!ids.length){toast('デッキが空です');return}
+    const instances=[];
+    for(const id of ids){
+      const card=onlineCloneCardFromServerId(id);
+      if(!card)throw new Error(`カードID ${id} がカード管理にありません`);
+      instances.push(card);
+    }
+    for(const card of instances){onlineRemoveShadowDeckCard(board?.players?.[pi],card.id);onlineApplyTakenCardToZone(pi,card,dest,faceDown)}
+    if(dest==='hand'){onlinePersistOwnerHand();onlineOwnerHandRestoreState='fresh'}
+    renderBoard();onlineScheduleAutoSync();
+    onlineRecordRoomAction('server-top-x-batch',{slot,count:ids.length,dest,faceDown:!!faceDown},dest==='hand'?`owner-p${slot}`:'public');
+    await onlineRemoteGetRoom();onlineSignalRoomUpdate('top-x-batch');
+    closeModal();toast(`デッキの上から${ids.length}枚を${ZONE_LABELS[dest]||dest}へ移動しました`);
+  }catch(err){
+    console.error('online top-X batch failed',err);
+    toast(`上からX枚の処理に失敗：${String(err?.message||err)}`);
+  }
+}
+async function onlineLookTopX(pi,z='deck'){
+  const slot=onlineOwnPiForDeckAction(pi);
+  if(!slot||z!=='deck'){toast('オンラインでは自分のメインデッキのみ操作できます');return}
+  const room=onlineLoadRooms()[onlineSessionState.joinCode];
+  if(!onlineCanOperateCurrentBoard(room)){toast('オンライン対戦が開始されていません');return}
+  let countRes;
+  try{countRes=await onlineServerPeekCount(slot)}catch(err){toast(`デッキ枚数の取得に失敗：${String(err?.message||err)}`);return}
+  const max=Math.max(0,Number(countRes?.count??onlineDeckCountFromRoom(room,slot))||0);
+  if(!max){toast('デッキが空です');return}
+  openModal(`<div class="modal-head"><h3>デッキ / 上からX枚</h3><button class="btn" id="online-lookx-cancel">閉じる</button></div>
+    <p class="muted">オンラインではサーバー上の実際のデッキ順を参照します。確認したカードは自分にだけ表示されます。</p>
+    <label>枚数<input id="online-lookx-count" type="number" inputmode="numeric" min="1" max="${max}" value="${Math.min(5,max)}"></label>
+    <div class="actions" style="margin-top:10px"><button class="btn primary" id="online-lookx-start">中身を確認</button></div>
+    <details class="compact-info-details lookx-batch-details"><summary>まとめて移動</summary><div class="lookx-batch-grid">
+      <button class="btn small" data-online-lookx-batch="hand">手札へ</button><button class="btn small" data-online-lookx-batch="grave">墓地へ</button><button class="btn small" data-online-lookx-batch="banish">消失へ</button><button class="btn small" data-online-lookx-batch="painFace">PCへ（表）</button><button class="btn small" data-online-lookx-batch="painBack">PCへ（裏）</button>
+    </div><div class="muted" style="margin-top:6px">まとめて移動は既存のサーバードロー処理を利用して上から指定枚数を確定移動します。</div></details>`);
+  $('#online-lookx-cancel').onclick=closeModal;
+  const getN=()=>Math.max(1,Math.min(max,Number($('#online-lookx-count')?.value)||1));
+  $('#online-lookx-start').onclick=async()=>{
+    const btn=$('#online-lookx-start');if(btn)btn.disabled=true;
+    try{
+      const res=await onlineServerPeekTop(slot,getN()),ids=(res?.peeked||res?.cards||[]).map(String);
+      if(!ids.length){toast('確認できるカードがありません');return}
+      const entries=[];
+      for(let i=0;i<ids.length;i++){
+        const card=onlineCloneCardFromServerId(ids[i]);
+        if(!card)throw new Error(`カードID ${ids[i]} がカード管理にありません`);
+        entries.push({card,cardId:ids[i],originalPosition:i+1,dest:null,faceDown:false});
+      }
+      onlineTopInspectSession={pi,slot,sourceZone:'deck',cards:entries,moved:[],peekedIds:ids,deckSignature:String(res?.deckSignature||res?.revision||''),busy:false};
+      onlineRenderTopInspectSession();
+    }catch(err){
+      console.error('online peek-top failed',err);
+      toast(`上からX枚を確認できません：${String(err?.message||err)}`);
+    }finally{if(btn)btn.disabled=false}
+  };
+  $$('[data-online-lookx-batch]').forEach(b=>b.onclick=()=>{
+    const a=b.dataset.onlineLookxBatch,n=getN();
+    if(a==='painFace')onlineBatchMoveTopX(pi,z,n,'pain',false);
+    else if(a==='painBack')onlineBatchMoveTopX(pi,z,n,'pain',true);
+    else onlineBatchMoveTopX(pi,z,n,a,false);
+  });
+}
+function onlineRenderTopInspectSession(){
+  const s=onlineTopInspectSession;if(!s)return;
+  const rows=s.cards.map((x,i)=>`<div class="inspect-card"><h4>${esc(x.card.name)}</h4><div class="muted">現在 ${i+1}番目 / 確認時 上から${x.originalPosition}番目</div><div class="muted">Lv ${esc(x.card.level||'-')} / ${esc(x.card.power||'-')}</div><div class="actions"><button class="btn small" data-online-inspect-up="${i}" ${i===0?'disabled':''}>↑</button><button class="btn small" data-online-inspect-down="${i}" ${i===s.cards.length-1?'disabled':''}>↓</button><button class="btn small primary" data-online-inspect-hand="${i}">手札に</button><button class="btn small" data-online-inspect-move="${i}">移動先</button></div></div>`).join('');
+  openModal(`<div class="modal-head"><h3>上からX枚を見る</h3><span class="pill">デッキへ戻す候補 ${s.cards.length}枚</span></div><p class="muted">サーバー上のデッキ順はまだ変更されていません。移動先を指定したカードは確定時にデッキから取り除き、残りを現在の並び順で上または下へ戻します。</p><div class="inspect-grid">${rows||'<div class="empty">すべてのカードに移動先を指定しました。</div>'}</div><div class="actions" style="margin-top:12px"><button class="btn primary" id="online-inspect-return-top">残りをデッキ上に戻して確定</button><button class="btn" id="online-inspect-return-bottom">残りをデッキ下に戻して確定</button><button class="btn" id="online-inspect-abort">変更せず閉じる</button></div>`,false);
+  $$('[data-online-inspect-hand]').forEach(b=>b.onclick=()=>onlineStageTopInspectMove(Number(b.dataset.onlineInspectHand),'hand',false));
+  $$('[data-online-inspect-move]').forEach(b=>b.onclick=()=>onlineOpenTopInspectMove(Number(b.dataset.onlineInspectMove)));
+  $$('[data-online-inspect-up]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.onlineInspectUp);if(i<=0)return;[s.cards[i-1],s.cards[i]]=[s.cards[i],s.cards[i-1]];onlineRenderTopInspectSession()});
+  $$('[data-online-inspect-down]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.onlineInspectDown);if(i>=s.cards.length-1)return;[s.cards[i+1],s.cards[i]]=[s.cards[i],s.cards[i+1]];onlineRenderTopInspectSession()});
+  $('#online-inspect-return-top').onclick=()=>onlineFinishTopInspectSession('top');
+  $('#online-inspect-return-bottom').onclick=()=>onlineFinishTopInspectSession('bottom');
+  $('#online-inspect-abort').onclick=()=>{onlineTopInspectSession=null;closeModal();toast('デッキ順は変更していません')};
+}
+function onlineStageTopInspectMove(i,dest,faceDown=false,opt={}){
+  const s=onlineTopInspectSession,x=s?.cards?.[i];if(!s||!x)return;
+  s.cards.splice(i,1);s.moved.push({...x,dest,faceDown:!!faceDown,opt:{...opt}});onlineRenderTopInspectSession();
+}
+function onlineOpenTopInspectMove(i){
+  const s=onlineTopInspectSession,x=s?.cards?.[i],c=x?.card;if(!s||!c)return;
+  /* Returning to either deck is handled only by the final top/bottom buttons, so deck targets are removed here. */
+  const targetHtml=moveTargetsHtml(s.pi,'grave');
+  openModal(`<div class="modal-head"><h3>${esc(c.name)} の移動先</h3></div><label>移動先<select id="online-inspect-target">${targetHtml}</select></label><div id="online-inspect-options" style="margin-top:10px"></div><button class="btn primary" id="online-inspect-confirm" style="margin-top:10px">決定</button><button class="btn" id="online-inspect-back" style="margin-top:10px">戻る</button>`,false);
+  const sel=$('#online-inspect-target');
+  [...sel.options].forEach(o=>{const [opi,z]=String(o.value||'').split('|');if(Number(opi)!==s.pi||z==='deck'||z==='otherDeck')o.remove()});
+  const upd=()=>{const[pi,z]=sel.value.split('|');let h='';if(FIXED.includes(z))h=`<label>枠<select id="online-inspect-slot">${board.players[Number(pi)][z].map((v,j)=>`<option value="${j}">${j+1}${v?'（使用中）':''}</option>`).join('')}</select></label><label style="margin-top:8px">使用中なら<select id="online-inspect-occ"><option value="top">上に重ねる</option><option value="bottom">下に重ねる</option></select></label>`;$('#online-inspect-options').innerHTML=h};
+  sel.onchange=upd;upd();$('#online-inspect-back').onclick=onlineRenderTopInspectSession;
+  $('#online-inspect-confirm').onclick=()=>{const[pi,z]=sel.value.split('|');if(Number(pi)!==s.pi){toast('オンラインでは相手側へ直接移動できません');return}const opt=FIXED.includes(z)?{slot:Number($('#online-inspect-slot')?.value||0),stack:$('#online-inspect-occ')?.value||'top'}:{};onlineStageTopInspectMove(i,z,z==='pain'?false:false,opt)};
+}
+async function onlineFinishTopInspectSession(position='top'){
+  const s=onlineTopInspectSession;if(!s||s.busy)return;s.busy=true;
+  const returnIds=s.cards.map(x=>String(x.cardId));
+  const top=position==='top'?returnIds:[],bottom=position==='bottom'?returnIds:[];
+  try{
+    await onlineServerCommitTopInspection(s.slot,s.peekedIds,top,bottom,s.deckSignature);
+    for(const x of s.moved){onlineRemoveShadowDeckCard(board?.players?.[s.pi],x.cardId);onlineApplyTakenCardToZone(s.pi,x.card,x.dest,x.faceDown,x.opt||{})}
+    if(s.moved.some(x=>x.dest==='hand')){onlinePersistOwnerHand();onlineOwnerHandRestoreState='fresh'}
+    onlineRecordRoomAction('server-top-x-inspect',{slot:s.slot,count:s.peekedIds.length,moved:s.moved.length,returned:returnIds.length,returnPosition:position},'owner-p'+s.slot);
+    onlineTopInspectSession=null;closeModal();renderBoard();onlineScheduleAutoSync();await onlineRemoteGetRoom();onlineSignalRoomUpdate('top-x-inspect');toast('上からX枚の処理を確定しました');
+  }catch(err){
+    s.busy=false;console.error('online commit top inspection failed',err);toast(`確定できません：${String(err?.message||err)}`);onlineRenderTopInspectSession();
+  }
 }
 
 async function onlineAuditHashEntry(prevHash,row){
