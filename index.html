@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v24.3</title>
+<title>みん会TCG Simulator v24.2</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21694,7 +21694,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v24.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v24.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22381,10 +22381,6 @@ h3 .minkai-ruby{margin-top:.45em}
     <div class="setup panel">
       <div class="section-head"><h2>盤面開始</h2></div>
       <div id="board-resume-panel" class="board-resume-panel"></div>
-      <div class="actions board-resume-fallback-actions" id="board-resume-fallback-actions">
-        <button class="btn" type="button" id="setup-resume-board-always">前回の盤面から再開</button>
-        <button class="btn small" type="button" id="setup-open-board-saves-always">保存した盤面</button>
-      </div>
       <label>盤面モード<select id="mode-select"><option value="1">一人用</option><option value="2">二人用</option></select></label>
       <div class="setup-row" style="margin-top:12px">
         <label>プレイヤー1 デッキ<select id="setup-deck-1"></select></label>
@@ -32083,23 +32079,15 @@ function openBoardSaveManager(){
 function renderBoardResumePanel(){
  const host=$('#board-resume-panel');if(!host)return;
  const auto=loadStoredBoardSession(),snaps=loadBoardSnapshots(),snapCount=snaps.filter(Boolean).length;
- if(!auto&&!snapCount){host.innerHTML='';host.hidden=true}else{
+ if(!auto&&!snapCount){host.innerHTML='';host.hidden=true;return}
  host.hidden=false;
  host.innerHTML=`<div class="board-resume-card">
    <div class="board-resume-copy"><b>${auto?'前回の盤面があります':'保存した盤面があります'}</b><div class="muted">${auto?`${boardSessionSummary(auto)} / ${formatBoardSavedAt(auto.savedAt)}`:`スナップショット ${snapCount}件`}</div></div>
    <div class="actions">${auto?'<button class="btn small primary" id="setup-resume-board">前回から再開</button>':''}<button class="btn small" id="setup-open-board-saves">保存スロット</button>${auto?'<button class="btn small danger" id="setup-delete-autosave">前回分を削除</button>':''}</div>
  </div>`;
- }
  const resume=$('#setup-resume-board');if(resume)resume.onclick=()=>loadBoardSessionRecord(auto);
  $('#setup-open-board-saves').onclick=()=>openBoardSaveManager();
  const del=$('#setup-delete-autosave');if(del)del.onclick=()=>{if(!confirm('前回の自動保存盤面を削除しますか？\n名前付きスナップショットは残ります。'))return;localStorage.removeItem(LS_BOARD_SESSION);renderBoardResumePanel();toast('前回の盤面を削除しました')};
- const alwaysResume=$('#setup-resume-board-always');
- if(alwaysResume){
-   alwaysResume.disabled=!auto;
-   alwaysResume.title=auto?`${boardSessionSummary(auto)} / ${formatBoardSavedAt(auto.savedAt)}`:'前回の自動保存盤面はありません';
-   alwaysResume.onclick=()=>{const latest=loadStoredBoardSession();if(latest)loadBoardSessionRecord(latest);else toast('前回の自動保存盤面はありません')};
- }
- const alwaysSaves=$('#setup-open-board-saves-always');if(alwaysSaves)alwaysSaves.onclick=()=>openBoardSaveManager();
 }
 
 function renderSetup(forceDefaults=false){
