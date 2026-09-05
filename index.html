@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v25.8</title>
+<title>みん会TCG Simulator v25.9</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21812,7 +21812,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v25.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v25.9 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -32964,7 +32964,7 @@ function renderBoard(){
  if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive&&currentScreenName==='online-duel'){
    onlineDuelBoard=board;
    // 手札操作直後の再読込でも失わないよう、描画要求時点で即保存。
-   try{onlinePersistOwnerHand()}catch(_){}
+   try{onlinePersistOwnerHand();onlinePersistOwnerPublicBoard()}catch(_){}
    onlineRenderDuelBoard();
    onlineScheduleAutoSync();
    return;
@@ -33748,11 +33748,33 @@ function bindBoard(){
 }
 
 const moveSourceZones=new WeakMap();
+function onlineRepairOwnMaskedPainCard(card){
+ if(!onlineDuelActive||!card||!card.faceDown||String(card.name||'')!=='裏向きカード')return card;
+ const slot=onlineOwnSlot(),code=onlineSessionState.joinCode;
+ if(!slot||!code)return card;
+ const saved=onlineRestoreOwnerPublicBoardFallback(slot,code);
+ if(!saved)return card;
+ const targetInstance=String(card.instanceId||'').replace(/^remote_/,'');
+ for(const pile of Array.isArray(saved.pain)?saved.pain:[]){
+   for(const sc of Array.isArray(pile?.cards)?pile.cards:[]){
+     const sid=String(sc?.instanceId||'');
+     if(targetInstance&&sid===targetInstance){
+       const restored=onlinePrivateCardToInstance(sc);
+       Object.keys(card).forEach(k=>delete card[k]);
+       Object.assign(card,restored);
+       return card;
+     }
+   }
+ }
+ return card;
+}
 function prepareCardForDestination(card,destZone){
  if(!card||typeof card!=='object')return card;
  const srcZone=moveSourceZones.get(card);
  moveSourceZones.delete(card);
  if(srcZone==='pain'&&card.faceDown&&boardDisplayPrefs.painRevealOnMove!==false&&!['pain','deck','otherDeck'].includes(destZone)){
+   // 自分のPCにある裏向きカードは、公開用の匿名化データではなく所有者専用情報へ戻してから表向きにする。
+   onlineRepairOwnMaskedPainCard(card);
    card.faceDown=false;
  }
  return card;
@@ -35174,6 +35196,7 @@ let onlineSetupDraft={deckId:'',otherDeckId:'',oshiiCardId:'',roomCode:''};
 const LS_ONLINE_OWNER_HAND='minkai-online-owner-hand-v1';
 const LS_ONLINE_OWNER_HAND_V2='minkai-online-owner-hand-v2';
 const LS_ONLINE_OWNER_PUBLIC_BOARD='minkai-online-owner-public-board-v1';
+const LS_ONLINE_OWNER_PRIVATE_BOARD_V2='minkai-online-owner-private-board-v2';
 const LS_ONLINE_SCROLL_STATE='minkai-online-scroll-state-v1';
 function onlinePersistOwnerHand(){
   if(!onlineDuelActive||!onlineSessionState.joinCode)return;
@@ -35223,27 +35246,150 @@ function onlinePersistOwnerHand(){
   }catch(_){}
 }
 
+function onlineCloneOwnerPrivateCard(c){
+  if(!c||typeof c!=='object')return null;
+  ensureInstanceBoardExtras(c);
+  return {
+    id:String(c.id||''),
+    instanceId:String(c.instanceId||''),
+    name:String(c.name||''),
+    ruby:String(c.ruby||''),
+    type:String(c.type||''),
+    level:c.level??'',
+    power:c.power??'',
+    race:String(c.race||''),
+    rarity:String(c.rarity||''),
+    effect:String(c.effect||''),
+    flavor:String(c.flavor||''),
+    memo:String(c.memo||''),
+    faceDown:!!c.faceDown,
+    rested:!!c.rested,
+    powerMod:Number(c.powerMod)||0,
+    levelModPersistent:Number(c.levelModPersistent)||0,
+    levelModTemporary:Number(c.levelModTemporary)||0,
+    token:!!c.token,
+    publicCopy:!!c.publicCopy,
+    publicSourceId:String(c.publicSourceId||''),
+    counters:Array.isArray(c.counters)?c.counters.map(x=>({
+      name:String(x?.name||'カウンター'),
+      value:Number(x?.value)||0
+    })):[],
+    markers:Array.isArray(c.markers)?c.markers.map(x=>({
+      key:String(x?.key||'custom'),
+      label:String(x?.label||'マーカー'),
+      tone:String(x?.tone||'custom')
+    })):[]
+  };
+}
+function onlineExtractOwnerPrivateBoard(slot){
+  const p=board?.players?.[Number(slot)-1];
+  if(!p)return null;
+  const out={};
+  for(const z of ONLINE_PUBLIC_ZONES){
+    const src=Array.isArray(p[z])?p[z]:[];
+    out[z]=src.map(pile=>{
+      if(!pile)return null;
+      return {
+        id:String(pile.id||''),
+        cards:(Array.isArray(pile.cards)?pile.cards:[]).map(onlineCloneOwnerPrivateCard).filter(Boolean)
+      };
+    });
+  }
+  out.meta={updatedAt:Date.now()};
+  return out;
+}
+function onlinePrivateCardToInstance(saved){
+  const master=saved?.id?cards.find(c=>String(c.id)===String(saved.id)):null;
+  let c=master?cloneInstance(master):{
+    id:String(saved?.id||uid('private-card')),
+    instanceId:String(saved?.instanceId||uid('private-inst')),
+    name:String(saved?.name||'カード'),
+    ruby:String(saved?.ruby||''),
+    type:String(saved?.type||''),
+    level:saved?.level??'',
+    power:saved?.power??'',
+    race:String(saved?.race||''),
+    rarity:String(saved?.rarity||''),
+    effect:String(saved?.effect||''),
+    flavor:String(saved?.flavor||''),
+    visualEffects:[],counters:[],markers:[],memo:'',
+    powerMod:0,levelModPersistent:0,levelModTemporary:0,token:false
+  };
+  if(saved?.instanceId)c.instanceId=String(saved.instanceId);
+  c.name=String(saved?.name??c.name??'カード');
+  c.ruby=String(saved?.ruby??c.ruby??'');
+  c.type=String(saved?.type??c.type??'');
+  c.level=saved?.level??c.level??'';
+  c.power=saved?.power??c.power??'';
+  c.race=String(saved?.race??c.race??'');
+  c.rarity=String(saved?.rarity??c.rarity??'');
+  c.effect=String(saved?.effect??c.effect??'');
+  c.flavor=String(saved?.flavor??c.flavor??'');
+  c.memo=String(saved?.memo||'');
+  c.faceDown=!!saved?.faceDown;
+  c.rested=!!saved?.rested;
+  c.powerMod=Number(saved?.powerMod)||0;
+  c.levelModPersistent=Number(saved?.levelModPersistent)||0;
+  c.levelModTemporary=Number(saved?.levelModTemporary)||0;
+  c.token=!!saved?.token;
+  c.publicCopy=!!saved?.publicCopy;
+  c.publicSourceId=String(saved?.publicSourceId||'');
+  c.counters=Array.isArray(saved?.counters)?saved.counters.map(x=>({
+    name:String(x?.name||'カウンター'),
+    value:Number(x?.value)||0
+  })):[];
+  c.markers=Array.isArray(saved?.markers)?saved.markers.map(x=>({
+    id:uid('private-mark'),
+    key:String(x?.key||'custom'),
+    label:String(x?.label||'マーカー'),
+    tone:String(x?.tone||'custom')
+  })):[];
+  return c;
+}
+function onlineApplyOwnerPrivateBoard(slot,saved){
+  const p=onlineDuelBoard?.players?.[Number(slot)-1];
+  if(!p||!saved)return false;
+  for(const z of ONLINE_PUBLIC_ZONES){
+    const src=Array.isArray(saved[z])?saved[z]:[];
+    if(FIXED.includes(z)){
+      const minLen=z==='character'||z==='pain'||z==='room'?5:z==='rulePlus'?1:src.length;
+      p[z]=Array.from({length:Math.max(minLen,src.length)},(_,i)=>{
+        const pile=src[i];
+        if(!pile||!Array.isArray(pile.cards)||!pile.cards.length)return null;
+        return {id:String(pile.id||uid('private-pile')),cards:pile.cards.map(onlinePrivateCardToInstance)};
+      });
+    }else{
+      p[z]=src.filter(pile=>pile&&Array.isArray(pile.cards)&&pile.cards.length).map(pile=>({
+        id:String(pile.id||uid('private-pile')),
+        cards:pile.cards.map(onlinePrivateCardToInstance)
+      }));
+    }
+  }
+  return true;
+}
 function onlinePersistOwnerPublicBoard(){
   if(!onlineDuelActive||!onlineSessionState.joinCode)return;
   const slot=onlineOwnSlot();
   if(!slot||!board?.players?.[slot-1])return;
   try{
-    const all=JSON.parse(localStorage.getItem(LS_ONLINE_OWNER_PUBLIC_BOARD)||'{}');
+    // v25.9: ここは「公開用」ではなく所有者専用の完全な盤面情報を保存する。
+    // 裏向きPCのカードID/名称を隠さず保持し、再接続後に自分だけ復元できるようにする。
+    const all=JSON.parse(localStorage.getItem(LS_ONLINE_OWNER_PRIVATE_BOARD_V2)||'{}');
     all[onlineSessionState.joinCode]={
       slot,
-      publicBoard:onlineExtractPublicBoardFromSolo(slot),
+      privateBoard:onlineExtractOwnerPrivateBoard(slot),
       savedAt:Date.now()
     };
-    localStorage.setItem(LS_ONLINE_OWNER_PUBLIC_BOARD,JSON.stringify(all));
+    localStorage.setItem(LS_ONLINE_OWNER_PRIVATE_BOARD_V2,JSON.stringify(all));
   }catch(_){}
 }
 function onlineRestoreOwnerPublicBoardFallback(slot,code){
   try{
-    const all=JSON.parse(localStorage.getItem(LS_ONLINE_OWNER_PUBLIC_BOARD)||'{}');
+    const all=JSON.parse(localStorage.getItem(LS_ONLINE_OWNER_PRIVATE_BOARD_V2)||'{}');
     const rec=all?.[code];
-    if(!rec||Number(rec.slot)!==Number(slot)||!rec.publicBoard)return null;
+    if(!rec||Number(rec.slot)!==Number(slot)||!rec.privateBoard)return null;
     if(Date.now()-Number(rec.savedAt||0)>1000*60*60*6)return null;
-    return rec.publicBoard;
+    return rec.privateBoard;
   }catch(_){return null}
 }
 function onlineRestoreOwnerHand(player,slot,code){
@@ -35318,11 +35464,13 @@ function onlineForgetOwnerHand(code=''){
       localStorage.setItem(key,JSON.stringify(all));
     }catch(_){}
   }
-  try{
-    const all=JSON.parse(localStorage.getItem(LS_ONLINE_OWNER_PUBLIC_BOARD)||'{}');
-    if(code)delete all[code];else Object.keys(all).forEach(k=>delete all[k]);
-    localStorage.setItem(LS_ONLINE_OWNER_PUBLIC_BOARD,JSON.stringify(all));
-  }catch(_){}
+  for(const key of [LS_ONLINE_OWNER_PUBLIC_BOARD,LS_ONLINE_OWNER_PRIVATE_BOARD_V2]){
+    try{
+      const all=JSON.parse(localStorage.getItem(key)||'{}');
+      if(code)delete all[code];else Object.keys(all).forEach(k=>delete all[k]);
+      localStorage.setItem(key,JSON.stringify(all));
+    }catch(_){}
+  }
 }
 
 let onlineOwnerHandRestoreState='none'; // none | restored | fresh | incomplete
@@ -35505,24 +35653,23 @@ function onlinePrepareDuelBoard(room){
     makePlayer() の対戦開始時配置へ戻っていた。
     手札は owner-hand の復元、デッキ順はサーバー管理なのでここでは触らない。
   */
-  let restoreP1=state.p1,restoreP2=state.p2;
+  const restoreP1=state.p1,restoreP2=state.p2;
+
+  // 相手側は公開用スナップショットを使う。
+  if(ownSlot!==1)onlineApplyRemotePublicSlotToDuel(1,restoreP1);
+  if(ownSlot!==2)onlineApplyRemotePublicSlotToDuel(2,restoreP2);
+
   if(ownSlot){
-    const localFallback=onlineRestoreOwnerPublicBoardFallback(ownSlot,code);
-    const ownRemote=ownSlot===1?restoreP1:restoreP2;
-    const remoteHasState=ONLINE_PUBLIC_ZONES.some(z=>{
-      const a=Array.isArray(ownRemote?.[z])?ownRemote[z]:[];
-      return a.some(p=>p&&Array.isArray(p.cards)&&p.cards.length);
-    });
-    const localHasState=localFallback&&ONLINE_PUBLIC_ZONES.some(z=>{
-      const a=Array.isArray(localFallback?.[z])?localFallback[z]:[];
-      return a.some(p=>p&&Array.isArray(p.cards)&&p.cards.length);
-    });
-    if(!remoteHasState&&localHasState){
-      if(ownSlot===1)restoreP1=localFallback;else restoreP2=localFallback;
+    const ownerPrivate=onlineRestoreOwnerPublicBoardFallback(ownSlot,code);
+    if(ownerPrivate){
+      // 自分側は裏向きカードの正体を含む所有者専用キャッシュを最優先。
+      onlineApplyOwnerPrivateBoard(ownSlot,ownerPrivate);
+    }else{
+      // 初回接続など専用キャッシュが無い場合だけ公開スナップショットを使用。
+      // 裏向きカードは正体を復元できないため、以後の操作で新しい専用キャッシュを作る。
+      onlineApplyRemotePublicSlotToDuel(ownSlot,ownSlot===1?restoreP1:restoreP2);
     }
   }
-  onlineApplyRemotePublicSlotToDuel(1,restoreP1);
-  onlineApplyRemotePublicSlotToDuel(2,restoreP2);
 
   // 復元直後に同一内容を「新しい変更」として再送しない。
   if(ownSlot){
@@ -37070,6 +37217,7 @@ async function onlineAutoSyncNow(){
   // v25.7: 手札は公開盤面のsignatureに含まれないため、
   // 公開盤面が未変更でも先に必ず保存する。
   onlinePersistOwnerHand();
+  onlinePersistOwnerPublicBoard();
 
   const publicBoard=onlineExtractPublicBoardFromSolo(slot);
   const snap=onlinePublicBoardSyncSignature(publicBoard);
@@ -38366,7 +38514,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v25.8 public card repository
+// v25.9 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
