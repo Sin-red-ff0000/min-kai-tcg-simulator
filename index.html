@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v25.7</title>
+<title>みん会TCG Simulator v25.8</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20292,6 +20292,14 @@ h3 .minkai-ruby{margin-top:.45em}
 #deck-review-pane input,
 #deck-review-pane button{font-family:inherit}
 #deck-review-pane .deck-review-row .pill{color:var(--muted)}
+
+/* v25.8 deck builder detail button */
+.deck-card-row .qty{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+[data-deck-builder-detail]{white-space:nowrap}
+@media(max-width:760px){
+  .deck-card-row .qty{justify-content:flex-start}
+  [data-deck-builder-detail]{min-height:36px;padding-left:12px;padding-right:12px}
+}
 </style>
 
 <style>
@@ -21804,7 +21812,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v25.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v25.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -32011,6 +32019,18 @@ function deckReviewDetailHtml(c,index,total){
    ${flavor?`<div class="manager-detail-flavor">${esc(flavor)}</div>`:''}
  </div>`;
 }
+function openDeckBuilderCardDetail(id){
+ const c=cards.find(x=>String(x.id)===String(id));
+ if(!c){toast('カード情報が見つかりません');return}
+ openModal(deckReviewDetailHtml(c,0,1));
+ const prev=$('#deck-review-detail-prev'),next=$('#deck-review-detail-next');
+ if(prev)prev.hidden=true;
+ if(next)next.hidden=true;
+ const count=document.querySelector('.deck-review-detail-nav .pill');
+ if(count)count.hidden=true;
+ $('#deck-review-detail-close').onclick=closeModal;
+}
+
 function openDeckReviewDetail(id){
  const ids=deckReviewDetailIds.filter(cid=>cards.some(c=>String(c.id)===String(cid)));
  let index=ids.indexOf(String(id));if(index<0)return;
@@ -32101,7 +32121,7 @@ function renderDeckPool(){
  if(deckPoolPage>pageMax)deckPoolPage=pageMax;
  const start=deckPoolPage*pageSize;
  const pageRows=arr.slice(start,start+pageSize);
- $('#deck-card-pool').innerHTML=pageRows.length?pageRows.map(c=>`<div class="deck-card-row list-row"><div class="grow"><b>${esc(c.name)}</b><div class="muted">${esc(c.type)}${c.level!==''&&c.level!=null?' / Lv'+esc(c.level):''}${c.power!==''&&c.power!=null?' / PW'+esc(c.power):''}${c.race?' / '+esc(c.race):''}</div></div><div class="qty"><button class="btn small" data-pool-minus="${c.id}">−</button><b>${workingDeck.entries[c.id]||0}</b><button class="btn small" data-pool-plus="${c.id}">＋</button><button class="btn small" data-pool-plus4="${c.id}">＋4</button></div></div>`).join(''):'<div class="muted">該当カードなし</div>';
+ $('#deck-card-pool').innerHTML=pageRows.length?pageRows.map(c=>`<div class="deck-card-row list-row"><div class="grow"><b>${esc(c.name)}</b><div class="muted">${esc(c.type)}${c.level!==''&&c.level!=null?' / Lv'+esc(c.level):''}${c.power!==''&&c.power!=null?' / PW'+esc(c.power):''}${c.race?' / '+esc(c.race):''}</div></div><div class="qty"><button class="btn small" type="button" data-deck-builder-detail="${c.id}">詳細</button><button class="btn small" data-pool-minus="${c.id}">−</button><b>${workingDeck.entries[c.id]||0}</b><button class="btn small" data-pool-plus="${c.id}">＋</button><button class="btn small" data-pool-plus4="${c.id}">＋4</button></div></div>`).join(''):'<div class="muted">該当カードなし</div>';
  const info=$('#deck-pool-page-info'),prev=$('#deck-pool-prev'),next=$('#deck-pool-next');
  if(arr.length){
    const end=Math.min(start+pageSize,arr.length);
@@ -32120,10 +32140,10 @@ function renderDeckPool(){
 }
 function resetDeckPoolPageAndRender(){deckPoolPage=0;renderDeckPool()}
 function bindDeckQty(){
- $$('[data-pool-plus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.poolPlus,1));$$('[data-pool-plus4]').forEach(b=>b.onclick=()=>changeQty(b.dataset.poolPlus4,4));$$('[data-pool-minus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.poolMinus,-1));$$('[data-current-plus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.currentPlus,1));$$('[data-current-plus4]').forEach(b=>b.onclick=()=>changeQty(b.dataset.currentPlus4,4));$$('[data-current-minus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.currentMinus,-1));
+ $$('[data-pool-plus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.poolPlus,1));$$('[data-pool-plus4]').forEach(b=>b.onclick=()=>changeQty(b.dataset.poolPlus4,4));$$('[data-pool-minus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.poolMinus,-1));$$('[data-current-plus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.currentPlus,1));$$('[data-current-plus4]').forEach(b=>b.onclick=()=>changeQty(b.dataset.currentPlus4,4));$$('[data-current-minus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.currentMinus,-1));$$('[data-deck-builder-detail]').forEach(b=>b.onclick=()=>openDeckBuilderCardDetail(b.dataset.deckBuilderDetail));
 }
 function changeQty(id,d){const n=Math.max(0,(workingDeck.entries[id]||0)+d);if(n)workingDeck.entries[id]=n;else delete workingDeck.entries[id];renderDeckPool();renderDeckCurrent()}
-function renderDeckCurrent(){const entries=deckContentEntryRows();const total=entries.reduce((a,[,n])=>a+n,0);$('#deck-total').textContent=total+'枚';$('#deck-current').innerHTML=entries.length?entries.map(([id,n],i)=>{const c=cards.find(x=>x.id===id);return `<div class="list-row deck-card-row deck-current-row"><div class="deck-order-controls"><button class="btn tiny" data-deck-move-up="${i}" ${i===0?'disabled':''}>↑</button><button class="btn tiny" data-deck-move-down="${i}" ${i===entries.length-1?'disabled':''}>↓</button></div><div class="grow"><b>${esc(c?.name||'削除済みカード')}</b><div class="muted">${esc(c?.type||'')}${c?.level!==''&&c?.level!=null?` / Lv${esc(c.level)}`:''}${c?.power!==''&&c?.power!=null?` / PW${esc(c.power)}`:''}</div></div><div class="qty"><button class="btn small" data-current-minus="${id}">−</button><b>${n}</b><button class="btn small" data-current-plus="${id}">＋</button><button class="btn small" data-current-plus4="${id}">＋4</button></div></div>`}).join(''):'<div class="muted">カードが入っていません。</div>';bindDeckQty();$$('[data-deck-move-up]').forEach(b=>b.onclick=()=>moveWorkingDeckEntry(Number(b.dataset.deckMoveUp),-1));$$('[data-deck-move-down]').forEach(b=>b.onclick=()=>moveWorkingDeckEntry(Number(b.dataset.deckMoveDown),1));renderDeckDefaultOshii()}
+function renderDeckCurrent(){const entries=deckContentEntryRows();const total=entries.reduce((a,[,n])=>a+n,0);$('#deck-total').textContent=total+'枚';$('#deck-current').innerHTML=entries.length?entries.map(([id,n],i)=>{const c=cards.find(x=>x.id===id);return `<div class="list-row deck-card-row deck-current-row"><div class="deck-order-controls"><button class="btn tiny" data-deck-move-up="${i}" ${i===0?'disabled':''}>↑</button><button class="btn tiny" data-deck-move-down="${i}" ${i===entries.length-1?'disabled':''}>↓</button></div><div class="grow"><b>${esc(c?.name||'削除済みカード')}</b><div class="muted">${esc(c?.type||'')}${c?.level!==''&&c?.level!=null?` / Lv${esc(c.level)}`:''}${c?.power!==''&&c?.power!=null?` / PW${esc(c.power)}`:''}</div></div><div class="qty"><button class="btn small" type="button" data-deck-builder-detail="${id}">詳細</button><button class="btn small" data-current-minus="${id}">−</button><b>${n}</b><button class="btn small" data-current-plus="${id}">＋</button><button class="btn small" data-current-plus4="${id}">＋4</button></div></div>`}).join(''):'<div class="muted">カードが入っていません。</div>';bindDeckQty();$$('[data-deck-move-up]').forEach(b=>b.onclick=()=>moveWorkingDeckEntry(Number(b.dataset.deckMoveUp),-1));$$('[data-deck-move-down]').forEach(b=>b.onclick=()=>moveWorkingDeckEntry(Number(b.dataset.deckMoveDown),1));renderDeckDefaultOshii()}
 $('#deck-type-filter').onchange=resetDeckPoolPageAndRender;$('#deck-level-sort').onchange=resetDeckPoolPageAndRender;$('#deck-card-search').oninput=resetDeckPoolPageAndRender;$('#deck-race-search').oninput=resetDeckPoolPageAndRender;['#deck-level-min','#deck-level-max','#deck-power-min','#deck-power-max'].forEach(sel=>{const el=$(sel);if(el)el.oninput=resetDeckPoolPageAndRender});
 $('#deck-filter-reset').onclick=()=>{
  $('#deck-card-search').value='';$('#deck-type-filter').value='all';$('#deck-race-search').value='';
@@ -38346,7 +38366,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v25.7 public card repository
+// v25.8 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
