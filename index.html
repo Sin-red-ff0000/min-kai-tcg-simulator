@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v25.3</title>
+<title>みん会TCG Simulator v25.4</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21788,7 +21788,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v25.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v25.4 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -32567,12 +32567,18 @@ function captureHandScroll(){
  board.players.forEach((_,pi)=>{const el=document.querySelector(`[data-hand-scroll="${pi}"]`);if(el)handScrollPositions[pi]=el.scrollLeft});
 }
 function captureFixedZoneScroll(){
- document.querySelectorAll('[data-zone-scroll]').forEach(el=>{zoneScrollPositions[el.dataset.zoneScroll]=el.scrollLeft});
+ document.querySelectorAll('[data-zone-scroll]').forEach(el=>{
+   zoneScrollPositions[el.dataset.zoneScroll]={
+     left:Number(el.scrollLeft)||0,
+     top:Number(el.scrollTop)||0
+   };
+ });
 }
 function restoreBoardScroll(){
  if(!board)return;
  const followNow=new Set(pendingHandFollow);
  pendingHandFollow.clear();
+ const pageX=window.scrollX||0,pageY=window.scrollY||0;
  requestAnimationFrame(()=>{
    board.players.forEach((_,pi)=>{
      const el=document.querySelector(`[data-hand-scroll="${pi}"]`);if(!el)return;
@@ -32583,7 +32589,20 @@ function restoreBoardScroll(){
        el.scrollLeft=handScrollPositions[pi]||0;
      }
    });
-   document.querySelectorAll('[data-zone-scroll]').forEach(el=>{el.scrollLeft=zoneScrollPositions[el.dataset.zoneScroll]||0});
+   document.querySelectorAll('[data-zone-scroll]').forEach(el=>{
+     const saved=zoneScrollPositions[el.dataset.zoneScroll];
+     if(saved&&typeof saved==='object'){
+       el.scrollLeft=Number(saved.left)||0;
+       el.scrollTop=Number(saved.top)||0;
+     }else{
+       // 旧形式との互換
+       el.scrollLeft=Number(saved)||0;
+     }
+   });
+   // スマホでDOM再生成時にページ全体が先頭方向へ跳ぶのを防ぐ
+   if(Math.abs((window.scrollY||0)-pageY)>2||Math.abs((window.scrollX||0)-pageX)>2){
+     window.scrollTo(pageX,pageY);
+   }
  });
 }
 const BOARD_MARKER_PRESETS={
@@ -32912,7 +32931,14 @@ function renderBoard(){
    onlineScheduleAutoSync();
    return;
  }
- if(!board)return;ensureBoardUiState();captureHandScroll();captureFixedZoneScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardDisplaySettings();applyBoardZoom();hydrateDecorStackMetrics(root);requestAnimationFrame(()=>{if(root?.isConnected){hydrateDecorStackMetrics(root);Promise.resolve(hydrateBoardVisuals(root)).catch(err=>console.warn('盤面外観の再読込に失敗',err))}});renderHomePowerControls();renderBoardPanelState();syncBoardTrayFields();renderBoardToolPresets();syncBoardRandomTools();hydratePlayerBoardBackgrounds();restoreBoardScroll();refreshMobileBoardToolWindow();syncMobileBoardToolsVisibility();commitBoardHistory();updateBoardHistoryControls();scheduleBoardAutosave()}
+ if(!board)return;
+ const boardPageScroll={x:window.scrollX||0,y:window.scrollY||0};
+ ensureBoardUiState();captureHandScroll();captureFixedZoneScroll();board.turn=Math.max(1,Number(board.turn)||1);$('#board-mode-label').textContent=board.mode===1?'一人用':'二人用';$('#turn-value').textContent=board.turn+'ターン目';$('#board-note').value=board.note||'';const root=$('#board-main');if(board.mode===1){root.innerHTML=renderPlayer(board.players[0],0,false)}else{root.innerHTML=renderPlayer(board.players[1],1,true)+'<div class="divider">──────── 対戦ライン ────────</div>'+renderPlayer(board.players[0],0,false)}bindBoard();applyBoardDisplaySettings();applyBoardZoom();hydrateDecorStackMetrics(root);requestAnimationFrame(()=>{if(root?.isConnected){hydrateDecorStackMetrics(root);Promise.resolve(hydrateBoardVisuals(root)).catch(err=>console.warn('盤面外観の再読込に失敗',err))}});renderHomePowerControls();renderBoardPanelState();syncBoardTrayFields();renderBoardToolPresets();syncBoardRandomTools();hydratePlayerBoardBackgrounds();restoreBoardScroll();requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   if(currentScreenName==='board'&&board){
+     const dx=Math.abs((window.scrollX||0)-boardPageScroll.x),dy=Math.abs((window.scrollY||0)-boardPageScroll.y);
+     if(dx>2||dy>2)window.scrollTo(boardPageScroll.x,boardPageScroll.y);
+   }
+ }));refreshMobileBoardToolWindow();syncMobileBoardToolsVisibility();commitBoardHistory();updateBoardHistoryControls();scheduleBoardAutosave()}
 function zoneHeader(pi,z){const p=board.players[pi], n=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button><button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;else if(['hand','grave','banish'].includes(z))controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll';controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button></span>`}return `<div class="zone-head"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
 
 function signedNumber(n){
@@ -33109,7 +33135,7 @@ async function hydratePlayerBoardBackgrounds(theme=currentThemeForDisplay()){
 }
 
 function renderCompressedPiles(piles,pi,z){return piles.map((pile,i)=>{const depth=Math.min(i,10),html=renderPile(pile,pi,z,i);return html.replace('draggable="true"',`draggable="true" style="left:${6+depth*4}px;top:${5+depth*2}px;z-index:${i+1}"`)}).join('')}
-function renderZone(p,pi,z){const collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];if(FIXED.includes(z)){return `<div class="zone ${collapsed?'collapsed':''}">${zoneHeader(pi,z)}${collapsed?'':`<div class="zone-body fixed" data-zone="${pi}|${z}" data-zone-scroll="${pi}|${z}">${p[z].map((pile,i)=>pile?renderPile(pile,pi,z,i):`<div class="slot" data-slot="${pi}|${z}|${i}">${i+1}</div>`).join('')}</div>`}</div>`}const handClass=z==='hand'?` hand-${p.handMode==='operation'?'operation':'scroll'}-mode`:'';const handAttr=z==='hand'?` data-hand-scroll="${pi}"`:'';return `<div class="zone">${zoneHeader(pi,z)}<div class="dropzone ${p[z].length?'':'empty'}${handClass}" data-zone="${pi}|${z}"${handAttr}>${p[z].map((pile,i)=>renderPile(pile,pi,z,i)).join('')}</div></div>`}
+function renderZone(p,pi,z){const collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];if(FIXED.includes(z)){return `<div class="zone ${collapsed?'collapsed':''}">${zoneHeader(pi,z)}${collapsed?'':`<div class="zone-body fixed" data-zone="${pi}|${z}" data-zone-scroll="${pi}|${z}">${p[z].map((pile,i)=>pile?renderPile(pile,pi,z,i):`<div class="slot" data-slot="${pi}|${z}|${i}">${i+1}</div>`).join('')}</div>`}</div>`}const handClass=z==='hand'?` hand-${p.handMode==='operation'?'operation':'scroll'}-mode`:'';const handAttr=z==='hand'?` data-hand-scroll="${pi}"`:` data-zone-scroll="${pi}|${z}"`;return `<div class="zone">${zoneHeader(pi,z)}<div class="dropzone ${p[z].length?'':'empty'}${handClass}" data-zone="${pi}|${z}"${handAttr}>${p[z].map((pile,i)=>renderPile(pile,pi,z,i)).join('')}</div></div>`}
 function compactZoneBox(p,pi,z){return `<div class="deck-box">${zoneHeader(pi,z)}<div class="dropzone pile-zone ${p[z].length?'':'empty'}" data-zone="${pi}|${z}">${renderCompressedPiles(p[z],pi,z)}</div></div>`}
 function deckExtraStateKey(pi,z){return `${Number(pi)}|${z==='otherDeck'?'otherDeck':'deck'}`}
 function isDeckExtraOpen(pi,z){return !!ensureBoardUiState()?.deckExtraOpen?.[deckExtraStateKey(pi,z)]}
@@ -35671,7 +35697,8 @@ function onlineRenderDuelBoard(){
   const room=onlineLoadRooms()[onlineSessionState.joinCode];
   if(!host||!room||!onlineDuelBoard)return;
 
-  // 同期による再描画の前に、手札・各ゾーンの横スクロール位置を保存する。
+  // 同期による再描画前に、盤面内スクロールとページ位置を保存する。
+  const onlinePageScroll={x:window.scrollX||0,y:window.scrollY||0};
   board=onlineDuelBoard;
   captureHandScroll();
   captureFixedZoneScroll();
@@ -35739,6 +35766,12 @@ function onlineRenderDuelBoard(){
 
   // DOM再生成後に、同期前のスクロール位置を復元する。
   restoreBoardScroll();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    if(currentScreenName==='online-duel'){
+      const dx=Math.abs((window.scrollX||0)-onlinePageScroll.x),dy=Math.abs((window.scrollY||0)-onlinePageScroll.y);
+      if(dx>2||dy>2)window.scrollTo(onlinePageScroll.x,onlinePageScroll.y);
+    }
+  }));
 }
 function onlineUpdateDuelToolbar(room){
   if(!room)return;
@@ -38066,7 +38099,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v25.3 public card repository
+// v25.4 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
