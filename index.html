@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v26.0</title>
+<title>みん会TCG Simulator v26.1</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21821,7 +21821,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v26.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v26.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -32986,7 +32986,17 @@ function renderBoard(){
      if(dx>2||dy>2)window.scrollTo(boardPageScroll.x,boardPageScroll.y);
    }
  }));refreshMobileBoardToolWindow();syncMobileBoardToolsVisibility();commitBoardHistory();updateBoardHistoryControls();scheduleBoardAutosave()}
-function zoneHeader(pi,z){const p=board.players[pi], n=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button><button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;else if(['hand','grave','banish'].includes(z))controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll';controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button></span>`}return `<div class="zone-head"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
+function onlineZoneDisplayCount(pi,z,fallback){
+ if(z==='deck'&&typeof onlineDuelActive!=='undefined'&&onlineDuelActive&&typeof onlineDeckCountFromRoom==='function'){
+   try{
+     const room=onlineLoadRooms?.()[onlineSessionState?.joinCode];
+     const n=onlineDeckCountFromRoom(room,Number(pi)+1);
+     if(n!=null)return n;
+   }catch(_){}
+ }
+ return fallback;
+}
+function zoneHeader(pi,z){const p=board.players[pi], rawN=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)), n=onlineZoneDisplayCount(pi,z,rawN),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button><button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;else if(['hand','grave','banish'].includes(z))controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll';controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button></span>`}return `<div class="zone-head"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
 
 function signedNumber(n){
  const v=Number(n)||0;
@@ -33117,7 +33127,8 @@ function ensurePlayerFreeCounters(p){
 }
 function renderPlayer(p,pi,reverse){
  const rows=reverse?['utility','hand','rulePlus','room','pain','character']:['character','pain','room','rulePlus','hand','utility'],homeMod=Number(p.homePowerMod)||0,free=ensurePlayerFreeCounters(p);
- return `<div class="player-board" data-player-background="${pi}"><div class="player-title"><b>${esc(p.name)}</b><span class="pill">デッキ ${physicalCount(p.deck)}枚</span><span class="pill">その他 ${physicalCount(p.otherDeck)}枚</span>${homeMod?`<span class="pill home-power-badge">ホームPW ${signedNumber(homeMod)}</span>`:''}<button class="btn small player-record-btn" type="button" data-player-record="${pi}">記録${free.length?` ${free.length}`:''}</button></div>${rows.map(z=>z==='utility'?renderUtility(p,pi):renderZone(p,pi,z)).join('')}</div>`;
+ const deckDisplayCount=onlineZoneDisplayCount(pi,'deck',physicalCount(p.deck));
+ return `<div class="player-board" data-player-background="${pi}"><div class="player-title"><b>${esc(p.name)}</b><span class="pill">デッキ ${deckDisplayCount}枚</span><span class="pill">その他 ${physicalCount(p.otherDeck)}枚</span>${homeMod?`<span class="pill home-power-badge">ホームPW ${signedNumber(homeMod)}</span>`:''}<button class="btn small player-record-btn" type="button" data-player-record="${pi}">記録${free.length?` ${free.length}`:''}</button></div>${rows.map(z=>z==='utility'?renderUtility(p,pi):renderZone(p,pi,z)).join('')}</div>`;
 }
 function playerFreeCounterWindowHtml(pi){
  const p=board?.players?.[Number(pi)];if(!p)return '<div class="muted">プレイヤーが見つかりません。</div>';
@@ -34349,6 +34360,7 @@ function onlineBrowseManagedDeckContents(pi){
   openModal(`<div class="modal-head"><h3>メインデッキの内容</h3><button class="btn" id="online-managed-deck-close">閉じる</button></div>
     <p class="muted">オンライン中のデッキ順はサーバー管理です。ここでは自分の残りカード内容を確認できますが、順番は表示しません。</p>
     <div class="pill" style="margin-bottom:10px">サーバー上の残り枚数 ${serverCount==null?'?':serverCount}枚</div>
+    ${p._onlineShadowDeckIncomplete?'<div class="muted" style="margin-bottom:10px">再接続後のため、下のカード内訳は端末側で復元できた範囲のみ表示しています。残り枚数はサーバー表示が正しい値です。</div>':''}
     <div class="inspect-grid">${rows.length?rows.map(x=>`<div class="board-zone-list-card">
       ${boardMiniArtHtml(x.card)}
       <div class="board-zone-list-info">
@@ -35304,6 +35316,14 @@ function onlineExtractOwnerPrivateBoard(slot){
       };
     });
   }
+  // その他デッキは相手へ公開しないが、再接続で初期枚数へ戻さないため所有者端末に保存する。
+  out.otherDeck=(Array.isArray(p.otherDeck)?p.otherDeck:[]).map(pile=>{
+    if(!pile)return null;
+    return {
+      id:String(pile.id||''),
+      cards:(Array.isArray(pile.cards)?pile.cards:[]).map(onlineCloneOwnerPrivateCard).filter(Boolean)
+    };
+  });
   out.meta={updatedAt:Date.now()};
   return out;
 }
@@ -35373,6 +35393,12 @@ function onlineApplyOwnerPrivateBoard(slot,saved){
         cards:pile.cards.map(onlinePrivateCardToInstance)
       }));
     }
+  }
+  if(Array.isArray(saved.otherDeck)){
+    p.otherDeck=saved.otherDeck.filter(pile=>pile&&Array.isArray(pile.cards)&&pile.cards.length).map(pile=>({
+      id:String(pile.id||uid('private-other-pile')),
+      cards:pile.cards.map(onlinePrivateCardToInstance)
+    }));
   }
   return true;
 }
@@ -35622,6 +35648,87 @@ function onlineApplyRemotePublicSlotToDuel(slot,state){
     ?state.meta.freeCounters.map(x=>({name:String(x?.name||'記録').slice(0,20),value:Number(x?.value)||0}))
     :[];
 }
+
+function onlineFlattenZoneCards(p,z){
+  return (Array.isArray(p?.[z])?p[z]:[]).flatMap(pile=>Array.isArray(pile?.cards)?pile.cards:[]).filter(Boolean);
+}
+function onlineRemoveOneShadowDeckById(player,cardId){
+  if(!player||!Array.isArray(player.deck))return false;
+  const id=String(cardId||'');
+  for(let i=0;i<player.deck.length;i++){
+    const pile=player.deck[i];
+    const cardsInPile=Array.isArray(pile?.cards)?pile.cards:[];
+    const ci=cardsInPile.findIndex(c=>String(c?.id||'')===id);
+    if(ci<0)continue;
+    cardsInPile.splice(ci,1);
+    if(!cardsInPile.length)player.deck.splice(i,1);
+    return true;
+  }
+  return false;
+}
+function onlineReconcileOwnerOtherDeck(player){
+  if(!player||!Array.isArray(player.otherDeck))return;
+  // v26.1以前のキャッシュにはotherDeckが無い。
+  // その場合はRP等へ移動済みのカードを初期その他デッキから差し引いて重複を減らす。
+  const outside=['rulePlus','character','grave','banish','pain','room']
+    .flatMap(z=>onlineFlattenZoneCards(player,z));
+  for(const c of outside){
+    const id=String(c?.id||'');
+    if(!id)continue;
+    for(let i=0;i<player.otherDeck.length;i++){
+      const pile=player.otherDeck[i],arr=Array.isArray(pile?.cards)?pile.cards:[];
+      const ci=arr.findIndex(x=>String(x?.id||'')===id);
+      if(ci<0)continue;
+      arr.splice(ci,1);
+      if(!arr.length)player.otherDeck.splice(i,1);
+      break;
+    }
+  }
+}
+function onlineReconcileOwnerShadowDeck(slot,room){
+  const player=onlineDuelBoard?.players?.[Number(slot)-1];
+  if(!player)return;
+
+  /*
+    makePlayer()は再接続時にデッキを対戦開始時の全枚数で作る。
+    手札復元では手札分だけ引かれるが、墓地/消失/PC/ホーム等へ出た分が
+    デッキに残ったままだったため、再接続のたびにローカル枚数が増えて見えていた。
+  */
+  const outsideZones=['hand','character','grave','banish','pain','room','rulePlus'];
+  const outside=outsideZones.flatMap(z=>onlineFlattenZoneCards(player,z));
+
+  // 一旦デッキを初期状態から再構成したいので、選択デッキから作った現在の影デッキを利用。
+  // hand復元時に既に除去済みのカードは二重に引かないよう、handは現状との差分で扱う。
+  // public/privateゾーン分は必ず1枚ずつ差し引く。
+  for(const z of ['character','grave','banish','pain','room','rulePlus']){
+    for(const c of onlineFlattenZoneCards(player,z)){
+      if(c?.id)onlineRemoveOneShadowDeckById(player,c.id);
+    }
+  }
+
+  // サーバーが持つ残り枚数を最終的な正とする。
+  const serverCount=onlineDeckCountFromRoom(room,slot);
+  if(serverCount!=null){
+    const current=physicalCount(player.deck);
+    if(current>serverCount){
+      let remove=current-serverCount;
+      while(remove>0&&player.deck.length){
+        const pile=player.deck[player.deck.length-1];
+        const arr=Array.isArray(pile?.cards)?pile.cards:[];
+        if(!arr.length){player.deck.pop();continue}
+        arr.pop();remove--;
+        if(!arr.length)player.deck.pop();
+      }
+    }
+    // current < serverCount の場合は正体不明カードを捏造せず、
+    // 表示枚数だけサーバー値を使用する。実際のドローはサーバーが返すIDで復元する。
+    player._onlineServerDeckCount=serverCount;
+    player._onlineShadowDeckIncomplete=physicalCount(player.deck)<serverCount;
+  }
+
+  onlineReconcileOwnerOtherDeck(player);
+}
+
 function onlinePrepareDuelBoard(room){
   const code=String(room?.code||onlineSessionState.joinCode||'');
   if(onlineDuelBoard&&onlineDuelRoomCode===code)return onlineDuelBoard;
@@ -35678,6 +35785,9 @@ function onlinePrepareDuelBoard(room){
       // 裏向きカードは正体を復元できないため、以後の操作で新しい専用キャッシュを作る。
       onlineApplyRemotePublicSlotToDuel(ownSlot,ownSlot===1?restoreP1:restoreP2);
     }
+
+    // 再接続用makePlayer()で復活した初期デッキ枚数を、現在の対戦状態へ合わせる。
+    onlineReconcileOwnerShadowDeck(ownSlot,room);
   }
 
   // 復元直後に同一内容を「新しい変更」として再送しない。
@@ -35698,6 +35808,11 @@ function onlineMergeRemotePublicIntoDuel(room){
   const own=onlineOwnSlot(),state=onlineRoomPublicState(room);
   if(own!==1)onlineApplyRemotePublicSlotToDuel(1,state.p1);
   if(own!==2)onlineApplyRemotePublicSlotToDuel(2,state.p2);
+  if(own){
+    const p=onlineDuelBoard.players?.[own-1];
+    const serverCount=onlineDeckCountFromRoom(room,own);
+    if(p&&serverCount!=null)p._onlineServerDeckCount=serverCount;
+  }
   onlineDuelBoard.turn=Number(room?.match?.turnCount||onlineDuelBoard.turn||1);
 }
 
@@ -37306,7 +37421,14 @@ function onlineCountPrivateInfo(slot){
   const p=board?.players?.[slot-1];
   if(!p)return {handCount:0,deckCount:0};
   const handCount=(Array.isArray(p.hand)?p.hand:[]).reduce((n,pile)=>n+(Array.isArray(pile?.cards)?pile.cards.length:0),0);
-  const deckCount=(Array.isArray(p.deck)?p.deck:[]).reduce((n,pile)=>n+(Array.isArray(pile?.cards)?pile.cards.length:0),0);
+  let deckCount=(Array.isArray(p.deck)?p.deck:[]).reduce((n,pile)=>n+(Array.isArray(pile?.cards)?pile.cards.length:0),0);
+  if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive){
+    try{
+      const room=onlineLoadRooms()[onlineSessionState.joinCode];
+      const serverCount=onlineDeckCountFromRoom(room,slot);
+      if(serverCount!=null)deckCount=serverCount;
+    }catch(_){}
+  }
   return {handCount,deckCount};
 }
 function onlineBuildPrivateStateForOwner(slot){
@@ -38376,10 +38498,19 @@ function onlineLocalPlayer(slot){
 }
 function onlineRemoveShadowDeckCard(player,cardId){
   if(!player||!Array.isArray(player.deck))return false;
-  const idx=player.deck.findIndex(pile=>String(pile?.cards?.[0]?.id||'')===String(cardId));
-  if(idx<0)return false;
-  player.deck.splice(idx,1);
-  return true;
+  const id=String(cardId||'');
+  for(let i=0;i<player.deck.length;i++){
+    const pile=player.deck[i],arr=Array.isArray(pile?.cards)?pile.cards:[];
+    const ci=arr.findIndex(c=>String(c?.id||'')===id);
+    if(ci<0)continue;
+    arr.splice(ci,1);
+    if(!arr.length)player.deck.splice(i,1);
+    if(Number.isFinite(Number(player._onlineServerDeckCount)))player._onlineServerDeckCount=Math.max(0,Number(player._onlineServerDeckCount)-1);
+    return true;
+  }
+  // 再接続後の影デッキが部分復元でも、サーバー上では確実に1枚減っている。
+  if(Number.isFinite(Number(player._onlineServerDeckCount)))player._onlineServerDeckCount=Math.max(0,Number(player._onlineServerDeckCount)-1);
+  return false;
 }
 function onlineAddCardIdToLocalHand(slot,cardId){
   const player=onlineLocalPlayer(slot);
@@ -38748,7 +38879,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v26.0 public card repository
+// v26.1 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
