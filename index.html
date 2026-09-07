@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v26.2</title>
+<title>みん会TCG Simulator v26.3</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21842,7 +21842,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v26.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v26.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22964,7 +22964,7 @@ h3 .minkai-ruby{margin-top:.45em}
               <button class="btn primary" type="button" id="account-full-cloud-upload">完全バックアップをクラウドへ保存</button>
               <button class="btn" type="button" id="account-full-cloud-download">クラウド完全バックアップを復元</button>
             </div>
-            <p class="account-cloud-danger-note muted">復元すると、この端末のカード・デッキ・コレクション・画像・外観設定をクラウドの内容へ置き換えます。復元前には現在の端末状態をZIPとして自動退避します。</p>
+            <p class="account-cloud-danger-note muted">復元すると、この端末のカード・デッキ・コレクション・画像・外観設定をクラウドの内容へ置き換えます。復元前に現在の端末状態をZIPで保存するか選べます。</p>
           </div>
 
           <div class="account-cloud-pane" data-account-cloud-pane="history" hidden>
@@ -38932,7 +38932,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v26.2 public card repository
+// v26.3 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -40644,7 +40644,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='26.2';
+  manifest.appVersion='26.3';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -40685,7 +40685,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'26.2',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'26.3',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
@@ -40702,11 +40702,18 @@ async function accountFullCloudDownload(){
     const meta=metaResult.meta;
     if(!meta?.storage_path){window.accountSetMessage?.('クラウド完全バックアップがありません。','error');return}
     const summary=meta.summary||{};
-    if(!confirm(`クラウドのバックアップをこの端末へ復元します。\n${accountFullCloudSummaryText(summary)}\n\n現在のカード・デッキ・画像・外観設定はクラウドの内容へ置き換わります。\n念のため、復元前の端末データはZIPとして自動保存します。続けますか？`)){window.accountSetMessage?.('復元をキャンセルしました。');return}
-    window.accountSetMessage?.('復元前の端末バックアップを作成しています…');
-    const localBackup=await window.minkaiBuildFullBackupZip(text=>window.accountSetMessage?.(`復元前バックアップ: ${text}`));
-    const stamp=new Date().toISOString().replace(/[:.]/g,'-');
-    window.minkaiDownloadBlob(localBackup.blob,`min_kai_tcg_before_cloud_restore_${stamp}.zip`);
+    if(!confirm(`クラウドのバックアップをこの端末へ復元します。\n${accountFullCloudSummaryText(summary)}\n\n現在のカード・デッキ・画像・外観設定はクラウドの内容へ置き換わります。続けますか？`)){window.accountSetMessage?.('復元をキャンセルしました。');return}
+
+    // v26.3: 復元前ZIPは任意。キャンセルではなく「ZIPを作らず復元」を選べる。
+    const makeSafetyZip=confirm(`復元前の現在の端末データを、念のためZIPで保存しますか？\n\nOK：ZIPを作成してから復元\nキャンセル：ZIPを作成せず、そのまま復元`);
+    if(makeSafetyZip){
+      window.accountSetMessage?.('復元前の端末バックアップZIPを作成しています…');
+      const localBackup=await window.minkaiBuildFullBackupZip(text=>window.accountSetMessage?.(`復元前バックアップ: ${text}`));
+      const stamp=new Date().toISOString().replace(/[:.]/g,'-');
+      window.minkaiDownloadBlob(localBackup.blob,`min_kai_tcg_before_cloud_restore_${stamp}.zip`);
+    }else{
+      window.accountSetMessage?.('ZIPを作成せずに復元を続けます…');
+    }
     window.accountSetMessage?.('クラウド完全バックアップをダウンロードしています…');
     const downloaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(meta.storage_path)}`,{expectBlob:true,allowError:true});
     if(!downloaded.ok){window.accountSetMessage?.(downloaded.message,'error');return}
