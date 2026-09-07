@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v26.4</title>
+<title>みん会TCG Simulator v26.5</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21842,7 +21842,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v26.4 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v26.5 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -37054,10 +37054,17 @@ function onlineExtractPublicBoardFromSolo(slot){
   out.meta.updatedAt=Date.now();
   out.meta.homePowerMod=Number(p.homePowerMod)||0;
 
-  // v26.4: デッキ内容・順番は非公開のまま、残り枚数だけ公開する。
+  // v26.5: デッキ内容・順番は非公開のまま、残り枚数だけ公開する。
   const publicCounts=onlineCountPrivateInfo(slot);
   out.meta.handCount=Number(publicCounts.handCount)||0;
-  out.meta.deckCount=Math.max(0,Number(publicCounts.deckCount)||0);
+
+  // 対戦開始直後などserver deckCountがまだ0/未反映でも、
+  // 端末側に実カードが残っているなら誤った0を公開しない。
+  const localDeckCount=(Array.isArray(p.deck)?p.deck:[]).reduce(
+    (n,pile)=>n+(Array.isArray(pile?.cards)?pile.cards.length:0),0
+  );
+  const countedDeck=Math.max(0,Number(publicCounts.deckCount)||0);
+  out.meta.deckCount=(countedDeck===0&&localDeckCount>0)?localDeckCount:countedDeck;
 
   out.meta.freeCounters=ensurePlayerFreeCounters(p).map(x=>({
     name:String(x?.name||'記録').slice(0,20),
@@ -37165,6 +37172,7 @@ function onlinePublishOwnPublicBoard(){
       slot,
       publicBoard:state[`p${slot}`],
       handCount:onlineCountPrivateInfo(slot).handCount,
+      deckCount:Number(state[`p${slot}`]?.meta?.deckCount ?? onlineCountPrivateInfo(slot).deckCount),
       revision:state.revision
     }).then(data=>{if(data)onlineApplyRemoteRoomSnapshot(data)}).catch(err=>console.warn('remote public sync failed',err));
   }
@@ -38529,8 +38537,8 @@ function onlineRoomRenderSignature(room){
     p2:state.p2||null,
     p1Hand:Number(room?.p1?.handCount??-1),
     p2Hand:Number(room?.p2?.handCount??-1),
-    p1Deck:Number(room?.p1?.deckCount??room?.p1?.deckTotal??-1),
-    p2Deck:Number(room?.p2?.deckCount??room?.p2?.deckTotal??-1),
+    p1Deck:Number(onlineDeckCountFromRoom(room,1)??-1),
+    p2Deck:Number(onlineDeckCountFromRoom(room,2)??-1),
     started:!!room?.match?.started,
     turn:Number(room?.match?.turnCount||0)
   });
@@ -38603,18 +38611,39 @@ function onlineApplyServerDrawToLocalBoard(slot,drawnIds){
   return {names,errors};
 }
 function onlineDeckCountFromRoom(room,slot){
-  const member=Number(slot)===1?room?.p1:room?.p2;
+  const s=Number(slot);
+  const member=s===1?room?.p1:room?.p2;
+  const own=typeof onlineOwnSlot==='function'?Number(onlineOwnSlot()):null;
 
   const n=Number(member?.deckCount);
-  if(Number.isFinite(n)&&n>=0)return n;
-
-  // v26.4: 相手・観戦者は公開盤面にある「残り枚数」だけを参照する。
-  const publicMeta=room?.publicState?.[`p${Number(slot)}`]?.meta;
+  const publicMeta=room?.publicState?.[`p${s}`]?.meta;
   const publicCount=Number(publicMeta?.deckCount);
-  if(Number.isFinite(publicCount)&&publicCount>=0)return publicCount;
-
   const total=Number(member?.deckTotal);
+
+  /*
+    v26.5:
+    Supabase側のルーム応答では、相手や観戦者に対して member.deckCount が
+    非公開値として 0 に置き換えられる経路がある。
+    v26.4 はその 0 を「本当に0枚」と誤認し、publicState.meta.deckCount まで
+    到達しなかったため、相手・観戦表示が0枚固定になっていた。
+
+    自分のスロットだけは server member.deckCount を最優先。
+    相手・観戦は公開盤面の deckCount を最優先する。
+  */
+  if(own===s){
+    if(Number.isFinite(n)&&n>=0)return n;
+    if(Number.isFinite(publicCount)&&publicCount>=0)return publicCount;
+  }else{
+    if(Number.isFinite(publicCount)&&publicCount>=0)return publicCount;
+    // 公開枚数がまだ無い旧ルームでは、0は秘匿用プレースホルダーの可能性が高いので信用しない。
+    if(Number.isFinite(n)&&n>0)return n;
+  }
+
   if(Number.isFinite(total)&&total>=0)return total;
+
+  // 最後の最後だけ0を許可。公開枚数が0なら実際のデッキ切れとして扱う。
+  if(Number.isFinite(publicCount)&&publicCount===0)return 0;
+  if(own===s&&Number.isFinite(n)&&n===0)return 0;
   return null;
 }
 function onlineServerDeckGuardActive(pi,z){
@@ -38952,7 +38981,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v26.4 public card repository
+// v26.5 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -40664,7 +40693,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='26.4';
+  manifest.appVersion='26.5';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -40705,7 +40734,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'26.4',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'26.5',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
