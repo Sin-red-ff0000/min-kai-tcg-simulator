@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v27.1</title>
+<title>みん会TCG Simulator v27.2</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21960,7 +21960,7 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v27.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v27.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23525,9 +23525,6 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
         </div>
       </div>
     </div>
-  </section>
-
-  
   
 <div class="panel settings-v27-section" data-settings-section="help">
   <div class="section-head">
@@ -23633,6 +23630,10 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
     </div>
   </div>
 </div>
+</section>
+
+  
+  
 <section id="screen-online" class="screen">
 <div id="online-selftest-panel" class="panel online-selftest-panel" style="margin-bottom:12px">
   <details id="online-selftest-details">
@@ -37826,7 +37827,10 @@ function onlineOwnSlotRaw(){
   if(onlineSessionState.role==='guest')return 2;
   return null;
 }
-let onlineSelfTestState={active:false,mode:'local',view:'p1',dummy:false,startedAt:0};
+let onlineSelfTestState={
+  active:false,mode:'local',view:'p1',dummy:false,startedAt:0,
+  backup:null,masterBoard:null,testRoomCode:'',testRoom:null
+};
 
 function onlineOwnSlot(){
   if(onlineSelfTestState?.active){
@@ -37849,55 +37853,311 @@ function onlineSelfTestStatus(msg,error=false){
   const el=document.getElementById('online-selftest-status');
   if(el){el.textContent=msg;el.style.color=error?'var(--danger)':''}
 }
+
+function onlineSelfTestCurrentRoom(){
+  if(onlineSelfTestState?.active&&onlineSelfTestState.testRoom)return onlineSelfTestState.testRoom;
+  try{return onlineLoadRooms()[onlineSessionState.joinCode]||null}catch(_){return null}
+}
+function onlineSelfTestClone(value){
+  try{return structuredClone(value)}catch(_){
+    try{return JSON.parse(JSON.stringify(value))}catch(__){return value}
+  }
+}
+function onlineSelfTestPickDeckIds(){
+  const ids=[];
+  const preferred=[
+    onlineSetupDraft?.deckId,
+    document.getElementById('online-deck-select')?.value,
+    document.getElementById('setup-deck-1')?.value,
+    document.getElementById('setup-deck-2')?.value
+  ].filter(Boolean);
+  for(const id of preferred){
+    if(decks.some(d=>String(d.id)===String(id))&&!ids.includes(String(id)))ids.push(String(id));
+  }
+  for(const d of decks){
+    if(ids.length>=2)break;
+    if(!ids.includes(String(d.id)))ids.push(String(d.id));
+  }
+  if(ids.length===1)ids.push(ids[0]);
+  return ids.slice(0,2);
+}
+function onlineSelfTestDrawOpeningHand(player,count=5){
+  if(!player)return;
+  while(player.hand.length<count&&player.deck.length){
+    const pile=player.deck.shift();
+    if(pile)player.hand.push(pile);
+  }
+}
+function onlineSelfTestBuildMasterBoard(){
+  const ids=onlineSelfTestPickDeckIds();
+  if(!ids.length)return null;
+  const p1=makePlayer(ids[0],0,'','');
+  const p2=makePlayer(ids[1]||ids[0],1,'','');
+  onlineSelfTestDrawOpeningHand(p1,5);
+  onlineSelfTestDrawOpeningHand(p2,5);
+  p1.name='P1';p2.name='P2';
+  return {
+    mode:2,
+    setup:{mode:2,online:true,roomCode:'SELFTEST'},
+    players:[p1,p2],
+    note:'',
+    turn:1,
+    ui:{
+      panelCollapsed:{operations:false,tray:true,power:true,note:false},
+      trayCounterName:'カウンター',
+      trayCustomMarker:'',
+      diceExpression:'1d6',
+      randomHistory:[],
+      boardSearchQuery:'',
+      linkJumpHistory:[],
+      homePowerApplyDraft:{0:0,1:0},
+      onlinePublicResults:{1:null,2:null}
+    }
+  };
+}
+function onlineSelfTestPublicStateFromMaster(master){
+  const prevBoard=board,prevDuel=onlineDuelActive,prevCode=onlineDuelRoomCode;
+  try{
+    board=master;
+    onlineDuelActive=false;
+    onlineDuelRoomCode='';
+    return {
+      p1:onlineExtractPublicBoardFromSolo(1),
+      p2:onlineExtractPublicBoardFromSolo(2),
+      revision:1,
+      updatedAt:Date.now()
+    };
+  }finally{
+    board=prevBoard;
+    onlineDuelActive=prevDuel;
+    onlineDuelRoomCode=prevCode;
+  }
+}
+function onlineSelfTestMakeRoom(master){
+  const state=onlineSelfTestPublicStateFromMaster(master);
+  const now=Date.now();
+  const ids=onlineSelfTestPickDeckIds();
+  const deck1=decks.find(d=>String(d.id)===String(ids[0]));
+  const deck2=decks.find(d=>String(d.id)===String(ids[1]||ids[0]));
+  return {
+    version:ONLINE_MODE_VERSION,
+    roomId:'selftest-room',
+    code:'SELFTEST',
+    createdAt:now,
+    updatedAt:now,
+    p1:{
+      clientId:'selftest-p1',name:'P1',lastSeen:now,ready:true,deckLocked:true,
+      deckId:String(ids[0]||''),deckName:String(deck1?.name||'テストデッキ'),
+      deckTotal:physicalCount(master.players[0].deck)+physicalCount(master.players[0].hand),
+      deckCount:physicalCount(master.players[0].deck),handCount:physicalCount(master.players[0].hand)
+    },
+    p2:{
+      clientId:'selftest-p2',name:'P2',lastSeen:now,ready:true,deckLocked:true,
+      deckId:String(ids[1]||ids[0]||''),deckName:String(deck2?.name||'テストデッキ'),
+      deckTotal:physicalCount(master.players[1].deck)+physicalCount(master.players[1].hand),
+      deckCount:physicalCount(master.players[1].deck),handCount:physicalCount(master.players[1].hand)
+    },
+    spectators:[],
+    match:{status:'started',startedAt:now,startedBy:'selftest-p1',turnPlayer:1,turnCount:1},
+    publicState:state
+  };
+}
+function onlineSelfTestBuildViewBoard(view){
+  const master=onlineSelfTestState.masterBoard,room=onlineSelfTestState.testRoom;
+  if(!master||!room)return null;
+
+  const result={
+    mode:2,
+    setup:{mode:2,online:true,roomCode:'SELFTEST'},
+    players:[onlineCreateBlankPlayer(0),onlineCreateBlankPlayer(1)],
+    note:'',
+    turn:1,
+    ui:onlineSelfTestClone(master.ui)
+  };
+  result.players[0].name='P1';result.players[1].name='P2';
+
+  onlineDuelBoard=result;
+  if(view==='p1'){
+    result.players[0]=onlineSelfTestClone(master.players[0]);
+    onlineApplyRemotePublicSlotToDuel(2,room.publicState.p2);
+  }else if(view==='p2'){
+    result.players[1]=onlineSelfTestClone(master.players[1]);
+    onlineApplyRemotePublicSlotToDuel(1,room.publicState.p1);
+  }else{
+    onlineApplyRemotePublicSlotToDuel(1,room.publicState.p1);
+    onlineApplyRemotePublicSlotToDuel(2,room.publicState.p2);
+  }
+  return result;
+}
+function onlineSelfTestBackupState(){
+  if(onlineSelfTestState.backup)return;
+  onlineSelfTestState.backup={
+    session:onlineSelfTestClone(onlineSessionState),
+    board,
+    onlineDuelBoard,
+    onlineDuelRoomCode,
+    onlineDuelActive,
+    onlineOfflineBoardState,
+    currentScreenName
+  };
+}
+function onlineSelfTestRestoreState(){
+  const b=onlineSelfTestState.backup;
+  if(!b)return;
+  onlineStopBoardMutationWatch();
+  onlineSessionState=b.session;
+  onlineDuelBoard=b.onlineDuelBoard;
+  onlineDuelRoomCode=b.onlineDuelRoomCode;
+  onlineDuelActive=b.onlineDuelActive;
+  onlineOfflineBoardState=b.onlineOfflineBoardState;
+  board=b.board;
+}
+function onlineSelfTestInstallRoom(room){
+  const rooms=onlineLoadRooms();
+  rooms.SELFTEST=room;
+  onlineSaveRooms(rooms);
+}
+function onlineSelfTestRemoveRoom(){
+  try{
+    const rooms=onlineLoadRooms();
+    delete rooms.SELFTEST;
+    onlineSaveRooms(rooms);
+  }catch(_){}
+}
 function onlineSelfTestRefreshBoard(){
   onlineApplySelfTestClass();
-  try{
-    const room=(typeof onlineRoom!=='undefined'&&onlineRoom)||null;
-    if(room&&typeof onlineRenderDuelBoard==='function')onlineRenderDuelBoard(room,{force:true});
-    else if(typeof renderBoard==='function')renderBoard();
-  }catch(e){console.warn('selftest render',e)}
+  if(!onlineSelfTestState.active){onlineRefreshDiagnostic();return}
+
+  const room=onlineSelfTestCurrentRoom();
+  if(!room){
+    onlineSelfTestStatus('動作確認用ルームを取得できませんでした。',true);
+    return;
+  }
+
+  if(onlineSelfTestState.mode==='local'){
+    const next=onlineSelfTestBuildViewBoard(onlineSelfTestState.view);
+    if(!next){
+      onlineSelfTestStatus('テスト盤面を作成できませんでした。デッキを1つ以上作成してください。',true);
+      return;
+    }
+    onlineDuelBoard=next;
+    board=onlineDuelBoard;
+  }else{
+    if(!onlineDuelBoard){
+      onlinePrepareDuelBoard(room);
+      board=onlineDuelBoard;
+    }
+  }
+
+  onlineLastRenderedDuelSignature='';
+  nav('online-duel',{preserveScroll:true});
+  onlineRenderDuelBoard({force:true});
   onlineEnhanceSpectatorRulePlus();
   onlineRefreshDiagnostic();
 }
 function onlineSelfTestStart(){
   const mode=document.getElementById('online-selftest-mode')?.value||'local';
   const view=document.getElementById('online-selftest-view')?.value||'p1';
-  onlineSelfTestState.active=true;
-  onlineSelfTestState.mode=mode;
-  onlineSelfTestState.view=view;
-  onlineSelfTestState.startedAt=Date.now();
 
-  if(mode==='live'){
-    const room=(typeof onlineRoom!=='undefined'&&onlineRoom)||null;
-    if(!room){
-      onlineSelfTestStatus('実通信確認には、先に通常どおりオンラインルームを作成してください。ルーム作成後は1人のまま視点切替できます。',true);
-      onlineSelfTestState.active=false;
-      onlineApplySelfTestClass();
+  if(mode==='local'){
+    const master=onlineSelfTestBuildMasterBoard();
+    if(!master){
+      onlineSelfTestStatus('ローカル確認にはデッキが1つ以上必要です。先にデッキを作成してください。',true);
       return;
     }
-    onlineSelfTestStatus(`実通信確認中：${view==='spectator'?'観戦':view.toUpperCase()}視点。現在のSupabaseルームを読み取りながら表示を確認します。`);
-  }else{
-    onlineSelfTestStatus(`ローカル確認中：${view==='spectator'?'観戦':view.toUpperCase()}視点。Supabaseへの追加書き込みは行いません。`);
+
+    onlineSelfTestBackupState();
+    onlineSelfTestState.active=true;
+    onlineSelfTestState.mode='local';
+    onlineSelfTestState.view=view;
+    onlineSelfTestState.startedAt=Date.now();
+    onlineSelfTestState.masterBoard=master;
+    onlineSelfTestState.testRoom=onlineSelfTestMakeRoom(master);
+    onlineSelfTestState.testRoomCode='SELFTEST';
+    onlineSelfTestInstallRoom(onlineSelfTestState.testRoom);
+
+    onlineSessionState={
+      ...onlineSessionState,
+      provider:'local-broadcast',
+      role:view==='p2'?'guest':(view==='spectator'?'spectator':'host'),
+      roomId:'selftest-room',
+      joinCode:'SELFTEST',
+      connection:'connected',
+      ready:true,
+      deckLocked:true,
+      playerSlot:view==='p1'?1:(view==='p2'?2:null),
+      clientId:view==='p2'?'selftest-p2':'selftest-p1',
+      displayName:view==='spectator'?'観戦者':view.toUpperCase()
+    };
+
+    onlineDuelActive=true;
+    onlineDuelRoomCode='SELFTEST';
+    onlineOfflineBoardState=onlineSelfTestState.backup.board;
+
+    onlineSelfTestStatus(`ローカル確認中：${view==='spectator'?'観戦':view.toUpperCase()}視点。テスト盤面を作成しました。`);
+    onlineSelfTestRefreshBoard();
+    return;
   }
+
+  const room=onlineLoadRooms()[onlineSessionState.joinCode];
+  if(!room){
+    onlineSelfTestStatus('実通信確認には、先に通常どおりオンラインルームへ接続してください。',true);
+    return;
+  }
+
+  onlineSelfTestBackupState();
+  onlineSelfTestState.active=true;
+  onlineSelfTestState.mode='live';
+  onlineSelfTestState.view=view;
+  onlineSelfTestState.startedAt=Date.now();
+  onlineSelfTestState.testRoom=room;
+  onlineSelfTestState.testRoomCode=String(room.code||onlineSessionState.joinCode||'');
+
+  if(!onlineDuelActive){
+    onlineOfflineBoardState=board;
+    onlineDuelActive=true;
+  }
+  onlineDuelRoomCode=String(room.code||onlineSessionState.joinCode||'');
+  onlineDuelBoard=null;
+  onlinePrepareDuelBoard(room);
+  board=onlineDuelBoard;
+
+  onlineSelfTestStatus(`実通信確認中：${view==='spectator'?'観戦':view.toUpperCase()}視点。現在接続中のルームを使用しています。`);
   onlineSelfTestRefreshBoard();
 }
 function onlineSelfTestStop(){
-  onlineSelfTestState={active:false,mode:'local',view:'p1',dummy:false,startedAt:0};
+  const returnScreen=onlineSelfTestState.backup?.currentScreenName||'online';
+  if(onlineSelfTestState.mode==='local')onlineSelfTestRemoveRoom();
+  onlineSelfTestRestoreState();
+
+  onlineSelfTestState={
+    active:false,mode:'local',view:'p1',dummy:false,startedAt:0,
+    backup:null,masterBoard:null,testRoomCode:'',testRoom:null
+  };
   onlineApplySelfTestClass();
-  onlineSelfTestStatus('動作確認を終了しました。通常のオンライン表示へ戻りました。');
+  onlineSelfTestStatus('動作確認を終了しました。通常表示へ戻りました。');
+
   try{
-    const room=(typeof onlineRoom!=='undefined'&&onlineRoom)||null;
-    if(room&&typeof onlineRenderDuelBoard==='function')onlineRenderDuelBoard(room,{force:true});
+    if(returnScreen&&document.getElementById(`screen-${returnScreen}`))nav(returnScreen,{preserveScroll:true});
+    else nav('online');
   }catch(_){}
   onlineRefreshDiagnostic();
 }
 function onlineSelfTestDummy(){
+  if(!onlineSelfTestState.active){
+    onlineSelfTestStatus('先に「動作確認を開始」を押してください。',true);
+    return;
+  }
   onlineSelfTestState.dummy=true;
-  onlineSelfTestStatus('テスト用P2を有効にしました。P2視点へ切り替えて、相手側の見え方を確認できます。');
+  if(onlineSelfTestState.mode==='local'){
+    onlineSelfTestStatus('ローカル確認ではP2を自動で用意済みです。P2視点へ切り替えて確認できます。');
+  }else{
+    onlineSelfTestStatus('実通信確認では現在のルーム状態を使用します。');
+  }
   onlineSelfTestRefreshBoard();
 }
 function onlineDiagnosticSnapshot(){
-  const room=(typeof onlineRoom!=='undefined'&&onlineRoom)||null;
+  const room=onlineSelfTestCurrentRoom();
   const rawOwn=(()=>{try{return onlineOwnSlotRaw()}catch(_){return null}})();
   const visibleOwn=(()=>{try{return onlineOwnSlot()}catch(_){return null}})();
   const safeCount=(slot)=>{
@@ -37907,7 +38167,7 @@ function onlineDiagnosticSnapshot(){
   const member=(slot)=>slot===1?room?.p1:room?.p2;
   const rev=room?.revision??room?.publicState?.revision??null;
   const info={
-    appVersion:'26.8',
+    appVersion:'27.2',
     generatedAt:new Date().toISOString(),
     userAgent:navigator.userAgent,
     online:{
@@ -39615,7 +39875,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v27.1 public card repository
+// v27.2 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -41598,7 +41858,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='27.1';
+  manifest.appVersion='27.2';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -41639,7 +41899,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'27.1',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'27.2',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
@@ -41748,6 +42008,12 @@ function bindOnlineSelfTestV268(){
   on('online-selftest-view','change',e=>{
     if(!onlineSelfTestState.active)return;
     onlineSelfTestState.view=e.target.value||'p1';
+    if(onlineSelfTestState.mode==='local'){
+      onlineSessionState.role=onlineSelfTestState.view==='p2'?'guest':(onlineSelfTestState.view==='spectator'?'spectator':'host');
+      onlineSessionState.playerSlot=onlineSelfTestState.view==='p1'?1:(onlineSelfTestState.view==='p2'?2:null);
+      onlineSessionState.clientId=onlineSelfTestState.view==='p2'?'selftest-p2':'selftest-p1';
+      onlineSessionState.displayName=onlineSelfTestState.view==='spectator'?'観戦者':onlineSelfTestState.view.toUpperCase();
+    }
     onlineSelfTestStatus(`${onlineSelfTestState.mode==='live'?'実通信':'ローカル'}確認中：${onlineSelfTestState.view==='spectator'?'観戦':onlineSelfTestState.view.toUpperCase()}視点`);
     onlineSelfTestRefreshBoard();
   });
