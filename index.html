@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v26.7</title>
+<title>みん会TCG Simulator v26.8</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21862,6 +21862,20 @@ h3 .minkai-ruby{margin-top:.45em}
   .public-set-detail-card{grid-template-columns:auto minmax(0,1fr)}
   .public-set-detail-card>.actions{grid-column:2;justify-content:flex-start}
 }
+
+/* v26.8 one-person online verification / spectator polish */
+.online-selftest-panel{max-width:1100px}
+.online-selftest-controls{display:grid;grid-template-columns:repeat(2,minmax(0,260px));gap:8px;margin:10px 0}
+.online-diagnostic-output{white-space:pre-wrap;word-break:break-word;max-height:320px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:10px;background:rgba(0,0,0,.18);font-size:12px;line-height:1.5}
+body.online-selftest-active [data-online-selftest-hidden="1"]{display:none!important}
+body.online-selftest-spectator .online-player-only,
+body.online-selftest-spectator [data-online-owner-action],
+body.online-selftest-spectator [data-zone-action]:not([data-zone-view]){display:none!important}
+body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
+@media(max-width:760px){
+  .online-selftest-controls{grid-template-columns:1fr}
+  .online-diagnostic-output{max-height:240px}
+}
 </style>
 
 </head>
@@ -21871,7 +21885,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v26.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v26.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23406,6 +23420,48 @@ h3 .minkai-ruby{margin-top:.45em}
 
   
   <section id="screen-online" class="screen">
+<div id="online-selftest-panel" class="panel online-selftest-panel" style="margin-bottom:12px">
+  <details id="online-selftest-details">
+    <summary class="collapsible-panel-summary">
+      <span>1人用オンライン動作確認</span>
+      <span class="pill">Ver26.8</span>
+    </summary>
+    <div class="collapsible-panel-body">
+      <p class="muted">相手がいなくても、P1・P2・観戦者から盤面がどう見えるかを確認できます。通常対戦のルームや保存データは変更しません。</p>
+      <div class="online-selftest-controls">
+        <label>確認方式
+          <select id="online-selftest-mode">
+            <option value="local">ローカル確認</option>
+            <option value="live">実通信確認</option>
+          </select>
+        </label>
+        <label>確認視点
+          <select id="online-selftest-view">
+            <option value="p1">P1視点</option>
+            <option value="p2">P2視点</option>
+            <option value="spectator">観戦視点</option>
+          </select>
+        </label>
+      </div>
+      <div class="actions">
+        <button class="btn primary" type="button" id="online-selftest-start">動作確認を開始</button>
+        <button class="btn" type="button" id="online-selftest-dummy">テスト用P2を用意</button>
+        <button class="btn" type="button" id="online-selftest-stop">動作確認を終了</button>
+      </div>
+      <div id="online-selftest-status" class="muted" style="margin-top:8px">未開始</div>
+      <div class="panel" style="margin-top:10px">
+        <div class="section-head"><h3 style="margin:0">オンライン診断</h3><span class="pill">コピー可能</span></div>
+        <p class="muted">デッキ枚数や同期不具合の確認用です。管理キー・手札内容・カード内容などの秘匿情報は診断文へ含めません。</p>
+        <div class="actions">
+          <button class="btn small" type="button" id="online-diagnostic-refresh">診断情報を更新</button>
+          <button class="btn small" type="button" id="online-diagnostic-copy">診断情報をコピー</button>
+        </div>
+        <pre id="online-diagnostic-output" class="online-diagnostic-output">診断情報はまだ取得していません。</pre>
+      </div>
+    </div>
+  </details>
+</div>
+
     <div class="section-head">
       <h2>オンライン対戦</h2>
       <div class="actions">
@@ -37446,11 +37502,134 @@ function onlineStopRealtimeBridge(){
 function onlineCurrentTurnPlayer(room){
   return Number(room?.match?.turnPlayer||1)===2?2:1;
 }
-function onlineOwnSlot(){
+function onlineOwnSlotRaw(){
   if(onlineSessionState.role==='host')return 1;
   if(onlineSessionState.role==='guest')return 2;
   return null;
 }
+let onlineSelfTestState={active:false,mode:'local',view:'p1',dummy:false,startedAt:0};
+
+function onlineOwnSlot(){
+  if(onlineSelfTestState?.active){
+    if(onlineSelfTestState.view==='p1')return 1;
+    if(onlineSelfTestState.view==='p2')return 2;
+    return null;
+  }
+  return onlineOwnSlotRaw();
+}
+function onlineSelfTestRole(){
+  if(!onlineSelfTestState?.active)return null;
+  return onlineSelfTestState.view==='spectator'?'spectator':onlineSelfTestState.view;
+}
+function onlineApplySelfTestClass(){
+  document.body.classList.toggle('online-selftest-active',!!onlineSelfTestState.active);
+  document.body.classList.toggle('online-selftest-spectator',!!onlineSelfTestState.active&&onlineSelfTestState.view==='spectator');
+}
+function onlineSelfTestStatus(msg,error=false){
+  const el=document.getElementById('online-selftest-status');
+  if(el){el.textContent=msg;el.style.color=error?'var(--danger)':''}
+}
+function onlineSelfTestRefreshBoard(){
+  onlineApplySelfTestClass();
+  try{
+    const room=(typeof onlineRoom!=='undefined'&&onlineRoom)||null;
+    if(room&&typeof onlineRenderDuelBoard==='function')onlineRenderDuelBoard(room,{force:true});
+    else if(typeof renderBoard==='function')renderBoard();
+  }catch(e){console.warn('selftest render',e)}
+  onlineEnhanceSpectatorRulePlus();
+  onlineRefreshDiagnostic();
+}
+function onlineSelfTestStart(){
+  const mode=document.getElementById('online-selftest-mode')?.value||'local';
+  const view=document.getElementById('online-selftest-view')?.value||'p1';
+  onlineSelfTestState.active=true;
+  onlineSelfTestState.mode=mode;
+  onlineSelfTestState.view=view;
+  onlineSelfTestState.startedAt=Date.now();
+
+  if(mode==='live'){
+    const room=(typeof onlineRoom!=='undefined'&&onlineRoom)||null;
+    if(!room){
+      onlineSelfTestStatus('実通信確認には、先に通常どおりオンラインルームを作成してください。ルーム作成後は1人のまま視点切替できます。',true);
+      onlineSelfTestState.active=false;
+      onlineApplySelfTestClass();
+      return;
+    }
+    onlineSelfTestStatus(`実通信確認中：${view==='spectator'?'観戦':view.toUpperCase()}視点。現在のSupabaseルームを読み取りながら表示を確認します。`);
+  }else{
+    onlineSelfTestStatus(`ローカル確認中：${view==='spectator'?'観戦':view.toUpperCase()}視点。Supabaseへの追加書き込みは行いません。`);
+  }
+  onlineSelfTestRefreshBoard();
+}
+function onlineSelfTestStop(){
+  onlineSelfTestState={active:false,mode:'local',view:'p1',dummy:false,startedAt:0};
+  onlineApplySelfTestClass();
+  onlineSelfTestStatus('動作確認を終了しました。通常のオンライン表示へ戻りました。');
+  try{
+    const room=(typeof onlineRoom!=='undefined'&&onlineRoom)||null;
+    if(room&&typeof onlineRenderDuelBoard==='function')onlineRenderDuelBoard(room,{force:true});
+  }catch(_){}
+  onlineRefreshDiagnostic();
+}
+function onlineSelfTestDummy(){
+  onlineSelfTestState.dummy=true;
+  onlineSelfTestStatus('テスト用P2を有効にしました。P2視点へ切り替えて、相手側の見え方を確認できます。');
+  onlineSelfTestRefreshBoard();
+}
+function onlineDiagnosticSnapshot(){
+  const room=(typeof onlineRoom!=='undefined'&&onlineRoom)||null;
+  const rawOwn=(()=>{try{return onlineOwnSlotRaw()}catch(_){return null}})();
+  const visibleOwn=(()=>{try{return onlineOwnSlot()}catch(_){return null}})();
+  const safeCount=(slot)=>{
+    try{return onlineDeckCountFromRoom(room,slot)}catch(_){return null}
+  };
+  const pub=(slot)=>room?.publicState?.[`p${slot}`]?.meta||{};
+  const member=(slot)=>slot===1?room?.p1:room?.p2;
+  const rev=room?.revision??room?.publicState?.revision??null;
+  const info={
+    appVersion:'26.8',
+    generatedAt:new Date().toISOString(),
+    userAgent:navigator.userAgent,
+    online:{
+      roomId:room?.id||room?.room_id||null,
+      connected:!!room,
+      rawOwnSlot:rawOwn,
+      visibleOwnSlot:visibleOwn,
+      selfTest:onlineSelfTestState.active?{mode:onlineSelfTestState.mode,view:onlineSelfTestState.view,dummy:onlineSelfTestState.dummy}:null,
+      revision:rev,
+      p1:{
+        visibleDeckCount:safeCount(1),
+        roomDeckCount:member(1)?.deckCount??null,
+        roomDeckTotal:member(1)?.deckTotal??null,
+        publicDeckCount:pub(1)?.deckCount??null,
+        publicHandCount:pub(1)?.handCount??null
+      },
+      p2:{
+        visibleDeckCount:safeCount(2),
+        roomDeckCount:member(2)?.deckCount??null,
+        roomDeckTotal:member(2)?.deckTotal??null,
+        publicDeckCount:pub(2)?.deckCount??null,
+        publicHandCount:pub(2)?.handCount??null
+      }
+    }
+  };
+  return info;
+}
+function onlineRefreshDiagnostic(){
+  const out=document.getElementById('online-diagnostic-output');if(!out)return;
+  try{out.textContent=JSON.stringify(onlineDiagnosticSnapshot(),null,2)}
+  catch(e){out.textContent='診断情報の作成に失敗しました: '+(e?.message||e)}
+}
+async function onlineCopyDiagnostic(){
+  onlineRefreshDiagnostic();
+  const text=document.getElementById('online-diagnostic-output')?.textContent||'';
+  try{await navigator.clipboard.writeText(text);toast('診断情報をコピーしました')}
+  catch(_){
+    const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');toast('診断情報をコピーしました')}finally{ta.remove()}
+  }
+}
+
 function onlineCanEndTurn(room){
   const own=onlineOwnSlot();
   return !!own&&onlineMatchStarted(room)&&onlineCurrentTurnPlayer(room)===own;
@@ -39093,7 +39272,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v26.7 public card repository
+// v26.8 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -41076,7 +41255,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='26.7';
+  manifest.appVersion='26.8';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -41117,7 +41296,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'26.7',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'26.8',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
@@ -41215,6 +41394,48 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   });
   document.addEventListener('DOMContentLoaded',()=>setAccountCloudTab(currentCloudTab));
 })();
+
+function bindOnlineSelfTestV268(){
+  const on=(id,ev,fn)=>{const el=document.getElementById(id);if(el&&!el.dataset.v268Bound){el.dataset.v268Bound='1';el.addEventListener(ev,fn)}};
+  on('online-selftest-start','click',onlineSelfTestStart);
+  on('online-selftest-stop','click',onlineSelfTestStop);
+  on('online-selftest-dummy','click',onlineSelfTestDummy);
+  on('online-diagnostic-refresh','click',onlineRefreshDiagnostic);
+  on('online-diagnostic-copy','click',onlineCopyDiagnostic);
+  on('online-selftest-view','change',e=>{
+    if(!onlineSelfTestState.active)return;
+    onlineSelfTestState.view=e.target.value||'p1';
+    onlineSelfTestStatus(`${onlineSelfTestState.mode==='live'?'実通信':'ローカル'}確認中：${onlineSelfTestState.view==='spectator'?'観戦':onlineSelfTestState.view.toUpperCase()}視点`);
+    onlineSelfTestRefreshBoard();
+  });
+  on('online-selftest-mode','change',e=>{
+    if(onlineSelfTestState.active){
+      onlineSelfTestState.mode=e.target.value||'local';
+      onlineSelfTestRefreshBoard();
+    }
+  });
+}
+
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindOnlineSelfTestV268);
+else bindOnlineSelfTestV268();
+
+function onlineEnhanceSpectatorRulePlus(){
+  if(!(onlineSelfTestState?.active&&onlineSelfTestState.view==='spectator'))return;
+  document.querySelectorAll('[data-zone="rulePlus"],.rule-plus-zone,.ruleplus-zone').forEach(zone=>{
+    if(zone.dataset.spectatorCollapseReady)return;
+    zone.dataset.spectatorCollapseReady='1';
+    const btn=document.createElement('button');
+    btn.type='button';btn.className='btn small';btn.textContent='ルールプラスを折りたたむ';
+    btn.style.marginBottom='6px';
+    btn.onclick=()=>{
+      const collapsed=zone.dataset.spectatorCollapsed==='1';
+      zone.dataset.spectatorCollapsed=collapsed?'0':'1';
+      [...zone.children].forEach(ch=>{if(ch!==btn)ch.style.display=collapsed?'':'none'});
+      btn.textContent=collapsed?'ルールプラスを折りたたむ':'ルールプラスを展開';
+    };
+    zone.prepend(btn);
+  });
+}
 </script>
 
 
