@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v26.8</title>
+<title>みん会TCG Simulator v26.9</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21876,6 +21876,31 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
   .online-selftest-controls{grid-template-columns:1fr}
   .online-diagnostic-output{max-height:240px}
 }
+
+/* v26.9 online public-result area / spectator view */
+.online-public-result-card{
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:10px;
+  margin-top:8px;
+  background:rgba(255,255,255,.025);
+}
+.online-public-result-card .online-public-result-head{
+  display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap
+}
+.online-public-result-card .online-public-result-main{margin-top:6px;font-weight:800;line-height:1.45}
+.online-public-result-card .online-public-result-sub{margin-top:4px;line-height:1.45}
+.online-public-result-card .online-public-result-cards{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.online-public-result-card .online-public-result-cards .pill{white-space:normal}
+.online-spectator-view .online-board-tool-root{display:none!important}
+.online-spectator-view .online-owner-tool-hint{display:none!important}
+.online-spectator-view .online-duel-opponent button[data-zone-view],
+.online-spectator-view [data-zone-view]{display:inline-flex!important;pointer-events:auto!important;opacity:1!important}
+.online-spectator-view .online-duel-main .zone-toggle{display:inline-flex!important}
+.online-spectator-view .online-duel-tools{position:sticky;top:8px;align-self:start}
+@media(max-width:900px){
+  .online-spectator-view .online-duel-tools{position:static}
+}
 </style>
 
 </head>
@@ -21885,7 +21910,7 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v26.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v26.9 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23499,10 +23524,20 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
 
       <aside class="online-duel-tools">
         <div class="panel">
+          <div class="board-panel-head"><h3>公開情報</h3><span class="pill">双方・観戦共通</span></div>
+          <div id="online-public-result-p1" class="online-public-result-card">
+            <div class="muted">P1 公開結果なし</div>
+          </div>
+          <div id="online-public-result-p2" class="online-public-result-card">
+            <div class="muted">P2 公開結果なし</div>
+          </div>
+          <div class="muted" style="margin-top:8px">コイントス・ダイス・手札からの選択・指定カードからの選択・公開した山札確認結果がここに表示されます。</div>
+        </div>
+        <div class="panel">
           <div class="board-panel-head"><h3>対戦情報</h3></div>
           <div id="online-duel-private-counts" class="muted">手札・デッキ枚数を取得中</div>
           <div id="online-duel-tool-result" class="muted">操作待機中</div>
-          <div class="muted">盤面ツールはP1/P2それぞれの丸ボタンから開きます。</div>
+          <div class="muted online-owner-tool-hint">盤面ツールはP1/P2それぞれの丸ボタンから開きます。</div>
         </div>
       </aside>
     </div>
@@ -32889,6 +32924,7 @@ function ensureBoardUiState(){
  if(typeof board.ui.diceExpression!=='string'||!board.ui.diceExpression.trim())board.ui.diceExpression='1d6';
  if(!Array.isArray(board.ui.randomHistory))board.ui.randomHistory=[];
  board.ui.randomHistory=board.ui.randomHistory.slice(0,10);
+ if(!board.ui.onlinePublicResults||typeof board.ui.onlinePublicResults!=='object')board.ui.onlinePublicResults={1:null,2:null};
  if(typeof board.ui.boardSearchQuery!=='string')board.ui.boardSearchQuery='';
  if(!Array.isArray(board.ui.linkJumpHistory))board.ui.linkJumpHistory=[];
  board.ui.linkJumpHistory=board.ui.linkJumpHistory.slice(0,12);
@@ -33088,6 +33124,86 @@ function parseDiceExpression(value){
  if(count<1||count>10||sides<2||sides>100)return null;
  return {text:`${count}d${sides}`,count,sides};
 }
+
+function onlineNormalizePublicResult(value){
+  if(!value||typeof value!=='object')return null;
+  return {
+    id:String(value.id||'').slice(0,80),
+    kind:String(value.kind||'info').slice(0,40),
+    label:String(value.label||'公開結果').slice(0,120),
+    detail:String(value.detail||'').slice(0,500),
+    totalText:String(value.totalText||'').slice(0,200),
+    cards:Array.isArray(value.cards)?value.cards.slice(0,20).map(x=>String(x||'').slice(0,120)):[],
+    at:Number(value.at)||Date.now()
+  };
+}
+function onlineSetPublicResult(slot,result,{sync=true}={}){
+  if(!board)return;
+  const s=Number(slot);
+  if(![1,2].includes(s))return;
+  const ui=ensureBoardUiState();
+  ui.onlinePublicResults[s]=onlineNormalizePublicResult({
+    id:result?.id||uid('pub-result'),
+    kind:result?.kind||'info',
+    label:result?.label||'公開結果',
+    detail:result?.detail||'',
+    totalText:result?.totalText||'',
+    cards:result?.cards||[],
+    at:Date.now()
+  });
+  scheduleBoardAutosave();
+  if(sync&&typeof onlineDuelActive!=='undefined'&&onlineDuelActive){
+    try{onlineScheduleAutoSync()}catch(_){}
+    try{onlineRenderPublicResults()}catch(_){}
+  }
+}
+function onlineClearPublicResult(slot){
+  if(!board)return;
+  const s=Number(slot);if(![1,2].includes(s))return;
+  const ui=ensureBoardUiState();
+  ui.onlinePublicResults[s]=null;
+  scheduleBoardAutosave();
+  if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive){
+    try{onlineScheduleAutoSync()}catch(_){}
+    try{onlineRenderPublicResults()}catch(_){}
+  }
+}
+function onlineRecordLatestRandomResult(entry){
+  if(!(typeof onlineDuelActive!=='undefined'&&onlineDuelActive))return;
+  let slot=null;
+  try{slot=onlineOwnSlot()}catch(_){}
+  if(!slot)return;
+  onlineSetPublicResult(slot,{
+    kind:entry.kind,
+    label:entry.label,
+    detail:entry.detail,
+    totalText:entry.totalText,
+    cards:entry.cards||[]
+  });
+}
+function onlinePublicResultHtml(slot,result,own=false){
+  if(!result)return `<div class="muted">P${slot} 公開結果なし</div>`;
+  const time=result.at?new Date(Number(result.at)).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit',second:'2-digit'}):'';
+  return `<div class="online-public-result-head"><b>P${slot} ${esc(String(result.label||'公開結果'))}</b><span class="pill">${esc(time)}</span></div>
+    ${result.detail?`<div class="online-public-result-main">${esc(String(result.detail))}</div>`:''}
+    ${result.totalText?`<div class="online-public-result-sub">${esc(String(result.totalText))}</div>`:''}
+    ${Array.isArray(result.cards)&&result.cards.length?`<div class="online-public-result-cards">${result.cards.map(x=>`<span class="pill">${esc(String(x))}</span>`).join('')}</div>`:''}
+    ${own?`<div class="actions" style="margin-top:8px"><button class="btn small" type="button" data-online-public-clear="${slot}">公開情報を消す</button></div>`:''}`;
+}
+function onlineRenderPublicResults(){
+  const room=onlineLoadRooms?.()[onlineSessionState?.joinCode]||null;
+  const own=(()=>{try{return onlineOwnSlot()}catch(_){return null}})();
+  for(const slot of [1,2]){
+    const local=board?.ui?.onlinePublicResults?.[slot]||null;
+    const remote=room?.publicState?.[`p${slot}`]?.meta?.publicResult||null;
+    const result=slot===own?(local||remote):(remote||local);
+    const box=document.getElementById(`online-public-result-p${slot}`);
+    if(box)box.innerHTML=onlinePublicResultHtml(slot,result,slot===own);
+  }
+  document.querySelectorAll('[data-online-public-clear]').forEach(btn=>{
+    btn.onclick=()=>onlineClearPublicResult(Number(btn.dataset.onlinePublicClear));
+  });
+}
 function recordBoardRandomResult(kind,label,detail,totalText=''){
  if(!board)return;
  const ui=ensureBoardUiState();
@@ -33095,6 +33211,7 @@ function recordBoardRandomResult(kind,label,detail,totalText=''){
  ui.randomHistory.unshift(entry);
  ui.randomHistory=ui.randomHistory.slice(0,10);
  syncBoardRandomTools();scheduleBoardAutosave();
+ onlineRecordLatestRandomResult(entry);
 }
 function rollBoardDice(expression){
  if(!board)return;
@@ -35870,6 +35987,10 @@ function onlineApplyRemotePublicSlotToDuel(slot,state){
   player.homePowerMod=Number(state?.meta?.homePowerMod)||0;
   const remoteDeckCount=Number(state?.meta?.deckCount);
   if(Number.isFinite(remoteDeckCount)&&remoteDeckCount>=0)player._onlineServerDeckCount=remoteDeckCount;
+  try{
+    const ui=ensureBoardUiState();
+    ui.onlinePublicResults[Number(slot)]=onlineNormalizePublicResult(state?.meta?.publicResult||null);
+  }catch(_){}
   player.freeCounters=Array.isArray(state?.meta?.freeCounters)
     ?state.meta.freeCounters.map(x=>({name:String(x?.name||'記録').slice(0,20),value:Number(x?.value)||0}))
     :[];
@@ -36572,6 +36693,8 @@ function onlineRenderDuelBoard(options={}){
   if(!force&&host.childElementCount&&signature===onlineLastRenderedDuelSignature){
     onlineUpdateDuelToolbar(room);
     onlineRefreshToolAvailability();
+    onlineApplySpectatorViewClass();
+    onlineRenderPublicResults();
     return false;
   }
   if(onlineBoardRenderInProgress)return false;
@@ -36645,6 +36768,8 @@ function onlineRenderDuelBoard(options={}){
     onlineUpdateDuelToolbar(room);
     onlineApplyDuelZoom();
     onlineRefreshToolAvailability();
+    onlineApplySpectatorViewClass();
+    onlineRenderPublicResults();
     host.querySelectorAll('[data-zone-view]').forEach(btn=>{btn.disabled=false;btn.removeAttribute('aria-disabled');btn.style.pointerEvents='auto';btn.style.opacity='1'});
 
     for(const slot of [1,2]){
@@ -37162,7 +37287,7 @@ function onlineEmptyPublicBoard(){
     pain:[],
     room:[],
     rulePlus:[],
-    meta:{handCount:null,deckCount:null,updatedAt:Date.now()}
+    meta:{handCount:null,deckCount:null,publicResult:null,updatedAt:Date.now()}
   };
 }
 function onlineNormalizePublicPile(pile){
@@ -37238,6 +37363,7 @@ function onlineExtractPublicBoardFromSolo(slot){
     name:String(x?.name||'記録').slice(0,20),
     value:Number(x?.value)||0
   }));
+  out.meta.publicResult=onlineNormalizePublicResult(board?.ui?.onlinePublicResults?.[slot]||null);
   return out;
 }
 function onlineRoomPublicState(room){
@@ -37524,6 +37650,7 @@ function onlineSelfTestRole(){
 function onlineApplySelfTestClass(){
   document.body.classList.toggle('online-selftest-active',!!onlineSelfTestState.active);
   document.body.classList.toggle('online-selftest-spectator',!!onlineSelfTestState.active&&onlineSelfTestState.view==='spectator');
+  onlineApplySpectatorViewClass();
 }
 function onlineSelfTestStatus(msg,error=false){
   const el=document.getElementById('online-selftest-status');
@@ -38411,11 +38538,24 @@ async function onlineLookTopX(pi,z='deck'){
 function onlineRenderTopInspectSession(){
   const s=onlineTopInspectSession;if(!s)return;
   const rows=s.cards.map((x,i)=>`<div class="inspect-card"><h4>${esc(x.card.name)}</h4><div class="muted">現在 ${i+1}番目 / 確認時 上から${x.originalPosition}番目</div><div class="muted">Lv ${esc(x.card.level||'-')} / ${esc(x.card.power||'-')}</div><div class="actions"><button class="btn small" data-online-inspect-up="${i}" ${i===0?'disabled':''}>↑</button><button class="btn small" data-online-inspect-down="${i}" ${i===s.cards.length-1?'disabled':''}>↓</button><button class="btn small primary" data-online-inspect-hand="${i}">手札に</button><button class="btn small" data-online-inspect-move="${i}">移動先</button></div></div>`).join('');
-  openModal(`<div class="modal-head"><h3>上からX枚を見る</h3><span class="pill">デッキへ戻す候補 ${s.cards.length}枚</span></div><p class="muted">サーバー上のデッキ順はまだ変更されていません。移動先を指定したカードは確定時にデッキから取り除き、残りを現在の並び順で上または下へ戻します。</p><div class="inspect-grid">${rows||'<div class="empty">すべてのカードに移動先を指定しました。</div>'}</div><div class="actions" style="margin-top:12px"><button class="btn primary" id="online-inspect-return-top">残りをデッキ上に戻して確定</button><button class="btn" id="online-inspect-return-bottom">残りをデッキ下に戻して確定</button><button class="btn" id="online-inspect-abort">変更せず閉じる</button></div>`,false);
+  openModal(`<div class="modal-head"><h3>上からX枚を見る</h3><span class="pill">デッキへ戻す候補 ${s.cards.length}枚</span></div><p class="muted">サーバー上のデッキ順はまだ変更されていません。移動先を指定したカードは確定時にデッキから取り除き、残りを現在の並び順で上または下へ戻します。</p><div class="inspect-grid">${rows||'<div class="empty">すべてのカードに移動先を指定しました。</div>'}</div><div class="actions" style="margin-top:12px"><button class="btn" id="online-inspect-publish">確認したカードを公開情報へ表示</button><button class="btn primary" id="online-inspect-return-top">残りをデッキ上に戻して確定</button><button class="btn" id="online-inspect-return-bottom">残りをデッキ下に戻して確定</button><button class="btn" id="online-inspect-abort">変更せず閉じる</button></div>`,false);
   $$('[data-online-inspect-hand]').forEach(b=>b.onclick=()=>onlineStageTopInspectMove(Number(b.dataset.onlineInspectHand),'hand',false));
   $$('[data-online-inspect-move]').forEach(b=>b.onclick=()=>onlineOpenTopInspectMove(Number(b.dataset.onlineInspectMove)));
   $$('[data-online-inspect-up]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.onlineInspectUp);if(i<=0)return;[s.cards[i-1],s.cards[i]]=[s.cards[i],s.cards[i-1]];onlineRenderTopInspectSession()});
   $$('[data-online-inspect-down]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.onlineInspectDown);if(i>=s.cards.length-1)return;[s.cards[i+1],s.cards[i]]=[s.cards[i],s.cards[i+1]];onlineRenderTopInspectSession()});
+  const publishBtn=$('#online-inspect-publish');
+  if(publishBtn)publishBtn.onclick=()=>{
+    const all=[...(s.cards||[]),...(s.moved||[])].sort((a,b)=>(Number(a.originalPosition)||0)-(Number(b.originalPosition)||0));
+    const names=all.map(x=>String(x?.card?.name||'名称未設定'));
+    onlineSetPublicResult(s.slot,{
+      kind:'deck-peek',
+      label:`デッキの上から${names.length}枚を確認`,
+      detail:names.join(' / '),
+      totalText:`P${s.slot}の公開確認`,
+      cards:names
+    });
+    toast('確認したカードを公開情報へ表示しました');
+  };
   $('#online-inspect-return-top').onclick=()=>onlineFinishTopInspectSession('top');
   $('#online-inspect-return-bottom').onclick=()=>onlineFinishTopInspectSession('bottom');
   $('#online-inspect-abort').onclick=()=>{onlineTopInspectSession=null;closeModal();toast('デッキ順は変更していません')};
@@ -38833,6 +38973,16 @@ function onlineRoomRenderSignature(room){
     started:!!room?.match?.started,
     turn:Number(room?.match?.turnCount||0)
   });
+}
+
+function onlineIsSpectatorView(){
+  try{
+    if(typeof onlineSelfTestState!=='undefined'&&onlineSelfTestState?.active&&onlineSelfTestState.view==='spectator')return true;
+  }catch(_){}
+  return onlineSessionState?.role==='spectator'||onlineSessionState?.role==='watcher';
+}
+function onlineApplySpectatorViewClass(){
+  document.body.classList.toggle('online-spectator-view',!!onlineIsSpectatorView());
 }
 function onlineDuelRenderSignature(room){
   return onlineRoomRenderSignature(room)+'|'+onlineLocalBoardRenderSignature();
@@ -39272,7 +39422,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v26.8 public card repository
+// v26.9 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -41255,7 +41405,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='26.8';
+  manifest.appVersion='26.9';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -41296,7 +41446,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'26.8',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'26.9',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
