@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v26.5</title>
+<title>みん会TCG Simulator v26.6</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21833,6 +21833,20 @@ h3 .minkai-ruby{margin-top:.45em}
   .public-register-meta textarea{min-height:90px}
   .public-card-preview{min-height:auto}
 }
+
+/* v26.6 public management mobile layout repair */
+@media(max-width:760px){
+  #public-managed-list,#public-temp-managed-list,#public-master-managed-list{min-width:0;width:100%;overflow-x:hidden}
+  #public-managed-list .public-card-row,#public-temp-managed-list .public-card-row,#public-master-managed-list .public-card-row{min-width:0;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden;padding:11px}
+  #public-managed-list .public-card-row-head,#public-temp-managed-list .public-card-row-head,#public-master-managed-list .public-card-row-head{display:block;min-width:0;width:100%}
+  #public-managed-list .public-card-row-head>div:first-child,#public-temp-managed-list .public-card-row-head>div:first-child,#public-master-managed-list .public-card-row-head>div:first-child{display:grid!important;grid-template-columns:auto minmax(0,1fr);align-items:start!important;gap:9px!important;min-width:0;width:100%}
+  #public-managed-list .public-card-row-head>div:first-child>div,#public-temp-managed-list .public-card-row-head>div:first-child>div,#public-master-managed-list .public-card-row-head>div:first-child>div{min-width:0;width:100%}
+  #public-managed-list .public-card-row-title,#public-temp-managed-list .public-card-row-title,#public-master-managed-list .public-card-row-title{display:block;width:100%;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:break-word;line-height:1.4}
+  #public-managed-list .public-card-row-meta,#public-temp-managed-list .public-card-row-meta,#public-master-managed-list .public-card-row-meta{display:flex;flex-wrap:wrap;width:100%;max-width:100%;gap:5px}
+  #public-managed-list .public-card-row-meta .pill,#public-temp-managed-list .public-card-row-meta .pill,#public-master-managed-list .public-card-row-meta .pill{writing-mode:horizontal-tb!important;white-space:nowrap;max-width:100%}
+  #public-managed-list .public-card-row-head>.muted,#public-temp-managed-list .public-card-row-head>.muted,#public-master-managed-list .public-card-row-head>.muted{display:block;margin-top:8px}
+  .public-managed-card-actions{display:flex;flex-wrap:wrap;gap:6px;width:100%}.public-managed-card-actions .btn{flex:0 1 auto;max-width:100%}.public-id-chip{overflow-wrap:anywhere;word-break:break-all}
+}
 </style>
 
 </head>
@@ -21842,7 +21856,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v26.5 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v26.6 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22160,6 +22174,7 @@ h3 .minkai-ruby{margin-top:.45em}
           <label class="btn" style="display:inline-flex;align-items:center">完全バックアップZIPから復元<input id="full-backup-file-input" type="file" accept=".zip,application/zip,application/x-zip-compressed" style="display:none"></label>
         </div>
         <div id="full-backup-status" class="muted" style="margin-top:8px"></div>
+        <div id="full-backup-last-created" class="muted" style="margin-top:6px">この端末での最終ZIP作成：未作成</div>
       </div>
       <div class="image-storage-panel">
         <div class="section-head"><h3 style="font-size:15px;margin:0">画像ストレージ</h3><button class="btn small" type="button" id="image-storage-refresh">更新</button></div>
@@ -22573,7 +22588,7 @@ h3 .minkai-ruby{margin-top:.45em}
     <div id="public-tab-register" class="public-tab-pane active">
       <div class="public-register-layout">
         <div class="panel">
-          <details class="card-manager-filter-details" id="public-local-filter-panel" open>
+          <details class="card-manager-filter-details" id="public-local-filter-panel">
             <summary class="collapsible-panel-summary card-manager-filter-summary">
               <span>検索・絞り込み</span>
               <span id="public-local-filter-count" class="pill">0条件</span>
@@ -22651,7 +22666,7 @@ h3 .minkai-ruby{margin-top:.45em}
 
     <div id="public-tab-browse" class="public-tab-pane">
       <div class="panel">
-        <details class="card-manager-filter-details" id="public-browse-filter-panel" open>
+        <details class="card-manager-filter-details" id="public-browse-filter-panel">
           <summary class="collapsible-panel-summary card-manager-filter-summary">
             <span>検索・絞り込み</span>
             <span id="public-browse-filter-count" class="pill">0条件</span>
@@ -22757,7 +22772,7 @@ h3 .minkai-ruby{margin-top:.45em}
 
       <div class="panel">
         <div class="section-head"><h3 style="margin:0">自分の公開カード</h3><span class="pill">保存管理キー</span></div>
-        <details class="card-manager-filter-details" open>
+        <details class="card-manager-filter-details">
           <summary class="collapsible-panel-summary card-manager-filter-summary">
             <span>検索・絞り込み</span><span id="public-managed-filter-count" class="pill">0条件</span>
           </summary>
@@ -26901,7 +26916,7 @@ function importPayload(data,conflict){
   reconcileCardLinks();normalizeDeckSettings();save(LS_CARDS,cards);save(LS_DECKS,decks);if(touchedIds.length)touchRecentCards(touchedIds);if(registeredIds.length)touchRegisteredCards(registeredIds);renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup(true);
   return {added,updated,skipped,deckAdded};
 }
-$$('[data-tool-tab]').forEach(btn=>btn.onclick=()=>{$$('[data-tool-tab]').forEach(b=>b.classList.remove('primary'));btn.classList.add('primary');$$('#screen-cards .tool-pane').forEach(p=>p.classList.remove('active'));$('#tool-pane-'+btn.dataset.toolTab)?.classList.add('active');if(btn.dataset.toolTab==='manual'){renderRegisterHistory();openRegisterFloatingPreview()}else if(floatingPreviewOwner==='screen:cards')closeFloatingPreview()});
+$$('[data-tool-tab]').forEach(btn=>btn.onclick=()=>{$$('[data-tool-tab]').forEach(b=>b.classList.remove('primary'));btn.classList.add('primary');$$('#screen-cards .tool-pane').forEach(p=>p.classList.remove('active'));$('#tool-pane-'+btn.dataset.toolTab)?.classList.add('active');if(btn.dataset.toolTab==='manual'){renderRegisterHistory();if(floatingPreviewOwner==='screen:cards')closeFloatingPreview()}else if(floatingPreviewOwner==='screen:cards')closeFloatingPreview()});
 $('#parse-text-cards').onclick=()=>{textPreviewCards=parseCardText($('#text-import-source').value);$('#text-import-status').textContent=textPreviewCards.length?`${textPreviewCards.length}枚のカードを検出しました。内容を確認してから登録してください。`:'カードを検出できませんでした。';renderTextPreview()};
 $('#clear-text-import').onclick=()=>{$('#text-import-source').value='';$('#text-import-status').textContent='';textPreviewCards=[];renderTextPreview()};
 $('#register-preview-cards').onclick=()=>{if(!textPreviewCards.length)return;let n=0,addedIds=[];for(const c of textPreviewCards){if(!c.name.trim())continue;const id=uid('card');cards.push({id,name:c.name.trim(),ruby:String(c.ruby||'').trim(),type:normalizeCardType(c.type||'キャラクター'),level:String(c.level||'').trim(),power:String(c.power||'').trim(),race:String(c.race||'').trim(),rarity:String(c.rarity||'').trim(),effect:c.effect||'',flavor:c.flavor||'',visualEffects:[],cardLinks:[]});addedIds.push(id);n++}save(LS_CARDS,cards);touchRecentCards(addedIds);touchRegisteredCards(addedIds);$('#text-import-source').value='';$('#text-import-status').textContent=n?`${n}枚を登録しました。入力欄をクリアしました。`:'';textPreviewCards=[];renderTextPreview();renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();toast(`${n}枚を登録しました`)};
@@ -27046,7 +27061,7 @@ function refreshCardRubyPreview(){
 refreshCardRubyPreview();
 
 syncManualCustomTypeFields();
-$('#card-register-image').onchange=e=>{const file=e.target.files?.[0];if(!file){cleanupRegisterPreviewFile();refreshRegisterFloatingPreview();return}if(!String(file.type||'').startsWith('image/')){toast('画像ファイルを選択してください');cleanupRegisterPreviewFile();return}if(registerPreviewUrl){try{URL.revokeObjectURL(registerPreviewUrl)}catch{}}registerPreviewFile=file;registerPreviewUrl=URL.createObjectURL(file);$('#card-register-image-status').textContent=`選択中：${file.name}`;openRegisterFloatingPreview()};
+$('#card-register-image').onchange=e=>{const file=e.target.files?.[0];if(!file){cleanupRegisterPreviewFile();refreshRegisterFloatingPreview();return}if(!String(file.type||'').startsWith('image/')){toast('画像ファイルを選択してください');cleanupRegisterPreviewFile();return}if(registerPreviewUrl){try{URL.revokeObjectURL(registerPreviewUrl)}catch{}}registerPreviewFile=file;registerPreviewUrl=URL.createObjectURL(file);$('#card-register-image-status').textContent=`選択中：${file.name}`;refreshRegisterFloatingPreview()};
 $('#card-register-preview-open').onclick=openRegisterFloatingPreview;
 $('#card-clear').onclick=clearCardForm;
 $('#card-form').onsubmit=async e=>{
@@ -32728,7 +32743,7 @@ function ensureBoardUiState(){
  if(!board.ui.deckExtraOpen||typeof board.ui.deckExtraOpen!=='object')board.ui.deckExtraOpen={};
  for(const pi of [0,1])for(const z of ['deck','otherDeck']){
    const key=`${pi}|${z}`;
-   if(typeof board.ui.deckExtraOpen[key]!=='boolean')board.ui.deckExtraOpen[key]=false;
+   if(typeof board.ui.deckExtraOpen[key]!=='boolean')board.ui.deckExtraOpen[key]=true;
  }
  if(!board.ui.homePowerApplyDraft||typeof board.ui.homePowerApplyDraft!=='object')board.ui.homePowerApplyDraft={};
  for(const pi of [0,1]){
@@ -33820,7 +33835,7 @@ function bindBoard(){
    if(details){const[epi,ez]=details.dataset.deckExtra.split('|');setDeckExtraOpen(Number(epi),ez,details.open)}
    const[a,pi,z='deck']=b.dataset.deckAction.split('|');deckAction(a,Number(pi),z)
  });
- $$('[data-zone-view]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,z]=b.dataset.zoneView.split('|');openZoneViewer(Number(pi),z)});
+ $$('[data-zone-view]').forEach(b=>{b.disabled=false;b.removeAttribute('aria-disabled');b.style.pointerEvents='auto';b.onclick=e=>{e.preventDefault();e.stopPropagation();const[pi,z]=String(b.dataset.zoneView||'').split('|');if(!['hand','grave','banish','character','pain','room','rulePlus'].includes(z))return;openZoneViewer(Number(pi),z)}});
  $$('[data-hand-mode]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pi,mode]=b.dataset.handMode.split('|');if(onlineOpponentReadOnly(Number(pi)))return;board.players[Number(pi)].handMode=mode==='operation'?'operation':'scroll';renderBoard();scheduleBoardAutosave()});
 }
 
@@ -34004,7 +34019,7 @@ function openZoneViewerMove(pi,z,instanceId,query=''){
 function openZoneViewer(pi,z,initialQuery=''){
  const player=board.players[pi],readOnly=onlineOpponentReadOnly(pi);
  openModal(`<div class="modal-head"><h3>${esc(player.name)} / ${ZONE_LABELS[z]} 一覧</h3><span class="pill" id="zone-view-count">0枚</span><button class="btn" id="zone-view-close">閉じる</button></div>
-   <p class="muted">${readOnly?'相手の公開領域を閲覧しています。カードの移動・変更はできません。':'盤面を動かさず中身を確認できます。詳細確認、ショートカット移動、「移動先」から任意ゾーンへの移動が可能です。'}</p>
+   <p class="muted">${readOnly?'公開領域を閲覧しています。カードの移動・変更はできません。':'盤面を動かさず中身を確認できます。詳細確認、ショートカット移動、「移動先」から任意ゾーンへの移動が可能です。'}</p>
    <label>カード名検索<input id="zone-card-search" type="search" placeholder="カード名の一部を入力" value="${esc(initialQuery)}" autocomplete="off"></label>
    <div class="board-zone-list" id="zone-view-grid" style="margin-top:10px"></div>`);
  const search=$('#zone-card-search'),grid=$('#zone-view-grid'),count=$('#zone-view-count');
@@ -36478,6 +36493,7 @@ function onlineRenderDuelBoard(options={}){
     onlineUpdateDuelToolbar(room);
     onlineApplyDuelZoom();
     onlineRefreshToolAvailability();
+    host.querySelectorAll('[data-zone-view]').forEach(btn=>{btn.disabled=false;btn.removeAttribute('aria-disabled');btn.style.pointerEvents='auto';btn.style.opacity='1'});
 
     for(const slot of [1,2]){
       if(onlineToolWindowState[slot]?.open)onlineRenderToolWindow(slot,onlineToolWindowState[slot].section);
@@ -38981,7 +38997,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v26.5 public card repository
+// v26.6 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -40693,7 +40709,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='26.5';
+  manifest.appVersion='26.6';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -40734,7 +40750,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'26.5',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'26.6',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
