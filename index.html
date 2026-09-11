@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v27.4</title>
+<title>みん会TCG Simulator v27.5</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21941,6 +21941,14 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
   #card-effect,#card-flavor{min-height:120px}
   #deck-card-search,#deck-race-search{font-size:16px}
 }
+
+.online-selftest-deck-setup{margin:12px 0;padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025)}
+.online-selftest-player-setup{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.online-selftest-player-card{display:grid;gap:8px;padding:10px;border:1px solid var(--line);border-radius:10px;background:rgba(0,0,0,.12)}
+.online-selftest-player-card>b{font-size:1.05em}
+.online-selftest-player-card label{display:grid;gap:4px}
+body.online-selftest-local-running #online-duel-main .online-player-section:not(.online-duel-opponent){outline:2px solid rgba(116,170,255,.38);outline-offset:2px}
+@media(max-width:760px){.online-selftest-player-setup{grid-template-columns:1fr}}
 </style>
 
 
@@ -21960,7 +21968,7 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v27.4 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v27.5 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23658,9 +23666,26 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
           </select>
         </label>
       </div>
+      <div id="online-selftest-deck-setup" class="online-selftest-deck-setup">
+        <div class="section-head"><h3 style="margin:0">テスト用デッキ設定</h3><span class="pill">ローカル確認用</span></div>
+        <div class="online-selftest-player-setup">
+          <div class="online-selftest-player-card">
+            <b>P1</b>
+            <label>メインデッキ<select id="online-selftest-p1-deck"></select></label>
+            <label>その他デッキ<select id="online-selftest-p1-other"></select></label>
+            <label>最推し<select id="online-selftest-p1-favorite"></select></label>
+          </div>
+          <div class="online-selftest-player-card">
+            <b>P2</b>
+            <label>メインデッキ<select id="online-selftest-p2-deck"></select></label>
+            <label>その他デッキ<select id="online-selftest-p2-other"></select></label>
+            <label>最推し<select id="online-selftest-p2-favorite"></select></label>
+          </div>
+        </div>
+        <p class="muted">P1とP2で別々のメインデッキ・その他デッキ・最推しを指定できます。同じデッキを両方に指定しても構いません。</p>
+      </div>
       <div class="actions">
         <button class="btn primary" type="button" id="online-selftest-start">動作確認を開始</button>
-        <button class="btn" type="button" id="online-selftest-dummy">テスト用P2を用意</button>
         <button class="btn" type="button" id="online-selftest-stop">動作確認を終了</button>
       </div>
       <div id="online-selftest-status" class="muted" style="margin-top:8px">未開始</div>
@@ -33509,6 +33534,13 @@ function syncBoardRandomTools(){
 }
 
 function renderBoard(){
+ if(typeof onlineSelfTestState!=='undefined'&&onlineSelfTestState?.active&&onlineSelfTestState.mode==='local'&&currentScreenName==='online-duel'){
+   onlineDuelBoard=board;
+   try{onlineSelfTestRefreshMasterFromCurrent()}catch(_){}
+   onlineLastRenderedDuelSignature='';
+   onlineRenderDuelBoard({force:true});
+   return;
+ }
  if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive&&currentScreenName==='online-duel'){
    onlineDuelBoard=board;
    // 手札操作直後の再読込でも失わないよう、描画要求時点で即保存。
@@ -34834,9 +34866,9 @@ function renderCounters(c){return c.counters.length?c.counters.map((x,i)=>`<div 
 function bindCounters(c,refresh){$$('[data-counter-name]').forEach(x=>x.onchange=()=>{c.counters[Number(x.dataset.counterName)].name=x.value;renderBoard()});$$('[data-counter-val]').forEach(x=>x.onchange=()=>{c.counters[Number(x.dataset.counterVal)].value=Number(x.value)||0;renderBoard()});$$('[data-counter-minus]').forEach(b=>b.onclick=()=>{c.counters[Number(b.dataset.counterMinus)].value--;refresh();renderBoard()});$$('[data-counter-plus]').forEach(b=>b.onclick=()=>{c.counters[Number(b.dataset.counterPlus)].value++;refresh();renderBoard()});$$('[data-counter-del]').forEach(b=>b.onclick=()=>{c.counters.splice(Number(b.dataset.counterDel),1);refresh();renderBoard()})}
 function moveTargetsHtml(defaultPi=null,defaultZone='grave'){
  const order=['hand','character','pain','room','rulePlus','deck','otherDeck','grave','banish'];
- const own=onlineDuelActive?onlineOwnSlot():null;
+ const localSelfTest=onlineSelfTestLocalEditable(),own=localSelfTest?onlineOwnSlot():(onlineDuelActive?onlineOwnSlot():null);
  return board.players.map((p,pi)=>{
-   if(onlineDuelActive&&own!=null&&pi!==Number(own)-1)return '';
+   if((onlineDuelActive||localSelfTest)&&own!=null&&pi!==Number(own)-1)return '';
    const opts=order.filter(z=>!onlineServerDeckGuardActive(pi,z)).map(z=>`<option value="${pi}|${z}"${Number(defaultPi)===pi&&z===defaultZone?' selected':''}>${ZONE_LABELS[z]}</option>`).join('');
    return opts?`<optgroup label="${esc(p.name)}">${opts}</optgroup>`:'';
  }).join('');
@@ -34846,9 +34878,9 @@ function allPileOptions(exclude){let out='';board.players.forEach((p,pi)=>{Objec
 function stackCandidates(pi,z,exclude){const out=[];board.players[pi][z].forEach((pile,i)=>{if(!pile)return;if(exclude&&exclude.pi===pi&&exclude.z===z&&exclude.index===i)return;out.push({pile,index:i})});return out}
 function openStackDialog(){const ctx={...detailCtx};if(ctx.instanceId){const loc=findBoardInstanceAnywhere(ctx.instanceId);if(loc){ctx.pi=loc.pi;ctx.z=loc.z;ctx.index=loc.pileIndex;ctx.cardIndex=loc.cardIndex}}const srcPile=getPile(ctx.pi,ctx.z,ctx.index),c=srcPile?.cards?.[ctx.cardIndex];if(!c)return;openModal(`<div class="modal-head"><h3>${esc(c.name)} を重ねる</h3><button class="btn" id="stack-cancel">戻る</button></div><label>プレイヤー<select id="stack-player">${board.players.map((p,i)=>`<option value="${i}">${esc(p.name)}</option>`).join('')}</select></label><label style="margin-top:8px">ゾーン<select id="stack-zone">${Object.entries(ZONE_LABELS).map(([z,l])=>`<option value="${z}">${l}</option>`).join('')}</select></label><label style="margin-top:8px">カード<select id="stack-target-card"></select></label><div id="stack-empty" class="muted" style="margin-top:6px"></div><label style="margin-top:8px">位置<select id="stack-pos"><option value="top">上に重ねる</option><option value="bottom">下に重ねる</option></select></label><button class="btn primary" id="stack-confirm" style="margin-top:10px">重ねる</button>`);$('#stack-cancel').onclick=()=>openDetail(ctx.pi,ctx.z,ctx.index,ctx.cardIndex);
  const refreshCards=()=>{const pi=Number($('#stack-player').value),z=$('#stack-zone').value,own=onlineDuelActive?onlineOwnSlot():null,forbidden=(onlineDuelActive&&own!=null&&pi!==Number(own)-1)||onlineServerDeckGuardActive(pi,z),targets=forbidden?[]:stackCandidates(pi,z,ctx),sel=$('#stack-target-card');sel.innerHTML=targets.map(x=>`<option value="${x.pile.id}">${esc(topCard(x.pile).name)}${x.pile.cards.length>1?`（重なり${x.pile.cards.length}枚）`:''}</option>`).join('');$('#stack-empty').textContent=targets.length?'':'このゾーンに重ね先のカードがありません。';$('#stack-confirm').disabled=!targets.length};
- const pickFirstAvailable=()=>{for(let pi=0;pi<board.players.length;pi++){if(onlineDuelActive&&onlineOwnSlot()!=null&&pi!==Number(onlineOwnSlot())-1)continue;for(const z of Object.keys(ZONE_LABELS)){if(onlineServerDeckGuardActive(pi,z))continue;if(stackCandidates(pi,z,ctx).length){$('#stack-player').value=String(pi);$('#stack-zone').value=z;refreshCards();return true}}}return false};
+ const pickFirstAvailable=()=>{for(let pi=0;pi<board.players.length;pi++){if((onlineDuelActive||onlineSelfTestLocalEditable())&&onlineOwnSlot()!=null&&pi!==Number(onlineOwnSlot())-1)continue;for(const z of Object.keys(ZONE_LABELS)){if(onlineServerDeckGuardActive(pi,z))continue;if(stackCandidates(pi,z,ctx).length){$('#stack-player').value=String(pi);$('#stack-zone').value=z;refreshCards();return true}}}return false};
  $('#stack-player').onchange=refreshCards;$('#stack-zone').onchange=refreshCards;if(!pickFirstAvailable()){$('#stack-confirm').disabled=true;$('#stack-empty').textContent='重ね先のカードがありません。'}
- $('#stack-confirm').onclick=()=>{const tpi=Number($('#stack-player').value),z=$('#stack-zone').value,targetId=$('#stack-target-card').value;if(!targetId)return;if(onlineServerDeckMutationBlocked(ctx.pi,ctx.z)||onlineServerDeckMutationBlocked(tpi,z))return;if(onlineDuelActive&&onlineOwnSlot()!=null&&tpi!==Number(onlineOwnSlot())-1){toast('相手側のカードは操作できません');return}const card=removeCardAt(ctx.pi,ctx.z,ctx.index,ctx.cardIndex),area=board.players[tpi][z],newIndex=area.findIndex(p=>p&&p.id===targetId),target=newIndex>=0?area[newIndex]:null;if(!target){addAsPile(tpi,z,card);toast('重ね先が移動したため通常配置しました')}else{prepareCardForDestination(card,z);if($('#stack-pos').value==='top')target.cards.unshift(card);else target.cards.push(card)};$('#modal-layer').classList.remove('open');detailCtx=null;detailNav=null;renderBoard()}}
+ $('#stack-confirm').onclick=()=>{const tpi=Number($('#stack-player').value),z=$('#stack-zone').value,targetId=$('#stack-target-card').value;if(!targetId)return;if(onlineServerDeckMutationBlocked(ctx.pi,ctx.z)||onlineServerDeckMutationBlocked(tpi,z))return;if((onlineDuelActive||onlineSelfTestLocalEditable())&&onlineOwnSlot()!=null&&tpi!==Number(onlineOwnSlot())-1){toast('相手側のカードは操作できません');return}const card=removeCardAt(ctx.pi,ctx.z,ctx.index,ctx.cardIndex),area=board.players[tpi][z],newIndex=area.findIndex(p=>p&&p.id===targetId),target=newIndex>=0?area[newIndex]:null;if(!target){addAsPile(tpi,z,card);toast('重ね先が移動したため通常配置しました')}else{prepareCardForDestination(card,z);if($('#stack-pos').value==='top')target.cards.unshift(card);else target.cards.push(card)};$('#modal-layer').classList.remove('open');detailCtx=null;detailNav=null;renderBoard()}}
 
 // Deck actions
 function takeTopCard(pi,z='deck'){const d=board.players[pi][z];if(!d.length)return null;const c=d[0].cards.shift();if(!d[0].cards.length)d.shift();return c}
@@ -36978,13 +37010,7 @@ function onlineRenderDuelBoard(options={}){
       });
     }
 
-    if(selfTestLocal&&!selfTestSpectator){
-      const prevOnlineActive=onlineDuelActive;
-      onlineDuelActive=false;
-      try{bindBoard()}finally{onlineDuelActive=prevOnlineActive}
-    }else{
-      bindBoard();
-    }
+    bindBoard();
     bindBoardToolTray();
     onlineBindDuelConvenienceTools();
     applyBoardDisplaySettings();
@@ -37022,7 +37048,9 @@ function onlineUpdateDuelToolbar(room){
   const own=onlineOwnSlot()||0;
   document.documentElement.dataset.onlineDuelOwn=String(own);
   $('#online-duel-room-code').textContent=onlineSessionState.joinCode||'------';
-  $('#online-duel-role').textContent=onlineRoleLabel();
+  $('#online-duel-role').textContent=onlineSelfTestState?.active&&onlineSelfTestState.mode==='local'
+    ?`動作確認 / ${onlineSelfTestState.view==='spectator'?'観戦':onlineSelfTestState.view.toUpperCase()}`
+    :onlineRoleLabel();
   const turnLabel=$('#online-duel-turn'); if(turnLabel)turnLabel.textContent='通話進行';
   $('#online-duel-permission').textContent=own?`P${own} 自分側・常時操作可`:'観戦専用';
   for(const slot of [1,2]){
@@ -37066,6 +37094,7 @@ function onlineEnterDuelBoard(){
   onlineScheduleAutoSync();
 }
 function onlineExitDuelBoardToLobby(){
+  if(onlineSelfTestState?.active){onlineSelfTestStop();return}
   try{onlineCaptureScrollSnapshot();onlinePersistOwnerHand()}catch(_){}
   onlineStopBoardMutationWatch();
   onlineLastRenderedDuelSignature='';
@@ -37916,6 +37945,7 @@ function onlineSelfTestRole(){
 function onlineApplySelfTestClass(){
   document.body.classList.toggle('online-selftest-active',!!onlineSelfTestState.active);
   document.body.classList.toggle('online-selftest-spectator',!!onlineSelfTestState.active&&onlineSelfTestState.view==='spectator');
+  document.body.classList.toggle('online-selftest-local-running',!!onlineSelfTestState.active&&onlineSelfTestState.mode==='local');
   onlineApplySpectatorViewClass();
 }
 function onlineSelfTestStatus(msg,error=false){
@@ -37932,23 +37962,36 @@ function onlineSelfTestClone(value){
     try{return JSON.parse(JSON.stringify(value))}catch(__){return value}
   }
 }
+function onlineSelfTestFillDeckSetup(){
+  const mainList=setupDeckList('main'),otherList=setupDeckList('other');
+  fillSetupDeckSelect(document.getElementById('online-selftest-p1-deck'),mainList,'main',{forceDefault:false});
+  fillSetupDeckSelect(document.getElementById('online-selftest-p2-deck'),mainList,'main',{forceDefault:false});
+  fillSetupDeckSelect(document.getElementById('online-selftest-p1-other'),otherList,'other',{allowNone:true,forceDefault:false});
+  fillSetupDeckSelect(document.getElementById('online-selftest-p2-other'),otherList,'other',{allowNone:true,forceDefault:false});
+  onlineSelfTestSyncFavorite(1,false);onlineSelfTestSyncFavorite(2,false);
+  const setup=document.getElementById('online-selftest-deck-setup');
+  if(setup)setup.hidden=(document.getElementById('online-selftest-mode')?.value||'local')!=='local';
+}
+function onlineSelfTestSyncFavorite(slot,useDeckDefault=false){
+  const deckSel=document.getElementById(`online-selftest-p${slot}-deck`);
+  const fav=document.getElementById(`online-selftest-p${slot}-favorite`);
+  if(!deckSel||!fav)return;
+  const prev=fav.value,d=decks.find(x=>String(x.id)===String(deckSel.value)),preferred=String(d?.defaultOshiiCardId||'');
+  fav.innerHTML=favoriteOptions(deckSel.value);
+  if(useDeckDefault&&preferred&&[...fav.options].some(o=>o.value===preferred))fav.value=preferred;
+  else if(prev&&[...fav.options].some(o=>o.value===prev))fav.value=prev;
+  else if(preferred&&[...fav.options].some(o=>o.value===preferred))fav.value=preferred;
+}
+function onlineSelfTestSelectedSetup(){
+  const val=id=>String(document.getElementById(id)?.value||'');
+  return {
+    p1:{deckId:val('online-selftest-p1-deck'),otherDeckId:val('online-selftest-p1-other'),favoriteId:val('online-selftest-p1-favorite')},
+    p2:{deckId:val('online-selftest-p2-deck'),otherDeckId:val('online-selftest-p2-other'),favoriteId:val('online-selftest-p2-favorite')}
+  };
+}
 function onlineSelfTestPickDeckIds(){
-  const ids=[];
-  const preferred=[
-    onlineSetupDraft?.deckId,
-    document.getElementById('online-deck-select')?.value,
-    document.getElementById('setup-deck-1')?.value,
-    document.getElementById('setup-deck-2')?.value
-  ].filter(Boolean);
-  for(const id of preferred){
-    if(decks.some(d=>String(d.id)===String(id))&&!ids.includes(String(id)))ids.push(String(id));
-  }
-  for(const d of decks){
-    if(ids.length>=2)break;
-    if(!ids.includes(String(d.id)))ids.push(String(d.id));
-  }
-  if(ids.length===1)ids.push(ids[0]);
-  return ids.slice(0,2);
+  const x=onlineSelfTestSelectedSetup();
+  return [x.p1.deckId,x.p2.deckId].filter(Boolean);
 }
 function onlineSelfTestDrawOpeningHand(player,count=5){
   if(!player)return;
@@ -37958,30 +38001,17 @@ function onlineSelfTestDrawOpeningHand(player,count=5){
   }
 }
 function onlineSelfTestBuildMasterBoard(){
-  const ids=onlineSelfTestPickDeckIds();
-  if(!ids.length)return null;
-  const p1=makePlayer(ids[0],0,'','');
-  const p2=makePlayer(ids[1]||ids[0],1,'','');
-  onlineSelfTestDrawOpeningHand(p1,5);
-  onlineSelfTestDrawOpeningHand(p2,5);
+  const setup=onlineSelfTestSelectedSetup();
+  if(!setup.p1.deckId||!setup.p2.deckId)return null;
+  const p1=makePlayer(setup.p1.deckId,0,setup.p1.favoriteId,setup.p1.otherDeckId);
+  const p2=makePlayer(setup.p2.deckId,1,setup.p2.favoriteId,setup.p2.otherDeckId);
+  onlineSelfTestDrawOpeningHand(p1,5);onlineSelfTestDrawOpeningHand(p2,5);
   p1.name='P1';p2.name='P2';
   return {
     mode:2,
-    setup:{mode:2,online:true,roomCode:'SELFTEST'},
-    players:[p1,p2],
-    note:'',
-    turn:1,
-    ui:{
-      panelCollapsed:{operations:false,tray:true,power:true,note:false},
-      trayCounterName:'カウンター',
-      trayCustomMarker:'',
-      diceExpression:'1d6',
-      randomHistory:[],
-      boardSearchQuery:'',
-      linkJumpHistory:[],
-      homePowerApplyDraft:{0:0,1:0},
-      onlinePublicResults:{1:null,2:null}
-    }
+    setup:{mode:2,online:true,roomCode:'SELFTEST',deck1:setup.p1.deckId,otherDeck1:setup.p1.otherDeckId,favorite1:setup.p1.favoriteId,deck2:setup.p2.deckId,otherDeck2:setup.p2.otherDeckId,favorite2:setup.p2.favoriteId},
+    players:[p1,p2],note:'',turn:1,
+    ui:{panelCollapsed:{operations:false,tray:true,power:true,note:false},trayCounterName:'カウンター',trayCustomMarker:'',diceExpression:'1d6',randomHistory:[],boardSearchQuery:'',linkJumpHistory:[],homePowerApplyDraft:{0:0,1:0},onlinePublicResults:{1:null,2:null}}
   };
 }
 function onlineSelfTestPublicStateFromMaster(master){
@@ -38005,9 +38035,9 @@ function onlineSelfTestPublicStateFromMaster(master){
 function onlineSelfTestMakeRoom(master){
   const state=onlineSelfTestPublicStateFromMaster(master);
   const now=Date.now();
-  const ids=onlineSelfTestPickDeckIds();
+  const ids=[String(master?.setup?.deck1||''),String(master?.setup?.deck2||'')];
   const deck1=decks.find(d=>String(d.id)===String(ids[0]));
-  const deck2=decks.find(d=>String(d.id)===String(ids[1]||ids[0]));
+  const deck2=decks.find(d=>String(d.id)===String(ids[1]));
   return {
     version:ONLINE_MODE_VERSION,
     roomId:'selftest-room',
@@ -38148,9 +38178,15 @@ function onlineSelfTestStartCore(){
   const view=document.getElementById('online-selftest-view')?.value||'p1';
 
   if(mode==='local'){
+    onlineSelfTestFillDeckSetup();
+    const setup=onlineSelfTestSelectedSetup();
+    if(!setup.p1.deckId||!setup.p2.deckId){
+      onlineSelfTestStatus('P1・P2それぞれのメインデッキを選択してください。',true);
+      return;
+    }
     const master=onlineSelfTestBuildMasterBoard();
     if(!master){
-      onlineSelfTestStatus('ローカル確認にはデッキが1つ以上必要です。先にデッキを作成してください。',true);
+      onlineSelfTestStatus('テスト盤面を作成できませんでした。デッキ設定を確認してください。',true);
       return;
     }
 
@@ -38178,7 +38214,7 @@ function onlineSelfTestStartCore(){
       displayName:view==='spectator'?'観戦者':view.toUpperCase()
     };
 
-    onlineDuelActive=true;
+    onlineDuelActive=false;
     onlineDuelRoomCode='SELFTEST';
     onlineOfflineBoardState=onlineSelfTestState.backup.board;
 
@@ -38297,11 +38333,12 @@ function bindOnlineSelfTestInternalV273(){
   };
   on('online-selftest-start','click',onlineSelfTestStart);
   on('online-selftest-stop','click',onlineSelfTestStop);
-  on('online-selftest-dummy','click',onlineSelfTestDummy);
   on('online-diagnostic-refresh','click',onlineRefreshDiagnostic);
   on('online-diagnostic-copy','click',onlineCopyDiagnostic);
   on('online-selftest-view','change',e=>onlineSelfTestSetView(e.target.value));
-  on('online-selftest-mode','change',e=>onlineSelfTestSetMode(e.target.value));
+  on('online-selftest-mode','change',e=>{onlineSelfTestSetMode(e.target.value);onlineSelfTestFillDeckSetup()});
+  for(const slot of [1,2])on(`online-selftest-p${slot}-deck`,'change',()=>onlineSelfTestSyncFavorite(slot,true));
+  onlineSelfTestFillDeckSetup();
 }
 
 // デバッグ用に明示的な公開APIも用意。
@@ -38309,7 +38346,6 @@ function bindOnlineSelfTestInternalV273(){
 window.minkaiOnlineSelfTest={
   start:onlineSelfTestStart,
   stop:onlineSelfTestStop,
-  dummy:onlineSelfTestDummy,
   setView:onlineSelfTestSetView,
   diagnostic:onlineRefreshDiagnostic,
   copyDiagnostic:onlineCopyDiagnostic
@@ -38332,7 +38368,7 @@ function onlineDiagnosticSnapshot(){
   const member=(slot)=>slot===1?room?.p1:room?.p2;
   const rev=room?.revision??room?.publicState?.revision??null;
   const info={
-    appVersion:'27.4',
+    appVersion:'27.5',
     generatedAt:new Date().toISOString(),
     userAgent:navigator.userAgent,
     online:{
@@ -40043,7 +40079,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v27.4 public card repository
+// v27.5 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -42026,7 +42062,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='27.4';
+  manifest.appVersion='27.5';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -42067,7 +42103,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'27.4',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'27.5',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
