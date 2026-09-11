@@ -35,6 +35,7 @@
     "g11-naming-audit": "node scripts/g11-naming-audit.mjs",
     "libido-body-mechanics-audit": "node scripts/libido-body-mechanics-audit.mjs",
     "libido-body-operations-audit": "node scripts/libido-body-operations-audit.mjs",
-    "libido-description-audit": "node scripts/libido-description-audit.mjs"
+    "libido-description-audit": "node scripts/libido-description-audit.mjs",
+    "libido-distinctiveness": "node scripts/libido-distinctiveness-audit.mjs"
   }
 }

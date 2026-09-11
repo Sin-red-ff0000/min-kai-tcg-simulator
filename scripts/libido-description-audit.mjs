@@ -1,6 +1,6 @@
 import { SERIES_DEFINITIONS } from '../src/data/seriesDefinitions.js?v=4.8';
 const rows=SERIES_DEFINITIONS.filter(s=>s.manufacturerId==='libido');
-const fields=['summary','namingConcept','developmentBackground','engineeringNotes','trainingNotes','weaponDoctrine'];
+const fields=['summary','creatorIntent','companionAppeal','appealHook','signatureScene','creatorNonnegotiable','creatorQuirk','creatorFirstDecision','privateUsePriority','namingConcept','developmentBackground','engineeringNotes','trainingNotes','weaponDoctrine'];
 const missing=[]; const unique={};
 for(const f of fields){ const vals=rows.map(r=>r[f]); unique[f]=new Set(vals).size; rows.forEach(r=>{if(!r[f]) missing.push(`${r.id}:${f}`)}); }
 const creators=new Set(rows.map(r=>r.creatorProfile?.creator).filter(Boolean));
