@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v27.3</title>
+<title>みん会TCG Simulator v27.4</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21960,7 +21960,7 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v27.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v27.4 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -32885,6 +32885,14 @@ function saveBoardSessionNow(showToast=false){
  }
 }
 function scheduleBoardAutosave(){
+ if(typeof onlineSelfTestState!=='undefined'&&onlineSelfTestState?.active&&onlineSelfTestState.mode==='local'){
+   if(!board)return;
+   if(boardAutosaveTimer)clearTimeout(boardAutosaveTimer);
+   boardAutosaveTimer=setTimeout(()=>{
+     try{onlineSelfTestRefreshMasterFromCurrent()}catch(_){}
+   },120);
+   return;
+ }
  if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive){
    if(typeof onlineScheduleAutoSync==='function')onlineScheduleAutoSync();
    return;
@@ -34656,6 +34664,8 @@ function refreshLiveBoardDetailAfterRender(){
  else openDetail(loc.pi,loc.z,loc.pileIndex,loc.cardIndex,zoneDetailIds(loc.pi,loc.z));
 }
 function onlineOpponentReadOnly(pi){
+  if(onlineSelfTestLocalEditable())return Number(pi)!==onlineSelfTestOwnPlayerIndex();
+  if(onlineSelfTestLocalSpectator())return true;
   return !!onlineDuelActive&&Number(pi)+1!==Number(onlineOwnSlot());
 }
 function onlineClonePublicCardForControl(card){
@@ -36917,6 +36927,9 @@ function onlineRenderDuelBoard(options={}){
 
     host.innerHTML=p2+'<div class="divider">──────── オンライン対戦ライン ────────</div>'+p1;
 
+    const selfTestLocal=onlineSelfTestState?.active&&onlineSelfTestState.mode==='local';
+    const selfTestSpectator=selfTestLocal&&onlineSelfTestState.view==='spectator';
+
     host.querySelectorAll('.online-duel-opponent button:not([data-zone-view])').forEach(btn=>{
       btn.disabled=true;
       btn.setAttribute('aria-disabled','true');
@@ -36928,16 +36941,27 @@ function onlineRenderDuelBoard(options={}){
       btn.tabIndex=-1;
     });
 
-    const ownPi=Number(onlineOwnSlot()||0)-1;
+    const ownPi=selfTestLocal
+      ?(selfTestSpectator?-1:onlineSelfTestOwnPlayerIndex())
+      :Number(onlineOwnSlot()||0)-1;
     if(ownPi>=0){
       host.querySelectorAll(`[data-slot-plus^="${ownPi}|"], [data-slot-minus^="${ownPi}|"], [data-zone-view^="${ownPi}|"], [data-hand-mode^="${ownPi}|"]`).forEach(btn=>{
         btn.disabled=false;btn.removeAttribute('aria-disabled');btn.tabIndex=0;btn.style.pointerEvents='auto';btn.style.opacity='1';
       });
+      if(selfTestLocal){
+        host.querySelectorAll(`[data-pile^="${ownPi}|"], [data-marker-remove^="${ownPi}|"], [data-deck-action*="|${ownPi}|"]`).forEach(el=>{
+          el.disabled=false;
+          el.removeAttribute('aria-disabled');
+          el.tabIndex=0;
+          el.style.pointerEvents='auto';
+          el.style.opacity='1';
+        });
+      }
       host.querySelectorAll(`[data-deck-action*="|${ownPi}|deck"], [data-deck-action$="|${ownPi}"]`).forEach(btn=>{
         const raw=String(btn.dataset.deckAction||'').split('|');
         const action=raw[0],pi=Number(raw[1]),z=raw[2]||'deck';
         if(pi===ownPi&&z==='deck'){
-          const supported=['draw','shuffle','browse','painFace','painBack','look'].includes(action);
+          const supported=selfTestLocal||['draw','shuffle','browse','painFace','painBack','look'].includes(action);
           btn.disabled=!supported;
           if(supported){
             btn.removeAttribute('aria-disabled');
@@ -36954,7 +36978,13 @@ function onlineRenderDuelBoard(options={}){
       });
     }
 
-    bindBoard();
+    if(selfTestLocal&&!selfTestSpectator){
+      const prevOnlineActive=onlineDuelActive;
+      onlineDuelActive=false;
+      try{bindBoard()}finally{onlineDuelActive=prevOnlineActive}
+    }else{
+      bindBoard();
+    }
     bindBoardToolTray();
     onlineBindDuelConvenienceTools();
     applyBoardDisplaySettings();
@@ -36976,7 +37006,7 @@ function onlineRenderDuelBoard(options={}){
     return true;
   }finally{
     onlineBoardRenderInProgress=false;
-    if(hadObserver&&onlineDuelActive){
+    if(hadObserver&&onlineDuelActive&&!(onlineSelfTestState?.active&&onlineSelfTestState.mode==='local')){
       queueMicrotask(()=>{
         onlineBoardMutationPaused=false;
         if(onlineDuelActive)onlineStartBoardMutationWatch();
@@ -37860,6 +37890,25 @@ function onlineOwnSlot(){
   }
   return onlineOwnSlotRaw();
 }
+
+function onlineSelfTestLocalEditable(){
+  return !!(
+    onlineSelfTestState?.active &&
+    onlineSelfTestState.mode==='local' &&
+    (onlineSelfTestState.view==='p1'||onlineSelfTestState.view==='p2')
+  );
+}
+function onlineSelfTestLocalSpectator(){
+  return !!(
+    onlineSelfTestState?.active &&
+    onlineSelfTestState.mode==='local' &&
+    onlineSelfTestState.view==='spectator'
+  );
+}
+function onlineSelfTestOwnPlayerIndex(){
+  if(!onlineSelfTestLocalEditable())return -1;
+  return onlineSelfTestState.view==='p2'?1:0;
+}
 function onlineSelfTestRole(){
   if(!onlineSelfTestState?.active)return null;
   return onlineSelfTestState.view==='spectator'?'spectator':onlineSelfTestState.view;
@@ -38044,6 +38093,16 @@ function onlineSelfTestRemoveRoom(){
     onlineSaveRooms(rooms);
   }catch(_){}
 }
+
+function onlineSelfTestRefreshMasterFromCurrent(){
+  if(!onlineSelfTestLocalEditable()||!onlineSelfTestState.masterBoard||!board)return;
+  const pi=onlineSelfTestOwnPlayerIndex();
+  if(pi<0)return;
+  onlineSelfTestState.masterBoard.players[pi]=onlineSelfTestClone(board.players[pi]);
+  onlineSelfTestState.masterBoard.ui=onlineSelfTestClone(board.ui||onlineSelfTestState.masterBoard.ui);
+  onlineSelfTestState.testRoom=onlineSelfTestMakeRoom(onlineSelfTestState.masterBoard);
+  onlineSelfTestInstallRoom(onlineSelfTestState.testRoom);
+}
 function onlineSelfTestRefreshBoardCore(){
   onlineApplySelfTestClass();
   if(!onlineSelfTestState.active){onlineRefreshDiagnostic();return}
@@ -38123,7 +38182,7 @@ function onlineSelfTestStartCore(){
     onlineDuelRoomCode='SELFTEST';
     onlineOfflineBoardState=onlineSelfTestState.backup.board;
 
-    onlineSelfTestStatus(`ローカル確認中：${view==='spectator'?'観戦':view.toUpperCase()}視点。テスト盤面を作成しました。`);
+    onlineSelfTestStatus(`ローカル確認中：${view==='spectator'?'観戦（閲覧専用）':view.toUpperCase()+'視点（'+view.toUpperCase()+'側を操作可能）'}。テスト盤面を作成しました。`);
     onlineSelfTestRefreshBoard();
     return;
   }
@@ -38211,7 +38270,7 @@ function onlineSelfTestSetView(view){
   }
 
   if(onlineSelfTestState.active){
-    onlineSelfTestStatus(`${onlineSelfTestState.mode==='live'?'実通信':'ローカル'}確認中：${next==='spectator'?'観戦':next.toUpperCase()}視点`);
+    onlineSelfTestStatus(`${onlineSelfTestState.mode==='live'?'実通信':'ローカル'}確認中：${next==='spectator'?'観戦（閲覧専用）':next.toUpperCase()+'視点（'+next.toUpperCase()+'側を操作可能）'}`);
     onlineSelfTestRefreshBoard();
   }
 }
@@ -38273,7 +38332,7 @@ function onlineDiagnosticSnapshot(){
   const member=(slot)=>slot===1?room?.p1:room?.p2;
   const rev=room?.revision??room?.publicState?.revision??null;
   const info={
-    appVersion:'27.3',
+    appVersion:'27.4',
     generatedAt:new Date().toISOString(),
     userAgent:navigator.userAgent,
     online:{
@@ -38608,6 +38667,7 @@ async function onlineAutoSyncNow(){
   onlineUpdateDuelToolbar(onlineLoadRooms()[code]||room);
 }
 function onlineScheduleAutoSync(){
+  if(onlineSelfTestState?.active&&onlineSelfTestState.mode==='local')return;
   if(onlineAutoSyncTimer)clearTimeout(onlineAutoSyncTimer);
   onlineAutoSyncTimer=setTimeout(()=>{
     onlineAutoSyncTimer=0;
@@ -38615,6 +38675,7 @@ function onlineScheduleAutoSync(){
   },ONLINE_AUTO_SYNC_DELAY);
 }
 function onlineStartBoardMutationWatch(){
+  if(onlineSelfTestState?.active&&onlineSelfTestState.mode==='local')return;
   if(onlineBoardMutationObserver){onlineBoardMutationObserver.disconnect();onlineBoardMutationObserver=null}
   const candidates=['#online-duel-main','#board-root','#board-area','#board-view','#board'];
   let target=null;
@@ -39647,6 +39708,7 @@ function onlineDeckCountFromRoom(room,slot){
   return null;
 }
 function onlineServerDeckGuardActive(pi,z){
+  if(onlineSelfTestState?.active&&onlineSelfTestState.mode==='local')return false;
   if(z!=='deck'||!onlineDuelActive||homePlayMode!=='online'||!onlineSessionState.joinCode)return false;
   const room=onlineLoadRooms()[onlineSessionState.joinCode];
   if(!onlineMatchStarted(room))return false;
@@ -39981,7 +40043,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v27.3 public card repository
+// v27.4 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -41964,7 +42026,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='27.3';
+  manifest.appVersion='27.4';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -42005,7 +42067,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'27.3',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'27.4',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
