@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v27.2</title>
+<title>みん会TCG Simulator v27.3</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21960,7 +21960,7 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v27.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v27.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -37827,6 +37827,26 @@ function onlineOwnSlotRaw(){
   if(onlineSessionState.role==='guest')return 2;
   return null;
 }
+
+function onlineEnhanceSpectatorRulePlusInternal(){
+  if(!(onlineSelfTestState?.active&&onlineSelfTestState.view==='spectator'))return;
+  document.querySelectorAll('#online-duel-main [data-zone="rulePlus"],#online-duel-main .rule-plus-zone,#online-duel-main .ruleplus-zone').forEach(zone=>{
+    if(zone.dataset.spectatorCollapseReady)return;
+    zone.dataset.spectatorCollapseReady='1';
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='btn small';
+    btn.textContent='ルールプラスを折りたたむ';
+    btn.style.marginBottom='6px';
+    btn.onclick=()=>{
+      const collapsed=zone.dataset.spectatorCollapsed==='1';
+      zone.dataset.spectatorCollapsed=collapsed?'0':'1';
+      [...zone.children].forEach(ch=>{if(ch!==btn)ch.style.display=collapsed?'':'none'});
+      btn.textContent=collapsed?'ルールプラスを折りたたむ':'ルールプラスを展開';
+    };
+    zone.prepend(btn);
+  });
+}
 let onlineSelfTestState={
   active:false,mode:'local',view:'p1',dummy:false,startedAt:0,
   backup:null,masterBoard:null,testRoomCode:'',testRoom:null
@@ -38024,7 +38044,7 @@ function onlineSelfTestRemoveRoom(){
     onlineSaveRooms(rooms);
   }catch(_){}
 }
-function onlineSelfTestRefreshBoard(){
+function onlineSelfTestRefreshBoardCore(){
   onlineApplySelfTestClass();
   if(!onlineSelfTestState.active){onlineRefreshDiagnostic();return}
 
@@ -38052,10 +38072,19 @@ function onlineSelfTestRefreshBoard(){
   onlineLastRenderedDuelSignature='';
   nav('online-duel',{preserveScroll:true});
   onlineRenderDuelBoard({force:true});
-  onlineEnhanceSpectatorRulePlus();
+  onlineEnhanceSpectatorRulePlusInternal();
   onlineRefreshDiagnostic();
 }
-function onlineSelfTestStart(){
+
+function onlineSelfTestRefreshBoard(){
+  try{
+    return onlineSelfTestRefreshBoardCore();
+  }catch(err){
+    console.error('online self-test render failed',err);
+    onlineSelfTestStatus(`テスト盤面の表示に失敗しました：${err?.message||String(err)}`,true);
+  }
+}
+function onlineSelfTestStartCore(){
   const mode=document.getElementById('online-selftest-mode')?.value||'local';
   const view=document.getElementById('online-selftest-view')?.value||'p1';
 
@@ -38125,6 +38154,19 @@ function onlineSelfTestStart(){
   onlineSelfTestStatus(`実通信確認中：${view==='spectator'?'観戦':view.toUpperCase()}視点。現在接続中のルームを使用しています。`);
   onlineSelfTestRefreshBoard();
 }
+
+function onlineSelfTestStart(){
+  try{
+    return onlineSelfTestStartCore();
+  }catch(err){
+    console.error('online self-test start failed',err);
+    onlineSelfTestStatus(`動作確認の開始に失敗しました：${err?.message||String(err)}`,true);
+    try{onlineSelfTestRemoveRoom()}catch(_){}
+    try{onlineSelfTestRestoreState()}catch(_){}
+    onlineSelfTestState.active=false;
+    onlineApplySelfTestClass();
+  }
+}
 function onlineSelfTestStop(){
   const returnScreen=onlineSelfTestState.backup?.currentScreenName||'online';
   if(onlineSelfTestState.mode==='local')onlineSelfTestRemoveRoom();
@@ -38156,6 +38198,70 @@ function onlineSelfTestDummy(){
   }
   onlineSelfTestRefreshBoard();
 }
+
+function onlineSelfTestSetView(view){
+  const next=['p1','p2','spectator'].includes(view)?view:'p1';
+  onlineSelfTestState.view=next;
+
+  if(onlineSelfTestState.active&&onlineSelfTestState.mode==='local'){
+    onlineSessionState.role=next==='p2'?'guest':(next==='spectator'?'spectator':'host');
+    onlineSessionState.playerSlot=next==='p1'?1:(next==='p2'?2:null);
+    onlineSessionState.clientId=next==='p2'?'selftest-p2':'selftest-p1';
+    onlineSessionState.displayName=next==='spectator'?'観戦者':next.toUpperCase();
+  }
+
+  if(onlineSelfTestState.active){
+    onlineSelfTestStatus(`${onlineSelfTestState.mode==='live'?'実通信':'ローカル'}確認中：${next==='spectator'?'観戦':next.toUpperCase()}視点`);
+    onlineSelfTestRefreshBoard();
+  }
+}
+function onlineSelfTestSetMode(mode){
+  const next=mode==='live'?'live':'local';
+  if(!onlineSelfTestState.active){
+    onlineSelfTestState.mode=next;
+    return;
+  }
+  // 動作確認中に通信方式だけ切り替えると盤面ソースが混在するため、
+  // 一旦終了してから再開始するよう案内する。
+  if(next!==onlineSelfTestState.mode){
+    onlineSelfTestStatus('確認方式を変更する場合は、一度「動作確認を終了」してから再度開始してください。',true);
+    const select=document.getElementById('online-selftest-mode');
+    if(select)select.value=onlineSelfTestState.mode;
+  }
+}
+function bindOnlineSelfTestInternalV273(){
+  const on=(id,ev,fn)=>{
+    const el=document.getElementById(id);
+    if(!el||el.dataset.selftestV273Bound==='1')return;
+    el.dataset.selftestV273Bound='1';
+    el.addEventListener(ev,fn);
+  };
+  on('online-selftest-start','click',onlineSelfTestStart);
+  on('online-selftest-stop','click',onlineSelfTestStop);
+  on('online-selftest-dummy','click',onlineSelfTestDummy);
+  on('online-diagnostic-refresh','click',onlineRefreshDiagnostic);
+  on('online-diagnostic-copy','click',onlineCopyDiagnostic);
+  on('online-selftest-view','change',e=>onlineSelfTestSetView(e.target.value));
+  on('online-selftest-mode','change',e=>onlineSelfTestSetMode(e.target.value));
+}
+
+// デバッグ用に明示的な公開APIも用意。
+// HTML側のイベントが何らかの理由で外れてもコンソールから確認可能。
+window.minkaiOnlineSelfTest={
+  start:onlineSelfTestStart,
+  stop:onlineSelfTestStop,
+  dummy:onlineSelfTestDummy,
+  setView:onlineSelfTestSetView,
+  diagnostic:onlineRefreshDiagnostic,
+  copyDiagnostic:onlineCopyDiagnostic
+};
+
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',bindOnlineSelfTestInternalV273,{once:true});
+}else{
+  bindOnlineSelfTestInternalV273();
+}
+
 function onlineDiagnosticSnapshot(){
   const room=onlineSelfTestCurrentRoom();
   const rawOwn=(()=>{try{return onlineOwnSlotRaw()}catch(_){return null}})();
@@ -38167,7 +38273,7 @@ function onlineDiagnosticSnapshot(){
   const member=(slot)=>slot===1?room?.p1:room?.p2;
   const rev=room?.revision??room?.publicState?.revision??null;
   const info={
-    appVersion:'27.2',
+    appVersion:'27.3',
     generatedAt:new Date().toISOString(),
     userAgent:navigator.userAgent,
     online:{
@@ -39875,7 +39981,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v27.2 public card repository
+// v27.3 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -41858,7 +41964,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='27.2';
+  manifest.appVersion='27.3';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -41899,7 +42005,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'27.2',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'27.3',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
@@ -41998,53 +42104,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   document.addEventListener('DOMContentLoaded',()=>setAccountCloudTab(currentCloudTab));
 })();
 
-function bindOnlineSelfTestV268(){
-  const on=(id,ev,fn)=>{const el=document.getElementById(id);if(el&&!el.dataset.v268Bound){el.dataset.v268Bound='1';el.addEventListener(ev,fn)}};
-  on('online-selftest-start','click',onlineSelfTestStart);
-  on('online-selftest-stop','click',onlineSelfTestStop);
-  on('online-selftest-dummy','click',onlineSelfTestDummy);
-  on('online-diagnostic-refresh','click',onlineRefreshDiagnostic);
-  on('online-diagnostic-copy','click',onlineCopyDiagnostic);
-  on('online-selftest-view','change',e=>{
-    if(!onlineSelfTestState.active)return;
-    onlineSelfTestState.view=e.target.value||'p1';
-    if(onlineSelfTestState.mode==='local'){
-      onlineSessionState.role=onlineSelfTestState.view==='p2'?'guest':(onlineSelfTestState.view==='spectator'?'spectator':'host');
-      onlineSessionState.playerSlot=onlineSelfTestState.view==='p1'?1:(onlineSelfTestState.view==='p2'?2:null);
-      onlineSessionState.clientId=onlineSelfTestState.view==='p2'?'selftest-p2':'selftest-p1';
-      onlineSessionState.displayName=onlineSelfTestState.view==='spectator'?'観戦者':onlineSelfTestState.view.toUpperCase();
-    }
-    onlineSelfTestStatus(`${onlineSelfTestState.mode==='live'?'実通信':'ローカル'}確認中：${onlineSelfTestState.view==='spectator'?'観戦':onlineSelfTestState.view.toUpperCase()}視点`);
-    onlineSelfTestRefreshBoard();
-  });
-  on('online-selftest-mode','change',e=>{
-    if(onlineSelfTestState.active){
-      onlineSelfTestState.mode=e.target.value||'local';
-      onlineSelfTestRefreshBoard();
-    }
-  });
-}
 
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindOnlineSelfTestV268);
-else bindOnlineSelfTestV268();
-
-function onlineEnhanceSpectatorRulePlus(){
-  if(!(onlineSelfTestState?.active&&onlineSelfTestState.view==='spectator'))return;
-  document.querySelectorAll('[data-zone="rulePlus"],.rule-plus-zone,.ruleplus-zone').forEach(zone=>{
-    if(zone.dataset.spectatorCollapseReady)return;
-    zone.dataset.spectatorCollapseReady='1';
-    const btn=document.createElement('button');
-    btn.type='button';btn.className='btn small';btn.textContent='ルールプラスを折りたたむ';
-    btn.style.marginBottom='6px';
-    btn.onclick=()=>{
-      const collapsed=zone.dataset.spectatorCollapsed==='1';
-      zone.dataset.spectatorCollapsed=collapsed?'0':'1';
-      [...zone.children].forEach(ch=>{if(ch!==btn)ch.style.display=collapsed?'':'none'});
-      btn.textContent=collapsed?'ルールプラスを折りたたむ':'ルールプラスを展開';
-    };
-    zone.prepend(btn);
-  });
-}
 
 const SETTINGS_V27_CATEGORY_KEY='minkai-settings-category-v27';
 
