@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v26.6</title>
+<title>みん会TCG Simulator v26.7</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21847,6 +21847,21 @@ h3 .minkai-ruby{margin-top:.45em}
   #public-managed-list .public-card-row-head>.muted,#public-temp-managed-list .public-card-row-head>.muted,#public-master-managed-list .public-card-row-head>.muted{display:block;margin-top:8px}
   .public-managed-card-actions{display:flex;flex-wrap:wrap;gap:6px;width:100%}.public-managed-card-actions .btn{flex:0 1 auto;max-width:100%}.public-id-chip{overflow-wrap:anywhere;word-break:break-all}
 }
+
+/* v26.7 public set distribution */
+.public-set-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:12px;align-items:start}
+.public-set-card-picker{display:grid;gap:6px;max-height:470px;overflow:auto;margin-top:8px;padding-right:3px}
+.public-set-pick-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;border:1px solid var(--line);border-radius:9px;padding:8px;background:rgba(255,255,255,.02)}
+.public-set-row-title{font-weight:800}
+.public-set-detail-cards{display:grid;gap:7px;max-height:52vh;overflow:auto;margin-top:10px}
+.public-set-detail-card{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:8px}
+.public-set-badge{font-size:11px;padding:2px 7px;border:1px solid currentColor;border-radius:999px}
+@media(max-width:760px){
+  .public-set-grid{grid-template-columns:1fr}
+  .public-set-card-picker{max-height:none}
+  .public-set-detail-card{grid-template-columns:auto minmax(0,1fr)}
+  .public-set-detail-card>.actions{grid-column:2;justify-content:flex-start}
+}
 </style>
 
 </head>
@@ -21856,7 +21871,7 @@ h3 .minkai-ruby{margin-top:.45em}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v26.6 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v26.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22582,6 +22597,7 @@ h3 .minkai-ruby{margin-top:.45em}
     <div class="public-cards-tabs" role="tablist" aria-label="カード公開所">
       <button class="btn public-cards-tab active" type="button" data-public-tab="register">カードを登録</button>
       <button class="btn public-cards-tab" type="button" data-public-tab="browse">公開所</button>
+      <button class="btn public-cards-tab" type="button" data-public-tab="sets">セット配布</button>
       <button class="btn public-cards-tab" type="button" data-public-tab="keys">管理キー</button>
     </div>
 
@@ -22727,6 +22743,86 @@ h3 .minkai-ruby{margin-top:.45em}
             <button class="btn small" type="button" id="public-cards-page-jump-btn">移動</button>
           </div>
         </div>
+      </div>
+    </div>
+
+
+    <div id="public-tab-sets" class="public-tab-pane">
+      <div class="public-set-grid">
+        <div class="panel">
+          <div class="section-head">
+            <h3 style="margin:0">セットを作る</h3>
+            <span class="pill">公開済みカードから作成</span>
+          </div>
+          <p class="muted">自分が公開しているカードをまとめて1つのセットとして配布できます。カード画像はセットにも保存されません。</p>
+          <div class="form-grid">
+            <label>セット名<input id="public-set-name" maxlength="120" placeholder="例：深海テーマ 基本セット"></label>
+            <label>作者名<input id="public-set-author" maxlength="80" placeholder="管理キーに保存した作者名を使用"></label>
+            <label class="wide">説明<textarea id="public-set-description" maxlength="1000" placeholder="セット内容や使い方など"></textarea></label>
+          </div>
+          <div class="actions" style="margin:8px 0">
+            <button class="btn small" type="button" id="public-set-load-own">自分の公開カードを読み込む</button>
+            <button class="btn small" type="button" id="public-set-select-all">全選択</button>
+            <button class="btn small" type="button" id="public-set-clear-selection">選択解除</button>
+            <span id="public-set-selected-count" class="pill">選択 0枚</span>
+          </div>
+          <label>カード名で絞り込み
+            <input id="public-set-card-search" type="search" placeholder="公開済みカードを検索" autocomplete="off">
+          </label>
+          <div id="public-set-own-cards" class="public-set-card-picker"></div>
+          <div class="actions" style="margin-top:10px">
+            <button class="btn primary" type="button" id="public-set-create">選択カードでセットを公開</button>
+          </div>
+          <div id="public-set-create-status" class="muted" style="margin-top:8px"></div>
+        </div>
+
+        <div class="panel">
+          <div class="section-head">
+            <h3 style="margin:0">公開セット一覧</h3>
+            <span id="public-set-count" class="pill">未取得</span>
+          </div>
+          <details class="card-manager-filter-details" id="public-set-filter-panel">
+            <summary class="collapsible-panel-summary card-manager-filter-summary">
+              <span>検索・絞り込み</span><span id="public-set-filter-count" class="pill">0条件</span>
+            </summary>
+            <div class="collapsible-panel-body">
+              <div class="form-grid card-manager-search-grid">
+                <label class="wide">セット名<input id="public-set-search" type="search" placeholder="セット名の一部" autocomplete="off"></label>
+                <label>作者名<input id="public-set-author-search" type="search" placeholder="作者名の一部" autocomplete="off"></label>
+                <label class="wide">並び順<select id="public-set-sort">
+                  <option value="new">新着順</option>
+                  <option value="updated">更新順</option>
+                  <option value="downloads">DL数順</option>
+                  <option value="name">セット名順</option>
+                </select></label>
+              </div>
+              <div class="actions">
+                <button class="btn small" type="button" id="public-set-search-run">検索</button>
+                <button class="btn small" type="button" id="public-set-search-clear">検索条件をクリア</button>
+              </div>
+            </div>
+          </details>
+          <div class="actions" style="margin:10px 0">
+            <button class="btn small" type="button" id="public-set-refresh">更新</button>
+          </div>
+          <div id="public-set-list" class="public-cards-list"></div>
+          <div class="manager-pagination" style="margin-top:12px">
+            <span id="public-set-page-info" class="muted"></span>
+            <div class="actions">
+              <button class="btn small" type="button" id="public-set-prev">前の30件</button>
+              <button class="btn small" type="button" id="public-set-next">次の30件</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:12px">
+        <div class="section-head">
+          <h3 style="margin:0">自分の公開セット</h3>
+          <span class="pill">保存管理キー</span>
+        </div>
+        <div id="public-set-managed-status" class="muted"></div>
+        <div id="public-set-managed-list" class="public-cards-list"></div>
       </div>
     </div>
 
@@ -38997,12 +39093,13 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v26.6 public card repository
+// v26.7 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
 const LS_PUBLIC_AUTHOR_NAME='minkai_public_author_name_v246r5';
 const PUBLIC_PAGE_SIZE=30;
+const PUBLIC_SETS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-sets';
 
 let publicRows=[];
 let publicPage=0;
@@ -39020,6 +39117,12 @@ let publicManagedPage=0;
 let publicManagedSelectedIds=new Set();
 let publicLocalSelectedIds=new Set();
 let publicBrowseSelectedIds=new Set();
+let publicSetRows=[];
+let publicSetPage=0;
+let publicSetTotal=0;
+let publicSetOwnSelectedIds=new Set();
+let publicSetManagedRows=[];
+
 
 function publicStoredManagementKey(){return String(localStorage.getItem(LS_PUBLIC_MANAGEMENT_KEY)||'')}
 function publicSaveManagementKey(v){localStorage.setItem(LS_PUBLIC_MANAGEMENT_KEY,String(v||''))}
@@ -39103,6 +39206,20 @@ async function publicApi(action,payload={}){
   if(!res.ok||!data?.ok)return {ok:false,message:data?.message||`公開所サーバーエラー (${res.status})`,status:res.status,data};
   return data;
 }
+
+async function publicSetApi(action,payload={}){
+  let res;
+  try{
+    res=await fetch(PUBLIC_SETS_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json',apikey:PUBLIC_CARDS_KEY,Authorization:`Bearer ${PUBLIC_CARDS_KEY}`},
+      body:JSON.stringify({action,...payload})
+    });
+  }catch(_){return {ok:false,message:'セット配布サーバーへ接続できませんでした。'}}
+  let data=null;try{data=await res.json()}catch(_){}
+  if(!res.ok||!data?.ok)return {ok:false,message:data?.message||`セット配布サーバーエラー (${res.status})`,status:res.status,data};
+  return data;
+}
 function publicMeta(card){
   const parts=[];if(card?.type)parts.push(String(card.type));
   if(card?.level!==undefined&&String(card.level)!=='')parts.push(`Lv ${String(card.level)}`);
@@ -39120,11 +39237,17 @@ function publicClickableMetaHtml(card){
 }
 function publicDate(v){try{return v?new Date(v).toLocaleString('ja-JP'):''}catch(_){return String(v||'')}}
 function publicSwitchTab(tab){
-  publicActiveTab=['register','browse','keys'].includes(tab)?tab:'register';
+  publicActiveTab=['register','browse','sets','keys'].includes(tab)?tab:'register';
   document.querySelectorAll('.public-cards-tab').forEach(b=>b.classList.toggle('active',b.dataset.publicTab===publicActiveTab));
   document.querySelectorAll('.public-tab-pane').forEach(p=>p.classList.toggle('active',p.id===`public-tab-${publicActiveTab}`));
   if(publicActiveTab==='register')publicRenderLocalCards();
   if(publicActiveTab==='browse'&&!publicRows.length)publicFetchCards();
+  if(publicActiveTab==='sets'){
+    const author=document.getElementById('public-set-author');if(author&&!author.value)author.value=publicStoredAuthorName();
+    if(!publicSetRows.length)publicFetchSets();
+    publicFetchManagedSets();
+    publicRenderSetOwnCards();
+  }
   if(publicActiveTab==='keys')publicRenderKeyFields();
 }
 function publicRenderKeyFields(){
@@ -39504,18 +39627,59 @@ function publicDetail(row){
   document.getElementById('public-detail-close').onclick=closeModal;document.getElementById('public-detail-download').onclick=()=>{closeModal();publicDownload(row)};
   document.getElementById('public-detail-copy-id').onclick=()=>publicCopyText(row.id);
 }
-async function publicDownloadIntoLocal(row,{skipDuplicatePrompt=false}={}){
+async function publicDownloadIntoLocal(row,{skipDuplicatePrompt=false,duplicateMode='prompt'}={}){
   const r=await publicApi('download',{id:row.id});if(!r.ok)return {ok:false,message:r.message};
   const incoming=publicNormalizeDownloaded(r.card.card_data||{},r.card);
   const same=(Array.isArray(cards)?cards:[]).find(c=>String(c.name||'')===String(incoming.name||''));
-  if(same&&!skipDuplicatePrompt){
-    const choice=window.prompt(`同名カード「${incoming.name}」があります。\n1: 別カードとして追加\n2: 既存カードを上書き\n3: キャンセル`,'1');
-    if(choice===null||String(choice).trim()==='3')return {ok:false,cancel:true};
-    if(String(choice).trim()==='2'){const keepId=same.id;Object.keys(same).forEach(k=>delete same[k]);Object.assign(same,incoming,{id:keepId})}
-    else if(String(choice).trim()==='1')cards.push(incoming);else return {ok:false,message:'入力が不正です'};
-  }else cards.push(incoming);
+
+  let mode=duplicateMode;
+  if(skipDuplicatePrompt&&mode==='prompt')mode='add';
+
+  if(same){
+    if(mode==='prompt'){
+      const choice=window.prompt(`同名カード「${incoming.name}」があります。\n1: 別カードとして追加\n2: 既存カードを上書き\n3: キャンセル`,'1');
+      if(choice===null||String(choice).trim()==='3')return {ok:false,cancel:true};
+      if(String(choice).trim()==='2')mode='overwrite';
+      else if(String(choice).trim()==='1')mode='add';
+      else return {ok:false,message:'入力が不正です'};
+    }
+    if(mode==='overwrite'){
+      const keepId=same.id;
+      Object.keys(same).forEach(k=>delete same[k]);
+      Object.assign(same,incoming,{id:keepId});
+      incoming.id=keepId;
+    }else if(mode==='add'){
+      cards.push(incoming);
+    }else if(mode==='skip'){
+      return {ok:false,skip:true};
+    }else{
+      return {ok:false,cancel:true};
+    }
+  }else{
+    cards.push(incoming);
+  }
   row.download_count=(Number(row.download_count)||0)+1;
   return {ok:true,incoming};
+}
+
+function publicBulkConflictChoice(conflictCount){
+  return new Promise(resolve=>{
+    openModal(`<div class="modal-head"><h3>同名カードの扱い</h3></div>
+      <p class="muted">ダウンロード対象のうち ${Number(conflictCount)||0}枚が、この端末の登録カードと同名です。</p>
+      <div class="actions" style="display:grid;gap:8px">
+        <button class="btn primary" type="button" data-bulk-conflict="add">同名もすべて別カードとして追加</button>
+        <button class="btn" type="button" data-bulk-conflict="overwrite">同名はすべて既存カードへ上書き</button>
+        <button class="btn" type="button" data-bulk-conflict="individual">同名だけ1枚ずつ確認</button>
+        <button class="btn" type="button" data-bulk-conflict="cancel">キャンセル</button>
+      </div>`);
+    document.querySelectorAll('[data-bulk-conflict]').forEach(btn=>btn.onclick=()=>{
+      const v=btn.dataset.bulkConflict;closeModal();resolve(v);
+    });
+  });
+}
+function publicCountNameConflicts(rows){
+  const localNames=new Set((Array.isArray(cards)?cards:[]).map(c=>String(c.name||'')));
+  return (rows||[]).filter(r=>localNames.has(String(r.card_name||r.card_data?.name||''))).length;
 }
 async function publicDownload(row){
   const result=await publicDownloadIntoLocal(row);
@@ -39528,13 +39692,23 @@ async function publicDownload(row){
 async function publicBulkDownload(){
   const ids=[...publicBrowseSelectedIds],targets=publicRows.filter(r=>ids.includes(String(r.id)));
   if(!targets.length){toast('ダウンロードするカードを選択してください');return}
-  if(!await publicConfirmDialog('まとめてダウンロード',`${targets.length}枚をまとめてダウンロードします。\n同名カードがある場合も別カードとして追加します。`,'まとめてダウンロード'))return;
+
+  let duplicateMode='add';
+  const conflicts=publicCountNameConflicts(targets);
+  if(conflicts){
+    duplicateMode=await publicBulkConflictChoice(conflicts);
+    if(duplicateMode==='cancel')return;
+    if(duplicateMode==='individual')duplicateMode='prompt';
+  }
+
+  if(!await publicConfirmDialog('まとめてダウンロード',`${targets.length}枚をまとめてダウンロードします。`,'まとめてダウンロード'))return;
   publicSetBusy(true);let ok=0,fail=0,added=[];
   try{
     for(let i=0;i<targets.length;i++){
       publicSetStatus('public-cards-status',`${i+1}/${targets.length}枚をダウンロード中…`);
-      const r=await publicDownloadIntoLocal(targets[i],{skipDuplicatePrompt:true});
-      if(r.ok){ok++;added.push(r.incoming.id)}else fail++;
+      const r=await publicDownloadIntoLocal(targets[i],{duplicateMode});
+      if(r.ok){ok++;added.push(r.incoming.id)}
+      else if(!r.cancel&&!r.skip)fail++;
     }
     save(LS_CARDS,cards);
     try{if(added.length){touchRecentCards(added);touchRegisteredCards(added)}renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup()}catch(_){}
@@ -39542,6 +39716,178 @@ async function publicBulkDownload(){
   }finally{publicSetBusy(false)}
 }
 
+
+function publicRenderSetOwnCards(){
+  const box=document.getElementById('public-set-own-cards');if(!box)return;
+  const q=String(document.getElementById('public-set-card-search')?.value||'').trim().toLocaleLowerCase();
+  const rows=(publicManagedRows||[]).filter(r=>r.is_public!==false&&(!q||String(r.card_name||'').toLocaleLowerCase().includes(q)));
+  if(!rows.length){box.innerHTML='<div class="muted">自分の公開カードを読み込んでください。</div>';return}
+  box.innerHTML=rows.map(r=>`<label class="public-set-pick-row">
+    <input type="checkbox" data-public-set-own-card="${esc(String(r.id))}" ${publicSetOwnSelectedIds.has(String(r.id))?'checked':''}>
+    <span><span class="public-set-row-title">${esc(String(r.card_name||'(名称なし)'))}</span>
+    <span class="public-card-row-meta">${publicMetaHtml(r.card_data||{})}</span></span>
+  </label>`).join('');
+  const count=document.getElementById('public-set-selected-count');if(count)count.textContent=`選択 ${publicSetOwnSelectedIds.size}枚`;
+}
+function publicSetFilterCount(){
+  let n=0;
+  if(String(document.getElementById('public-set-search')?.value||'').trim())n++;
+  if(String(document.getElementById('public-set-author-search')?.value||'').trim())n++;
+  return n;
+}
+async function publicFetchSets(){
+  const q=String(document.getElementById('public-set-search')?.value||'').trim();
+  const author=String(document.getElementById('public-set-author-search')?.value||'').trim();
+  const sort=document.getElementById('public-set-sort')?.value||'new';
+  const r=await publicSetApi('list',{query:q,author,sort,page:publicSetPage,page_size:PUBLIC_PAGE_SIZE});
+  if(!r.ok){publicSetStatus('public-set-managed-status',r.message,true);return}
+  publicSetRows=Array.isArray(r.rows)?r.rows:[];
+  publicSetTotal=Number(r.total)||0;
+  publicRenderSets();
+}
+function publicRenderSets(){
+  const box=document.getElementById('public-set-list');
+  const count=document.getElementById('public-set-count');if(count)count.textContent=`${publicSetTotal}件`;
+  const fp=document.getElementById('public-set-filter-count');if(fp)fp.textContent=`${publicSetFilterCount()}条件`;
+  const info=document.getElementById('public-set-page-info');
+  if(info){const max=Math.max(1,Math.ceil(publicSetTotal/PUBLIC_PAGE_SIZE));info.textContent=publicSetTotal?`${publicSetPage+1} / ${max}ページ・${publicSetTotal}件`:'0件'}
+  const prev=document.getElementById('public-set-prev'),next=document.getElementById('public-set-next');
+  if(prev)prev.disabled=publicSetPage<=0;if(next)next.disabled=(publicSetPage+1)*PUBLIC_PAGE_SIZE>=publicSetTotal;
+  if(!box)return;
+  box.innerHTML=publicSetRows.length?publicSetRows.map(r=>`<div class="public-card-row" data-public-set-id="${esc(String(r.id))}">
+    <div class="public-card-row-head">
+      <div><div class="public-card-row-title">${esc(String(r.set_name||'(名称なし)'))}</div>
+      <div class="public-card-row-meta"><span class="pill">作者 ${esc(String(r.author_name||'未設定'))}</span><span class="pill">${Number(r.card_count)||0}枚</span><span class="pill">DL ${Number(r.download_count)||0}</span></div></div>
+      <div class="muted">更新 ${esc(publicDate(r.updated_at||r.created_at))}</div>
+    </div>
+    ${r.description?`<div class="public-card-row-desc">${esc(String(r.description))}</div>`:''}
+    <div class="actions" style="margin-top:10px">
+      <button class="btn small" type="button" data-public-set-action="detail">セット内容を見る</button>
+      <button class="btn small primary" type="button" data-public-set-action="download-all">セット全部をダウンロード</button>
+    </div>
+  </div>`).join(''):'<div class="muted">公開セットはありません。</div>';
+}
+async function publicFetchManagedSets(){
+  const key=publicStoredManagementKey();
+  const box=document.getElementById('public-set-managed-list');
+  if(!key){if(box)box.innerHTML='<div class="muted">管理キーを設定すると、自分の公開セットを管理できます。</div>';return}
+  const r=await publicSetApi('managed-list',{management_key:key});
+  if(!r.ok){if(box)box.innerHTML=`<div class="muted">${esc(r.message)}</div>`;return}
+  publicSetManagedRows=Array.isArray(r.rows)?r.rows:[];
+  if(box)box.innerHTML=publicSetManagedRows.length?publicSetManagedRows.map(row=>`<div class="public-card-row" data-public-managed-set-id="${esc(String(row.id))}">
+    <div class="public-card-row-head"><div><div class="public-card-row-title">${esc(String(row.set_name||''))}</div>
+    <div class="public-card-row-meta"><span class="pill">${Number(row.card_count)||0}枚</span><span class="pill">${row.is_public===false?'非公開':'公開中'}</span><span class="pill">DL ${Number(row.download_count)||0}</span></div></div>
+    <div class="muted">${esc(publicDate(row.updated_at||row.created_at))}</div></div>
+    ${row.description?`<div class="public-card-row-desc">${esc(String(row.description))}</div>`:''}
+    <div class="actions" style="margin-top:8px">
+      <button class="btn small" data-managed-set-action="detail">内容</button>
+      <button class="btn small" data-managed-set-action="edit">編集</button>
+      <button class="btn small" data-managed-set-action="toggle">${row.is_public===false?'再公開':'非公開'}</button>
+      <button class="btn small danger" data-managed-set-action="delete">削除</button>
+    </div>
+  </div>`).join(''):'<div class="muted">自分の公開セットはありません。</div>';
+}
+async function publicCreateSet(){
+  const key=publicStoredManagementKey();
+  if(!key){publicSetStatus('public-set-create-status','先に管理キーを設定してください。',true);return}
+  const ids=[...publicSetOwnSelectedIds];
+  if(!ids.length){publicSetStatus('public-set-create-status','セットに入れるカードを選択してください。',true);return}
+  const setName=String(document.getElementById('public-set-name')?.value||'').trim();
+  if(!setName){publicSetStatus('public-set-create-status','セット名を入力してください。',true);return}
+  const r=await publicSetApi('create',{
+    set_name:setName,
+    author_name:String(document.getElementById('public-set-author')?.value||publicStoredAuthorName()).trim(),
+    description:String(document.getElementById('public-set-description')?.value||'').trim(),
+    card_ids:ids,
+    management_key:key
+  });
+  if(!r.ok){publicSetStatus('public-set-create-status',r.message,true);return}
+  publicSetStatus('public-set-create-status',`「${setName}」を公開しました。`);
+  publicSetOwnSelectedIds.clear();
+  document.getElementById('public-set-name').value='';
+  document.getElementById('public-set-description').value='';
+  publicRenderSetOwnCards();await publicFetchSets();await publicFetchManagedSets();
+}
+async function publicSetDownloadCards(setRow,selectedIds=null){
+  const r=await publicSetApi('get',{id:setRow.id});
+  if(!r.ok){toast(r.message);return}
+  let rows=Array.isArray(r.cards)?r.cards:[];
+  if(selectedIds)rows=rows.filter(x=>selectedIds.has(String(x.id)));
+  if(!rows.length){toast('ダウンロードするカードがありません');return}
+
+  let mode='add';
+  const conflicts=publicCountNameConflicts(rows);
+  if(conflicts){
+    mode=await publicBulkConflictChoice(conflicts);
+    if(mode==='cancel')return;
+    if(mode==='individual')mode='prompt';
+  }
+  if(!await publicConfirmDialog('セットをダウンロード',`${rows.length}枚を登録カードへ追加します。`,'ダウンロード'))return;
+
+  let ok=0,fail=0,added=[];
+  for(let i=0;i<rows.length;i++){
+    const rr=await publicDownloadIntoLocal(rows[i],{duplicateMode:mode});
+    if(rr.ok){ok++;added.push(rr.incoming.id)}
+    else if(!rr.cancel&&!rr.skip)fail++;
+  }
+  if(ok){
+    await publicSetApi('download',{id:setRow.id,count:ok});
+    save(LS_CARDS,cards);
+    try{if(added.length){touchRecentCards(added);touchRegisteredCards(added)}renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup()}catch(_){}
+  }
+  toast(`${ok}枚をダウンロードしました${fail?` / ${fail}枚失敗`:''}`);
+  await publicFetchSets();
+}
+async function publicOpenSetDetail(setRow,managed=false){
+  const r=await publicSetApi('get',{id:setRow.id,management_key:managed?publicStoredManagementKey():undefined});
+  if(!r.ok){toast(r.message);return}
+  const rows=Array.isArray(r.cards)?r.cards:[];
+  openModal(`<div class="modal-head"><div><h3>${esc(String(r.set?.set_name||setRow.set_name||''))}</h3><div class="muted">作者 ${esc(String(r.set?.author_name||''))} / ${rows.length}枚</div></div><button class="btn" id="public-set-detail-close">閉じる</button></div>
+    ${r.set?.description?`<div class="public-card-row-desc">${esc(String(r.set.description))}</div>`:''}
+    <div class="actions" style="margin-top:10px"><button class="btn small" id="public-set-detail-select-all">全選択</button><button class="btn small" id="public-set-detail-clear">選択解除</button><button class="btn primary" id="public-set-detail-download">選択したカードをダウンロード</button></div>
+    <div class="public-set-detail-cards">${rows.map(row=>`<div class="public-set-detail-card" data-set-detail-card="${esc(String(row.id))}">
+      <input type="checkbox" data-set-detail-check="${esc(String(row.id))}" checked>
+      <div><div class="public-set-row-title">${esc(String(row.card_name||''))}</div><div class="public-card-row-meta">${publicMetaHtml(row.card_data||{})}</div></div>
+      <div class="actions"><button class="btn small" type="button" data-set-card-detail>詳細</button></div>
+    </div>`).join('')}</div>`);
+  document.getElementById('public-set-detail-close').onclick=closeModal;
+  document.getElementById('public-set-detail-select-all').onclick=()=>document.querySelectorAll('[data-set-detail-check]').forEach(x=>x.checked=true);
+  document.getElementById('public-set-detail-clear').onclick=()=>document.querySelectorAll('[data-set-detail-check]').forEach(x=>x.checked=false);
+  document.getElementById('public-set-detail-download').onclick=async()=>{
+    const selected=new Set([...document.querySelectorAll('[data-set-detail-check]:checked')].map(x=>String(x.dataset.setDetailCheck)));
+    closeModal();await publicSetDownloadCards(r.set||setRow,selected);
+  };
+  document.querySelector('.public-set-detail-cards')?.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-set-card-detail]');if(!btn)return;
+    const host=btn.closest('[data-set-detail-card]');const row=rows.find(x=>String(x.id)===String(host?.dataset.setDetailCard));if(row)publicDetail(row);
+  });
+}
+async function publicEditManagedSet(row){
+  const current=await publicSetApi('get',{id:row.id,management_key:publicStoredManagementKey()});
+  if(!current.ok){toast(current.message);return}
+  const selected=new Set((current.set?.card_ids||[]).map(String));
+  const own=(publicManagedRows||[]).filter(r=>r.is_public!==false);
+  openModal(`<div class="modal-head"><h3>公開セットを編集</h3><button class="btn" id="public-set-edit-close">閉じる</button></div>
+    <label>セット名<input id="public-set-edit-name" maxlength="120" value="${esc(String(row.set_name||''))}"></label>
+    <label>説明<textarea id="public-set-edit-desc" maxlength="1000">${esc(String(row.description||''))}</textarea></label>
+    <div class="public-set-card-picker" id="public-set-edit-cards">${own.map(c=>`<label class="public-set-pick-row"><input type="checkbox" data-set-edit-card="${esc(String(c.id))}" ${selected.has(String(c.id))?'checked':''}><span>${esc(String(c.card_name||''))}</span></label>`).join('')}</div>
+    <div class="actions" style="margin-top:10px"><button class="btn primary" id="public-set-edit-save">保存</button></div>`);
+  document.getElementById('public-set-edit-close').onclick=closeModal;
+  document.getElementById('public-set-edit-save').onclick=async()=>{
+    const ids=[...document.querySelectorAll('[data-set-edit-card]:checked')].map(x=>String(x.dataset.setEditCard));
+    const rr=await publicSetApi('update',{id:row.id,management_key:publicStoredManagementKey(),set_name:String(document.getElementById('public-set-edit-name').value||'').trim(),description:String(document.getElementById('public-set-edit-desc').value||'').trim(),author_name:publicStoredAuthorName(),card_ids:ids});
+    if(!rr.ok){toast(rr.message);return}closeModal();toast('セットを更新しました');await publicFetchManagedSets();await publicFetchSets();
+  };
+}
+async function publicToggleManagedSet(row){
+  const r=await publicSetApi('set-public',{id:row.id,management_key:publicStoredManagementKey(),is_public:row.is_public===false});
+  if(!r.ok){toast(r.message);return}await publicFetchManagedSets();await publicFetchSets();
+}
+async function publicDeleteManagedSet(row){
+  if(!await publicConfirmDialog('セットを削除',`「${row.set_name}」を削除します。`,'削除する',true))return;
+  const r=await publicSetApi('delete',{id:row.id,management_key:publicStoredManagementKey()});
+  if(!r.ok){toast(r.message);return}toast('セットを削除しました');await publicFetchManagedSets();await publicFetchSets();
+}
 async function publicToggleVisibility(row,makePublic,mode=''){
   const r=await publicApi('set-public',{id:row.id,...publicAuthFor(row,mode),is_public:!!makePublic});
   if(!r.ok){toast(r.message);return false}
@@ -39660,6 +40006,27 @@ function publicBind(){
     if(check){const id=String(check.dataset.publicLocalCheck||'');if(check.checked)publicLocalSelectedIds.add(id);else publicLocalSelectedIds.delete(id);const s=document.getElementById('public-local-selected-count');if(s)s.textContent=`選択 ${publicLocalSelectedIds.size}枚`;e.stopPropagation();return}
     const row=e.target.closest('[data-public-local-id]');if(!row)return;publicSelectedLocalCardId=String(row.dataset.publicLocalId||'');publicRenderLocalCards();
   })}
+
+  on('public-set-load-own','click',async()=>{await publicFetchManaged('own');publicRenderSetOwnCards()});
+  on('public-set-select-all','click',()=>{publicManagedRows.filter(r=>r.is_public!==false).forEach(r=>publicSetOwnSelectedIds.add(String(r.id)));publicRenderSetOwnCards()});
+  on('public-set-clear-selection','click',()=>{publicSetOwnSelectedIds.clear();publicRenderSetOwnCards()});
+  on('public-set-card-search','input',publicRenderSetOwnCards);
+  on('public-set-create','click',()=>publicCreateSet().catch(e=>publicSetStatus('public-set-create-status',e?.message||String(e),true)));
+  on('public-set-refresh','click',publicFetchSets);
+  on('public-set-search-run','click',()=>{publicSetPage=0;publicFetchSets()});
+  on('public-set-search-clear','click',()=>{const a=document.getElementById('public-set-search'),b=document.getElementById('public-set-author-search'),s=document.getElementById('public-set-sort');if(a)a.value='';if(b)b.value='';if(s)s.value='new';publicSetPage=0;publicFetchSets()});
+  on('public-set-sort','change',()=>{publicSetPage=0;publicFetchSets()});
+  on('public-set-prev','click',()=>{if(publicSetPage>0){publicSetPage--;publicFetchSets()}});
+  on('public-set-next','click',()=>{if((publicSetPage+1)*PUBLIC_PAGE_SIZE<publicSetTotal){publicSetPage++;publicFetchSets()}});
+
+  const setOwn=document.getElementById('public-set-own-cards');
+  if(setOwn&&!setOwn.dataset.publicBound){setOwn.dataset.publicBound='1';setOwn.addEventListener('change',e=>{const c=e.target.closest('[data-public-set-own-card]');if(!c)return;const id=String(c.dataset.publicSetOwnCard);if(c.checked)publicSetOwnSelectedIds.add(id);else publicSetOwnSelectedIds.delete(id);publicRenderSetOwnCards()})}
+
+  const setList=document.getElementById('public-set-list');
+  if(setList&&!setList.dataset.publicBound){setList.dataset.publicBound='1';setList.addEventListener('click',e=>{const btn=e.target.closest('[data-public-set-action]');if(!btn)return;const host=btn.closest('[data-public-set-id]');const row=publicSetRows.find(x=>String(x.id)===String(host?.dataset.publicSetId));if(!row)return;if(btn.dataset.publicSetAction==='detail')publicOpenSetDetail(row);if(btn.dataset.publicSetAction==='download-all')publicSetDownloadCards(row)})}
+
+  const managedSetList=document.getElementById('public-set-managed-list');
+  if(managedSetList&&!managedSetList.dataset.publicBound){managedSetList.dataset.publicBound='1';managedSetList.addEventListener('click',e=>{const btn=e.target.closest('[data-managed-set-action]');if(!btn)return;const host=btn.closest('[data-public-managed-set-id]');const row=publicSetManagedRows.find(x=>String(x.id)===String(host?.dataset.publicManagedSetId));if(!row)return;const a=btn.dataset.managedSetAction;if(a==='detail')publicOpenSetDetail(row,true);if(a==='edit')publicEditManagedSet(row);if(a==='toggle')publicToggleManagedSet(row);if(a==='delete')publicDeleteManagedSet(row)})}
 
   on('public-cards-refresh','click',publicFetchCards);
   on('public-cards-open-id','click',()=>publicOpenDirectId());on('public-cards-search-run','click',()=>{publicPage=0;publicFetchCards()});
@@ -40709,7 +41076,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='26.6';
+  manifest.appVersion='26.7';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -40750,7 +41117,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'26.6',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'26.7',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
