@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v27.0</title>
+<title>みん会TCG Simulator v27.1</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21916,16 +21916,51 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
   .settings-category-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
   .settings-category-tabs .btn{width:100%}
 }
+
+/* v27.1 mobile work recovery / offline */
+.offline-mode-banner{
+  position:sticky;top:0;z-index:9999;
+  padding:8px 12px;text-align:center;
+  border-bottom:1px solid rgba(255,188,74,.52);
+  background:#342a13;color:#ffe5a8;
+  font-size:12px;line-height:1.5
+}
+.draft-recovery-panel{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin:10px 0;padding:10px 12px;border:1px solid #53687d;border-radius:10px;
+  background:linear-gradient(135deg,rgba(37,54,71,.72),rgba(20,28,38,.78))
+}
+.draft-recovery-panel[hidden]{display:none!important}
+.draft-recovery-copy{min-width:0}
+.draft-recovery-copy b{display:block;margin-bottom:3px}
+.draft-autosave-status{margin:6px 0 10px;font-size:11px}
+.offline-capability-pill{border-color:#61758a}
+@media(max-width:700px){
+  .draft-recovery-panel{display:block}
+  .draft-recovery-panel .actions{margin-top:9px}
+  #card-effect,#card-flavor{min-height:120px}
+  #deck-card-search,#deck-race-search{font-size:16px}
+}
 </style>
 
+
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="theme-color" content="#111820">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="みん会TCG">
 </head>
 <body>
+<div id="offline-mode-banner" class="offline-mode-banner" hidden>
+  オフラインモード：カード登録・カード管理・デッキ作成など端末内機能は利用できます。オンライン対戦・公開所・クラウドは通信復帰後に利用してください。
+</div>
+
 <div id="app-background-layer" aria-hidden="true">
   <div id="app-background-image"></div>
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v27.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v27.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22287,6 +22322,17 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
           <datalist id="rarity-suggestions"></datalist>
           <div class="wide actions"><button class="btn primary" type="submit" id="card-register-submit">カードと画像を登録</button><button class="btn" type="button" id="card-clear">入力をクリア</button></div>
         </form>
+        <div id="card-draft-recovery" class="draft-recovery-panel" hidden>
+          <div class="draft-recovery-copy">
+            <b>入力途中のカードがあります</b>
+            <div id="card-draft-recovery-detail" class="muted"></div>
+          </div>
+          <div class="actions">
+            <button class="btn primary small" type="button" id="card-draft-restore">入力内容を復元</button>
+            <button class="btn small" type="button" id="card-draft-discard">下書きを破棄</button>
+          </div>
+        </div>
+        <div id="card-draft-autosave-status" class="muted draft-autosave-status">入力内容は端末内へ自動保存されます。</div>
         <div class="register-history">
           <div class="section-head" style="margin-top:14px"><h2 style="font-size:16px">最近登録したカード</h2><span class="muted">最大5枚</span></div>
           <div id="card-register-history" class="list compact-list"></div>
@@ -22499,6 +22545,17 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
       <button class="btn small" type="button" id="deck-view-review">デッキ確認</button>
     </div>
     <div id="deck-edit-pane">
+    <div id="deck-draft-recovery" class="draft-recovery-panel" hidden>
+      <div class="draft-recovery-copy">
+        <b>前回のデッキ編集途中データがあります</b>
+        <div id="deck-draft-recovery-detail" class="muted"></div>
+      </div>
+      <div class="actions">
+        <button class="btn primary small" type="button" id="deck-draft-restore">編集途中へ戻る</button>
+        <button class="btn small" type="button" id="deck-draft-discard">下書きを破棄</button>
+      </div>
+    </div>
+    <div id="deck-draft-autosave-status" class="muted draft-autosave-status">編集中のデッキは端末内へ自動保存されます。</div>
     <div class="grid2">
       <div class="panel">
         <label>編集するデッキ<select id="deck-select"></select></label>
@@ -26560,6 +26617,8 @@ function pushAppScreenHistory(name){
 function nav(name,opt={}){
  const screen=$('#screen-'+name);if(!screen)return;
  const previous=currentScreenName;
+ if(previous==='decks'&&name!=='decks'){try{deckV271SaveUiState()}catch(_){}}
+
  if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive&&name!=='online-duel'&&name!=='online'){
    onlineSuspendDuelForNormalNavigation();
  }
@@ -26576,7 +26635,7 @@ function nav(name,opt={}){
    if(name==='cards')renderRegisterHistory();
    if(name==='card-manager')renderCards();
    if(name==='collection'){renderCollection();setTimeout(()=>{try{maybeOpenCurrentCollectionCover()}catch(err){reportUiRuntimeError('コレクション表紙',err)}},0)}
-   if(name==='decks')renderDecks();
+   if(name==='decks'){deckV271RestoreUiControls();renderDecks();setTimeout(deckV271RestoreScroll,0)}
    if(name==='setup')renderSetup();
    if(name==='public-cards')window.publicCardsRender?.();
    if(name==='account')window.accountRender?.();
@@ -27367,6 +27426,7 @@ function refreshRegisterFloatingPreview(){if(floatingPreviewOpen&&floatingPrevie
 function clearCardForm(){
  ['card-name','card-ruby','card-level','card-power','card-race','card-rarity','card-effect','card-flavor','card-custom-type-left','card-custom-type-right'].forEach(id=>{const el=$('#'+id);if(el)el.value=''});
  if($('#card-type'))$('#card-type').value='キャラクター';cleanupRegisterPreviewFile();syncManualCustomTypeFields();refreshRegisterFloatingPreview();if(typeof refreshCardRubyPreview==='function')refreshCardRubyPreview();
+ try{cardDraftV271Clear()}catch(_){}
 }
 $('#card-type').onchange=()=>{syncManualCustomTypeFields();refreshRegisterFloatingPreview()};
 $('#card-custom-type-left').oninput=()=>{syncManualCustomTypeFields();refreshRegisterFloatingPreview()};
@@ -32256,6 +32316,7 @@ function moveWorkingDeckEntry(index,delta){
  const next={};rows.forEach(([id,n])=>next[id]=n);workingDeck.entries=next;
  $('#deck-content-sort').value='manual';
  renderDeckCurrent();
+ deckDraftV271Schedule();
 }
 function renderDeckDefaultOshii(){
  const sel=$('#deck-default-oshii');if(!sel)return;
@@ -32538,7 +32599,7 @@ function resetDeckPoolPageAndRender(){deckPoolPage=0;renderDeckPool()}
 function bindDeckQty(){
  $$('[data-pool-plus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.poolPlus,1));$$('[data-pool-plus4]').forEach(b=>b.onclick=()=>changeQty(b.dataset.poolPlus4,4));$$('[data-pool-minus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.poolMinus,-1));$$('[data-current-plus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.currentPlus,1));$$('[data-current-plus4]').forEach(b=>b.onclick=()=>changeQty(b.dataset.currentPlus4,4));$$('[data-current-minus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.currentMinus,-1));$$('[data-deck-builder-detail]').forEach(b=>b.onclick=()=>openDeckBuilderCardDetail(b.dataset.deckBuilderDetail));
 }
-function changeQty(id,d){const n=Math.max(0,(workingDeck.entries[id]||0)+d);if(n)workingDeck.entries[id]=n;else delete workingDeck.entries[id];renderDeckPool();renderDeckCurrent()}
+function changeQty(id,d){const n=Math.max(0,(workingDeck.entries[id]||0)+d);if(n)workingDeck.entries[id]=n;else delete workingDeck.entries[id];renderDeckPool();renderDeckCurrent();deckDraftV271Schedule()}
 function renderDeckCurrent(){const entries=deckContentEntryRows();const total=entries.reduce((a,[,n])=>a+n,0);$('#deck-total').textContent=total+'枚';$('#deck-current').innerHTML=entries.length?entries.map(([id,n],i)=>{const c=cards.find(x=>x.id===id);return `<div class="list-row deck-card-row deck-current-row"><div class="deck-order-controls"><button class="btn tiny" data-deck-move-up="${i}" ${i===0?'disabled':''}>↑</button><button class="btn tiny" data-deck-move-down="${i}" ${i===entries.length-1?'disabled':''}>↓</button></div><div class="grow"><b>${esc(c?.name||'削除済みカード')}</b><div class="muted">${esc(c?.type||'')}${c?.level!==''&&c?.level!=null?` / Lv${esc(c.level)}`:''}${c?.power!==''&&c?.power!=null?` / PW${esc(c.power)}`:''}</div></div><div class="qty"><button class="btn small" type="button" data-deck-builder-detail="${id}">詳細</button><button class="btn small" data-current-minus="${id}">−</button><b>${n}</b><button class="btn small" data-current-plus="${id}">＋</button><button class="btn small" data-current-plus4="${id}">＋4</button></div></div>`}).join(''):'<div class="muted">カードが入っていません。</div>';bindDeckQty();$$('[data-deck-move-up]').forEach(b=>b.onclick=()=>moveWorkingDeckEntry(Number(b.dataset.deckMoveUp),-1));$$('[data-deck-move-down]').forEach(b=>b.onclick=()=>moveWorkingDeckEntry(Number(b.dataset.deckMoveDown),1));renderDeckDefaultOshii()}
 $('#deck-type-filter').onchange=resetDeckPoolPageAndRender;$('#deck-level-sort').onchange=resetDeckPoolPageAndRender;$('#deck-card-search').oninput=resetDeckPoolPageAndRender;$('#deck-race-search').oninput=resetDeckPoolPageAndRender;['#deck-level-min','#deck-level-max','#deck-power-min','#deck-power-max'].forEach(sel=>{const el=$(sel);if(el)el.oninput=resetDeckPoolPageAndRender});
 $('#deck-filter-reset').onclick=()=>{
@@ -32546,8 +32607,8 @@ $('#deck-filter-reset').onclick=()=>{
  ['#deck-level-min','#deck-level-max','#deck-power-min','#deck-power-max'].forEach(sel=>{const el=$(sel);if(el)el.value=''});
  deckPoolPage=0;renderDeckPool();
 };
-$('#deck-content-sort-apply').onclick=()=>{sortWorkingDeckEntries($('#deck-content-sort').value,$('#deck-content-sort-dir').value);renderDeckCurrent()};
-$('#deck-default-oshii').onchange=()=>{workingDeck.defaultOshiiCardId=$('#deck-default-oshii').value||''};
+$('#deck-content-sort-apply').onclick=()=>{sortWorkingDeckEntries($('#deck-content-sort').value,$('#deck-content-sort-dir').value);renderDeckCurrent();deckDraftV271Schedule()};
+$('#deck-default-oshii').onchange=()=>{workingDeck.defaultOshiiCardId=$('#deck-default-oshii').value||'';deckDraftV271Schedule()};
 $('#deck-view-edit').onclick=()=>setDeckViewMode('edit');
 $('#deck-view-review').onclick=()=>setDeckViewMode('review');
 $('#deck-review-deck-select').onchange=()=>{
@@ -32599,7 +32660,7 @@ function saveWorkingDeck(){
    editingDeckId=id;decks.push(obj);
  }
  workingDeck=workingDeckFrom(obj);
- normalizeDeckSettings();save(LS_DECKS,decks);renderDecks();renderSetup(true);toast('デッキを保存しました');
+ normalizeDeckSettings();save(LS_DECKS,decks);deckDraftV271Clear();renderDecks();renderSetup(true);toast('デッキを保存しました');
 }
 $('#save-deck').onclick=saveWorkingDeck;
 $('#deck-settings').onclick=()=>{
@@ -39554,7 +39615,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v27.0 public card repository
+// v27.1 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -41537,7 +41598,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='27.0';
+  manifest.appVersion='27.1';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -41578,7 +41639,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'27.0',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'27.1',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
@@ -41870,6 +41931,284 @@ if(document.readyState==='loading'){
 }else{
   settingsV27Bind();
 }
+
+const CARD_DRAFT_V271='minkai-card-register-draft-v27-1';
+const DECK_DRAFT_V271='minkai-deck-editor-draft-v27-1';
+const DECK_UI_V271='minkai-deck-editor-ui-v27-1';
+let cardDraftV271Timer=0,deckDraftV271Timer=0;
+let deckV271PendingScroll=null;
+
+function v271SafeParse(raw){
+  try{return JSON.parse(raw||'null')}catch(_){return null}
+}
+function v271FormatTime(ts){
+  const n=Number(ts)||0;
+  return n?new Date(n).toLocaleString('ja-JP'):'日時不明';
+}
+
+/* ---------------- Card draft ---------------- */
+function cardDraftV271Read(){
+  try{return v271SafeParse(localStorage.getItem(CARD_DRAFT_V271))}catch(_){return null}
+}
+function cardDraftV271HasContent(d){
+  if(!d?.fields)return false;
+  return ['name','ruby','customLeft','customRight','level','power','race','rarity','effect','flavor']
+    .some(k=>String(d.fields[k]||'').trim()!=='');
+}
+function cardDraftV271Snapshot(){
+  const form=document.getElementById('card-form');if(!form)return null;
+  return {
+    version:1,
+    savedAt:Date.now(),
+    fields:{
+      name:document.getElementById('card-name')?.value||'',
+      ruby:document.getElementById('card-ruby')?.value||'',
+      type:document.getElementById('card-type')?.value||'キャラクター',
+      customLeft:document.getElementById('card-custom-type-left')?.value||'',
+      customRight:document.getElementById('card-custom-type-right')?.value||'',
+      level:document.getElementById('card-level')?.value||'',
+      power:document.getElementById('card-power')?.value||'',
+      race:document.getElementById('card-race')?.value||'',
+      rarity:document.getElementById('card-rarity')?.value||'',
+      effect:document.getElementById('card-effect')?.value||'',
+      flavor:document.getElementById('card-flavor')?.value||''
+    },
+    imageWasSelected:!!document.getElementById('card-register-image')?.files?.length
+  };
+}
+function cardDraftV271Save(){
+  const d=cardDraftV271Snapshot();
+  if(!d)return;
+  const status=document.getElementById('card-draft-autosave-status');
+  if(!cardDraftV271HasContent(d)){
+    try{localStorage.removeItem(CARD_DRAFT_V271)}catch(_){}
+    if(status)status.textContent='入力内容は端末内へ自動保存されます。';
+    return;
+  }
+  try{localStorage.setItem(CARD_DRAFT_V271,JSON.stringify(d))}catch(_){}
+  if(status)status.textContent=`自動保存済み：${v271FormatTime(d.savedAt)}${d.imageWasSelected?'（画像ファイル自体は復元対象外）':''}`;
+}
+function cardDraftV271Schedule(){
+  clearTimeout(cardDraftV271Timer);
+  cardDraftV271Timer=setTimeout(cardDraftV271Save,280);
+}
+function cardDraftV271Clear(){
+  clearTimeout(cardDraftV271Timer);
+  try{localStorage.removeItem(CARD_DRAFT_V271)}catch(_){}
+  const panel=document.getElementById('card-draft-recovery');if(panel)panel.hidden=true;
+  const status=document.getElementById('card-draft-autosave-status');
+  if(status)status.textContent='入力内容は端末内へ自動保存されます。';
+}
+function cardDraftV271Restore(){
+  const d=cardDraftV271Read();if(!cardDraftV271HasContent(d))return;
+  const f=d.fields||{};
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v??''};
+  set('card-name',f.name);set('card-ruby',f.ruby);set('card-type',f.type||'キャラクター');
+  set('card-custom-type-left',f.customLeft);set('card-custom-type-right',f.customRight);
+  set('card-level',f.level);set('card-power',f.power);set('card-race',f.race);set('card-rarity',f.rarity);
+  set('card-effect',f.effect);set('card-flavor',f.flavor);
+  try{syncManualCustomTypeFields();refreshCardRubyPreview();refreshRegisterFloatingPreview()}catch(_){}
+  const manual=document.querySelector('[data-tool-tab="manual"]');if(manual)manual.click();
+  const panel=document.getElementById('card-draft-recovery');if(panel)panel.hidden=true;
+  const status=document.getElementById('card-draft-autosave-status');
+  if(status)status.textContent=`下書きを復元しました：${v271FormatTime(d.savedAt)}${d.imageWasSelected?'。画像は再選択してください。':''}`;
+}
+function cardDraftV271RefreshRecovery(){
+  const d=cardDraftV271Read(),panel=document.getElementById('card-draft-recovery'),detail=document.getElementById('card-draft-recovery-detail');
+  if(!panel)return;
+  if(!cardDraftV271HasContent(d)){panel.hidden=true;return}
+  panel.hidden=false;
+  if(detail)detail.textContent=`${d.fields?.name?`「${d.fields.name}」 / `:''}${v271FormatTime(d.savedAt)}${d.imageWasSelected?' / 画像は再選択が必要です':''}`;
+}
+
+/* ---------------- Deck draft ---------------- */
+function deckDraftV271Read(){
+  try{return v271SafeParse(localStorage.getItem(DECK_DRAFT_V271))}catch(_){return null}
+}
+function deckDraftV271Snapshot(){
+  if(!document.getElementById('deck-edit-pane'))return null;
+  const current={...workingDeck,entries:{...(workingDeck?.entries||{})},tags:Array.isArray(workingDeck?.tags)?[...workingDeck.tags]:[]};
+  const name=document.getElementById('deck-name')?.value;
+  if(name!==undefined)current.name=name;
+  return {
+    version:1,
+    savedAt:Date.now(),
+    editingDeckId:editingDeckId||null,
+    workingDeck:current,
+    ui:deckV271CaptureUiState()
+  };
+}
+function deckDraftV271HasContent(d){
+  if(!d?.workingDeck)return false;
+  const w=d.workingDeck;
+  return !!String(w.name||'').trim() || Object.values(w.entries||{}).some(n=>Number(n)>0);
+}
+function deckDraftV271Save(){
+  const d=deckDraftV271Snapshot();if(!d)return;
+  const status=document.getElementById('deck-draft-autosave-status');
+  if(!deckDraftV271HasContent(d)){
+    try{localStorage.removeItem(DECK_DRAFT_V271)}catch(_){}
+    if(status)status.textContent='編集中のデッキは端末内へ自動保存されます。';
+    return;
+  }
+  try{localStorage.setItem(DECK_DRAFT_V271,JSON.stringify(d))}catch(_){}
+  if(status)status.textContent=`自動保存済み：${v271FormatTime(d.savedAt)}`;
+}
+function deckDraftV271Schedule(){
+  clearTimeout(deckDraftV271Timer);
+  deckDraftV271Timer=setTimeout(deckDraftV271Save,280);
+}
+function deckDraftV271Clear(){
+  clearTimeout(deckDraftV271Timer);
+  try{localStorage.removeItem(DECK_DRAFT_V271)}catch(_){}
+  const p=document.getElementById('deck-draft-recovery');if(p)p.hidden=true;
+  const s=document.getElementById('deck-draft-autosave-status');if(s)s.textContent='編集中のデッキは端末内へ自動保存されます。';
+}
+function deckDraftV271Restore(){
+  const d=deckDraftV271Read();if(!deckDraftV271HasContent(d))return;
+  editingDeckId=d.editingDeckId&&decks.some(x=>String(x.id)===String(d.editingDeckId))?d.editingDeckId:null;
+  workingDeck=workingDeckFrom(d.workingDeck||blankWorkingDeck());
+  if(d.ui)deckV271ApplyUiControls(d.ui);
+  renderDecks();
+  setTimeout(()=>{
+    if(d.ui?.scrollY!=null)window.scrollTo({top:Number(d.ui.scrollY)||0,behavior:'auto'});
+  },0);
+  const p=document.getElementById('deck-draft-recovery');if(p)p.hidden=true;
+  const s=document.getElementById('deck-draft-autosave-status');if(s)s.textContent=`編集途中を復元しました：${v271FormatTime(d.savedAt)}`;
+}
+function deckDraftV271RefreshRecovery(){
+  const d=deckDraftV271Read(),p=document.getElementById('deck-draft-recovery'),detail=document.getElementById('deck-draft-recovery-detail');
+  if(!p)return;
+  if(!deckDraftV271HasContent(d)){p.hidden=true;return}
+  p.hidden=false;
+  if(detail){
+    const total=Object.values(d.workingDeck?.entries||{}).reduce((a,n)=>a+(Number(n)||0),0);
+    detail.textContent=`${d.workingDeck?.name?`「${d.workingDeck.name}」 / `:''}${total}枚 / ${v271FormatTime(d.savedAt)}`;
+  }
+}
+
+/* ---------------- Deck UI state / return position ---------------- */
+function deckV271CaptureUiState(){
+  const val=id=>document.getElementById(id)?.value??'';
+  return {
+    savedAt:Date.now(),
+    deckPoolPage:Number(deckPoolPage)||0,
+    scrollY:Number(window.scrollY)||0,
+    filters:{
+      search:val('deck-card-search'),
+      type:val('deck-type-filter')||'all',
+      race:val('deck-race-search'),
+      levelMin:val('deck-level-min'),
+      levelMax:val('deck-level-max'),
+      powerMin:val('deck-power-min'),
+      powerMax:val('deck-power-max'),
+      sort:val('deck-level-sort')||'default',
+      tag:val('deck-tag-filter')||'all'
+    },
+    advancedOpen:!!document.getElementById('deck-advanced-filters')?.open
+  };
+}
+function deckV271SaveUiState(){
+  const s=deckV271CaptureUiState();
+  try{localStorage.setItem(DECK_UI_V271,JSON.stringify(s))}catch(_){}
+  deckV271PendingScroll=s.scrollY;
+  return s;
+}
+function deckV271ReadUiState(){
+  try{return v271SafeParse(localStorage.getItem(DECK_UI_V271))}catch(_){return null}
+}
+function deckV271ApplyUiControls(s){
+  if(!s)return;
+  const f=s.filters||{},set=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined&&v!==null)el.value=v};
+  set('deck-card-search',f.search||'');
+  set('deck-type-filter',f.type||'all');
+  set('deck-race-search',f.race||'');
+  set('deck-level-min',f.levelMin||'');
+  set('deck-level-max',f.levelMax||'');
+  set('deck-power-min',f.powerMin||'');
+  set('deck-power-max',f.powerMax||'');
+  set('deck-level-sort',f.sort||'default');
+  set('deck-tag-filter',f.tag||'all');
+  const adv=document.getElementById('deck-advanced-filters');if(adv)adv.open=!!s.advancedOpen;
+  deckPoolPage=Math.max(0,Number(s.deckPoolPage)||0);
+  deckV271PendingScroll=Number(s.scrollY)||0;
+}
+function deckV271RestoreUiControls(){
+  const s=deckV271ReadUiState();
+  if(s)deckV271ApplyUiControls(s);
+}
+function deckV271RestoreScroll(){
+  const y=deckV271PendingScroll;
+  if(y==null)return;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo({top:Number(y)||0,behavior:'auto'})));
+}
+
+/* ---------------- Offline / PWA ---------------- */
+function v271UpdateOnlineState(){
+  const banner=document.getElementById('offline-mode-banner');
+  if(banner)banner.hidden=navigator.onLine;
+  document.documentElement.dataset.network=navigator.onLine?'online':'offline';
+}
+async function v271RegisterServiceWorker(){
+  if(!('serviceWorker' in navigator))return;
+  try{
+    await navigator.serviceWorker.register('./sw.js',{scope:'./'});
+  }catch(err){
+    console.warn('service worker registration failed',err);
+  }
+}
+
+/* ---------------- Init ---------------- */
+function initWorkRecoveryV271(){
+  const form=document.getElementById('card-form');
+  if(form&&!form.dataset.v271DraftBound){
+    form.dataset.v271DraftBound='1';
+    form.addEventListener('input',cardDraftV271Schedule);
+    form.addEventListener('change',cardDraftV271Schedule);
+  }
+  const restoreCard=document.getElementById('card-draft-restore');
+  if(restoreCard&&!restoreCard.dataset.v271Bound){restoreCard.dataset.v271Bound='1';restoreCard.onclick=cardDraftV271Restore}
+  const discardCard=document.getElementById('card-draft-discard');
+  if(discardCard&&!discardCard.dataset.v271Bound){discardCard.dataset.v271Bound='1';discardCard.onclick=()=>{cardDraftV271Clear();toast('カード下書きを破棄しました')}}
+  cardDraftV271RefreshRecovery();
+
+  const deckPane=document.getElementById('deck-edit-pane');
+  if(deckPane&&!deckPane.dataset.v271DraftBound){
+    deckPane.dataset.v271DraftBound='1';
+    deckPane.addEventListener('input',deckDraftV271Schedule);
+    deckPane.addEventListener('change',deckDraftV271Schedule);
+    deckPane.addEventListener('click',e=>{
+      if(e.target.closest('[data-pool-plus],[data-pool-plus4],[data-pool-minus],[data-current-plus],[data-current-plus4],[data-current-minus],[data-deck-move-up],[data-deck-move-down]')){
+        setTimeout(deckDraftV271Schedule,0);
+      }
+    });
+  }
+  const restoreDeck=document.getElementById('deck-draft-restore');
+  if(restoreDeck&&!restoreDeck.dataset.v271Bound){restoreDeck.dataset.v271Bound='1';restoreDeck.onclick=deckDraftV271Restore}
+  const discardDeck=document.getElementById('deck-draft-discard');
+  if(discardDeck&&!discardDeck.dataset.v271Bound){discardDeck.dataset.v271Bound='1';discardDeck.onclick=()=>{deckDraftV271Clear();toast('デッキ下書きを破棄しました')}}
+  deckDraftV271RefreshRecovery();
+
+  window.addEventListener('pagehide',()=>{
+    try{cardDraftV271Save()}catch(_){}
+    try{deckDraftV271Save()}catch(_){}
+    try{if(currentScreenName==='decks')deckV271SaveUiState()}catch(_){}
+  });
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='hidden'){
+      try{cardDraftV271Save()}catch(_){}
+      try{deckDraftV271Save()}catch(_){}
+      try{if(currentScreenName==='decks')deckV271SaveUiState()}catch(_){}
+    }
+  });
+
+  v271UpdateOnlineState();
+  window.addEventListener('online',()=>{v271UpdateOnlineState();toast('オンラインへ復帰しました')});
+  window.addEventListener('offline',()=>{v271UpdateOnlineState();toast('オフラインになりました。端末内機能は引き続き利用できます')});
+  v271RegisterServiceWorker();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initWorkRecoveryV271);
+else initWorkRecoveryV271();
 </script>
 
 
