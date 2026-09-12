@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v27.5</title>
+<title>みん会TCG Simulator v27.6</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21903,7 +21903,7 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
 }
 
 /* v27.0 settings categories / help / maintenance */
-.settings-category-nav{position:sticky;top:6px;z-index:20;margin-bottom:10px}
+
 .settings-category-tabs{display:flex;gap:6px;flex-wrap:wrap}
 .settings-v27-section[hidden]{display:none!important}
 .settings-help-item{border:1px solid var(--line);border-radius:10px;margin-top:8px;padding:0 10px;background:rgba(255,255,255,.02)}
@@ -21912,7 +21912,6 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
 .settings-maintenance-card{border:1px solid var(--line);border-radius:10px;padding:12px;background:rgba(255,255,255,.02)}
 .settings-warning-box{margin:10px 0;padding:10px;border:1px solid rgba(255,180,80,.45);border-radius:9px;background:rgba(255,180,80,.08);line-height:1.6}
 @media(max-width:760px){
-  .settings-category-nav{position:static}
   .settings-category-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
   .settings-category-tabs .btn{width:100%}
 }
@@ -21949,6 +21948,16 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
 .online-selftest-player-card label{display:grid;gap:4px}
 body.online-selftest-local-running #online-duel-main .online-player-section:not(.online-duel-opponent){outline:2px solid rgba(116,170,255,.38);outline-offset:2px}
 @media(max-width:760px){.online-selftest-player-setup{grid-template-columns:1fr}}
+
+/* v27.6 guide screen + simplified settings */
+.guide-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.guide-pane{display:none}
+.guide-pane.active{display:block}
+.guide-card{line-height:1.72}
+.guide-card h3{margin-top:0}
+.guide-card p:last-child,.guide-card ol:last-child{margin-bottom:0}
+.guide-card ol{padding-left:1.35em}
+@media(max-width:700px){.guide-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.guide-tabs .btn{width:100%}}
 </style>
 
 
@@ -21968,7 +21977,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v27.5 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v27.6 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -21976,6 +21985,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <button data-nav="decks">デッキ</button>
   <button data-nav="setup">盤面開始</button>
   <button data-nav="public-cards">公開所</button>
+  <button data-nav="guide">説明</button>
   <button data-nav="settings" class="settings-nav-button" aria-label="設定">⚙ 設定</button>
 </header>
 <main>
@@ -23230,19 +23240,65 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
     <div id="account-message" class="account-message muted" role="status" aria-live="polite"></div>
   </section>
 
-  <section id="screen-settings" class="screen">
-<div class="settings-category-nav panel">
-  <div class="settings-category-tabs" role="tablist" aria-label="設定カテゴリ">
-    <button class="btn small primary" type="button" data-settings-category="display">表示</button>
-    <button class="btn small" type="button" data-settings-category="board">盤面</button>
-    <button class="btn small" type="button" data-settings-category="online">オンライン</button>
-    <button class="btn small" type="button" data-settings-category="public">公開所</button>
-    <button class="btn small" type="button" data-settings-category="account">アカウント・バックアップ</button>
-    <button class="btn small" type="button" data-settings-category="help">ヘルプ</button>
-    <button class="btn small" type="button" data-settings-category="maintenance">診断・メンテナンス</button>
+  <section id="screen-guide" class="screen">
+  <div class="section-head">
+    <div><h2>機能説明</h2><p class="muted" style="margin:4px 0 0">Simulatorの各機能を項目ごとに確認できます。</p></div>
+    <span class="pill">Ver27.6</span>
   </div>
-</div>
+  <div class="guide-tabs" role="tablist" aria-label="機能説明">
+    <button class="btn small primary" type="button" data-guide-tab="start">はじめに</button>
+    <button class="btn small" type="button" data-guide-tab="cards">カード</button>
+    <button class="btn small" type="button" data-guide-tab="decks">デッキ</button>
+    <button class="btn small" type="button" data-guide-tab="board">盤面</button>
+    <button class="btn small" type="button" data-guide-tab="online">オンライン</button>
+    <button class="btn small" type="button" data-guide-tab="public">公開所</button>
+    <button class="btn small" type="button" data-guide-tab="account">アカウント</button>
+    <button class="btn small" type="button" data-guide-tab="settings">設定・保存</button>
+  </div>
+  <div id="guide-pane-start" class="guide-pane active">
+    <div class="panel guide-card"><h3>基本的な使い方</h3><ol><li>カード登録で使用するカードを登録します。</li><li>デッキ作成で登録カードからデッキを組みます。</li><li>盤面開始からローカル盤面を開くか、ホームのオンライン対戦からルームを作成します。</li><li>対戦中のカード移動やカウンターなどはプレイヤーが手動で操作します。</li></ol><p>Simulatorはカードゲームの処理を自動判定するものではなく、実物のカードを机の上で動かす感覚に近い補助盤面です。ターンやフェイズをシステム側で固定しないため、カード効果による特殊な進行にも対応できます。</p></div>
+    <div class="panel guide-card"><h3>データの保存場所</h3><p>カード・デッキ・画像・設定の基本データは使用中の端末へ保存されます。アカウントのらくらくバックアップを使うと、対応データをクラウドへ保存して別端末へ復元できます。</p><p>Ver27.1以降は、一度オンラインで読み込んだ後ならカード登録やデッキ作成など一部の端末内機能をオフラインでも利用できます。オンライン対戦・公開所・クラウド機能には通信が必要です。</p></div>
+  </div>
+  <div id="guide-pane-cards" class="guide-pane">
+    <div class="panel guide-card"><h3>カード登録</h3><p>1枚ずつ登録、テキスト一括登録、JSON登録を利用できます。1枚ずつ登録では入力途中の内容が端末へ自動保存され、ブラウザを閉じた場合も下書きを復元できます。</p><p>プレビューは初期状態では閉じています。必要な時だけ開いて登録前の見た目を確認できます。画像を選択していた下書きを復元した場合、画像ファイルだけはもう一度選択する必要があります。</p></div>
+    <div class="panel guide-card"><h3>カード管理</h3><p>登録済みカードの検索・絞り込み・詳細確認・編集・削除・画像登録・一括操作を行います。カードそのものを削除すると、デッキが参照しているカードにも影響する場合があります。</p></div>
+    <div class="panel guide-card"><h3>コレクション</h3><p>登録カードを一覧で閲覧する画面です。お気に入りやアルバムを使ってカードを分類できます。カード画像や設定した外観・エフェクトも確認できます。</p></div>
+  </div>
+  <div id="guide-pane-decks" class="guide-pane">
+    <div class="panel guide-card"><h3>デッキ作成</h3><p>登録カードからメインデッキ・その他デッキを作成します。カード一覧と採用カード一覧の詳細ボタンから効果を確認しながら構築できます。</p><p>編集途中のデッキは端末へ自動保存され、ページを閉じても「編集途中へ戻る」から復元できます。</p></div>
+    <div class="panel guide-card"><h3>検索状態と作業位置</h3><p>検索文字、カード種類、種族、Lv・POWER範囲、並び順、詳細フィルター、ページ番号、スクロール位置を保存します。別画面へ移動して戻った場合も可能な限り元の位置を維持します。</p></div>
+    <div class="panel guide-card"><h3>最推し・その他デッキ</h3><p>最推しは盤面開始時に指定できるカードです。その他デッキはルールプラス、EX相当、トークン用など用途を固定せず利用できます。</p></div>
+  </div>
+  <div id="guide-pane-board" class="guide-pane">
+    <div class="panel guide-card"><h3>盤面の基本</h3><p>ホーム、手札、メインデッキ、その他デッキ、墓地、消失、ペインカウント、ルーム、ルールプラスなどのゾーンを手動で操作します。ターン・フェイズはSimulator側では管理しません。</p></div>
+    <div class="panel guide-card"><h3>カード操作</h3><p>カードの移動、詳細確認、表向き・裏向き、レスト、カウンター、マーカーなどを操作できます。墓地・消失は一覧表示から中身を確認できます。</p></div>
+    <div class="panel guide-card"><h3>盤面ツール</h3><p>コイントス、ダイス、カード選択、カウンターなどを利用できます。オンライン時は対応する結果を公開情報欄へ共有できます。</p></div>
+  </div>
+  <div id="guide-pane-online" class="guide-pane">
+    <div class="panel guide-card"><h3>オンライン対戦</h3><p>ルームを作成し、P1・P2・観戦者として参加します。手札やデッキ内容などの非公開情報は所有者だけが確認し、墓地・消失などの公開領域は相手や観戦者も閲覧できます。</p></div>
+    <div class="panel guide-card"><h3>公開情報欄</h3><p>P1・P2それぞれ直近1件の公開結果を表示します。コイントス、ダイス、手札からの選択、指定カード群からの選択などが対象です。</p><p>山札の上からN枚を見る処理は自動公開されず、「確認したカードを公開情報へ表示」を押した場合だけ共有されます。</p></div>
+    <div class="panel guide-card"><h3>1人用オンライン動作確認</h3><p>相手がいなくてもP1・P2・観戦者それぞれの見え方を確認できます。ローカル確認ではP1/P2のメインデッキ・その他デッキ・最推しを個別に指定できます。</p><p>P1視点ではP1側、P2視点ではP2側を操作し、観戦視点では双方を閲覧専用で確認します。ローカル確認はSupabaseへテスト内容を書き込みません。</p></div>
+    <div class="panel guide-card"><h3>オンライン診断</h3><p>room側・publicState側のdeckCountやhandCount、revision、現在の視点などを確認・コピーできます。管理キーや手札内容などの秘匿情報は診断文へ含めません。</p></div>
+  </div>
+  <div id="guide-pane-public" class="guide-pane">
+    <div class="panel guide-card"><h3>カード公開所</h3><p>自分の登録カードを公開し、他の利用者がダウンロードできます。公開所へカード画像はアップロードせず、カードデータだけを共有します。カードIDのコピーやまとめてダウンロードにも対応しています。</p></div>
+    <div class="panel guide-card"><h3>管理キー</h3><p>保存管理キーは自分の公開カードを管理するキーで端末へ保存されます。臨時管理キーは他の人から許可されたカードを一時的に管理するための欄で、自動保存しません。マスターキーは開発者側の全体管理用です。</p></div>
+    <div class="panel guide-card"><h3>セット配布</h3><p>公開済みカードを複数選び、セット名・作者名・説明文を付けてまとめて配布できます。利用者はセット全体または必要なカードだけを選択してダウンロードできます。</p><p>同名カードがある場合は、別カードとして追加・既存カードへ上書き・1枚ずつ確認から処理方法を選べます。</p></div>
+  </div>
+  <div id="guide-pane-account" class="guide-pane">
+    <div class="panel guide-card"><h3>アカウント</h3><p>アカウントを作成しなくてもSimulatorの基本機能は利用できます。アカウントは主に端末間バックアップ・復元のために使用し、オンライン対戦のルーム参加情報とは別です。</p></div>
+    <div class="panel guide-card"><h3>らくらくバックアップ</h3><p>カード、デッキ、カード画像、背景、フレーム、自作エフェクト、外観設定などをまとめてクラウドへ保存します。ログインしただけで端末データが自動上書きされることはありません。</p></div>
+    <div class="panel guide-card"><h3>らくらく復元</h3><p>同じアカウントで保存したバックアップを端末へ戻します。復元前に現在の端末データをZIPで保存するか選択できます。</p></div>
+  </div>
+  <div id="guide-pane-settings" class="guide-pane">
+    <div class="panel guide-card"><h3>外観・背景</h3><p>アクセントカラー、UI背景の濃さ、可読性補助、共通背景、画面別背景、対戦盤面背景などを調整できます。</p></div>
+    <div class="panel guide-card"><h3>画面・ナビ</h3><p>ヘッダーナビの表示・並び順、ホーム画面のショートカット、UI密度、文字サイズ、カード一覧の1ページ表示数を変更できます。</p></div>
+    <div class="panel guide-card"><h3>操作・カード</h3><p>スマホの端スワイプ、カードテキストのコピー設定、フレーバー表示、カードエフェクトの表示数・描画品質・アニメーションなどを設定できます。</p></div>
+    <div class="panel guide-card"><h3>メンテナンス</h3><p>一時キャッシュ再構築では、登録カード・デッキ・コレクション・カード画像・アカウント情報・クラウドバックアップを残したまま、一時的なオンライン状態や表示キャッシュだけを削除します。</p><p>進行中のオンライン対戦がある場合は実行しないでください。実行後はオンライン状態でページを再読み込みしてください。</p></div>
+  </div>
+</section>
 
+<section id="screen-settings" class="screen">
     <div class="section-head">
       <h2>設定</h2>
       <div class="settings-save-head">
@@ -23256,6 +23312,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
       <button class="btn small" type="button" data-settings-tab="background">背景</button>
       <button class="btn small" type="button" data-settings-tab="future">画面・ナビ</button>
       <button class="btn small" type="button" data-settings-tab="controls">操作・カード</button>
+      <button class="btn small" type="button" data-settings-tab="maintenance">メンテナンス</button>
     </div>
 
     <div id="settings-pane-appearance" class="settings-pane active">
@@ -23534,85 +23591,9 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
       </div>
     </div>
   
-<div class="panel settings-v27-section" data-settings-section="help">
-  <div class="section-head">
-    <h3 style="margin:0">機能ガイド</h3>
-    <span class="pill">項目別</span>
-  </div>
-  <p class="muted">必要な項目だけ開いて確認できます。</p>
 
-  <details class="settings-help-item">
-    <summary>カード登録</summary>
-    <div class="settings-help-body">
-      1枚ずつ登録、テキスト一括登録、JSON登録を利用できます。1枚ずつ登録ではプレビューは閉じた状態から始まり、必要な時だけ開けます。カード画像は端末内に保存され、公開所へカードを公開しても画像は送信されません。
-    </div>
-  </details>
-
-  <details class="settings-help-item">
-    <summary>カード管理</summary>
-    <div class="settings-help-body">
-      登録済みカードの検索、絞り込み、一括編集、画像登録などを行えます。カードそのものを削除すると、そのカードを参照しているデッキなどにも影響する場合があるため、削除前に対象を確認してください。
-    </div>
-  </details>
-
-  <details class="settings-help-item">
-    <summary>デッキ作成</summary>
-    <div class="settings-help-body">
-      登録カードからデッキを作成します。カード一覧と採用カード一覧のどちらからでも詳細を確認できます。デッキ作成中の検索やページ位置は、画面内で詳細を確認して戻った場合も維持されます。
-    </div>
-  </details>
-
-  <details class="settings-help-item">
-    <summary>盤面</summary>
-    <div class="settings-help-body">
-      カード移動、表裏、レスト、カウンター、マーカー、ダイス、コイントス、各ゾーンの一覧確認などを手動で操作します。ターンやフェイズはシステム側では管理しません。カード効果に応じて自由に盤面を操作できます。
-    </div>
-  </details>
-
-  <details class="settings-help-item">
-    <summary>オンライン対戦</summary>
-    <div class="settings-help-body">
-      ルームを作成してP1・P2・観戦者で盤面を共有します。手札やデッキ内容などの非公開情報は所有者だけが確認できます。墓地・消失などの公開領域は相手・観戦者も一覧表示できます。1人用オンライン動作確認からP1 / P2 / 観戦視点を切り替えて確認することもできます。
-    </div>
-  </details>
-
-  <details class="settings-help-item">
-    <summary>オンラインの公開情報</summary>
-    <div class="settings-help-body">
-      コイントス、ダイス、手札や指定カードから選んだ結果、公開を選んだ山札確認結果などはオンライン盤面の公開情報欄へ表示できます。履歴を蓄積する機能ではなく、P1・P2それぞれ直近1件だけを表示します。
-    </div>
-  </details>
-
-  <details class="settings-help-item">
-    <summary>公開所</summary>
-    <div class="settings-help-body">
-      登録カードを他の利用者へ公開できます。公開カードには画像を含めません。管理キーを設定すると、自分の公開カードを編集・非公開・再公開・削除できます。臨時管理キーを使えば、他の人から許可されたカードを一時的に管理できます。
-    </div>
-  </details>
-
-  <details class="settings-help-item">
-    <summary>セット配布</summary>
-    <div class="settings-help-body">
-      自分が公開済みの複数カードを1つのセットとしてまとめて配布できます。セット全体をダウンロードするほか、必要なカードだけを選んで部分ダウンロードできます。セットにはカード画像を保存しません。
-    </div>
-  </details>
-
-  <details class="settings-help-item">
-    <summary>アカウント・らくらくバックアップ</summary>
-    <div class="settings-help-body">
-      アカウントは端末間でデータを保存・復元するための機能です。らくらくバックアップではカード、デッキ、画像、背景、フレーム、自作エフェクト、外観設定などをまとめてクラウドへ保存します。らくらく復元では同じアカウントの保存内容を現在の端末へ戻します。復元前の安全用ZIPを作るかどうかは選択できます。
-    </div>
-  </details>
-
-  <details class="settings-help-item">
-    <summary>オンライン診断</summary>
-    <div class="settings-help-body">
-      オンライン画面の1人用動作確認から診断情報を表示・コピーできます。P1 / P2のdeckCount、handCount、publicState、revisionなどを確認でき、オンライン不具合の原因調査に使います。管理キー、手札内容、カード内容などは診断文へ含めません。
-    </div>
-  </details>
-</div>
-
-<div class="panel settings-v27-section" data-settings-section="maintenance">
+<div id="settings-pane-maintenance" class="settings-pane">
+<div class="panel">
   <div class="section-head">
     <h3 style="margin:0">診断・メンテナンス</h3>
     <span class="pill">安全操作</span>
@@ -23638,6 +23619,8 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
     </div>
   </div>
 </div>
+</div>
+
 </section>
 
   
@@ -24792,8 +24775,8 @@ boardDisplayPrefs={
 };
 save(LS_BOARD_DISPLAY,boardDisplayPrefs);
 
-const THEME_SCREEN_KEYS=['home','cards','card-manager','collection','decks','setup','settings'];
-const THEME_SCREEN_LABELS={home:'ホーム',cards:'カード登録','card-manager':'カード管理',collection:'コレクション',decks:'デッキ',setup:'盤面開始',settings:'設定'};
+const THEME_SCREEN_KEYS=['home','cards','card-manager','collection','decks','setup','guide','settings'];
+const THEME_SCREEN_LABELS={home:'ホーム',cards:'カード登録','card-manager':'カード管理',collection:'コレクション',decks:'デッキ',setup:'盤面開始',guide:'説明',settings:'設定'};
 const THEME_NAV_KEYS=['cards','card-manager','collection','decks','setup'];
 const THEME_NAV_MOVABLE_KEYS=[...THEME_NAV_KEYS];
 const THEME_HOME_SHORTCUT_KEYS=['cards','card-manager','collection','decks','setup-one','setup-two'];
@@ -24825,7 +24808,7 @@ const THEME_DEFAULTS={
     },
     screens:{
       home:{inherit:true},cards:{inherit:true},'card-manager':{inherit:true},collection:{inherit:true},
-      decks:{inherit:true},setup:{inherit:true},settings:{inherit:true}
+      decks:{inherit:true},setup:{inherit:true},guide:{inherit:true},settings:{inherit:true}
     },
     board:{inherit:true,p1:{inherit:true},p2:{inherit:true}}
   }
@@ -26497,7 +26480,7 @@ function renderThemeSettings(){
  ensureThemeDraft();syncThemeSettingsControls();bindThemePreviewDrag();renderThemeBackgroundOverrideLists();renderScreenNavSettings();syncCardFxSettingsUI();
 }
 function setSettingsTab(name){
- const tab=['appearance','background','future','controls'].includes(name)?name:'appearance';
+ const tab=['appearance','background','future','controls','maintenance'].includes(name)?name:'appearance';
  $$('[data-settings-tab]').forEach(b=>b.classList.toggle('primary',b.dataset.settingsTab===tab));
  $$('.settings-pane').forEach(p=>p.classList.toggle('active',p.id===`settings-pane-${tab}`));
  if(tab==='background'||tab==='future'||tab==='controls')renderThemeSettings();
@@ -38368,7 +38351,7 @@ function onlineDiagnosticSnapshot(){
   const member=(slot)=>slot===1?room?.p1:room?.p2;
   const rev=room?.revision??room?.publicState?.revision??null;
   const info={
-    appVersion:'27.5',
+    appVersion:'27.6',
     generatedAt:new Date().toISOString(),
     userAgent:navigator.userAgent,
     online:{
@@ -40079,7 +40062,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v27.5 public card repository
+// v27.6 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -42062,7 +42045,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='27.5';
+  manifest.appVersion='27.6';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -42103,7 +42086,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'27.5',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'27.6',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
@@ -42204,157 +42187,27 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 
-const SETTINGS_V27_CATEGORY_KEY='minkai-settings-category-v27';
-
-function settingsV27GuessCategory(el){
-  const text=(el.textContent||'').toLocaleLowerCase();
-  const id=String(el.id||'').toLocaleLowerCase();
-  const cls=String(el.className||'').toLocaleLowerCase();
-  const all=`${text} ${id} ${cls}`;
-
-  if(/アカウント|バックアップ|クラウド|復元|同期/.test(all))return 'account';
-  if(/オンライン|対戦|観戦|ルーム|通信/.test(all))return 'online';
-  if(/公開所|公開カード|管理キー|セット配布/.test(all))return 'public';
-  if(/盤面|背景|フレーム|エフェクト|マーカー|カウンター|表示倍率|カードサイズ/.test(all))return 'board';
-  return 'display';
-}
-function settingsV27PrepareSections(){
-  const screen=document.getElementById('screen-settings');if(!screen)return;
-  const nav=screen.querySelector('.settings-category-nav');
-  [...screen.children].forEach(el=>{
-    if(el===nav)return;
-    if(el.classList?.contains('settings-v27-section'))return;
-    if(!el.matches?.('.panel, section, .card, .settings-section'))return;
-    if(!el.dataset.settingsSection)el.dataset.settingsSection=settingsV27GuessCategory(el);
-    el.classList.add('settings-v27-section');
-  });
-}
-function settingsV27SelectCategory(category='display'){
-  settingsV27PrepareSections();
-  const screen=document.getElementById('screen-settings');if(!screen)return;
-  const valid=['display','board','online','public','account','help','maintenance'];
-  if(!valid.includes(category))category='display';
-  try{localStorage.setItem(SETTINGS_V27_CATEGORY_KEY,category)}catch(_){}
-  screen.querySelectorAll('[data-settings-category]').forEach(btn=>{
-    btn.classList.toggle('primary',btn.dataset.settingsCategory===category);
-  });
-  screen.querySelectorAll('[data-settings-section]').forEach(el=>{
-    el.hidden=el.dataset.settingsSection!==category;
-  });
-}
-function settingsV27Bind(){
-  const screen=document.getElementById('screen-settings');if(!screen)return;
-  settingsV27PrepareSections();
-
-  screen.querySelectorAll('[data-settings-category]').forEach(btn=>{
-    if(btn.dataset.settingsV27Bound)return;
-    btn.dataset.settingsV27Bound='1';
-    btn.addEventListener('click',()=>settingsV27SelectCategory(btn.dataset.settingsCategory));
-  });
-
-  const rebuild=document.getElementById('settings-rebuild-cache');
-  if(rebuild&&!rebuild.dataset.settingsV27Bound){
-    rebuild.dataset.settingsV27Bound='1';
-    rebuild.addEventListener('click',settingsV27RebuildCache);
-  }
-
-  const diag=document.getElementById('settings-open-online-diagnostic');
-  if(diag&&!diag.dataset.settingsV27Bound){
-    diag.dataset.settingsV27Bound='1';
-    diag.addEventListener('click',()=>{
-      try{nav('online')}catch(_){}
-      setTimeout(()=>{
-        const details=document.getElementById('online-selftest-details');
-        if(details)details.open=true;
-        document.getElementById('online-diagnostic-output')?.scrollIntoView({block:'center'});
-      },50);
-    });
-  }
-
-  let initial='display';
-  try{initial=localStorage.getItem(SETTINGS_V27_CATEGORY_KEY)||'display'}catch(_){}
-  settingsV27SelectCategory(initial);
-}
-function settingsV27ClearStorageKeys(storage,keys){
+function settingsMaintenanceClearStorageKeys(storage,keys){
   let removed=0;
-  for(const key of keys){
-    try{
-      if(storage.getItem(key)!==null){
-        storage.removeItem(key);
-        removed++;
-      }
-    }catch(_){}
-  }
+  for(const key of keys){try{if(storage.getItem(key)!==null){storage.removeItem(key);removed++;}}catch(_){}}
   return removed;
 }
-async function settingsV27RebuildCache(){
+async function settingsMaintenanceRebuildCache(){
   const status=document.getElementById('settings-rebuild-cache-status');
-  const ok=confirm(
-`一時キャッシュを再構築します。
-
-削除しないもの：
-・登録カード
-・デッキ
-・コレクション
-・カード画像
-・アカウント情報
-・クラウドバックアップ
-
-削除する可能性があるもの：
-・オンライン対戦の一時スクロール位置
-・再接続用の一時盤面キャッシュ
-・一時的な検索 / 表示キャッシュ
-
-進行中のオンライン対戦がある場合はキャンセルしてください。
-
-実行しますか？`);
-  if(!ok){
-    if(status)status.textContent='キャンセルしました。';
-    return;
-  }
-
-  // 本体データキーは絶対に対象へ入れない。
-  const localKeys=[
-    'minkai-online-scroll-state-v1',
-    'minkai-online-owner-hand-v1',
-    'minkai-online-owner-hand-v2',
-    'minkai-online-owner-public-board-v1',
-    'minkai-online-owner-private-board-v2',
-    'minkai-online-last-room-cache',
-    'minkai-public-filter-cache',
-    'minkai-public-view-cache'
-  ];
-  const sessionKeys=[
-    'minkai-online-scroll-state-v1',
-    'minkai-public-filter-cache',
-    'minkai-public-view-cache'
-  ];
-
-  let removed=0;
-  removed+=settingsV27ClearStorageKeys(localStorage,localKeys);
-  removed+=settingsV27ClearStorageKeys(sessionStorage,sessionKeys);
-
-  try{
-    if('caches' in window){
-      const names=await caches.keys();
-      for(const name of names){
-        if(/minkai|github|runtime|static/i.test(name)){
-          await caches.delete(name);
-          removed++;
-        }
-      }
-    }
-  }catch(_){}
-
-  if(status)status.textContent=`キャッシュを再構築しました。削除対象 ${removed}件。ページを再読み込みすると反映されます。`;
+  const ok=confirm(`一時キャッシュを再構築します。\n\n削除しないもの：\n・登録カード\n・デッキ\n・コレクション\n・カード画像\n・アカウント情報\n・クラウドバックアップ\n\n削除する可能性があるもの：\n・オンライン対戦の一時スクロール位置\n・再接続用の一時盤面キャッシュ\n・一時的な検索 / 表示キャッシュ\n\n進行中のオンライン対戦がある場合はキャンセルしてください。\n\n実行しますか？`);
+  if(!ok){if(status)status.textContent='キャンセルしました。';return;}
+  const localKeys=['minkai-online-scroll-state-v1','minkai-online-owner-hand-v1','minkai-online-owner-hand-v2','minkai-online-owner-public-board-v1','minkai-online-owner-private-board-v2','minkai-online-last-room-cache','minkai-public-filter-cache','minkai-public-view-cache'];
+  const sessionKeys=['minkai-online-scroll-state-v1','minkai-public-filter-cache','minkai-public-view-cache'];
+  let removed=0;removed+=settingsMaintenanceClearStorageKeys(localStorage,localKeys);removed+=settingsMaintenanceClearStorageKeys(sessionStorage,sessionKeys);
+  try{if('caches' in window){const names=await caches.keys();for(const name of names){if(/minkai|github|runtime|static/i.test(name)){await caches.delete(name);removed++;}}}}catch(_){}
+  if(status)status.textContent=`キャッシュを再構築しました。削除対象 ${removed}件。オンライン状態でページを再読み込みしてください。`;
   toast('一時キャッシュを再構築しました');
 }
-
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',settingsV27Bind);
-}else{
-  settingsV27Bind();
+function bindSettingsMaintenanceV276(){
+  const rebuild=document.getElementById('settings-rebuild-cache');if(rebuild&&!rebuild.dataset.v276Bound){rebuild.dataset.v276Bound='1';rebuild.addEventListener('click',settingsMaintenanceRebuildCache);}
+  const diag=document.getElementById('settings-open-online-diagnostic');if(diag&&!diag.dataset.v276Bound){diag.dataset.v276Bound='1';diag.addEventListener('click',()=>{try{nav('online')}catch(_){}setTimeout(()=>{const details=document.getElementById('online-selftest-details');if(details)details.open=true;document.getElementById('online-diagnostic-output')?.scrollIntoView({block:'center'});},80);});}
 }
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindSettingsMaintenanceV276);else bindSettingsMaintenanceV276();
 
 const CARD_DRAFT_V271='minkai-card-register-draft-v27-1';
 const DECK_DRAFT_V271='minkai-deck-editor-draft-v27-1';
@@ -42633,6 +42486,24 @@ function initWorkRecoveryV271(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initWorkRecoveryV271);
 else initWorkRecoveryV271();
+
+function setGuideTab(name){
+  const valid=['start','cards','decks','board','online','public','account','settings'];
+  const tab=valid.includes(name)?name:'start';
+  document.querySelectorAll('[data-guide-tab]').forEach(btn=>btn.classList.toggle('primary',btn.dataset.guideTab===tab));
+  document.querySelectorAll('#screen-guide .guide-pane').forEach(p=>p.classList.toggle('active',p.id===`guide-pane-${tab}`));
+  try{localStorage.setItem('minkai-guide-tab-v27-6',tab)}catch(_){}
+}
+function bindGuideV276(){
+  document.querySelectorAll('[data-guide-tab]').forEach(btn=>{if(btn.dataset.guideBound==='1')return;btn.dataset.guideBound='1';btn.addEventListener('click',()=>setGuideTab(btn.dataset.guideTab));});
+  let initial='start';try{initial=localStorage.getItem('minkai-guide-tab-v27-6')||'start'}catch(_){}setGuideTab(initial);
+}
+function bindSettingsTabsV276(){
+  document.querySelectorAll('#screen-settings [data-settings-tab]').forEach(btn=>{if(btn.dataset.settingsTabV276Bound==='1')return;btn.dataset.settingsTabV276Bound='1';btn.addEventListener('click',()=>setSettingsTab(btn.dataset.settingsTab));});
+  const active=document.querySelector('#screen-settings [data-settings-tab].primary')?.dataset?.settingsTab||'appearance';
+  setSettingsTab(active);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{bindGuideV276();bindSettingsTabsV276()});else{bindGuideV276();bindSettingsTabsV276()}
 </script>
 
 
