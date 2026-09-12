@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v27.6</title>
+<title>みん会TCG Simulator v27.7</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21958,6 +21958,32 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
 .guide-card p:last-child,.guide-card ol:last-child{margin-bottom:0}
 .guide-card ol{padding-left:1.35em}
 @media(max-width:700px){.guide-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.guide-tabs .btn{width:100%}}
+
+/* v27.7 settings-integrated function guide */
+.settings-guide-index{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.settings-guide-section{padding:0 12px}
+.settings-guide-section>summary{
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:13px 0;
+  font-weight:800
+}
+.settings-guide-body{
+  border-top:1px solid var(--line);
+  padding:12px 0 16px;
+  line-height:1.72
+}
+.settings-guide-body h4{margin:14px 0 5px}
+.settings-guide-body h4:first-child{margin-top:0}
+.settings-guide-body p{margin:5px 0 10px}
+@media(max-width:700px){
+  .settings-guide-index{display:grid;grid-template-columns:1fr 1fr}
+  .settings-guide-index .btn{width:100%}
+  .settings-guide-section>summary{align-items:flex-start;flex-direction:column;gap:3px}
+}
 </style>
 
 
@@ -21977,7 +22003,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v27.6 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v27.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -21985,7 +22011,6 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <button data-nav="decks">デッキ</button>
   <button data-nav="setup">盤面開始</button>
   <button data-nav="public-cards">公開所</button>
-  <button data-nav="guide">説明</button>
   <button data-nav="settings" class="settings-nav-button" aria-label="設定">⚙ 設定</button>
 </header>
 <main>
@@ -23240,63 +23265,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
     <div id="account-message" class="account-message muted" role="status" aria-live="polite"></div>
   </section>
 
-  <section id="screen-guide" class="screen">
-  <div class="section-head">
-    <div><h2>機能説明</h2><p class="muted" style="margin:4px 0 0">Simulatorの各機能を項目ごとに確認できます。</p></div>
-    <span class="pill">Ver27.6</span>
-  </div>
-  <div class="guide-tabs" role="tablist" aria-label="機能説明">
-    <button class="btn small primary" type="button" data-guide-tab="start">はじめに</button>
-    <button class="btn small" type="button" data-guide-tab="cards">カード</button>
-    <button class="btn small" type="button" data-guide-tab="decks">デッキ</button>
-    <button class="btn small" type="button" data-guide-tab="board">盤面</button>
-    <button class="btn small" type="button" data-guide-tab="online">オンライン</button>
-    <button class="btn small" type="button" data-guide-tab="public">公開所</button>
-    <button class="btn small" type="button" data-guide-tab="account">アカウント</button>
-    <button class="btn small" type="button" data-guide-tab="settings">設定・保存</button>
-  </div>
-  <div id="guide-pane-start" class="guide-pane active">
-    <div class="panel guide-card"><h3>基本的な使い方</h3><ol><li>カード登録で使用するカードを登録します。</li><li>デッキ作成で登録カードからデッキを組みます。</li><li>盤面開始からローカル盤面を開くか、ホームのオンライン対戦からルームを作成します。</li><li>対戦中のカード移動やカウンターなどはプレイヤーが手動で操作します。</li></ol><p>Simulatorはカードゲームの処理を自動判定するものではなく、実物のカードを机の上で動かす感覚に近い補助盤面です。ターンやフェイズをシステム側で固定しないため、カード効果による特殊な進行にも対応できます。</p></div>
-    <div class="panel guide-card"><h3>データの保存場所</h3><p>カード・デッキ・画像・設定の基本データは使用中の端末へ保存されます。アカウントのらくらくバックアップを使うと、対応データをクラウドへ保存して別端末へ復元できます。</p><p>Ver27.1以降は、一度オンラインで読み込んだ後ならカード登録やデッキ作成など一部の端末内機能をオフラインでも利用できます。オンライン対戦・公開所・クラウド機能には通信が必要です。</p></div>
-  </div>
-  <div id="guide-pane-cards" class="guide-pane">
-    <div class="panel guide-card"><h3>カード登録</h3><p>1枚ずつ登録、テキスト一括登録、JSON登録を利用できます。1枚ずつ登録では入力途中の内容が端末へ自動保存され、ブラウザを閉じた場合も下書きを復元できます。</p><p>プレビューは初期状態では閉じています。必要な時だけ開いて登録前の見た目を確認できます。画像を選択していた下書きを復元した場合、画像ファイルだけはもう一度選択する必要があります。</p></div>
-    <div class="panel guide-card"><h3>カード管理</h3><p>登録済みカードの検索・絞り込み・詳細確認・編集・削除・画像登録・一括操作を行います。カードそのものを削除すると、デッキが参照しているカードにも影響する場合があります。</p></div>
-    <div class="panel guide-card"><h3>コレクション</h3><p>登録カードを一覧で閲覧する画面です。お気に入りやアルバムを使ってカードを分類できます。カード画像や設定した外観・エフェクトも確認できます。</p></div>
-  </div>
-  <div id="guide-pane-decks" class="guide-pane">
-    <div class="panel guide-card"><h3>デッキ作成</h3><p>登録カードからメインデッキ・その他デッキを作成します。カード一覧と採用カード一覧の詳細ボタンから効果を確認しながら構築できます。</p><p>編集途中のデッキは端末へ自動保存され、ページを閉じても「編集途中へ戻る」から復元できます。</p></div>
-    <div class="panel guide-card"><h3>検索状態と作業位置</h3><p>検索文字、カード種類、種族、Lv・POWER範囲、並び順、詳細フィルター、ページ番号、スクロール位置を保存します。別画面へ移動して戻った場合も可能な限り元の位置を維持します。</p></div>
-    <div class="panel guide-card"><h3>最推し・その他デッキ</h3><p>最推しは盤面開始時に指定できるカードです。その他デッキはルールプラス、EX相当、トークン用など用途を固定せず利用できます。</p></div>
-  </div>
-  <div id="guide-pane-board" class="guide-pane">
-    <div class="panel guide-card"><h3>盤面の基本</h3><p>ホーム、手札、メインデッキ、その他デッキ、墓地、消失、ペインカウント、ルーム、ルールプラスなどのゾーンを手動で操作します。ターン・フェイズはSimulator側では管理しません。</p></div>
-    <div class="panel guide-card"><h3>カード操作</h3><p>カードの移動、詳細確認、表向き・裏向き、レスト、カウンター、マーカーなどを操作できます。墓地・消失は一覧表示から中身を確認できます。</p></div>
-    <div class="panel guide-card"><h3>盤面ツール</h3><p>コイントス、ダイス、カード選択、カウンターなどを利用できます。オンライン時は対応する結果を公開情報欄へ共有できます。</p></div>
-  </div>
-  <div id="guide-pane-online" class="guide-pane">
-    <div class="panel guide-card"><h3>オンライン対戦</h3><p>ルームを作成し、P1・P2・観戦者として参加します。手札やデッキ内容などの非公開情報は所有者だけが確認し、墓地・消失などの公開領域は相手や観戦者も閲覧できます。</p></div>
-    <div class="panel guide-card"><h3>公開情報欄</h3><p>P1・P2それぞれ直近1件の公開結果を表示します。コイントス、ダイス、手札からの選択、指定カード群からの選択などが対象です。</p><p>山札の上からN枚を見る処理は自動公開されず、「確認したカードを公開情報へ表示」を押した場合だけ共有されます。</p></div>
-    <div class="panel guide-card"><h3>1人用オンライン動作確認</h3><p>相手がいなくてもP1・P2・観戦者それぞれの見え方を確認できます。ローカル確認ではP1/P2のメインデッキ・その他デッキ・最推しを個別に指定できます。</p><p>P1視点ではP1側、P2視点ではP2側を操作し、観戦視点では双方を閲覧専用で確認します。ローカル確認はSupabaseへテスト内容を書き込みません。</p></div>
-    <div class="panel guide-card"><h3>オンライン診断</h3><p>room側・publicState側のdeckCountやhandCount、revision、現在の視点などを確認・コピーできます。管理キーや手札内容などの秘匿情報は診断文へ含めません。</p></div>
-  </div>
-  <div id="guide-pane-public" class="guide-pane">
-    <div class="panel guide-card"><h3>カード公開所</h3><p>自分の登録カードを公開し、他の利用者がダウンロードできます。公開所へカード画像はアップロードせず、カードデータだけを共有します。カードIDのコピーやまとめてダウンロードにも対応しています。</p></div>
-    <div class="panel guide-card"><h3>管理キー</h3><p>保存管理キーは自分の公開カードを管理するキーで端末へ保存されます。臨時管理キーは他の人から許可されたカードを一時的に管理するための欄で、自動保存しません。マスターキーは開発者側の全体管理用です。</p></div>
-    <div class="panel guide-card"><h3>セット配布</h3><p>公開済みカードを複数選び、セット名・作者名・説明文を付けてまとめて配布できます。利用者はセット全体または必要なカードだけを選択してダウンロードできます。</p><p>同名カードがある場合は、別カードとして追加・既存カードへ上書き・1枚ずつ確認から処理方法を選べます。</p></div>
-  </div>
-  <div id="guide-pane-account" class="guide-pane">
-    <div class="panel guide-card"><h3>アカウント</h3><p>アカウントを作成しなくてもSimulatorの基本機能は利用できます。アカウントは主に端末間バックアップ・復元のために使用し、オンライン対戦のルーム参加情報とは別です。</p></div>
-    <div class="panel guide-card"><h3>らくらくバックアップ</h3><p>カード、デッキ、カード画像、背景、フレーム、自作エフェクト、外観設定などをまとめてクラウドへ保存します。ログインしただけで端末データが自動上書きされることはありません。</p></div>
-    <div class="panel guide-card"><h3>らくらく復元</h3><p>同じアカウントで保存したバックアップを端末へ戻します。復元前に現在の端末データをZIPで保存するか選択できます。</p></div>
-  </div>
-  <div id="guide-pane-settings" class="guide-pane">
-    <div class="panel guide-card"><h3>外観・背景</h3><p>アクセントカラー、UI背景の濃さ、可読性補助、共通背景、画面別背景、対戦盤面背景などを調整できます。</p></div>
-    <div class="panel guide-card"><h3>画面・ナビ</h3><p>ヘッダーナビの表示・並び順、ホーム画面のショートカット、UI密度、文字サイズ、カード一覧の1ページ表示数を変更できます。</p></div>
-    <div class="panel guide-card"><h3>操作・カード</h3><p>スマホの端スワイプ、カードテキストのコピー設定、フレーバー表示、カードエフェクトの表示数・描画品質・アニメーションなどを設定できます。</p></div>
-    <div class="panel guide-card"><h3>メンテナンス</h3><p>一時キャッシュ再構築では、登録カード・デッキ・コレクション・カード画像・アカウント情報・クラウドバックアップを残したまま、一時的なオンライン状態や表示キャッシュだけを削除します。</p><p>進行中のオンライン対戦がある場合は実行しないでください。実行後はオンライン状態でページを再読み込みしてください。</p></div>
-  </div>
-</section>
+  
 
 <section id="screen-settings" class="screen">
     <div class="section-head">
@@ -23312,6 +23281,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
       <button class="btn small" type="button" data-settings-tab="background">背景</button>
       <button class="btn small" type="button" data-settings-tab="future">画面・ナビ</button>
       <button class="btn small" type="button" data-settings-tab="controls">操作・カード</button>
+      <button class="btn small" type="button" data-settings-tab="guide">機能ガイド</button>
       <button class="btn small" type="button" data-settings-tab="maintenance">メンテナンス</button>
     </div>
 
@@ -23591,6 +23561,229 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
       </div>
     </div>
   
+
+
+<div id="settings-pane-guide" class="settings-pane">
+  <div class="panel">
+    <div class="section-head">
+      <div>
+        <h3 style="margin:0">機能ガイド</h3>
+        <p class="muted" style="margin:5px 0 0">存在している機能を探しやすいよう、用途別にまとめています。項目を開くと詳しい使い方を確認できます。</p>
+      </div>
+      <span class="pill">Ver27.7</span>
+    </div>
+
+    <div class="settings-guide-index">
+      <button class="btn small" type="button" data-settings-guide-jump="guide-start">まず知っておきたいこと</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-cards">カード登録・管理</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-decks">デッキ作成</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-board">盤面</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-online">オンライン</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-public">公開所</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-account">アカウント・保存</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-mobile">スマホ・オフライン</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-settings">設定・メンテナンス</button>
+    </div>
+  </div>
+
+  <details class="panel settings-guide-section" id="guide-start" open>
+    <summary><span>まず知っておきたいこと</span><span class="muted">基本方針と保存場所</span></summary>
+    <div class="settings-guide-body">
+      <h4>Simulatorは「自動裁定」ではなく自由操作型</h4>
+      <p>カード効果を自動処理するゲームエンジンではなく、実際のカードを机の上で動かす感覚に近い補助盤面です。カード移動、表裏、レスト、カウンター、マーカーなどをプレイヤーが操作します。</p>
+      <p>ターンやフェイズをシステム側で固定していないため、今後カード効果がルール進行へ干渉しても盤面側の制約に引っ張られにくい設計です。</p>
+
+      <h4>端末保存とクラウド保存は別</h4>
+      <p>カード、デッキ、画像、各種設定は基本的に現在の端末へ保存されます。アカウントへログインしただけで自動的にクラウドへ上書きされることはありません。</p>
+      <p>端末をまたいで移動したい場合は、アカウント画面の「らくらくバックアップ」と「らくらく復元」を使います。</p>
+
+      <h4>オンライン対戦とアカウントは別機能</h4>
+      <p>オンライン対戦のルーム参加情報と、バックアップ用アカウントは別です。オンライン対戦だけならアカウントを作成しなくても利用できます。</p>
+    </div>
+  </details>
+
+  <details class="panel settings-guide-section" id="guide-cards">
+    <summary><span>カード登録・カード管理</span><span class="muted">登録、画像、検索、一括操作</span></summary>
+    <div class="settings-guide-body">
+      <h4>1枚ずつ登録</h4>
+      <p>カード名、種類、Lv、POWER、種族、効果、フレーバーなどを入力して登録します。プレビューは最初は閉じた状態で、必要な時だけ開いて確認できます。</p>
+
+      <h4>入力途中の自動保存</h4>
+      <p>1枚ずつ登録で入力している内容は端末内へ自動保存されます。ブラウザを閉じたり、スマホで別アプリへ移動したあとにページが落ちても、次回「入力内容を復元」から戻せます。</p>
+      <p>画像ファイルそのものはブラウザの制約で復元できないため、画像を選んでいた下書きを戻した場合は画像だけ再選択してください。</p>
+
+      <h4>一括登録</h4>
+      <p>テキスト一括登録やJSON登録を使うと複数カードをまとめて追加できます。大量のカードを作る場合はこちらが便利です。</p>
+
+      <h4>カード管理</h4>
+      <p>検索・絞り込み、編集、削除、画像登録、一括編集などを行います。カード数が増えた場合でも条件を組み合わせて対象を絞れます。</p>
+      <p>カードを削除すると、そのカードを参照しているデッキにも影響する場合があります。削除前に採用デッキを確認してください。</p>
+
+      <h4>カード画像</h4>
+      <p>カード画像は端末内データとして扱います。公開所へカードを公開しても画像はアップロードされません。</p>
+
+      <h4>コレクション</h4>
+      <p>登録カードを閲覧する画面です。お気に入りやアルバムで分類できます。カードごとの外観やエフェクトもここで確認できます。</p>
+    </div>
+  </details>
+
+  <details class="panel settings-guide-section" id="guide-decks">
+    <summary><span>デッキ作成</span><span class="muted">構築、詳細、作業復旧</span></summary>
+    <div class="settings-guide-body">
+      <h4>カード詳細</h4>
+      <p>デッキ作成中のカード一覧には詳細確認があります。カード効果を確認してから採用できるため、カード管理画面へ戻る必要はありません。</p>
+
+      <h4>編集途中の自動保存</h4>
+      <p>正式保存前のデッキも端末内へ自動保存されます。ブラウザ終了後でも「編集途中へ戻る」から復元できます。正式にデッキ保存した時点で下書きは整理されます。</p>
+
+      <h4>検索条件・作業位置の維持</h4>
+      <p>検索文字、カード種類、種族、Lv・POWER範囲、並び順、詳細フィルター、ページ番号、スクロール位置を保持します。カード詳細を確認して戻った時も、なるべく元の位置から続けられます。</p>
+
+      <h4>メインデッキ / その他デッキ</h4>
+      <p>メインデッキとは別にその他デッキを作れます。その他デッキの用途は固定していないため、ルールプラス、EX相当、トークン管理など各自のルールに合わせて使えます。</p>
+
+      <h4>最推し</h4>
+      <p>対戦開始時に指定するカードです。デッキごとのデフォルト最推しも設定できます。</p>
+    </div>
+  </details>
+
+  <details class="panel settings-guide-section" id="guide-board">
+    <summary><span>盤面</span><span class="muted">カード操作、一覧、ランダム処理</span></summary>
+    <div class="settings-guide-body">
+      <h4>カードの基本操作</h4>
+      <p>カードを選択して移動、詳細確認、表向き・裏向き、レスト、カウンター、マーカーなどを操作できます。「その他の操作」は初期状態から展開されています。</p>
+
+      <h4>墓地・消失の一覧</h4>
+      <p>墓地や消失など枚数が増える領域は「一覧」からまとめて確認できます。オンラインでは相手と観戦者も公開領域の一覧を閲覧できますが、相手側のカード操作はできません。</p>
+
+      <h4>Undo / Redo</h4>
+      <p>ローカル盤面では操作を戻す・やり直す機能があります。誤操作時の復旧に使えます。</p>
+
+      <h4>盤面保存</h4>
+      <p>現在の盤面を保存し、あとから再開できます。長時間の検証や途中中断に便利です。</p>
+
+      <h4>コイントス・ダイス・カード選択</h4>
+      <p>盤面ツールからコイントス、ダイス、手札からの選択、指定カード群からの選択などを利用できます。オンラインでは必要な結果を公開情報欄へ共有できます。</p>
+    </div>
+  </details>
+
+  <details class="panel settings-guide-section" id="guide-online">
+    <summary><span>オンライン対戦・観戦</span><span class="muted">同期、公開情報、1人確認、診断</span></summary>
+    <div class="settings-guide-body">
+      <h4>オンラインルーム</h4>
+      <p>ルームを作成し、P1・P2・観戦者として参加します。手札やデッキ内容などの非公開情報は所有者だけが確認し、墓地・消失などの公開領域は相手・観戦者も確認できます。</p>
+
+      <h4>公開情報欄</h4>
+      <p>P1・P2それぞれ直近1件の公開結果を表示します。コイントス、ダイス、手札から選ばれたカード、指定カード群から選ばれたカードなどを双方と観戦者で確認できます。</p>
+      <p>履歴を大量に残す仕組みではなく、「現在確認したい直近の結果」を共有するための領域です。</p>
+
+      <h4>山札の上からN枚確認</h4>
+      <p>上からN枚を見る処理は自動公開されません。確認画面で「確認したカードを公開情報へ表示」を押した場合だけ相手・観戦者へカード名を見せます。非公開確認の効果にも対応できます。</p>
+
+      <h4>残りデッキ枚数</h4>
+      <p>相手・観戦者にはデッキ内容や順番を送らず、残り枚数だけを公開情報として扱う設計です。表示不具合調査用にオンライン診断からroom側 / publicState側の値を確認できます。</p>
+
+      <h4>観戦</h4>
+      <p>観戦者は盤面操作を行わず、公開情報を中心に確認します。墓地・消失の一覧や公開情報欄を利用できます。</p>
+
+      <h4>1人用オンライン動作確認</h4>
+      <p>相手がいなくてもP1・P2・観戦視点を切り替えて確認できます。ローカル確認ではP1/P2それぞれのメインデッキ、その他デッキ、最推しを指定できます。</p>
+      <p>P1視点はP1側、P2視点はP2側を操作し、観戦視点は双方閲覧専用です。ローカル確認はSupabaseへテスト盤面を書き込みません。</p>
+
+      <h4>オンライン診断</h4>
+      <p>room側のdeckCount / deckTotal、publicState側のdeckCount / handCount、画面が採用している枚数、revision、現在の視点などを表示・コピーできます。</p>
+      <p>管理キー、手札の中身、デッキ内容などの秘匿情報は診断文へ含めません。不具合報告時にコピー結果を添えると原因を追いやすくなります。</p>
+    </div>
+  </details>
+
+  <details class="panel settings-guide-section" id="guide-public">
+    <summary><span>公開所・セット配布</span><span class="muted">共有、管理キー、一括DL</span></summary>
+    <div class="settings-guide-body">
+      <h4>カード公開</h4>
+      <p>登録済みカードのデータだけを公開できます。画像はアップロードしません。公開カードにはカードIDがあり、IDをコピーして共有できます。</p>
+
+      <h4>検索・絞り込み</h4>
+      <p>公開するカード、公開カード一覧、自分の公開カード管理には検索・絞り込みがあります。初期状態では折りたたまれているため、必要な時だけ開いて使います。</p>
+
+      <h4>保存管理キー</h4>
+      <p>自分の公開カードを編集・非公開・再公開・削除するためのキーです。最初に設定すると端末へ保存され、その後のカード公開へ自動的に使われます。</p>
+
+      <h4>臨時管理キー</h4>
+      <p>他の人から許可を受けてカードを管理する時に使います。保存管理キーとは別枠で、自動保存されません。</p>
+
+      <h4>マスターキー</h4>
+      <p>開発者側が全公開カードへアクセスするための管理用キーです。通常利用者が設定するものではありません。</p>
+
+      <h4>まとめて公開 / まとめてダウンロード</h4>
+      <p>複数カードをまとめて処理できます。同名カードが端末にある場合は、「別カードとして追加」「既存カードへ上書き」「1枚ずつ確認」から処理方法を選べます。</p>
+
+      <h4>セット配布</h4>
+      <p>自分の公開済みカードを複数まとめ、セット名・作者名・説明文を付けて配布できます。利用者はセット全部をダウンロードするだけでなく、セットの中から必要なカードだけを選んで部分ダウンロードできます。</p>
+    </div>
+  </details>
+
+  <details class="panel settings-guide-section" id="guide-account">
+    <summary><span>アカウント・バックアップ</span><span class="muted">端末間移行と復元</span></summary>
+    <div class="settings-guide-body">
+      <h4>アカウント</h4>
+      <p>アカウントを作らなくても基本機能は利用できます。アカウントは主に端末間バックアップのための機能です。</p>
+
+      <h4>らくらくバックアップ</h4>
+      <p>カード、デッキ、カード画像、背景、カスタムフレーム、自作エフェクト、外観設定などをまとめてクラウドへ保存します。</p>
+
+      <h4>らくらく復元</h4>
+      <p>別端末で同じアカウントへログインし、クラウドに保存した内容を端末へ戻します。ログインしただけでは復元されず、「らくらく復元」を押した時だけ処理します。</p>
+
+      <h4>復元前ZIP</h4>
+      <p>復元前に現在の端末データを安全用ZIPとして保存するか選択できます。「ZIPを作成せず復元」を選ぶこともできます。</p>
+
+      <h4>詳細クラウド管理</h4>
+      <p>普段はらくらくバックアップ / 復元だけで利用できます。必要な場合は詳細管理からカード・デッキだけの軽量同期、差分確認、履歴・復旧などを使えます。</p>
+
+      <h4>最終バックアップ日時</h4>
+      <p>この端末で最後に完全バックアップZIPを作成した日時を確認できます。</p>
+    </div>
+  </details>
+
+  <details class="panel settings-guide-section" id="guide-mobile">
+    <summary><span>スマホ・オフライン</span><span class="muted">作業復旧と通信なし利用</span></summary>
+    <div class="settings-guide-body">
+      <h4>スマホ向け作業復旧</h4>
+      <p>カード登録の入力途中、デッキ編集途中を端末へ自動保存します。ブラウザが終了しても復元できます。</p>
+
+      <h4>オフライン利用</h4>
+      <p>Ver27.1以降はService Workerを使用しています。一度オンライン状態で最新版を読み込むと、カード登録、カード管理、デッキ作成、コレクションなどの端末内機能をオフラインでも起動できます。</p>
+      <p>オンライン対戦、公開所、セット配布、クラウドバックアップなど通信必須機能はオフラインでは利用できません。</p>
+
+      <h4>オフライン表示</h4>
+      <p>通信が切れた場合は画面上部にオフラインモードの案内が表示されます。通信復帰後はオンライン機能を再び利用できます。</p>
+
+      <h4>注意</h4>
+      <p>ブラウザのサイトデータを削除すると端末内データや下書きも消える場合があります。プライベートブラウズでは保存が安定しない場合があります。</p>
+    </div>
+  </details>
+
+  <details class="panel settings-guide-section" id="guide-settings">
+    <summary><span>設定・メンテナンス</span><span class="muted">外観、背景、UI、キャッシュ</span></summary>
+    <div class="settings-guide-body">
+      <h4>外観</h4>
+      <p>アクセントカラー、UI背景の濃さ、可読性補助などを変更できます。外観変更はリアルタイムプレビューされ、保存ボタンで確定します。</p>
+
+      <h4>背景</h4>
+      <p>共通背景、画面別背景、対戦盤面背景、P1/P2個別背景を設定できます。背景ライブラリへ画像を登録して選択できます。</p>
+
+      <h4>画面・ナビ</h4>
+      <p>ヘッダーナビの表示・並び順、ホーム画面ショートカット、UI密度、文字サイズ、カード一覧の1ページ表示数を変更できます。</p>
+
+      <h4>操作・カード</h4>
+      <p>スマホの端スワイプ、カードテキストのコピー、フレーバー表示、カードエフェクト、盤面でのエフェクト描画品質などを設定できます。</p>
+
+      <h4>一時キャッシュ再構築</h4>
+      <p>表示崩れや古い一時情報が残った時に使います。登録カード、デッキ、コレクション、カード画像、アカウント情報、クラウドバックアップは削除しません。</p>
+      <p>オンラインの一時スクロール位置、再接続用一時キャッシュ、表示用キャッシュなどが対象です。進行中のオンライン対戦中は実行しないでください。</p>
+    </div>
+  </details>
+</div>
 
 <div id="settings-pane-maintenance" class="settings-pane">
 <div class="panel">
@@ -24775,8 +24968,8 @@ boardDisplayPrefs={
 };
 save(LS_BOARD_DISPLAY,boardDisplayPrefs);
 
-const THEME_SCREEN_KEYS=['home','cards','card-manager','collection','decks','setup','guide','settings'];
-const THEME_SCREEN_LABELS={home:'ホーム',cards:'カード登録','card-manager':'カード管理',collection:'コレクション',decks:'デッキ',setup:'盤面開始',guide:'説明',settings:'設定'};
+const THEME_SCREEN_KEYS=['home','cards','card-manager','collection','decks','setup','settings'];
+const THEME_SCREEN_LABELS={home:'ホーム',cards:'カード登録','card-manager':'カード管理',collection:'コレクション',decks:'デッキ',setup:'盤面開始',settings:'設定'};
 const THEME_NAV_KEYS=['cards','card-manager','collection','decks','setup'];
 const THEME_NAV_MOVABLE_KEYS=[...THEME_NAV_KEYS];
 const THEME_HOME_SHORTCUT_KEYS=['cards','card-manager','collection','decks','setup-one','setup-two'];
@@ -24808,7 +25001,7 @@ const THEME_DEFAULTS={
     },
     screens:{
       home:{inherit:true},cards:{inherit:true},'card-manager':{inherit:true},collection:{inherit:true},
-      decks:{inherit:true},setup:{inherit:true},guide:{inherit:true},settings:{inherit:true}
+      decks:{inherit:true},setup:{inherit:true},settings:{inherit:true}
     },
     board:{inherit:true,p1:{inherit:true},p2:{inherit:true}}
   }
@@ -26160,13 +26353,21 @@ async function applyThemePrefs(prefs){
    image.style.backgroundPosition=`${bg.x}% ${bg.y}%`;
    image.style.filter=`brightness(${bg.brightness}%) blur(${bg.blur}px)`;
    if(bg.imageEnabled&&bg.assetId){
-     const url=await getBackgroundAssetUrl(bg.assetId,'full');
+     let url='';
+     try{
+       url=await getBackgroundAssetUrl(bg.assetId,'full');
+     }catch(err){
+       console.warn('背景画像の取得に失敗しました。背景色のみで継続します。',err);
+       url='';
+     }
      if(token!==themeApplyToken)return;
      image.style.backgroundImage=url?`url("${url}")`:'none';
    }else image.style.backgroundImage='none';
  }
- updateThemePreview(t);
- if(currentScreenName==='board')hydratePlayerBoardBackgrounds(t);
+ try{await updateThemePreview(t)}catch(err){console.warn('設定プレビュー更新失敗',err)}
+ if(currentScreenName==='board'){
+   try{await hydratePlayerBoardBackgrounds(t)}catch(err){console.warn('盤面背景更新失敗',err)}
+ }
 }
 async function updateThemePreview(prefs=currentThemeForDisplay()){
  const preview=$('#theme-background-preview'),img=$('#theme-background-preview-image'),overlay=$('#theme-background-preview-overlay'),empty=$('#theme-background-preview-empty');
@@ -26178,7 +26379,9 @@ async function updateThemePreview(prefs=currentThemeForDisplay()){
  img.style.backgroundPosition=`${bg.x}% ${bg.y}%`;
  img.style.filter=`brightness(${bg.brightness}%) blur(${bg.blur}px)`;
  let url='';
- if(bg.imageEnabled&&bg.assetId)url=await getBackgroundAssetUrl(bg.assetId,'thumb');
+ if(bg.imageEnabled&&bg.assetId){
+   try{url=await getBackgroundAssetUrl(bg.assetId,'thumb')}catch(err){console.warn('背景プレビュー画像の取得失敗',err);url=''}
+ }
  if(!img.isConnected)return;
  img.style.backgroundImage=url?`url("${url}")`:'none';
  empty.style.display=url?'none':'flex';
@@ -26421,12 +26624,24 @@ async function updateThemeSelectedBackgroundLabel(){
  const el=$('#theme-background-selected');if(!el)return;
  const bg=ensureThemeDraft().backgrounds.common;
  if(!bg.assetId){el.textContent='選択中：背景画像なし';return}
- const rec=await getBackgroundAsset(bg.assetId);
+ let rec=null;
+ try{rec=await getBackgroundAsset(bg.assetId)}catch(err){console.warn('背景情報の取得失敗',err)}
  if(!el.isConnected)return;
  el.textContent=rec?`選択中：${rec.name}`:'選択中の背景画像が見つかりません';
 }
 function applyThemeDraftChange(mutator){
- const draft=ensureThemeDraft();mutator(draft);themeDraft=normalizeThemePrefs(draft);markThemeDraftDirty();applyThemePrefs(themeDraft);syncThemeSettingsControls();renderThemeBackgroundOverrideLists();
+ try{
+   const draft=ensureThemeDraft();
+   mutator(draft);
+   themeDraft=normalizeThemePrefs(draft);
+   markThemeDraftDirty();
+   void applyThemePrefs(themeDraft).catch(err=>console.warn('設定反映処理を継続しました',err));
+   syncThemeSettingsControls();
+   renderThemeBackgroundOverrideLists();
+ }catch(err){
+   console.error('設定変更処理',err);
+   toast(`設定の変更に失敗しました：${err?.message||String(err)}`);
+ }
 }
 function syncThemeSettingsControls(){
  const d=ensureThemeDraft(),ui=d.ui,bg=d.backgrounds.common;
@@ -26454,7 +26669,7 @@ function syncThemeSettingsControls(){
  if($('#theme-bg-overlay-value'))$('#theme-bg-overlay-value').textContent=`${bg.overlay}%`;
  if($('#theme-bg-blur'))$('#theme-bg-blur').value=String(bg.blur);
  if($('#theme-bg-blur-value'))$('#theme-bg-blur-value').textContent=`${bg.blur}px`;
- updateThemeSelectedBackgroundLabel();updateThemeSaveState();updateThemePreview(d);
+ void updateThemeSelectedBackgroundLabel().catch(err=>console.warn('背景ラベル更新失敗',err));updateThemeSaveState();void updateThemePreview(d).catch(err=>console.warn('設定プレビュー更新失敗',err));
 }
 function bindThemePreviewDrag(){
  const preview=$('#theme-background-preview');if(!preview)return;
@@ -26477,10 +26692,21 @@ function bindThemePreviewDrag(){
  preview.onpointerup=end;preview.onpointercancel=end;
 }
 function renderThemeSettings(){
- ensureThemeDraft();syncThemeSettingsControls();bindThemePreviewDrag();renderThemeBackgroundOverrideLists();renderScreenNavSettings();syncCardFxSettingsUI();
+ try{
+   ensureThemeDraft();
+   syncThemeSettingsControls();
+   bindThemePreviewDrag();
+   renderThemeBackgroundOverrideLists();
+   renderScreenNavSettings();
+   syncCardFxSettingsUI();
+ }catch(err){
+   console.error('設定画面描画',err);
+   const status=$('#theme-operation-status');
+   if(status)status.textContent=`設定画面の一部表示に失敗しました：${err?.message||String(err)}`;
+ }
 }
 function setSettingsTab(name){
- const tab=['appearance','background','future','controls','maintenance'].includes(name)?name:'appearance';
+ const tab=['appearance','background','future','controls','guide','maintenance'].includes(name)?name:'appearance';
  $$('[data-settings-tab]').forEach(b=>b.classList.toggle('primary',b.dataset.settingsTab===tab));
  $$('.settings-pane').forEach(p=>p.classList.toggle('active',p.id===`settings-pane-${tab}`));
  if(tab==='background'||tab==='future'||tab==='controls')renderThemeSettings();
@@ -38351,7 +38577,7 @@ function onlineDiagnosticSnapshot(){
   const member=(slot)=>slot===1?room?.p1:room?.p2;
   const rev=room?.revision??room?.publicState?.revision??null;
   const info={
-    appVersion:'27.6',
+    appVersion:'27.7',
     generatedAt:new Date().toISOString(),
     userAgent:navigator.userAgent,
     online:{
@@ -40062,7 +40288,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v27.6 public card repository
+// v27.7 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -42045,7 +42271,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='27.6';
+  manifest.appVersion='27.7';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -42086,7 +42312,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'27.6',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'27.7',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
@@ -42487,23 +42713,22 @@ function initWorkRecoveryV271(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initWorkRecoveryV271);
 else initWorkRecoveryV271();
 
-function setGuideTab(name){
-  const valid=['start','cards','decks','board','online','public','account','settings'];
-  const tab=valid.includes(name)?name:'start';
-  document.querySelectorAll('[data-guide-tab]').forEach(btn=>btn.classList.toggle('primary',btn.dataset.guideTab===tab));
-  document.querySelectorAll('#screen-guide .guide-pane').forEach(p=>p.classList.toggle('active',p.id===`guide-pane-${tab}`));
-  try{localStorage.setItem('minkai-guide-tab-v27-6',tab)}catch(_){}
+
+function bindSettingsGuideV277(){
+  document.querySelectorAll('[data-settings-guide-jump]').forEach(btn=>{
+    if(btn.dataset.v277GuideBound==='1')return;
+    btn.dataset.v277GuideBound='1';
+    btn.addEventListener('click',()=>{
+      const id=btn.dataset.settingsGuideJump;
+      const target=document.getElementById(id);
+      if(!target)return;
+      if(target.tagName==='DETAILS')target.open=true;
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
 }
-function bindGuideV276(){
-  document.querySelectorAll('[data-guide-tab]').forEach(btn=>{if(btn.dataset.guideBound==='1')return;btn.dataset.guideBound='1';btn.addEventListener('click',()=>setGuideTab(btn.dataset.guideTab));});
-  let initial='start';try{initial=localStorage.getItem('minkai-guide-tab-v27-6')||'start'}catch(_){}setGuideTab(initial);
-}
-function bindSettingsTabsV276(){
-  document.querySelectorAll('#screen-settings [data-settings-tab]').forEach(btn=>{if(btn.dataset.settingsTabV276Bound==='1')return;btn.dataset.settingsTabV276Bound='1';btn.addEventListener('click',()=>setSettingsTab(btn.dataset.settingsTab));});
-  const active=document.querySelector('#screen-settings [data-settings-tab].primary')?.dataset?.settingsTab||'appearance';
-  setSettingsTab(active);
-}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{bindGuideV276();bindSettingsTabsV276()});else{bindGuideV276();bindSettingsTabsV276()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindSettingsGuideV277);
+else bindSettingsGuideV277();
 </script>
 
 
