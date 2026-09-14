@@ -1,15 +1,22 @@
-# BUILD LAB v0.26 CODE TREE
+# BUILD LAB v0.30 CODE TREE
 
-## v0.26で追加・変更した主要責務
-- `js/data/arcana.js`：大アルカナ0〜21の22枚を定義。正位置/逆位置を別ビルド方針として設計。
-- `js/data/expansion26.js`：条件変化型二面カード8、元素・錬成カード30、キャラクター3、スタイル9、遺物20、プロトコル12、調律10、特殊個体10、複合挙動20を追加。
-- `js/data/unlocks26.js`：v0.26追加要素のアンロック72件、特殊個体/アルカナの条件参照ヘルパーを定義。
-- `js/core/battle.js`：二面カードのカード実体単位変化とv0.26ルール評価を統合。
-- `js/core/enemy.js`：v0.26特殊個体の発見判定と能力補正を統合。
-- `js/core/state.js`：セーブバージョン26、`build_lab_proto_v26`、v0.25旧キー移行。
-- `js/ui/arcanaView.js`：番号順表示、未解放時も正逆効果と解放条件を表示。
-- `js/ui/metaView.js`：特殊個体を未発見でも名前＋発見条件表示。発見後は効果＋発見条件表示。
-- `tests/expansion26_systems.test.js`：総数、アルカナ、発見条件、二面カード一方向変化、所有権、重複説明を固定テスト。
+## v0.27〜v0.30で追加・変更した主要責務
+- `js/data/expansion27.js`：アルカナ/ルーン/元素/連結/特殊個体/複合挙動の横断コンテンツ。
+- `js/data/unlocks27.js`：v0.27追加要素のアンロック。
+- `js/data/expansion28.js`：条件負荷監査と高条件コンテンツの再調整。
+- `js/data/expansion29.js`：敵特性で効果形状が変わる解析カード、追加二面カード。
+- `js/data/unlocks29.js`：解析・二面カード系アンロック。
+- `js/data/expansion30.js`：複合解析カード、3段階成長カード、成長支援要素。
+- `js/data/unlocks30.js`：v0.30追加要素のアンロック。
+- `js/core/battle.js`：解析分岐、条件変化、3段階成長、UID単位履歴を戦闘処理へ統合。
+- `js/core/enemy.js`：追加特殊個体・複合挙動の判定補助。
+- `js/ui/battleView.js`：解析モード・二面変化・成長段階を戦闘提示へ反映。
+- `js/core/state.js`：v0.30セーブキーと旧セーブ自動移行。
 
-## 総数
-カード493 / キャラクター38 / スタイル95 / 遺物385 / プロトコル155 / 調律62 / 特殊個体91 / 複合挙動108 / アルカナ22 / アンロック610。
+## 専用回帰テスト
+- `tests/expansion27_systems.test.js`
+- `tests/expansion28_balance_audit.test.js`
+- `tests/expansion29_adaptive.test.js`
+- `tests/expansion30_growth.test.js`
+
+`tests/run_checks.sh` / `tests/run_checks.bat` から通常回帰として実行されます。

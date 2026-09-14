@@ -16,7 +16,7 @@
     v26_dual_terminal:{condition:'4ターン目到達',front:{name:'観測面',kind:'block',block:9,tags:['長期戦','防御'],desc:'防御9。4ターン目以降「決裁面」へ変化。'},back:{name:'決裁面',kind:'damage',damage:20,tags:['長期戦','単発'],desc:'20ダメージ。'},check:(b)=>b.turn>=4}
   };
   for(const [id,df] of Object.entries(D.DUAL_FACE_CARDS))D.CARDS[id]={id,name:df.front.name,tags:[...df.front.tags,'二面'],desc:df.front.desc,kind:df.front.kind,...df.front,dualFace:true,requiresUnlock:true};
-  D.resolveDualFaceCard=function(instance,battle){const base=D.CARDS[instance.cardId],df=D.DUAL_FACE_CARDS?.[instance.cardId];if(!df||!battle)return base;if(instance.face!=='back'&&df.check(battle)){instance.face='back';instance.transformedAtTurn=battle.turn;}const face=instance.face==='back'?df.back:df.front;return {...base,...face,id:instance.cardId,dualFace:true,face:instance.face||'front'};};
+  D.resolveDualFaceCard=function(instance,battle,state){const base=D.CARDS[instance.cardId],df=D.DUAL_FACE_CARDS?.[instance.cardId];if(!df||!battle)return base;if(instance.face!=='back'&&df.check(battle,instance,state)){instance.face='back';instance.transformedAtTurn=battle.turn;}const face=instance.face==='back'?df.back:df.front;return {...base,...face,id:instance.cardId,dualFace:true,face:instance.face||'front'};};
 
   // 元素・錬成拡充カード30種。
   const eCards=[

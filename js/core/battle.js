@@ -30,7 +30,7 @@
   function linkedCombo(instance){const b=Battle.current,pair=linkPair();if(!b||!pair||!b.lastUsed)return false;const current=instance.cardId,prev=b.lastUsed.cardId;if(!(pair.includes(current)&&pair.includes(prev)&&current!==prev))return false;const dir=prev===pair[0]&&current===pair[1]?'forward':prev===pair[1]&&current===pair[0]?'reverse':null,mode=activeLinkMode();return !mode.direction||mode.direction===dir;}
   function linkDirection(instance){const b=Battle.current,pair=linkPair();if(!b||!pair||!b.lastUsed)return null;const current=instance.cardId,prev=b.lastUsed.cardId;if(prev===pair[0]&&current===pair[1])return'forward';if(prev===pair[1]&&current===pair[0])return'reverse';return null;}
   function inst(cardId){return {uid:`c${++seq}`,cardId,upgraded:false,wasReserved:false};}
-  function card(x){const base=D.CARDS[x.cardId];return D.resolveDualFaceCard?D.resolveDualFaceCard(x,Battle.current,state()):base;}
+  function card(x){let base=D.CARDS[x.cardId];if(D.resolveDualFaceCard)base=D.resolveDualFaceCard(x,Battle.current,state());if(D.resolveMultiStageCard)base=D.resolveMultiStageCard(x,Battle.current,state());if(D.resolveAdaptiveCard)base=D.resolveAdaptiveCard(base,x,Battle.current,state());return base;}
   function pileFindAndRemove(uid){
     const b=Battle.current;if(!b)return null;
     const piles=['draw','discard','excluded','reserved','prompt','resolving'];
@@ -411,6 +411,14 @@
     const pr26=D.V26_PROTOCOL_RULES?.[state().protocol];if(pr26)m*=v19RuleMatch(pr26.when,v19ctx)?(pr26.hit||1):(pr26.miss||1);
     const tr26=D.V26_TUNING_RULES?.[tune];if(tr26)m*=v19RuleMatch(tr26.when,v19ctx)?(tr26.hit||1):(tr26.miss||1);
     const v26style=activeStyle();const v26charClauses=(v26style&&D.V26_STYLE_RULES?.[v26style.id])||D.V26_CHARACTER_RULES?.[state().character];if(v26charClauses)m=v19ApplyClauses(m,v26charClauses,v19ctx);
+    const card27=D.V27_CARD_RULES?.[instance.cardId];if(card27)m=v19ApplyClauses(m,card27,v19ctx);
+    for(const rid of state().relics||[]){const clauses=D.V27_RELIC_RULES?.[rid];if(clauses)m=v19ApplyClauses(m,clauses,v19ctx);}
+    const pr27=D.V27_PROTOCOL_RULES?.[state().protocol];if(pr27)m*=v19RuleMatch(pr27.when,v19ctx)?(pr27.hit||1):(pr27.miss||1);
+    const tr27=D.V27_TUNING_RULES?.[tune];if(tr27)m*=v19RuleMatch(tr27.when,v19ctx)?(tr27.hit||1):(tr27.miss||1);
+    for(const rid of state().relics||[]){const clauses=D.V29_RELIC_RULES?.[rid];if(clauses)m=v19ApplyClauses(m,clauses,v19ctx);}
+    const pr29=D.V29_PROTOCOL_RULES?.[state().protocol];if(pr29)m*=v19RuleMatch(pr29.when,v19ctx)?(pr29.hit||1):(pr29.miss||1);
+    const tr29=D.V29_TUNING_RULES?.[tune];if(tr29)m*=v19RuleMatch(tr29.when,v19ctx)?(tr29.hit||1):(tr29.miss||1);
+    const v27style=activeStyle();const v27charClauses=(v27style&&D.V27_STYLE_RULES?.[v27style.id])||D.V27_CHARACTER_RULES?.[state().character];if(v27charClauses)m=v19ApplyClauses(m,v27charClauses,v19ctx);
     if(rune){const rr=D.RUNES?.[rune];if(rr&&v19RuleMatch(rr.when||{},v19ctx))m*=rr.hit||1;}
     const arc=activeArcana();if(arc){const side=arc[arcanaOrientation()];if(side&&v19RuleMatch(side.when||{},v19ctx))m*=side.mult||1;}
     if(b.player.nextPenalty)m*=Math.max(0,1-b.player.nextPenalty);
@@ -426,7 +434,7 @@
     // prompt所有権を先に解消。選ばれなかったカードは捨て札/除外へ。
     b.prompt=[];b.resolving.push(selected);others.forEach(x=>discardInstance(x,true));
     const repeat=(state().character==='standard'&&!hasAltStyle()&&index===center)?2:1;if(repeat===2)log(`${D.CHARACTERS.standard.name}：中央枠を2回発動。`);
-    for(let r=0;r<repeat;r++){applyCard(selected,mult);if(checkEnd())return;}
+    for(let r=0;r<repeat;r++){applyCard(selected,mult);if(checkEnd())return;}if(D.noteMultiStageUse)D.noteMultiStageUse(selected,b);
     if(state().character==='vector'){if(styleIs('vector_flux')){if(prevPos&&prevPos!==pos){b.player.block+=4;log('ベクトル・流動型：位置変更で防御 +4');}}else{if(pos==='left'){b.player.block+=5;log('ベクトル：左枠選択で防御 +5');}else if(pos==='right'){b.player.nextBuff=Math.max(b.player.nextBuff,.25);log('ベクトル：右枠選択で次カード強化。');}}}
     if(state().character==='archive'&&styleIs('archive_salvage')&&b.discardedEver[selected.uid]){b.player.block+=5;log('アーカイブ・回収型：防御 +5');}
     if(linkActive){const dir=linkDirection(selected);b.linkComboCount++;if(dir==='forward')b.linkForwardCount++;if(dir==='reverse')b.linkReverseCount++;log(`カード連結：${activeLinkMode().name}コンボ成立${dir==='forward'?'（A→B）':dir==='reverse'?'（B→A）':''}。`);if(state().character==='relay'&&!styleIs('relay_direction')){b.player.block+=3;log('リレー：防御 +3');}if(hasRelic('relay_buffer')){b.player.block+=4;log('継電バッファ：防御 +4');}if(hasRelic('twin_guard')&&(c.kind==='block'||c.kind==='hybrid')){b.player.block+=4;log('双極装甲：防御 +4');}if(hasRelic('pair_memory'))b.player.nextBuff=Math.max(b.player.nextBuff,.10);if(hasRelic('chain_reserve')&&selectedWasReserved)b.player.nextBuff=Math.max(b.player.nextBuff,.20);if(activeProtocol('link_guardian')){b.player.block+=3;log('連結防護規格：防御 +3');}}
@@ -450,7 +458,7 @@
   function reserveExisting(instance,center=false){const moved=moveTo(instance.uid,center?'centerReserved':'reserved');if(moved){moved.wasReserved=true;log(`《${card(moved).name}》を${center?'中央に':'次ターンへ'}予約。`);}}
 
   function discardInstance(instance,fromPrompt){
-    const b=Battle.current,c=card(instance);b.lastDiscard=instance;b.discardedEver[instance.uid]=true;b.discardedThisTurn++;
+    const b=Battle.current,c=card(instance);b.lastDiscard=instance;b.discardedEver[instance.uid]=true;b.discardedThisTurn++;if(D.noteMultiStageDiscard)D.noteMultiStageDiscard(instance,b);
     // 選別のレンズは次の再構築まで専用除外パイルへ。
     (hasRelic('selection_lens')?b.excluded:b.discard).push(instance);
     if(fromPrompt&&c.onDiscard){

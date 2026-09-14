@@ -40,6 +40,11 @@
         let ok=false;try{ok=!!cfg.check(state.enemy);}catch(_){ok=false;}
         if(ok&&!state.unlockedTraits[id]){state.unlockedTraits[id]=true;state.enemy.traits[id]=true;found.push(D.TRAITS[id].name);}
       }
+      for(const [id,cfg] of Object.entries(D.V27_TRAIT_CONDITIONS||{})){
+        if(cfg.advanced&&!BL.Unlock.hasSystem(state,'advanced_enemy_parameters'))continue;
+        let ok=false;try{ok=!!cfg.check(state.enemy);}catch(_){ok=false;}
+        if(ok&&!state.unlockedTraits[id]){state.unlockedTraits[id]=true;state.enemy.traits[id]=true;found.push(D.TRAITS[id].name);}
+      }
       return found;
     },
     detectBehaviorDiscoveries(state){
@@ -106,6 +111,7 @@
       for(const id of active){const r=D.V23_TRAIT_RULES?.[id];if(!r)continue;if(r.hpMult)hp*=r.hpMult;if(r.atkMult)atk*=r.atkMult;if(r.defAdd)def+=r.defAdd;if(r.spdAdd)spd+=r.spdAdd;if(r.regenAdd)regen+=r.regenAdd;if(r.resistAdd)resist+=r.resistAdd;}
       for(const id of active){const r=D.V24_TRAIT_RULES?.[id];if(!r)continue;if(r.hpMult)hp*=r.hpMult;if(r.atkMult)atk*=r.atkMult;if(r.defAdd)def+=r.defAdd;if(r.spdAdd)spd+=r.spdAdd;if(r.regenAdd)regen+=r.regenAdd;if(r.resistAdd)resist+=r.resistAdd;}
       for(const id of active){const r=D.V26_TRAIT_RULES?.[id];if(!r)continue;if(r.hpMult)hp*=r.hpMult;if(r.atkMult)atk*=r.atkMult;if(r.defAdd)def+=r.defAdd;if(r.spdAdd)spd+=r.spdAdd;if(r.regenAdd)regen+=r.regenAdd;if(r.resistAdd)resist+=r.resistAdd;}
+      for(const id of active){const r=D.V27_TRAIT_RULES?.[id];if(!r)continue;if(r.hpMult)hp*=r.hpMult;if(r.atkMult)atk*=r.atkMult;if(r.defAdd)def+=r.defAdd;if(r.spdAdd)spd+=r.spdAdd;if(r.regenAdd)regen+=r.regenAdd;if(r.resistAdd)resist+=r.resistAdd;}
       def=Math.max(0,def);spd=Math.max(.1,spd);resist=Math.min(100,Math.max(0,resist));
       const behaviors=D.getActiveEnemyBehaviors?D.getActiveEnemyBehaviors(state):[];
       return {name:active.length?active.map(id=>D.TRAITS[id].short).join('＋')+'個体':'標準試験体',hp:Math.round(hp),maxHp:Math.round(hp),atk:Math.round(atk),def:Math.round(def),spd,regen:Math.round(regen),resist:Math.round(resist),traits:active,behaviors,boss:false,bossId:null};

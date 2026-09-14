@@ -58,5 +58,5 @@ let migrated=BL.Store.mergeDefaults({version:8,boss3Defeated:true,unlockedSystem
 console.log('PASS doctrine tuning gating');
 
 // v0.8セーブからv0.9へ移行し、第3ボス既撃破なら報酬を復元
-migrated=BL.Store.mergeDefaults({version:8,boss3Defeated:true,deck:[...D.DEFAULT_DECK],unlockedCards:{},unlockedRelics:{},unlockedSystems:{}});assert(migrated.version===26,'save version did not migrate to 20');assert(migrated.unlockedSystems.deck_doctrine,'第3ボス既撃破セーブで構築規格システムが復元されません');assert(migrated.unlockedDoctrines.compact&&migrated.unlockedDoctrines.expanded&&migrated.unlockedDoctrines.singleton,'第3ボス初期規格が復元されません');
+migrated=BL.Store.mergeDefaults({version:8,boss3Defeated:true,deck:[...D.DEFAULT_DECK],unlockedCards:{},unlockedRelics:{},unlockedSystems:{}});assert(migrated.version===30,'save version did not migrate to 20');assert(migrated.unlockedSystems.deck_doctrine,'第3ボス既撃破セーブで構築規格システムが復元されません');assert(migrated.unlockedDoctrines.compact&&migrated.unlockedDoctrines.expanded&&migrated.unlockedDoctrines.singleton,'第3ボス初期規格が復元されません');
 console.log('PASS v0.9 migration');

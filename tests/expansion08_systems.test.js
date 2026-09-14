@@ -54,5 +54,5 @@ assert(poisonAfter('catalyst')>poisonAfter('standard'),'status basic-effect mult
 console.log('PASS status multiplier consistency');
 
 // v0.7セーブはv0.8へ安全に移行。
-const migrated=BL.Store.mergeDefaults({version:7,deck:[...D.DEFAULT_DECK],unlockedCards:{},unlockedRelics:{},bossDefeated:true,boss2Defeated:true});assert(migrated.version===26,'save version did not migrate to current version');assert(migrated.unlockedSystems.prompt_control&&migrated.unlockedSystems.card_link,'boss systems lost during v0.8 migration');
+const migrated=BL.Store.mergeDefaults({version:7,deck:[...D.DEFAULT_DECK],unlockedCards:{},unlockedRelics:{},bossDefeated:true,boss2Defeated:true});assert(migrated.version===30,'save version did not migrate to current version');assert(migrated.unlockedSystems.prompt_control&&migrated.unlockedSystems.card_link,'boss systems lost during v0.8 migration');
 console.log('PASS v0.8 migration');
