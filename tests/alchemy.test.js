@@ -5,7 +5,7 @@ global.localStorage={getItem:k=>mem[k]||null,setItem:(k,v)=>mem[k]=v,removeItem:
 const root=path.resolve(__dirname,'..');
 for(const m of fs.readFileSync(path.join(root,'index.html'),'utf8').matchAll(/<script src="([^"?]+)/g))if(!m[1].includes('/ui/')&&!m[1].endsWith('app.js'))require(path.join(root,m[1]));
 const BL=global.BuildLab,A=BL.Data.ALCHEMY,L=BL.Alchemy;
-assert.equal(BL.Store.state.version,30);assert.equal(BL.Store.state.stats.wins,9);assert.equal(BL.Store.state.alchemy.enabled,false);assert(BL.Store.state.unlockedSystems.rune);
+assert.equal(BL.Store.state.version,32);assert.equal(BL.Store.state.stats.wins,9);assert.equal(BL.Store.state.alchemy.enabled,false);assert(BL.Store.state.unlockedSystems.rune);
 const fake=config=>({turn:1,log:[],player:{hp:30,maxHp:50,block:0},enemy:{hp:1000},alchemy:L.create({...config,enabled:true})});
 const api=b=>({damage:n=>b.enemy.hp-=n,heal:n=>b.player.hp=Math.min(b.player.maxHp,b.player.hp+n)});
 let b=fake(A.presets[1]);L.supply(b);assert.equal(b.alchemy.stock.obsidian,2);assert.equal(b.alchemy.stock.water,2);

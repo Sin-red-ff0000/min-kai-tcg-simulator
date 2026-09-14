@@ -14,6 +14,6 @@ assert(/js\/data\/unlocks24\.js\?v=0\.30\.0/.test(html),'v0.24 unlock data missi
 assert(html.includes('Cache-Control'),'cache-control meta missing');
 assert(app.includes("safeRender('guides'"),'guide isolated render missing');
 assert(app.indexOf("safeRender('guides'")<app.indexOf("['characters'"),'guides should render before state-heavy views');
-assert(state.includes("const KEY='build_lab_proto_v30'"),'v30 save key missing');
+assert(state.includes("const KEY='build_lab_proto_v32'"),'v30 save key missing');
 assert(state.includes("'build_lab_proto_v18'"),'v18 migration key missing');
 console.log('PASS web_deploy.test.js');

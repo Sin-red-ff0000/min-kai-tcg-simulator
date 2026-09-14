@@ -68,5 +68,5 @@ for(const pid of D.V19_PROTOCOL_IDS){const st=BL.Store.defaultState();st.unlocke
 for(const tid of D.V19_TUNING_IDS){const st=BL.Store.defaultState();st.unlockedTunings[tid]=true;st.cardTunings.double_strike=tid;st.enemy.hp=20;st.enemy.atk=1;BL.Store.state=st;let r=BL.Battle.create(false);assert(!r.error,`v19 tuning battle ${tid}`);BL.Battle.play(0);if(BL.Battle.current)BL.Battle.retire();}
 
 // v0.18以前のセーブはv0.19へ移行。
-const migrated=BL.Store.mergeDefaults({version:18,deck:[...D.DEFAULT_DECK],unlockedCards:{},unlockedRelics:{}});assert(migrated.version===30,'v18->v20 migration failed');
+const migrated=BL.Store.mergeDefaults({version:18,deck:[...D.DEFAULT_DECK],unlockedCards:{},unlockedRelics:{}});assert(migrated.version===32,'v18->v20 migration failed');
 console.log(`PASS expansion19_systems.test.js (+${D.V19_CHARACTER_IDS.length} chars / +${D.V19_STYLE_IDS.length} styles / +${D.V19_RELIC_IDS.length} relics / +${D.V19_PROTOCOL_IDS.length} protocols / +${D.V19_TUNING_IDS.length} tunings / +${D.V19_TRAIT_IDS.length} traits / +${D.V19_BEHAVIOR_IDS.length} behaviors)`);

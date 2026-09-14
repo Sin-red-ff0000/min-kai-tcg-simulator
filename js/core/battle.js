@@ -113,6 +113,9 @@
     if(when.advancedMaterialMade&&!advIds.some(id=>Number(b?.alchemy?.made?.[id]||0)>0))return false;
     if(when.advancedMaterialDiversityMin!=null&&advIds.filter(id=>Number(b?.alchemy?.made?.[id]||0)>0).length<when.advancedMaterialDiversityMin)return false;
     if(when.reactionTotalMin!=null&&Object.values(b?.alchemy?.reactions||{}).reduce((a,n)=>a+Number(n||0),0)<when.reactionTotalMin)return false;
+    if(when.stageExact!=null&&Number(ctx.instance?.stage||0)!==Number(when.stageExact))return false;
+    if(when.stageMin!=null&&Number(ctx.instance?.stage||0)<Number(when.stageMin))return false;
+    if(when.secondTag&&!(ctx.c?.tags||[]).includes(when.secondTag))return false;
     return true;
   }
   function currentArcanaMatches(ctx){const a=activeArcana();if(!a)return false;const side=a[arcanaOrientation()];return !!side&&v19RuleMatch(side.when||{},ctx);}
@@ -449,7 +452,7 @@
     if(c.effect==='reorderNext')b.reorderNext=true;if(c.effect==='redrawNext')b.redrawNext=true;
     if(hasRelic('holding_tank')&&others[0])reserveExisting(others[0],false);
     // 選択カードを必ず「移動」させる。複製しない。
-    pileFindAndRemove(selected.uid);selected.wasReserved=false;if(tune==='overload'||c.v22Route==='exclude'||((c.selfDamage||conv==='blood_role')&&hasRelic('blood_key')))b.excluded.push(selected);else if(c.v22Route==='bottom'||tune==='recycle'||conv==='cycle_role'||(hasRelic('cycle_reserve')&&selectedWasReserved))b.draw.push(selected);else b.discard.push(selected);
+    pileFindAndRemove(selected.uid);selected.wasReserved=false;if(tune==='overload'||c.v22Route==='exclude'||((c.selfDamage||conv==='blood_role')&&hasRelic('blood_key')))b.excluded.push(selected);else if(c.returnBottom||c.v22Route==='bottom'||tune==='recycle'||conv==='cycle_role'||(hasRelic('cycle_reserve')&&selectedWasReserved))b.draw.push(selected);else b.discard.push(selected);
     BL.Alchemy?.afterCard(b,alchemyCard,alchemyAPI);if(checkEnd())return;
     b.recentReshuffle=false;
     enemyTurn();

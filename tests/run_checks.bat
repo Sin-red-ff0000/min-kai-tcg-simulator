@@ -12,6 +12,9 @@ node tests\expansion26_systems.test.js || exit /b 1
 node tests\expansion27_systems.test.js || exit /b 1
 node tests\expansion28_balance_audit.test.js || exit /b 1
 node tests\expansion29_adaptive.test.js || exit /b 1
+node tests\expansion30_growth.test.js || exit /b 1
+node tests\expansion31_choice_growth.test.js || exit /b 1
+node tests\expansion32_branch_growth.test.js || exit /b 1
 node tests\boss_balance.test.js || exit /b 1
 node tests\boss_reward_integration.test.js || exit /b 1
 node tests\chapter2_systems.test.js || exit /b 1

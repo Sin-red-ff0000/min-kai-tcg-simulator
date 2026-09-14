@@ -1,22 +1,148 @@
-# BUILD LAB v0.30 CODE TREE
+# CODE TREE — BUILD LAB v0.32
 
-## v0.27〜v0.30で追加・変更した主要責務
-- `js/data/expansion27.js`：アルカナ/ルーン/元素/連結/特殊個体/複合挙動の横断コンテンツ。
-- `js/data/unlocks27.js`：v0.27追加要素のアンロック。
-- `js/data/expansion28.js`：条件負荷監査と高条件コンテンツの再調整。
-- `js/data/expansion29.js`：敵特性で効果形状が変わる解析カード、追加二面カード。
-- `js/data/unlocks29.js`：解析・二面カード系アンロック。
-- `js/data/expansion30.js`：複合解析カード、3段階成長カード、成長支援要素。
-- `js/data/unlocks30.js`：v0.30追加要素のアンロック。
-- `js/core/battle.js`：解析分岐、条件変化、3段階成長、UID単位履歴を戦闘処理へ統合。
-- `js/core/enemy.js`：追加特殊個体・複合挙動の判定補助。
-- `js/ui/battleView.js`：解析モード・二面変化・成長段階を戦闘提示へ反映。
-- `js/core/state.js`：v0.30セーブキーと旧セーブ自動移行。
-
-## 専用回帰テスト
-- `tests/expansion27_systems.test.js`
-- `tests/expansion28_balance_audit.test.js`
-- `tests/expansion29_adaptive.test.js`
-- `tests/expansion30_growth.test.js`
-
-`tests/run_checks.sh` / `tests/run_checks.bat` から通常回帰として実行されます。
+```
+CHANGELOG.md
+CODE_TREE.md
+NEXT_SYSTEM_IDEAS.md
+README.md
+UPDATE_v0.21.md
+UPDATE_v0.22.md
+UPDATE_v0.23.md
+UPDATE_v0.24.md
+UPDATE_v0.25.md
+UPDATE_v0.26.md
+UPDATE_v0.30.md
+UPDATE_v0.32.md
+index.html
+js/app.js
+js/core/alchemy.js
+js/core/battle.js
+js/core/enemy.js
+js/core/state.js
+js/core/unlock.js
+js/core/utils.js
+js/data/alchemy.js
+js/data/alchemy24.js
+js/data/arcana.js
+js/data/balance22.js
+js/data/chapter3.js
+js/data/characterStyles.js
+js/data/conversions.js
+js/data/doctrines.js
+js/data/enemyBehaviors.js
+js/data/expansion08.js
+js/data/expansion09.js
+js/data/expansion10.js
+js/data/expansion11.js
+js/data/expansion12.js
+js/data/expansion13.js
+js/data/expansion14.js
+js/data/expansion17.js
+js/data/expansion18.js
+js/data/expansion19.js
+js/data/expansion20.js
+js/data/expansion23.js
+js/data/expansion24.js
+js/data/expansion26.js
+js/data/expansion27.js
+js/data/expansion28.js
+js/data/expansion29.js
+js/data/expansion30.js
+js/data/expansion31.js
+js/data/expansion32.js
+js/data/gameData.js
+js/data/guides.js
+js/data/guides20.js
+js/data/protocols.js
+js/data/runes.js
+js/data/tunings.js
+js/data/unlocks.js
+js/data/unlocks07.js
+js/data/unlocks08.js
+js/data/unlocks09.js
+js/data/unlocks10.js
+js/data/unlocks11.js
+js/data/unlocks12.js
+js/data/unlocks13.js
+js/data/unlocks14.js
+js/data/unlocks17.js
+js/data/unlocks18.js
+js/data/unlocks19.js
+js/data/unlocks20.js
+js/data/unlocks23.js
+js/data/unlocks24.js
+js/data/unlocks26.js
+js/data/unlocks27.js
+js/data/unlocks29.js
+js/data/unlocks30.js
+js/data/unlocks31.js
+js/data/unlocks32.js
+js/ui/alchemyView.js
+js/ui/arcanaView.js
+js/ui/battleView.js
+js/ui/conversionView.js
+js/ui/deckView.js
+js/ui/doctrineView.js
+js/ui/experimentView.js
+js/ui/guideView.js
+js/ui/linkView.js
+js/ui/metaView.js
+js/ui/mobile.js
+js/ui/runeView.js
+js/ui/styleView.js
+js/ui/tabs.js
+js/ui/tuningView.js
+styles/base.css
+styles/components.css
+styles/layout.css
+styles/mobile.css
+tests/VALIDATION_v0.21.txt
+tests/VALIDATION_v0.22.txt
+tests/VALIDATION_v0.23.txt
+tests/VALIDATION_v0.24.txt
+tests/VALIDATION_v0.25.txt
+tests/VALIDATION_v0.26.txt
+tests/VALIDATION_v0.30.txt
+tests/alchemy.test.js
+tests/balance22_audit.test.js
+tests/boss2_balance.test.js
+tests/boss3_balance.test.js
+tests/boss4_balance.test.js
+tests/boss4_reward_integration.test.js
+tests/boss_balance.test.js
+tests/boss_reward_integration.test.js
+tests/chapter2_systems.test.js
+tests/chapter3_systems.test.js
+tests/content_balance.test.js
+tests/effect_coverage.test.js
+tests/expansion08_systems.test.js
+tests/expansion09_systems.test.js
+tests/expansion10_systems.test.js
+tests/expansion11_systems.test.js
+tests/expansion12_systems.test.js
+tests/expansion13_systems.test.js
+tests/expansion14_systems.test.js
+tests/expansion17_systems.test.js
+tests/expansion18_systems.test.js
+tests/expansion19_systems.test.js
+tests/expansion20_systems.test.js
+tests/expansion23_systems.test.js
+tests/expansion24_systems.test.js
+tests/expansion26_systems.test.js
+tests/expansion27_systems.test.js
+tests/expansion28_balance_audit.test.js
+tests/expansion29_adaptive.test.js
+tests/expansion30_growth.test.js
+tests/expansion31_choice_growth.test.js
+tests/expansion32_branch_growth.test.js
+tests/guide_detail.test.js
+tests/mobile_ui.test.js
+tests/modal_overflow.test.js
+tests/reset_controls.test.js
+tests/run_checks.bat
+tests/run_checks.sh
+tests/smoke.test.js
+tests/static_ui.test.js
+tests/system_guide.test.js
+tests/web_deploy.test.js
+```
