@@ -1,16 +1,23 @@
-# Ver 24.6 card public repository
+# BUILD LAB v0.26
 
-Ver 24.6 adds a login-free public card repository for sharing registered card data without images.
+BUILD LABは、レベル上げや素材の縦成長ではなく、無料で組み替えられる横方向のビルド研究を中心にした実験型ゲームです。
 
-Main additions:
-- publish one local registered card
-- browse/search/sort public cards
-- download as an independent local copy
-- per-card management key for owner-only update/delete
-- restore management permission on another device using card ID + management key
+## v0.26の主な追加
+- 大アルカナ22枚（0 愚者〜21 世界）
+- 条件達成で自動変化する二面カード8種
+- 元素・錬成カード30種を含む大規模横拡張
+- 特殊個体図鑑の発見条件常時表示
+- 元素/錬成と既存の調律・ルーン・連結・アルカナをつなぐ新規ビルド
 
-Supabase setup:
-- `SUPABASE_PUBLIC_CARDS_v24_6.sql`
-- `supabase/functions/minkai-public-cards/index.ts`
+## 現在の総数
+カード493 / キャラクター38 / スタイル95 / 遺物385 / プロトコル155 / 調律62 / 特殊個体91 / 複合挙動108 / アルカナ22 / アンロック610。
 
-v24.5 account/cloud-key and online scroll preservation fixes are included.
+## テスト
+macOS/Linux: `bash tests/run_checks.sh`
+
+Windows: `tests\\run_checks.bat`
+
+正常時は最後に `All checks passed.` と表示されます。
+
+## 更新
+v0.25からの更新方法は `UPDATE_v0.26.md` を参照してください。
