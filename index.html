@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v27.1</title>
+<title>みん会TCG Simulator v27.7</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21903,7 +21903,7 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
 }
 
 /* v27.0 settings categories / help / maintenance */
-.settings-category-nav{position:sticky;top:6px;z-index:20;margin-bottom:10px}
+
 .settings-category-tabs{display:flex;gap:6px;flex-wrap:wrap}
 .settings-v27-section[hidden]{display:none!important}
 .settings-help-item{border:1px solid var(--line);border-radius:10px;margin-top:8px;padding:0 10px;background:rgba(255,255,255,.02)}
@@ -21912,7 +21912,6 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
 .settings-maintenance-card{border:1px solid var(--line);border-radius:10px;padding:12px;background:rgba(255,255,255,.02)}
 .settings-warning-box{margin:10px 0;padding:10px;border:1px solid rgba(255,180,80,.45);border-radius:9px;background:rgba(255,180,80,.08);line-height:1.6}
 @media(max-width:760px){
-  .settings-category-nav{position:static}
   .settings-category-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
   .settings-category-tabs .btn{width:100%}
 }
@@ -21941,6 +21940,50 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
   #card-effect,#card-flavor{min-height:120px}
   #deck-card-search,#deck-race-search{font-size:16px}
 }
+
+.online-selftest-deck-setup{margin:12px 0;padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025)}
+.online-selftest-player-setup{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.online-selftest-player-card{display:grid;gap:8px;padding:10px;border:1px solid var(--line);border-radius:10px;background:rgba(0,0,0,.12)}
+.online-selftest-player-card>b{font-size:1.05em}
+.online-selftest-player-card label{display:grid;gap:4px}
+body.online-selftest-local-running #online-duel-main .online-player-section:not(.online-duel-opponent){outline:2px solid rgba(116,170,255,.38);outline-offset:2px}
+@media(max-width:760px){.online-selftest-player-setup{grid-template-columns:1fr}}
+
+/* v27.6 guide screen + simplified settings */
+.guide-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.guide-pane{display:none}
+.guide-pane.active{display:block}
+.guide-card{line-height:1.72}
+.guide-card h3{margin-top:0}
+.guide-card p:last-child,.guide-card ol:last-child{margin-bottom:0}
+.guide-card ol{padding-left:1.35em}
+@media(max-width:700px){.guide-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.guide-tabs .btn{width:100%}}
+
+/* v27.7 settings-integrated function guide */
+.settings-guide-index{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.settings-guide-section{padding:0 12px}
+.settings-guide-section>summary{
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:13px 0;
+  font-weight:800
+}
+.settings-guide-body{
+  border-top:1px solid var(--line);
+  padding:12px 0 16px;
+  line-height:1.72
+}
+.settings-guide-body h4{margin:14px 0 5px}
+.settings-guide-body h4:first-child{margin-top:0}
+.settings-guide-body p{margin:5px 0 10px}
+@media(max-width:700px){
+  .settings-guide-index{display:grid;grid-template-columns:1fr 1fr}
+  .settings-guide-index .btn{width:100%}
+  .settings-guide-section>summary{align-items:flex-start;flex-direction:column;gap:3px}
+}
 </style>
 
 
@@ -21960,7 +22003,7 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v27.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v27.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23222,19 +23265,9 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
     <div id="account-message" class="account-message muted" role="status" aria-live="polite"></div>
   </section>
 
-  <section id="screen-settings" class="screen">
-<div class="settings-category-nav panel">
-  <div class="settings-category-tabs" role="tablist" aria-label="設定カテゴリ">
-    <button class="btn small primary" type="button" data-settings-category="display">表示</button>
-    <button class="btn small" type="button" data-settings-category="board">盤面</button>
-    <button class="btn small" type="button" data-settings-category="online">オンライン</button>
-    <button class="btn small" type="button" data-settings-category="public">公開所</button>
-    <button class="btn small" type="button" data-settings-category="account">アカウント・バックアップ</button>
-    <button class="btn small" type="button" data-settings-category="help">ヘルプ</button>
-    <button class="btn small" type="button" data-settings-category="maintenance">診断・メンテナンス</button>
-  </div>
-</div>
+  
 
+<section id="screen-settings" class="screen">
     <div class="section-head">
       <h2>設定</h2>
       <div class="settings-save-head">
@@ -23248,6 +23281,8 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
       <button class="btn small" type="button" data-settings-tab="background">背景</button>
       <button class="btn small" type="button" data-settings-tab="future">画面・ナビ</button>
       <button class="btn small" type="button" data-settings-tab="controls">操作・カード</button>
+      <button class="btn small" type="button" data-settings-tab="guide">機能ガイド</button>
+      <button class="btn small" type="button" data-settings-tab="maintenance">メンテナンス</button>
     </div>
 
     <div id="settings-pane-appearance" class="settings-pane active">
@@ -23525,89 +23560,233 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
         </div>
       </div>
     </div>
-  </section>
+  
 
-  
-  
-<div class="panel settings-v27-section" data-settings-section="help">
-  <div class="section-head">
-    <h3 style="margin:0">機能ガイド</h3>
-    <span class="pill">項目別</span>
+
+<div id="settings-pane-guide" class="settings-pane">
+  <div class="panel">
+    <div class="section-head">
+      <div>
+        <h3 style="margin:0">機能ガイド</h3>
+        <p class="muted" style="margin:5px 0 0">存在している機能を探しやすいよう、用途別にまとめています。項目を開くと詳しい使い方を確認できます。</p>
+      </div>
+      <span class="pill">Ver27.7</span>
+    </div>
+
+    <div class="settings-guide-index">
+      <button class="btn small" type="button" data-settings-guide-jump="guide-start">まず知っておきたいこと</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-cards">カード登録・管理</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-decks">デッキ作成</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-board">盤面</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-online">オンライン</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-public">公開所</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-account">アカウント・保存</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-mobile">スマホ・オフライン</button>
+      <button class="btn small" type="button" data-settings-guide-jump="guide-settings">設定・メンテナンス</button>
+    </div>
   </div>
-  <p class="muted">必要な項目だけ開いて確認できます。</p>
 
-  <details class="settings-help-item">
-    <summary>カード登録</summary>
-    <div class="settings-help-body">
-      1枚ずつ登録、テキスト一括登録、JSON登録を利用できます。1枚ずつ登録ではプレビューは閉じた状態から始まり、必要な時だけ開けます。カード画像は端末内に保存され、公開所へカードを公開しても画像は送信されません。
+  <details class="panel settings-guide-section" id="guide-start" open>
+    <summary><span>まず知っておきたいこと</span><span class="muted">基本方針と保存場所</span></summary>
+    <div class="settings-guide-body">
+      <h4>Simulatorは「自動裁定」ではなく自由操作型</h4>
+      <p>カード効果を自動処理するゲームエンジンではなく、実際のカードを机の上で動かす感覚に近い補助盤面です。カード移動、表裏、レスト、カウンター、マーカーなどをプレイヤーが操作します。</p>
+      <p>ターンやフェイズをシステム側で固定していないため、今後カード効果がルール進行へ干渉しても盤面側の制約に引っ張られにくい設計です。</p>
+
+      <h4>端末保存とクラウド保存は別</h4>
+      <p>カード、デッキ、画像、各種設定は基本的に現在の端末へ保存されます。アカウントへログインしただけで自動的にクラウドへ上書きされることはありません。</p>
+      <p>端末をまたいで移動したい場合は、アカウント画面の「らくらくバックアップ」と「らくらく復元」を使います。</p>
+
+      <h4>オンライン対戦とアカウントは別機能</h4>
+      <p>オンライン対戦のルーム参加情報と、バックアップ用アカウントは別です。オンライン対戦だけならアカウントを作成しなくても利用できます。</p>
     </div>
   </details>
 
-  <details class="settings-help-item">
-    <summary>カード管理</summary>
-    <div class="settings-help-body">
-      登録済みカードの検索、絞り込み、一括編集、画像登録などを行えます。カードそのものを削除すると、そのカードを参照しているデッキなどにも影響する場合があるため、削除前に対象を確認してください。
+  <details class="panel settings-guide-section" id="guide-cards">
+    <summary><span>カード登録・カード管理</span><span class="muted">登録、画像、検索、一括操作</span></summary>
+    <div class="settings-guide-body">
+      <h4>1枚ずつ登録</h4>
+      <p>カード名、種類、Lv、POWER、種族、効果、フレーバーなどを入力して登録します。プレビューは最初は閉じた状態で、必要な時だけ開いて確認できます。</p>
+
+      <h4>入力途中の自動保存</h4>
+      <p>1枚ずつ登録で入力している内容は端末内へ自動保存されます。ブラウザを閉じたり、スマホで別アプリへ移動したあとにページが落ちても、次回「入力内容を復元」から戻せます。</p>
+      <p>画像ファイルそのものはブラウザの制約で復元できないため、画像を選んでいた下書きを戻した場合は画像だけ再選択してください。</p>
+
+      <h4>一括登録</h4>
+      <p>テキスト一括登録やJSON登録を使うと複数カードをまとめて追加できます。大量のカードを作る場合はこちらが便利です。</p>
+
+      <h4>カード管理</h4>
+      <p>検索・絞り込み、編集、削除、画像登録、一括編集などを行います。カード数が増えた場合でも条件を組み合わせて対象を絞れます。</p>
+      <p>カードを削除すると、そのカードを参照しているデッキにも影響する場合があります。削除前に採用デッキを確認してください。</p>
+
+      <h4>カード画像</h4>
+      <p>カード画像は端末内データとして扱います。公開所へカードを公開しても画像はアップロードされません。</p>
+
+      <h4>コレクション</h4>
+      <p>登録カードを閲覧する画面です。お気に入りやアルバムで分類できます。カードごとの外観やエフェクトもここで確認できます。</p>
     </div>
   </details>
 
-  <details class="settings-help-item">
-    <summary>デッキ作成</summary>
-    <div class="settings-help-body">
-      登録カードからデッキを作成します。カード一覧と採用カード一覧のどちらからでも詳細を確認できます。デッキ作成中の検索やページ位置は、画面内で詳細を確認して戻った場合も維持されます。
+  <details class="panel settings-guide-section" id="guide-decks">
+    <summary><span>デッキ作成</span><span class="muted">構築、詳細、作業復旧</span></summary>
+    <div class="settings-guide-body">
+      <h4>カード詳細</h4>
+      <p>デッキ作成中のカード一覧には詳細確認があります。カード効果を確認してから採用できるため、カード管理画面へ戻る必要はありません。</p>
+
+      <h4>編集途中の自動保存</h4>
+      <p>正式保存前のデッキも端末内へ自動保存されます。ブラウザ終了後でも「編集途中へ戻る」から復元できます。正式にデッキ保存した時点で下書きは整理されます。</p>
+
+      <h4>検索条件・作業位置の維持</h4>
+      <p>検索文字、カード種類、種族、Lv・POWER範囲、並び順、詳細フィルター、ページ番号、スクロール位置を保持します。カード詳細を確認して戻った時も、なるべく元の位置から続けられます。</p>
+
+      <h4>メインデッキ / その他デッキ</h4>
+      <p>メインデッキとは別にその他デッキを作れます。その他デッキの用途は固定していないため、ルールプラス、EX相当、トークン管理など各自のルールに合わせて使えます。</p>
+
+      <h4>最推し</h4>
+      <p>対戦開始時に指定するカードです。デッキごとのデフォルト最推しも設定できます。</p>
     </div>
   </details>
 
-  <details class="settings-help-item">
-    <summary>盤面</summary>
-    <div class="settings-help-body">
-      カード移動、表裏、レスト、カウンター、マーカー、ダイス、コイントス、各ゾーンの一覧確認などを手動で操作します。ターンやフェイズはシステム側では管理しません。カード効果に応じて自由に盤面を操作できます。
+  <details class="panel settings-guide-section" id="guide-board">
+    <summary><span>盤面</span><span class="muted">カード操作、一覧、ランダム処理</span></summary>
+    <div class="settings-guide-body">
+      <h4>カードの基本操作</h4>
+      <p>カードを選択して移動、詳細確認、表向き・裏向き、レスト、カウンター、マーカーなどを操作できます。「その他の操作」は初期状態から展開されています。</p>
+
+      <h4>墓地・消失の一覧</h4>
+      <p>墓地や消失など枚数が増える領域は「一覧」からまとめて確認できます。オンラインでは相手と観戦者も公開領域の一覧を閲覧できますが、相手側のカード操作はできません。</p>
+
+      <h4>Undo / Redo</h4>
+      <p>ローカル盤面では操作を戻す・やり直す機能があります。誤操作時の復旧に使えます。</p>
+
+      <h4>盤面保存</h4>
+      <p>現在の盤面を保存し、あとから再開できます。長時間の検証や途中中断に便利です。</p>
+
+      <h4>コイントス・ダイス・カード選択</h4>
+      <p>盤面ツールからコイントス、ダイス、手札からの選択、指定カード群からの選択などを利用できます。オンラインでは必要な結果を公開情報欄へ共有できます。</p>
     </div>
   </details>
 
-  <details class="settings-help-item">
-    <summary>オンライン対戦</summary>
-    <div class="settings-help-body">
-      ルームを作成してP1・P2・観戦者で盤面を共有します。手札やデッキ内容などの非公開情報は所有者だけが確認できます。墓地・消失などの公開領域は相手・観戦者も一覧表示できます。1人用オンライン動作確認からP1 / P2 / 観戦視点を切り替えて確認することもできます。
+  <details class="panel settings-guide-section" id="guide-online">
+    <summary><span>オンライン対戦・観戦</span><span class="muted">同期、公開情報、1人確認、診断</span></summary>
+    <div class="settings-guide-body">
+      <h4>オンラインルーム</h4>
+      <p>ルームを作成し、P1・P2・観戦者として参加します。手札やデッキ内容などの非公開情報は所有者だけが確認し、墓地・消失などの公開領域は相手・観戦者も確認できます。</p>
+
+      <h4>公開情報欄</h4>
+      <p>P1・P2それぞれ直近1件の公開結果を表示します。コイントス、ダイス、手札から選ばれたカード、指定カード群から選ばれたカードなどを双方と観戦者で確認できます。</p>
+      <p>履歴を大量に残す仕組みではなく、「現在確認したい直近の結果」を共有するための領域です。</p>
+
+      <h4>山札の上からN枚確認</h4>
+      <p>上からN枚を見る処理は自動公開されません。確認画面で「確認したカードを公開情報へ表示」を押した場合だけ相手・観戦者へカード名を見せます。非公開確認の効果にも対応できます。</p>
+
+      <h4>残りデッキ枚数</h4>
+      <p>相手・観戦者にはデッキ内容や順番を送らず、残り枚数だけを公開情報として扱う設計です。表示不具合調査用にオンライン診断からroom側 / publicState側の値を確認できます。</p>
+
+      <h4>観戦</h4>
+      <p>観戦者は盤面操作を行わず、公開情報を中心に確認します。墓地・消失の一覧や公開情報欄を利用できます。</p>
+
+      <h4>1人用オンライン動作確認</h4>
+      <p>相手がいなくてもP1・P2・観戦視点を切り替えて確認できます。ローカル確認ではP1/P2それぞれのメインデッキ、その他デッキ、最推しを指定できます。</p>
+      <p>P1視点はP1側、P2視点はP2側を操作し、観戦視点は双方閲覧専用です。ローカル確認はSupabaseへテスト盤面を書き込みません。</p>
+
+      <h4>オンライン診断</h4>
+      <p>room側のdeckCount / deckTotal、publicState側のdeckCount / handCount、画面が採用している枚数、revision、現在の視点などを表示・コピーできます。</p>
+      <p>管理キー、手札の中身、デッキ内容などの秘匿情報は診断文へ含めません。不具合報告時にコピー結果を添えると原因を追いやすくなります。</p>
     </div>
   </details>
 
-  <details class="settings-help-item">
-    <summary>オンラインの公開情報</summary>
-    <div class="settings-help-body">
-      コイントス、ダイス、手札や指定カードから選んだ結果、公開を選んだ山札確認結果などはオンライン盤面の公開情報欄へ表示できます。履歴を蓄積する機能ではなく、P1・P2それぞれ直近1件だけを表示します。
+  <details class="panel settings-guide-section" id="guide-public">
+    <summary><span>公開所・セット配布</span><span class="muted">共有、管理キー、一括DL</span></summary>
+    <div class="settings-guide-body">
+      <h4>カード公開</h4>
+      <p>登録済みカードのデータだけを公開できます。画像はアップロードしません。公開カードにはカードIDがあり、IDをコピーして共有できます。</p>
+
+      <h4>検索・絞り込み</h4>
+      <p>公開するカード、公開カード一覧、自分の公開カード管理には検索・絞り込みがあります。初期状態では折りたたまれているため、必要な時だけ開いて使います。</p>
+
+      <h4>保存管理キー</h4>
+      <p>自分の公開カードを編集・非公開・再公開・削除するためのキーです。最初に設定すると端末へ保存され、その後のカード公開へ自動的に使われます。</p>
+
+      <h4>臨時管理キー</h4>
+      <p>他の人から許可を受けてカードを管理する時に使います。保存管理キーとは別枠で、自動保存されません。</p>
+
+      <h4>マスターキー</h4>
+      <p>開発者側が全公開カードへアクセスするための管理用キーです。通常利用者が設定するものではありません。</p>
+
+      <h4>まとめて公開 / まとめてダウンロード</h4>
+      <p>複数カードをまとめて処理できます。同名カードが端末にある場合は、「別カードとして追加」「既存カードへ上書き」「1枚ずつ確認」から処理方法を選べます。</p>
+
+      <h4>セット配布</h4>
+      <p>自分の公開済みカードを複数まとめ、セット名・作者名・説明文を付けて配布できます。利用者はセット全部をダウンロードするだけでなく、セットの中から必要なカードだけを選んで部分ダウンロードできます。</p>
     </div>
   </details>
 
-  <details class="settings-help-item">
-    <summary>公開所</summary>
-    <div class="settings-help-body">
-      登録カードを他の利用者へ公開できます。公開カードには画像を含めません。管理キーを設定すると、自分の公開カードを編集・非公開・再公開・削除できます。臨時管理キーを使えば、他の人から許可されたカードを一時的に管理できます。
+  <details class="panel settings-guide-section" id="guide-account">
+    <summary><span>アカウント・バックアップ</span><span class="muted">端末間移行と復元</span></summary>
+    <div class="settings-guide-body">
+      <h4>アカウント</h4>
+      <p>アカウントを作らなくても基本機能は利用できます。アカウントは主に端末間バックアップのための機能です。</p>
+
+      <h4>らくらくバックアップ</h4>
+      <p>カード、デッキ、カード画像、背景、カスタムフレーム、自作エフェクト、外観設定などをまとめてクラウドへ保存します。</p>
+
+      <h4>らくらく復元</h4>
+      <p>別端末で同じアカウントへログインし、クラウドに保存した内容を端末へ戻します。ログインしただけでは復元されず、「らくらく復元」を押した時だけ処理します。</p>
+
+      <h4>復元前ZIP</h4>
+      <p>復元前に現在の端末データを安全用ZIPとして保存するか選択できます。「ZIPを作成せず復元」を選ぶこともできます。</p>
+
+      <h4>詳細クラウド管理</h4>
+      <p>普段はらくらくバックアップ / 復元だけで利用できます。必要な場合は詳細管理からカード・デッキだけの軽量同期、差分確認、履歴・復旧などを使えます。</p>
+
+      <h4>最終バックアップ日時</h4>
+      <p>この端末で最後に完全バックアップZIPを作成した日時を確認できます。</p>
     </div>
   </details>
 
-  <details class="settings-help-item">
-    <summary>セット配布</summary>
-    <div class="settings-help-body">
-      自分が公開済みの複数カードを1つのセットとしてまとめて配布できます。セット全体をダウンロードするほか、必要なカードだけを選んで部分ダウンロードできます。セットにはカード画像を保存しません。
+  <details class="panel settings-guide-section" id="guide-mobile">
+    <summary><span>スマホ・オフライン</span><span class="muted">作業復旧と通信なし利用</span></summary>
+    <div class="settings-guide-body">
+      <h4>スマホ向け作業復旧</h4>
+      <p>カード登録の入力途中、デッキ編集途中を端末へ自動保存します。ブラウザが終了しても復元できます。</p>
+
+      <h4>オフライン利用</h4>
+      <p>Ver27.1以降はService Workerを使用しています。一度オンライン状態で最新版を読み込むと、カード登録、カード管理、デッキ作成、コレクションなどの端末内機能をオフラインでも起動できます。</p>
+      <p>オンライン対戦、公開所、セット配布、クラウドバックアップなど通信必須機能はオフラインでは利用できません。</p>
+
+      <h4>オフライン表示</h4>
+      <p>通信が切れた場合は画面上部にオフラインモードの案内が表示されます。通信復帰後はオンライン機能を再び利用できます。</p>
+
+      <h4>注意</h4>
+      <p>ブラウザのサイトデータを削除すると端末内データや下書きも消える場合があります。プライベートブラウズでは保存が安定しない場合があります。</p>
     </div>
   </details>
 
-  <details class="settings-help-item">
-    <summary>アカウント・らくらくバックアップ</summary>
-    <div class="settings-help-body">
-      アカウントは端末間でデータを保存・復元するための機能です。らくらくバックアップではカード、デッキ、画像、背景、フレーム、自作エフェクト、外観設定などをまとめてクラウドへ保存します。らくらく復元では同じアカウントの保存内容を現在の端末へ戻します。復元前の安全用ZIPを作るかどうかは選択できます。
-    </div>
-  </details>
+  <details class="panel settings-guide-section" id="guide-settings">
+    <summary><span>設定・メンテナンス</span><span class="muted">外観、背景、UI、キャッシュ</span></summary>
+    <div class="settings-guide-body">
+      <h4>外観</h4>
+      <p>アクセントカラー、UI背景の濃さ、可読性補助などを変更できます。外観変更はリアルタイムプレビューされ、保存ボタンで確定します。</p>
 
-  <details class="settings-help-item">
-    <summary>オンライン診断</summary>
-    <div class="settings-help-body">
-      オンライン画面の1人用動作確認から診断情報を表示・コピーできます。P1 / P2のdeckCount、handCount、publicState、revisionなどを確認でき、オンライン不具合の原因調査に使います。管理キー、手札内容、カード内容などは診断文へ含めません。
+      <h4>背景</h4>
+      <p>共通背景、画面別背景、対戦盤面背景、P1/P2個別背景を設定できます。背景ライブラリへ画像を登録して選択できます。</p>
+
+      <h4>画面・ナビ</h4>
+      <p>ヘッダーナビの表示・並び順、ホーム画面ショートカット、UI密度、文字サイズ、カード一覧の1ページ表示数を変更できます。</p>
+
+      <h4>操作・カード</h4>
+      <p>スマホの端スワイプ、カードテキストのコピー、フレーバー表示、カードエフェクト、盤面でのエフェクト描画品質などを設定できます。</p>
+
+      <h4>一時キャッシュ再構築</h4>
+      <p>表示崩れや古い一時情報が残った時に使います。登録カード、デッキ、コレクション、カード画像、アカウント情報、クラウドバックアップは削除しません。</p>
+      <p>オンラインの一時スクロール位置、再接続用一時キャッシュ、表示用キャッシュなどが対象です。進行中のオンライン対戦中は実行しないでください。</p>
     </div>
   </details>
 </div>
 
-<div class="panel settings-v27-section" data-settings-section="maintenance">
+<div id="settings-pane-maintenance" class="settings-pane">
+<div class="panel">
   <div class="section-head">
     <h3 style="margin:0">診断・メンテナンス</h3>
     <span class="pill">安全操作</span>
@@ -23633,6 +23812,12 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
     </div>
   </div>
 </div>
+</div>
+
+</section>
+
+  
+  
 <section id="screen-online" class="screen">
 <div id="online-selftest-panel" class="panel online-selftest-panel" style="margin-bottom:12px">
   <details id="online-selftest-details">
@@ -23657,9 +23842,26 @@ body.online-selftest-spectator [data-zone-view]{display:inline-flex!important}
           </select>
         </label>
       </div>
+      <div id="online-selftest-deck-setup" class="online-selftest-deck-setup">
+        <div class="section-head"><h3 style="margin:0">テスト用デッキ設定</h3><span class="pill">ローカル確認用</span></div>
+        <div class="online-selftest-player-setup">
+          <div class="online-selftest-player-card">
+            <b>P1</b>
+            <label>メインデッキ<select id="online-selftest-p1-deck"></select></label>
+            <label>その他デッキ<select id="online-selftest-p1-other"></select></label>
+            <label>最推し<select id="online-selftest-p1-favorite"></select></label>
+          </div>
+          <div class="online-selftest-player-card">
+            <b>P2</b>
+            <label>メインデッキ<select id="online-selftest-p2-deck"></select></label>
+            <label>その他デッキ<select id="online-selftest-p2-other"></select></label>
+            <label>最推し<select id="online-selftest-p2-favorite"></select></label>
+          </div>
+        </div>
+        <p class="muted">P1とP2で別々のメインデッキ・その他デッキ・最推しを指定できます。同じデッキを両方に指定しても構いません。</p>
+      </div>
       <div class="actions">
         <button class="btn primary" type="button" id="online-selftest-start">動作確認を開始</button>
-        <button class="btn" type="button" id="online-selftest-dummy">テスト用P2を用意</button>
         <button class="btn" type="button" id="online-selftest-stop">動作確認を終了</button>
       </div>
       <div id="online-selftest-status" class="muted" style="margin-top:8px">未開始</div>
@@ -26151,13 +26353,21 @@ async function applyThemePrefs(prefs){
    image.style.backgroundPosition=`${bg.x}% ${bg.y}%`;
    image.style.filter=`brightness(${bg.brightness}%) blur(${bg.blur}px)`;
    if(bg.imageEnabled&&bg.assetId){
-     const url=await getBackgroundAssetUrl(bg.assetId,'full');
+     let url='';
+     try{
+       url=await getBackgroundAssetUrl(bg.assetId,'full');
+     }catch(err){
+       console.warn('背景画像の取得に失敗しました。背景色のみで継続します。',err);
+       url='';
+     }
      if(token!==themeApplyToken)return;
      image.style.backgroundImage=url?`url("${url}")`:'none';
    }else image.style.backgroundImage='none';
  }
- updateThemePreview(t);
- if(currentScreenName==='board')hydratePlayerBoardBackgrounds(t);
+ try{await updateThemePreview(t)}catch(err){console.warn('設定プレビュー更新失敗',err)}
+ if(currentScreenName==='board'){
+   try{await hydratePlayerBoardBackgrounds(t)}catch(err){console.warn('盤面背景更新失敗',err)}
+ }
 }
 async function updateThemePreview(prefs=currentThemeForDisplay()){
  const preview=$('#theme-background-preview'),img=$('#theme-background-preview-image'),overlay=$('#theme-background-preview-overlay'),empty=$('#theme-background-preview-empty');
@@ -26169,7 +26379,9 @@ async function updateThemePreview(prefs=currentThemeForDisplay()){
  img.style.backgroundPosition=`${bg.x}% ${bg.y}%`;
  img.style.filter=`brightness(${bg.brightness}%) blur(${bg.blur}px)`;
  let url='';
- if(bg.imageEnabled&&bg.assetId)url=await getBackgroundAssetUrl(bg.assetId,'thumb');
+ if(bg.imageEnabled&&bg.assetId){
+   try{url=await getBackgroundAssetUrl(bg.assetId,'thumb')}catch(err){console.warn('背景プレビュー画像の取得失敗',err);url=''}
+ }
  if(!img.isConnected)return;
  img.style.backgroundImage=url?`url("${url}")`:'none';
  empty.style.display=url?'none':'flex';
@@ -26412,12 +26624,24 @@ async function updateThemeSelectedBackgroundLabel(){
  const el=$('#theme-background-selected');if(!el)return;
  const bg=ensureThemeDraft().backgrounds.common;
  if(!bg.assetId){el.textContent='選択中：背景画像なし';return}
- const rec=await getBackgroundAsset(bg.assetId);
+ let rec=null;
+ try{rec=await getBackgroundAsset(bg.assetId)}catch(err){console.warn('背景情報の取得失敗',err)}
  if(!el.isConnected)return;
  el.textContent=rec?`選択中：${rec.name}`:'選択中の背景画像が見つかりません';
 }
 function applyThemeDraftChange(mutator){
- const draft=ensureThemeDraft();mutator(draft);themeDraft=normalizeThemePrefs(draft);markThemeDraftDirty();applyThemePrefs(themeDraft);syncThemeSettingsControls();renderThemeBackgroundOverrideLists();
+ try{
+   const draft=ensureThemeDraft();
+   mutator(draft);
+   themeDraft=normalizeThemePrefs(draft);
+   markThemeDraftDirty();
+   void applyThemePrefs(themeDraft).catch(err=>console.warn('設定反映処理を継続しました',err));
+   syncThemeSettingsControls();
+   renderThemeBackgroundOverrideLists();
+ }catch(err){
+   console.error('設定変更処理',err);
+   toast(`設定の変更に失敗しました：${err?.message||String(err)}`);
+ }
 }
 function syncThemeSettingsControls(){
  const d=ensureThemeDraft(),ui=d.ui,bg=d.backgrounds.common;
@@ -26445,7 +26669,7 @@ function syncThemeSettingsControls(){
  if($('#theme-bg-overlay-value'))$('#theme-bg-overlay-value').textContent=`${bg.overlay}%`;
  if($('#theme-bg-blur'))$('#theme-bg-blur').value=String(bg.blur);
  if($('#theme-bg-blur-value'))$('#theme-bg-blur-value').textContent=`${bg.blur}px`;
- updateThemeSelectedBackgroundLabel();updateThemeSaveState();updateThemePreview(d);
+ void updateThemeSelectedBackgroundLabel().catch(err=>console.warn('背景ラベル更新失敗',err));updateThemeSaveState();void updateThemePreview(d).catch(err=>console.warn('設定プレビュー更新失敗',err));
 }
 function bindThemePreviewDrag(){
  const preview=$('#theme-background-preview');if(!preview)return;
@@ -26468,10 +26692,21 @@ function bindThemePreviewDrag(){
  preview.onpointerup=end;preview.onpointercancel=end;
 }
 function renderThemeSettings(){
- ensureThemeDraft();syncThemeSettingsControls();bindThemePreviewDrag();renderThemeBackgroundOverrideLists();renderScreenNavSettings();syncCardFxSettingsUI();
+ try{
+   ensureThemeDraft();
+   syncThemeSettingsControls();
+   bindThemePreviewDrag();
+   renderThemeBackgroundOverrideLists();
+   renderScreenNavSettings();
+   syncCardFxSettingsUI();
+ }catch(err){
+   console.error('設定画面描画',err);
+   const status=$('#theme-operation-status');
+   if(status)status.textContent=`設定画面の一部表示に失敗しました：${err?.message||String(err)}`;
+ }
 }
 function setSettingsTab(name){
- const tab=['appearance','background','future','controls'].includes(name)?name:'appearance';
+ const tab=['appearance','background','future','controls','guide','maintenance'].includes(name)?name:'appearance';
  $$('[data-settings-tab]').forEach(b=>b.classList.toggle('primary',b.dataset.settingsTab===tab));
  $$('.settings-pane').forEach(p=>p.classList.toggle('active',p.id===`settings-pane-${tab}`));
  if(tab==='background'||tab==='future'||tab==='controls')renderThemeSettings();
@@ -32884,6 +33119,14 @@ function saveBoardSessionNow(showToast=false){
  }
 }
 function scheduleBoardAutosave(){
+ if(typeof onlineSelfTestState!=='undefined'&&onlineSelfTestState?.active&&onlineSelfTestState.mode==='local'){
+   if(!board)return;
+   if(boardAutosaveTimer)clearTimeout(boardAutosaveTimer);
+   boardAutosaveTimer=setTimeout(()=>{
+     try{onlineSelfTestRefreshMasterFromCurrent()}catch(_){}
+   },120);
+   return;
+ }
  if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive){
    if(typeof onlineScheduleAutoSync==='function')onlineScheduleAutoSync();
    return;
@@ -33500,6 +33743,13 @@ function syncBoardRandomTools(){
 }
 
 function renderBoard(){
+ if(typeof onlineSelfTestState!=='undefined'&&onlineSelfTestState?.active&&onlineSelfTestState.mode==='local'&&currentScreenName==='online-duel'){
+   onlineDuelBoard=board;
+   try{onlineSelfTestRefreshMasterFromCurrent()}catch(_){}
+   onlineLastRenderedDuelSignature='';
+   onlineRenderDuelBoard({force:true});
+   return;
+ }
  if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive&&currentScreenName==='online-duel'){
    onlineDuelBoard=board;
    // 手札操作直後の再読込でも失わないよう、描画要求時点で即保存。
@@ -34655,6 +34905,8 @@ function refreshLiveBoardDetailAfterRender(){
  else openDetail(loc.pi,loc.z,loc.pileIndex,loc.cardIndex,zoneDetailIds(loc.pi,loc.z));
 }
 function onlineOpponentReadOnly(pi){
+  if(onlineSelfTestLocalEditable())return Number(pi)!==onlineSelfTestOwnPlayerIndex();
+  if(onlineSelfTestLocalSpectator())return true;
   return !!onlineDuelActive&&Number(pi)+1!==Number(onlineOwnSlot());
 }
 function onlineClonePublicCardForControl(card){
@@ -34823,9 +35075,9 @@ function renderCounters(c){return c.counters.length?c.counters.map((x,i)=>`<div 
 function bindCounters(c,refresh){$$('[data-counter-name]').forEach(x=>x.onchange=()=>{c.counters[Number(x.dataset.counterName)].name=x.value;renderBoard()});$$('[data-counter-val]').forEach(x=>x.onchange=()=>{c.counters[Number(x.dataset.counterVal)].value=Number(x.value)||0;renderBoard()});$$('[data-counter-minus]').forEach(b=>b.onclick=()=>{c.counters[Number(b.dataset.counterMinus)].value--;refresh();renderBoard()});$$('[data-counter-plus]').forEach(b=>b.onclick=()=>{c.counters[Number(b.dataset.counterPlus)].value++;refresh();renderBoard()});$$('[data-counter-del]').forEach(b=>b.onclick=()=>{c.counters.splice(Number(b.dataset.counterDel),1);refresh();renderBoard()})}
 function moveTargetsHtml(defaultPi=null,defaultZone='grave'){
  const order=['hand','character','pain','room','rulePlus','deck','otherDeck','grave','banish'];
- const own=onlineDuelActive?onlineOwnSlot():null;
+ const localSelfTest=onlineSelfTestLocalEditable(),own=localSelfTest?onlineOwnSlot():(onlineDuelActive?onlineOwnSlot():null);
  return board.players.map((p,pi)=>{
-   if(onlineDuelActive&&own!=null&&pi!==Number(own)-1)return '';
+   if((onlineDuelActive||localSelfTest)&&own!=null&&pi!==Number(own)-1)return '';
    const opts=order.filter(z=>!onlineServerDeckGuardActive(pi,z)).map(z=>`<option value="${pi}|${z}"${Number(defaultPi)===pi&&z===defaultZone?' selected':''}>${ZONE_LABELS[z]}</option>`).join('');
    return opts?`<optgroup label="${esc(p.name)}">${opts}</optgroup>`:'';
  }).join('');
@@ -34835,9 +35087,9 @@ function allPileOptions(exclude){let out='';board.players.forEach((p,pi)=>{Objec
 function stackCandidates(pi,z,exclude){const out=[];board.players[pi][z].forEach((pile,i)=>{if(!pile)return;if(exclude&&exclude.pi===pi&&exclude.z===z&&exclude.index===i)return;out.push({pile,index:i})});return out}
 function openStackDialog(){const ctx={...detailCtx};if(ctx.instanceId){const loc=findBoardInstanceAnywhere(ctx.instanceId);if(loc){ctx.pi=loc.pi;ctx.z=loc.z;ctx.index=loc.pileIndex;ctx.cardIndex=loc.cardIndex}}const srcPile=getPile(ctx.pi,ctx.z,ctx.index),c=srcPile?.cards?.[ctx.cardIndex];if(!c)return;openModal(`<div class="modal-head"><h3>${esc(c.name)} を重ねる</h3><button class="btn" id="stack-cancel">戻る</button></div><label>プレイヤー<select id="stack-player">${board.players.map((p,i)=>`<option value="${i}">${esc(p.name)}</option>`).join('')}</select></label><label style="margin-top:8px">ゾーン<select id="stack-zone">${Object.entries(ZONE_LABELS).map(([z,l])=>`<option value="${z}">${l}</option>`).join('')}</select></label><label style="margin-top:8px">カード<select id="stack-target-card"></select></label><div id="stack-empty" class="muted" style="margin-top:6px"></div><label style="margin-top:8px">位置<select id="stack-pos"><option value="top">上に重ねる</option><option value="bottom">下に重ねる</option></select></label><button class="btn primary" id="stack-confirm" style="margin-top:10px">重ねる</button>`);$('#stack-cancel').onclick=()=>openDetail(ctx.pi,ctx.z,ctx.index,ctx.cardIndex);
  const refreshCards=()=>{const pi=Number($('#stack-player').value),z=$('#stack-zone').value,own=onlineDuelActive?onlineOwnSlot():null,forbidden=(onlineDuelActive&&own!=null&&pi!==Number(own)-1)||onlineServerDeckGuardActive(pi,z),targets=forbidden?[]:stackCandidates(pi,z,ctx),sel=$('#stack-target-card');sel.innerHTML=targets.map(x=>`<option value="${x.pile.id}">${esc(topCard(x.pile).name)}${x.pile.cards.length>1?`（重なり${x.pile.cards.length}枚）`:''}</option>`).join('');$('#stack-empty').textContent=targets.length?'':'このゾーンに重ね先のカードがありません。';$('#stack-confirm').disabled=!targets.length};
- const pickFirstAvailable=()=>{for(let pi=0;pi<board.players.length;pi++){if(onlineDuelActive&&onlineOwnSlot()!=null&&pi!==Number(onlineOwnSlot())-1)continue;for(const z of Object.keys(ZONE_LABELS)){if(onlineServerDeckGuardActive(pi,z))continue;if(stackCandidates(pi,z,ctx).length){$('#stack-player').value=String(pi);$('#stack-zone').value=z;refreshCards();return true}}}return false};
+ const pickFirstAvailable=()=>{for(let pi=0;pi<board.players.length;pi++){if((onlineDuelActive||onlineSelfTestLocalEditable())&&onlineOwnSlot()!=null&&pi!==Number(onlineOwnSlot())-1)continue;for(const z of Object.keys(ZONE_LABELS)){if(onlineServerDeckGuardActive(pi,z))continue;if(stackCandidates(pi,z,ctx).length){$('#stack-player').value=String(pi);$('#stack-zone').value=z;refreshCards();return true}}}return false};
  $('#stack-player').onchange=refreshCards;$('#stack-zone').onchange=refreshCards;if(!pickFirstAvailable()){$('#stack-confirm').disabled=true;$('#stack-empty').textContent='重ね先のカードがありません。'}
- $('#stack-confirm').onclick=()=>{const tpi=Number($('#stack-player').value),z=$('#stack-zone').value,targetId=$('#stack-target-card').value;if(!targetId)return;if(onlineServerDeckMutationBlocked(ctx.pi,ctx.z)||onlineServerDeckMutationBlocked(tpi,z))return;if(onlineDuelActive&&onlineOwnSlot()!=null&&tpi!==Number(onlineOwnSlot())-1){toast('相手側のカードは操作できません');return}const card=removeCardAt(ctx.pi,ctx.z,ctx.index,ctx.cardIndex),area=board.players[tpi][z],newIndex=area.findIndex(p=>p&&p.id===targetId),target=newIndex>=0?area[newIndex]:null;if(!target){addAsPile(tpi,z,card);toast('重ね先が移動したため通常配置しました')}else{prepareCardForDestination(card,z);if($('#stack-pos').value==='top')target.cards.unshift(card);else target.cards.push(card)};$('#modal-layer').classList.remove('open');detailCtx=null;detailNav=null;renderBoard()}}
+ $('#stack-confirm').onclick=()=>{const tpi=Number($('#stack-player').value),z=$('#stack-zone').value,targetId=$('#stack-target-card').value;if(!targetId)return;if(onlineServerDeckMutationBlocked(ctx.pi,ctx.z)||onlineServerDeckMutationBlocked(tpi,z))return;if((onlineDuelActive||onlineSelfTestLocalEditable())&&onlineOwnSlot()!=null&&tpi!==Number(onlineOwnSlot())-1){toast('相手側のカードは操作できません');return}const card=removeCardAt(ctx.pi,ctx.z,ctx.index,ctx.cardIndex),area=board.players[tpi][z],newIndex=area.findIndex(p=>p&&p.id===targetId),target=newIndex>=0?area[newIndex]:null;if(!target){addAsPile(tpi,z,card);toast('重ね先が移動したため通常配置しました')}else{prepareCardForDestination(card,z);if($('#stack-pos').value==='top')target.cards.unshift(card);else target.cards.push(card)};$('#modal-layer').classList.remove('open');detailCtx=null;detailNav=null;renderBoard()}}
 
 // Deck actions
 function takeTopCard(pi,z='deck'){const d=board.players[pi][z];if(!d.length)return null;const c=d[0].cards.shift();if(!d[0].cards.length)d.shift();return c}
@@ -36916,6 +37168,9 @@ function onlineRenderDuelBoard(options={}){
 
     host.innerHTML=p2+'<div class="divider">──────── オンライン対戦ライン ────────</div>'+p1;
 
+    const selfTestLocal=onlineSelfTestState?.active&&onlineSelfTestState.mode==='local';
+    const selfTestSpectator=selfTestLocal&&onlineSelfTestState.view==='spectator';
+
     host.querySelectorAll('.online-duel-opponent button:not([data-zone-view])').forEach(btn=>{
       btn.disabled=true;
       btn.setAttribute('aria-disabled','true');
@@ -36927,16 +37182,27 @@ function onlineRenderDuelBoard(options={}){
       btn.tabIndex=-1;
     });
 
-    const ownPi=Number(onlineOwnSlot()||0)-1;
+    const ownPi=selfTestLocal
+      ?(selfTestSpectator?-1:onlineSelfTestOwnPlayerIndex())
+      :Number(onlineOwnSlot()||0)-1;
     if(ownPi>=0){
       host.querySelectorAll(`[data-slot-plus^="${ownPi}|"], [data-slot-minus^="${ownPi}|"], [data-zone-view^="${ownPi}|"], [data-hand-mode^="${ownPi}|"]`).forEach(btn=>{
         btn.disabled=false;btn.removeAttribute('aria-disabled');btn.tabIndex=0;btn.style.pointerEvents='auto';btn.style.opacity='1';
       });
+      if(selfTestLocal){
+        host.querySelectorAll(`[data-pile^="${ownPi}|"], [data-marker-remove^="${ownPi}|"], [data-deck-action*="|${ownPi}|"]`).forEach(el=>{
+          el.disabled=false;
+          el.removeAttribute('aria-disabled');
+          el.tabIndex=0;
+          el.style.pointerEvents='auto';
+          el.style.opacity='1';
+        });
+      }
       host.querySelectorAll(`[data-deck-action*="|${ownPi}|deck"], [data-deck-action$="|${ownPi}"]`).forEach(btn=>{
         const raw=String(btn.dataset.deckAction||'').split('|');
         const action=raw[0],pi=Number(raw[1]),z=raw[2]||'deck';
         if(pi===ownPi&&z==='deck'){
-          const supported=['draw','shuffle','browse','painFace','painBack','look'].includes(action);
+          const supported=selfTestLocal||['draw','shuffle','browse','painFace','painBack','look'].includes(action);
           btn.disabled=!supported;
           if(supported){
             btn.removeAttribute('aria-disabled');
@@ -36975,7 +37241,7 @@ function onlineRenderDuelBoard(options={}){
     return true;
   }finally{
     onlineBoardRenderInProgress=false;
-    if(hadObserver&&onlineDuelActive){
+    if(hadObserver&&onlineDuelActive&&!(onlineSelfTestState?.active&&onlineSelfTestState.mode==='local')){
       queueMicrotask(()=>{
         onlineBoardMutationPaused=false;
         if(onlineDuelActive)onlineStartBoardMutationWatch();
@@ -36991,7 +37257,9 @@ function onlineUpdateDuelToolbar(room){
   const own=onlineOwnSlot()||0;
   document.documentElement.dataset.onlineDuelOwn=String(own);
   $('#online-duel-room-code').textContent=onlineSessionState.joinCode||'------';
-  $('#online-duel-role').textContent=onlineRoleLabel();
+  $('#online-duel-role').textContent=onlineSelfTestState?.active&&onlineSelfTestState.mode==='local'
+    ?`動作確認 / ${onlineSelfTestState.view==='spectator'?'観戦':onlineSelfTestState.view.toUpperCase()}`
+    :onlineRoleLabel();
   const turnLabel=$('#online-duel-turn'); if(turnLabel)turnLabel.textContent='通話進行';
   $('#online-duel-permission').textContent=own?`P${own} 自分側・常時操作可`:'観戦専用';
   for(const slot of [1,2]){
@@ -37035,6 +37303,7 @@ function onlineEnterDuelBoard(){
   onlineScheduleAutoSync();
 }
 function onlineExitDuelBoardToLobby(){
+  if(onlineSelfTestState?.active){onlineSelfTestStop();return}
   try{onlineCaptureScrollSnapshot();onlinePersistOwnerHand()}catch(_){}
   onlineStopBoardMutationWatch();
   onlineLastRenderedDuelSignature='';
@@ -37826,7 +38095,30 @@ function onlineOwnSlotRaw(){
   if(onlineSessionState.role==='guest')return 2;
   return null;
 }
-let onlineSelfTestState={active:false,mode:'local',view:'p1',dummy:false,startedAt:0};
+
+function onlineEnhanceSpectatorRulePlusInternal(){
+  if(!(onlineSelfTestState?.active&&onlineSelfTestState.view==='spectator'))return;
+  document.querySelectorAll('#online-duel-main [data-zone="rulePlus"],#online-duel-main .rule-plus-zone,#online-duel-main .ruleplus-zone').forEach(zone=>{
+    if(zone.dataset.spectatorCollapseReady)return;
+    zone.dataset.spectatorCollapseReady='1';
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='btn small';
+    btn.textContent='ルールプラスを折りたたむ';
+    btn.style.marginBottom='6px';
+    btn.onclick=()=>{
+      const collapsed=zone.dataset.spectatorCollapsed==='1';
+      zone.dataset.spectatorCollapsed=collapsed?'0':'1';
+      [...zone.children].forEach(ch=>{if(ch!==btn)ch.style.display=collapsed?'':'none'});
+      btn.textContent=collapsed?'ルールプラスを折りたたむ':'ルールプラスを展開';
+    };
+    zone.prepend(btn);
+  });
+}
+let onlineSelfTestState={
+  active:false,mode:'local',view:'p1',dummy:false,startedAt:0,
+  backup:null,masterBoard:null,testRoomCode:'',testRoom:null
+};
 
 function onlineOwnSlot(){
   if(onlineSelfTestState?.active){
@@ -37836,6 +38128,25 @@ function onlineOwnSlot(){
   }
   return onlineOwnSlotRaw();
 }
+
+function onlineSelfTestLocalEditable(){
+  return !!(
+    onlineSelfTestState?.active &&
+    onlineSelfTestState.mode==='local' &&
+    (onlineSelfTestState.view==='p1'||onlineSelfTestState.view==='p2')
+  );
+}
+function onlineSelfTestLocalSpectator(){
+  return !!(
+    onlineSelfTestState?.active &&
+    onlineSelfTestState.mode==='local' &&
+    onlineSelfTestState.view==='spectator'
+  );
+}
+function onlineSelfTestOwnPlayerIndex(){
+  if(!onlineSelfTestLocalEditable())return -1;
+  return onlineSelfTestState.view==='p2'?1:0;
+}
 function onlineSelfTestRole(){
   if(!onlineSelfTestState?.active)return null;
   return onlineSelfTestState.view==='spectator'?'spectator':onlineSelfTestState.view;
@@ -37843,61 +38154,420 @@ function onlineSelfTestRole(){
 function onlineApplySelfTestClass(){
   document.body.classList.toggle('online-selftest-active',!!onlineSelfTestState.active);
   document.body.classList.toggle('online-selftest-spectator',!!onlineSelfTestState.active&&onlineSelfTestState.view==='spectator');
+  document.body.classList.toggle('online-selftest-local-running',!!onlineSelfTestState.active&&onlineSelfTestState.mode==='local');
   onlineApplySpectatorViewClass();
 }
 function onlineSelfTestStatus(msg,error=false){
   const el=document.getElementById('online-selftest-status');
   if(el){el.textContent=msg;el.style.color=error?'var(--danger)':''}
 }
-function onlineSelfTestRefreshBoard(){
-  onlineApplySelfTestClass();
-  try{
-    const room=(typeof onlineRoom!=='undefined'&&onlineRoom)||null;
-    if(room&&typeof onlineRenderDuelBoard==='function')onlineRenderDuelBoard(room,{force:true});
-    else if(typeof renderBoard==='function')renderBoard();
-  }catch(e){console.warn('selftest render',e)}
-  onlineEnhanceSpectatorRulePlus();
-  onlineRefreshDiagnostic();
-}
-function onlineSelfTestStart(){
-  const mode=document.getElementById('online-selftest-mode')?.value||'local';
-  const view=document.getElementById('online-selftest-view')?.value||'p1';
-  onlineSelfTestState.active=true;
-  onlineSelfTestState.mode=mode;
-  onlineSelfTestState.view=view;
-  onlineSelfTestState.startedAt=Date.now();
 
-  if(mode==='live'){
-    const room=(typeof onlineRoom!=='undefined'&&onlineRoom)||null;
-    if(!room){
-      onlineSelfTestStatus('実通信確認には、先に通常どおりオンラインルームを作成してください。ルーム作成後は1人のまま視点切替できます。',true);
-      onlineSelfTestState.active=false;
-      onlineApplySelfTestClass();
+function onlineSelfTestCurrentRoom(){
+  if(onlineSelfTestState?.active&&onlineSelfTestState.testRoom)return onlineSelfTestState.testRoom;
+  try{return onlineLoadRooms()[onlineSessionState.joinCode]||null}catch(_){return null}
+}
+function onlineSelfTestClone(value){
+  try{return structuredClone(value)}catch(_){
+    try{return JSON.parse(JSON.stringify(value))}catch(__){return value}
+  }
+}
+function onlineSelfTestFillDeckSetup(){
+  const mainList=setupDeckList('main'),otherList=setupDeckList('other');
+  fillSetupDeckSelect(document.getElementById('online-selftest-p1-deck'),mainList,'main',{forceDefault:false});
+  fillSetupDeckSelect(document.getElementById('online-selftest-p2-deck'),mainList,'main',{forceDefault:false});
+  fillSetupDeckSelect(document.getElementById('online-selftest-p1-other'),otherList,'other',{allowNone:true,forceDefault:false});
+  fillSetupDeckSelect(document.getElementById('online-selftest-p2-other'),otherList,'other',{allowNone:true,forceDefault:false});
+  onlineSelfTestSyncFavorite(1,false);onlineSelfTestSyncFavorite(2,false);
+  const setup=document.getElementById('online-selftest-deck-setup');
+  if(setup)setup.hidden=(document.getElementById('online-selftest-mode')?.value||'local')!=='local';
+}
+function onlineSelfTestSyncFavorite(slot,useDeckDefault=false){
+  const deckSel=document.getElementById(`online-selftest-p${slot}-deck`);
+  const fav=document.getElementById(`online-selftest-p${slot}-favorite`);
+  if(!deckSel||!fav)return;
+  const prev=fav.value,d=decks.find(x=>String(x.id)===String(deckSel.value)),preferred=String(d?.defaultOshiiCardId||'');
+  fav.innerHTML=favoriteOptions(deckSel.value);
+  if(useDeckDefault&&preferred&&[...fav.options].some(o=>o.value===preferred))fav.value=preferred;
+  else if(prev&&[...fav.options].some(o=>o.value===prev))fav.value=prev;
+  else if(preferred&&[...fav.options].some(o=>o.value===preferred))fav.value=preferred;
+}
+function onlineSelfTestSelectedSetup(){
+  const val=id=>String(document.getElementById(id)?.value||'');
+  return {
+    p1:{deckId:val('online-selftest-p1-deck'),otherDeckId:val('online-selftest-p1-other'),favoriteId:val('online-selftest-p1-favorite')},
+    p2:{deckId:val('online-selftest-p2-deck'),otherDeckId:val('online-selftest-p2-other'),favoriteId:val('online-selftest-p2-favorite')}
+  };
+}
+function onlineSelfTestPickDeckIds(){
+  const x=onlineSelfTestSelectedSetup();
+  return [x.p1.deckId,x.p2.deckId].filter(Boolean);
+}
+function onlineSelfTestDrawOpeningHand(player,count=5){
+  if(!player)return;
+  while(player.hand.length<count&&player.deck.length){
+    const pile=player.deck.shift();
+    if(pile)player.hand.push(pile);
+  }
+}
+function onlineSelfTestBuildMasterBoard(){
+  const setup=onlineSelfTestSelectedSetup();
+  if(!setup.p1.deckId||!setup.p2.deckId)return null;
+  const p1=makePlayer(setup.p1.deckId,0,setup.p1.favoriteId,setup.p1.otherDeckId);
+  const p2=makePlayer(setup.p2.deckId,1,setup.p2.favoriteId,setup.p2.otherDeckId);
+  onlineSelfTestDrawOpeningHand(p1,5);onlineSelfTestDrawOpeningHand(p2,5);
+  p1.name='P1';p2.name='P2';
+  return {
+    mode:2,
+    setup:{mode:2,online:true,roomCode:'SELFTEST',deck1:setup.p1.deckId,otherDeck1:setup.p1.otherDeckId,favorite1:setup.p1.favoriteId,deck2:setup.p2.deckId,otherDeck2:setup.p2.otherDeckId,favorite2:setup.p2.favoriteId},
+    players:[p1,p2],note:'',turn:1,
+    ui:{panelCollapsed:{operations:false,tray:true,power:true,note:false},trayCounterName:'カウンター',trayCustomMarker:'',diceExpression:'1d6',randomHistory:[],boardSearchQuery:'',linkJumpHistory:[],homePowerApplyDraft:{0:0,1:0},onlinePublicResults:{1:null,2:null}}
+  };
+}
+function onlineSelfTestPublicStateFromMaster(master){
+  const prevBoard=board,prevDuel=onlineDuelActive,prevCode=onlineDuelRoomCode;
+  try{
+    board=master;
+    onlineDuelActive=false;
+    onlineDuelRoomCode='';
+    return {
+      p1:onlineExtractPublicBoardFromSolo(1),
+      p2:onlineExtractPublicBoardFromSolo(2),
+      revision:1,
+      updatedAt:Date.now()
+    };
+  }finally{
+    board=prevBoard;
+    onlineDuelActive=prevDuel;
+    onlineDuelRoomCode=prevCode;
+  }
+}
+function onlineSelfTestMakeRoom(master){
+  const state=onlineSelfTestPublicStateFromMaster(master);
+  const now=Date.now();
+  const ids=[String(master?.setup?.deck1||''),String(master?.setup?.deck2||'')];
+  const deck1=decks.find(d=>String(d.id)===String(ids[0]));
+  const deck2=decks.find(d=>String(d.id)===String(ids[1]));
+  return {
+    version:ONLINE_MODE_VERSION,
+    roomId:'selftest-room',
+    code:'SELFTEST',
+    createdAt:now,
+    updatedAt:now,
+    p1:{
+      clientId:'selftest-p1',name:'P1',lastSeen:now,ready:true,deckLocked:true,
+      deckId:String(ids[0]||''),deckName:String(deck1?.name||'テストデッキ'),
+      deckTotal:physicalCount(master.players[0].deck)+physicalCount(master.players[0].hand),
+      deckCount:physicalCount(master.players[0].deck),handCount:physicalCount(master.players[0].hand)
+    },
+    p2:{
+      clientId:'selftest-p2',name:'P2',lastSeen:now,ready:true,deckLocked:true,
+      deckId:String(ids[1]||ids[0]||''),deckName:String(deck2?.name||'テストデッキ'),
+      deckTotal:physicalCount(master.players[1].deck)+physicalCount(master.players[1].hand),
+      deckCount:physicalCount(master.players[1].deck),handCount:physicalCount(master.players[1].hand)
+    },
+    spectators:[],
+    match:{status:'started',startedAt:now,startedBy:'selftest-p1',turnPlayer:1,turnCount:1},
+    publicState:state
+  };
+}
+function onlineSelfTestBuildViewBoard(view){
+  const master=onlineSelfTestState.masterBoard,room=onlineSelfTestState.testRoom;
+  if(!master||!room)return null;
+
+  const result={
+    mode:2,
+    setup:{mode:2,online:true,roomCode:'SELFTEST'},
+    players:[onlineCreateBlankPlayer(0),onlineCreateBlankPlayer(1)],
+    note:'',
+    turn:1,
+    ui:onlineSelfTestClone(master.ui)
+  };
+  result.players[0].name='P1';result.players[1].name='P2';
+
+  onlineDuelBoard=result;
+  if(view==='p1'){
+    result.players[0]=onlineSelfTestClone(master.players[0]);
+    onlineApplyRemotePublicSlotToDuel(2,room.publicState.p2);
+  }else if(view==='p2'){
+    result.players[1]=onlineSelfTestClone(master.players[1]);
+    onlineApplyRemotePublicSlotToDuel(1,room.publicState.p1);
+  }else{
+    onlineApplyRemotePublicSlotToDuel(1,room.publicState.p1);
+    onlineApplyRemotePublicSlotToDuel(2,room.publicState.p2);
+  }
+  return result;
+}
+function onlineSelfTestBackupState(){
+  if(onlineSelfTestState.backup)return;
+  onlineSelfTestState.backup={
+    session:onlineSelfTestClone(onlineSessionState),
+    board,
+    onlineDuelBoard,
+    onlineDuelRoomCode,
+    onlineDuelActive,
+    onlineOfflineBoardState,
+    currentScreenName
+  };
+}
+function onlineSelfTestRestoreState(){
+  const b=onlineSelfTestState.backup;
+  if(!b)return;
+  onlineStopBoardMutationWatch();
+  onlineSessionState=b.session;
+  onlineDuelBoard=b.onlineDuelBoard;
+  onlineDuelRoomCode=b.onlineDuelRoomCode;
+  onlineDuelActive=b.onlineDuelActive;
+  onlineOfflineBoardState=b.onlineOfflineBoardState;
+  board=b.board;
+}
+function onlineSelfTestInstallRoom(room){
+  const rooms=onlineLoadRooms();
+  rooms.SELFTEST=room;
+  onlineSaveRooms(rooms);
+}
+function onlineSelfTestRemoveRoom(){
+  try{
+    const rooms=onlineLoadRooms();
+    delete rooms.SELFTEST;
+    onlineSaveRooms(rooms);
+  }catch(_){}
+}
+
+function onlineSelfTestRefreshMasterFromCurrent(){
+  if(!onlineSelfTestLocalEditable()||!onlineSelfTestState.masterBoard||!board)return;
+  const pi=onlineSelfTestOwnPlayerIndex();
+  if(pi<0)return;
+  onlineSelfTestState.masterBoard.players[pi]=onlineSelfTestClone(board.players[pi]);
+  onlineSelfTestState.masterBoard.ui=onlineSelfTestClone(board.ui||onlineSelfTestState.masterBoard.ui);
+  onlineSelfTestState.testRoom=onlineSelfTestMakeRoom(onlineSelfTestState.masterBoard);
+  onlineSelfTestInstallRoom(onlineSelfTestState.testRoom);
+}
+function onlineSelfTestRefreshBoardCore(){
+  onlineApplySelfTestClass();
+  if(!onlineSelfTestState.active){onlineRefreshDiagnostic();return}
+
+  const room=onlineSelfTestCurrentRoom();
+  if(!room){
+    onlineSelfTestStatus('動作確認用ルームを取得できませんでした。',true);
+    return;
+  }
+
+  if(onlineSelfTestState.mode==='local'){
+    const next=onlineSelfTestBuildViewBoard(onlineSelfTestState.view);
+    if(!next){
+      onlineSelfTestStatus('テスト盤面を作成できませんでした。デッキを1つ以上作成してください。',true);
       return;
     }
-    onlineSelfTestStatus(`実通信確認中：${view==='spectator'?'観戦':view.toUpperCase()}視点。現在のSupabaseルームを読み取りながら表示を確認します。`);
+    onlineDuelBoard=next;
+    board=onlineDuelBoard;
   }else{
-    onlineSelfTestStatus(`ローカル確認中：${view==='spectator'?'観戦':view.toUpperCase()}視点。Supabaseへの追加書き込みは行いません。`);
+    if(!onlineDuelBoard){
+      onlinePrepareDuelBoard(room);
+      board=onlineDuelBoard;
+    }
   }
+
+  onlineLastRenderedDuelSignature='';
+  nav('online-duel',{preserveScroll:true});
+  onlineRenderDuelBoard({force:true});
+  onlineEnhanceSpectatorRulePlusInternal();
+  onlineRefreshDiagnostic();
+}
+
+function onlineSelfTestRefreshBoard(){
+  try{
+    return onlineSelfTestRefreshBoardCore();
+  }catch(err){
+    console.error('online self-test render failed',err);
+    onlineSelfTestStatus(`テスト盤面の表示に失敗しました：${err?.message||String(err)}`,true);
+  }
+}
+function onlineSelfTestStartCore(){
+  const mode=document.getElementById('online-selftest-mode')?.value||'local';
+  const view=document.getElementById('online-selftest-view')?.value||'p1';
+
+  if(mode==='local'){
+    onlineSelfTestFillDeckSetup();
+    const setup=onlineSelfTestSelectedSetup();
+    if(!setup.p1.deckId||!setup.p2.deckId){
+      onlineSelfTestStatus('P1・P2それぞれのメインデッキを選択してください。',true);
+      return;
+    }
+    const master=onlineSelfTestBuildMasterBoard();
+    if(!master){
+      onlineSelfTestStatus('テスト盤面を作成できませんでした。デッキ設定を確認してください。',true);
+      return;
+    }
+
+    onlineSelfTestBackupState();
+    onlineSelfTestState.active=true;
+    onlineSelfTestState.mode='local';
+    onlineSelfTestState.view=view;
+    onlineSelfTestState.startedAt=Date.now();
+    onlineSelfTestState.masterBoard=master;
+    onlineSelfTestState.testRoom=onlineSelfTestMakeRoom(master);
+    onlineSelfTestState.testRoomCode='SELFTEST';
+    onlineSelfTestInstallRoom(onlineSelfTestState.testRoom);
+
+    onlineSessionState={
+      ...onlineSessionState,
+      provider:'local-broadcast',
+      role:view==='p2'?'guest':(view==='spectator'?'spectator':'host'),
+      roomId:'selftest-room',
+      joinCode:'SELFTEST',
+      connection:'connected',
+      ready:true,
+      deckLocked:true,
+      playerSlot:view==='p1'?1:(view==='p2'?2:null),
+      clientId:view==='p2'?'selftest-p2':'selftest-p1',
+      displayName:view==='spectator'?'観戦者':view.toUpperCase()
+    };
+
+    onlineDuelActive=false;
+    onlineDuelRoomCode='SELFTEST';
+    onlineOfflineBoardState=onlineSelfTestState.backup.board;
+
+    onlineSelfTestStatus(`ローカル確認中：${view==='spectator'?'観戦（閲覧専用）':view.toUpperCase()+'視点（'+view.toUpperCase()+'側を操作可能）'}。テスト盤面を作成しました。`);
+    onlineSelfTestRefreshBoard();
+    return;
+  }
+
+  const room=onlineLoadRooms()[onlineSessionState.joinCode];
+  if(!room){
+    onlineSelfTestStatus('実通信確認には、先に通常どおりオンラインルームへ接続してください。',true);
+    return;
+  }
+
+  onlineSelfTestBackupState();
+  onlineSelfTestState.active=true;
+  onlineSelfTestState.mode='live';
+  onlineSelfTestState.view=view;
+  onlineSelfTestState.startedAt=Date.now();
+  onlineSelfTestState.testRoom=room;
+  onlineSelfTestState.testRoomCode=String(room.code||onlineSessionState.joinCode||'');
+
+  if(!onlineDuelActive){
+    onlineOfflineBoardState=board;
+    onlineDuelActive=true;
+  }
+  onlineDuelRoomCode=String(room.code||onlineSessionState.joinCode||'');
+  onlineDuelBoard=null;
+  onlinePrepareDuelBoard(room);
+  board=onlineDuelBoard;
+
+  onlineSelfTestStatus(`実通信確認中：${view==='spectator'?'観戦':view.toUpperCase()}視点。現在接続中のルームを使用しています。`);
   onlineSelfTestRefreshBoard();
 }
-function onlineSelfTestStop(){
-  onlineSelfTestState={active:false,mode:'local',view:'p1',dummy:false,startedAt:0};
-  onlineApplySelfTestClass();
-  onlineSelfTestStatus('動作確認を終了しました。通常のオンライン表示へ戻りました。');
+
+function onlineSelfTestStart(){
   try{
-    const room=(typeof onlineRoom!=='undefined'&&onlineRoom)||null;
-    if(room&&typeof onlineRenderDuelBoard==='function')onlineRenderDuelBoard(room,{force:true});
+    return onlineSelfTestStartCore();
+  }catch(err){
+    console.error('online self-test start failed',err);
+    onlineSelfTestStatus(`動作確認の開始に失敗しました：${err?.message||String(err)}`,true);
+    try{onlineSelfTestRemoveRoom()}catch(_){}
+    try{onlineSelfTestRestoreState()}catch(_){}
+    onlineSelfTestState.active=false;
+    onlineApplySelfTestClass();
+  }
+}
+function onlineSelfTestStop(){
+  const returnScreen=onlineSelfTestState.backup?.currentScreenName||'online';
+  if(onlineSelfTestState.mode==='local')onlineSelfTestRemoveRoom();
+  onlineSelfTestRestoreState();
+
+  onlineSelfTestState={
+    active:false,mode:'local',view:'p1',dummy:false,startedAt:0,
+    backup:null,masterBoard:null,testRoomCode:'',testRoom:null
+  };
+  onlineApplySelfTestClass();
+  onlineSelfTestStatus('動作確認を終了しました。通常表示へ戻りました。');
+
+  try{
+    if(returnScreen&&document.getElementById(`screen-${returnScreen}`))nav(returnScreen,{preserveScroll:true});
+    else nav('online');
   }catch(_){}
   onlineRefreshDiagnostic();
 }
 function onlineSelfTestDummy(){
+  if(!onlineSelfTestState.active){
+    onlineSelfTestStatus('先に「動作確認を開始」を押してください。',true);
+    return;
+  }
   onlineSelfTestState.dummy=true;
-  onlineSelfTestStatus('テスト用P2を有効にしました。P2視点へ切り替えて、相手側の見え方を確認できます。');
+  if(onlineSelfTestState.mode==='local'){
+    onlineSelfTestStatus('ローカル確認ではP2を自動で用意済みです。P2視点へ切り替えて確認できます。');
+  }else{
+    onlineSelfTestStatus('実通信確認では現在のルーム状態を使用します。');
+  }
   onlineSelfTestRefreshBoard();
 }
+
+function onlineSelfTestSetView(view){
+  const next=['p1','p2','spectator'].includes(view)?view:'p1';
+  onlineSelfTestState.view=next;
+
+  if(onlineSelfTestState.active&&onlineSelfTestState.mode==='local'){
+    onlineSessionState.role=next==='p2'?'guest':(next==='spectator'?'spectator':'host');
+    onlineSessionState.playerSlot=next==='p1'?1:(next==='p2'?2:null);
+    onlineSessionState.clientId=next==='p2'?'selftest-p2':'selftest-p1';
+    onlineSessionState.displayName=next==='spectator'?'観戦者':next.toUpperCase();
+  }
+
+  if(onlineSelfTestState.active){
+    onlineSelfTestStatus(`${onlineSelfTestState.mode==='live'?'実通信':'ローカル'}確認中：${next==='spectator'?'観戦（閲覧専用）':next.toUpperCase()+'視点（'+next.toUpperCase()+'側を操作可能）'}`);
+    onlineSelfTestRefreshBoard();
+  }
+}
+function onlineSelfTestSetMode(mode){
+  const next=mode==='live'?'live':'local';
+  if(!onlineSelfTestState.active){
+    onlineSelfTestState.mode=next;
+    return;
+  }
+  // 動作確認中に通信方式だけ切り替えると盤面ソースが混在するため、
+  // 一旦終了してから再開始するよう案内する。
+  if(next!==onlineSelfTestState.mode){
+    onlineSelfTestStatus('確認方式を変更する場合は、一度「動作確認を終了」してから再度開始してください。',true);
+    const select=document.getElementById('online-selftest-mode');
+    if(select)select.value=onlineSelfTestState.mode;
+  }
+}
+function bindOnlineSelfTestInternalV273(){
+  const on=(id,ev,fn)=>{
+    const el=document.getElementById(id);
+    if(!el||el.dataset.selftestV273Bound==='1')return;
+    el.dataset.selftestV273Bound='1';
+    el.addEventListener(ev,fn);
+  };
+  on('online-selftest-start','click',onlineSelfTestStart);
+  on('online-selftest-stop','click',onlineSelfTestStop);
+  on('online-diagnostic-refresh','click',onlineRefreshDiagnostic);
+  on('online-diagnostic-copy','click',onlineCopyDiagnostic);
+  on('online-selftest-view','change',e=>onlineSelfTestSetView(e.target.value));
+  on('online-selftest-mode','change',e=>{onlineSelfTestSetMode(e.target.value);onlineSelfTestFillDeckSetup()});
+  for(const slot of [1,2])on(`online-selftest-p${slot}-deck`,'change',()=>onlineSelfTestSyncFavorite(slot,true));
+  onlineSelfTestFillDeckSetup();
+}
+
+// デバッグ用に明示的な公開APIも用意。
+// HTML側のイベントが何らかの理由で外れてもコンソールから確認可能。
+window.minkaiOnlineSelfTest={
+  start:onlineSelfTestStart,
+  stop:onlineSelfTestStop,
+  setView:onlineSelfTestSetView,
+  diagnostic:onlineRefreshDiagnostic,
+  copyDiagnostic:onlineCopyDiagnostic
+};
+
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',bindOnlineSelfTestInternalV273,{once:true});
+}else{
+  bindOnlineSelfTestInternalV273();
+}
+
 function onlineDiagnosticSnapshot(){
-  const room=(typeof onlineRoom!=='undefined'&&onlineRoom)||null;
+  const room=onlineSelfTestCurrentRoom();
   const rawOwn=(()=>{try{return onlineOwnSlotRaw()}catch(_){return null}})();
   const visibleOwn=(()=>{try{return onlineOwnSlot()}catch(_){return null}})();
   const safeCount=(slot)=>{
@@ -37907,7 +38577,7 @@ function onlineDiagnosticSnapshot(){
   const member=(slot)=>slot===1?room?.p1:room?.p2;
   const rev=room?.revision??room?.publicState?.revision??null;
   const info={
-    appVersion:'26.8',
+    appVersion:'27.7',
     generatedAt:new Date().toISOString(),
     userAgent:navigator.userAgent,
     online:{
@@ -38242,6 +38912,7 @@ async function onlineAutoSyncNow(){
   onlineUpdateDuelToolbar(onlineLoadRooms()[code]||room);
 }
 function onlineScheduleAutoSync(){
+  if(onlineSelfTestState?.active&&onlineSelfTestState.mode==='local')return;
   if(onlineAutoSyncTimer)clearTimeout(onlineAutoSyncTimer);
   onlineAutoSyncTimer=setTimeout(()=>{
     onlineAutoSyncTimer=0;
@@ -38249,6 +38920,7 @@ function onlineScheduleAutoSync(){
   },ONLINE_AUTO_SYNC_DELAY);
 }
 function onlineStartBoardMutationWatch(){
+  if(onlineSelfTestState?.active&&onlineSelfTestState.mode==='local')return;
   if(onlineBoardMutationObserver){onlineBoardMutationObserver.disconnect();onlineBoardMutationObserver=null}
   const candidates=['#online-duel-main','#board-root','#board-area','#board-view','#board'];
   let target=null;
@@ -39281,6 +39953,7 @@ function onlineDeckCountFromRoom(room,slot){
   return null;
 }
 function onlineServerDeckGuardActive(pi,z){
+  if(onlineSelfTestState?.active&&onlineSelfTestState.mode==='local')return false;
   if(z!=='deck'||!onlineDuelActive||homePlayMode!=='online'||!onlineSessionState.joinCode)return false;
   const room=onlineLoadRooms()[onlineSessionState.joinCode];
   if(!onlineMatchStarted(room))return false;
@@ -39615,7 +40288,7 @@ window.minkaiRestoreFullBackupZip=restoreFullBackupZip;
 window.minkaiDownloadBlob=downloadBlob;
 
 
-// v27.1 public card repository
+// v27.7 public card repository
 const PUBLIC_CARDS_URL='https://kxwsrzpaewhnvirfgxpz.supabase.co/functions/v1/minkai-public-cards';
 const PUBLIC_CARDS_KEY='sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
 const LS_PUBLIC_MANAGEMENT_KEY='minkai_public_management_key_v246r3';
@@ -41598,7 +42271,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='27.1';
+  manifest.appVersion='27.7';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -41639,7 +42312,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'27.1',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'27.7',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
@@ -41738,199 +42411,29 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   document.addEventListener('DOMContentLoaded',()=>setAccountCloudTab(currentCloudTab));
 })();
 
-function bindOnlineSelfTestV268(){
-  const on=(id,ev,fn)=>{const el=document.getElementById(id);if(el&&!el.dataset.v268Bound){el.dataset.v268Bound='1';el.addEventListener(ev,fn)}};
-  on('online-selftest-start','click',onlineSelfTestStart);
-  on('online-selftest-stop','click',onlineSelfTestStop);
-  on('online-selftest-dummy','click',onlineSelfTestDummy);
-  on('online-diagnostic-refresh','click',onlineRefreshDiagnostic);
-  on('online-diagnostic-copy','click',onlineCopyDiagnostic);
-  on('online-selftest-view','change',e=>{
-    if(!onlineSelfTestState.active)return;
-    onlineSelfTestState.view=e.target.value||'p1';
-    onlineSelfTestStatus(`${onlineSelfTestState.mode==='live'?'実通信':'ローカル'}確認中：${onlineSelfTestState.view==='spectator'?'観戦':onlineSelfTestState.view.toUpperCase()}視点`);
-    onlineSelfTestRefreshBoard();
-  });
-  on('online-selftest-mode','change',e=>{
-    if(onlineSelfTestState.active){
-      onlineSelfTestState.mode=e.target.value||'local';
-      onlineSelfTestRefreshBoard();
-    }
-  });
-}
 
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindOnlineSelfTestV268);
-else bindOnlineSelfTestV268();
 
-function onlineEnhanceSpectatorRulePlus(){
-  if(!(onlineSelfTestState?.active&&onlineSelfTestState.view==='spectator'))return;
-  document.querySelectorAll('[data-zone="rulePlus"],.rule-plus-zone,.ruleplus-zone').forEach(zone=>{
-    if(zone.dataset.spectatorCollapseReady)return;
-    zone.dataset.spectatorCollapseReady='1';
-    const btn=document.createElement('button');
-    btn.type='button';btn.className='btn small';btn.textContent='ルールプラスを折りたたむ';
-    btn.style.marginBottom='6px';
-    btn.onclick=()=>{
-      const collapsed=zone.dataset.spectatorCollapsed==='1';
-      zone.dataset.spectatorCollapsed=collapsed?'0':'1';
-      [...zone.children].forEach(ch=>{if(ch!==btn)ch.style.display=collapsed?'':'none'});
-      btn.textContent=collapsed?'ルールプラスを折りたたむ':'ルールプラスを展開';
-    };
-    zone.prepend(btn);
-  });
-}
-
-const SETTINGS_V27_CATEGORY_KEY='minkai-settings-category-v27';
-
-function settingsV27GuessCategory(el){
-  const text=(el.textContent||'').toLocaleLowerCase();
-  const id=String(el.id||'').toLocaleLowerCase();
-  const cls=String(el.className||'').toLocaleLowerCase();
-  const all=`${text} ${id} ${cls}`;
-
-  if(/アカウント|バックアップ|クラウド|復元|同期/.test(all))return 'account';
-  if(/オンライン|対戦|観戦|ルーム|通信/.test(all))return 'online';
-  if(/公開所|公開カード|管理キー|セット配布/.test(all))return 'public';
-  if(/盤面|背景|フレーム|エフェクト|マーカー|カウンター|表示倍率|カードサイズ/.test(all))return 'board';
-  return 'display';
-}
-function settingsV27PrepareSections(){
-  const screen=document.getElementById('screen-settings');if(!screen)return;
-  const nav=screen.querySelector('.settings-category-nav');
-  [...screen.children].forEach(el=>{
-    if(el===nav)return;
-    if(el.classList?.contains('settings-v27-section'))return;
-    if(!el.matches?.('.panel, section, .card, .settings-section'))return;
-    if(!el.dataset.settingsSection)el.dataset.settingsSection=settingsV27GuessCategory(el);
-    el.classList.add('settings-v27-section');
-  });
-}
-function settingsV27SelectCategory(category='display'){
-  settingsV27PrepareSections();
-  const screen=document.getElementById('screen-settings');if(!screen)return;
-  const valid=['display','board','online','public','account','help','maintenance'];
-  if(!valid.includes(category))category='display';
-  try{localStorage.setItem(SETTINGS_V27_CATEGORY_KEY,category)}catch(_){}
-  screen.querySelectorAll('[data-settings-category]').forEach(btn=>{
-    btn.classList.toggle('primary',btn.dataset.settingsCategory===category);
-  });
-  screen.querySelectorAll('[data-settings-section]').forEach(el=>{
-    el.hidden=el.dataset.settingsSection!==category;
-  });
-}
-function settingsV27Bind(){
-  const screen=document.getElementById('screen-settings');if(!screen)return;
-  settingsV27PrepareSections();
-
-  screen.querySelectorAll('[data-settings-category]').forEach(btn=>{
-    if(btn.dataset.settingsV27Bound)return;
-    btn.dataset.settingsV27Bound='1';
-    btn.addEventListener('click',()=>settingsV27SelectCategory(btn.dataset.settingsCategory));
-  });
-
-  const rebuild=document.getElementById('settings-rebuild-cache');
-  if(rebuild&&!rebuild.dataset.settingsV27Bound){
-    rebuild.dataset.settingsV27Bound='1';
-    rebuild.addEventListener('click',settingsV27RebuildCache);
-  }
-
-  const diag=document.getElementById('settings-open-online-diagnostic');
-  if(diag&&!diag.dataset.settingsV27Bound){
-    diag.dataset.settingsV27Bound='1';
-    diag.addEventListener('click',()=>{
-      try{nav('online')}catch(_){}
-      setTimeout(()=>{
-        const details=document.getElementById('online-selftest-details');
-        if(details)details.open=true;
-        document.getElementById('online-diagnostic-output')?.scrollIntoView({block:'center'});
-      },50);
-    });
-  }
-
-  let initial='display';
-  try{initial=localStorage.getItem(SETTINGS_V27_CATEGORY_KEY)||'display'}catch(_){}
-  settingsV27SelectCategory(initial);
-}
-function settingsV27ClearStorageKeys(storage,keys){
+function settingsMaintenanceClearStorageKeys(storage,keys){
   let removed=0;
-  for(const key of keys){
-    try{
-      if(storage.getItem(key)!==null){
-        storage.removeItem(key);
-        removed++;
-      }
-    }catch(_){}
-  }
+  for(const key of keys){try{if(storage.getItem(key)!==null){storage.removeItem(key);removed++;}}catch(_){}}
   return removed;
 }
-async function settingsV27RebuildCache(){
+async function settingsMaintenanceRebuildCache(){
   const status=document.getElementById('settings-rebuild-cache-status');
-  const ok=confirm(
-`一時キャッシュを再構築します。
-
-削除しないもの：
-・登録カード
-・デッキ
-・コレクション
-・カード画像
-・アカウント情報
-・クラウドバックアップ
-
-削除する可能性があるもの：
-・オンライン対戦の一時スクロール位置
-・再接続用の一時盤面キャッシュ
-・一時的な検索 / 表示キャッシュ
-
-進行中のオンライン対戦がある場合はキャンセルしてください。
-
-実行しますか？`);
-  if(!ok){
-    if(status)status.textContent='キャンセルしました。';
-    return;
-  }
-
-  // 本体データキーは絶対に対象へ入れない。
-  const localKeys=[
-    'minkai-online-scroll-state-v1',
-    'minkai-online-owner-hand-v1',
-    'minkai-online-owner-hand-v2',
-    'minkai-online-owner-public-board-v1',
-    'minkai-online-owner-private-board-v2',
-    'minkai-online-last-room-cache',
-    'minkai-public-filter-cache',
-    'minkai-public-view-cache'
-  ];
-  const sessionKeys=[
-    'minkai-online-scroll-state-v1',
-    'minkai-public-filter-cache',
-    'minkai-public-view-cache'
-  ];
-
-  let removed=0;
-  removed+=settingsV27ClearStorageKeys(localStorage,localKeys);
-  removed+=settingsV27ClearStorageKeys(sessionStorage,sessionKeys);
-
-  try{
-    if('caches' in window){
-      const names=await caches.keys();
-      for(const name of names){
-        if(/minkai|github|runtime|static/i.test(name)){
-          await caches.delete(name);
-          removed++;
-        }
-      }
-    }
-  }catch(_){}
-
-  if(status)status.textContent=`キャッシュを再構築しました。削除対象 ${removed}件。ページを再読み込みすると反映されます。`;
+  const ok=confirm(`一時キャッシュを再構築します。\n\n削除しないもの：\n・登録カード\n・デッキ\n・コレクション\n・カード画像\n・アカウント情報\n・クラウドバックアップ\n\n削除する可能性があるもの：\n・オンライン対戦の一時スクロール位置\n・再接続用の一時盤面キャッシュ\n・一時的な検索 / 表示キャッシュ\n\n進行中のオンライン対戦がある場合はキャンセルしてください。\n\n実行しますか？`);
+  if(!ok){if(status)status.textContent='キャンセルしました。';return;}
+  const localKeys=['minkai-online-scroll-state-v1','minkai-online-owner-hand-v1','minkai-online-owner-hand-v2','minkai-online-owner-public-board-v1','minkai-online-owner-private-board-v2','minkai-online-last-room-cache','minkai-public-filter-cache','minkai-public-view-cache'];
+  const sessionKeys=['minkai-online-scroll-state-v1','minkai-public-filter-cache','minkai-public-view-cache'];
+  let removed=0;removed+=settingsMaintenanceClearStorageKeys(localStorage,localKeys);removed+=settingsMaintenanceClearStorageKeys(sessionStorage,sessionKeys);
+  try{if('caches' in window){const names=await caches.keys();for(const name of names){if(/minkai|github|runtime|static/i.test(name)){await caches.delete(name);removed++;}}}}catch(_){}
+  if(status)status.textContent=`キャッシュを再構築しました。削除対象 ${removed}件。オンライン状態でページを再読み込みしてください。`;
   toast('一時キャッシュを再構築しました');
 }
-
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',settingsV27Bind);
-}else{
-  settingsV27Bind();
+function bindSettingsMaintenanceV276(){
+  const rebuild=document.getElementById('settings-rebuild-cache');if(rebuild&&!rebuild.dataset.v276Bound){rebuild.dataset.v276Bound='1';rebuild.addEventListener('click',settingsMaintenanceRebuildCache);}
+  const diag=document.getElementById('settings-open-online-diagnostic');if(diag&&!diag.dataset.v276Bound){diag.dataset.v276Bound='1';diag.addEventListener('click',()=>{try{nav('online')}catch(_){}setTimeout(()=>{const details=document.getElementById('online-selftest-details');if(details)details.open=true;document.getElementById('online-diagnostic-output')?.scrollIntoView({block:'center'});},80);});}
 }
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindSettingsMaintenanceV276);else bindSettingsMaintenanceV276();
 
 const CARD_DRAFT_V271='minkai-card-register-draft-v27-1';
 const DECK_DRAFT_V271='minkai-deck-editor-draft-v27-1';
@@ -42209,6 +42712,23 @@ function initWorkRecoveryV271(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initWorkRecoveryV271);
 else initWorkRecoveryV271();
+
+
+function bindSettingsGuideV277(){
+  document.querySelectorAll('[data-settings-guide-jump]').forEach(btn=>{
+    if(btn.dataset.v277GuideBound==='1')return;
+    btn.dataset.v277GuideBound='1';
+    btn.addEventListener('click',()=>{
+      const id=btn.dataset.settingsGuideJump;
+      const target=document.getElementById(id);
+      if(!target)return;
+      if(target.tagName==='DETAILS')target.open=true;
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindSettingsGuideV277);
+else bindSettingsGuideV277();
 </script>
 
 
