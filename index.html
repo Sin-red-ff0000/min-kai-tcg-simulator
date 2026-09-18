@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v27.7</title>
+<title>みん会TCG Simulator v27.8</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22003,7 +22003,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v27.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v27.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -26835,7 +26835,7 @@ function reportUiRuntimeError(context,err){
  lastUiRuntimeErrorAt=now;
  toast(`${context}中にエラーが発生しました。操作をやり直してください`);
 }
-window.addEventListener('unhandledrejection',e=>reportUiRuntimeError('処理',e.reason||new Error('Promise error')));
+window.addEventListener('unhandledrejection',e=>{console.error('[未処理Promise]',e.reason||new Error('Promise error'))});
 window.addEventListener('error',e=>reportUiRuntimeError('画面処理',e.error||new Error(e.message||'Runtime error')));
 const appScreenHistory=[];
 function appScreenCanRestore(name){
@@ -26864,13 +26864,18 @@ function nav(name,opt={}){
  }
  clearLegacyMainZoom();if(name!=='collection')clearCollectionPageZoom();
  $$('.screen').forEach(x=>x.classList.remove('active'));
- currentScreenName=name;screen.classList.add('active');applyThemePrefs(currentThemeForDisplay());
+ currentScreenName=name;screen.classList.add('active');
+ void applyThemePrefs(currentThemeForDisplay()).catch(err=>console.warn('画面テーマ反映を継続しました',err));
  try{
    if(name==='home'){updateImageStorageStatus();updateHomeDataOverview();}
    if(name==='cards')renderRegisterHistory();
    if(name==='card-manager')renderCards();
    if(name==='collection'){renderCollection();setTimeout(()=>{try{maybeOpenCurrentCollectionCover()}catch(err){reportUiRuntimeError('コレクション表紙',err)}},0)}
-   if(name==='decks'){deckV271RestoreUiControls();renderDecks();setTimeout(deckV271RestoreScroll,0)}
+   if(name==='decks'){
+     try{deckV271RestoreUiControls()}catch(err){console.warn('デッキ表示条件の復元失敗',err)}
+     renderDecks();
+     setTimeout(()=>{try{deckV271RestoreScroll()}catch(err){console.warn('デッキ位置復元失敗',err)}},0);
+   }
    if(name==='setup')renderSetup();
    if(name==='public-cards')window.publicCardsRender?.();
    if(name==='account')window.accountRender?.();
@@ -38577,7 +38582,7 @@ function onlineDiagnosticSnapshot(){
   const member=(slot)=>slot===1?room?.p1:room?.p2;
   const rev=room?.revision??room?.publicState?.revision??null;
   const info={
-    appVersion:'27.7',
+    appVersion:'27.8',
     generatedAt:new Date().toISOString(),
     userAgent:navigator.userAgent,
     online:{
@@ -42271,7 +42276,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='27.7';
+  manifest.appVersion='27.8';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -42312,7 +42317,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'27.7',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'27.8',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
@@ -42641,9 +42646,8 @@ function deckV271RestoreUiControls(){
   if(s)deckV271ApplyUiControls(s);
 }
 function deckV271RestoreScroll(){
-  const y=deckV271PendingScroll;
-  if(y==null)return;
-  requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo({top:Number(y)||0,behavior:'auto'})));
+  const y=deckV271PendingScroll;if(y==null)return;
+  try{requestAnimationFrame(()=>requestAnimationFrame(()=>{try{window.scrollTo({top:Number(y)||0,behavior:'auto'})}catch(err){console.warn('デッキ位置復元失敗',err)}}))}catch(err){console.warn('デッキ位置復元予約失敗',err)}
 }
 
 /* ---------------- Offline / PWA ---------------- */
