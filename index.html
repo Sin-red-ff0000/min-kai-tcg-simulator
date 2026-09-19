@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v28.0</title>
+<title>みん会TCG Simulator v28.1</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22003,7 +22003,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v28.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v28.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -33751,15 +33751,18 @@ let onlineBoardLocalRenderQueued=false;
 let onlineBoardLocalRenderTimer=0;
 function onlineQueueLocalBoardRender(){
  if(!onlineDuelActive||currentScreenName!=='online-duel')return;
- onlineDuelBoard=board;
  if(onlineBoardLocalRenderTimer)clearTimeout(onlineBoardLocalRenderTimer);
  onlineBoardLocalRenderQueued=true;
  onlineBoardLocalRenderTimer=setTimeout(()=>{
-   onlineBoardLocalRenderTimer=0;onlineBoardLocalRenderQueued=false;
+   onlineBoardLocalRenderTimer=0;
+   onlineBoardLocalRenderQueued=false;
    if(!onlineDuelActive||currentScreenName!=='online-duel')return;
-   try{onlineLastRenderedDuelSignature='';onlineRenderDuelBoard({force:true})}
-   catch(err){console.error('オンライン盤面の再描画に失敗',err)}
- },48);
+   try{
+     onlineDuelBoard=board;
+     onlineLastRenderedDuelSignature='';
+     onlineRenderDuelBoard({force:true});
+   }catch(err){console.error('オンライン盤面再描画失敗',err)}
+ },60);
 }
 function renderBoard(){
  if(typeof onlineSelfTestState!=='undefined'&&onlineSelfTestState?.active&&onlineSelfTestState.mode==='local'&&currentScreenName==='online-duel'){
@@ -33799,7 +33802,7 @@ function onlineZoneDisplayCount(pi,z,fallback){
  }
  return fallback;
 }
-function zoneHeader(pi,z){const p=board.players[pi], rawN=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)), n=onlineZoneDisplayCount(pi,z,rawN),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button><button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;else if(['hand','grave','banish'].includes(z))controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll';controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button></span>`}return `<div class="zone-head" data-zone-head="${pi}|${z}"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count" data-zone-count="${pi}|${z}">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
+function zoneHeader(pi,z){const p=board.players[pi], rawN=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)), n=onlineZoneDisplayCount(pi,z,rawN),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button><button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;else if(['hand','grave','banish'].includes(z))controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll';controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button></span>`}return `<div class="zone-head" data-zone-head="${pi}|${z}"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
 
 function signedNumber(n){
  const v=Number(n)||0;
@@ -36925,15 +36928,262 @@ function onlineBindToolWindow(slot){
 }
 
 function onlinePublicZoneItemsFromRoom(slot,z){
- const room=onlineLoadRooms()[onlineSessionState.joinCode],state=room?.publicState?.[`p${Number(slot)}`],src=Array.isArray(state?.[z])?state[z]:[],out=[];
- for(const pile of src){if(!pile)continue;for(const c of (Array.isArray(pile.cards)?pile.cards:[])){if(c)out.push(c)}}return out;
+  const room=onlineLoadRooms()[onlineSessionState.joinCode];
+  const state=room?.publicState?.[`p${Number(slot)}`];
+  const src=Array.isArray(state?.[z])?state[z]:[];
+  const rows=[];
+  src.forEach((pile,pileIndex)=>{
+    (Array.isArray(pile?.cards)?pile.cards:[]).forEach((c,cardIndex)=>rows.push({
+      c,pileIndex,cardIndex,
+      key:String(c?.publicKey||`${pileIndex}-${cardIndex}`),
+      position:`${rows.length+1}番目${cardIndex>0?` / 重なり${cardIndex+1}枚目`:''}`
+    }));
+  });
+  if(z==='grave'||z==='banish')rows.reverse();
+  return rows;
 }
-function openOnlinePublicZoneViewer(slot,z){
- const items=onlinePublicZoneItemsFromRoom(slot,z),label=z==='grave'?'墓地':z==='banish'?'消失領域':ZONE_LABELS[z]||z;
- const rows=items.length?items.map((c,i)=>`<div class="zone-view-row"><div><b>${i+1}. ${esc(c.faceDown?'裏向きカード':c.name||'カード')}</b><div class="muted">${c.faceDown?'内容非公開':`${esc(c.type||'-')} / Lv ${esc(c.level||'-')} / POWER ${esc(c.power||'-')}`}</div></div></div>`).join(''):'<div class="empty">カードなし</div>';
- openModal(`<div class="modal-head"><h3>P${slot} ${label} 一覧</h3><button class="btn" id="online-public-zone-close">閉じる</button></div><p class="muted">公開領域を閲覧しています。重なっているカードも1枚ずつ表示します。</p><div class="zone-view-list">${rows}</div>`);const b=document.getElementById('online-public-zone-close');if(b)b.onclick=closeModal;
+function openOnlinePublicZoneViewer(slot,z,initialQuery=''){
+  if(!['grave','banish'].includes(z))return false;
+  const rows=onlinePublicZoneItemsFromRoom(slot,z);
+  openModal(`<div class="modal-head"><h3>P${Number(slot)} / ${esc(ZONE_LABELS[z]||z)} 一覧</h3><span class="pill" id="online-public-zone-count">${rows.length}枚</span><button class="btn" id="online-public-zone-close">閉じる</button></div>
+    <p class="muted">相手が同期した公開領域を直接表示しています。重なっているカードも1枚ずつ確認できます。</p>
+    <label>カード名検索<input id="online-public-zone-search" type="search" value="${esc(initialQuery)}" autocomplete="off"></label>
+    <div class="board-zone-list" id="online-public-zone-grid" style="margin-top:10px"></div>`);
+  const search=document.getElementById('online-public-zone-search'),grid=document.getElementById('online-public-zone-grid'),count=document.getElementById('online-public-zone-count');
+  const render=()=>{
+    const q=String(search?.value||'').trim().toLocaleLowerCase();
+    const shown=rows.filter(x=>!q||String(x.c?.name||'').toLocaleLowerCase().includes(q));
+    if(count)count.textContent=q?`${shown.length}/${rows.length}枚`:`${rows.length}枚`;
+    if(grid)grid.innerHTML=shown.map(x=>{const c=x.c||{};return `<div class="board-zone-list-card"><div class="board-zone-list-info"><h4>${esc(c.faceDown?'裏向きカード':(c.name||'名称未設定'))}</h4><div class="muted">${esc(x.position)}${c.type?` / ${esc(c.type)}`:''}${c.level!==''&&c.level!=null?` / Lv ${esc(c.level)}`:''}</div>${!c.faceDown&&c.race?`<div class="muted">種族：${esc(c.race)}</div>`:''}${!c.faceDown?`<details class="zone-card-effect-preview"><summary>効果を確認</summary><div class="zone-card-effect-body">${esc(c.effect||'効果テキストなし')}</div></details>`:''}</div></div>`}).join('')||'<div class="muted">カードなし</div>';
+  };
+  document.getElementById('online-public-zone-close').onclick=closeModal;
+  if(search)search.oninput=render;
+  render();
+  return true;
+}
+function onlinePublicDeckCountForDisplay(room,slot){
+  const pub=Number(room?.publicState?.[`p${Number(slot)}`]?.meta?.deckCount);
+  if(Number.isFinite(pub)&&pub>=0)return pub;
+  const member=Number((Number(slot)===1?room?.p1:room?.p2)?.deckCount);
+  if(Number.isFinite(member)&&member>=0)return member;
+  return null;
 }
 
+function onlinePlayerActionToolbar(slot,room){
+  const own=onlineOwnSlot()||0,mine=own===slot;
+  const deckCount=onlinePublicDeckCountForDisplay(room,slot);
+  return `<div class="online-player-toolbar" data-online-toolbar-slot="${slot}">
+    <span class="online-player-toolbar-title">P${slot} 操作</span>
+    <span class="pill">${mine?'自分側・常時操作可':'閲覧専用'}</span>
+    <span class="pill online-deck-count-badge">残りデッキ ${deckCount==null?'--':deckCount}枚</span>
+    <span class="online-player-toolbar-spacer"></span>
+    <button class="btn small" type="button" data-online-slot-action="${slot}|draw" ${mine?'':'disabled'}>1枚ドロー</button>
+    <button class="btn small" type="button" data-online-slot-action="${slot}|shuffle" ${mine?'':'disabled'}>デッキをシャッフル</button>
+    <button class="btn small" type="button" data-online-slot-action="${slot}|random" ${mine?'':'disabled'}>手札からランダム</button>
+  </div>`;
+}
+function onlineBindDuelConvenienceTools(){
+  const host=$('#online-duel-main');
+  if(!host)return;
+
+  if(host.dataset.onlineActionDelegation!=='1'){
+    host.dataset.onlineActionDelegation='1';
+    host.addEventListener('click',e=>{
+      const btn=e.target.closest?.('[data-online-slot-action]');
+      if(!btn||!host.contains(btn))return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      const raw=String(btn.dataset.onlineSlotAction||'');
+      const [slotRaw,action]=raw.split('|');
+      const slot=Number(slotRaw);
+      if(![1,2].includes(slot)||!['draw','shuffle','random','end'].includes(action))return;
+
+      const own=onlineOwnSlot();
+      if(slot!==own){
+        toast(`P${slot}側の操作はP${slot}本人だけ使用できます`);
+        return;
+      }
+
+      Promise.resolve(onlineDuelRunForSlot(slot,action)).catch(err=>{
+        console.error('online player action failed',err);
+        const msg=String(err?.message||err);
+        const out=$('#online-duel-tool-result');
+        if(out)out.textContent=`操作失敗：${msg}`;
+        toast(`操作失敗：${msg}`);
+      });
+    });
+  }
+}
+
+
+function onlineCaptureViewportAnchor(){
+  const host=document.querySelector('#online-duel-main');
+  if(!host||currentScreenName!=='online-duel')return null;
+  const cx=Math.max(1,Math.min(window.innerWidth-1,Math.round(window.innerWidth*.5)));
+  const cy=Math.max(1,Math.min(window.innerHeight-1,Math.round(window.innerHeight*.48)));
+  let el=document.elementFromPoint(cx,cy);
+  el=el?.closest?.('[data-online-anchor],[data-zone-scroll],[data-zone],[data-slot]')||null;
+
+  // 画面中央が空白なら、現在の表示領域と重なっているカード/ゾーンを探す。
+  if(!el){
+    const candidates=[...host.querySelectorAll('[data-online-anchor],[data-zone-scroll],[data-zone]')];
+    el=candidates.find(node=>{
+      const r=node.getBoundingClientRect();
+      return r.bottom>80&&r.top<window.innerHeight-40;
+    })||null;
+  }
+  if(!el)return null;
+
+  const r=el.getBoundingClientRect();
+  if(el.dataset.onlineAnchor){
+    return {
+      kind:'card',
+      key:String(el.dataset.onlineAnchor),
+      viewportTop:Number(r.top)||0,
+      viewportLeft:Number(r.left)||0
+    };
+  }
+  if(el.dataset.zoneScroll){
+    return {
+      kind:'zoneScroll',
+      key:String(el.dataset.zoneScroll),
+      viewportTop:Number(r.top)||0,
+      viewportLeft:Number(r.left)||0
+    };
+  }
+  if(el.dataset.zone){
+    return {
+      kind:'zone',
+      key:String(el.dataset.zone),
+      viewportTop:Number(r.top)||0,
+      viewportLeft:Number(r.left)||0
+    };
+  }
+  if(el.dataset.slot){
+    return {
+      kind:'slot',
+      key:String(el.dataset.slot),
+      viewportTop:Number(r.top)||0,
+      viewportLeft:Number(r.left)||0
+    };
+  }
+  return null;
+}
+function onlineFindViewportAnchor(anchor){
+  if(!anchor)return null;
+  const escCss=v=>{
+    try{return CSS.escape(String(v))}catch(_){return String(v).replace(/["\\]/g,'\\$&')}
+  };
+  if(anchor.kind==='card')return document.querySelector(`#online-duel-main [data-online-anchor="${escCss(anchor.key)}"]`);
+  if(anchor.kind==='zoneScroll')return document.querySelector(`#online-duel-main [data-zone-scroll="${escCss(anchor.key)}"]`);
+  if(anchor.kind==='zone')return document.querySelector(`#online-duel-main [data-zone="${escCss(anchor.key)}"]`);
+  if(anchor.kind==='slot')return document.querySelector(`#online-duel-main [data-slot="${escCss(anchor.key)}"]`);
+  return null;
+}
+function onlineCaptureScrollSnapshot(){
+  const zones={};
+  document.querySelectorAll('#online-duel-main [data-zone-scroll]').forEach(el=>{
+    zones[String(el.dataset.zoneScroll||'')]={
+      left:Number(el.scrollLeft)||0,
+      top:Number(el.scrollTop)||0
+    };
+  });
+  const hands={};
+  document.querySelectorAll('#online-duel-main [data-hand-scroll]').forEach(el=>{
+    hands[String(el.dataset.handScroll||'')]={
+      left:Number(el.scrollLeft)||0,
+      top:Number(el.scrollTop)||0
+    };
+  });
+  const snap={
+    pageX:Number(window.scrollX)||0,
+    pageY:Number(window.scrollY)||0,
+    visualOffsetTop:Number(window.visualViewport?.offsetTop)||0,
+    visualHeight:Number(window.visualViewport?.height)||Number(window.innerHeight)||0,
+    anchor:onlineCaptureViewportAnchor(),
+    zones,hands,
+    at:Date.now()
+  };
+  if(onlineSessionState.joinCode){
+    for(const storage of [sessionStorage,localStorage]){
+      try{
+        const all=JSON.parse(storage.getItem(LS_ONLINE_SCROLL_STATE)||'{}');
+        all[onlineSessionState.joinCode]=snap;
+        storage.setItem(LS_ONLINE_SCROLL_STATE,JSON.stringify(all));
+      }catch(_){}
+    }
+  }
+  return snap;
+}
+function onlineStoredScrollSnapshot(){
+  const code=onlineSessionState.joinCode;
+  if(!code)return null;
+  let best=null;
+  for(const storage of [sessionStorage,localStorage]){
+    try{
+      const all=JSON.parse(storage.getItem(LS_ONLINE_SCROLL_STATE)||'{}');
+      const snap=all?.[code];
+      if(!snap)continue;
+      if(Date.now()-Number(snap.at||0)>1000*60*60*6)continue;
+      if(!best||Number(snap.at||0)>Number(best.at||0))best=snap;
+    }catch(_){}
+  }
+  return best;
+}
+function onlineApplyScrollSnapshot(snap){
+  if(!snap||currentScreenName!=='online-duel')return;
+
+  document.querySelectorAll('#online-duel-main [data-zone-scroll]').forEach(el=>{
+    const s=snap.zones?.[String(el.dataset.zoneScroll||'')];
+    if(!s)return;
+    el.scrollLeft=Number(s.left)||0;
+    el.scrollTop=Number(s.top)||0;
+  });
+  document.querySelectorAll('#online-duel-main [data-hand-scroll]').forEach(el=>{
+    const s=snap.hands?.[String(el.dataset.handScroll||'')];
+    if(!s)return;
+    el.scrollLeft=Number(s.left)||0;
+    el.scrollTop=Number(s.top)||0;
+  });
+
+  // まず保存座標へ戻す。
+  const baseX=Number(snap.pageX)||0,baseY=Number(snap.pageY)||0;
+  if(Math.abs((window.scrollX||0)-baseX)>1||Math.abs((window.scrollY||0)-baseY)>1){
+    window.scrollTo({left:baseX,top:baseY,behavior:'auto'});
+  }
+
+  // DOMの高さが読み込み前後で変わった場合は、見ていたカード/ゾーンを基準に補正。
+  const anchorEl=onlineFindViewportAnchor(snap.anchor);
+  if(anchorEl&&snap.anchor){
+    const r=anchorEl.getBoundingClientRect();
+    const dy=(Number(r.top)||0)-(Number(snap.anchor.viewportTop)||0);
+    const dx=(Number(r.left)||0)-(Number(snap.anchor.viewportLeft)||0);
+    if(Math.abs(dy)>1||Math.abs(dx)>1){
+      window.scrollBy({left:dx,top:dy,behavior:'auto'});
+    }
+  }
+}
+function onlineWaitForLayoutStable(callback,maxMs=1400){
+  const host=document.querySelector('#online-duel-main');
+  if(!host){callback();return}
+  const started=performance.now();
+  let lastH=-1,lastW=-1,stableFrames=0;
+  const tick=()=>{
+    if(currentScreenName!=='online-duel')return;
+    const h=Math.round(host.getBoundingClientRect().height);
+    const w=Math.round(host.getBoundingClientRect().width);
+    if(Math.abs(h-lastH)<=1&&Math.abs(w-lastW)<=1)stableFrames++;
+    else stableFrames=0;
+    lastH=h;lastW=w;
+    if(stableFrames>=3||performance.now()-started>=maxMs){
+      callback();
+      return;
+    }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
 function onlineRestoreScrollStable(snap){
   if(!snap)return;
   const apply=()=>onlineApplyScrollSnapshot(snap);
@@ -36952,10 +37202,14 @@ function onlineRestoreScrollStable(snap){
 }
 
 
-function onlineRefreshVisibleZoneCounts(room=null){
- if(!onlineDuelActive||currentScreenName!=='online-duel')return;
- room=room||onlineLoadRooms()[onlineSessionState.joinCode];if(!room)return;
- for(const slot of [1,2]){const pi=slot-1,n=onlineDeckCountFromRoom(room,slot);const el=document.querySelector(`#online-duel-main [data-zone-count="${pi}|deck"]`);if(el&&n!=null)el.textContent=String(n)}
+function onlineV281RefreshDeckCounts(room){
+  const host=$('#online-duel-main');if(!host||!room)return;
+  for(const slot of [1,2]){
+    const n=onlineDeckCountFromRoom(room,slot);
+    if(n==null)continue;
+    const el=host.querySelector(`[data-zone-head="${slot-1}|deck"] .count`);
+    if(el)el.textContent=String(n);
+  }
 }
 function onlineRenderDuelBoard(options={}){
   const host=$('#online-duel-main');
@@ -36969,8 +37223,7 @@ function onlineRenderDuelBoard(options={}){
   // 同じ盤面ならinnerHTMLを交換しない。
   // ポーリングやRealtime通知はツールバー等の軽量更新だけ行う。
   if(!force&&host.childElementCount&&signature===onlineLastRenderedDuelSignature){
-    onlineUpdateDuelToolbar(room);
-    onlineRefreshVisibleZoneCounts(room);
+    onlineUpdateDuelToolbar(room);onlineV281RefreshDeckCounts(room);
     onlineRefreshToolAvailability();
     onlineApplySpectatorViewClass();
     onlineRenderPublicResults();
@@ -37061,15 +37314,17 @@ function onlineRenderDuelBoard(options={}){
       const [piRaw,z]=String(btn.dataset.zoneView||'').split('|'),slot=Number(piRaw)+1;
       if(slot!==ownSlotNow&&['grave','banish'].includes(z)){
         btn.disabled=false;btn.removeAttribute('aria-disabled');btn.style.pointerEvents='auto';btn.style.opacity='1';
-        btn.onclick=e=>{e.preventDefault();e.stopPropagation();openOnlinePublicZoneViewer(slot,z)};
+        if(btn.dataset.v281PublicBound!=='1'){
+          btn.dataset.v281PublicBound='1';
+          btn.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();openOnlinePublicZoneViewer(slot,z)},true);
+        }
       }
     });
     bindBoardToolTray();
     onlineBindDuelConvenienceTools();
     applyBoardDisplaySettings();
     hydratePlayerBoardBackgrounds();
-    onlineUpdateDuelToolbar(room);
-    onlineRefreshVisibleZoneCounts(room);
+    onlineUpdateDuelToolbar(room);onlineV281RefreshDeckCounts(room);
     onlineApplyDuelZoom();
     onlineRefreshToolAvailability();
     onlineApplySpectatorViewClass();
@@ -37086,13 +37341,10 @@ function onlineRenderDuelBoard(options={}){
     return true;
   }finally{
     onlineBoardRenderInProgress=false;
-    if(hadObserver&&onlineDuelActive&&!(onlineSelfTestState?.active&&onlineSelfTestState.mode==='local')){
-      queueMicrotask(()=>{
-        onlineBoardMutationPaused=false;
-        if(onlineDuelActive)onlineStartBoardMutationWatch();
-      });
-    }else{
-      onlineBoardMutationPaused=false;
+    onlineBoardMutationPaused=false;
+    if(onlineBoardMutationObserver){
+      try{onlineBoardMutationObserver.disconnect()}catch(_){}
+      onlineBoardMutationObserver=null;
     }
   }
 }
@@ -38422,7 +38674,7 @@ function onlineDiagnosticSnapshot(){
   const member=(slot)=>slot===1?room?.p1:room?.p2;
   const rev=room?.revision??room?.publicState?.revision??null;
   const info={
-    appVersion:'27.9',
+    appVersion:'28.1',
     generatedAt:new Date().toISOString(),
     userAgent:navigator.userAgent,
     online:{
@@ -38742,7 +38994,7 @@ async function onlineAutoSyncNow(){
         deckCount:Number(publicBoard?.meta?.deckCount ?? onlineCountPrivateInfo(slot).deckCount),
         revision:state.revision
       });
-      if(data)onlineApplyRemoteRoomSnapshot(data,{skipDuelRender:true});
+      if(data)onlineApplyRemoteRoomSnapshot(data);
     }catch(err){
       console.warn('remote public sync failed',err);
       const status=$('#online-duel-sync');
@@ -38765,9 +39017,13 @@ function onlineScheduleAutoSync(){
   },ONLINE_AUTO_SYNC_DELAY);
 }
 function onlineStartBoardMutationWatch(){
-  if(onlineBoardMutationObserver){onlineBoardMutationObserver.disconnect();onlineBoardMutationObserver=null}
+  if(onlineBoardMutationObserver){
+    try{onlineBoardMutationObserver.disconnect()}catch(_){}
+    onlineBoardMutationObserver=null;
+  }
   onlineBoardMutationPaused=false;
 }
+
 function onlineStopBoardMutationWatch(){
   if(onlineBoardMutationObserver){onlineBoardMutationObserver.disconnect();onlineBoardMutationObserver=null}
   if(onlineAutoSyncTimer){clearTimeout(onlineAutoSyncTimer);onlineAutoSyncTimer=0}
@@ -39449,7 +39705,7 @@ function onlineRequireRemoteConfig(){
   }
   return true;
 }
-function onlineApplyRemoteRoomSnapshot(snapshot,options={}){
+function onlineApplyRemoteRoomSnapshot(snapshot){
   if(!snapshot||typeof snapshot!=='object')return null;
   const room=snapshot.room||snapshot;
   if(!room||!room.code)return null;
@@ -39465,8 +39721,7 @@ function onlineApplyRemoteRoomSnapshot(snapshot,options={}){
   if(onlineDuelActive&&onlineDuelRoomCode===String(room.code)){
     if(previousSig!==nextSig){
       onlineMergeRemotePublicIntoDuel(room);
-      if(currentScreenName==='online-duel'&&!options.skipDuelRender)onlineRenderDuelBoard();
-      else if(currentScreenName==='online-duel'){onlineUpdateDuelToolbar(room);onlineRefreshToolAvailability();onlineRefreshVisibleZoneCounts(room)}
+      if(currentScreenName==='online-duel')onlineRenderDuelBoard();
     }else if(currentScreenName==='online-duel'){
       onlineUpdateDuelToolbar(room);
       onlineRefreshToolAvailability();
@@ -42101,7 +42356,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='27.9';
+  manifest.appVersion='28.1';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -42142,7 +42397,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'27.9',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'28.1',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
