@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v28.3</title>
+<title>みん会TCG Simulator v28.4</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21984,6 +21984,20 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   .settings-guide-index .btn{width:100%}
   .settings-guide-section>summary{align-items:flex-start;flex-direction:column;gap:3px}
 }
+
+/* Ver28.4 opponent public interaction fix
+   Earlier .online-duel-opponent .zone-head button has higher specificity,
+   so use an ID-scoped rule that wins in normal P1/P2 view as well as spectator view. */
+#online-duel-main .online-duel-opponent .zone-head button[data-zone-view]{
+  pointer-events:auto!important;
+  opacity:1!important;
+  cursor:pointer!important;
+}
+#online-duel-main .online-duel-opponent [data-pile]{
+  pointer-events:auto!important;
+  opacity:1!important;
+  cursor:pointer!important;
+}
 </style>
 
 
@@ -22003,7 +22017,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v28.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v28.4 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -37334,6 +37348,16 @@ function onlineRenderDuelBoard(options={}){
     }
 
     bindBoard();
+
+    // Ver28.4: 相手カードはドラッグ不可のまま、クリック詳細だけ許可する。
+    // CSSの旧read-only指定でpointer-events:noneが残っていたため明示的に解除。
+    host.querySelectorAll('.online-duel-opponent [data-pile]').forEach(el=>{
+      el.draggable=false;
+      el.removeAttribute('draggable');
+      el.style.pointerEvents='auto';
+      el.style.opacity='1';
+    });
+
     // Ver28.3:
     // 観戦で正常動作しているopenZoneViewerをP1/P2の相手公開領域にもそのまま使用する。
     // onlineDuelBoardの相手側はpublicStateから復元済みなので、別ビューアを経由させない。
@@ -37346,15 +37370,9 @@ function onlineRenderDuelBoard(options={}){
         btn.removeAttribute('aria-disabled');
         btn.style.pointerEvents='auto';
         btn.style.opacity='1';
-        btn.onclick=null;
-        if(btn.dataset.v283PublicBound!=='1'){
-          btn.dataset.v283PublicBound='1';
-          btn.addEventListener('click',e=>{
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            openZoneViewer(pi,z);
-          },true);
-        }
+        // bindBoard() already attached openZoneViewer().
+        // ここではCSS/disabled状態だけを解除し、イベント経路を二重化しない。
+        btn.tabIndex=0;
       }
     });
     bindBoardToolTray();
@@ -37943,17 +37961,19 @@ function onlineExtractPublicBoardFromSolo(slot){
   out.meta.updatedAt=Date.now();
   out.meta.homePowerMod=Number(p.homePowerMod)||0;
 
-  // v26.5: デッキ内容・順番は非公開のまま、残り枚数だけ公開する。
+  // Ver28.4:
+  // 公開する残りデッキ枚数は「現在の自分の影デッキ」を直接数える。
+  // 旧処理はroom側の古いdeckCountを読み、それをpublicStateへ再送していたため、
+  // 対戦開始時の最大枚数で固定される循環が発生していた。
   const publicCounts=onlineCountPrivateInfo(slot);
   out.meta.handCount=Number(publicCounts.handCount)||0;
-
-  // 対戦開始直後などserver deckCountがまだ0/未反映でも、
-  // 端末側に実カードが残っているなら誤った0を公開しない。
   const localDeckCount=(Array.isArray(p.deck)?p.deck:[]).reduce(
     (n,pile)=>n+(Array.isArray(pile?.cards)?pile.cards.length:0),0
   );
-  const countedDeck=Math.max(0,Number(publicCounts.deckCount)||0);
-  out.meta.deckCount=(countedDeck===0&&localDeckCount>0)?localDeckCount:countedDeck;
+  const cachedServerCount=Number(p._onlineServerDeckCount);
+  out.meta.deckCount=p._onlineShadowDeckIncomplete&&Number.isFinite(cachedServerCount)&&cachedServerCount>=0
+    ?cachedServerCount
+    :localDeckCount;
 
   out.meta.freeCounters=ensurePlayerFreeCounters(p).map(x=>({
     name:String(x?.name||'記録').slice(0,20),
@@ -38711,7 +38731,7 @@ function onlineDiagnosticSnapshot(){
   const member=(slot)=>slot===1?room?.p1:room?.p2;
   const rev=room?.revision??room?.publicState?.revision??null;
   const info={
-    appVersion:'28.3',
+    appVersion:'28.4',
     generatedAt:new Date().toISOString(),
     userAgent:navigator.userAgent,
     online:{
@@ -38910,14 +38930,30 @@ function onlineCardOwnerOnlyView(card){
 function onlineCountPrivateInfo(slot){
   const p=board?.players?.[slot-1];
   if(!p)return {handCount:0,deckCount:0};
-  const handCount=(Array.isArray(p.hand)?p.hand:[]).reduce((n,pile)=>n+(Array.isArray(pile?.cards)?pile.cards.length:0),0);
-  let deckCount=(Array.isArray(p.deck)?p.deck:[]).reduce((n,pile)=>n+(Array.isArray(pile?.cards)?pile.cards.length:0),0);
+  const handCount=(Array.isArray(p.hand)?p.hand:[]).reduce(
+    (n,pile)=>n+(Array.isArray(pile?.cards)?pile.cards.length:0),0
+  );
+  const localDeckCount=(Array.isArray(p.deck)?p.deck:[]).reduce(
+    (n,pile)=>n+(Array.isArray(pile?.cards)?pile.cards.length:0),0
+  );
+
+  let deckCount=localDeckCount;
   if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive){
-    try{
-      const room=onlineLoadRooms()[onlineSessionState.joinCode];
-      const serverCount=onlineDeckCountFromRoom(room,slot);
-      if(serverCount!=null)deckCount=serverCount;
-    }catch(_){}
+    const own=typeof onlineOwnSlot==='function'?Number(onlineOwnSlot()):0;
+    if(Number(slot)===own){
+      // 自分の影デッキが完全なら、現在の実枚数を正とする。
+      // ここでroom.deckCountを参照すると、古い最大枚数を自分自身へ再公開する循環になる。
+      if(p._onlineShadowDeckIncomplete){
+        const cached=Number(p._onlineServerDeckCount);
+        if(Number.isFinite(cached)&&cached>=0)deckCount=cached;
+      }
+    }else{
+      try{
+        const room=onlineLoadRooms()[onlineSessionState.joinCode];
+        const remote=onlineDeckCountFromRoom(room,slot);
+        if(remote!=null)deckCount=remote;
+      }catch(_){}
+    }
   }
   return {handCount,deckCount};
 }
@@ -39033,7 +39069,11 @@ async function onlineAutoSyncNow(){
         deckCount:Number(publicBoard?.meta?.deckCount ?? onlineCountPrivateInfo(slot).deckCount),
         revision:state.revision
       });
-      if(data)onlineApplyRemoteRoomSnapshot(data,{skipDuelRender:true});
+      if(data){
+        onlineApplyRemoteRoomSnapshot(data,{skipDuelRender:true});
+        const latest=onlineLoadRooms()[code];
+        if(latest)onlineV281RefreshDeckCounts(latest);
+      }
     }catch(err){
       console.warn('remote public sync failed',err);
       const status=$('#online-duel-sync');
@@ -40054,31 +40094,32 @@ function onlineApplyServerDrawToLocalBoard(slot,drawnIds){
 function onlineDeckCountFromRoom(room,slot){
   const s=Number(slot);
   const member=s===1?room?.p1:room?.p2;
-  const own=typeof onlineOwnSlot==='function'?Number(onlineOwnSlot()):null;
-  const memberCount=Number(member?.deckCount);
-  const publicCount=Number(room?.publicState?.[`p${s}`]?.meta?.deckCount);
-  const total=Number(member?.deckTotal);
+  const own=typeof onlineOwnSlot==='function'?Number(onlineOwnSlot()):0;
+  const publicRaw=room?.publicState?.[`p${s}`]?.meta?.deckCount;
+  const memberRaw=member?.deckCount;
+  const publicCount=publicRaw===null||publicRaw===undefined?null:Number(publicRaw);
+  const memberCount=memberRaw===null||memberRaw===undefined?null:Number(memberRaw);
 
-  if(own===s){
-    if(Number.isFinite(memberCount)&&memberCount>=0)return memberCount;
-    if(Number.isFinite(publicCount)&&publicCount>=0)return publicCount;
-  }else{
-    // Edge Functionが相手のpublic metaを0で返す版でも、
-    // member.deckCountに正しい公開残数がある場合はそちらを採用する。
-    if(Number.isFinite(publicCount)&&publicCount>0)return publicCount;
-    if(Number.isFinite(memberCount)&&memberCount>0)return memberCount;
-    // 両方0で、初期総数も0/不明なら0として扱う。
-    if(Number.isFinite(publicCount)&&publicCount===0 &&
-       Number.isFinite(memberCount)&&memberCount===0 &&
-       (!Number.isFinite(total)||total===0))return 0;
+  if(s===own){
+    const p=board?.players?.[s-1];
+    if(p&&!p._onlineShadowDeckIncomplete){
+      const local=(Array.isArray(p.deck)?p.deck:[]).reduce(
+        (n,pile)=>n+(Array.isArray(pile?.cards)?pile.cards.length:0),0
+      );
+      return local;
+    }
+    const cached=Number(p?._onlineServerDeckCount);
+    if(Number.isFinite(cached)&&cached>=0)return cached;
   }
 
-  if(Number.isFinite(total)&&total>=0){
-    // 対戦開始直後の公開値未反映時は総数を暫定表示。
-    return total;
-  }
+  // 対戦中は「最大枚数 deckTotal」を残り枚数として使わない。
   if(Number.isFinite(publicCount)&&publicCount>=0)return publicCount;
   if(Number.isFinite(memberCount)&&memberCount>=0)return memberCount;
+
+  if(!onlineMatchStarted(room)){
+    const total=Number(member?.deckTotal);
+    if(Number.isFinite(total)&&total>=0)return total;
+  }
   return null;
 }
 
@@ -42401,7 +42442,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='28.3';
+  manifest.appVersion='28.4';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -42442,7 +42483,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'28.3',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'28.4',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
