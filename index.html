@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v27.8</title>
+<title>みん会TCG Simulator v27.9</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22003,7 +22003,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v27.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v27.9 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -33747,6 +33747,27 @@ function syncBoardRandomTools(){
  }
 }
 
+let onlineBoardLocalRenderQueued=false;
+function onlineQueueLocalBoardRender(){
+ if(onlineBoardLocalRenderQueued)return;
+ onlineBoardLocalRenderQueued=true;
+ requestAnimationFrame(()=>{
+   onlineBoardLocalRenderQueued=false;
+   if(!onlineDuelActive||currentScreenName!=='online-duel')return;
+   try{
+     onlineDuelBoard=board;
+     onlinePersistOwnerHand();
+     onlinePersistOwnerPublicBoard();
+     onlineLastRenderedDuelSignature='';
+     onlineRenderDuelBoard({force:true});
+     onlineScheduleAutoSync();
+   }catch(err){
+     console.error('オンライン盤面の局所再描画に失敗',err);
+     const status=document.getElementById('online-duel-sync');
+     if(status)status.textContent='盤面再描画に失敗しました。再接続を試してください。';
+   }
+ });
+}
 function renderBoard(){
  if(typeof onlineSelfTestState!=='undefined'&&onlineSelfTestState?.active&&onlineSelfTestState.mode==='local'&&currentScreenName==='online-duel'){
    onlineDuelBoard=board;
@@ -33756,11 +33777,11 @@ function renderBoard(){
    return;
  }
  if(typeof onlineDuelActive!=='undefined'&&onlineDuelActive&&currentScreenName==='online-duel'){
+   // drop/touchイベントの途中で盤面DOMを全交換するとブラウザ側のdrag処理と競合するため、
+   // 次フレームへまとめて1回だけ再描画する。
    onlineDuelBoard=board;
-   // 手札操作直後の再読込でも失わないよう、描画要求時点で即保存。
    try{onlinePersistOwnerHand();onlinePersistOwnerPublicBoard()}catch(_){}
-   onlineRenderDuelBoard();
-   onlineScheduleAutoSync();
+   onlineQueueLocalBoardRender();
    return;
  }
  if(!board)return;
@@ -36877,7 +36898,19 @@ function onlineBindToolWindow(slot){
   const marker=content.querySelector(`[data-online-custom-marker="${slot}"]`);
   if(marker)marker.oninput=e=>{ensureBoardUiState().trayCustomMarker=e.target.value.slice(0,18);syncBoardTrayFields();onlineScheduleAutoSync()};
   const counter=content.querySelector(`[data-online-counter-name="${slot}"]`);
-  if(counter)counter.oninput=e=>{ensureBoardUiState().trayCounterName=e.target.value.slice(0,20);syncBoardTrayFields();onlineRenderToolWindow(slot,'counter')};
+  if(counter){
+    counter.oninput=e=>{
+      const ui=ensureBoardUiState();ui.trayCounterName=e.target.value.slice(0,20);
+      // 入力中にツールウィンドウ自身を再描画しない。再描画するとinputが置換されIME/フォーカスが強制終了する。
+      content.querySelectorAll('[data-online-counter-plus],[data-online-counter-minus]').forEach(el=>{
+        const name=(ui.trayCounterName||'カウンター').trim()||'カウンター';
+        if(el.dataset.onlineCounterPlus!=null)el.textContent=`${name} +1`;
+        if(el.dataset.onlineCounterMinus!=null)el.textContent=`${name} −1`;
+      });
+    };
+    counter.onchange=()=>{syncBoardTrayFields();onlineScheduleAutoSync()};
+    counter.onblur=()=>{syncBoardTrayFields();onlineScheduleAutoSync()};
+  }
   const sm=content.querySelector(`[data-online-save-marker="${slot}"]`);if(sm)sm.onclick=()=>{addBoardToolPreset('marker',ensureBoardUiState().trayCustomMarker);onlineRenderToolWindow(slot,'marker')};
   const sc=content.querySelector(`[data-online-save-counter="${slot}"]`);if(sc)sc.onclick=()=>{addBoardToolPreset('counter',ensureBoardUiState().trayCounterName);onlineRenderToolWindow(slot,'counter')};
   content.querySelectorAll(`[data-online-preset-manager="${slot}"]`).forEach(b=>b.onclick=openBoardPresetManager);
@@ -36898,11 +36931,55 @@ function onlineBindToolWindow(slot){
   bindBoardToolTray();
 }
 
+function onlinePublicZoneItemsFromRoom(slot,z){
+  const room=onlineLoadRooms()[onlineSessionState.joinCode];
+  const state=room?.publicState?.[`p${Number(slot)}`];
+  const src=Array.isArray(state?.[z])?state[z]:[];
+  const rows=[];
+  src.forEach((pile,pileIndex)=>{
+    (Array.isArray(pile?.cards)?pile.cards:[]).forEach((c,cardIndex)=>rows.push({
+      c,pileIndex,cardIndex,
+      key:String(c?.publicKey||`${pileIndex}-${cardIndex}`),
+      position:`${rows.length+1}番目${cardIndex>0?` / 重なり${cardIndex+1}枚目`:''}`
+    }));
+  });
+  if(z==='grave'||z==='banish')rows.reverse();
+  return rows;
+}
+function openOnlinePublicZoneViewer(slot,z,initialQuery=''){
+  if(!['grave','banish'].includes(z))return false;
+  const rows=onlinePublicZoneItemsFromRoom(slot,z);
+  openModal(`<div class="modal-head"><h3>P${Number(slot)} / ${esc(ZONE_LABELS[z]||z)} 一覧</h3><span class="pill" id="online-public-zone-count">${rows.length}枚</span><button class="btn" id="online-public-zone-close">閉じる</button></div>
+    <p class="muted">相手が同期した公開領域を直接表示しています。重なっているカードも1枚ずつ確認できます。</p>
+    <label>カード名検索<input id="online-public-zone-search" type="search" value="${esc(initialQuery)}" autocomplete="off"></label>
+    <div class="board-zone-list" id="online-public-zone-grid" style="margin-top:10px"></div>`);
+  const search=document.getElementById('online-public-zone-search'),grid=document.getElementById('online-public-zone-grid'),count=document.getElementById('online-public-zone-count');
+  const render=()=>{
+    const q=String(search?.value||'').trim().toLocaleLowerCase();
+    const shown=rows.filter(x=>!q||String(x.c?.name||'').toLocaleLowerCase().includes(q));
+    if(count)count.textContent=q?`${shown.length}/${rows.length}枚`:`${rows.length}枚`;
+    if(grid)grid.innerHTML=shown.map(x=>{const c=x.c||{};return `<div class="board-zone-list-card"><div class="board-zone-list-info"><h4>${esc(c.faceDown?'裏向きカード':(c.name||'名称未設定'))}</h4><div class="muted">${esc(x.position)}${c.type?` / ${esc(c.type)}`:''}${c.level!==''&&c.level!=null?` / Lv ${esc(c.level)}`:''}</div>${!c.faceDown&&c.race?`<div class="muted">種族：${esc(c.race)}</div>`:''}${!c.faceDown?`<details class="zone-card-effect-preview"><summary>効果を確認</summary><div class="zone-card-effect-body">${esc(c.effect||'効果テキストなし')}</div></details>`:''}</div></div>`}).join('')||'<div class="muted">カードなし</div>';
+  };
+  document.getElementById('online-public-zone-close').onclick=closeModal;
+  if(search)search.oninput=render;
+  render();
+  return true;
+}
+function onlinePublicDeckCountForDisplay(room,slot){
+  const pub=Number(room?.publicState?.[`p${Number(slot)}`]?.meta?.deckCount);
+  if(Number.isFinite(pub)&&pub>=0)return pub;
+  const member=Number((Number(slot)===1?room?.p1:room?.p2)?.deckCount);
+  if(Number.isFinite(member)&&member>=0)return member;
+  return null;
+}
+
 function onlinePlayerActionToolbar(slot,room){
   const own=onlineOwnSlot()||0,mine=own===slot;
+  const deckCount=onlinePublicDeckCountForDisplay(room,slot);
   return `<div class="online-player-toolbar" data-online-toolbar-slot="${slot}">
     <span class="online-player-toolbar-title">P${slot} 操作</span>
     <span class="pill">${mine?'自分側・常時操作可':'閲覧専用'}</span>
+    <span class="pill online-deck-count-badge">残りデッキ ${deckCount==null?'--':deckCount}枚</span>
     <span class="online-player-toolbar-spacer"></span>
     <button class="btn small" type="button" data-online-slot-action="${slot}|draw" ${mine?'':'disabled'}>1枚ドロー</button>
     <button class="btn small" type="button" data-online-slot-action="${slot}|shuffle" ${mine?'':'disabled'}>デッキをシャッフル</button>
@@ -37225,6 +37302,16 @@ function onlineRenderDuelBoard(options={}){
     }
 
     bindBoard();
+    // プレイヤー視点の相手墓地/消失はローカル影盤面ではなくroom.publicStateを直接参照する。
+    // これにより重なりカードも観戦時と同じ公開情報から確認できる。
+    const ownSlotNow=Number(onlineOwnSlot()||0);
+    host.querySelectorAll('[data-zone-view]').forEach(btn=>{
+      const [piRaw,z]=String(btn.dataset.zoneView||'').split('|'),slot=Number(piRaw)+1;
+      if(slot!==ownSlotNow&&['grave','banish'].includes(z)){
+        btn.disabled=false;btn.removeAttribute('aria-disabled');btn.style.pointerEvents='auto';btn.style.opacity='1';
+        btn.onclick=e=>{e.preventDefault();e.stopPropagation();openOnlinePublicZoneViewer(slot,z)};
+      }
+    });
     bindBoardToolTray();
     onlineBindDuelConvenienceTools();
     applyBoardDisplaySettings();
@@ -38582,7 +38669,7 @@ function onlineDiagnosticSnapshot(){
   const member=(slot)=>slot===1?room?.p1:room?.p2;
   const rev=room?.revision??room?.publicState?.revision??null;
   const info={
-    appVersion:'27.8',
+    appVersion:'27.9',
     generatedAt:new Date().toISOString(),
     userAgent:navigator.userAgent,
     online:{
@@ -42276,7 +42363,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='27.8';
+  manifest.appVersion='27.9';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -42317,7 +42404,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'27.8',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'27.9',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
