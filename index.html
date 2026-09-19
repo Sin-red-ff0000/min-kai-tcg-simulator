@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v28.2</title>
+<title>みん会TCG Simulator v28.3</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22003,7 +22003,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v28.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v28.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -34004,7 +34004,7 @@ function compactZoneBox(p,pi,z){return `<div class="deck-box">${zoneHeader(pi,z)
 function deckExtraStateKey(pi,z){return `${Number(pi)}|${z==='otherDeck'?'otherDeck':'deck'}`}
 function isDeckExtraOpen(pi,z){return !!ensureBoardUiState()?.deckExtraOpen?.[deckExtraStateKey(pi,z)]}
 function setDeckExtraOpen(pi,z,open){if(!board)return;const ui=ensureBoardUiState(),key=deckExtraStateKey(pi,z);ui.deckExtraOpen[key]=!!open;scheduleBoardAutosave()}
-function renderDeckBox(p,pi,z,label){const count=physicalCount(p[z]),empty=count<=0;const other=z==='otherDeck',extraOpen=isDeckExtraOpen(pi,z);const extra=other?`<button class="btn small" data-deck-action="rulePlus|${pi}|${z}">RPに追加</button>`:`<button class="btn small" data-deck-action="topToGrave|${pi}|${z}" ${empty?'disabled':''}>1枚墓地</button><button class="btn small" data-deck-action="topToBanish|${pi}|${z}" ${empty?'disabled':''}>1枚消失</button>`;return `<div class="deck-box ${z==='deck'?'deck-box-main':''}" data-zone="${pi}|${z}"><h4>${label} <span>${count}枚</span></h4><div class="deck-primary-actions"><button class="btn small primary" data-deck-action="draw|${pi}|${z}">1枚引く</button><button class="btn small" data-deck-action="browse|${pi}|${z}">中を見る</button></div><details class="deck-compact-actions" data-deck-extra="${pi}|${z}" ${extraOpen?'open':''}><summary>その他の操作</summary><div class="deck-controls"><button class="btn small" data-deck-action="shuffle|${pi}|${z}">シャッフル</button><button class="btn small" data-deck-action="painFace|${pi}|${z}">PCへ(表)</button><button class="btn small" data-deck-action="painBack|${pi}|${z}">PCへ(裏)</button><button class="btn small" data-deck-action="look|${pi}|${z}">上からX枚</button>${extra}</div></details><div class="deck-drop-note">ドラッグで戻すと一番下</div></div>`}
+function renderDeckBox(p,pi,z,label){const rawCount=physicalCount(p[z]),count=onlineZoneDisplayCount(pi,z,rawCount),empty=count<=0;const other=z==='otherDeck',extraOpen=isDeckExtraOpen(pi,z);const extra=other?`<button class="btn small" data-deck-action="rulePlus|${pi}|${z}">RPに追加</button>`:`<button class="btn small" data-deck-action="topToGrave|${pi}|${z}" ${empty?'disabled':''}>1枚墓地</button><button class="btn small" data-deck-action="topToBanish|${pi}|${z}" ${empty?'disabled':''}>1枚消失</button>`;return `<div class="deck-box ${z==='deck'?'deck-box-main':''}" data-zone="${pi}|${z}"><h4>${label} <span>${count}枚</span></h4><div class="deck-primary-actions"><button class="btn small primary" data-deck-action="draw|${pi}|${z}">1枚引く</button><button class="btn small" data-deck-action="browse|${pi}|${z}">中を見る</button></div><details class="deck-compact-actions" data-deck-extra="${pi}|${z}" ${extraOpen?'open':''}><summary>その他の操作</summary><div class="deck-controls"><button class="btn small" data-deck-action="shuffle|${pi}|${z}">シャッフル</button><button class="btn small" data-deck-action="painFace|${pi}|${z}">PCへ(表)</button><button class="btn small" data-deck-action="painBack|${pi}|${z}">PCへ(裏)</button><button class="btn small" data-deck-action="look|${pi}|${z}">上からX枚</button>${extra}</div></details><div class="deck-drop-note">ドラッグで戻すと一番下</div></div>`}
 function renderUtility(p,pi){return `<div class="utility-grid"><div class="deck-pair">${renderDeckBox(p,pi,'deck','デッキ')}${renderDeckBox(p,pi,'otherDeck','その他デッキ')}</div><div class="grave-banish-pair">${compactZoneBox(p,pi,'grave')}${compactZoneBox(p,pi,'banish')}</div></div>`}
 function physicalCount(arr){return arr.reduce((a,p)=>a+p.cards.length,0)}
 function topCard(pile){return pile.cards[0]}
@@ -34747,7 +34747,8 @@ function openZoneViewerMove(pi,z,instanceId,query=''){
    if(FIXED.includes(tz))addAsPile(tpi,tz,card,{slot:Number($('#zone-view-move-slot').value),stack:$('#zone-view-move-stack').value});
    else if(tz==='deck'||tz==='otherDeck')addAsPile(tpi,tz,card,{position:$('#zone-view-move-deckpos').value});
    else addAsPile(tpi,tz,card);
-   renderBoard();openZoneViewer(pi,z,query);
+   closeBoardMoveModalHard();
+   setTimeout(()=>{renderBoard();openZoneViewer(pi,z,query)},0);
  };
 }
 function openZoneViewer(pi,z,initialQuery=''){
@@ -34910,6 +34911,32 @@ function findCardInstance(pi,z,instanceId){
 }
 function openModal(html,closable=true){if(floatingPreviewOpen&&floatingPreviewOwner.startsWith('modal:'))closeFloatingPreview();if(collectionViewerKeyHandler){document.removeEventListener('keydown',collectionViewerKeyHandler);collectionViewerKeyHandler=null}$('#modal').classList.remove('collection-viewer-modal','fx-editor-modal');$('#modal-layer').classList.remove('board-detail-live');$('#modal').innerHTML=html;$('#modal-layer').classList.add('open');$('#modal-layer').dataset.closable=closable?'1':'0'}
 function closeModal(){if($('#modal-layer').dataset.closable==='0')return;if(floatingPreviewOpen&&floatingPreviewOwner.startsWith('modal:'))closeFloatingPreview();if(collectionViewerKeyHandler){document.removeEventListener('keydown',collectionViewerKeyHandler);collectionViewerKeyHandler=null}cleanupImageEditorTemp();$('#modal-layer').classList.remove('open','board-detail-live');$('#modal').classList.remove('collection-viewer-modal','fx-editor-modal');detailCtx=null;detailNav=null;liveBoardDetailState=null;browseSession=null}
+
+function closeBoardMoveModalHard(){
+  try{
+    const layer=$('#modal-layer');
+    if(layer){
+      layer.dataset.closable='1';
+      layer.classList.remove('open','board-detail-live');
+      layer.style.pointerEvents='';
+    }
+    $('#modal')?.classList.remove('collection-viewer-modal','fx-editor-modal');
+  }catch(_){}
+  detailCtx=null;
+  detailNav=null;
+  liveBoardDetailState=null;
+  browseSession=null;
+}
+function renderBoardAfterMove(){
+  closeBoardMoveModalHard();
+  // click / pointer / drag のイベントスタックを抜けてから盤面を更新する。
+  setTimeout(()=>{
+    try{renderBoard()}catch(err){
+      console.error('カード移動後の盤面更新失敗',err);
+      toast('カード移動は完了しました。表示更新に失敗したため盤面を再表示してください');
+    }
+  },0);
+}
 $('#modal-layer').onclick=e=>{if(e.target===$('#modal-layer'))closeModal()};
 
 let liveBoardDetailState=null;
@@ -35104,7 +35131,7 @@ function moveTargetsHtml(defaultPi=null,defaultZone='grave'){
    return opts?`<optgroup label="${esc(p.name)}">${opts}</optgroup>`:'';
  }).join('');
 }
-function openMoveDialog(ctxOverride=null){const ctx=ctxOverride?{...ctxOverride}:{...detailCtx};if(ctx.instanceId){const loc=findBoardInstanceAnywhere(ctx.instanceId);if(loc){ctx.pi=loc.pi;ctx.z=loc.z;ctx.index=loc.pileIndex;ctx.cardIndex=loc.cardIndex}}const pile=getPile(ctx.pi,ctx.z,ctx.index), c=pile?.cards?.[ctx.cardIndex];if(!c)return;openModal(`<div class="modal-head"><h3>${esc(c.name)} を移動</h3><button class="btn" id="move-cancel">戻る</button></div><label>移動先<select id="move-target">${moveTargetsHtml(ctx.pi,'grave')}</select></label><div id="move-options" style="margin-top:10px"></div><button class="btn primary" id="move-confirm" style="margin-top:10px">移動する</button>`);$('#move-cancel').onclick=()=>openDetail(ctx.pi,ctx.z,ctx.index,ctx.cardIndex);const update=()=>{const[pi,z]=$('#move-target').value.split('|');let h='';if(FIXED.includes(z)){h=`<label>枠<select id="move-slot">${board.players[pi][z].map((x,i)=>`<option value="${i}">${i+1}${x?'（使用中）':''}</option>`).join('')}</select></label><label style="margin-top:8px">使用中の枠の場合<select id="occupied-mode"><option value="top">上に重ねる</option><option value="bottom">下に重ねる</option></select></label>`}else if(z==='deck'||z==='otherDeck'){h='<label>位置<select id="deck-pos"><option value="top">一番上</option><option value="bottom">一番下</option></select></label>'}$('#move-options').innerHTML=h};$('#move-target').onchange=update;update();$('#move-confirm').onclick=()=>{const[pi,z]=$('#move-target').value.split('|');if(onlineServerDeckMutationBlocked(Number(pi),z)||onlineServerDeckMutationBlocked(ctx.pi,ctx.z))return;const src=ctx;const card=removeCardAt(src.pi,src.z,src.index,src.cardIndex);if(FIXED.includes(z)){const slot=Number($('#move-slot').value),mode=$('#occupied-mode').value;addAsPile(Number(pi),z,card,{slot,stack:mode})}else if(z==='deck'||z==='otherDeck'){addAsPile(Number(pi),z,card,{position:$('#deck-pos').value==='bottom'?'bottom':'top'})}else addAsPile(Number(pi),z,card);closeModal();renderBoard()}}
+function openMoveDialog(ctxOverride=null){const ctx=ctxOverride?{...ctxOverride}:{...detailCtx};if(ctx.instanceId){const loc=findBoardInstanceAnywhere(ctx.instanceId);if(loc){ctx.pi=loc.pi;ctx.z=loc.z;ctx.index=loc.pileIndex;ctx.cardIndex=loc.cardIndex}}const pile=getPile(ctx.pi,ctx.z,ctx.index), c=pile?.cards?.[ctx.cardIndex];if(!c)return;openModal(`<div class="modal-head"><h3>${esc(c.name)} を移動</h3><button class="btn" id="move-cancel">戻る</button></div><label>移動先<select id="move-target">${moveTargetsHtml(ctx.pi,'grave')}</select></label><div id="move-options" style="margin-top:10px"></div><button class="btn primary" id="move-confirm" style="margin-top:10px">移動する</button>`);$('#move-cancel').onclick=()=>openDetail(ctx.pi,ctx.z,ctx.index,ctx.cardIndex);const update=()=>{const[pi,z]=$('#move-target').value.split('|');let h='';if(FIXED.includes(z)){h=`<label>枠<select id="move-slot">${board.players[pi][z].map((x,i)=>`<option value="${i}">${i+1}${x?'（使用中）':''}</option>`).join('')}</select></label><label style="margin-top:8px">使用中の枠の場合<select id="occupied-mode"><option value="top">上に重ねる</option><option value="bottom">下に重ねる</option></select></label>`}else if(z==='deck'||z==='otherDeck'){h='<label>位置<select id="deck-pos"><option value="top">一番上</option><option value="bottom">一番下</option></select></label>'}$('#move-options').innerHTML=h};$('#move-target').onchange=update;update();$('#move-confirm').onclick=()=>{const[pi,z]=$('#move-target').value.split('|');if(onlineServerDeckMutationBlocked(Number(pi),z)||onlineServerDeckMutationBlocked(ctx.pi,ctx.z))return;const src=ctx;const card=removeCardAt(src.pi,src.z,src.index,src.cardIndex);if(FIXED.includes(z)){const slot=Number($('#move-slot').value),mode=$('#occupied-mode').value;addAsPile(Number(pi),z,card,{slot,stack:mode})}else if(z==='deck'||z==='otherDeck'){addAsPile(Number(pi),z,card,{position:$('#deck-pos').value==='bottom'?'bottom':'top'})}else addAsPile(Number(pi),z,card);renderBoardAfterMove()}}
 function allPileOptions(exclude){let out='';board.players.forEach((p,pi)=>{Object.keys(ZONE_LABELS).forEach(z=>{p[z].forEach((pile,i)=>{if(!pile)return;if(exclude&&exclude.pi===pi&&exclude.z===z&&exclude.index===i)return;out+=`<option value="${pi}|${z}|${i}">${esc(p.name)} / ${ZONE_LABELS[z]} / ${esc(topCard(pile).name)}</option>`})})});return out}
 function stackCandidates(pi,z,exclude){const out=[];board.players[pi][z].forEach((pile,i)=>{if(!pile)return;if(exclude&&exclude.pi===pi&&exclude.z===z&&exclude.index===i)return;out.push({pile,index:i})});return out}
 function openStackDialog(){const ctx={...detailCtx};if(ctx.instanceId){const loc=findBoardInstanceAnywhere(ctx.instanceId);if(loc){ctx.pi=loc.pi;ctx.z=loc.z;ctx.index=loc.pileIndex;ctx.cardIndex=loc.cardIndex}}const srcPile=getPile(ctx.pi,ctx.z,ctx.index),c=srcPile?.cards?.[ctx.cardIndex];if(!c)return;openModal(`<div class="modal-head"><h3>${esc(c.name)} を重ねる</h3><button class="btn" id="stack-cancel">戻る</button></div><label>プレイヤー<select id="stack-player">${board.players.map((p,i)=>`<option value="${i}">${esc(p.name)}</option>`).join('')}</select></label><label style="margin-top:8px">ゾーン<select id="stack-zone">${Object.entries(ZONE_LABELS).map(([z,l])=>`<option value="${z}">${l}</option>`).join('')}</select></label><label style="margin-top:8px">カード<select id="stack-target-card"></select></label><div id="stack-empty" class="muted" style="margin-top:6px"></div><label style="margin-top:8px">位置<select id="stack-pos"><option value="top">上に重ねる</option><option value="bottom">下に重ねる</option></select></label><button class="btn primary" id="stack-confirm" style="margin-top:10px">重ねる</button>`);$('#stack-cancel').onclick=()=>openDetail(ctx.pi,ctx.z,ctx.index,ctx.cardIndex);
@@ -37207,8 +37234,8 @@ function onlineV281RefreshDeckCounts(room){
   for(const slot of [1,2]){
     const n=onlineDeckCountFromRoom(room,slot);
     if(n==null)continue;
-    const el=host.querySelector(`[data-zone-head="${slot-1}|deck"] .count`);
-    if(el)el.textContent=String(n);
+    const el=host.querySelector(`[data-zone="${slot-1}|deck"] h4 span`)||host.querySelector(`[data-zone-head="${slot-1}|deck"] .count`);
+    if(el)el.textContent=`${n}枚`;
   }
 }
 function onlineRenderDuelBoard(options={}){
@@ -37307,16 +37334,26 @@ function onlineRenderDuelBoard(options={}){
     }
 
     bindBoard();
-    // プレイヤー視点の相手墓地/消失はローカル影盤面ではなくroom.publicStateを直接参照する。
-    // これにより重なりカードも観戦時と同じ公開情報から確認できる。
+    // Ver28.3:
+    // 観戦で正常動作しているopenZoneViewerをP1/P2の相手公開領域にもそのまま使用する。
+    // onlineDuelBoardの相手側はpublicStateから復元済みなので、別ビューアを経由させない。
     const ownSlotNow=Number(onlineOwnSlot()||0);
     host.querySelectorAll('[data-zone-view]').forEach(btn=>{
-      const [piRaw,z]=String(btn.dataset.zoneView||'').split('|'),slot=Number(piRaw)+1;
+      const [piRaw,z]=String(btn.dataset.zoneView||'').split('|');
+      const pi=Number(piRaw),slot=pi+1;
       if(slot!==ownSlotNow&&['character','grave','banish'].includes(z)){
-        btn.disabled=false;btn.removeAttribute('aria-disabled');btn.style.pointerEvents='auto';btn.style.opacity='1';
-        if(btn.dataset.v281PublicBound!=='1'){
-          btn.dataset.v281PublicBound='1';
-          btn.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();openOnlinePublicZoneViewer(slot,z)},true);
+        btn.disabled=false;
+        btn.removeAttribute('aria-disabled');
+        btn.style.pointerEvents='auto';
+        btn.style.opacity='1';
+        btn.onclick=null;
+        if(btn.dataset.v283PublicBound!=='1'){
+          btn.dataset.v283PublicBound='1';
+          btn.addEventListener('click',e=>{
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            openZoneViewer(pi,z);
+          },true);
         }
       }
     });
@@ -38674,7 +38711,7 @@ function onlineDiagnosticSnapshot(){
   const member=(slot)=>slot===1?room?.p1:room?.p2;
   const rev=room?.revision??room?.publicState?.revision??null;
   const info={
-    appVersion:'28.2',
+    appVersion:'28.3',
     generatedAt:new Date().toISOString(),
     userAgent:navigator.userAgent,
     online:{
@@ -39728,6 +39765,7 @@ function onlineApplyRemoteRoomSnapshot(snapshot,options={}){
       if(currentScreenName==='online-duel'&&!options.skipDuelRender){
         onlineRenderDuelBoard();
       }else if(currentScreenName==='online-duel'){
+        // 自分の送信応答では全体再描画しないが、相手公開盤面は常にmerge済み。
         onlineUpdateDuelToolbar(room);
         onlineV281RefreshDeckCounts(room);
         onlineRefreshToolAvailability();
@@ -42363,7 +42401,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='28.2';
+  manifest.appVersion='28.3';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -42404,7 +42442,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'28.2',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'28.3',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
