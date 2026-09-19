@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v28.1</title>
+<title>みん会TCG Simulator v28.2</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22003,7 +22003,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v28.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v28.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -35104,14 +35104,14 @@ function moveTargetsHtml(defaultPi=null,defaultZone='grave'){
    return opts?`<optgroup label="${esc(p.name)}">${opts}</optgroup>`:'';
  }).join('');
 }
-function openMoveDialog(ctxOverride=null){const ctx=ctxOverride?{...ctxOverride}:{...detailCtx};if(ctx.instanceId){const loc=findBoardInstanceAnywhere(ctx.instanceId);if(loc){ctx.pi=loc.pi;ctx.z=loc.z;ctx.index=loc.pileIndex;ctx.cardIndex=loc.cardIndex}}const pile=getPile(ctx.pi,ctx.z,ctx.index), c=pile?.cards?.[ctx.cardIndex];if(!c)return;openModal(`<div class="modal-head"><h3>${esc(c.name)} を移動</h3><button class="btn" id="move-cancel">戻る</button></div><label>移動先<select id="move-target">${moveTargetsHtml(ctx.pi,'grave')}</select></label><div id="move-options" style="margin-top:10px"></div><button class="btn primary" id="move-confirm" style="margin-top:10px">移動する</button>`);$('#move-cancel').onclick=()=>openDetail(ctx.pi,ctx.z,ctx.index,ctx.cardIndex);const update=()=>{const[pi,z]=$('#move-target').value.split('|');let h='';if(FIXED.includes(z)){h=`<label>枠<select id="move-slot">${board.players[pi][z].map((x,i)=>`<option value="${i}">${i+1}${x?'（使用中）':''}</option>`).join('')}</select></label><label style="margin-top:8px">使用中の枠の場合<select id="occupied-mode"><option value="top">上に重ねる</option><option value="bottom">下に重ねる</option></select></label>`}else if(z==='deck'||z==='otherDeck'){h='<label>位置<select id="deck-pos"><option value="top">一番上</option><option value="bottom">一番下</option></select></label>'}$('#move-options').innerHTML=h};$('#move-target').onchange=update;update();$('#move-confirm').onclick=()=>{const[pi,z]=$('#move-target').value.split('|');if(onlineServerDeckMutationBlocked(Number(pi),z)||onlineServerDeckMutationBlocked(ctx.pi,ctx.z))return;const src=ctx;const card=removeCardAt(src.pi,src.z,src.index,src.cardIndex);if(FIXED.includes(z)){const slot=Number($('#move-slot').value),mode=$('#occupied-mode').value;addAsPile(Number(pi),z,card,{slot,stack:mode})}else if(z==='deck'||z==='otherDeck'){addAsPile(Number(pi),z,card,{position:$('#deck-pos').value==='bottom'?'bottom':'top'})}else addAsPile(Number(pi),z,card);$('#modal-layer').classList.remove('open');detailCtx=null;detailNav=null;renderBoard()}}
+function openMoveDialog(ctxOverride=null){const ctx=ctxOverride?{...ctxOverride}:{...detailCtx};if(ctx.instanceId){const loc=findBoardInstanceAnywhere(ctx.instanceId);if(loc){ctx.pi=loc.pi;ctx.z=loc.z;ctx.index=loc.pileIndex;ctx.cardIndex=loc.cardIndex}}const pile=getPile(ctx.pi,ctx.z,ctx.index), c=pile?.cards?.[ctx.cardIndex];if(!c)return;openModal(`<div class="modal-head"><h3>${esc(c.name)} を移動</h3><button class="btn" id="move-cancel">戻る</button></div><label>移動先<select id="move-target">${moveTargetsHtml(ctx.pi,'grave')}</select></label><div id="move-options" style="margin-top:10px"></div><button class="btn primary" id="move-confirm" style="margin-top:10px">移動する</button>`);$('#move-cancel').onclick=()=>openDetail(ctx.pi,ctx.z,ctx.index,ctx.cardIndex);const update=()=>{const[pi,z]=$('#move-target').value.split('|');let h='';if(FIXED.includes(z)){h=`<label>枠<select id="move-slot">${board.players[pi][z].map((x,i)=>`<option value="${i}">${i+1}${x?'（使用中）':''}</option>`).join('')}</select></label><label style="margin-top:8px">使用中の枠の場合<select id="occupied-mode"><option value="top">上に重ねる</option><option value="bottom">下に重ねる</option></select></label>`}else if(z==='deck'||z==='otherDeck'){h='<label>位置<select id="deck-pos"><option value="top">一番上</option><option value="bottom">一番下</option></select></label>'}$('#move-options').innerHTML=h};$('#move-target').onchange=update;update();$('#move-confirm').onclick=()=>{const[pi,z]=$('#move-target').value.split('|');if(onlineServerDeckMutationBlocked(Number(pi),z)||onlineServerDeckMutationBlocked(ctx.pi,ctx.z))return;const src=ctx;const card=removeCardAt(src.pi,src.z,src.index,src.cardIndex);if(FIXED.includes(z)){const slot=Number($('#move-slot').value),mode=$('#occupied-mode').value;addAsPile(Number(pi),z,card,{slot,stack:mode})}else if(z==='deck'||z==='otherDeck'){addAsPile(Number(pi),z,card,{position:$('#deck-pos').value==='bottom'?'bottom':'top'})}else addAsPile(Number(pi),z,card);closeModal();renderBoard()}}
 function allPileOptions(exclude){let out='';board.players.forEach((p,pi)=>{Object.keys(ZONE_LABELS).forEach(z=>{p[z].forEach((pile,i)=>{if(!pile)return;if(exclude&&exclude.pi===pi&&exclude.z===z&&exclude.index===i)return;out+=`<option value="${pi}|${z}|${i}">${esc(p.name)} / ${ZONE_LABELS[z]} / ${esc(topCard(pile).name)}</option>`})})});return out}
 function stackCandidates(pi,z,exclude){const out=[];board.players[pi][z].forEach((pile,i)=>{if(!pile)return;if(exclude&&exclude.pi===pi&&exclude.z===z&&exclude.index===i)return;out.push({pile,index:i})});return out}
 function openStackDialog(){const ctx={...detailCtx};if(ctx.instanceId){const loc=findBoardInstanceAnywhere(ctx.instanceId);if(loc){ctx.pi=loc.pi;ctx.z=loc.z;ctx.index=loc.pileIndex;ctx.cardIndex=loc.cardIndex}}const srcPile=getPile(ctx.pi,ctx.z,ctx.index),c=srcPile?.cards?.[ctx.cardIndex];if(!c)return;openModal(`<div class="modal-head"><h3>${esc(c.name)} を重ねる</h3><button class="btn" id="stack-cancel">戻る</button></div><label>プレイヤー<select id="stack-player">${board.players.map((p,i)=>`<option value="${i}">${esc(p.name)}</option>`).join('')}</select></label><label style="margin-top:8px">ゾーン<select id="stack-zone">${Object.entries(ZONE_LABELS).map(([z,l])=>`<option value="${z}">${l}</option>`).join('')}</select></label><label style="margin-top:8px">カード<select id="stack-target-card"></select></label><div id="stack-empty" class="muted" style="margin-top:6px"></div><label style="margin-top:8px">位置<select id="stack-pos"><option value="top">上に重ねる</option><option value="bottom">下に重ねる</option></select></label><button class="btn primary" id="stack-confirm" style="margin-top:10px">重ねる</button>`);$('#stack-cancel').onclick=()=>openDetail(ctx.pi,ctx.z,ctx.index,ctx.cardIndex);
  const refreshCards=()=>{const pi=Number($('#stack-player').value),z=$('#stack-zone').value,own=onlineDuelActive?onlineOwnSlot():null,forbidden=(onlineDuelActive&&own!=null&&pi!==Number(own)-1)||onlineServerDeckGuardActive(pi,z),targets=forbidden?[]:stackCandidates(pi,z,ctx),sel=$('#stack-target-card');sel.innerHTML=targets.map(x=>`<option value="${x.pile.id}">${esc(topCard(x.pile).name)}${x.pile.cards.length>1?`（重なり${x.pile.cards.length}枚）`:''}</option>`).join('');$('#stack-empty').textContent=targets.length?'':'このゾーンに重ね先のカードがありません。';$('#stack-confirm').disabled=!targets.length};
  const pickFirstAvailable=()=>{for(let pi=0;pi<board.players.length;pi++){if((onlineDuelActive||onlineSelfTestLocalEditable())&&onlineOwnSlot()!=null&&pi!==Number(onlineOwnSlot())-1)continue;for(const z of Object.keys(ZONE_LABELS)){if(onlineServerDeckGuardActive(pi,z))continue;if(stackCandidates(pi,z,ctx).length){$('#stack-player').value=String(pi);$('#stack-zone').value=z;refreshCards();return true}}}return false};
  $('#stack-player').onchange=refreshCards;$('#stack-zone').onchange=refreshCards;if(!pickFirstAvailable()){$('#stack-confirm').disabled=true;$('#stack-empty').textContent='重ね先のカードがありません。'}
- $('#stack-confirm').onclick=()=>{const tpi=Number($('#stack-player').value),z=$('#stack-zone').value,targetId=$('#stack-target-card').value;if(!targetId)return;if(onlineServerDeckMutationBlocked(ctx.pi,ctx.z)||onlineServerDeckMutationBlocked(tpi,z))return;if((onlineDuelActive||onlineSelfTestLocalEditable())&&onlineOwnSlot()!=null&&tpi!==Number(onlineOwnSlot())-1){toast('相手側のカードは操作できません');return}const card=removeCardAt(ctx.pi,ctx.z,ctx.index,ctx.cardIndex),area=board.players[tpi][z],newIndex=area.findIndex(p=>p&&p.id===targetId),target=newIndex>=0?area[newIndex]:null;if(!target){addAsPile(tpi,z,card);toast('重ね先が移動したため通常配置しました')}else{prepareCardForDestination(card,z);if($('#stack-pos').value==='top')target.cards.unshift(card);else target.cards.push(card)};$('#modal-layer').classList.remove('open');detailCtx=null;detailNav=null;renderBoard()}}
+ $('#stack-confirm').onclick=()=>{const tpi=Number($('#stack-player').value),z=$('#stack-zone').value,targetId=$('#stack-target-card').value;if(!targetId)return;if(onlineServerDeckMutationBlocked(ctx.pi,ctx.z)||onlineServerDeckMutationBlocked(tpi,z))return;if((onlineDuelActive||onlineSelfTestLocalEditable())&&onlineOwnSlot()!=null&&tpi!==Number(onlineOwnSlot())-1){toast('相手側のカードは操作できません');return}const card=removeCardAt(ctx.pi,ctx.z,ctx.index,ctx.cardIndex),area=board.players[tpi][z],newIndex=area.findIndex(p=>p&&p.id===targetId),target=newIndex>=0?area[newIndex]:null;if(!target){addAsPile(tpi,z,card);toast('重ね先が移動したため通常配置しました')}else{prepareCardForDestination(card,z);if($('#stack-pos').value==='top')target.cards.unshift(card);else target.cards.push(card)};closeModal();renderBoard()}}
 
 // Deck actions
 function takeTopCard(pi,z='deck'){const d=board.players[pi][z];if(!d.length)return null;const c=d[0].cards.shift();if(!d[0].cards.length)d.shift();return c}
@@ -36943,7 +36943,7 @@ function onlinePublicZoneItemsFromRoom(slot,z){
   return rows;
 }
 function openOnlinePublicZoneViewer(slot,z,initialQuery=''){
-  if(!['grave','banish'].includes(z))return false;
+  if(!['character','grave','banish'].includes(z))return false;
   const rows=onlinePublicZoneItemsFromRoom(slot,z);
   openModal(`<div class="modal-head"><h3>P${Number(slot)} / ${esc(ZONE_LABELS[z]||z)} 一覧</h3><span class="pill" id="online-public-zone-count">${rows.length}枚</span><button class="btn" id="online-public-zone-close">閉じる</button></div>
     <p class="muted">相手が同期した公開領域を直接表示しています。重なっているカードも1枚ずつ確認できます。</p>
@@ -37312,7 +37312,7 @@ function onlineRenderDuelBoard(options={}){
     const ownSlotNow=Number(onlineOwnSlot()||0);
     host.querySelectorAll('[data-zone-view]').forEach(btn=>{
       const [piRaw,z]=String(btn.dataset.zoneView||'').split('|'),slot=Number(piRaw)+1;
-      if(slot!==ownSlotNow&&['grave','banish'].includes(z)){
+      if(slot!==ownSlotNow&&['character','grave','banish'].includes(z)){
         btn.disabled=false;btn.removeAttribute('aria-disabled');btn.style.pointerEvents='auto';btn.style.opacity='1';
         if(btn.dataset.v281PublicBound!=='1'){
           btn.dataset.v281PublicBound='1';
@@ -38443,7 +38443,7 @@ function onlineSelfTestRefreshBoardCore(){
   onlineApplySelfTestClass();
   if(!onlineSelfTestState.active){onlineRefreshDiagnostic();return}
 
-  const room=onlineSelfTestCurrentRoom();
+  const room=onlineSelfTestCurrentRoom()||onlineLastDiagnosticRoom;
   if(!room){
     onlineSelfTestStatus('動作確認用ルームを取得できませんでした。',true);
     return;
@@ -38674,11 +38674,13 @@ function onlineDiagnosticSnapshot(){
   const member=(slot)=>slot===1?room?.p1:room?.p2;
   const rev=room?.revision??room?.publicState?.revision??null;
   const info={
-    appVersion:'28.1',
+    appVersion:'28.2',
     generatedAt:new Date().toISOString(),
     userAgent:navigator.userAgent,
     online:{
-      roomId:room?.id||room?.room_id||null,
+      roomId:room?.id||room?.room_id||room?.code||null,
+      joinCode:onlineSessionState?.joinCode||room?.code||null,
+      sessionConnection:onlineSessionState?.connection||null,
       connected:!!room,
       rawOwnSlot:rawOwn,
       visibleOwnSlot:visibleOwn,
@@ -38839,7 +38841,7 @@ const ONLINE_PRIVACY={
   OWNER_ONLY:'owner-only',
   SERVER_ONLY:'server-only'
 };
-const ONLINE_AUTO_SYNC_DELAY=180;
+const ONLINE_AUTO_SYNC_DELAY=420;
 let onlineAutoSyncTimer=0;
 let onlineLastPublicSnapshot='';
 let onlineBoardMutationObserver=null;
@@ -38994,7 +38996,7 @@ async function onlineAutoSyncNow(){
         deckCount:Number(publicBoard?.meta?.deckCount ?? onlineCountPrivateInfo(slot).deckCount),
         revision:state.revision
       });
-      if(data)onlineApplyRemoteRoomSnapshot(data);
+      if(data)onlineApplyRemoteRoomSnapshot(data,{skipDuelRender:true});
     }catch(err){
       console.warn('remote public sync failed',err);
       const status=$('#online-duel-sync');
@@ -39705,10 +39707,12 @@ function onlineRequireRemoteConfig(){
   }
   return true;
 }
-function onlineApplyRemoteRoomSnapshot(snapshot){
+let onlineLastDiagnosticRoom=null;
+function onlineApplyRemoteRoomSnapshot(snapshot,options={}){
   if(!snapshot||typeof snapshot!=='object')return null;
   const room=snapshot.room||snapshot;
   if(!room||!room.code)return null;
+  try{onlineLastDiagnosticRoom=structuredClone(room)}catch(_){try{onlineLastDiagnosticRoom=JSON.parse(JSON.stringify(room))}catch(__){}}
 
   const rooms=onlineLoadRooms();
   const previous=rooms[room.code];
@@ -39721,9 +39725,17 @@ function onlineApplyRemoteRoomSnapshot(snapshot){
   if(onlineDuelActive&&onlineDuelRoomCode===String(room.code)){
     if(previousSig!==nextSig){
       onlineMergeRemotePublicIntoDuel(room);
-      if(currentScreenName==='online-duel')onlineRenderDuelBoard();
+      if(currentScreenName==='online-duel'&&!options.skipDuelRender){
+        onlineRenderDuelBoard();
+      }else if(currentScreenName==='online-duel'){
+        onlineUpdateDuelToolbar(room);
+        onlineV281RefreshDeckCounts(room);
+        onlineRefreshToolAvailability();
+        onlineRenderPublicResults();
+      }
     }else if(currentScreenName==='online-duel'){
       onlineUpdateDuelToolbar(room);
+      onlineV281RefreshDeckCounts(room);
       onlineRefreshToolAvailability();
     }
   }
@@ -39910,18 +39922,18 @@ function onlineLocalBoardRenderSignature(){
 function onlineRoomRenderSignature(room){
   if(!room)return '';
   const state=room.publicState||{};
+  const own=Number(onlineOwnSlot?.()||0);
+  const opponentPublic=own===1?(state.p2||null):own===2?(state.p1||null):{p1:state.p1||null,p2:state.p2||null};
   return JSON.stringify({
     code:String(room.code||''),
-    revision:Number(state.revision||0),
-    updatedAt:Number(state.updatedAt||0),
-    p1:state.p1||null,
-    p2:state.p2||null,
-    p1Hand:Number(room?.p1?.handCount??-1),
-    p2Hand:Number(room?.p2?.handCount??-1),
+    opponentPublic,
+    p1Hand:Number(room?.p1?.handCount??state.p1?.meta?.handCount??-1),
+    p2Hand:Number(room?.p2?.handCount??state.p2?.meta?.handCount??-1),
     p1Deck:Number(onlineDeckCountFromRoom(room,1)??-1),
     p2Deck:Number(onlineDeckCountFromRoom(room,2)??-1),
-    started:!!room?.match?.started,
-    turn:Number(room?.match?.turnCount||0)
+    status:String(room?.match?.status||''),
+    turn:Number(room?.match?.turnCount||0),
+    turnPlayer:Number(room?.match?.turnPlayer||0)
   });
 }
 
@@ -40005,38 +40017,33 @@ function onlineDeckCountFromRoom(room,slot){
   const s=Number(slot);
   const member=s===1?room?.p1:room?.p2;
   const own=typeof onlineOwnSlot==='function'?Number(onlineOwnSlot()):null;
-
-  const n=Number(member?.deckCount);
-  const publicMeta=room?.publicState?.[`p${s}`]?.meta;
-  const publicCount=Number(publicMeta?.deckCount);
+  const memberCount=Number(member?.deckCount);
+  const publicCount=Number(room?.publicState?.[`p${s}`]?.meta?.deckCount);
   const total=Number(member?.deckTotal);
 
-  /*
-    v26.5:
-    Supabase側のルーム応答では、相手や観戦者に対して member.deckCount が
-    非公開値として 0 に置き換えられる経路がある。
-    v26.4 はその 0 を「本当に0枚」と誤認し、publicState.meta.deckCount まで
-    到達しなかったため、相手・観戦表示が0枚固定になっていた。
-
-    自分のスロットだけは server member.deckCount を最優先。
-    相手・観戦は公開盤面の deckCount を最優先する。
-  */
   if(own===s){
-    if(Number.isFinite(n)&&n>=0)return n;
+    if(Number.isFinite(memberCount)&&memberCount>=0)return memberCount;
     if(Number.isFinite(publicCount)&&publicCount>=0)return publicCount;
   }else{
-    if(Number.isFinite(publicCount)&&publicCount>=0)return publicCount;
-    // 公開枚数がまだ無い旧ルームでは、0は秘匿用プレースホルダーの可能性が高いので信用しない。
-    if(Number.isFinite(n)&&n>0)return n;
+    // Edge Functionが相手のpublic metaを0で返す版でも、
+    // member.deckCountに正しい公開残数がある場合はそちらを採用する。
+    if(Number.isFinite(publicCount)&&publicCount>0)return publicCount;
+    if(Number.isFinite(memberCount)&&memberCount>0)return memberCount;
+    // 両方0で、初期総数も0/不明なら0として扱う。
+    if(Number.isFinite(publicCount)&&publicCount===0 &&
+       Number.isFinite(memberCount)&&memberCount===0 &&
+       (!Number.isFinite(total)||total===0))return 0;
   }
 
-  if(Number.isFinite(total)&&total>=0)return total;
-
-  // 最後の最後だけ0を許可。公開枚数が0なら実際のデッキ切れとして扱う。
-  if(Number.isFinite(publicCount)&&publicCount===0)return 0;
-  if(own===s&&Number.isFinite(n)&&n===0)return 0;
+  if(Number.isFinite(total)&&total>=0){
+    // 対戦開始直後の公開値未反映時は総数を暫定表示。
+    return total;
+  }
+  if(Number.isFinite(publicCount)&&publicCount>=0)return publicCount;
+  if(Number.isFinite(memberCount)&&memberCount>=0)return memberCount;
   return null;
 }
+
 function onlineServerDeckGuardActive(pi,z){
   if(onlineSelfTestState?.active&&onlineSelfTestState.mode==='local')return false;
   if(z!=='deck'||!onlineDuelActive||homePlayMode!=='online'||!onlineSessionState.joinCode)return false;
@@ -42356,7 +42363,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='28.1';
+  manifest.appVersion='28.2';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -42397,7 +42404,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'28.1',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'28.2',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
