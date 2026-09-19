@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v28.4</title>
+<title>みん会TCG Simulator v28.5</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -21998,6 +21998,15 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   opacity:1!important;
   cursor:pointer!important;
 }
+
+#online-duel-main .online-stack-peek{position:absolute;right:5px;bottom:5px;z-index:20;min-height:27px;padding:3px 7px;font-size:11px;font-weight:800;pointer-events:auto!important;opacity:.98!important;cursor:pointer!important}
+#online-duel-main .pile{position:relative}
+.online-stack-peek-list{display:flex;flex-direction:column;gap:8px;max-height:min(65vh,640px);overflow:auto}
+.online-stack-peek-row{width:100%;display:grid;grid-template-columns:34px minmax(160px,1fr) auto;align-items:center;gap:10px;text-align:left;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:10px;padding:10px 12px;cursor:pointer}
+.online-stack-peek-row:hover{filter:brightness(1.08)}
+.online-stack-peek-no{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:28px;border:1px solid var(--line);border-radius:999px}
+.online-stack-peek-name{font-weight:700}
+@media(max-width:720px){.online-stack-peek-row{grid-template-columns:30px minmax(0,1fr)}.online-stack-peek-row .muted{grid-column:2}}
 </style>
 
 
@@ -22017,7 +22026,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v28.4 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v28.5 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -33816,7 +33825,7 @@ function onlineZoneDisplayCount(pi,z,fallback){
  }
  return fallback;
 }
-function zoneHeader(pi,z){const p=board.players[pi], rawN=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0)), n=onlineZoneDisplayCount(pi,z,rawN),collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button><button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;else if(['hand','grave','banish'].includes(z))controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll';controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button></span>`}return `<div class="zone-head" data-zone-head="${pi}|${z}"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
+function zoneHeader(pi,z){const p=board.players[pi], rawN=FIXED.includes(z)?p[z].length:((z==='deck'||z==='otherDeck')?physicalCount(p[z]):p[z].reduce((a,x)=>a+x.cards.length,0));let n=onlineZoneDisplayCount(pi,z,rawN);if(onlineDuelActive&&z==='hand'){try{const room=onlineLoadRooms()[onlineSessionState.joinCode],slot=pi+1,pub=room?.publicState?.[`p${slot}`]?.meta?.handCount,member=slot===1?room?.p1?.handCount:room?.p2?.handCount,v=pub==null?Number(member):Number(pub);if(Number.isFinite(v)&&v>=0)n=v}catch(_){}}const collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];let controls='';if(COLLAPSIBLE.includes(z))controls+=`<button class="btn small zone-toggle" data-zone-toggle="${pi}|${z}" title="${collapsed?'展開':'折りたたむ'}">${collapsed?'▸':'▾'}</button>`;if(FIXED.includes(z))controls+=`<button class="btn small" data-slot-minus="${pi}|${z}">−</button><button class="btn small" data-slot-plus="${pi}|${z}">＋</button><button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;else if(['hand','grave','banish'].includes(z))controls+=`<button class="btn small" data-zone-view="${pi}|${z}">一覧</button>`;if(z==='hand'){const mode=p.handMode==='operation'?'operation':'scroll';controls+=`<span class="hand-mode-controls"><button class="btn small ${mode==='scroll'?'active':''}" data-hand-mode="${pi}|scroll">スクロール</button><button class="btn small ${mode==='operation'?'active':''}" data-hand-mode="${pi}|operation">操作</button></span>`}return `<div class="zone-head" data-zone-head="${pi}|${z}"><strong>${ZONE_LABELS[z]}</strong>${controls}<span class="count">${n}${FIXED.includes(z)?'枠':''}</span></div>`}
 
 function signedNumber(n){
  const v=Number(n)||0;
@@ -34028,9 +34037,10 @@ function renderPile(pile,pi,z,index){
  const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;
  const title=`${c.name}${pile.cards.length>1?'\n重なり: '+pile.cards.map(x=>x.name).join(' → '):''}`;
  const markers=renderCardMarkers(c),sizeClass=boardNameSizeClass(c);
- if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}" data-online-anchor="${esc(String(c.instanceId||c.id||`${pi}|${z}|${index}`))}">${markers}<div class="back-title">裏向きカード</div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;
+ const stackPeek=(onlineDuelActive&&onlineOpponentReadOnly(pi)&&pile.cards.length>1)?`<button type="button" class="btn online-stack-peek" data-stack-peek="${pi}|${z}|${index}">重なり ${pile.cards.length}枚</button>`:'';
+ if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}" data-online-anchor="${esc(String(c.instanceId||c.id||`${pi}|${z}|${index}`))}">${markers}<div class="back-title">裏向きカード</div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}${stackPeek}</div>`;
  const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';
- return `<div class="pile ${sizeClass} ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}" data-online-anchor="${esc(String(c.instanceId||c.id||`${pi}|${z}|${index}`))}">${art}${cardFxHtml(c,'board')}${cardDecorHtml(c,'back')}${cardFrameHtml(c)}${cardDecorHtml(c,'front')}${markers}<div class="name">${(()=>{try{return rubyTextHtml(c.name,cardRubySpec(c))}catch{return esc(c.name||'名称未設定')}})()}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div>${c.token?'<span class="pill" style="position:absolute;left:4px;bottom:4px;font-size:10px">TOKEN</span>':''}${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}</div>`;
+ return `<div class="pile ${sizeClass} ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}" data-online-anchor="${esc(String(c.instanceId||c.id||`${pi}|${z}|${index}`))}">${art}${cardFxHtml(c,'board')}${cardDecorHtml(c,'back')}${cardFrameHtml(c)}${cardDecorHtml(c,'front')}${markers}<div class="name">${(()=>{try{return rubyTextHtml(c.name,cardRubySpec(c))}catch{return esc(c.name||'名称未設定')}})()}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div>${c.token?'<span class="pill" style="position:absolute;left:4px;bottom:4px;font-size:10px">TOKEN</span>':''}${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}${stackPeek}</div>`;
 }
 
 async function hydrateBoardImages(){
@@ -37357,6 +37367,20 @@ function onlineRenderDuelBoard(options={}){
       el.style.pointerEvents='auto';
       el.style.opacity='1';
     });
+    host.querySelectorAll('[data-stack-peek]').forEach(btn=>{
+      if(btn.dataset.v285Bound==='1')return;
+      btn.dataset.v285Bound='1';
+      btn.addEventListener('click',e=>{
+        e.preventDefault();e.stopImmediatePropagation();
+        const [piRaw,z,idxRaw]=String(btn.dataset.stackPeek||'').split('|'),pi=Number(piRaw),idx=Number(idxRaw);
+        const pile=onlineDuelBoard?.players?.[pi]?.[z]?.[idx]||board?.players?.[pi]?.[z]?.[idx];
+        if(!pile?.cards?.length)return;
+        const rows=pile.cards.map((c,i)=>`<button type="button" class="online-stack-peek-row" data-stack-card="${i}"><span class="online-stack-peek-no">${i+1}</span><span class="online-stack-peek-name">${esc(c?.faceDown?'裏向きカード':(c?.name||'カード'))}</span><span class="muted">${c?.faceDown?'内容非公開':esc([c?.type,c?.level!=null?`Lv${c.level}`:''].filter(Boolean).join(' / '))}</span></button>`).join('');
+        openModal(`<div class="modal-head"><h3>P${pi+1} ${esc(ZONE_LABELS[z]||z)} / 重なり ${pile.cards.length}枚</h3><button class="btn" id="v285-stack-close">閉じる</button></div><p class="muted">上から順に表示しています。カードを選ぶと詳細を確認できます。</p><div class="online-stack-peek-list">${rows}</div>`);
+        $('#v285-stack-close')?.addEventListener('click',closeModal);
+        $$('#modal [data-stack-card]').forEach(row=>row.addEventListener('click',()=>{const ci=Number(row.dataset.stackCard);closeModal();setTimeout(()=>openCardDetail(pi,z,idx,ci),0)}));
+      },true);
+    });
 
     // Ver28.3:
     // 観戦で正常動作しているopenZoneViewerをP1/P2の相手公開領域にもそのまま使用する。
@@ -38731,7 +38755,7 @@ function onlineDiagnosticSnapshot(){
   const member=(slot)=>slot===1?room?.p1:room?.p2;
   const rev=room?.revision??room?.publicState?.revision??null;
   const info={
-    appVersion:'28.4',
+    appVersion:'28.5',
     generatedAt:new Date().toISOString(),
     userAgent:navigator.userAgent,
     online:{
@@ -42442,7 +42466,7 @@ async function accountCloudBuildPortableFullBackup(onProgress=()=>{}){
   const manifestBytes=files.get('manifest.json');
   if(!manifestBytes)throw new Error('完全バックアップのmanifest.jsonを作成できませんでした。');
   const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));
-  manifest.appVersion='28.4';
+  manifest.appVersion='28.5';
   manifest.createdAt=new Date().toISOString();
   if(manifest.data&&typeof manifest.data==='object'){
     manifest.data.boardSession=null;
@@ -42483,7 +42507,7 @@ async function accountFullCloudUpload(){
     const uploaded=await accountFullCloudStorageRequest(`object/${ACCOUNT_FULL_CLOUD_BUCKET}/${accountFullCloudEncodePath(objectPath)}`,{method:'POST',body:built.blob,contentType:'application/zip',upsert:true,allowError:true});
     if(!uploaded.ok){window.accountSetMessage?.(uploaded.message,'error');accountFullCloudSetState('保存失敗',uploaded.message);return}
     const createdAt=new Date().toISOString();
-    const meta={schema_version:1,app_version:'28.4',created_at:createdAt,storage_path:objectPath,summary};
+    const meta={schema_version:1,app_version:'28.5',created_at:createdAt,storage_path:objectPath,summary};
     const saved=await window.accountCloudUpsert?.(ACCOUNT_FULL_CLOUD_META_KEY,meta,Date.now());
     if(!saved?.ok){window.accountSetMessage?.('ZIP本体は保存されましたが、保存情報の記録に失敗しました。もう一度保存を実行すると修復できます。','error');accountFullCloudSetState('一部保存','ZIP本体は保存済みですが管理情報の記録に失敗しました。');return}
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
