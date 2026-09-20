@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v28.7</title>
+<title>みん会TCG Simulator v29.0</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22046,7 +22046,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v28.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v29.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22628,9 +22628,9 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
     <div class="section-head"><h2>デッキ</h2><button class="btn" id="new-deck">新規デッキ</button></div>
     <div class="deck-view-tabs">
       <button class="btn small primary" type="button" id="deck-view-edit">デッキ作成</button>
-      <button class="btn small" type="button" id="deck-view-review">デッキ確認</button>
+      <button class="btn small" type="button" id="deck-view-review">デッキ確認</button><button class="btn small" type="button" id="deck-view-pack-edit">パック作成</button><button class="btn small" type="button" id="deck-view-pack-review">パック確認</button>
     </div>
-    <div id="deck-edit-pane">
+    <div id="pack-edit-pane" class="panel pk-pane" hidden></div><div id="pack-review-pane" class="panel pk-pane" hidden></div><div id="deck-edit-pane">
     <div id="deck-draft-recovery" class="draft-recovery-panel" hidden>
       <div class="draft-recovery-copy">
         <b>前回のデッキ編集途中データがあります</b>
@@ -22729,7 +22729,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
           <h2 id="deck-review-title" style="font-size:19px;margin:0">デッキ確認</h2>
           <div id="deck-review-summary" class="muted" style="margin-top:4px"></div>
         </div>
-        <div class="actions"><button class="btn" type="button" id="deck-review-stats">統計を見る</button><button class="btn primary" type="button" id="deck-review-copy">デッキをコピー</button></div>
+        <div class="actions"><button class="btn" type="button" id="pack-draw-check">初手・ドロー検証</button><button class="btn" type="button" id="deck-review-stats">統計を見る</button><button class="btn primary" type="button" id="deck-review-copy">デッキをコピー</button></div>
       </div>
       <div class="deck-review-tools">
         <label>確認するデッキ
@@ -22794,7 +22794,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
     <div class="public-cards-tabs" role="tablist" aria-label="カード公開所">
       <button class="btn public-cards-tab active" type="button" data-public-tab="register">カードを登録</button>
       <button class="btn public-cards-tab" type="button" data-public-tab="browse">公開所</button>
-      <button class="btn public-cards-tab" type="button" data-public-tab="sets">セット配布</button>
+      <button class="btn public-cards-tab" type="button" data-public-tab="sets">セットを作る</button><button class="btn public-cards-tab" data-public-tab="sets-download">セットをDL</button><button class="btn public-cards-tab" data-public-tab="packs-publish">パック公開</button><button class="btn public-cards-tab" data-public-tab="packs-download">パックをDL</button>
       <button class="btn public-cards-tab" type="button" data-public-tab="keys">管理キー</button>
     </div>
 
@@ -40674,11 +40674,13 @@ function publicClickableMetaHtml(card){
 }
 function publicDate(v){try{return v?new Date(v).toLocaleString('ja-JP'):''}catch(_){return String(v||'')}}
 function publicSwitchTab(tab){
-  publicActiveTab=['register','browse','sets','keys'].includes(tab)?tab:'register';
+  publicActiveTab=['register','browse','sets','sets-download','packs-publish','packs-download','keys'].includes(tab)?tab:'register';
   document.querySelectorAll('.public-cards-tab').forEach(b=>b.classList.toggle('active',b.dataset.publicTab===publicActiveTab));
   document.querySelectorAll('.public-tab-pane').forEach(p=>p.classList.toggle('active',p.id===`public-tab-${publicActiveTab}`));
   if(publicActiveTab==='register')publicRenderLocalCards();
   if(publicActiveTab==='browse'&&!publicRows.length)publicFetchCards();
+  if(publicActiveTab==='sets-download')publicFetchSets();
+  if(publicActiveTab==='packs-publish'||publicActiveTab==='packs-download')window.minkaiPacksPublic?.(publicActiveTab);
   if(publicActiveTab==='sets'){
     const author=document.getElementById('public-set-author');if(author&&!author.value)author.value=publicStoredAuthorName();
     if(!publicSetRows.length)publicFetchSets();
@@ -41547,6 +41549,151 @@ async function publicCardsRender(){
 window.publicCardsRender=publicCardsRender;
 window.publicCardsFetch=publicFetchCards;
 publicBind();publicRenderKeyFields();publicRenderLocalCards();publicRenderManagedLists();
+
+
+// BEGIN V29 INLINE
+/* Min-kai TCG v29: pure allocation and simulation functions. */
+(function(root){
+'use strict';
+const copy=x=>JSON.parse(JSON.stringify(x));
+function int(x,min=0,max=10000){const n=Number(x);if(!Number.isSafeInteger(n)||n<min||n>max)throw Error(`${min}～${max}の整数を入力してください`);return n;}
+function counts(x){if(!x||typeof x!=='object'||Array.isArray(x))throw Error('カード枚数が不正です');const o=Object.create(null);for(const [k,v] of Object.entries(x)){if(['__proto__','constructor','prototype'].includes(k))throw Error('カードIDが不正です');const n=int(v);if(n)o[k]=n;}return o;}
+function total(x){return Object.values(counts(x)).reduce((a,b)=>a+b,0);}
+function expand(x){const o=[];for(const [k,n] of Object.entries(counts(x)))for(let i=0;i<n;i++)o.push(k);if(o.length>20000)throw Error('合計枚数は20000枚以内にしてください');return o;}
+function tally(a){const o=Object.create(null);a.forEach(k=>{o[k]=(o[k]||0)+1});return o;}
+function shuffle(a,r=Math.random){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function pack(p,valid,r=Math.random){
+ if(!p||!Array.isArray(p.slots)||!p.slots.length||p.slots.length>20)throw Error('封入枠を1～20個設定してください');
+ const out=[],used=new Set();
+ const demand=p.slots.flatMap(s=>Array(int(s.count,1,100)).fill(s));
+ if(demand.length>500)throw Error('1パックは500枚以内にしてください');
+ function feasible(rest,blocked){
+  const assigned=new Map();
+  function assign(i,seen){for(const id of Object.keys(counts(rest[i].weights))){const key=valid.get(id);if(key===undefined||blocked.has(key)||seen.has(key))continue;seen.add(key);if(!assigned.has(key)||assign(assigned.get(key),seen)){assigned.set(key,i);return true;}}return false;}
+  return rest.every((_,i)=>assign(i,new Set()));
+ }
+ if(p.duplicates===false&&!feasible(demand,used))throw Error('重複なしでは封入枚数を満たせません。枠の対象カードを増やしてください');
+ for(const s of p.slots){const n=int(s.count,1,100);let entries=Object.entries(counts(s.weights)).filter(([id])=>valid.has(id));
+ if(!entries.length)throw Error('封入枠に登録済みカードを選んでください');
+ for(let i=0;i<n;i++){const pool=entries.filter(([id])=>p.duplicates!==false||(!used.has(valid.get(id))&&feasible(demand.slice(out.length+1),new Set([...used,valid.get(id)]))));const sum=pool.reduce((a,x)=>a+x[1],0);if(!sum)throw Error('重複なしでは封入枚数を満たせません。枠の対象カードを増やしてください');let v=r()*sum,id=pool[pool.length-1][0];for(const x of pool){v-=x[1];if(v<0){id=x[0];break}}out.push(id);used.add(valid.get(id));}
+ }if(out.length>500)throw Error('1パックは500枚以内にしてください');return out;
+}
+function move(a,b,offer){const c=counts(offer);for(const [id,n] of Object.entries(c)){if((a[id]||0)<n)throw Error('所持枚数が不足しています');a[id]-=n;b[id]=(b[id]||0)+n;}}
+function trade(players,a,b,ab,ba){if(a===b)throw Error('別の参加者を選んでください');const p=copy(players);if(!p[a]||!p[b])throw Error('参加者が見つかりません'); // Check both offers before receiving.
+ for(const [idx,offer] of [[a,ab],[b,ba]])for(const [id,n] of Object.entries(counts(offer)))if((p[idx].owned[id]||0)<n)throw Error('所持枚数が不足しています');
+ move(p[a].owned,p[b].owned,ab);move(p[b].owned,p[a].owned,ba);return p;}
+function prepare(mode,names,batches,points=100){if(names.length<1||names.length>8)throw Error('参加者は1～8人です');return {mode,players:names.map(name=>({name,owned:{},points:int(points,0,100000)})),batches:copy(batches),round:0,seat:0,turn:0,stage:'pick',done:false,log:[]};}
+function award(s,i,a){for(const id of a)s.players[i].owned[id]=(s.players[i].owned[id]||0)+1;}
+function pick(state,index){const s=copy(state),hand=s.batches[s.round]?.[s.seat];if(!hand||!hand.length)throw Error('選択するパックがありません');index=int(index,0,hand.length-1);award(s,s.seat,hand.splice(index,1));s.seat++;
+ if(s.seat===s.players.length){s.seat=0;if(s.batches[s.round].every(x=>!x.length)){s.round++;if(s.round>=s.batches.length)s.done=true;}else{const a=s.batches[s.round];s.batches[s.round]=s.round%2?[...a.slice(1),a[0]]:[a[a.length-1],...a.slice(0,-1)];}}
+ return s;}
+function condition(hand,groups,join){const c=tally(hand),ok=groups.map(g=>g.ids.reduce((a,id)=>a+(c[id]||0),0)>=g.min);return join==='any'?ok.some(Boolean):ok.every(Boolean);}
+function trial(entries,max,groups,join,r=Math.random){const a=expand(entries);if(max>a.length)throw Error('引く枚数がデッキ枚数を超えています');const result=[];for(let i=0;i<max;i++){const j=i+Math.floor(r()*(a.length-i));[a[i],a[j]]=[a[j],a[i]];result.push(condition(a.slice(0,i+1),groups,join));}return result;}
+const api={copy,int,counts,total,expand,tally,shuffle,pack,trade,prepare,award,pick,trial};root.MinkaiPackEngine=api;if(typeof module!=='undefined')module.exports=api;
+})(typeof window!=='undefined'?window:globalThis);
+
+/* v29 pack UI. Existing cards/decks retain their original storage keys. */
+(()=>{'use strict';
+const E=MinkaiPackEngine,KEY='minkai_pack_workspace_v29',DRAFT='minkai_pack_draft_v29';
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)],h=x=>esc(String(x??'')),C=x=>E.copy(x);
+let db,broken=false;try{db=JSON.parse(localStorage.getItem(KEY)||'{"version":1,"packs":[],"games":[],"links":{}}');if(db.version!==1||!Array.isArray(db.packs)||!Array.isArray(db.games)||!db.links)throw Error();}catch{broken=true;db={version:1,packs:[],games:[],links:{}};}
+let draft;try{draft=JSON.parse(localStorage.getItem(DRAFT)||'null')}catch{}draft=draft||blank();
+let slot=0,query='',gameId='',unlocked=false,busy=false;
+function blank(){return {id:uid('pack'),name:'',description:'',duplicates:true,slots:[{name:'通常枠',count:5,weights:{}}]};}
+function tx(fn){if(broken)throw Error('パック保存データを読み込めません。上書きせずバックアップを確認してください');const next=C(db);fn(next);localStorage.setItem(KEY,JSON.stringify(next));db=next;}
+function stash(){localStorage.setItem(DRAFT,JSON.stringify(draft));}
+function safe(fn){return async(...args)=>{try{await fn(...args)}catch(e){toast(e.message||String(e));}};}
+function on(id,fn){const x=document.getElementById(id);if(x)x.onclick=safe(fn);}
+function name(id){return cards.find(c=>String(c.id)===String(id))?.name||'未登録カード';}
+function valid(){return new Map(cards.map(c=>[c.id,c.name||c.id]));}
+function button(id,text,cls=''){return `<button type="button" class="btn ${cls}" id="${id}">${text}</button>`;}
+function opts(items,key='id',label='name'){return items.map(x=>`<option value="${h(x[key])}">${h(x[label])}</option>`).join('');}
+function num(id,label,value,min=0,max=10000){return `<label>${label}<input id="${id}" type="number" min="${min}" max="${max}" value="${value}" step="1"></label>`;}
+function n(id,min=0,max=10000){return E.int(q('#'+id).value,min,max);}
+function head(title){return `<div class="modal-head"><h3>${h(title)}</h3>${button('pk-close','閉じる')}</div>`;}
+function modal(title,body){openModal(head(title)+`<div class="pk-pane">${body}</div>`);on('pk-close',closeModal);}
+function download(data,file){downloadBlob(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),file);}
+function readFile(cb){const input=document.createElement('input');input.type='file';input.accept='.json,application/json';input.onchange=safe(async()=>{const f=input.files[0];if(!f)return;if(f.size>20000000)throw Error('20MB以内のファイルを選んでください');cb(JSON.parse(await f.text()));});input.click();}
+function assertPack(p){if(!p.name?.trim())throw Error('パック名を入力してください');E.pack(p,valid());return p;}
+function snapshot(p){const ids=[...new Set(p.slots.flatMap(s=>Object.keys(s.weights)))];return {format:'minkai-pack',version:1,pack:C(p),cards:ids.map(id=>{const c=cards.find(c=>c.id===id);if(!c)throw Error('削除済みカードが含まれています');return {id,card:publicCardForUpload(c)};})};}
+function importPack(data){
+ if(data?.format!=='minkai-pack'||data.version!==1||!Array.isArray(data.cards)||data.cards.length>10000)throw Error('対応するパックファイルではありません');
+ const old=cards,added=[],map=new Map();for(const x of data.cards){if(typeof x.id!=='string'||!x.card?.name)throw Error('カード情報が不正です');const clean=publicCardForUpload(x.card);const match=cards.find(c=>JSON.stringify(publicCardForUpload(c))===JSON.stringify(clean));const c=match||{...clean,id:uid('card')};if(!match)added.push(c);map.set(x.id,c.id);}
+ const p=C(data.pack);p.id=uid('pack');delete p.publicId;if(!Array.isArray(p.slots)||p.slots.length>20)throw Error('封入枠が不正です');
+ for(const s of p.slots){const w={};for(const [id,v] of Object.entries(E.counts(s.weights))){if(!map.has(id))throw Error('封入カードの情報がありません');w[map.get(id)]=v;}s.weights=w;}
+ cards=cards.concat(added);try{assertPack(p);save(LS_CARDS,cards);tx(d=>d.packs.push(p));}catch(e){cards=old;save(LS_CARDS,old);throw e;}renderDecks();review();toast('パックを取り込みました。同名でも能力が異なるカードは別に登録しました');
+}
+const originalMode=setDeckViewMode;
+setDeckViewMode=function(mode){originalMode(mode);const isPack=mode.startsWith('pack-');if(isPack){q('#deck-edit-pane').hidden=true;q('#deck-review-pane').hidden=true;q('#new-deck').hidden=true;}q('#pack-edit-pane').hidden=mode!=='pack-edit';q('#pack-review-pane').hidden=mode!=='pack-review';for(const [m,id] of [['edit','deck-view-edit'],['review','deck-view-review'],['pack-edit','deck-view-pack-edit'],['pack-review','deck-view-pack-review']])q('#'+id).classList.toggle('primary',m===mode);if(mode==='pack-edit')editor();if(mode==='pack-review')review();};
+on('deck-view-pack-edit',()=>setDeckViewMode('pack-edit'));on('deck-view-pack-review',()=>setDeckViewMode('pack-review'));on('pack-draw-check',drawDialog);
+// Move original panels; retain IDs, event listeners, forms and input state.
+const originalSets=q('#public-tab-sets'),grid=originalSets.querySelector('.public-set-grid'),browse=grid.children[1];const setDL=document.createElement('div');setDL.id='public-tab-sets-download';setDL.className='public-tab-pane';originalSets.after(setDL);setDL.append(browse);grid.style.display='block';const status=document.createElement('div');status.id='pk-set-dl-status';status.className='muted';browse.prepend(status);
+const originalFetchSets=publicFetchSets;publicFetchSets=async function(){await originalFetchSets();status.textContent=q('#public-set-managed-status')?.textContent||'';};
+for(const id of ['packs-publish','packs-download']){const el=document.createElement('div');el.id='public-tab-'+id;el.className='public-tab-pane pk-pane';q('#public-tab-keys').before(el);}
+function editor(){
+ slot=Math.min(slot,draft.slots.length-1);const root=q('#pack-edit-pane');root.innerHTML=`<div class="section-head"><h3>パック作成</h3>${button('pk-new','新規パック')}</div><label>パック名<input id="pk-name" maxlength="120" value="${h(draft.name)}"></label><label>説明<textarea id="pk-desc" maxlength="1000">${h(draft.description)}</textarea></label><label class="pk-check"><input id="pk-dup" type="checkbox" ${draft.duplicates?'checked':''}>同じパック内で同名カードの重複を許可</label><div class="pk-row"><label>編集する封入枠<select id="pk-slot">${draft.slots.map((s,i)=>`<option value="${i}" ${i===slot?'selected':''}>${h(s.name)} (${s.count}枚)</option>`).join('')}</select></label>${button('pk-add-slot','枠を追加')}${button('pk-del-slot','枠を削除')}</div><div class="pk-grid"><label>枠名<input id="pk-slot-name" value="${h(draft.slots[slot].name)}" maxlength="80"></label>${num('pk-count','封入枚数',draft.slots[slot].count,1,100)}</div><p class="muted">選んだカードから抽選します。重みが2なら1のカードの2倍出やすくなります。検索で非表示になっても選択は残ります。</p><div class="pk-row"><input id="pk-search" type="search" placeholder="カード名・種族・効果で検索" value="${h(query)}">${button('pk-all','検索結果を選択')}${button('pk-none','この枠の選択を解除')}</div><div id="pk-picker" class="pk-scroll"></div><p id="pk-selected" class="muted"></p><div class="pk-row">${button('pk-save','パックを保存','primary')}${button('pk-copy','別のパックとして保存')}</div><p class="muted">入力内容はこの端末へ自動保存されます。</p>`;
+ q('#pk-name').oninput=()=>{draft.name=q('#pk-name').value;stash()};q('#pk-desc').oninput=()=>{draft.description=q('#pk-desc').value;stash()};q('#pk-dup').onchange=()=>{draft.duplicates=q('#pk-dup').checked;stash()};q('#pk-slot').onchange=()=>{slot=Number(q('#pk-slot').value);editor()};q('#pk-slot-name').oninput=()=>{draft.slots[slot].name=q('#pk-slot-name').value;stash()};q('#pk-count').onchange=safe(()=>{draft.slots[slot].count=n('pk-count',1,100);stash()});q('#pk-search').oninput=()=>{query=q('#pk-search').value;picker()};
+ on('pk-new',()=>{if(!confirm('現在の下書きを閉じて新規作成しますか？'))return;draft=blank();slot=0;stash();editor()});on('pk-add-slot',()=>{if(draft.slots.length>=20)throw Error('枠は20個までです');draft.slots.push({name:'追加枠',count:1,weights:{}});slot=draft.slots.length-1;stash();editor()});on('pk-del-slot',()=>{if(draft.slots.length===1)throw Error('少なくとも1枠必要です');draft.slots.splice(slot,1);slot=0;stash();editor()});on('pk-all',()=>{filtered().forEach(c=>draft.slots[slot].weights[c.id]=draft.slots[slot].weights[c.id]||1);stash();picker()});on('pk-none',()=>{draft.slots[slot].weights={};stash();picker()});
+ const persist=(duplicate)=>{draft.slots[slot].count=n('pk-count',1,100);assertPack(draft);const p=C(draft);if(duplicate){p.id=uid('pack');delete p.publicId;p.name+=' コピー';}tx(d=>{const i=d.packs.findIndex(x=>x.id===p.id);if(i<0)d.packs.push(p);else d.packs[i]=p;});draft=C(p);stash();toast('パックを保存しました');setDeckViewMode('pack-review');};on('pk-save',()=>persist(false));on('pk-copy',()=>persist(true));picker();
+}
+function filtered(){const words=query.toLowerCase().split(/\s+/).filter(Boolean);return cards.filter(c=>words.every(w=>`${c.name} ${c.race} ${c.effect} ${c.text}`.toLowerCase().includes(w)));}
+function picker(){const a=filtered(),weights=draft.slots[slot].weights;q('#pk-picker').innerHTML=a.slice(0,250).map(c=>`<div class="pk-card"><label class="pk-check"><input type="checkbox" data-pk-id="${h(c.id)}" ${weights[c.id]?'checked':''}><span>${h(c.name)}<small>${h(c.type||'')} / Lv${h(c.level??'')}</small></span></label><label class="pk-weight">重み<input type="number" min="1" max="10000" data-pk-weight="${h(c.id)}" value="${weights[c.id]||1}"></label></div>`).join('')||'<p>カードがありません。</p>';q('#pk-selected').textContent=`選択 ${Object.keys(weights).length}種 / 検索結果 ${a.length}種${a.length>250?'（先頭250件。検索で絞り込めます）':''}`;
+ qa('[data-pk-id]').forEach(x=>x.onchange=()=>{if(x.checked)weights[x.dataset.pkId]=1;else delete weights[x.dataset.pkId];stash();q('#pk-selected').textContent=`選択 ${Object.keys(weights).length}種`;});qa('[data-pk-weight]').forEach(x=>x.onchange=safe(()=>{const v=E.int(x.value,1,10000);weights[x.dataset.pkWeight]=v;stash();picker()}));}
+function review(){const root=q('#pack-review-pane');root.innerHTML=`<h3>パック確認</h3><div class="pk-row">${button('pk-import','パックを取り込む')}${button('pk-backup','パック・遊びの記録を書き出す')}${button('pk-restore','記録を復元')}${button('pk-join','小型デッキの合体戦')}</div><p class="muted">複数人のモードは、この端末で順番に操作します。別端末との同時進行にはまだ対応していません。</p>${broken?'<p>保存データを読み込めませんでした。上書きを停止しています。</p>':''}<div id="pk-list">${db.packs.map(p=>`<div class="panel"><h4>${h(p.name)}</h4><p>${h(p.description)}</p><p>${p.slots.map(s=>`${h(s.name)} ${s.count}枚・${Object.keys(s.weights).length}種`).join(' / ')}</p><div class="pk-row">${['edit:編集','detail:内容','play:開封・遊ぶ','export:共有用ファイル','publish:公開所へ','delete:削除'].map(x=>{const [a,l]=x.split(':');return `<button class="btn small" data-pack="${h(p.id)}" data-pa="${a}">${l}</button>`}).join('')}</div></div>`).join('')||'<p>保存したパックはありません。パック作成から登録してください。</p>'}<h3>獲得カード・続きから遊ぶ</h3>${db.games.map(g=>`<div class="pk-card"><span>${h(g.name)}<small>${h(g.mode)} / ${g.players.map(p=>`${h(p.name)} ${E.total(p.owned)}枚`).join('・')}</small></span><button class="btn" data-game="${h(g.id)}">開く</button></div>`).join('')||'<p class="muted">開封やドラフトを始めると、ここに記録が残ります。</p>'}`;
+ qa('[data-pa]').forEach(b=>b.onclick=safe(()=>{const p=db.packs.find(p=>p.id===b.dataset.pack);if(b.dataset.pa==='edit'){draft=C(p);slot=0;stash();setDeckViewMode('pack-edit')}if(b.dataset.pa==='detail')packDetail(p);if(b.dataset.pa==='play')setup(p);if(b.dataset.pa==='export')download(snapshot(p),`${p.name}.json`);if(b.dataset.pa==='publish'){nav('public-cards');publicSwitchTab('packs-publish');q('#pk-public-select').value=p.id;}if(b.dataset.pa==='delete'&&confirm('このパック設定を削除しますか？獲得済みカードは残ります。')){tx(d=>d.packs=d.packs.filter(x=>x.id!==p.id));review();}}));qa('[data-game]').forEach(b=>b.onclick=()=>{gameId=b.dataset.game;unlocked=false;gameView()});on('pk-import',()=>readFile(importPack));on('pk-backup',()=>download({format:'minkai-pack-workspace',version:1,db,cards:cards.map(c=>({id:c.id,card:publicCardForUpload(c)}))},'パックと遊びの記録.json'));on('pk-restore',()=>readFile(restore));on('pk-join',mergeDialog);
+}
+function packDetail(p){modal(p.name,p.slots.map(s=>`<h4>${h(s.name)}：${s.count}枚</h4><div class="pk-scroll">${Object.entries(s.weights).map(([id,w])=>`<div class="pk-card"><span>${h(name(id))}</span><span>重み ${w}</span></div>`).join('')}</div>`).join(''));}
+function quantities(entries,prefix){return `<div class="pk-scroll">${Object.entries(entries).filter(([,v])=>v>0).map(([id,v],i)=>`<div class="pk-card"><span>${h(name(id))} ×${v}<small>${h(cards.find(c=>c.id===id)?.effect||'')}</small></span><input aria-label="${h(name(id))}の枚数" data-qty="${h(id)}" data-group="${prefix}" type="number" value="0" min="0" max="${v}"></div>`).join('')}</div>`;}
+function readQty(prefix){const out={};qa(`[data-group="${prefix}"]`).forEach(x=>{const v=E.int(x.value,0,Number(x.max));if(v)out[x.dataset.qty]=v;});return out;}
+function setup(p){modal('開封・遊びを開始',`<label>記録名<input id="pg-name" value="${h(p.name)}"></label><label>参加者（1行に1人・最大8人）<textarea id="pg-players">プレイヤー1\nプレイヤー2</textarea></label><label>遊び方<select id="pg-mode"><option value="sealed">シールド・パック開封</option><option value="draft">通常ドラフト</option><option value="finite">共通のカード群から取り合うドラフト</option><option value="equal">同じ配布カードで構築</option><option value="split">山分けドラフト（2人）</option><option value="auction">競り</option></select></label><div class="pk-grid">${num('pg-rounds','1人あたりのパック数',3,1,20)}${num('pg-points','競りの持ち点',100,0,100000)}</div><label>共通のカード群（有限ドラフト・競り・山分け）<select id="pg-pool"><option value="">このパックの対象カードを各1枚</option>${opts(decks)}</select></label><p class="muted">デッキを選ぶと採用枚数が全体の在庫になります。有限ドラフトはパックの合計枚数ずつ配り、封入枠や重みは使用しません。競りは全員の入札額を入力して落札を確定します。</p>${button('pg-start','開始する','primary')}`);
+ on('pg-start',()=>{const names=q('#pg-players').value.split('\n').map(x=>x.trim()).filter(Boolean);if(new Set(names).size!==names.length)throw Error('参加者名を重複させないでください');const mode=q('#pg-mode').value,rounds=n('pg-rounds',1,20);if(mode==='split'&&names.length!==2)throw Error('山分けは2人で開始してください');if(['draft','finite'].includes(mode)&&names.length<2)throw Error('ドラフトは2人以上で開始してください');let s=E.prepare(mode,names,[],n('pg-points',0,100000));s.id=uid('game');s.name=q('#pg-name').value.trim()||p.name;s.packId=p.id;s.created=new Date().toISOString();const poolId=q('#pg-pool').value,pool=poolId?E.expand(decks.find(d=>d.id===poolId).entries):[...new Set(p.slots.flatMap(x=>Object.keys(x.weights)))];if(pool.some(id=>!valid().has(id)))throw Error('削除済みカードが含まれています');let remaining=E.shuffle(pool);const size=p.slots.reduce((a,x)=>a+E.int(x.count,1,100),0);if(size*rounds*names.length>20000)throw Error('配布は合計20000枚以内にしてください');
+ if(['sealed','equal'].includes(mode)){const common=[];if(mode==='equal')for(let r=0;r<rounds;r++)common.push(...E.pack(p,valid()));for(let i=0;i<names.length;i++){let a=common;if(mode==='sealed'){a=[];for(let r=0;r<rounds;r++)a.push(...E.pack(p,valid()));}E.award(s,i,a);}s.done=true;}
+ if(['draft','finite'].includes(mode)){if(mode==='finite'&&remaining.length<size*rounds*names.length)throw Error(`共通在庫が不足しています。${size*rounds*names.length}枚必要です`);for(let r=0;r<rounds;r++){const a=[];for(let i=0;i<names.length;i++)a.push(mode==='finite'?remaining.splice(0,size):E.pack(p,valid()));s.batches.push(a);}s.remaining=remaining;}
+ if(['split','auction'].includes(mode)){if(!remaining.length)throw Error('対象カードがありません');s.queue=remaining;s.stage=mode==='split'?'divide':'bid';}
+ s.log.push('開始');tx(d=>d.games.push(s));gameId=s.id;unlocked=false;closeModal();gameView();});
+}
+function game(){const g=db.games.find(x=>x.id===gameId);if(!g)throw Error('記録が見つかりません');return g;}
+function change(fn){tx(d=>{const i=d.games.findIndex(g=>g.id===gameId);const g=fn(d.games[i]);if(g)d.games[i]=g;});gameView();}
+function cardList(a){return a.map(id=>h(name(id))).join('、');}
+function gameView(){const g=game();setDeckViewMode('pack-review');const root=q('#pack-review-pane');root.innerHTML=`<div class="section-head"><h3>${h(g.name)}</h3>${button('pg-back','パック一覧')}</div><p>方式：${h({sealed:'シールド',draft:'通常ドラフト',finite:'共通在庫ドラフト',equal:'同じ配布カード',split:'山分け',auction:'競り'}[g.mode]||g.mode)} / ${g.done?'配布完了':'進行中'}</p><div id="pg-stage" class="panel"></div><h4>獲得カード</h4>${g.players.map((p,i)=>`<div class="pk-card"><span>${h(p.name)}：${E.total(p.owned)}枚${g.mode==='auction'?` / 残り${p.points}点`:''}</span><button class="btn" data-owned="${i}">確認・構築・追加開封</button></div>`).join('')}<div class="pk-row">${button('pg-trade','トレード')}${button('pg-history','履歴')}</div>`;on('pg-back',review);qa('[data-owned]').forEach(b=>b.onclick=safe(()=>owned(Number(b.dataset.owned))));on('pg-trade',tradeDialog);on('pg-history',()=>modal('履歴',`<div class="pk-scroll">${g.log.slice().reverse().map(x=>`<p>${h(x)}</p>`).join('')}</div>`));const stage=q('#pg-stage');if(g.done){stage.textContent='配布が完了しました。獲得カードからデッキを作成できます。';return;}
+ if(['draft','finite'].includes(g.mode)){const player=g.players[g.seat];if(!unlocked){stage.innerHTML=`<p>${h(player.name)}の選択です。端末を渡してから開いてください。</p>${button('pg-reveal','パックを見る')}`;on('pg-reveal',()=>{unlocked=true;gameView()});}else{stage.innerHTML=`<p>${h(player.name)} / ${g.round+1}パック目：1枚選んでください</p>${g.batches[g.round][g.seat].map((id,i)=>`<button class="btn pk-pick" data-pick="${i}">${h(name(id))}<small style="display:block;white-space:pre-wrap">${h(cards.find(c=>c.id===id)?.effect||'')}</small></button>`).join('')}`;qa('[data-pick]').forEach(b=>b.onclick=safe(()=>{unlocked=false;change(x=>{const next=E.pick(x,Number(b.dataset.pick));next.log.push(`${player.name}が1枚選択`);return next;});}));}return;}
+ if(g.mode==='split'){const batch=g.queue.slice(0,6),divider=g.turn%2,chooser=1-divider;if(g.stage==='divide'){stage.innerHTML=`<p>${h(g.players[divider].name)}が2つの束に分けます。チェックしたカードがA、残りがBです。</p>${batch.map((id,i)=>`<label class="pk-check"><input data-split="${i}" type="checkbox">${h(name(id))}</label>`).join('')}${button('pg-divide','この分け方で決定')}`;on('pg-divide',()=>{const idx=qa('[data-split]:checked').map(x=>Number(x.dataset.split));if(batch.length>1&&(!idx.length||idx.length===batch.length))throw Error('両方の束に1枚以上入れてください');change(s=>{s.parts=[batch.filter((_,i)=>idx.includes(i)),batch.filter((_,i)=>!idx.includes(i))];s.stage='choose';});});}else{stage.innerHTML=`<p>${h(g.players[chooser].name)}が束を選びます。</p>${g.parts.map((a,i)=>`<div class="panel"><p>${cardList(a)||'カードなし'}</p><button class="btn" data-part="${i}">束${i?'B':'A'}を選ぶ</button></div>`).join('')}`;qa('[data-part]').forEach(b=>b.onclick=safe(()=>change(s=>{const i=Number(b.dataset.part);E.award(s,chooser,s.parts[i]);E.award(s,divider,s.parts[1-i]);s.queue.splice(0,batch.length);s.log.push(`${s.players[chooser].name}が束${i?'B':'A'}を選択`);s.turn++;s.stage='divide';delete s.parts;s.done=!s.queue.length;})));}return;}
+ if(g.mode==='auction'){stage.innerHTML=`<h4>出品：${h(name(g.queue[0]))}</h4><p>0点は見送り。同額の最高入札は再入札します。</p>${g.players.map((p,i)=>num('bid-'+i,p.name+'（残り'+p.points+'点）',0,0,p.points)).join('')}${button('pg-bid','入札を確定')}`;on('pg-bid',()=>{const bids=g.players.map((p,i)=>n('bid-'+i,0,p.points)),max=Math.max(...bids);if(max&&bids.filter(x=>x===max).length>1)throw Error('最高額が同じです。再入札してください');change(s=>{const id=s.queue.shift();if(max){const i=bids.indexOf(max);s.players[i].points-=max;E.award(s,i,[id]);s.log.push(`${s.players[i].name}が${name(id)}を${max}点で落札`);}else s.log.push(`${name(id)}：全員見送り`);s.done=!s.queue.length;});});}
+}
+function owned(index){const g=game(),p=g.players[index];modal(p.name+'の獲得カード',`<p>使用する枚数を入力してデッキを保存できます。追加開封の結果はこの記録に引き継がれます。</p>${quantities(p.owned,'build')}<label>デッキ名<input id="pg-deck-name" value="${h(g.name+' / '+p.name)}"></label><div class="pk-row">${button('pg-deck-save','選んだ枚数でデッキ保存','primary')}${button('pg-all-owned','全枚数を選択')}</div><hr><label>開けるパック<select id="pg-more-pack">${opts(db.packs)}</select></label>${num('pg-more-count','パック数',1,1,20)}${button('pg-more','追加開封')}<details><summary>カードを返して交換開封</summary><p>上の枚数欄で返却するカードを選んでください。</p>${num('pg-cost','必要な返却枚数（合計）',5,1,20000)}${button('pg-exchange','選んだカードを返して開封')}</details>`);
+ on('pg-all-owned',()=>qa('[data-group="build"]').forEach(x=>x.value=x.max));on('pg-deck-save',()=>{const entries=readQty('build');if(!E.total(entries))throw Error('カードを選んでください');const d={id:uid('deck'),name:q('#pg-deck-name').value.trim()||g.name,entries,mainEnabled:true,otherEnabled:true,tags:[],defaultOshiiCardId:''};const next=decks.concat([d]);save(LS_DECKS,next);try{tx(s=>s.links[d.id]={gameId:g.id,player:index});}catch(e){save(LS_DECKS,decks);throw e;}decks=next;renderDecks();renderSetup(true);gameView();toast('デッキを保存しました。デッキ確認・盤面開始から使えます');});
+ const openMore=(exchange)=>{const pack=db.packs.find(x=>x.id===q('#pg-more-pack').value);if(!pack)throw Error('パックを選んでください');const times=n('pg-more-count',1,20),offer=exchange?readQty('build'):{};if(exchange&&E.total(offer)!==n('pg-cost',1,20000))throw Error('返却する合計枚数を必要枚数に合わせてください');const a=[];for(let i=0;i<times;i++)a.push(...E.pack(pack,valid()));if(!confirm(exchange?`${E.total(offer)}枚を返して${times}パック開けますか？`:`${times}パックを追加しますか？`))return;change(s=>{const owner=s.players[index].owned;for(const [id,n] of Object.entries(offer)){if((owner[id]||0)<n)throw Error('所持枚数が不足しています');owner[id]-=n;}E.award(s,index,a);s.log.push(`${p.name}：${exchange?'交換':'追加'}開封 ${pack.name} ${times}パック / ${cardList(a)}`);});closeModal();owned(index);};on('pg-more',()=>openMore(false));on('pg-exchange',()=>openMore(true));
+}
+function tradeDialog(){const g=game();if(g.players.length<2)throw Error('参加者が2人以上の記録で使えます');modal('トレード',`<div class="pk-grid"><label>参加者A<select id="trade-a">${g.players.map((p,i)=>`<option value="${i}">${h(p.name)}</option>`).join('')}</select></label><label>参加者B<select id="trade-b">${g.players.map((p,i)=>`<option value="${i}" ${i===1?'selected':''}>${h(p.name)}</option>`).join('')}</select></label></div>${button('trade-choose','交換するカードを選ぶ')}<div id="trade-body"></div>`);on('trade-choose',()=>{const a=Number(q('#trade-a').value),b=Number(q('#trade-b').value);if(a===b)throw Error('別の参加者を選んでください');q('#trade-body').innerHTML=`<h4>${h(g.players[a].name)}が渡すカード</h4>${quantities(g.players[a].owned,'offer-a')}<h4>${h(g.players[b].name)}が渡すカード</h4>${quantities(g.players[b].owned,'offer-b')}<label class="pk-check"><input id="trade-ok-a" type="checkbox">${h(g.players[a].name)}が確認</label><label class="pk-check"><input id="trade-ok-b" type="checkbox">${h(g.players[b].name)}が確認</label>${button('trade-commit','交換を確定')}`;qa('#trade-body [data-qty]').forEach(x=>x.oninput=()=>{q('#trade-ok-a').checked=false;q('#trade-ok-b').checked=false;});on('trade-commit',()=>{if(!q('#trade-ok-a').checked||!q('#trade-ok-b').checked)throw Error('双方の確認が必要です');const ab=readQty('offer-a'),ba=readQty('offer-b');if(!E.total(ab)&&!E.total(ba))throw Error('交換するカードを選んでください');change(s=>{s.players=E.trade(s.players,a,b,ab,ba);s.log.push(`${s.players[a].name} ↔ ${s.players[b].name}：${E.total(ab)}枚 / ${E.total(ba)}枚を交換`);});closeModal();});});const reset=()=>q('#trade-body').innerHTML='';q('#trade-a').onchange=reset;q('#trade-b').onchange=reset;}
+function mergeDialog(){modal('小型デッキの合体戦',`<p>小型デッキとして使う保存デッキを2つ以上選んでください。異なる2つを抽選し、採用枚数を合計します。</p><div class="pk-scroll">${decks.map(d=>`<label class="pk-check"><input type="checkbox" data-mini="${h(d.id)}">${h(d.name)} (${E.total(d.entries)}枚)</label>`).join('')}</div>${button('mini-merge','2つ抽選してデッキを保存')}`);on('mini-merge',()=>{const ids=qa('[data-mini]:checked').map(x=>x.dataset.mini);if(ids.length<2)throw Error('2つ以上選んでください');const pair=E.shuffle(ids).slice(0,2).map(id=>decks.find(d=>d.id===id)),entries={};pair.forEach(d=>Object.entries(d.entries).forEach(([id,n])=>entries[id]=(entries[id]||0)+n));const d={id:uid('deck'),name:pair.map(d=>d.name).join('＋'),entries,tags:[],mainEnabled:true,otherEnabled:true};save(LS_DECKS,decks.concat([d]));decks.push(d);renderDecks();renderSetup(true);setDeckViewMode('pack-review');closeModal();toast('合体デッキを保存しました：'+d.name);});}
+// Keep collection limits when a generated deck is edited in the existing builder.
+const saveDeck=saveWorkingDeck;saveWorkingDeck=function(){const link=db.links[editingDeckId];if(link){const g=db.games.find(x=>x.id===link.gameId),owner=g?.players[link.player];if(owner){const over=Object.entries(workingDeck.entries).filter(([id,n])=>n>(owner.owned[id]||0));if(over.length){toast('所持枚数を超えています：'+over.map(([id])=>name(id)).join('、'));return;}}}return saveDeck();};q('#save-deck').onclick=saveWorkingDeck;
+function drawDialog(){const source=deckReviewSourceDeck(),original=E.counts(source.entries||{});if(!E.total(original))throw Error('確認するデッキにカードがありません');const entries=C(original);let groupIndex=0,cancel=false,runId=0;
+ modal('初手・ドロー検証',`<p>${h(source.name||'編集中のデッキ')} / ${E.total(original)}枚。検証用の採用枚数を変更しても元のデッキは変わりません。</p><div class="pk-grid">${num('draw-initial','初手枚数',Math.min(5,E.total(original)),1,20000)}${num('draw-extra','追加で引く枚数',0,0,20000)}<label>試行回数<select id="draw-trials"><option>1000</option><option selected>10000</option><option>50000</option></select></label><label>条件の組み合わせ<select id="draw-join"><option value="all">すべて満たす（AND）</option><option value="any">どれか満たす（OR）</option></select></label></div><p>条件内のカードは合計枚数で判定します。AとBを各1枚なら条件を2つ作り、すべて満たすを選びます。</p><div id="draw-groups"></div>${button('draw-add-group','条件を追加')}<details><summary>比較用の採用枚数を変更</summary><div class="pk-scroll">${Object.entries(original).map(([id,v])=>`<div class="pk-card"><span>${h(name(id))}</span><input data-draw-count="${h(id)}" type="number" value="${v}" min="0" max="10000"></div>`).join('')}</div><p id="draw-total">比較用：${E.total(entries)}枚</p></details><div class="pk-row">${button('draw-run','元の構築と比較して検証','primary')}${button('draw-stop','中止')}</div><div id="draw-result" aria-live="polite"></div>`);
+ function add(){const id=groupIndex++,el=document.createElement('div');el.className='panel';el.dataset.condition=id;el.innerHTML=`<label>条件 ${id+1}：対象カード（複数選択可）</label><div class="pk-scroll">${Object.keys(original).map(cid=>`<label class="pk-check"><input type="checkbox" value="${h(cid)}">${h(name(cid))}</label>`).join('')}</div><label>合計で必要な枚数<input data-min type="number" value="1" min="1" max="20000"></label><button type="button" class="btn small" data-remove>この条件を削除</button>`;el.querySelector('[data-remove]').onclick=()=>el.remove();q('#draw-groups').append(el);}add();on('draw-add-group',add);qa('[data-draw-count]').forEach(x=>x.onchange=safe(()=>{entries[x.dataset.drawCount]=E.int(x.value);q('#draw-total').textContent=`比較用：${E.total(entries)}枚`;}));on('draw-stop',()=>{cancel=true});on('pk-close',()=>{cancel=true;runId++;closeModal()});
+ on('draw-run',async()=>{if(busy)throw Error('検証中です');qa('[data-draw-count]').forEach(x=>entries[x.dataset.drawCount]=E.int(x.value));const groups=qa('[data-condition]').map(el=>({ids:[...el.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value),min:E.int(el.querySelector('[data-min]').value,1,20000)}));if(!groups.length||groups.some(g=>!g.ids.length))throw Error('各条件にカードを選んでください');const initial=n('draw-initial',1,20000),max=initial+n('draw-extra',0,20000),trials=n('draw-trials',1,50000),join=q('#draw-join').value;if(max>Math.min(E.total(original),E.total(entries)))throw Error('引く枚数が元または比較用のデッキ枚数を超えています');if(max>300)throw Error('一度に引く枚数は300枚以内にしてください');cancel=false;busy=true;const token=++runId,counts=[Array(max).fill(0),Array(max).fill(0)];let done=0;const result=q('#draw-result');try{for(let t=0;t<trials;t++){if(cancel||!result.isConnected||token!==runId)break;[original,entries].forEach((e,i)=>E.trial(e,max,groups,join).forEach((ok,j)=>{if(ok)counts[i][j]++}));done++;if(t%100===0){result.textContent=`検証中 ${done}/${trials}回`;await new Promise(r=>setTimeout(r,0));}}if(!result.isConnected)return;result.innerHTML=`<p>${cancel?'中止・途中結果':'検証完了'}：各${done}回。抽選による推定値です。</p><div class="pk-table"><table><thead><tr><th>引いた枚数</th><th>元 ${E.total(original)}枚</th><th>比較 ${E.total(entries)}枚</th></tr></thead><tbody>${Array.from({length:max-initial+1},(_,i)=>{const j=initial+i-1;return `<tr><td>${j+1}枚</td>${counts.map(a=>`<td>${done?(a[j]/done*100).toFixed(2):'0'}% (${a[j]}/${done})</td>`).join('')}</tr>`}).join('')}</tbody></table></div>`;}finally{busy=false;}});
+}
+function restore(data){if(data?.format!=='minkai-pack-workspace'||data.version!==1||!Array.isArray(data.cards)||!data.db||data.db.version!==1||!Array.isArray(data.db.packs)||!Array.isArray(data.db.games))throw Error('対応する記録ファイルではありません');if(!confirm('パックと遊びの記録を、このファイルの内容で置き換えますか？通常のデッキは残ります。'))return;const previous=cards,added=[],map=new Map();for(const x of data.cards){if(!x.card?.name||typeof x.id!=='string')throw Error('カード情報が不正です');const c=cards.find(c=>JSON.stringify(publicCardForUpload(c))===JSON.stringify(publicCardForUpload(x.card)))||{...publicCardForUpload(x.card),id:uid('card')};if(!cards.includes(c))added.push(c);map.set(x.id,c.id);}
+ function remap(v){if(typeof v==='string')return map.get(v)||v;if(Array.isArray(v))return v.map(remap);if(v&&typeof v==='object'){const out=Object.create(null);for(const [k,x] of Object.entries(v)){if(['__proto__','prototype','constructor'].includes(k))throw Error('不正な記録です');out[map.get(k)||k]=remap(x);}return out;}return v;}
+ const next=remap(data.db);next.links={};cards=cards.concat(added);try{next.packs.forEach(assertPack);for(const g of next.games){if(!g.id||!Array.isArray(g.players)||!Array.isArray(g.log))throw Error('遊びの記録が不正です');g.players.forEach(p=>E.counts(p.owned));}save(LS_CARDS,cards);localStorage.setItem(KEY,JSON.stringify(next));db=next;broken=false;}catch(e){cards=previous;save(LS_CARDS,previous);throw e;}review();renderDecks();toast('記録を復元しました。画像は元の端末の画像設定を使用します');}
+// Public packs use a dedicated RPC and never modify the existing public-card/set endpoints.
+async function api(action,args={}){const res=await fetch(new URL('/rest/v1/rpc/minkai_pack_api',PUBLIC_SETS_URL),{method:'POST',headers:{'Content-Type':'application/json',apikey:PUBLIC_CARDS_KEY,Authorization:`Bearer ${PUBLIC_CARDS_KEY}`},body:JSON.stringify({request:{action,...args}})});const data=await res.json();if(!res.ok)throw Error(res.status===404?'パック公開用のサーバー設定がまだありません。同梱のSQLを適用してください。':(data.message||'公開所へ接続できません'));if(data.error)throw Error(data.error);return data;}
+window.minkaiPacksPublic=function(tab){const publish=tab==='packs-publish',root=q('#public-tab-'+tab);if(publish){root.innerHTML=`<div class="panel"><h3>パック公開</h3><p>カード情報と封入設定を公開します。画像・獲得カード・参加者情報は含みません。</p><label>公開するパック<select id="pk-public-select">${opts(db.packs)}</select></label><label>作者名<input id="pk-author" maxlength="80" value="${h(publicStoredAuthorName())}"></label><div class="pk-row">${button('pk-publish','選択パックを公開・更新','primary')}${button('pk-managed','自分の公開パックを取得')}</div><p id="pk-public-message" aria-live="polite"></p><div id="pk-managed-list"></div></div>`;on('pk-publish',async()=>{const p=db.packs.find(x=>x.id===q('#pk-public-select').value),key=publicStoredManagementKey();if(!p)throw Error('先にパックを保存してください');if(!key)throw Error('管理キーを設定してください');assertPack(p);if(!confirm(`${p.name}を公開しますか？画像は含まれません。`))return;const btn=q('#pk-publish');btn.disabled=true;try{const r=await api('save',{id:p.publicId||null,key,name:p.name,author:q('#pk-author').value,payload:snapshot(p)});tx(d=>d.packs.find(x=>x.id===p.id).publicId=r.id);q('#pk-public-message').textContent='公開しました';}finally{btn.disabled=false;}});on('pk-managed',async()=>{const key=publicStoredManagementKey();if(!key)throw Error('管理キーを設定してください');const r=await api('managed',{key});q('#pk-managed-list').innerHTML=r.rows.map(row=>`<div class="pk-card"><span>${h(row.name)} (${row.is_public?'公開中':'非公開'})</span><button class="btn" data-pub-toggle="${h(row.id)}" data-visible="${row.is_public?'0':'1'}">${row.is_public?'非公開にする':'再公開'}</button></div>`).join('')||'<p>公開したパックはありません。</p>';qa('[data-pub-toggle]').forEach(b=>b.onclick=safe(async()=>{await api('visibility',{id:b.dataset.pubToggle,key,is_public:b.dataset.visible==='1'});q('#pk-managed').click();}));});}
+ else{root.innerHTML=`<div class="panel"><h3>パックをDL</h3><div class="pk-row"><input id="pk-public-search" type="search" placeholder="パック名・作者名">${button('pk-public-find','検索')}</div><div id="pk-public-list"></div><div class="pk-row">${button('pk-public-prev','前へ')}${button('pk-public-next','次へ')}</div></div>`;let page=0;const search=async()=>{const r=await api('list',{query:q('#pk-public-search').value,page});q('#pk-public-list').innerHTML=r.rows.map(row=>`<div class="panel"><h4>${h(row.name)}</h4><p>作者：${h(row.author)}</p>${row.payload.pack.slots.map(s=>`<p>${h(s.name)} ${s.count}枚 / ${Object.keys(s.weights).length}種</p>`).join('')}<div class="pk-row"><button class="btn" data-pub-detail="${h(row.id)}">内容確認</button><button class="btn" data-pub-download="${h(row.id)}">取り込む</button></div></div>`).join('')||'<p>パックが見つかりません。</p>';q('#pk-public-prev').disabled=page===0;q('#pk-public-next').disabled=r.rows.length<20;qa('[data-pub-download]').forEach(b=>b.onclick=safe(()=>{if(confirm('このパックと必要なカード情報を取り込みますか？'))importPack(r.rows.find(x=>x.id===b.dataset.pubDownload).payload);}));qa('[data-pub-detail]').forEach(b=>b.onclick=safe(()=>{const data=r.rows.find(x=>x.id===b.dataset.pubDetail).payload;modal(data.pack.name,data.pack.slots.map(s=>`<h4>${h(s.name)}</h4>${Object.entries(s.weights).map(([id,w])=>`<p>${h(data.cards.find(c=>c.id===id)?.card.name)} / 重み ${w}</p>`).join('')}`).join(''));}));};on('pk-public-find',()=>{page=0;return search()});on('pk-public-prev',()=>{page=Math.max(0,page-1);return search()});on('pk-public-next',()=>{page++;return search()});}
+};
+const oldExport=exportBackupObject;exportBackupObject=function(){const data=oldExport();data.packWorkspace=C(db);return data;};
+const oldRestore=restoreBackupObject;restoreBackupObject=function(data,opt){
+ if(data.packWorkspace&&(data.packWorkspace.version!==1||!Array.isArray(data.packWorkspace.packs)||!Array.isArray(data.packWorkspace.games)))throw Error('パックのバックアップ形式が不正です');
+ const result=oldRestore(data,opt);
+ if(data.packWorkspace){localStorage.setItem(KEY,JSON.stringify(data.packWorkspace));db=C(data.packWorkspace);broken=false;}
+ return result;
+};
+function checkOwnedDeck(id){const link=db.links[id],d=decks.find(x=>x.id===id),g=link&&db.games.find(x=>x.id===link.gameId),p=g?.players[link.player];if(!p||!d)return true;const over=Object.entries(d.entries).filter(([id,n])=>n>(p.owned[id]||0));if(over.length){toast(d.name+'：所持枚数を超えています。デッキを修正してください');return false;}return true;}
+q('#start-board').addEventListener('click',e=>{const ids=qa('#screen-setup select').filter(el=>el.id.startsWith('setup-deck-')||el.id.startsWith('setup-other-deck-')).map(el=>el.value);if(!ids.every(checkOwnedDeck)){e.preventDefault();e.stopImmediatePropagation();}},true);
+window.minkaiPacksV29={getState:()=>C(db),restore,importPack,review};
+})();
+
+// END V29 INLINE
 })();
 </script>
 
@@ -42974,5 +43121,13 @@ else bindSettingsGuideV277();
 
 
 
-</body>
-</html>
+
+
+
+
+
+
+<!-- V29 ADDITIONS -->
+<style>.pk-pane{max-width:1100px;margin:0 auto;overflow-wrap:anywhere}.pk-pane[hidden]{display:none!important}.pk-pane label{margin:8px 0}.pk-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}.pk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.pk-scroll{max-height:360px;overflow:auto;border:1px solid var(--border,#455168);border-radius:8px;padding:8px;margin:8px 0}.pk-card{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--border,#455168)}.pk-card small{display:block;color:var(--muted);margin-top:4px}.pk-check{display:flex!important;flex-direction:row!important;align-items:center;gap:8px}.pk-check input[type=checkbox]{width:20px!important;height:20px;flex-shrink:0}.pk-weight{width:85px;flex-shrink:0}.pk-card input[type=number]{width:85px;flex-shrink:0}.pk-pick{display:block;width:100%;text-align:left;margin:8px 0;min-height:44px}.pk-table{overflow:auto}.pk-table table{width:100%;border-collapse:collapse}.pk-table td,.pk-table th{padding:10px;border-bottom:1px solid var(--border,#455168);text-align:left}.deck-view-tabs{display:flex;flex-wrap:wrap;gap:8px}.public-cards-tabs{flex-wrap:wrap}.pk-pane .panel{margin-top:12px}.pk-pane input,.pk-pane select,.pk-pane textarea{max-width:100%;min-width:0}.pk-pane .btn{min-height:40px}@media(max-width:600px){.pk-row>input{width:100%}.pk-pane .pk-card{gap:8px}.pk-pane .pk-grid{grid-template-columns:1fr}.pk-pane .btn{min-height:44px}.deck-view-tabs>.btn{flex:1 1 40%}}
+</style>
+</body></html>
