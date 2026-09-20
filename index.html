@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v29.0</title>
+<title>みん会TCG Simulator v29.2</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22046,7 +22046,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v29.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v29.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -41639,8 +41639,8 @@ function editor(){
 function filtered(){const words=query.toLowerCase().split(/\s+/).filter(Boolean);return cards.filter(c=>words.every(w=>`${c.name} ${c.race} ${c.effect} ${c.text}`.toLowerCase().includes(w)));}
 function picker(){const a=filtered(),weights=draft.slots[slot].weights;q('#pk-picker').innerHTML=a.slice(0,250).map(c=>`<div class="pk-card"><label class="pk-check"><input type="checkbox" data-pk-id="${h(c.id)}" ${weights[c.id]?'checked':''}><span>${h(c.name)}<small>${h(c.type||'')} / Lv${h(c.level??'')}</small></span></label><label class="pk-weight">重み<input type="number" min="1" max="10000" data-pk-weight="${h(c.id)}" value="${weights[c.id]||1}"></label></div>`).join('')||'<p>カードがありません。</p>';q('#pk-selected').textContent=`選択 ${Object.keys(weights).length}種 / 検索結果 ${a.length}種${a.length>250?'（先頭250件。検索で絞り込めます）':''}`;
  qa('[data-pk-id]').forEach(x=>x.onchange=()=>{if(x.checked)weights[x.dataset.pkId]=1;else delete weights[x.dataset.pkId];stash();q('#pk-selected').textContent=`選択 ${Object.keys(weights).length}種`;});qa('[data-pk-weight]').forEach(x=>x.onchange=safe(()=>{const v=E.int(x.value,1,10000);weights[x.dataset.pkWeight]=v;stash();picker()}));}
-function review(){const root=q('#pack-review-pane');root.innerHTML=`<h3>パック確認</h3><div class="pk-row">${button('pk-import','パックを取り込む')}${button('pk-backup','パック・遊びの記録を書き出す')}${button('pk-restore','記録を復元')}${button('pk-join','小型デッキの合体戦')}</div><p class="muted">複数人のモードは、この端末で順番に操作します。別端末との同時進行にはまだ対応していません。</p>${broken?'<p>保存データを読み込めませんでした。上書きを停止しています。</p>':''}<div id="pk-list">${db.packs.map(p=>`<div class="panel"><h4>${h(p.name)}</h4><p>${h(p.description)}</p><p>${p.slots.map(s=>`${h(s.name)} ${s.count}枚・${Object.keys(s.weights).length}種`).join(' / ')}</p><div class="pk-row">${['edit:編集','detail:内容','play:開封・遊ぶ','export:共有用ファイル','publish:公開所へ','delete:削除'].map(x=>{const [a,l]=x.split(':');return `<button class="btn small" data-pack="${h(p.id)}" data-pa="${a}">${l}</button>`}).join('')}</div></div>`).join('')||'<p>保存したパックはありません。パック作成から登録してください。</p>'}<h3>獲得カード・続きから遊ぶ</h3>${db.games.map(g=>`<div class="pk-card"><span>${h(g.name)}<small>${h(g.mode)} / ${g.players.map(p=>`${h(p.name)} ${E.total(p.owned)}枚`).join('・')}</small></span><button class="btn" data-game="${h(g.id)}">開く</button></div>`).join('')||'<p class="muted">開封やドラフトを始めると、ここに記録が残ります。</p>'}`;
- qa('[data-pa]').forEach(b=>b.onclick=safe(()=>{const p=db.packs.find(p=>p.id===b.dataset.pack);if(b.dataset.pa==='edit'){draft=C(p);slot=0;stash();setDeckViewMode('pack-edit')}if(b.dataset.pa==='detail')packDetail(p);if(b.dataset.pa==='play')setup(p);if(b.dataset.pa==='export')download(snapshot(p),`${p.name}.json`);if(b.dataset.pa==='publish'){nav('public-cards');publicSwitchTab('packs-publish');q('#pk-public-select').value=p.id;}if(b.dataset.pa==='delete'&&confirm('このパック設定を削除しますか？獲得済みカードは残ります。')){tx(d=>d.packs=d.packs.filter(x=>x.id!==p.id));review();}}));qa('[data-game]').forEach(b=>b.onclick=()=>{gameId=b.dataset.game;unlocked=false;gameView()});on('pk-import',()=>readFile(importPack));on('pk-backup',()=>download({format:'minkai-pack-workspace',version:1,db,cards:cards.map(c=>({id:c.id,card:publicCardForUpload(c)}))},'パックと遊びの記録.json'));on('pk-restore',()=>readFile(restore));on('pk-join',mergeDialog);
+function review(){const root=q('#pack-review-pane');root.innerHTML=`<h3>パック確認</h3><div class="pk-row">${button('pk-import','パックを取り込む')}${button('pk-backup','パック・遊びの記録を書き出す')}${button('pk-restore','記録を復元')}${button('pk-join','小型デッキの合体戦')}${button('pk-online-event','オンラインで遊ぶ')}</div><p class="muted">複数人のモードは、この端末で順番に操作します。別端末との同時進行にはまだ対応していません。</p>${broken?'<p>保存データを読み込めませんでした。上書きを停止しています。</p>':''}<div id="pk-list">${db.packs.map(p=>`<div class="panel"><h4>${h(p.name)}</h4><p>${h(p.description)}</p><p>${p.slots.map(s=>`${h(s.name)} ${s.count}枚・${Object.keys(s.weights).length}種`).join(' / ')}</p><div class="pk-row">${['edit:編集','detail:内容','play:開封・遊ぶ','export:共有用ファイル','publish:公開所へ','delete:削除'].map(x=>{const [a,l]=x.split(':');return `<button class="btn small" data-pack="${h(p.id)}" data-pa="${a}">${l}</button>`}).join('')}</div></div>`).join('')||'<p>保存したパックはありません。パック作成から登録してください。</p>'}<h3>獲得カード・続きから遊ぶ</h3>${db.games.map(g=>`<div class="pk-card"><span>${h(g.name)}<small>${h(g.mode)} / ${g.players.map(p=>`${h(p.name)} ${E.total(p.owned)}枚`).join('・')}</small></span><button class="btn" data-game="${h(g.id)}">開く</button></div>`).join('')||'<p class="muted">開封やドラフトを始めると、ここに記録が残ります。</p>'}`;
+ qa('[data-pa]').forEach(b=>b.onclick=safe(()=>{const p=db.packs.find(p=>p.id===b.dataset.pack);if(b.dataset.pa==='edit'){draft=C(p);slot=0;stash();setDeckViewMode('pack-edit')}if(b.dataset.pa==='detail')packDetail(p);if(b.dataset.pa==='play')setup(p);if(b.dataset.pa==='export')download(snapshot(p),`${p.name}.json`);if(b.dataset.pa==='publish'){nav('public-cards');publicSwitchTab('packs-publish');q('#pk-public-select').value=p.id;}if(b.dataset.pa==='delete'&&confirm('このパック設定を削除しますか？獲得済みカードは残ります。')){tx(d=>d.packs=d.packs.filter(x=>x.id!==p.id));review();}}));qa('[data-game]').forEach(b=>b.onclick=()=>{gameId=b.dataset.game;unlocked=false;gameView()});on('pk-import',()=>readFile(importPack));on('pk-backup',()=>download({format:'minkai-pack-workspace',version:1,db,cards:cards.map(c=>({id:c.id,card:publicCardForUpload(c)}))},'パックと遊びの記録.json'));on('pk-restore',()=>readFile(restore));on('pk-join',mergeDialog);on('pk-online-event',()=>window.MinkaiOnlineEventV292?.open());
 }
 function packDetail(p){modal(p.name,p.slots.map(s=>`<h4>${h(s.name)}：${s.count}枚</h4><div class="pk-scroll">${Object.entries(s.weights).map(([id,w])=>`<div class="pk-card"><span>${h(name(id))}</span><span>重み ${w}</span></div>`).join('')}</div>`).join(''));}
 function quantities(entries,prefix){return `<div class="pk-scroll">${Object.entries(entries).filter(([,v])=>v>0).map(([id,v],i)=>`<div class="pk-card"><span>${h(name(id))} ×${v}<small>${h(cards.find(c=>c.id===id)?.effect||'')}</small></span><input aria-label="${h(name(id))}の枚数" data-qty="${h(id)}" data-group="${prefix}" type="number" value="0" min="0" max="${v}"></div>`).join('')}</div>`;}
@@ -43130,4 +43130,57 @@ else bindSettingsGuideV277();
 <!-- V29 ADDITIONS -->
 <style>.pk-pane{max-width:1100px;margin:0 auto;overflow-wrap:anywhere}.pk-pane[hidden]{display:none!important}.pk-pane label{margin:8px 0}.pk-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}.pk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.pk-scroll{max-height:360px;overflow:auto;border:1px solid var(--border,#455168);border-radius:8px;padding:8px;margin:8px 0}.pk-card{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--border,#455168)}.pk-card small{display:block;color:var(--muted);margin-top:4px}.pk-check{display:flex!important;flex-direction:row!important;align-items:center;gap:8px}.pk-check input[type=checkbox]{width:20px!important;height:20px;flex-shrink:0}.pk-weight{width:85px;flex-shrink:0}.pk-card input[type=number]{width:85px;flex-shrink:0}.pk-pick{display:block;width:100%;text-align:left;margin:8px 0;min-height:44px}.pk-table{overflow:auto}.pk-table table{width:100%;border-collapse:collapse}.pk-table td,.pk-table th{padding:10px;border-bottom:1px solid var(--border,#455168);text-align:left}.deck-view-tabs{display:flex;flex-wrap:wrap;gap:8px}.public-cards-tabs{flex-wrap:wrap}.pk-pane .panel{margin-top:12px}.pk-pane input,.pk-pane select,.pk-pane textarea{max-width:100%;min-width:0}.pk-pane .btn{min-height:40px}@media(max-width:600px){.pk-row>input{width:100%}.pk-pane .pk-card{gap:8px}.pk-pane .pk-grid{grid-template-columns:1fr}.pk-pane .btn{min-height:44px}.deck-view-tabs>.btn{flex:1 1 40%}}
 </style>
-</body></html>
+\n<script>
+/* Ver29.2 Stage 1: online event room foundation.
+   Game rules are intentionally not online yet. Server is authoritative; local storage keeps only resume credentials. */
+(()=>{
+'use strict';
+const VERSION='29.2-stage1';
+const LS='minkai-online-event-resume-v292';
+const POLL_MS=3000,HEARTBEAT_MS=12000;
+const BASE=(globalThis.ONLINE_SUPABASE_DEFAULTS?.projectUrl||'https://kxwsrzpaewhnvirfgxpz.supabase.co').replace(/\/$/,'');
+const KEY=globalThis.ONLINE_SUPABASE_DEFAULTS?.publishableKey||'sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_';
+let session=null,state=null,poll=0,beat=0,busy=false,lastRevision=-1;
+const esc=x=>String(x??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
+function load(){try{const x=JSON.parse(localStorage.getItem(LS)||'null');if(!x?.roomCode||!x?.playerId||!x?.resumeToken)return null;return x}catch(_){return null}}
+function save(){try{session?localStorage.setItem(LS,JSON.stringify({...session,savedAt:Date.now()})):localStorage.removeItem(LS)}catch(_){}}
+async function rpc(name,args={}){
+  let r;try{r=await fetch(`${BASE}/rest/v1/rpc/${name}`,{method:'POST',headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':`Bearer ${KEY}`},body:JSON.stringify(args)})}catch(e){throw Error('NETWORK_ERROR: '+String(e?.message||e))}
+  const text=await r.text();let data=null;try{data=text?JSON.parse(text):null}catch(_){data=text}
+  if(!r.ok)throw Error(String(data?.message||data?.hint||data?.details||data||`HTTP ${r.status}`));return data;
+}
+function stop(){if(poll)clearInterval(poll);if(beat)clearInterval(beat);poll=beat=0}
+function start(){stop();poll=setInterval(()=>sync(false),POLL_MS);beat=setInterval(()=>heartbeat(),HEARTBEAT_MS)}
+function normalize(x){return x?.room?x:{room:x?.room||null,players:x?.players||[],me:x?.me||null}}
+async function sync(render=true){if(!session||busy)return;try{const x=normalize(await rpc('minkai_event_get_state_v292',{p_room_code:session.roomCode,p_player_id:session.playerId,p_resume_token:session.resumeToken}));if(!x.room)return;const rev=Number(x.room.revision||0);state=x;if(rev!==lastRevision){lastRevision=rev;if(render)drawLobby();else drawLobby()}}catch(e){setStatus('同期失敗：'+friendly(e))}}
+async function heartbeat(){if(!session)return;try{const x=await rpc('minkai_event_heartbeat_v292',{p_room_code:session.roomCode,p_player_id:session.playerId,p_resume_token:session.resumeToken});if(x?.revision!=null&&Number(x.revision)!==lastRevision)sync()}catch(e){setStatus('再接続待ち：'+friendly(e))}}
+function friendly(e){const t=String(e?.message||e);if(t.includes('STALE_REVISION'))return '状態が更新されました。再同期します';if(t.includes('SESSION_EXPIRED'))return '参加情報を確認できません';if(t.includes('ROOM_NOT_FOUND'))return 'ルームが見つかりません';return t.replace(/^NETWORK_ERROR:\s*/,'通信できません：')}
+function setStatus(t){const el=document.getElementById('oe-status');if(el)el.textContent=t}
+function open(){
+ const saved=load();
+ modal('オンラインで遊ぶ',`<div class="online-event-v292"><p>別端末で遊ぶためのオンラインルーム基盤です。Ver29.2第1段階では、ルーム作成・参加・準備完了・切断確認・再接続・revision同期までを確認できます。ドラフトなどのゲーム進行はまだオンライン化していません。</p><div id="oe-entry">${saved?`<div class="panel"><p>前回のルーム <strong>${esc(saved.roomCode)}</strong> に再接続できます。</p><div class="pk-row"><button class="btn primary" id="oe-resume">再接続</button><button class="btn" id="oe-forget">参加情報を破棄</button></div></div>`:''}<label>表示名<input id="oe-name" maxlength="24" value="プレイヤー"></label><div class="pk-row"><button class="btn primary" id="oe-create">ルームを作成</button></div><label>参加コード<input id="oe-code" maxlength="8" autocomplete="off" placeholder="例 ABC123"></label><button class="btn" id="oe-join">ルームに参加</button><p id="oe-status" class="muted">Supabaseのオンラインイベント基盤へ接続します。</p></div><div id="oe-lobby" hidden></div></div>`);
+ bindEntry();
+}
+function bindEntry(){
+ const q=id=>document.getElementById(id);
+ q('oe-create')?.addEventListener('click',()=>createRoom(q('oe-name')?.value));
+ q('oe-join')?.addEventListener('click',()=>joinRoom(q('oe-code')?.value,q('oe-name')?.value));
+ q('oe-resume')?.addEventListener('click',resume);
+ q('oe-forget')?.addEventListener('click',()=>{session=null;state=null;lastRevision=-1;stop();save();open()});
+}
+async function createRoom(name){if(busy)return;busy=true;setStatus('ルームを作成しています…');try{const x=await rpc('minkai_event_create_room_v292',{p_display_name:String(name||'プレイヤー').trim().slice(0,24)});acceptSession(x);toast('オンラインルームを作成しました')}catch(e){setStatus('作成失敗：'+friendly(e))}finally{busy=false}}
+async function joinRoom(code,name){if(busy)return;busy=true;setStatus('参加しています…');try{const x=await rpc('minkai_event_join_room_v292',{p_room_code:String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8),p_display_name:String(name||'プレイヤー').trim().slice(0,24)});acceptSession(x);toast('オンラインルームに参加しました')}catch(e){setStatus('参加失敗：'+friendly(e))}finally{busy=false}}
+function acceptSession(x){if(!x?.roomCode||!x?.playerId||!x?.resumeToken)throw Error('サーバー応答が不完全です');session={roomCode:x.roomCode,playerId:x.playerId,resumeToken:x.resumeToken};save();lastRevision=-1;start();sync()}
+async function resume(){const x=load();if(!x)return;session=x;setStatus('再接続しています…');try{const r=await rpc('minkai_event_resume_v292',{p_room_code:x.roomCode,p_player_id:x.playerId,p_resume_token:x.resumeToken});if(r?.resumeToken)session.resumeToken=r.resumeToken;save();start();await sync();toast('オンラインルームへ復帰しました')}catch(e){setStatus('再接続失敗：'+friendly(e))}}
+function drawLobby(){const entry=document.getElementById('oe-entry'),root=document.getElementById('oe-lobby');if(!root||!state?.room)return;if(entry)entry.hidden=true;root.hidden=false;const room=state.room,players=state.players||[],me=players.find(p=>p.player_id===session?.playerId);root.innerHTML=`<div class="section-head"><h3>オンラインルーム ${esc(room.room_code)}</h3><span class="pill">revision ${Number(room.revision||0)}</span></div><p>状態：${esc(room.status)} / 第1段階・同期基盤テスト</p><div class="online-event-members">${players.map(p=>`<div class="pk-card"><span><strong>${esc(p.display_name)}</strong>${p.is_host?' <small>ホスト</small>':''}<small>${p.connected?'接続中':'一時切断'} / ${p.ready?'準備完了':'準備中'}</small></span>${p.player_id===session?.playerId?'<span class="pill">自分</span>':''}</div>`).join('')}</div><div class="pk-row"><button class="btn primary" id="oe-ready">${me?.ready?'準備を解除':'準備完了'}</button><button class="btn" id="oe-sync">再同期</button><button class="btn danger" id="oe-leave">退出</button></div><p id="oe-status" class="muted">${players.length}人参加 / 最大8人。ゲーム開始処理は次段階で追加します。</p>`;
+ document.getElementById('oe-ready')?.addEventListener('click',()=>setReady(!me?.ready));document.getElementById('oe-sync')?.addEventListener('click',()=>sync());document.getElementById('oe-leave')?.addEventListener('click',leave);
+}
+async function setReady(v){if(busy||!state?.room)return;busy=true;try{await rpc('minkai_event_set_ready_v292',{p_room_code:session.roomCode,p_player_id:session.playerId,p_resume_token:session.resumeToken,p_ready:!!v,p_expected_revision:Number(state.room.revision||0),p_action_id:crypto.randomUUID?.()||('a'+Date.now()+Math.random())});await sync()}catch(e){if(String(e).includes('STALE_REVISION'))await sync();else setStatus('更新失敗：'+friendly(e))}finally{busy=false}}
+async function leave(){if(!session)return;if(!confirm('このオンラインルームから退出しますか？'))return;try{await rpc('minkai_event_leave_v292',{p_room_code:session.roomCode,p_player_id:session.playerId,p_resume_token:session.resumeToken,p_expected_revision:Number(state?.room?.revision||0),p_action_id:crypto.randomUUID?.()||('a'+Date.now()+Math.random())})}catch(e){console.warn(e)}session=null;state=null;lastRevision=-1;stop();save();open()}
+window.MinkaiOnlineEventV292={open,sync,version:VERSION};
+addEventListener('pagehide',stop);
+})();
+</script>
+<style>
+.online-event-v292{max-width:720px}.online-event-v292 input{text-transform:none}.online-event-members{margin:12px 0}.online-event-v292 .danger{border-color:#b44}
+</style>\n</body></html>
