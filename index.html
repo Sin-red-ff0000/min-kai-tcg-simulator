@@ -43130,7 +43130,7 @@ else bindSettingsGuideV277();
 <!-- V29 ADDITIONS -->
 <style>.pk-pane{max-width:1100px;margin:0 auto;overflow-wrap:anywhere}.pk-pane[hidden]{display:none!important}.pk-pane label{margin:8px 0}.pk-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}.pk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.pk-scroll{max-height:360px;overflow:auto;border:1px solid var(--border,#455168);border-radius:8px;padding:8px;margin:8px 0}.pk-card{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--border,#455168)}.pk-card small{display:block;color:var(--muted);margin-top:4px}.pk-check{display:flex!important;flex-direction:row!important;align-items:center;gap:8px}.pk-check input[type=checkbox]{width:20px!important;height:20px;flex-shrink:0}.pk-weight{width:85px;flex-shrink:0}.pk-card input[type=number]{width:85px;flex-shrink:0}.pk-pick{display:block;width:100%;text-align:left;margin:8px 0;min-height:44px}.pk-table{overflow:auto}.pk-table table{width:100%;border-collapse:collapse}.pk-table td,.pk-table th{padding:10px;border-bottom:1px solid var(--border,#455168);text-align:left}.deck-view-tabs{display:flex;flex-wrap:wrap;gap:8px}.public-cards-tabs{flex-wrap:wrap}.pk-pane .panel{margin-top:12px}.pk-pane input,.pk-pane select,.pk-pane textarea{max-width:100%;min-width:0}.pk-pane .btn{min-height:40px}@media(max-width:600px){.pk-row>input{width:100%}.pk-pane .pk-card{gap:8px}.pk-pane .pk-grid{grid-template-columns:1fr}.pk-pane .btn{min-height:44px}.deck-view-tabs>.btn{flex:1 1 40%}}
 </style>
-\n<script>
+<script>
 /* Ver29.4 Stage 3: online event foundation concurrency test.
    Still no online draft rules. This stage focuses on reconnect, stale revision, duplicate action,
    presence, version compatibility, cleanup, and recovery diagnostics. */
@@ -43144,8 +43144,12 @@ const KEY=globalThis.ONLINE_SUPABASE_DEFAULTS?.publishableKey||'sb_publishable_P
 let session=null,state=null,poll=0,beat=0,busy=false,lastRevision=-1,lastPresence='',syncPromise=null,heartbeatPromise=null,bc=null,observer=null;
 const esc=x=>String(x??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
 function eventModal(title,body){
- openModal(`<div class="modal-head"><h3>${esc(title)}</h3><button type="button" class="btn" id="oe-modal-close">閉じる</button></div><div class="pk-pane">${body}</div>`);
- document.getElementById('oe-modal-close')?.addEventListener('click',()=>{stop();closeModal()});
+ const layer=document.getElementById('modal-layer'),box=document.getElementById('modal');
+ if(!layer||!box){throw Error('オンラインイベント画面を開けませんでした');}
+ box.classList.remove('collection-viewer-modal','fx-editor-modal');
+ box.innerHTML=`<div class="modal-head"><h3>${esc(title)}</h3><button type="button" class="btn" id="oe-modal-close">閉じる</button></div><div class="pk-pane online-event-v294">${body}</div>`;
+ layer.classList.add('open');layer.dataset.closable='1';
+ document.getElementById('oe-modal-close')?.addEventListener('click',()=>{stop();layer.classList.remove('open');box.innerHTML='';});
 }
 function load(){try{let raw=localStorage.getItem(LS);if(!raw){raw=localStorage.getItem(OLD_LS);if(raw)localStorage.setItem(LS,raw)}const x=JSON.parse(raw||'null');if(!x?.roomCode||!x?.playerId||!x?.resumeToken)return null;return x}catch(_){return null}}
 function save(){try{session?localStorage.setItem(LS,JSON.stringify({...session,savedAt:Date.now()})):localStorage.removeItem(LS);if(!session)localStorage.removeItem(OLD_LS)}catch(_){}}
