@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v40.3</title>
+<title>みん会TCG Simulator v40.4</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22086,7 +22086,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v40.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v40.4 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -43274,7 +43274,7 @@ else bindSettingsGuideV277();
 /* Ver30.2: online event integrity, limits, disconnect recovery and API cutover. */
 (()=>{
 'use strict';
-const VERSION='40.3',PROTOCOL='event-v302-1';
+const VERSION='40.4',PROTOCOL='event-v302-1';
 const MODE_GUIDE={
  draft:{name:'通常ドラフト',short:'1つのパックを全員で共有し、順番に1枚ずつ取ります。',need:'2人以上・パック',flow:'1パックを開く → 手番の人が1枚取る → 次の人へ → 空になったら次のパック',finish:'自分が取ったカードがカードプールになります。そこからデッキ条件を満たす枚数を選んで構築します。',example:'2人・5枚パック×16ならゲーム全体で80枚生成。交互に取り、40枚ずつ獲得します。'},
  sealed:{name:'シールド',short:'各自が自分用のパックを開け、そのカードからデッキを作ります。',need:'1人以上・パック',flow:'各プレイヤー用にパックを開封 → 開封カードをすべて獲得',finish:'自分が開けたカード全体がカードプールになります。',example:'10枚パック×7なら1人70枚獲得。最低40枚・上限なしなら70枚から40～70枚を使って構築できます。'},
