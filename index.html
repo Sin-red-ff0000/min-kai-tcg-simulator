@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v41.5</title>
+<title>みん会TCG Simulator v41.6</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22086,7 +22086,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v41.5 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v41.6 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -42818,14 +42818,14 @@ function accountBuildChatGPTReadIndex(manifest,createdAt){
     const list=Object.entries(entries).map(([cardId,count])=>({cardId:String(cardId),cardName:String(byId.get(String(cardId))?.name||''),count:Math.max(0,Number(count)||0)})).filter(x=>x.count>0);
     return {id:String(d?.id||''),name:String(d?.name||''),minDeckSize:d?.minDeckSize??null,maxDeckSize:d?.maxDeckSize??null,cards:list,total:list.reduce((n,x)=>n+x.count,0)};
   });
-  return {format:'minkai-chatgpt-read-index',version:1,created_at:createdAt,app_version:'41.5',source:'full_backup',cards,decks,summary:{cards:cards.length,decks:decks.length}};
+  return {format:'minkai-chatgpt-read-index',version:1,created_at:createdAt,app_version:'41.6',source:'full_backup',cards,decks,summary:{cards:cards.length,decks:decks.length}};
 }
 async function accountSyncChatGPTSearchDb(index){
   const session=await window.accountEnsureSession?.();
   if(!session?.access_token)throw new Error('ログインが必要です。');
   let response;
   try{
-    response=await fetch(`${ACCOUNT_FULL_CLOUD_URL}/rest/v1/rpc/minkai_ai_sync_index_v415`,{
+    response=await fetch(`${ACCOUNT_FULL_CLOUD_URL}/rest/v1/rpc/minkai_ai_sync_index_v416`,{
       method:'POST',
       headers:{apikey:ACCOUNT_FULL_CLOUD_KEY,Authorization:`Bearer ${session.access_token}`,'Content-Type':'application/json'},
       body:JSON.stringify({p_cards:Array.isArray(index?.cards)?index.cards:[],p_decks:Array.isArray(index?.decks)?index.decks:[]})
@@ -42845,7 +42845,7 @@ async function accountSaveChatGPTReadIndex(manifest,createdAt){
     method:'POST',body:new Blob([json],{type:'application/json'}),contentType:'application/json',upsert:true,allowError:true
   });
   if(!uploaded.ok)throw new Error(uploaded.message||'ChatGPT用読み取り索引本体を保存できませんでした。');
-  const meta={format:index.format,version:index.version,app_version:'41.5',created_at:createdAt,storage_path:objectPath,bytes:new TextEncoder().encode(json).byteLength,summary:index.summary};
+  const meta={format:index.format,version:index.version,app_version:'41.6',created_at:createdAt,storage_path:objectPath,bytes:new TextEncoder().encode(json).byteLength,summary:index.summary};
   const saved=await window.accountCloudUpsert?.(ACCOUNT_AI_INDEX_META_KEY,meta,Date.now());
   if(!saved?.ok)throw new Error(saved?.message||'ChatGPT用読み取り索引の管理情報を保存できませんでした。');
   const dbSync=await accountSyncChatGPTSearchDb(index);
@@ -42908,7 +42908,7 @@ async function accountFullCloudUpload(){
       window.accountSetMessage?.(`完全バックアップは保存しましたが、ChatGPT用読み取り索引の保存に失敗しました：${indexErr?.message||String(indexErr)}`,'error');return;
     }
     accountFullCloudSetState('保存済み',`${accountFullCloudSummaryText(summary)}　保存: ${accountFullCloudFormatTime(createdAt)}`);
-    window.accountSetMessage?.(`完全バックアップを保存しました。ChatGPT用読み取り索引・検索DBも更新済み（カード ${aiIndex.summary.cards}枚・デッキ ${aiIndex.summary.decks}件）。`,'ok');
+    window.accountSetMessage?.(`完全バックアップを保存しました。ChatGPT用読み取り索引・検索DBも更新済み（Ver41.6 / カード ${Number(aiIndex?.dbSync?.cards??aiIndex.summary.cards)}枚・デッキ ${Number(aiIndex?.dbSync?.decks??aiIndex.summary.decks)}件）。`,'ok');
   }catch(err){window.accountSetMessage?.(err?.message||String(err),'error');accountFullCloudSetState('保存失敗',err?.message||String(err))}
   finally{accountFullCloudSetBusy(false)}
 }
@@ -43343,7 +43343,7 @@ else bindSettingsGuideV277();
 /* Ver30.2: online event integrity, limits, disconnect recovery and API cutover. */
 (()=>{
 'use strict';
-const VERSION='41.5',PROTOCOL='event-v302-1';
+const VERSION='41.6',PROTOCOL='event-v302-1';
 const MODE_GUIDE={
  draft:{name:'通常ドラフト',short:'1つのパックを全員で共有し、順番に1枚ずつ取ります。',need:'2人以上・パック',flow:'1パックを開く → 手番の人が1枚取る → 次の人へ → 空になったら次のパック',finish:'自分が取ったカードがカードプールになります。そこからデッキ条件を満たす枚数を選んで構築します。',example:'2人・5枚パック×16ならゲーム全体で80枚生成。交互に取り、40枚ずつ獲得します。'},
  sealed:{name:'シールド',short:'各自が自分用のパックを開け、そのカードからデッキを作ります。',need:'2人以上・パック',flow:'各プレイヤー用にパックを開封 → 開封カードをすべて獲得',finish:'自分が開けたカード全体がカードプールになります。',example:'10枚パック×7なら1人70枚獲得。最低40枚・上限なしなら70枚から40～70枚を使って構築できます。'},
