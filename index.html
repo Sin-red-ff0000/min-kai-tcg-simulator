@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v41.6</title>
+<title>みん会TCG Simulator v41.8</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22086,7 +22086,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v41.6 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v41.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -34138,7 +34138,7 @@ async function hydratePlayerBoardBackgrounds(theme=currentThemeForDisplay()){
  }
 }
 
-function renderCompressedPiles(piles,pi,z){return piles.map((pile,i)=>{const depth=Math.min(i,10),html=renderPile(pile,pi,z,i);return html.replace('draggable="true"',`draggable="true" style="left:${6+depth*4}px;top:${5+depth*2}px;z-index:${i+1}"`)}).join('')}
+function renderCompressedPiles(piles,pi,z){const visible=(z==='grave'||z==='banish')&&piles.length?[{pile:piles[piles.length-1],index:piles.length-1}]:piles.map((pile,index)=>({pile,index}));return visible.map(({pile,index},i)=>{const depth=(z==='grave'||z==='banish')?0:Math.min(i,10),html=renderPile(pile,pi,z,index);return html.replace('draggable="true"',`draggable="true" style="left:${6+depth*4}px;top:${5+depth*2}px;z-index:${i+1}"`)}).join('')}
 function renderZone(p,pi,z){
  const collapsed=COLLAPSIBLE.includes(z)&&p.collapsed?.[z];
  if(FIXED.includes(z)){return `<div class="zone ${collapsed?'collapsed':''}">${zoneHeader(pi,z)}${collapsed?'':`<div class="zone-body fixed" data-zone="${pi}|${z}" data-zone-scroll="${pi}|${z}">${p[z].map((pile,i)=>pile?renderPile(pile,pi,z,i):`<div class="slot" data-slot="${pi}|${z}|${i}">${i+1}</div>`).join('')}</div>`}</div>`}
@@ -34441,6 +34441,7 @@ function queueBoardTouchTap(src){
  boardLastTouchTap={src,at:now};clearTimeout(boardTouchTapTimer);boardTouchTapTimer=setTimeout(()=>{if(boardLastTouchTap.src!==src)return;boardLastTouchTap={src:'',at:0};const[pi,z,i]=src.split('|');openDetail(Number(pi),z,Number(i),0)},300)
 }
 function stackTopByDrag(spi,sz,si,dpi,dz,di){
+ if(dz==='grave'||dz==='banish')return moveTopByDrag(spi,sz,si,dpi,dz,null),true;
  if(boardDisplayPrefs.swipeStackEnabled===false)return false;
  const src=getPile(spi,sz,si),targetBefore=getPile(dpi,dz,di);if(!src||!targetBefore||src===targetBefore)return false;
  const targetId=targetBefore.id,c=removeCardAt(spi,sz,si,0);if(!c)return false;
@@ -34456,8 +34457,8 @@ function clearTouchDropHighlight(){
 }
 function touchDropTarget(x,y,src=''){
   const at=document.elementFromPoint(x,y);if(!at)return null;
-  if(boardDisplayPrefs.swipeStackEnabled!==false){const pile=at.closest('[data-pile]');if(pile&&pile.dataset.pile!==src)return pile}
-  return at.closest('[data-slot],[data-zone]');
+  if(boardDisplayPrefs.swipeStackEnabled!==false){const pile=at.closest('[data-pile]');if(pile&&pile.dataset.pile!==src){const zone=String(pile.dataset.pile).split('|')[1];if(zone!=='grave'&&zone!=='banish')return pile}}
+  return at.closest('[data-slot],[data-zone]')||at.closest('[data-pile]')?.closest('[data-zone]');
 }
 function makeTouchDragGhost(s){
   if(s.ghost)return;
@@ -34671,9 +34672,9 @@ function bindBoard(){
    el.onclick=e=>{if(Date.now()<touchClickBlockUntil||touchLike)return;queueBoardMouseClick(el)};
    el.ondblclick=e=>{if(touchLike)return;e.preventDefault();e.stopPropagation();clearTimeout(boardCardClickTimer);togglePileRestByKey(el.dataset.pile)};
    el.oncontextmenu=e=>{e.preventDefault();e.stopPropagation();if(!touchLike)openBoardCardContextMenu(el.dataset.pile,e.clientX,e.clientY)};
-   el.ondragover=e=>{if(boardDesktopToolDrag){e.preventDefault();e.stopPropagation();el.classList.add('tool-drop-target');e.dataTransfer.dropEffect='copy';return}if(boardDisplayPrefs.swipeStackEnabled!==false){const src=boardDesktopCardDragSrc||e.dataTransfer?.getData('text/plain');if(src&&src!==el.dataset.pile){e.preventDefault();e.stopPropagation();el.classList.add('stack-drop-target');e.dataTransfer.dropEffect='move'}}};
+   el.ondragover=e=>{if(boardDesktopToolDrag){e.preventDefault();e.stopPropagation();el.classList.add('tool-drop-target');e.dataTransfer.dropEffect='copy';return}if(boardDisplayPrefs.swipeStackEnabled!==false&&onlineZRaw!=='grave'&&onlineZRaw!=='banish'){const src=boardDesktopCardDragSrc||e.dataTransfer?.getData('text/plain');if(src&&src!==el.dataset.pile){e.preventDefault();e.stopPropagation();el.classList.add('stack-drop-target');e.dataTransfer.dropEffect='move'}}};
    el.ondragleave=e=>{e.stopPropagation();el.classList.remove('tool-drop-target','stack-drop-target')};
-   el.ondrop=e=>{if(boardDesktopToolDrag){e.preventDefault();e.stopPropagation();el.classList.remove('tool-drop-target','stack-drop-target');const tool=boardDesktopToolDrag;boardDesktopToolDrag=null;applyBoardToolToPile(tool,el.dataset.pile);return}const src=boardDesktopCardDragSrc||e.dataTransfer?.getData('text/plain');if(boardDisplayPrefs.swipeStackEnabled!==false&&src&&src!==el.dataset.pile){e.preventDefault();e.stopPropagation();el.classList.remove('stack-drop-target');const a=src.split('|'),d=el.dataset.pile.split('|');stackTopByDrag(Number(a[0]),a[1],Number(a[2]),Number(d[0]),d[1],Number(d[2]))}};
+   el.ondrop=e=>{if(boardDesktopToolDrag){e.preventDefault();e.stopPropagation();el.classList.remove('tool-drop-target','stack-drop-target');const tool=boardDesktopToolDrag;boardDesktopToolDrag=null;applyBoardToolToPile(tool,el.dataset.pile);return}const src=boardDesktopCardDragSrc||e.dataTransfer?.getData('text/plain');if(boardDisplayPrefs.swipeStackEnabled!==false&&onlineZRaw!=='grave'&&onlineZRaw!=='banish'&&src&&src!==el.dataset.pile){e.preventDefault();e.stopPropagation();el.classList.remove('stack-drop-target');const a=src.split('|'),d=el.dataset.pile.split('|');stackTopByDrag(Number(a[0]),a[1],Number(a[2]),Number(d[0]),d[1],Number(d[2]))}};
    if(touchLike){
      el.draggable=false;
      el.removeAttribute('draggable');
