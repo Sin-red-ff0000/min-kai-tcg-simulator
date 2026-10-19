@@ -1,4 +1,4 @@
-const CACHE_NAME='minkai-tcg-v41-9';
+const CACHE_NAME='minkai-tcg-v42-0';
 const APP_SHELL=['./','./index.html','./manifest.webmanifest'];
 
 self.addEventListener('install',event=>{

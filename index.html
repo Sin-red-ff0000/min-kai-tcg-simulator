@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v41.9</title>
+<title>みん会TCG Simulator v42.0</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22075,6 +22075,35 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
 @media(max-width:980px){.pk-builder{grid-template-columns:1fr!important}.pk-builder-side{position:static!important}}
 @media(max-width:600px){#pack-edit-pane,#pack-review-pane{width:calc(100vw - 10px)!important}#modal{width:calc(100vw - 10px);padding:10px}.pk-card{align-items:flex-start;flex-wrap:wrap}}
 </style>
+<style>
+
+/* Ver42.0: progressive UX layer; original application controls remain intact. */
+.v42-nav-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--panel2,#20242d);border:1px solid var(--line,#353b47);color:var(--text,#fff);border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:700}
+.v42-nav-panel{position:fixed;z-index:9995;top:62px;left:12px;width:min(580px,calc(100vw - 24px));max-height:calc(100dvh - 78px);overflow:auto;background:var(--panel,#171a21);color:var(--text,#fff);border:1px solid var(--line,#353b47);border-radius:14px;box-shadow:0 14px 42px #0009;padding:14px}
+.v42-nav-panel[hidden],.v42-quicklinks[hidden]{display:none!important}
+.v42-nav-group{margin-bottom:13px}.v42-nav-group strong{display:block;font-size:13px;margin:4px 0 7px;color:var(--muted,#aab1bd)}
+.v42-nav-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.v42-nav-buttons button{padding:11px 9px;min-height:42px;border-radius:9px;border:1px solid var(--line,#353b47);background:var(--panel2,#20242d);color:var(--text,#fff);text-align:left;cursor:pointer}
+.v42-nav-buttons button:hover,.v42-nav-buttons button:focus-visible{outline:2px solid var(--accent,#78a7ff);outline-offset:1px}
+.v42-quicklinks{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:9px 0 14px;padding:9px 10px;background:var(--panel,#171a21);border:1px solid var(--line,#353b47);border-radius:11px}
+.v42-quicklinks b{font-size:12px;color:var(--muted,#aab1bd);margin-right:4px}
+.v42-quicklinks button{font-size:13px;border:1px solid var(--line,#353b47);background:var(--panel2,#20242d);color:var(--text,#fff);border-radius:8px;padding:7px 10px;min-height:36px;cursor:pointer}
+.v42-quicklinks button:focus-visible{outline:2px solid var(--accent,#78a7ff)}
+.v42-section-heading{scroll-margin-top:110px}
+.v42-status{position:fixed;bottom:12px;right:12px;z-index:9000;max-width:min(390px,calc(100vw - 24px));padding:9px 13px;border:1px solid var(--line,#353b47);border-radius:10px;background:var(--panel,#171a21);color:var(--text,#fff);box-shadow:0 5px 22px #0007;font-size:12px;pointer-events:none}
+.v42-status[data-state="error"]{border-color:var(--danger,#ff7d7d)}
+.v42-status[hidden]{display:none!important}
+.v42-toplevel-tabs{display:flex!important;gap:6px!important;overflow-x:auto!important;overscroll-behavior-x:contain;scrollbar-width:thin;scroll-snap-type:x proximity;padding-bottom:6px}
+.v42-toplevel-tabs>button{flex:0 0 auto!important;scroll-snap-align:start;min-height:40px}
+#screen-decks .grid2,#screen-cards .form-grid,#screen-card-manager .form-grid{min-width:0}
+#screen-decks .grid2>*{min-width:0}
+#screen-decks input,#screen-decks select,#screen-cards input,#screen-cards textarea,#screen-card-manager input{max-width:100%;box-sizing:border-box}
+#screen-public-cards .public-cards-tabs,#screen-settings .settings-tabs{scrollbar-width:thin}
+#screen-decks .deck-view-tabs{position:sticky;top:0;z-index:50;background:var(--bg,#0f1115);padding:8px 0}
+@media(max-width:760px){.v42-nav-panel{top:56px}.v42-nav-buttons{grid-template-columns:1fr 1fr}.v42-quicklinks{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin}.v42-quicklinks>*{flex-shrink:0}.v42-status{bottom:72px;right:7px}#screen-decks .deck-view-tabs{top:0}#screen-decks .grid2{grid-template-columns:minmax(0,1fr)!important}#screen-cards .form-grid{grid-template-columns:minmax(0,1fr)!important}}
+@media(prefers-reduced-motion:reduce){.v42-nav-panel,.v42-quicklinks{scroll-behavior:auto!important}}
+
+</style>
 </head>
 <body>
 <div id="offline-mode-banner" class="offline-mode-banner" hidden>
@@ -22086,7 +22115,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v41.9 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v42.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -41844,7 +41873,7 @@ window.minkaiPacksV29={getState:()=>C(db),getPackSnapshot:(id)=>{const p=db.pack
 
 // END V29 INLINE
 })();
-/* Ver41.9: share deck draft state with the separate autosave script without copying stale values. */
+/* Ver42.0: share deck draft state with the separate autosave script without copying stale values. */
 for (const [key, read, write] of [
  ['workingDeck',()=>workingDeck,v=>{workingDeck=v}],
  ['editingDeckId',()=>editingDeckId,v=>{editingDeckId=v}],
@@ -43486,4 +43515,56 @@ window.MinkaiOnlineEventV299={open,sync,version:VERSION,protocol:PROTOCOL};windo
 <style>
 .oe-steps{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 14px}.oe-steps>*{padding:6px 9px;border:1px solid var(--border,#455168);border-radius:999px;font-size:.86em}.oe-mode-choice{position:relative;display:flex;flex-direction:column;gap:5px}.oe-mode-card{width:100%;min-height:112px;text-align:left;display:flex!important;flex-direction:column;align-items:flex-start!important;gap:7px;white-space:normal!important}.oe-mode-card small,.oe-mode-card em{display:block;white-space:normal;font-style:normal}.oe-mode-card em{opacity:.7;font-size:.78em}.oe-mode-explain{align-self:flex-end}.oe-start-preview,.oe-now{margin:12px 0;padding:12px;border:1px solid var(--border,#455168);border-radius:10px;background:rgba(127,127,127,.08)}.oe-start-preview p,.oe-now p{margin:5px 0}.oe-guide h4{margin-bottom:4px}.oe-guide p{margin-top:4px}.oe-compare{overflow:auto;max-width:100%}.oe-compare table{border-collapse:collapse;min-width:680px}.oe-compare th,.oe-compare td{padding:9px;border:1px solid var(--border,#455168);vertical-align:top;text-align:left}@media(max-width:700px){.oe-mode-grid{grid-template-columns:1fr!important}.oe-mode-card{min-height:auto}.oe-steps{overflow-x:auto;flex-wrap:nowrap}.oe-steps>*{white-space:nowrap}.oe-compare{max-height:60vh}}
 </style>
+<script>
+
+/* Ver42.0 progressive enhancement: never replaces core navigation or persistence. */
+(()=>{'use strict';
+const ready=()=>{
+ const appbar=document.querySelector('header.appbar');if(!appbar||document.getElementById('v42-nav-toggle'))return;
+ const navGroups=[
+  ['ホーム',[['ホーム','home']]],
+  ['カード',[['カード登録','cards'],['カード管理','card-manager'],['コレクション','collection']]],
+  ['デッキ・パック',[['デッキ作成','decks','deck-view-edit'],['デッキ確認','decks','deck-view-review'],['パック作成','decks','deck-view-pack-edit'],['パック確認','decks','deck-view-pack-review'],['獲得カード・続き','decks','deck-view-pack-history']]],
+  ['対戦',[['盤面開始','setup'],['オンライン対戦','online'],['特殊対戦','online','online-open-event-room']]],
+  ['公開所',[['カード・セット・パック公開所','public-cards']]],
+  ['設定',[['設定・データ管理','settings']]]
+ ];
+ const toggle=document.createElement('button');toggle.id='v42-nav-toggle';toggle.type='button';toggle.className='v42-nav-toggle';toggle.textContent='☰ メニュー';toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-controls','v42-nav-panel');
+ const panel=document.createElement('div');panel.id='v42-nav-panel';panel.className='v42-nav-panel';panel.hidden=true;panel.setAttribute('aria-label','機能メニュー');
+ const close=()=>{panel.hidden=true;toggle.setAttribute('aria-expanded','false')};
+ const navigate=(screen,action)=>{close();const button=appbar.querySelector('[data-nav="'+screen+'"]');if(button)button.click();else if(screen==='online'){const fallback=document.getElementById('settings-open-online-diagnostic');if(fallback)fallback.click();}
+  if(action){let tries=0;const select=()=>{const target=document.getElementById(action);if(target&&!target.disabled){target.click();return}if(++tries<5)setTimeout(select,90)};setTimeout(select,70)}
+ };
+ for(const [group,items] of navGroups){const wrap=document.createElement('div');wrap.className='v42-nav-group';const label=document.createElement('strong');label.textContent=group;wrap.append(label);const buttons=document.createElement('div');buttons.className='v42-nav-buttons';for(const [text,screen,action] of items){const b=document.createElement('button');b.type='button';b.textContent=text;b.addEventListener('click',()=>navigate(screen,action));buttons.append(b)}wrap.append(buttons);panel.append(wrap)}
+ toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden))});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});document.addEventListener('pointerdown',e=>{if(!panel.hidden&&!panel.contains(e.target)&&!toggle.contains(e.target))close()});
+ const brand=appbar.querySelector('.brand');if(brand)brand.after(toggle);else appbar.prepend(toggle);document.body.append(panel);
+ // Keep the original tabs and handlers; only enhance discoverability and scroll behavior.
+ for(const sel of ['.deck-view-tabs','.public-cards-tabs','.settings-tabs','.registration-tabs'])document.querySelectorAll(sel).forEach(el=>el.classList.add('v42-toplevel-tabs'));
+ const shortcuts={
+  'screen-cards':[['入力形式','.registration-tabs'],['カード登録フォーム','#card-form']],
+  'screen-card-manager':[['検索・絞り込み','#card-manager-filter-panel'],['カード一覧','.card-manager-panel']],
+  'screen-decks':[['デッキ・パック切替','.deck-view-tabs'],['デッキ編集','#deck-edit-pane'],['パック作成','#pack-edit-pane'],['パック確認','#pack-review-pane']],
+  'screen-setup':[['前回の盤面','#board-resume-panel'],['対戦設定','.setup-row']],
+  'screen-public-cards':[['公開・取得の切替','.public-cards-tabs']],
+  'screen-settings':[['設定カテゴリ','.settings-tabs']],
+  'screen-online':[['通信・対戦チェック','#online-selftest-panel']]
+ };
+ Object.entries(shortcuts).forEach(([id,entries])=>{const screen=document.getElementById(id);if(!screen)return;const bar=document.createElement('div');bar.className='v42-quicklinks';bar.setAttribute('aria-label','画面内ショートカット');const title=document.createElement('b');title.textContent='この画面：';bar.append(title);for(const [label,selector] of entries){const el=screen.querySelector(selector)||document.querySelector(selector);if(!el)continue;const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.addEventListener('click',()=>{if(el.hidden){const paneButton={'#pack-edit-pane':'deck-view-pack-edit','#pack-review-pane':'deck-view-pack-review'}[selector];if(paneButton)document.getElementById(paneButton)?.click()};if(el.tagName==='DETAILS')el.open=true;setTimeout(()=>el.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'}),40)});bar.append(btn)}if(bar.children.length>1){const head=screen.querySelector('.section-head');if(head)head.after(bar);else screen.prepend(bar)}});
+ // Remember where a user was editing, without restoring potentially stale card/deck content.
+ const scrollPositions=new Map();let current='';const getActive=()=>Array.from(document.querySelectorAll('main .screen')).find(x=>!x.hidden&&getComputedStyle(x).display!=='none');
+ const remember=()=>{if(current)scrollPositions.set(current,window.scrollY)};
+ window.addEventListener('scroll',()=>{if(current)scrollPositions.set(current,window.scrollY)},{passive:true});
+ appbar.addEventListener('click',e=>{if(!e.target.closest('[data-nav]'))return;remember();setTimeout(()=>{const next=getActive();if(next){current=next.id;const y=scrollPositions.get(current);if(typeof y==='number')window.scrollTo({top:y,behavior:'instant'})}},80)});
+ current=getActive()?.id||'';
+ // Preserve search filters only within this tab session. Dispatch normal input/change events for existing renderers.
+ const persistIds=['card-manager-search','card-manager-type'];for(const id of persistIds){const el=document.getElementById(id);if(!el)continue;const key='minkai_v420_ui_'+id;try{const stored=sessionStorage.getItem(key);if(stored!==null&&!el.value){el.value=stored;el.dispatchEvent(new Event(el.tagName==='SELECT'?'change':'input',{bubbles:true}))}}catch(_){}el.addEventListener('input',()=>{try{sessionStorage.setItem(key,el.value)}catch(_){}});el.addEventListener('change',()=>{try{sessionStorage.setItem(key,el.value)}catch(_){}})}
+ // Informational badge mirrors the application's own save status; it never asserts persistence by itself.
+ const status=document.createElement('div');status.id='v42-save-status';status.className='v42-status';status.hidden=true;status.setAttribute('role','status');document.body.append(status);
+ const watched=['deck-draft-autosave-status','theme-save-state'];let hideTimer;
+ const update=el=>{if(!el||!el.textContent.trim())return;const msg=el.textContent.trim();status.textContent='保存状態：'+msg.slice(0,110);status.dataset.state=/失敗|エラー|できません/.test(msg)?'error':'info';status.hidden=false;clearTimeout(hideTimer);hideTimer=setTimeout(()=>{status.hidden=true},status.dataset.state==='error'?11000:3500)};
+ for(const id of watched){const el=document.getElementById(id);if(el)new MutationObserver(()=>update(el)).observe(el,{childList:true,characterData:true,subtree:true})}
+};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
+})();
+
+</script>
 </body></html>
