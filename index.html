@@ -25090,9 +25090,24 @@ let cardFxPrefs=normalizeCardFxPrefs(load(LS_CARD_FX,defaultCardFxPrefs()));save
  const select=document.getElementById('fx-trial-card-select'),frame=document.getElementById('fx-trial-frame'),launch=document.getElementById('fx-trial-launch'),reload=document.getElementById('fx-trial-reload'),status=document.getElementById('fx-trial-status');
  if(!select||!frame||!launch)return;
  let currentId='',requestToken=0;
- function populate(){const keep=currentId||select.value;select.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent='カードを選択';select.append(empty);
-   for(const c of cards){const option=document.createElement('option');option.value=c.id;option.textContent=c.name||'(名称なし)';select.append(option)}
-   select.value=cards.some(c=>c.id===keep)?keep:'';currentId=select.value;}
+ function populate(){
+   const keep=currentId||select.value;
+   // Read the same live card array used by the card manager, not a stale snapshot.
+   const available=Array.isArray(cards)?cards.filter(c=>c&&c.id!=null):[];
+   select.replaceChildren();
+   const placeholder=document.createElement('option');placeholder.value='';
+   placeholder.textContent=available.length?'カードを選択（登録済み '+available.length+'枚）':'登録済みカードがありません（0枚）';
+   select.append(placeholder);
+   available.forEach((c,i)=>{const option=document.createElement('option');option.value=String(c.id);option.textContent=(c.name&&String(c.name).trim())||'名称なしのカード #'+(i+1);select.append(option)});
+   select.value=available.some(c=>String(c.id)===String(keep))?String(keep):'';
+   currentId=select.value;
+   if(!available.length){status.textContent='登録カード0枚：本体のカード管理で登録数を確認してください。別URL・別端末・ローカルファイルでは保存領域が異なる場合があります。'}
+   else if(!select.value){status.textContent='登録済み '+available.length+'枚からカードを選択してください'}
+ }
+ // Cards can be registered or imported while the preview is closed.
+ select.addEventListener('focus',populate);
+ select.addEventListener('pointerdown',()=>{if(!select.value)populate()});
+
  async function send(){const token=++requestToken;const c=cards.find(x=>x.id===select.value);currentId=c?.id||'';
    if(!c){status.textContent='カードを選択してください';return;}
    status.textContent='読み込み中…';let image='';
@@ -25102,8 +25117,8 @@ let cardFxPrefs=normalizeCardFxPrefs(load(LS_CARD_FX,defaultCardFxPrefs()));save
    status.textContent=c.fxPreviewV2?'保存済み設定を読込':'未設定（新規加工）';
  }
  select.addEventListener('change',send);reload.addEventListener('click',send);
- frame.addEventListener('load',()=>{populate();send()});
- launch.addEventListener('click',()=>{populate();if(frame.contentDocument?.readyState==='complete')send()});
+ frame.addEventListener('load',()=>{populate();if(select.value)send()});
+ launch.addEventListener('click',()=>{populate();if(select.value&&frame.contentDocument?.readyState==='complete')send()});
  window.addEventListener('message',event=>{
    if(event.origin!==location.origin||event.source!==frame.contentWindow)return;
    const m=event.data;if(!m||m.channel!=='minkai-fx-trial-v2')return;
@@ -43620,6 +43635,7 @@ const ready=()=>{
 
 <!-- FX v22.2 isolated trial launcher: no card data is modified. -->
 <style>
+#fx-trial-launch[hidden]{display:none!important}
 #fx-trial-launch{position:fixed;right:16px;bottom:76px;z-index:2147483000;border:1px solid #88b8ff;border-radius:12px;padding:10px 14px;background:#182a45;color:#fff;box-shadow:0 4px 20px #0009;font-weight:700;cursor:pointer}
 #fx-trial-shell[hidden]{display:none!important}#fx-trial-shell{position:fixed;inset:0;z-index:2147483001;background:#000b;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box}
 #fx-trial-box{background:#171a21;width:min(1180px,100%);height:min(92vh,980px);display:flex;flex-direction:column;border:1px solid #677b99;border-radius:12px;overflow:hidden}
@@ -43639,8 +43655,14 @@ const ready=()=>{
 <script>
 (function(){'use strict';
 const launch=document.getElementById('fx-trial-launch'),shell=document.getElementById('fx-trial-shell'),close=document.getElementById('fx-trial-close'),frame=document.getElementById('fx-trial-frame');
-function hide(){shell.hidden=true;launch.focus()}
-launch.addEventListener('click',()=>{if(!frame.src)frame.src=frame.dataset.src;shell.hidden=false;close.focus()});
+const homeScreen=document.getElementById('screen-home');
+function isHomeActive(){return !!homeScreen && homeScreen.classList.contains('active') && !homeScreen.hidden && getComputedStyle(homeScreen).display!=='none'}
+function syncHomeOnly(){const home=isHomeActive();launch.hidden=!home;if(!home&&!shell.hidden)shell.hidden=true;}
+function hide(){shell.hidden=true;if(isHomeActive())launch.focus()}
+launch.addEventListener('click',()=>{if(!isHomeActive())return;if(!frame.src)frame.src=frame.dataset.src;shell.hidden=false;close.focus()});
+if(homeScreen)new MutationObserver(syncHomeOnly).observe(homeScreen,{attributes:true,attributeFilter:['class','hidden','style']});
+document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>queueMicrotask(syncHomeOnly)));
+syncHomeOnly();
 close.addEventListener('click',hide);shell.addEventListener('click',e=>{if(e.target===shell)hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!shell.hidden)hide()});
 })();
 </script>
