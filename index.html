@@ -43808,20 +43808,28 @@ scheduleScan();
 </style>
 <script>
 (function(){'use strict';
-let current=null,lastX=0,lastY=0,scheduled=0;
-function updateShader(el,x,y){el.dataset.fx22TiltX=x.toFixed(2);el.dataset.fx22TiltY=y.toFixed(2);window.__fx22ViewerRefresh?.()}
-function reset(el){if(!el)return;el.style.transform='';lastX=lastY=0;updateShader(el,0,0)}
+let current=null,lastX=NaN,lastY=NaN,scheduled=0,raf=0,origin=null;
+const clamp=v=>Math.max(-1,Math.min(1,v));
+function updateShader(el,x,y){if(!el?.isConnected)return;el.dataset.fx22TiltX=x.toFixed(2);el.dataset.fx22TiltY=y.toFixed(2);window.__fx22ViewerRefresh?.()}
+function reset(el){if(!el)return;el.style.transform='';origin=null;lastX=lastY=NaN;if(scheduled)clearTimeout(scheduled);scheduled=0;if(raf)cancelAnimationFrame(raf);raf=0;updateShader(el,0,0)}
 function attach(){const el=document.getElementById('collection-viewer-art');if(el===current)return;reset(current);current=el;if(!el)return;
-el.title='マウスでカードを傾けると、加工の反射模様も変化します';
-el.addEventListener('pointermove',ev=>{if(ev.pointerType!=='mouse'&&ev.pointerType!=='pen')return;const r=el.getBoundingClientRect();if(!r.width||!r.height)return;
-const x=Math.max(-1,Math.min(1,(ev.clientX-r.left)/r.width*2-1)),y=Math.max(-1,Math.min(1,(ev.clientY-r.top)/r.height*2-1));
-el.style.transform='perspective(1100px) rotateY('+(-x*14).toFixed(2)+'deg) rotateX('+(y*14).toFixed(2)+'deg)';
-// Quantize angles and throttle costly CPU shaders; latest angle takes priority.
-const qx=Math.round(x*5)/5,qy=Math.round(y*5)/5;
-if(qx===lastX&&qy===lastY)return;lastX=qx;lastY=qy;
-if(scheduled)clearTimeout(scheduled);scheduled=setTimeout(()=>{scheduled=0;updateShader(el,qx,qy)},130);
-},{passive:true});
-el.addEventListener('pointerleave',()=>{if(scheduled)clearTimeout(scheduled);scheduled=0;reset(el)},{passive:true});}
+ el.title='マウスでカードを傾けると加工模様も変化します';
+ el.addEventListener('pointerenter',()=>{ // Measure before the 3D transform changes the bounding rectangle.
+   const prev=el.style.transform;el.style.transform='none';const r=el.getBoundingClientRect();el.style.transform=prev;
+   origin={left:r.left,top:r.top,width:r.width,height:r.height};
+ },{passive:true});
+ el.addEventListener('pointermove',ev=>{if(ev.pointerType!=='mouse'&&ev.pointerType!=='pen')return;
+   if(!origin){const r=el.getBoundingClientRect();origin={left:r.left,top:r.top,width:r.width,height:r.height}}
+   if(!origin.width||!origin.height)return;
+   const x=clamp((ev.clientX-origin.left)/origin.width*2-1),y=clamp((ev.clientY-origin.top)/origin.height*2-1);
+   if(!raf)raf=requestAnimationFrame(()=>{raf=0;if(!el.isConnected)return;el.style.transform='perspective(1100px) rotateY('+(-x*14).toFixed(2)+'deg) rotateX('+(y*14).toFixed(2)+'deg)'});
+   // Quantize the actual shader input to keep the CPU workload bounded.
+   const qx=Math.round(x*6)/6,qy=Math.round(y*6)/6;
+   if(qx===lastX&&qy===lastY)return;lastX=qx;lastY=qy;
+   if(scheduled)clearTimeout(scheduled);scheduled=setTimeout(()=>{scheduled=0;updateShader(el,qx,qy)},90);
+ },{passive:true});
+ el.addEventListener('pointerleave',()=>reset(el),{passive:true});
+}
 new MutationObserver(attach).observe(document.getElementById('modal')||document.body,{childList:true,subtree:true});attach();
 })();
 </script>
