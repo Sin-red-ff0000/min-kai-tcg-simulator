@@ -32375,7 +32375,7 @@ function openCollectionViewer(id){
    </div>
    <div class="collection-viewer-center">
      <button class="collection-viewer-arrow viewer-controls" id="collection-viewer-prev" ${idx<=0?'disabled':''} aria-label="前のカード">‹</button>
-     <div id="collection-viewer-art" class="collection-viewer-art visual-quality-high"><span class="collection-placeholder-name">${esc(card.name)}</span>${cardFxHtml(card,'collection')}${cardDecorHtml(card,'back')}${cardFrameHtml(card)}${cardDecorHtml(card,'front')}</div>
+     <div id="collection-viewer-art" data-fx-card-id="${esc(String(card.id))}" class="collection-viewer-art visual-quality-high"><span class="collection-placeholder-name">${esc(card.name)}</span>${cardFxHtml(card,'collection')}${cardDecorHtml(card,'back')}${cardFrameHtml(card)}${cardDecorHtml(card,'front')}</div>
      <button class="collection-viewer-arrow viewer-controls" id="collection-viewer-next" ${idx>=ids.length-1?'disabled':''} aria-label="次のカード">›</button>
    </div>
    <div class="collection-viewer-bottom viewer-controls">
@@ -32413,7 +32413,7 @@ function openCollectionDetail(id){
  const navIds=collectionFilteredCards().filter(x=>x.c).map(x=>x.c.id),idx=navIds.indexOf(id),flavor=displayFlavorText(c),fav=isCollectionFavorite(id);
  openModal(`<div class="modal-head"><h3>コレクション</h3><button class="btn" id="collection-detail-close">閉じる</button></div>
  <div class="collection-detail">
-   <div id="collection-detail-art" class="collection-detail-art visual-quality-high"><span class="collection-placeholder-name">${esc(c.name)}</span>${cardFxHtml(c,'collection')}${cardDecorHtml(c,'back')}${cardFrameHtml(c)}${cardDecorHtml(c,'front')}</div>
+   <div id="collection-detail-art" data-fx-card-id="${esc(String(c.id))}" class="collection-detail-art visual-quality-high"><span class="collection-placeholder-name">${esc(c.name)}</span>${cardFxHtml(c,'collection')}${cardDecorHtml(c,'back')}${cardFrameHtml(c)}${cardDecorHtml(c,'front')}</div>
    <div class="collection-detail-main">
      <h2>${collectionNameHtml(c)}</h2>${c.rarity?`<div class="collection-detail-rarity">${esc(c.rarity)}</div>`:''}${flavor?`<div class="collection-detail-flavor">${esc(flavor)}</div>`:''}
      <div class="actions collection-detail-actions">
@@ -43699,6 +43699,8 @@ function setFx22Status(msg){let x=document.getElementById('fx22-display-status')
 function visibleTargets(){
  const out=[];
  if(isActive(collection))out.push(...collection.querySelectorAll('[data-collection-art]'));
+ // Collection detail and full-screen viewing are hosted in the shared modal.
+ out.push(...document.querySelectorAll('#collection-viewer-art[data-fx-card-id],#collection-detail-art[data-fx-card-id]'));
  // Manager detail is a modal outside the manager section; require manager screen active.
  if(isActive(manager))out.push(...document.querySelectorAll('#manager-card-image-preview[data-fx-card-id]'));
  if(isActive(board))out.push(...board.querySelectorAll('.pile[data-fx-card-id]:not(.face-down)'));
@@ -43762,6 +43764,39 @@ for(const screen of [collection,manager,board])observer.observe(screen,{attribut
 document.addEventListener('click',()=>setTimeout(scheduleScan,100));
 setInterval(()=>{if(isActive(collection)||isActive(manager)||isActive(board))scheduleScan()},2200);
 scheduleScan();
+})();
+</script>
+
+<style>
+/* v1.1: collection viewer receives the same cached FX surface and a 3D inspection interaction. */
+#collection-viewer-art{transform-style:preserve-3d;will-change:transform;transition:transform 150ms ease-out;cursor:crosshair}
+#collection-viewer-art .fx22-surface-layer{z-index:5;filter:hue-rotate(var(--fx22-view-hue,0deg)) brightness(var(--fx22-view-light,1));}
+#collection-detail-art .fx22-surface-layer{z-index:5}
+@media(prefers-reduced-motion:reduce){#collection-viewer-art{transition:none}}
+</style>
+<script>
+(function(){
+ 'use strict';
+ let current=null;
+ function reset(el){if(!el)return;el.style.transform='';el.style.setProperty('--fx22-view-hue','0deg');el.style.setProperty('--fx22-view-light','1');}
+ function attach(){
+  const el=document.getElementById('collection-viewer-art');
+  if(el===current)return;
+  reset(current);current=el;
+  if(!el)return;
+  el.setAttribute('title','マウスを動かすとカードが傾きます。カードから離すと正面に戻ります。');
+  el.addEventListener('pointermove',ev=>{
+   if(ev.pointerType!=='mouse'&&ev.pointerType!=='pen')return;
+   const r=el.getBoundingClientRect();if(!r.width||!r.height)return;
+   const x=Math.max(-1,Math.min(1,(ev.clientX-r.left)/r.width*2-1));
+   const y=Math.max(-1,Math.min(1,(ev.clientY-r.top)/r.height*2-1));
+   el.style.transform='perspective(1100px) rotateY('+(-x*14).toFixed(2)+'deg) rotateX('+(y*14).toFixed(2)+'deg)';
+   el.style.setProperty('--fx22-view-hue',(x*16+y*9).toFixed(2)+'deg');
+   el.style.setProperty('--fx22-view-light',(1+.1*x-.07*y).toFixed(3));
+  },{passive:true});
+  el.addEventListener('pointerleave',()=>reset(el),{passive:true});
+ }
+ const observer=new MutationObserver(attach);observer.observe(document.getElementById('modal')||document.body,{childList:true,subtree:true});attach();
 })();
 </script>
 </body></html>
