@@ -43775,6 +43775,7 @@ window.addEventListener('message',e=>{
  if((location.protocol!=='file:'&&e.origin!==location.origin)||e.source!==frame?.contentWindow||e.data?.channel!=='minkai-fx-collection-render'||!working||e.data.token!==working.token)return;
  if(e.data.action==='error'){console.error('[FX表示] 加工生成エラー',e.data.message);setFx22Status('加工描画エラー: '+String(e.data.message||'不明').slice(0,100));}
  if(e.data.action==='result'&&typeof e.data.image==='string'){
+  if(working.viewer && !visibleTargets().some(el=>el.id==='collection-viewer-art' && el.dataset.fx22Key===working.k)){working=null;pump();return;}
   cache.set(working.k,e.data.image);
   if(cache.size>100)cache.delete(cache.keys().next().value);
   for(const el of visibleTargets())if(el.dataset.fx22Key===working.k)place(el,e.data.image);
@@ -43808,27 +43809,40 @@ scheduleScan();
 </style>
 <script>
 (function(){'use strict';
-let current=null,lastX=NaN,lastY=NaN,scheduled=0,raf=0,origin=null;
+// v1.5: stable untransformed bounds, one angle state for CSS and shader, RAF coalescing.
+let current=null, origin=null, raf=0, timer=0, targetX=0,targetY=0,lastShaderX=NaN,lastShaderY=NaN;
 const clamp=v=>Math.max(-1,Math.min(1,v));
-function updateShader(el,x,y){if(!el?.isConnected)return;el.dataset.fx22TiltX=x.toFixed(2);el.dataset.fx22TiltY=y.toFixed(2);window.__fx22ViewerRefresh?.()}
-function reset(el){if(!el)return;el.style.transform='';origin=null;lastX=lastY=NaN;if(scheduled)clearTimeout(scheduled);scheduled=0;if(raf)cancelAnimationFrame(raf);raf=0;updateShader(el,0,0)}
-function attach(){const el=document.getElementById('collection-viewer-art');if(el===current)return;reset(current);current=el;if(!el)return;
- el.title='マウスでカードを傾けると加工模様も変化します';
- el.addEventListener('pointerenter',()=>{ // Measure before the 3D transform changes the bounding rectangle.
-   const prev=el.style.transform;el.style.transform='none';const r=el.getBoundingClientRect();el.style.transform=prev;
-   origin={left:r.left,top:r.top,width:r.width,height:r.height};
+function shader(el,x,y,force=false){
+ if(!el?.isConnected)return;
+ const qx=Math.round(x*8)/8,qy=Math.round(y*8)/8;
+ if(!force&&qx===lastShaderX&&qy===lastShaderY)return;
+ lastShaderX=qx;lastShaderY=qy;
+ el.dataset.fx22TiltX=qx.toFixed(3);el.dataset.fx22TiltY=qy.toFixed(3);
+ window.__fx22ViewerRefresh?.();
+}
+function draw(){raf=0;const el=current;if(!el?.isConnected)return;
+ el.style.transform='perspective(1100px) rotateY('+(-targetX*14).toFixed(2)+'deg) rotateX('+(targetY*14).toFixed(2)+'deg)';
+ shader(el,targetX,targetY);
+}
+function move(ev){if(!origin||!current||origin.width<=0||origin.height<=0)return;
+ targetX=clamp((ev.clientX-origin.left)/origin.width*2-1);
+ targetY=clamp((ev.clientY-origin.top)/origin.height*2-1);
+ if(!raf)raf=requestAnimationFrame(draw);
+}
+function measure(el){const transform=el.style.transform;el.style.transform='none';const r=el.getBoundingClientRect();el.style.transform=transform;origin={left:r.left,top:r.top,width:r.width,height:r.height}}
+function reset(el){if(raf)cancelAnimationFrame(raf);raf=0;if(timer)clearTimeout(timer);timer=0;origin=null;targetX=targetY=0;lastShaderX=lastShaderY=NaN;
+ if(el){el.style.transform='';shader(el,0,0,true)}
+}
+function attach(){const el=document.getElementById('collection-viewer-art');if(el===current)return;
+ reset(current);current=el;if(!el)return;
+ el.title='マウスでカードを傾けると加工の反射も変化します';
+ el.addEventListener('pointerenter',()=>measure(el),{passive:true});
+ el.addEventListener('pointermove',ev=>{if(ev.pointerType==='mouse'||ev.pointerType==='pen'){if(!origin)measure(el);move(ev)}},{passive:true});
+ el.addEventListener('pointerleave',()=>{ // Keep the last reflected frame visible until reset settles.
+  if(timer)clearTimeout(timer);
+  timer=setTimeout(()=>{if(current===el)reset(el)},220);
  },{passive:true});
- el.addEventListener('pointermove',ev=>{if(ev.pointerType!=='mouse'&&ev.pointerType!=='pen')return;
-   if(!origin){const r=el.getBoundingClientRect();origin={left:r.left,top:r.top,width:r.width,height:r.height}}
-   if(!origin.width||!origin.height)return;
-   const x=clamp((ev.clientX-origin.left)/origin.width*2-1),y=clamp((ev.clientY-origin.top)/origin.height*2-1);
-   if(!raf)raf=requestAnimationFrame(()=>{raf=0;if(!el.isConnected)return;el.style.transform='perspective(1100px) rotateY('+(-x*14).toFixed(2)+'deg) rotateX('+(y*14).toFixed(2)+'deg)'});
-   // Quantize the actual shader input to keep the CPU workload bounded.
-   const qx=Math.round(x*6)/6,qy=Math.round(y*6)/6;
-   if(qx===lastX&&qy===lastY)return;lastX=qx;lastY=qy;
-   if(scheduled)clearTimeout(scheduled);scheduled=setTimeout(()=>{scheduled=0;updateShader(el,qx,qy)},90);
- },{passive:true});
- el.addEventListener('pointerleave',()=>reset(el),{passive:true});
+ shader(el,0,0,true);
 }
 new MutationObserver(attach).observe(document.getElementById('modal')||document.body,{childList:true,subtree:true});attach();
 })();

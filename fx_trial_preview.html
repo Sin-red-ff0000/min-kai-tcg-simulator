@@ -401,6 +401,7 @@ window.addEventListener('message',async function(e){
  exportBusy=true;const m=e.data;
  try{
   applyPreset(m.preset);
+  if(raf){cancelAnimationFrame(raf);raf=0;}
   tx=Math.max(-1,Math.min(1,Number(m.tiltX)||0));ty=Math.max(-1,Math.min(1,Number(m.tiltY)||0));
   // Let the normal renderer finish and keep the preview's own shader mathematics.
   // Direct render: avoid two animation-frame waits on every request.
