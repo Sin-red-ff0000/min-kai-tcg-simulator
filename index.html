@@ -25086,7 +25086,7 @@ save(LS_CARDS,cards);
 let cardFxPrefs=normalizeCardFxPrefs(load(LS_CARD_FX,defaultCardFxPrefs()));save(LS_CARD_FX,cardFxPrefs);
 
 // Trial FX v0.2: card-bound preview settings, isolated from legacy visualEffects.
-(function initFxTrialCardBridge(){
+function initFxTrialCardBridge(){
  const select=document.getElementById('fx-trial-card-select'),frame=document.getElementById('fx-trial-frame'),launch=document.getElementById('fx-trial-launch'),reload=document.getElementById('fx-trial-reload'),status=document.getElementById('fx-trial-status');
  if(!select||!frame||!launch)return;
  let currentId='',requestToken=0;
@@ -25108,7 +25108,7 @@ let cardFxPrefs=normalizeCardFxPrefs(load(LS_CARD_FX,defaultCardFxPrefs()));save
  select.addEventListener('focus',populate);
  select.addEventListener('pointerdown',()=>{if(!select.value)populate()});
 
- async function send(){const token=++requestToken;const c=cards.find(x=>x.id===select.value);currentId=c?.id||'';
+ async function send(){const token=++requestToken;const c=cards.find(x=>String(x.id)===String(select.value));currentId=c?.id!=null?String(c.id):'';
    if(!c){status.textContent='カードを選択してください';return;}
    status.textContent='読み込み中…';let image='';
    try{const sourceId=String(c.imageSourceCardId||c.id);const link=await getCardImageLink(sourceId);if(link?.imageId){const rec=await imageDbGet('images',link.imageId);const blob=rec?.fullBlob||rec?.thumbBlob;if(blob){image=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(reader.error);reader.readAsDataURL(blob)})}}}catch(err){console.warn('FX画像取得:',err)}
@@ -25124,12 +25124,13 @@ let cardFxPrefs=normalizeCardFxPrefs(load(LS_CARD_FX,defaultCardFxPrefs()));save
    const m=event.data;if(!m||m.channel!=='minkai-fx-trial-v2')return;
    if(m.action==='error'){status.textContent='読込エラー: '+String(m.message||'').slice(0,70);return;}
    if(m.action!=='save')return;
-   const c=cards.find(x=>x.id===currentId&&x.id===select.value);if(!c){status.textContent='カードを選択してください';return;}
+   const c=cards.find(x=>String(x.id)===String(currentId)&&String(x.id)===String(select.value));if(!c){status.textContent='カードを選択してください';return;}
    const validated=normalizeFxPreviewV2(m.preset);if(!validated){status.textContent='保存失敗：設定形式が不正';return;}
    c.fxPreviewV2=validated;
    try{save(LS_CARDS,cards);status.textContent='「'+c.name+'」に保存しました';toast('加工設定をカードに保存しました')}catch(err){status.textContent='保存失敗';console.error(err)}
  });
-})();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initFxTrialCardBridge,{once:true});else initFxTrialCardBridge();
 
 let boardToolPrefs=normalizeBoardToolPrefs(load(LS_BOARD_TOOLS,defaultBoardToolPrefs()));save(LS_BOARD_TOOLS,boardToolPrefs);
 let mobileBoardToolPrefs=normalizeMobileBoardToolPrefs(load(LS_MOBILE_BOARD_TOOL,defaultMobileBoardToolPrefs()));save(LS_MOBILE_BOARD_TOOL,mobileBoardToolPrefs);
