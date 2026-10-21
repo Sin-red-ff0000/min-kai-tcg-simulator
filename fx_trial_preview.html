@@ -374,5 +374,25 @@ $('preset-import').onclick=()=>$('preset-file').click();
 $('preset-file').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>1024*1024)throw Error('ファイルが大きすぎます（上限1MB）');const raw=JSON.parse(await file.text());if(raw.format!=='MinKaiTCG-FX-Presets'||raw.version!==1||!Array.isArray(raw.presets))throw Error('対応していないJSON形式です');let added=0,skipped=0;for(const r of raw.presets){if(presetRecords.length>=100){skipped++;continue}try{if(typeof r.name!=='string'||!r.name.trim()||r.name.length>60)throw Error('名前');const data=validatePreset(r.data);presetRecords.push({name:r.name,data});added++}catch(err){skipped++}}writePresetStore();refreshPresetSelect();presetMessage(added+'件を追加しました。'+(skipped?' '+skipped+'件をスキップしました。':''))}catch(err){presetMessage('取り込み失敗：'+err.message)}finally{e.target.value=''}};
 readPresetStore();refreshPresetSelect();
 
-schedule()})();
+schedule()
+// FX trial v0.2: message bridge. Only the containing parent frame may supply card data.
+window.addEventListener('message',event=>{
+  if(event.source!==window.parent||event.origin!==location.origin)return;
+  const m=event.data;if(!m||m.channel!=='minkai-fx-trial-v2')return;
+  if(m.action==='load'){
+    try{if(m.preset)applyPreset(m.preset);else applyPreset({layers:[{id:'hologram',opacity:100,blend:'normal'}],settings:Object.fromEntries(PRESET_FIELDS.map(k=>[k,$(k).value])),quality:'auto'});
+      if(typeof m.image==='string'&&m.image.startsWith('data:image/')){art.src=m.image;}
+      else if(typeof m.image==='string'&&m.image.startsWith('blob:')){art.src=m.image;}
+      else{art.src=original;}
+      const badge=document.getElementById('fx-trial-card-label');if(badge)badge.textContent='編集中：'+(m.name||'未選択');
+    }catch(err){window.parent.postMessage({channel:'minkai-fx-trial-v2',action:'error',message:String(err.message||err)},location.origin)}
+  }
+});
+const trialSave=document.createElement('button');trialSave.type='button';trialSave.textContent='この加工を選択カードに保存';trialSave.id='fx-trial-save-card';
+trialSave.style.cssText='background:#244c7b;color:white;border:1px solid #87baff;padding:10px 14px;border-radius:9px;cursor:pointer;margin:8px';
+const trialLabel=document.createElement('span');trialLabel.id='fx-trial-card-label';trialLabel.textContent='編集中：未選択';trialLabel.style.cssText='font-size:13px;color:#d9e8ff';
+const trialPanel=document.createElement('div');trialPanel.style.cssText='position:sticky;top:0;z-index:100;background:#111b2bea;border-bottom:1px solid #48618b;padding:4px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap';
+trialPanel.append(trialSave,trialLabel);document.body.prepend(trialPanel);
+trialSave.addEventListener('click',()=>{try{window.parent.postMessage({channel:'minkai-fx-trial-v2',action:'save',preset:snapshotPreset()},location.origin)}catch(err){alert('加工設定を送信できません：'+err.message)}});
+})();
 </script><p style="max-width:1100px;margin:20px auto;color:#aab7ce;font-size:12px;line-height:1.8">新規加工12種類＋既存加工86種類（既存加工1〜9）の計98種類を収録。全種類の加工IDと描画分岐を照合済み。詳細設定の表示不具合と、反射の方向・範囲が反映されない問題を修正。Ver42.0本体には変更を加えていません。</p></body></html>

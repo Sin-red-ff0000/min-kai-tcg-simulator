@@ -24489,6 +24489,24 @@ function normalizeCardFxPrefs(raw={}){
    effectGeneration:12
  };
 }
+
+function normalizeFxPreviewV2(raw){
+ if(!raw||typeof raw!=='object'||!Array.isArray(raw.layers)||raw.layers.length<1||raw.layers.length>4)return null;
+ const blends=new Set(['normal','screen','lighten','overlay','multiply','color-dodge']);
+ const layers=[];
+ for(const l of raw.layers){if(!l||typeof l.id!=='string'||!/^[a-z0-9-]{1,70}$/.test(l.id)||!blends.has(l.blend))return null;
+   const n=Number(l.opacity);if(!Number.isFinite(n)||n<0||n>100)return null;
+   layers.push({id:l.id,opacity:Math.round(n),blend:l.blend});}
+ const ranges={strength:[0,100],density:[10,100],sharp:[0,100],direction:[-180,180],spread:[0,100],hue:[-180,180],sat:[0,200],bright:[30,180],protect:[0,100],tiltmax:[0,30]};
+ const settings={};if(!raw.settings||typeof raw.settings!=='object')return null;
+ for(const [key,val] of Object.entries(raw.settings)){
+   if(key==='fxmask'){if(typeof val!=='string'||val.length>40)return null;settings[key]=val;continue;}
+   if(!Object.hasOwn(ranges,key))return null;
+   const n=Number(val);if(!Number.isFinite(n)||n<ranges[key][0]||n>ranges[key][1])return null;settings[key]=String(n);
+ }
+ return {layers,settings,quality:['auto','fast','high'].includes(raw.quality)?raw.quality:'auto'};
+}
+
 function normalizeCardVisualEffects(raw){
  const source=Array.isArray(raw)?raw:[],out=[],used=new Set();
  for(let i=0;i<source.length;i++){
@@ -25062,10 +25080,42 @@ const FIXED=['character','pain','room','rulePlus'];
 const COLLAPSIBLE=['pain','room','rulePlus'];
 let cards=load(LS_CARDS,[]), decks=load(LS_DECKS,[]), recentCardIds=load(LS_CARD_RECENT,[]), registeredRecentCardIds=load(LS_CARD_REGISTER_RECENT,[]), cardManagerShowAll=true, cardManagerPage=0, cardManagerDuplicateOnly=false, deckPoolPage=0, editingDeckId=null, workingDeck={name:'',entries:{},defaultOshiiCardId:'',tags:[],mainEnabled:true,otherEnabled:true,mainFavorite:false,otherFavorite:false};
 let managerDetailContext=null;
-cards=Array.isArray(cards)?cards.map(c=>({...c,type:normalizeCardType(c?.type),rarity:String(c?.rarity||''),flavor:String(c?.flavor||''),visualEffects:normalizeCardVisualEffects(c?.visualEffects),cardLinks:normalizeCardLinks(c?.cardLinks,c?.id)})):[];
+cards=Array.isArray(cards)?cards.map(c=>({...c,type:normalizeCardType(c?.type),rarity:String(c?.rarity||''),flavor:String(c?.flavor||''),visualEffects:normalizeCardVisualEffects(c?.visualEffects),fxPreviewV2:normalizeFxPreviewV2(c?.fxPreviewV2),cardLinks:normalizeCardLinks(c?.cardLinks,c?.id)})):[];
 reconcileCardLinks();
 save(LS_CARDS,cards);
 let cardFxPrefs=normalizeCardFxPrefs(load(LS_CARD_FX,defaultCardFxPrefs()));save(LS_CARD_FX,cardFxPrefs);
+
+// Trial FX v0.2: card-bound preview settings, isolated from legacy visualEffects.
+(function initFxTrialCardBridge(){
+ const select=document.getElementById('fx-trial-card-select'),frame=document.getElementById('fx-trial-frame'),launch=document.getElementById('fx-trial-launch'),reload=document.getElementById('fx-trial-reload'),status=document.getElementById('fx-trial-status');
+ if(!select||!frame||!launch)return;
+ let currentId='',requestToken=0;
+ function populate(){const keep=currentId||select.value;select.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent='カードを選択';select.append(empty);
+   for(const c of cards){const option=document.createElement('option');option.value=c.id;option.textContent=c.name||'(名称なし)';select.append(option)}
+   select.value=cards.some(c=>c.id===keep)?keep:'';currentId=select.value;}
+ async function send(){const token=++requestToken;const c=cards.find(x=>x.id===select.value);currentId=c?.id||'';
+   if(!c){status.textContent='カードを選択してください';return;}
+   status.textContent='読み込み中…';let image='';
+   try{const sourceId=String(c.imageSourceCardId||c.id);const link=await getCardImageLink(sourceId);if(link?.imageId){const rec=await imageDbGet('images',link.imageId);const blob=rec?.fullBlob||rec?.thumbBlob;if(blob){image=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(reader.error);reader.readAsDataURL(blob)})}}}catch(err){console.warn('FX画像取得:',err)}
+   if(token!==requestToken||frame.contentWindow==null)return;
+   frame.contentWindow.postMessage({channel:'minkai-fx-trial-v2',action:'load',name:c.name,preset:c.fxPreviewV2||null,image},location.origin);
+   status.textContent=c.fxPreviewV2?'保存済み設定を読込':'未設定（新規加工）';
+ }
+ select.addEventListener('change',send);reload.addEventListener('click',send);
+ frame.addEventListener('load',()=>{populate();send()});
+ launch.addEventListener('click',()=>{populate();if(frame.contentDocument?.readyState==='complete')send()});
+ window.addEventListener('message',event=>{
+   if(event.origin!==location.origin||event.source!==frame.contentWindow)return;
+   const m=event.data;if(!m||m.channel!=='minkai-fx-trial-v2')return;
+   if(m.action==='error'){status.textContent='読込エラー: '+String(m.message||'').slice(0,70);return;}
+   if(m.action!=='save')return;
+   const c=cards.find(x=>x.id===currentId&&x.id===select.value);if(!c){status.textContent='カードを選択してください';return;}
+   const validated=normalizeFxPreviewV2(m.preset);if(!validated){status.textContent='保存失敗：設定形式が不正';return;}
+   c.fxPreviewV2=validated;
+   try{save(LS_CARDS,cards);status.textContent='「'+c.name+'」に保存しました';toast('加工設定をカードに保存しました')}catch(err){status.textContent='保存失敗';console.error(err)}
+ });
+})();
+
 let boardToolPrefs=normalizeBoardToolPrefs(load(LS_BOARD_TOOLS,defaultBoardToolPrefs()));save(LS_BOARD_TOOLS,boardToolPrefs);
 let mobileBoardToolPrefs=normalizeMobileBoardToolPrefs(load(LS_MOBILE_BOARD_TOOL,defaultMobileBoardToolPrefs()));save(LS_MOBILE_BOARD_TOOL,mobileBoardToolPrefs);
 let handFollowPrefs=load(LS_HAND_FOLLOW,[true,true]);
@@ -27067,12 +27117,12 @@ $('#home-two-player').onclick=()=>{nav('setup');$('#mode-select').value='2';sync
 // Import / export helpers
 const SIM_FORMAT='min-kai-tcg-simulator';
 let textPreviewCards=[];
-function cardToPortable(c){return {id:c.id||undefined,name:c.name||'',ruby:String(c.ruby||''),type:c.type||'キャラクター',level:c.level===''||c.level==null?null:Number.isFinite(Number(c.level))?Number(c.level):c.level,power:c.power===''||c.power==null?null:Number.isFinite(Number(c.power))?Number(c.power):c.power,races:String(c.race||'').split(/[\/／]/).map(x=>x.trim()).filter(Boolean),rarity:String(c.rarity||''),effect:c.effect||'',flavor:String(c.flavor||''),visualEffects:normalizeCardVisualEffects(c.visualEffects),appearancePresetMeta:appearancePresetMetaPortable(c.appearancePresetMeta),cardLinks:cardLinksFor(c).map(x=>({targetId:x.targetId,targetName:cards.find(t=>t.id===x.targetId)?.name||'',label:x.label,bidirectional:x.bidirectional}))}}
+function cardToPortable(c){return {id:c.id||undefined,name:c.name||'',ruby:String(c.ruby||''),type:c.type||'キャラクター',level:c.level===''||c.level==null?null:Number.isFinite(Number(c.level))?Number(c.level):c.level,power:c.power===''||c.power==null?null:Number.isFinite(Number(c.power))?Number(c.power):c.power,races:String(c.race||'').split(/[\/／]/).map(x=>x.trim()).filter(Boolean),rarity:String(c.rarity||''),effect:c.effect||'',flavor:String(c.flavor||''),visualEffects:normalizeCardVisualEffects(c.visualEffects),fxPreviewV2:normalizeFxPreviewV2(c.fxPreviewV2),appearancePresetMeta:appearancePresetMetaPortable(c.appearancePresetMeta),cardLinks:cardLinksFor(c).map(x=>({targetId:x.targetId,targetName:cards.find(t=>t.id===x.targetId)?.name||'',label:x.label,bidirectional:x.bidirectional}))}}
 function normalizeImportedCard(raw){
   if(!raw||typeof raw!=='object')return null;
   const type=normalizeCardType(raw.type);
   const races=Array.isArray(raw.races)?raw.races.join(' / '):(raw.race??'');
-  return {sourceId:raw.id||null,name:String(raw.name??'').trim(),ruby:String(raw.ruby??''),type,level:raw.level==null?'':String(raw.level),power:raw.power==null?'':String(raw.power),race:String(races),rarity:String(raw.rarity??''),effect:String(raw.effect??''),flavor:String(raw.flavor??''),visualEffects:normalizeCardVisualEffects(raw.visualEffects),appearancePresetMeta:normalizeAppearancePresetMeta(raw.appearancePresetMeta),importLinks:Array.isArray(raw.cardLinks)?raw.cardLinks:[]};
+  return {sourceId:raw.id||null,name:String(raw.name??'').trim(),ruby:String(raw.ruby??''),type,level:raw.level==null?'':String(raw.level),power:raw.power==null?'':String(raw.power),race:String(races),rarity:String(raw.rarity??''),effect:String(raw.effect??''),flavor:String(raw.flavor??''),visualEffects:normalizeCardVisualEffects(raw.visualEffects),fxPreviewV2:normalizeFxPreviewV2(raw.fxPreviewV2),appearancePresetMeta:normalizeAppearancePresetMeta(raw.appearancePresetMeta),importLinks:Array.isArray(raw.cardLinks)?raw.cardLinks:[]};
 }
 function splitCardText(src){
   src=String(src||'').replace(/\r\n?/g,'\n').trim();
@@ -43576,7 +43626,7 @@ const ready=()=>{
 #fx-trial-bar{display:flex;align-items:center;gap:12px;padding:9px 12px;color:white;font:14px sans-serif}#fx-trial-bar span{flex:1}#fx-trial-close{background:#36465e;color:white;border:1px solid #8191ab;padding:7px 14px;border-radius:8px;cursor:pointer}#fx-trial-frame{border:0;flex:1;width:100%;background:#151923}
 </style>
 <button type="button" id="fx-trial-launch" aria-haspopup="dialog">加工プレビュー（試験）</button>
-<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="加工プレビュー（試験）"><div id="fx-trial-box"><div id="fx-trial-bar"><span>FX v22.2 試験環境 — 本体カードへの保存は行いません。プリセット保存・JSON入出力はプレビュー内で利用できます。</span><button type="button" id="fx-trial-close">閉じる</button></div><iframe id="fx-trial-frame" title="FX加工プレビュー v22.2" loading="lazy" data-src="./fx_trial_preview.html"></iframe></div></div>
+<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="加工プレビュー（試験）"><div id="fx-trial-box"><div id="fx-trial-bar"><span>FX v22.2 試験連携：登録済みカードを選択し、加工を保存できます（従来の外観描画は維持）。</span><label style="color:#fff;display:flex;gap:6px;align-items:center">カード<select id="fx-trial-card-select" style="max-width:220px;padding:6px;background:#25324a;color:white;border:1px solid #7589ab"></select></label><button type="button" id="fx-trial-reload" style="padding:7px;background:#36465e;color:white;border:1px solid #8191ab">再読込</button><span id="fx-trial-status" style="font-size:12px;max-width:180px"></span><button type="button" id="fx-trial-close">閉じる</button></div><iframe id="fx-trial-frame" title="FX加工プレビュー v22.2" loading="lazy" data-src="./fx_trial_preview.html"></iframe></div></div>
 <script>
 (function(){'use strict';
 const launch=document.getElementById('fx-trial-launch'),shell=document.getElementById('fx-trial-shell'),close=document.getElementById('fx-trial-close'),frame=document.getElementById('fx-trial-frame');
