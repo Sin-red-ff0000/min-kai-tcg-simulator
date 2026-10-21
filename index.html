@@ -43695,6 +43695,7 @@ const cache=new Map(),queued=new Set();
 function getCard(id){try{return window.__fxCollectionGetCard?.(id)||null}catch{return null}}
 function keyFor(card){return String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
 function isActive(el){return !!el&&(el.classList.contains('active')||el.classList.contains('act'))}
+function setFx22Status(msg){let x=document.getElementById('fx22-display-status');if(!x){x=document.createElement('div');x.id='fx22-display-status';x.style.cssText='position:fixed;bottom:65px;right:12px;z-index:99999;background:#3c1820;color:#fff;border:1px solid #e88;padding:8px 12px;border-radius:8px;max-width:360px;font:12px sans-serif';document.body.append(x)}x.textContent=msg;}
 function visibleTargets(){
  const out=[];
  if(isActive(collection))out.push(...collection.querySelectorAll('[data-collection-art]'));
@@ -43708,7 +43709,7 @@ function ensureFrame(){
  if(frame)return;
  frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
- frame.src='./fx_trial_preview.html';frame.addEventListener('load',()=>{ready=true;pump()});document.body.append(frame);
+ frame.src='./fx_trial_preview.html';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
 }
 function place(el,url){
  if(!el.isConnected)return;
@@ -43733,11 +43734,12 @@ function pump(){
  const next=queue.shift();queued.delete(next.k);
  const card=getCard(next.id);
  if(!card||keyFor(card)!==next.k){pump();return}
- working={...next,token:++seq};
- frame.contentWindow.postMessage({channel:'minkai-fx-collection-render',action:'render',token:working.token,cardId:next.id,preset:next.preset},location.origin);
+ working={...next,token:++seq};const token=working.token;setTimeout(()=>{if(working?.token===token){console.warn('[FX表示] 描画応答タイムアウト',working.id);setFx22Status('加工描画が応答しません。ブラウザのコンソールを確認してください');working=null;pump()}},18000);
+ frame.contentWindow.postMessage({channel:'minkai-fx-collection-render',action:'render',token:working.token,cardId:next.id,preset:next.preset},location.protocol==='file:'?'*':location.origin);
 }
 window.addEventListener('message',e=>{
- if(e.origin!==location.origin||e.source!==frame?.contentWindow||e.data?.channel!=='minkai-fx-collection-render'||!working||e.data.token!==working.token)return;
+ if((location.protocol!=='file:'&&e.origin!==location.origin)||e.source!==frame?.contentWindow||e.data?.channel!=='minkai-fx-collection-render'||!working||e.data.token!==working.token)return;
+ if(e.data.action==='error'){console.error('[FX表示] 加工生成エラー',e.data.message);setFx22Status('加工描画エラー: '+String(e.data.message||'不明').slice(0,100));}
  if(e.data.action==='result'&&typeof e.data.image==='string'){
   cache.set(working.k,e.data.image);
   if(cache.size>100)cache.delete(cache.keys().next().value);

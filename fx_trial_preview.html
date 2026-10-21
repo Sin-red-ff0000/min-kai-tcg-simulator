@@ -401,7 +401,7 @@ trialSave.addEventListener('click',()=>{try{window.parent.postMessage({channel:'
 'use strict';
 let exportBusy=false;
 window.addEventListener('message',async function(e){
- if(e.origin!==location.origin||e.data?.channel!=='minkai-fx-collection-render'||e.data.action!=='render'||exportBusy)return;
+ if((location.protocol!=='file:'&&e.origin!==location.origin)||e.data?.channel!=='minkai-fx-collection-render'||e.data.action!=='render'||exportBusy)return;
  exportBusy=true;const m=e.data;
  try{
   applyPreset(m.preset);
@@ -419,8 +419,8 @@ window.addEventListener('message',async function(e){
    oc.drawImage(src,0,0,out.width,out.height);
   }
   oc.globalAlpha=1;oc.globalCompositeOperation='source-over';
-  e.source.postMessage({channel:'minkai-fx-collection-render',action:'result',token:m.token,cardId:m.cardId,image:out.toDataURL('image/png')},e.origin);
- }catch(err){e.source.postMessage({channel:'minkai-fx-collection-render',action:'error',token:m.token,cardId:m.cardId,message:String(err?.message||err)},e.origin)}
+  e.source.postMessage({channel:'minkai-fx-collection-render',action:'result',token:m.token,cardId:m.cardId,image:out.toDataURL('image/png')},location.protocol==='file:'?'*':e.origin);
+ }catch(err){e.source.postMessage({channel:'minkai-fx-collection-render',action:'error',token:m.token,cardId:m.cardId,message:String(err?.stack||err?.message||err)},location.protocol==='file:'?'*':e.origin)}
  finally{exportBusy=false}
 });
 })();
