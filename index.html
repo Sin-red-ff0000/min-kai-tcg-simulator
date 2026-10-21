@@ -43748,7 +43748,7 @@ function place(el,url){
  if(!el.isConnected)return;
  let layer=el.querySelector(':scope > .fx22-surface-layer');
  if(!layer){layer=document.createElement('span');layer.className='fx22-surface-layer';el.append(layer)}
- if(layer.dataset.fx22Url!==url){layer.style.backgroundImage='url("'+url+'")';layer.dataset.fx22Url=url}
+ if(layer.__fx22Url!==url){layer.style.backgroundImage='url("'+url+'")';layer.__fx22Url=url}
 }
 function scan(){
  for(const el of visibleTargets()){
@@ -43765,6 +43765,8 @@ function scheduleScan(){if(scanPending)return;scanPending=true;requestAnimationF
 window.__fx22ViewerRefresh=scheduleScan;
 function pump(){
  if(!ready||working||!queue.length)return;
+ const viewerIndex=queue.findIndex(it=>it.viewer);
+ if(viewerIndex>0){const latest=queue.splice(viewerIndex,1)[0];queue.unshift(latest)}
  const next=queue.shift();queued.delete(next.k);
  const card=getCard(next.id);
  if(!card||!next.k.startsWith(keyFor(card))){pump();return}
@@ -43810,12 +43812,18 @@ scheduleScan();
 <script>
 (function(){'use strict';
 // v1.5: stable untransformed bounds, one angle state for CSS and shader, RAF coalescing.
-let current=null, origin=null, raf=0, timer=0, targetX=0,targetY=0,lastShaderX=NaN,lastShaderY=NaN;
+let current=null, origin=null, raf=0, timer=0, targetX=0,targetY=0,lastShaderX=NaN,lastShaderY=NaN,lastShaderAt=0,shaderTimer=0;
 const clamp=v=>Math.max(-1,Math.min(1,v));
 function shader(el,x,y,force=false){
  if(!el?.isConnected)return;
- const qx=Math.round(x*8)/8,qy=Math.round(y*8)/8;
+ const qx=Math.round(x*12)/12,qy=Math.round(y*12)/12;
  if(!force&&qx===lastShaderX&&qy===lastShaderY)return;
+ // Card transform is updated every RAF; expensive shader generation is coalesced.
+ if(!force&&performance.now()-lastShaderAt<85){
+   if(!shaderTimer)shaderTimer=setTimeout(()=>{shaderTimer=0;if(current?.isConnected)shader(current,targetX,targetY)},90);
+   return;
+ }
+ lastShaderAt=performance.now();
  lastShaderX=qx;lastShaderY=qy;
  el.dataset.fx22TiltX=qx.toFixed(3);el.dataset.fx22TiltY=qy.toFixed(3);
  window.__fx22ViewerRefresh?.();
@@ -43830,7 +43838,7 @@ function move(ev){if(!origin||!current||origin.width<=0||origin.height<=0)return
  if(!raf)raf=requestAnimationFrame(draw);
 }
 function measure(el){const transform=el.style.transform;el.style.transform='none';const r=el.getBoundingClientRect();el.style.transform=transform;origin={left:r.left,top:r.top,width:r.width,height:r.height}}
-function reset(el){if(raf)cancelAnimationFrame(raf);raf=0;if(timer)clearTimeout(timer);timer=0;origin=null;targetX=targetY=0;lastShaderX=lastShaderY=NaN;
+function reset(el){if(raf)cancelAnimationFrame(raf);raf=0;if(timer)clearTimeout(timer);timer=0;if(shaderTimer)clearTimeout(shaderTimer);shaderTimer=0;origin=null;targetX=targetY=0;lastShaderX=lastShaderY=NaN;
  if(el){el.style.transform='';shader(el,0,0,true)}
 }
 function attach(){const el=document.getElementById('collection-viewer-art');if(el===current)return;
