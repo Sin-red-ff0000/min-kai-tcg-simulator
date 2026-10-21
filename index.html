@@ -43567,4 +43567,22 @@ const ready=()=>{
 })();
 
 </script>
+
+<!-- FX v22.2 isolated trial launcher: no card data is modified. -->
+<style>
+#fx-trial-launch{position:fixed;right:16px;bottom:76px;z-index:2147483000;border:1px solid #88b8ff;border-radius:12px;padding:10px 14px;background:#182a45;color:#fff;box-shadow:0 4px 20px #0009;font-weight:700;cursor:pointer}
+#fx-trial-shell[hidden]{display:none!important}#fx-trial-shell{position:fixed;inset:0;z-index:2147483001;background:#000b;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box}
+#fx-trial-box{background:#171a21;width:min(1180px,100%);height:min(92vh,980px);display:flex;flex-direction:column;border:1px solid #677b99;border-radius:12px;overflow:hidden}
+#fx-trial-bar{display:flex;align-items:center;gap:12px;padding:9px 12px;color:white;font:14px sans-serif}#fx-trial-bar span{flex:1}#fx-trial-close{background:#36465e;color:white;border:1px solid #8191ab;padding:7px 14px;border-radius:8px;cursor:pointer}#fx-trial-frame{border:0;flex:1;width:100%;background:#151923}
+</style>
+<button type="button" id="fx-trial-launch" aria-haspopup="dialog">加工プレビュー（試験）</button>
+<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="加工プレビュー（試験）"><div id="fx-trial-box"><div id="fx-trial-bar"><span>FX v22.2 試験環境 — 本体カードへの保存は行いません。プリセット保存・JSON入出力はプレビュー内で利用できます。</span><button type="button" id="fx-trial-close">閉じる</button></div><iframe id="fx-trial-frame" title="FX加工プレビュー v22.2" loading="lazy" data-src="./fx_trial_preview.html"></iframe></div></div>
+<script>
+(function(){'use strict';
+const launch=document.getElementById('fx-trial-launch'),shell=document.getElementById('fx-trial-shell'),close=document.getElementById('fx-trial-close'),frame=document.getElementById('fx-trial-frame');
+function hide(){shell.hidden=true;launch.focus()}
+launch.addEventListener('click',()=>{if(!frame.src)frame.src=frame.dataset.src;shell.hidden=false;close.focus()});
+close.addEventListener('click',hide);shell.addEventListener('click',e=>{if(e.target===shell)hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!shell.hidden)hide()});
+})();
+</script>
 </body></html>
