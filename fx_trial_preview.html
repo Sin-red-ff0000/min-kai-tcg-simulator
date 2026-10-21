@@ -394,11 +394,7 @@ const trialLabel=document.createElement('span');trialLabel.id='fx-trial-card-lab
 const trialPanel=document.createElement('div');trialPanel.style.cssText='position:sticky;top:0;z-index:100;background:#111b2bea;border-bottom:1px solid #48618b;padding:4px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap';
 trialPanel.append(trialSave,trialLabel);document.body.prepend(trialPanel);
 trialSave.addEventListener('click',()=>{try{window.parent.postMessage({channel:'minkai-fx-trial-v2',action:'save',preset:snapshotPreset()},location.origin)}catch(err){alert('加工設定を送信できません：'+err.message)}});
-})();
-</script><p style="max-width:1100px;margin:20px auto;color:#aab7ce;font-size:12px;line-height:1.8">新規加工12種類＋既存加工86種類（既存加工1〜9）の計98種類を収録。全種類の加工IDと描画分岐を照合済み。詳細設定の表示不具合と、反射の方向・範囲が反映されない問題を修正。Ver42.0本体には変更を加えていません。</p>
-<script>
-(function(){
-'use strict';
+// FX trial v1.0: export bridge runs in the same scope as the renderer.
 let exportBusy=false;
 window.addEventListener('message',async function(e){
  if((location.protocol!=='file:'&&e.origin!==location.origin)||e.data?.channel!=='minkai-fx-collection-render'||e.data.action!=='render'||exportBusy)return;
@@ -424,5 +420,5 @@ window.addEventListener('message',async function(e){
  finally{exportBusy=false}
 });
 })();
-</script>
+</script><p style="max-width:1100px;margin:20px auto;color:#aab7ce;font-size:12px;line-height:1.8">新規加工12種類＋既存加工86種類（既存加工1〜9）の計98種類を収録。全種類の加工IDと描画分岐を照合済み。詳細設定の表示不具合と、反射の方向・範囲が反映されない問題を修正。Ver42.0本体には変更を加えていません。</p>
 </body></html>
