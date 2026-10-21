@@ -43623,10 +43623,19 @@ const ready=()=>{
 #fx-trial-launch{position:fixed;right:16px;bottom:76px;z-index:2147483000;border:1px solid #88b8ff;border-radius:12px;padding:10px 14px;background:#182a45;color:#fff;box-shadow:0 4px 20px #0009;font-weight:700;cursor:pointer}
 #fx-trial-shell[hidden]{display:none!important}#fx-trial-shell{position:fixed;inset:0;z-index:2147483001;background:#000b;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box}
 #fx-trial-box{background:#171a21;width:min(1180px,100%);height:min(92vh,980px);display:flex;flex-direction:column;border:1px solid #677b99;border-radius:12px;overflow:hidden}
-#fx-trial-bar{display:flex;align-items:center;gap:12px;padding:9px 12px;color:white;font:14px sans-serif}#fx-trial-bar span{flex:1}#fx-trial-close{background:#36465e;color:white;border:1px solid #8191ab;padding:7px 14px;border-radius:8px;cursor:pointer}#fx-trial-frame{border:0;flex:1;width:100%;background:#151923}
+#fx-trial-bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 16px;padding:12px 16px;color:white;font:14px sans-serif;align-items:center;border-bottom:1px solid #35435c}
+#fx-trial-heading{min-width:0;font-size:13px;line-height:1.5;color:#d8e5f9}
+#fx-trial-close{background:#36465e;color:white;border:1px solid #8191ab;padding:9px 15px;border-radius:8px;cursor:pointer;white-space:nowrap}
+#fx-trial-controls{grid-column:1/-1;display:flex;align-items:center;flex-wrap:wrap;gap:9px 12px;min-width:0}
+#fx-trial-controls label{display:flex;align-items:center;gap:9px;min-width:0;flex:1 1 300px;font-weight:600}
+#fx-trial-card-select{flex:1;min-width:160px;max-width:650px;width:100%;padding:9px 11px;background:#25324a;color:white;border:1px solid #7589ab;border-radius:8px;font-size:14px}
+#fx-trial-reload{padding:9px 13px;background:#36465e;color:white;border:1px solid #8191ab;border-radius:8px;cursor:pointer;white-space:nowrap}
+#fx-trial-status{font-size:12px;color:#bcd1ed;flex:1 1 150px;min-width:0;overflow-wrap:anywhere}
+#fx-trial-frame{border:0;flex:1;min-height:0;width:100%;background:#151923}
+@media(max-width:640px){#fx-trial-shell{padding:4px}#fx-trial-box{height:98vh}#fx-trial-bar{padding:9px;gap:8px}#fx-trial-heading{font-size:12px}#fx-trial-controls label{flex-basis:100%}#fx-trial-card-select{min-width:0}}
 </style>
 <button type="button" id="fx-trial-launch" aria-haspopup="dialog">加工プレビュー（試験）</button>
-<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="加工プレビュー（試験）"><div id="fx-trial-box"><div id="fx-trial-bar"><span>FX v22.2 試験連携：登録済みカードを選択し、加工を保存できます（従来の外観描画は維持）。</span><label style="color:#fff;display:flex;gap:6px;align-items:center">カード<select id="fx-trial-card-select" style="max-width:220px;padding:6px;background:#25324a;color:white;border:1px solid #7589ab"></select></label><button type="button" id="fx-trial-reload" style="padding:7px;background:#36465e;color:white;border:1px solid #8191ab">再読込</button><span id="fx-trial-status" style="font-size:12px;max-width:180px"></span><button type="button" id="fx-trial-close">閉じる</button></div><iframe id="fx-trial-frame" title="FX加工プレビュー v22.2" loading="lazy" data-src="./fx_trial_preview.html"></iframe></div></div>
+<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="加工プレビュー（試験）"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">FX v22.2 試験連携｜登録済みカードを選んで加工を保存（従来の外観描画は維持）</div><button type="button" id="fx-trial-close">閉じる</button><div id="fx-trial-controls"><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="FX加工プレビュー v22.2" loading="lazy" data-src="./fx_trial_preview.html"></iframe></div></div>
 <script>
 (function(){'use strict';
 const launch=document.getElementById('fx-trial-launch'),shell=document.getElementById('fx-trial-shell'),close=document.getElementById('fx-trial-close'),frame=document.getElementById('fx-trial-frame');
