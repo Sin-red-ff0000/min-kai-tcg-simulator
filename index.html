@@ -29296,6 +29296,27 @@ async function openCustomFxManager(cardId,returnTo='manager'){
 }
 
 async function openCardEffectEditor(cardId,returnTo='manager'){
+ // FX v1.2: the unified 98-effect editor replaces the legacy per-card editor.
+ const selected=cards.find(c=>String(c.id)===String(cardId));
+ if(selected){
+   const shell=document.getElementById('fx-trial-shell');
+   const frame=document.getElementById('fx-trial-frame');
+   const select=document.getElementById('fx-trial-card-select');
+   if(shell&&frame&&select){
+     const openSelected=()=>{
+       select.dispatchEvent(new Event('focus'));
+       select.value=String(selected.id);
+       select.dispatchEvent(new Event('change',{bubbles:true}));
+     };
+     shell.hidden=false;
+     if(!frame.getAttribute('src')){
+       frame.addEventListener('load',()=>setTimeout(openSelected,0),{once:true});
+       frame.src=frame.dataset.src||'./fx_trial_preview.html';
+     }else openSelected();
+     return;
+   }
+ }
+
  const card=cards.find(c=>c.id===cardId);if(!card)return;await customFxReadyPromise;
  const existing=normalizeCardVisualEffects(card.visualEffects);
  const rowHtml=slot=>{
@@ -43682,6 +43703,13 @@ close.addEventListener('click',hide);shell.addEventListener('click',e=>{if(e.tar
  mix-blend-mode:screen;opacity:.8;border-radius:inherit;
 }
 #screen-board .pile .fx22-surface-layer{z-index:2}
+#collection-viewer-art,#collection-detail-art{position:relative}
+#collection-viewer-art > .fx22-surface-layer,
+#collection-detail-art > .fx22-surface-layer{
+ position:absolute;inset:0;z-index:12;pointer-events:none;
+ background-size:100% 100%;background-repeat:no-repeat;
+ mix-blend-mode:screen;opacity:.8;border-radius:inherit;
+}
 </style>
 <script>
 (function(){
@@ -43726,7 +43754,7 @@ function scan(){
   if(!card?.fxPreviewV2?.layers?.length){if(old)old.remove();delete el.dataset.fx22Key;continue}
   const k=keyFor(card);el.dataset.fx22Key=k;
   if(cache.has(k)){place(el,cache.get(k));continue}
-  if(!queued.has(k)){queue.push({id,k,preset:card.fxPreviewV2});queued.add(k)}
+  if(!queued.has(k)){const item={id,k,preset:card.fxPreviewV2};if(el.id==='collection-viewer-art'||el.id==='collection-detail-art')queue.unshift(item);else queue.push(item);queued.add(k)}
  }
  if(queue.length)ensureFrame();pump();
 }
