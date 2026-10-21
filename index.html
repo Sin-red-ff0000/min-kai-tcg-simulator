@@ -30182,7 +30182,7 @@ function openCardManagerDetail(id,opt={}){
      <button class="btn small" id="manager-image-toggle">${imageExpanded?'閉じる':'展開'}</button>
    </div>
    ${imageExpanded?`<div class="manager-image-body">
-     <div id="manager-card-image-preview" class="manager-card-image-preview"><span>画像を確認中…</span></div>
+     <div id="manager-card-image-preview" data-fx-card-id="${esc(c.id)}" class="manager-card-image-preview"><span>画像を確認中…</span></div>
      <div class="actions"><button class="btn" id="manager-image-settings">画像設定</button><button class="btn" id="manager-image-enlarge" style="display:none">画像を拡大</button></div>
    </div>`:''}
  </div>
@@ -34264,7 +34264,7 @@ function renderPile(pile,pi,z,index){
  const stackPeek='';
  if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}" data-online-anchor="${esc(String(c.instanceId||c.id||`${pi}|${z}|${index}`))}">${markers}<div class="back-title">裏向きカード</div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}${stackPeek}</div>`;
  const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';
- return `<div class="pile ${sizeClass} ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}" data-online-anchor="${esc(String(c.instanceId||c.id||`${pi}|${z}|${index}`))}">${art}${cardFxHtml(c,'board')}${cardDecorHtml(c,'back')}${cardFrameHtml(c)}${cardDecorHtml(c,'front')}${markers}<div class="name">${(()=>{try{return rubyTextHtml(c.name,cardRubySpec(c))}catch{return esc(c.name||'名称未設定')}})()}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div>${c.token?'<span class="pill" style="position:absolute;left:4px;bottom:4px;font-size:10px">TOKEN</span>':''}${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}${stackPeek}</div>`;
+ return `<div class="pile ${sizeClass} ${c.rested?'rested':''}" data-fx-card-id="${esc(c.id)}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}" data-online-anchor="${esc(String(c.instanceId||c.id||`${pi}|${z}|${index}`))}">${art}${cardFxHtml(c,'board')}${cardDecorHtml(c,'back')}${cardFrameHtml(c)}${cardDecorHtml(c,'front')}${markers}<div class="name">${(()=>{try{return rubyTextHtml(c.name,cardRubySpec(c))}catch{return esc(c.name||'名称未設定')}})()}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div>${c.token?'<span class="pill" style="position:absolute;left:4px;bottom:4px;font-size:10px">TOKEN</span>':''}${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}${stackPeek}</div>`;
 }
 
 async function hydrateBoardImages(){
@@ -43670,47 +43670,69 @@ close.addEventListener('click',hide);shell.addEventListener('click',e=>{if(e.tar
 </script>
 
 <style>
-/* FX v22.2: collection-only overlay; never used by deck, card manager or battle. */
-#screen-collection [data-collection-art]{position:relative}
-#screen-collection .fx22-collection-layer{position:absolute;inset:0;z-index:4;pointer-events:none;background-size:100% 100%;background-repeat:no-repeat;mix-blend-mode:screen;opacity:.8;border-radius:inherit}
+/* Trial v0.8: FX overlays restricted to collection, manager image detail, and face-up board piles. */
+#screen-collection [data-collection-art],
+#manager-card-image-preview[data-fx-card-id],
+#screen-board .pile[data-fx-card-id]{position:relative}
+#screen-collection .fx22-surface-layer,
+#manager-card-image-preview .fx22-surface-layer,
+#screen-board .pile .fx22-surface-layer{
+ position:absolute;inset:0;z-index:4;pointer-events:none;
+ background-size:100% 100%;background-repeat:no-repeat;
+ mix-blend-mode:screen;opacity:.8;border-radius:inherit;
+}
+#screen-board .pile .fx22-surface-layer{z-index:2}
 </style>
 <script>
 (function(){
 'use strict';
 const collection=document.getElementById('screen-collection');
-if(!collection)return;
-let frame=null,ready=false,working=null,seq=0,queue=[],lastScan=0;
-const cache=new Map();const queued=new Set();
+const manager=document.getElementById('screen-card-manager');
+const board=document.getElementById('screen-board');
+if(!collection||!manager||!board)return;
+let frame=null,ready=false,working=null,seq=0,queue=[],scanPending=false;
+const cache=new Map(),queued=new Set();
 function getCard(id){try{return window.__fxCollectionGetCard?.(id)||null}catch{return null}}
 function keyFor(card){return String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
-function targets(){return Array.from(collection.querySelectorAll('[data-collection-art]'))}
+function isActive(el){return !!el&&(el.classList.contains('active')||el.classList.contains('act'))}
+function visibleTargets(){
+ const out=[];
+ if(isActive(collection))out.push(...collection.querySelectorAll('[data-collection-art]'));
+ // Manager detail is a modal outside the manager section; require manager screen active.
+ if(isActive(manager))out.push(...document.querySelectorAll('#manager-card-image-preview[data-fx-card-id]'));
+ if(isActive(board))out.push(...board.querySelectorAll('.pile[data-fx-card-id]:not(.face-down)'));
+ return out;
+}
+function cardIdFor(el){return el.getAttribute('data-collection-art')||el.getAttribute('data-fx-card-id')}
 function ensureFrame(){
  if(frame)return;
- frame=document.createElement('iframe');frame.title='コレクション加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
+ frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
  frame.src='./fx_trial_preview.html';frame.addEventListener('load',()=>{ready=true;pump()});document.body.append(frame);
 }
 function place(el,url){
  if(!el.isConnected)return;
- let layer=el.querySelector(':scope > .fx22-collection-layer');
- if(!layer){layer=document.createElement('span');layer.className='fx22-collection-layer';el.append(layer)}
- layer.style.backgroundImage='url("'+url+'")';
+ let layer=el.querySelector(':scope > .fx22-surface-layer');
+ if(!layer){layer=document.createElement('span');layer.className='fx22-surface-layer';el.append(layer)}
+ if(layer.dataset.fx22Url!==url){layer.style.backgroundImage='url("'+url+'")';layer.dataset.fx22Url=url}
 }
 function scan(){
- if(!collection.classList.contains('active')&&!collection.classList.contains('act'))return;
- for(const el of targets()){
-  const id=el.getAttribute('data-collection-art');const card=getCard(id);
-  if(!card?.fxPreviewV2?.layers?.length)continue;
+ for(const el of visibleTargets()){
+  const id=cardIdFor(el),card=getCard(id);
+  const old=el.querySelector(':scope > .fx22-surface-layer');
+  if(!card?.fxPreviewV2?.layers?.length){if(old)old.remove();delete el.dataset.fx22Key;continue}
   const k=keyFor(card);el.dataset.fx22Key=k;
   if(cache.has(k)){place(el,cache.get(k));continue}
   if(!queued.has(k)){queue.push({id,k,preset:card.fxPreviewV2});queued.add(k)}
  }
  if(queue.length)ensureFrame();pump();
 }
+function scheduleScan(){if(scanPending)return;scanPending=true;requestAnimationFrame(()=>{scanPending=false;scan()})}
 function pump(){
  if(!ready||working||!queue.length)return;
  const next=queue.shift();queued.delete(next.k);
- if(!getCard(next.id)||keyFor(getCard(next.id))!==next.k){pump();return}
+ const card=getCard(next.id);
+ if(!card||keyFor(card)!==next.k){pump();return}
  working={...next,token:++seq};
  frame.contentWindow.postMessage({channel:'minkai-fx-collection-render',action:'render',token:working.token,cardId:next.id,preset:next.preset},location.origin);
 }
@@ -43718,18 +43740,26 @@ window.addEventListener('message',e=>{
  if(e.origin!==location.origin||e.source!==frame?.contentWindow||e.data?.channel!=='minkai-fx-collection-render'||!working||e.data.token!==working.token)return;
  if(e.data.action==='result'&&typeof e.data.image==='string'){
   cache.set(working.k,e.data.image);
-  if(cache.size>120)cache.delete(cache.keys().next().value);
-  for(const el of targets())if(el.dataset.fx22Key===working.k)place(el,e.data.image);
+  if(cache.size>100)cache.delete(cache.keys().next().value);
+  for(const el of visibleTargets())if(el.dataset.fx22Key===working.k)place(el,e.data.image);
  }
  working=null;pump();
 });
-const observer=new MutationObserver(()=>{
- const now=Date.now();if(now-lastScan<120)return;lastScan=now;
- requestAnimationFrame(scan);
+const observer=new MutationObserver(mutations=>{
+ // Do not recursively schedule a render for the overlay elements we just inserted.
+ if(mutations.every(m=>m.target?.classList?.contains('fx22-surface-layer')||
+   [...m.addedNodes,...m.removedNodes].every(n=>n.nodeType===1&&n.classList?.contains('fx22-surface-layer'))))return;
+ scheduleScan();
 });
 observer.observe(collection,{childList:true,subtree:true});
-document.addEventListener('click',e=>{if(e.target.closest('[data-nav="collection"]'))setTimeout(scan,180)});
-setInterval(()=>{if(collection.classList.contains('act')||collection.classList.contains('active'))scan()},1800);
+observer.observe(board,{childList:true,subtree:true});
+// Manager details live in the shared modal, so observe the modal's insertion/removal as well.
+const modal=document.getElementById('modal')||document.querySelector('.modal-overlay')||document.body;
+observer.observe(modal,{childList:true,subtree:true});
+for(const screen of [collection,manager,board])observer.observe(screen,{attributes:true,attributeFilter:['class']});
+document.addEventListener('click',()=>setTimeout(scheduleScan,100));
+setInterval(()=>{if(isActive(collection)||isActive(manager)||isActive(board))scheduleScan()},2200);
+scheduleScan();
 })();
 </script>
 </body></html>
