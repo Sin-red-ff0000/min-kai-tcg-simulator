@@ -401,10 +401,11 @@ window.addEventListener('message',async function(e){
  exportBusy=true;const m=e.data;
  try{
   applyPreset(m.preset);
+  tx=Math.max(-1,Math.min(1,Number(m.tiltX)||0));ty=Math.max(-1,Math.min(1,Number(m.tiltY)||0));
   // Let the normal renderer finish and keep the preview's own shader mathematics.
-  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+  // Direct render: avoid two animation-frame waits on every request.
   drawLayers();
-  const out=document.createElement('canvas');out.width=180;out.height=260;
+  const out=document.createElement('canvas');out.width=m.viewer?320:180;out.height=m.viewer?464:260;
   const oc=out.getContext('2d',{alpha:true});
   const blendMap={'normal':'source-over','screen':'screen','lighten':'lighten','overlay':'overlay','multiply':'multiply','color-dodge':'color-dodge'};
   const protection=1-(Number(document.getElementById('protect')?.value||0)/100)*.7;

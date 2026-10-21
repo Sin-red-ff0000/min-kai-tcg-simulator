@@ -43722,6 +43722,9 @@ let frame=null,ready=false,working=null,seq=0,queue=[],scanPending=false;
 const cache=new Map(),queued=new Set();
 function getCard(id){try{return window.__fxCollectionGetCard?.(id)||null}catch{return null}}
 function keyFor(card){return String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
+function angleFor(el){return el.id==='collection-viewer-art'?{x:Number(el.dataset.fx22TiltX)||0,y:Number(el.dataset.fx22TiltY)||0}:{x:0,y:0}}
+function renderKey(card,el){const a=angleFor(el);return keyFor(card)+(el.id==='collection-viewer-art'?'|viewer|'+a.x.toFixed(2)+'|'+a.y.toFixed(2):'')}
+
 function isActive(el){return !!el&&(el.classList.contains('active')||el.classList.contains('act'))}
 function setFx22Status(msg){let x=document.getElementById('fx22-display-status');if(!x){x=document.createElement('div');x.id='fx22-display-status';x.style.cssText='position:fixed;bottom:65px;right:12px;z-index:99999;background:#3c1820;color:#fff;border:1px solid #e88;padding:8px 12px;border-radius:8px;max-width:360px;font:12px sans-serif';document.body.append(x)}x.textContent=msg;}
 function visibleTargets(){
@@ -43752,20 +43755,21 @@ function scan(){
   const id=cardIdFor(el),card=getCard(id);
   const old=el.querySelector(':scope > .fx22-surface-layer');
   if(!card?.fxPreviewV2?.layers?.length){if(old)old.remove();delete el.dataset.fx22Key;continue}
-  const k=keyFor(card);el.dataset.fx22Key=k;
+  const k=renderKey(card,el);el.dataset.fx22Key=k;
   if(cache.has(k)){place(el,cache.get(k));continue}
-  if(!queued.has(k)){const item={id,k,preset:card.fxPreviewV2};if(el.id==='collection-viewer-art'||el.id==='collection-detail-art')queue.unshift(item);else queue.push(item);queued.add(k)}
+  if(!queued.has(k)){if(el.id==='collection-viewer-art'){queue=queue.filter(it=>!it.viewer);for(const key of [...queued])if(key.includes('|viewer|'))queued.delete(key)}const tilt=angleFor(el),viewer=el.id==='collection-viewer-art';const item={id,k,preset:card.fxPreviewV2,tiltX:tilt.x,tiltY:tilt.y,viewer};if(viewer||el.id==='collection-detail-art')queue.unshift(item);else queue.push(item);queued.add(k)}
  }
  if(queue.length)ensureFrame();pump();
 }
 function scheduleScan(){if(scanPending)return;scanPending=true;requestAnimationFrame(()=>{scanPending=false;scan()})}
+window.__fx22ViewerRefresh=scheduleScan;
 function pump(){
  if(!ready||working||!queue.length)return;
  const next=queue.shift();queued.delete(next.k);
  const card=getCard(next.id);
- if(!card||keyFor(card)!==next.k){pump();return}
+ if(!card||!next.k.startsWith(keyFor(card))){pump();return}
  working={...next,token:++seq};const token=working.token;setTimeout(()=>{if(working?.token===token){console.warn('[FX表示] 描画応答タイムアウト',working.id);setFx22Status('加工描画が応答しません。ブラウザのコンソールを確認してください');working=null;pump()}},18000);
- frame.contentWindow.postMessage({channel:'minkai-fx-collection-render',action:'render',token:working.token,cardId:next.id,preset:next.preset},location.protocol==='file:'?'*':location.origin);
+ frame.contentWindow.postMessage({channel:'minkai-fx-collection-render',action:'render',token:working.token,cardId:next.id,preset:next.preset,tiltX:next.tiltX,tiltY:next.tiltY,viewer:next.viewer},location.protocol==='file:'?'*':location.origin);
 }
 window.addEventListener('message',e=>{
  if((location.protocol!=='file:'&&e.origin!==location.origin)||e.source!==frame?.contentWindow||e.data?.channel!=='minkai-fx-collection-render'||!working||e.data.token!==working.token)return;
@@ -43796,35 +43800,29 @@ scheduleScan();
 </script>
 
 <style>
-/* v1.1: collection viewer receives the same cached FX surface and a 3D inspection interaction. */
-#collection-viewer-art{transform-style:preserve-3d;will-change:transform;transition:transform 150ms ease-out;cursor:crosshair}
-#collection-viewer-art .fx22-surface-layer{z-index:5;filter:hue-rotate(var(--fx22-view-hue,0deg)) brightness(var(--fx22-view-light,1));}
+/* v1.3: real angle-dependent shader output in collection viewer. */
+#collection-viewer-art{transform-style:preserve-3d;will-change:transform;transition:transform 120ms ease-out;cursor:crosshair}
+#collection-viewer-art .fx22-surface-layer{z-index:5;filter:none}
 #collection-detail-art .fx22-surface-layer{z-index:5}
 @media(prefers-reduced-motion:reduce){#collection-viewer-art{transition:none}}
 </style>
 <script>
-(function(){
- 'use strict';
- let current=null;
- function reset(el){if(!el)return;el.style.transform='';el.style.setProperty('--fx22-view-hue','0deg');el.style.setProperty('--fx22-view-light','1');}
- function attach(){
-  const el=document.getElementById('collection-viewer-art');
-  if(el===current)return;
-  reset(current);current=el;
-  if(!el)return;
-  el.setAttribute('title','マウスを動かすとカードが傾きます。カードから離すと正面に戻ります。');
-  el.addEventListener('pointermove',ev=>{
-   if(ev.pointerType!=='mouse'&&ev.pointerType!=='pen')return;
-   const r=el.getBoundingClientRect();if(!r.width||!r.height)return;
-   const x=Math.max(-1,Math.min(1,(ev.clientX-r.left)/r.width*2-1));
-   const y=Math.max(-1,Math.min(1,(ev.clientY-r.top)/r.height*2-1));
-   el.style.transform='perspective(1100px) rotateY('+(-x*14).toFixed(2)+'deg) rotateX('+(y*14).toFixed(2)+'deg)';
-   el.style.setProperty('--fx22-view-hue',(x*16+y*9).toFixed(2)+'deg');
-   el.style.setProperty('--fx22-view-light',(1+.1*x-.07*y).toFixed(3));
-  },{passive:true});
-  el.addEventListener('pointerleave',()=>reset(el),{passive:true});
- }
- const observer=new MutationObserver(attach);observer.observe(document.getElementById('modal')||document.body,{childList:true,subtree:true});attach();
+(function(){'use strict';
+let current=null,lastX=0,lastY=0,scheduled=0;
+function updateShader(el,x,y){el.dataset.fx22TiltX=x.toFixed(2);el.dataset.fx22TiltY=y.toFixed(2);window.__fx22ViewerRefresh?.()}
+function reset(el){if(!el)return;el.style.transform='';lastX=lastY=0;updateShader(el,0,0)}
+function attach(){const el=document.getElementById('collection-viewer-art');if(el===current)return;reset(current);current=el;if(!el)return;
+el.title='マウスでカードを傾けると、加工の反射模様も変化します';
+el.addEventListener('pointermove',ev=>{if(ev.pointerType!=='mouse'&&ev.pointerType!=='pen')return;const r=el.getBoundingClientRect();if(!r.width||!r.height)return;
+const x=Math.max(-1,Math.min(1,(ev.clientX-r.left)/r.width*2-1)),y=Math.max(-1,Math.min(1,(ev.clientY-r.top)/r.height*2-1));
+el.style.transform='perspective(1100px) rotateY('+(-x*14).toFixed(2)+'deg) rotateX('+(y*14).toFixed(2)+'deg)';
+// Quantize angles and throttle costly CPU shaders; latest angle takes priority.
+const qx=Math.round(x*5)/5,qy=Math.round(y*5)/5;
+if(qx===lastX&&qy===lastY)return;lastX=qx;lastY=qy;
+if(scheduled)clearTimeout(scheduled);scheduled=setTimeout(()=>{scheduled=0;updateShader(el,qx,qy)},130);
+},{passive:true});
+el.addEventListener('pointerleave',()=>{if(scheduled)clearTimeout(scheduled);scheduled=0;reset(el)},{passive:true});}
+new MutationObserver(attach).observe(document.getElementById('modal')||document.body,{childList:true,subtree:true});attach();
 })();
 </script>
 </body></html>
