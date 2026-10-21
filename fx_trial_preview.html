@@ -395,4 +395,34 @@ const trialPanel=document.createElement('div');trialPanel.style.cssText='positio
 trialPanel.append(trialSave,trialLabel);document.body.prepend(trialPanel);
 trialSave.addEventListener('click',()=>{try{window.parent.postMessage({channel:'minkai-fx-trial-v2',action:'save',preset:snapshotPreset()},location.origin)}catch(err){alert('加工設定を送信できません：'+err.message)}});
 })();
-</script><p style="max-width:1100px;margin:20px auto;color:#aab7ce;font-size:12px;line-height:1.8">新規加工12種類＋既存加工86種類（既存加工1〜9）の計98種類を収録。全種類の加工IDと描画分岐を照合済み。詳細設定の表示不具合と、反射の方向・範囲が反映されない問題を修正。Ver42.0本体には変更を加えていません。</p></body></html>
+</script><p style="max-width:1100px;margin:20px auto;color:#aab7ce;font-size:12px;line-height:1.8">新規加工12種類＋既存加工86種類（既存加工1〜9）の計98種類を収録。全種類の加工IDと描画分岐を照合済み。詳細設定の表示不具合と、反射の方向・範囲が反映されない問題を修正。Ver42.0本体には変更を加えていません。</p>
+<script>
+(function(){
+'use strict';
+let exportBusy=false;
+window.addEventListener('message',async function(e){
+ if(e.origin!==location.origin||e.data?.channel!=='minkai-fx-collection-render'||e.data.action!=='render'||exportBusy)return;
+ exportBusy=true;const m=e.data;
+ try{
+  applyPreset(m.preset);
+  // Let the normal renderer finish and keep the preview's own shader mathematics.
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+  drawLayers();
+  const out=document.createElement('canvas');out.width=180;out.height=260;
+  const oc=out.getContext('2d',{alpha:true});
+  const blendMap={'normal':'source-over','screen':'screen','lighten':'lighten','overlay':'overlay','multiply':'multiply','color-dodge':'color-dodge'};
+  const protection=1-(Number(document.getElementById('protect')?.value||0)/100)*.7;
+  for(let i=0;i<layers.length;i++){
+   const src=i===0?c:layerCanvases[i];if(!src)continue;
+   oc.globalAlpha=protection*(layers[i].opacity/100);
+   oc.globalCompositeOperation=blendMap[layers[i].blend]||'source-over';
+   oc.drawImage(src,0,0,out.width,out.height);
+  }
+  oc.globalAlpha=1;oc.globalCompositeOperation='source-over';
+  e.source.postMessage({channel:'minkai-fx-collection-render',action:'result',token:m.token,cardId:m.cardId,image:out.toDataURL('image/png')},e.origin);
+ }catch(err){e.source.postMessage({channel:'minkai-fx-collection-render',action:'error',token:m.token,cardId:m.cardId,message:String(err?.message||err)},e.origin)}
+ finally{exportBusy=false}
+});
+})();
+</script>
+</body></html>

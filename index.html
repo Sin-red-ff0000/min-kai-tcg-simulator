@@ -25086,6 +25086,7 @@ save(LS_CARDS,cards);
 let cardFxPrefs=normalizeCardFxPrefs(load(LS_CARD_FX,defaultCardFxPrefs()));save(LS_CARD_FX,cardFxPrefs);
 
 // Trial FX v0.2: card-bound preview settings, isolated from legacy visualEffects.
+window.__fxCollectionGetCard = function(id){return cards.find(c=>String(c.id)===String(id))||null};
 function initFxTrialCardBridge(){
  const select=document.getElementById('fx-trial-card-select'),frame=document.getElementById('fx-trial-frame'),launch=document.getElementById('fx-trial-launch'),reload=document.getElementById('fx-trial-reload'),status=document.getElementById('fx-trial-status');
  if(!select||!frame||!launch)return;
@@ -43665,6 +43666,70 @@ if(homeScreen)new MutationObserver(syncHomeOnly).observe(homeScreen,{attributes:
 document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>queueMicrotask(syncHomeOnly)));
 syncHomeOnly();
 close.addEventListener('click',hide);shell.addEventListener('click',e=>{if(e.target===shell)hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!shell.hidden)hide()});
+})();
+</script>
+
+<style>
+/* FX v22.2: collection-only overlay; never used by deck, card manager or battle. */
+#screen-collection [data-collection-art]{position:relative}
+#screen-collection .fx22-collection-layer{position:absolute;inset:0;z-index:4;pointer-events:none;background-size:100% 100%;background-repeat:no-repeat;mix-blend-mode:screen;opacity:.8;border-radius:inherit}
+</style>
+<script>
+(function(){
+'use strict';
+const collection=document.getElementById('screen-collection');
+if(!collection)return;
+let frame=null,ready=false,working=null,seq=0,queue=[],lastScan=0;
+const cache=new Map();const queued=new Set();
+function getCard(id){try{return window.__fxCollectionGetCard?.(id)||null}catch{return null}}
+function keyFor(card){return String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
+function targets(){return Array.from(collection.querySelectorAll('[data-collection-art]'))}
+function ensureFrame(){
+ if(frame)return;
+ frame=document.createElement('iframe');frame.title='コレクション加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
+ frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
+ frame.src='./fx_trial_preview.html';frame.addEventListener('load',()=>{ready=true;pump()});document.body.append(frame);
+}
+function place(el,url){
+ if(!el.isConnected)return;
+ let layer=el.querySelector(':scope > .fx22-collection-layer');
+ if(!layer){layer=document.createElement('span');layer.className='fx22-collection-layer';el.append(layer)}
+ layer.style.backgroundImage='url("'+url+'")';
+}
+function scan(){
+ if(!collection.classList.contains('active')&&!collection.classList.contains('act'))return;
+ for(const el of targets()){
+  const id=el.getAttribute('data-collection-art');const card=getCard(id);
+  if(!card?.fxPreviewV2?.layers?.length)continue;
+  const k=keyFor(card);el.dataset.fx22Key=k;
+  if(cache.has(k)){place(el,cache.get(k));continue}
+  if(!queued.has(k)){queue.push({id,k,preset:card.fxPreviewV2});queued.add(k)}
+ }
+ if(queue.length)ensureFrame();pump();
+}
+function pump(){
+ if(!ready||working||!queue.length)return;
+ const next=queue.shift();queued.delete(next.k);
+ if(!getCard(next.id)||keyFor(getCard(next.id))!==next.k){pump();return}
+ working={...next,token:++seq};
+ frame.contentWindow.postMessage({channel:'minkai-fx-collection-render',action:'render',token:working.token,cardId:next.id,preset:next.preset},location.origin);
+}
+window.addEventListener('message',e=>{
+ if(e.origin!==location.origin||e.source!==frame?.contentWindow||e.data?.channel!=='minkai-fx-collection-render'||!working||e.data.token!==working.token)return;
+ if(e.data.action==='result'&&typeof e.data.image==='string'){
+  cache.set(working.k,e.data.image);
+  if(cache.size>120)cache.delete(cache.keys().next().value);
+  for(const el of targets())if(el.dataset.fx22Key===working.k)place(el,e.data.image);
+ }
+ working=null;pump();
+});
+const observer=new MutationObserver(()=>{
+ const now=Date.now();if(now-lastScan<120)return;lastScan=now;
+ requestAnimationFrame(scan);
+});
+observer.observe(collection,{childList:true,subtree:true});
+document.addEventListener('click',e=>{if(e.target.closest('[data-nav="collection"]'))setTimeout(scan,180)});
+setInterval(()=>{if(collection.classList.contains('act')||collection.classList.contains('active'))scan()},1800);
 })();
 </script>
 </body></html>
