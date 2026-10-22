@@ -22077,7 +22077,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
 </style>
 <style>
 
-/* Ver44.0: progressive UX layer; original application controls remain intact. */
+/* Ver44.1: progressive UX layer; original application controls remain intact. */
 .v42-nav-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--panel2,#20242d);border:1px solid var(--line,#353b47);color:var(--text,#fff);border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:700}
 .v42-nav-panel{position:fixed;z-index:9995;top:62px;left:12px;width:min(580px,calc(100vw - 24px));max-height:calc(100dvh - 78px);overflow:auto;background:var(--panel,#171a21);color:var(--text,#fff);border:1px solid var(--line,#353b47);border-radius:14px;box-shadow:0 14px 42px #0009;padding:14px}
 .v42-nav-panel[hidden],.v42-quicklinks[hidden]{display:none!important}
@@ -41961,7 +41961,7 @@ window.minkaiPacksV29={getState:()=>C(db),getPackSnapshot:(id)=>{const p=db.pack
 
 // END V29 INLINE
 })();
-/* Ver44.0: share deck draft state with the separate autosave script without copying stale values. */
+/* Ver44.1: share deck draft state with the separate autosave script without copying stale values. */
 for (const [key, read, write] of [
  ['workingDeck',()=>workingDeck,v=>{workingDeck=v}],
  ['editingDeckId',()=>editingDeckId,v=>{editingDeckId=v}],
@@ -43605,7 +43605,7 @@ window.MinkaiOnlineEventV299={open,sync,version:VERSION,protocol:PROTOCOL};windo
 </style>
 <script>
 
-/* Ver44.0 progressive enhancement: never replaces core navigation or persistence. */
+/* Ver44.1 progressive enhancement: never replaces core navigation or persistence. */
 (()=>{'use strict';
 const ready=()=>{
  const appbar=document.querySelector('header.appbar');if(!appbar||document.getElementById('v42-nav-toggle'))return;
@@ -43675,19 +43675,19 @@ const ready=()=>{
 
 /* v1.9 mobile FX dialog: prevent intrinsic iframe width from stretching content */
 #fx-trial-shell,#fx-trial-box,#fx-trial-frame{min-width:0!important;max-width:100%;box-sizing:border-box}
-#fx-trial-frame{display:block;width:100%!important;min-width:0!important;max-width:100%!important;flex:1 1 0!important}
+#fx-trial-frame{display:block;width:100%!important;min-width:0!important;max-width:100%!important;flex:1 1 auto!important}
 @media(max-width:640px){
  #fx-trial-shell{inset:0!important;width:100vw!important;max-width:100vw!important;padding:calc(env(safe-area-inset-top,0px) + 4px) 4px calc(env(safe-area-inset-bottom,0px) + 4px)!important;align-items:stretch!important}
  #fx-trial-box{width:100%!important;max-width:100%!important;height:100%!important;max-height:100%!important;min-height:0!important;border-radius:9px!important}
- #fx-trial-bar{flex:none!important;max-height:35vh;overflow-y:auto;grid-template-columns:minmax(0,1fr) auto!important}
+ #fx-trial-bar{flex:none!important;max-height:32vh;overflow-y:auto;grid-template-columns:minmax(0,1fr) auto!important}
  #fx-trial-controls{min-width:0!important;width:100%!important}
  #fx-trial-controls label{flex:1 1 100%!important;display:flex;flex-direction:column;align-items:stretch!important;gap:4px!important}
  #fx-trial-card-select{width:100%!important;max-width:100%!important;min-width:0!important}
- #fx-trial-frame{height:0!important;min-height:0!important;flex:1 1 0!important}
+ #fx-trial-frame{height:auto!important;min-height:240px!important;flex:1 1 auto!important}
 }
 </style>
 <button type="button" id="fx-trial-launch" aria-haspopup="dialog">カード加工エディター</button>
-<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定｜カードを選んで加工を保存</div><button type="button" id="fx-trial-close">閉じる</button><div id="fx-trial-controls"><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver44.0 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html"></iframe></div></div>
+<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定｜カードを選んで加工を保存</div><button type="button" id="fx-trial-close">閉じる</button><div id="fx-trial-controls"><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver44.1 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html"></iframe></div></div>
 <script>
 (function(){'use strict';
 const launch=document.getElementById('fx-trial-launch'),shell=document.getElementById('fx-trial-shell'),close=document.getElementById('fx-trial-close'),frame=document.getElementById('fx-trial-frame');
@@ -43897,7 +43897,12 @@ new MutationObserver(attach).observe(document.getElementById('modal')||document.
 #fx-v17-controls{max-width:100%;gap:6px;padding:8px}
 #fx-v17-controls input[type=range]{width:110px}
 }
-</style></body></html>
+</style>
 <style>
 @media(max-width:800px){#fx-trial-box{width:100%!important;max-width:100vw!important;min-width:0!important;overflow:hidden!important}#fx-trial-bar{padding:8px!important;gap:6px!important}#fx-trial-heading{font-size:12px!important;line-height:1.35!important}#fx-trial-controls{width:100%!important;min-width:0!important}#fx-trial-card-select{width:100%!important;max-width:100%!important;min-width:0!important}#fx-trial-frame{width:100%!important;min-width:0!important}#fx-trial-close{flex-shrink:0!important}}
 </style>
+<style id="fx-v44-1-visibility-fix">
+#fx-trial-box{display:flex!important;flex-direction:column!important;min-height:0!important}
+#fx-trial-frame{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 auto!important;height:auto!important;min-height:240px!important;width:100%!important}
+@media(max-width:800px){#fx-trial-box{height:100%!important;max-height:100%!important}#fx-trial-bar{flex:0 0 auto!important;max-height:32dvh!important;overflow-y:auto!important}#fx-trial-frame{height:auto!important;min-height:240px!important;flex:1 1 auto!important}}
+</style></body></html>
