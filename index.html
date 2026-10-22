@@ -43811,48 +43811,77 @@ scheduleScan();
 </style>
 <script>
 (function(){'use strict';
-// v1.5: stable untransformed bounds, one angle state for CSS and shader, RAF coalescing.
-let current=null, origin=null, raf=0, timer=0, targetX=0,targetY=0,lastShaderX=NaN,lastShaderY=NaN,lastShaderAt=0,shaderTimer=0;
+// v1.7: single tilt state, auto orbit, adjustable maximum angle, touch controls.
+let current=null, origin=null, raf=0, resetTimer=0, shaderTimer=0;
+let targetX=0,targetY=0,displayX=0,displayY=0,lastX=NaN,lastY=NaN,lastAt=0;
+let auto=false,maxAngle=14,autoStart=0,lastFrame=0,controls=null;
 const clamp=v=>Math.max(-1,Math.min(1,v));
+function measure(el){if(!el)return;const t=el.style.transform;el.style.transform='none';const r=el.getBoundingClientRect();el.style.transform=t;origin={left:r.left,top:r.top,width:r.width,height:r.height}}
 function shader(el,x,y,force=false){
  if(!el?.isConnected)return;
- const qx=Math.round(x*12)/12,qy=Math.round(y*12)/12;
- if(!force&&qx===lastShaderX&&qy===lastShaderY)return;
- // Card transform is updated every RAF; expensive shader generation is coalesced.
- if(!force&&performance.now()-lastShaderAt<85){
-   if(!shaderTimer)shaderTimer=setTimeout(()=>{shaderTimer=0;if(current?.isConnected)shader(current,targetX,targetY)},90);
-   return;
- }
- lastShaderAt=performance.now();
- lastShaderX=qx;lastShaderY=qy;
+ const qx=Math.round(x*18)/18,qy=Math.round(y*18)/18;
+ if(!force&&qx===lastX&&qy===lastY)return;
+ const now=performance.now();
+ if(!force&&now-lastAt<95){if(!shaderTimer)shaderTimer=setTimeout(()=>{shaderTimer=0;if(current?.isConnected)shader(current,displayX,displayY)},100);return}
+ lastAt=now;lastX=qx;lastY=qy;
  el.dataset.fx22TiltX=qx.toFixed(3);el.dataset.fx22TiltY=qy.toFixed(3);
  window.__fx22ViewerRefresh?.();
 }
-function draw(){raf=0;const el=current;if(!el?.isConnected)return;
- el.style.transform='perspective(1100px) rotateY('+(-targetX*14).toFixed(2)+'deg) rotateX('+(targetY*14).toFixed(2)+'deg)';
- shader(el,targetX,targetY);
+function animate(now){raf=0;const el=current;if(!el?.isConnected)return;
+ const dt=Math.min(48,Math.max(1,now-(lastFrame||now)));lastFrame=now;
+ if(auto){const t=(now-autoStart)/1000;targetX=Math.sin(t*0.85)*0.84;targetY=Math.sin(t*0.57+0.65)*0.70}
+ const alpha=1-Math.exp(-dt/65);
+ displayX+=(targetX-displayX)*alpha;displayY+=(targetY-displayY)*alpha;
+ el.style.transform='perspective(1100px) rotateY('+(-displayX*maxAngle).toFixed(2)+'deg) rotateX('+(displayY*maxAngle).toFixed(2)+'deg)';
+ shader(el,displayX,displayY);
+ if(auto||Math.abs(targetX-displayX)+Math.abs(targetY-displayY)>0.002)raf=requestAnimationFrame(animate);
 }
-function move(ev){if(!origin||!current||origin.width<=0||origin.height<=0)return;
- targetX=clamp((ev.clientX-origin.left)/origin.width*2-1);
- targetY=clamp((ev.clientY-origin.top)/origin.height*2-1);
- if(!raf)raf=requestAnimationFrame(draw);
-}
-function measure(el){const transform=el.style.transform;el.style.transform='none';const r=el.getBoundingClientRect();el.style.transform=transform;origin={left:r.left,top:r.top,width:r.width,height:r.height}}
-function reset(el){if(raf)cancelAnimationFrame(raf);raf=0;if(timer)clearTimeout(timer);timer=0;if(shaderTimer)clearTimeout(shaderTimer);shaderTimer=0;origin=null;targetX=targetY=0;lastShaderX=lastShaderY=NaN;
- if(el){el.style.transform='';shader(el,0,0,true)}
+function tick(){if(!raf)raf=requestAnimationFrame(animate)}
+function setAuto(value){auto=!!value;autoStart=performance.now();const btn=controls?.querySelector('#fx-v17-auto');if(btn){btn.textContent=auto?'自動傾斜：ON':'自動傾斜：OFF';btn.setAttribute('aria-pressed',String(auto))}if(auto)tick()}
+function reset(el){if(raf)cancelAnimationFrame(raf);raf=0;if(resetTimer)clearTimeout(resetTimer);resetTimer=0;if(shaderTimer)clearTimeout(shaderTimer);shaderTimer=0;origin=null;targetX=targetY=displayX=displayY=0;lastX=lastY=NaN;lastFrame=0;if(el?.isConnected){el.style.transform='';shader(el,0,0,true)}}
+function addControls(el){
+ const host=el.parentElement;if(!host)return;
+ controls=document.createElement('div');controls.id='fx-v17-controls';
+ controls.innerHTML='<button type="button" id="fx-v17-auto" aria-pressed="false">自動傾斜：OFF</button><label>傾斜の最大角度 <input id="fx-v17-angle" type="range" min="0" max="35" step="1" value="14"><output id="fx-v17-angle-value">14°</output></label><button type="button" id="fx-v17-center">角度を戻す</button>';
+ host.insertAdjacentElement('afterend',controls);
+ controls.querySelector('#fx-v17-auto').onclick=()=>setAuto(!auto);
+ controls.querySelector('#fx-v17-angle').oninput=e=>{maxAngle=Number(e.target.value);controls.querySelector('#fx-v17-angle-value').textContent=maxAngle+'°';tick()};
+ controls.querySelector('#fx-v17-center').onclick=()=>{setAuto(false);targetX=targetY=0;tick()};
 }
 function attach(){const el=document.getElementById('collection-viewer-art');if(el===current)return;
- reset(current);current=el;if(!el)return;
- el.title='マウスでカードを傾けると加工の反射も変化します';
- el.addEventListener('pointerenter',()=>measure(el),{passive:true});
- el.addEventListener('pointermove',ev=>{if(ev.pointerType==='mouse'||ev.pointerType==='pen'){if(!origin)measure(el);move(ev)}},{passive:true});
- el.addEventListener('pointerleave',()=>{ // Keep the last reflected frame visible until reset settles.
-  if(timer)clearTimeout(timer);
-  timer=setTimeout(()=>{if(current===el)reset(el)},220);
- },{passive:true});
+ if(controls){controls.remove();controls=null}reset(current);current=el;if(!el){auto=false;return}
+ el.title='マウスまたはタッチで傾斜。自動傾斜にも対応';addControls(el);setAuto(false);
+ el.addEventListener('pointerenter',()=>{if(!auto)measure(el)},{passive:true});
+ el.addEventListener('pointermove',ev=>{if(auto)return;if(!origin)measure(el);if(!origin.width||!origin.height)return;targetX=clamp((ev.clientX-origin.left)/origin.width*2-1);targetY=clamp((ev.clientY-origin.top)/origin.height*2-1);tick()},{passive:true});
+ el.addEventListener('pointerleave',()=>{if(auto)return;if(resetTimer)clearTimeout(resetTimer);resetTimer=setTimeout(()=>{if(current===el){targetX=targetY=0;tick()}},260)},{passive:true});
+ el.addEventListener('pointerdown',ev=>{if(ev.pointerType==='touch'){setAuto(false);measure(el);el.setPointerCapture?.(ev.pointerId)}},{passive:true});
  shader(el,0,0,true);
 }
 new MutationObserver(attach).observe(document.getElementById('modal')||document.body,{childList:true,subtree:true});attach();
 })();
 </script>
-</body></html>
+<style id="fx-v17-mobile-styles">
+/* viewport and status-bar safe areas, including installed iOS web apps */
+#fx-trial-shell{padding:calc(env(safe-area-inset-top,0px) + 8px) calc(env(safe-area-inset-right,0px) + 8px) calc(env(safe-area-inset-bottom,0px) + 8px) calc(env(safe-area-inset-left,0px) + 8px)!important;overflow:hidden}
+#fx-trial-box{max-height:100%;height:min(94dvh,980px);min-height:0}
+#fx-trial-bar{flex:none;position:relative;z-index:2}
+#fx-trial-close{min-height:44px;min-width:70px;touch-action:manipulation}
+#fx-trial-frame{min-height:0;overscroll-behavior:contain}
+#fx-v17-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 14px;margin:10px auto;padding:10px 12px;border:1px solid #52637e;border-radius:10px;background:#1b2433;color:#e8f1ff;font-size:13px;max-width:95%}
+#fx-v17-controls label{display:flex;align-items:center;gap:8px;margin:0}
+#fx-v17-controls input[type=range]{width:140px;max-width:34vw;accent-color:#7fb4ff}
+#fx-v17-controls button{background:#30435e;color:white;border:1px solid #7189a9;border-radius:8px;padding:8px 12px;min-height:40px;touch-action:manipulation}
+#collection-viewer-art{touch-action:none}
+@media(max-width:640px){
+#fx-trial-shell{align-items:stretch!important;justify-content:stretch!important;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)!important}
+#fx-trial-box{width:100%;height:100%;max-height:100%;border-radius:0;overflow:hidden}
+#fx-trial-bar{padding:8px 10px!important;gap:6px!important;max-height:40%;overflow-y:auto;overscroll-behavior:contain}
+#fx-trial-heading{font-size:11px!important;line-height:1.35}
+#fx-trial-controls{gap:6px;min-width:0}
+#fx-trial-controls label{min-width:0;width:100%;display:flex;align-items:center;gap:6px}
+#fx-trial-card-select{flex:1;min-width:0;max-width:100%;font-size:16px}
+#fx-trial-frame{width:100%;flex:1;min-height:0}
+#fx-v17-controls{max-width:100%;gap:6px;padding:8px}
+#fx-v17-controls input[type=range]{width:110px}
+}
+</style></body></html>
