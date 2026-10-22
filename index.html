@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v42.0</title>
+<title>みん会TCG Simulator v44.0</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22077,7 +22077,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
 </style>
 <style>
 
-/* Ver42.0: progressive UX layer; original application controls remain intact. */
+/* Ver44.0: progressive UX layer; original application controls remain intact. */
 .v42-nav-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--panel2,#20242d);border:1px solid var(--line,#353b47);color:var(--text,#fff);border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:700}
 .v42-nav-panel{position:fixed;z-index:9995;top:62px;left:12px;width:min(580px,calc(100vw - 24px));max-height:calc(100dvh - 78px);overflow:auto;background:var(--panel,#171a21);color:var(--text,#fff);border:1px solid var(--line,#353b47);border-radius:14px;box-shadow:0 14px 42px #0009;padding:14px}
 .v42-nav-panel[hidden],.v42-quicklinks[hidden]{display:none!important}
@@ -22115,7 +22115,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v42.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v44.0 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -41961,7 +41961,7 @@ window.minkaiPacksV29={getState:()=>C(db),getPackSnapshot:(id)=>{const p=db.pack
 
 // END V29 INLINE
 })();
-/* Ver42.0: share deck draft state with the separate autosave script without copying stale values. */
+/* Ver44.0: share deck draft state with the separate autosave script without copying stale values. */
 for (const [key, read, write] of [
  ['workingDeck',()=>workingDeck,v=>{workingDeck=v}],
  ['editingDeckId',()=>editingDeckId,v=>{editingDeckId=v}],
@@ -43605,7 +43605,7 @@ window.MinkaiOnlineEventV299={open,sync,version:VERSION,protocol:PROTOCOL};windo
 </style>
 <script>
 
-/* Ver42.0 progressive enhancement: never replaces core navigation or persistence. */
+/* Ver44.0 progressive enhancement: never replaces core navigation or persistence. */
 (()=>{'use strict';
 const ready=()=>{
  const appbar=document.querySelector('header.appbar');if(!appbar||document.getElementById('v42-nav-toggle'))return;
@@ -43686,8 +43686,8 @@ const ready=()=>{
  #fx-trial-frame{height:0!important;min-height:0!important;flex:1 1 0!important}
 }
 </style>
-<button type="button" id="fx-trial-launch" aria-haspopup="dialog">加工プレビュー（試験）</button>
-<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="加工プレビュー（試験）"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">FX v22.2 試験連携｜登録済みカードを選んで加工を保存（従来の外観描画は維持）</div><button type="button" id="fx-trial-close">閉じる</button><div id="fx-trial-controls"><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="FX加工プレビュー v22.2" loading="lazy" data-src="./fx_trial_preview.html"></iframe></div></div>
+<button type="button" id="fx-trial-launch" aria-haspopup="dialog">カード加工エディター</button>
+<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定｜カードを選んで加工を保存</div><button type="button" id="fx-trial-close">閉じる</button><div id="fx-trial-controls"><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver44.0 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html"></iframe></div></div>
 <script>
 (function(){'use strict';
 const launch=document.getElementById('fx-trial-launch'),shell=document.getElementById('fx-trial-shell'),close=document.getElementById('fx-trial-close'),frame=document.getElementById('fx-trial-frame');
@@ -43898,3 +43898,6 @@ new MutationObserver(attach).observe(document.getElementById('modal')||document.
 #fx-v17-controls input[type=range]{width:110px}
 }
 </style></body></html>
+<style>
+@media(max-width:800px){#fx-trial-box{width:100%!important;max-width:100vw!important;min-width:0!important;overflow:hidden!important}#fx-trial-bar{padding:8px!important;gap:6px!important}#fx-trial-heading{font-size:12px!important;line-height:1.35!important}#fx-trial-controls{width:100%!important;min-width:0!important}#fx-trial-card-select{width:100%!important;max-width:100%!important;min-width:0!important}#fx-trial-frame{width:100%!important;min-width:0!important}#fx-trial-close{flex-shrink:0!important}}
+</style>
