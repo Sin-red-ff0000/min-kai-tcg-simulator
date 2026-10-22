@@ -43672,6 +43672,19 @@ const ready=()=>{
 #fx-trial-status{font-size:12px;color:#bcd1ed;flex:1 1 150px;min-width:0;overflow-wrap:anywhere}
 #fx-trial-frame{border:0;flex:1;min-height:0;width:100%;background:#151923}
 @media(max-width:640px){#fx-trial-shell{padding:4px}#fx-trial-box{height:98vh}#fx-trial-bar{padding:9px;gap:8px}#fx-trial-heading{font-size:12px}#fx-trial-controls label{flex-basis:100%}#fx-trial-card-select{min-width:0}}
+
+/* v1.9 mobile FX dialog: prevent intrinsic iframe width from stretching content */
+#fx-trial-shell,#fx-trial-box,#fx-trial-frame{min-width:0!important;max-width:100%;box-sizing:border-box}
+#fx-trial-frame{display:block;width:100%!important;min-width:0!important;max-width:100%!important;flex:1 1 0!important}
+@media(max-width:640px){
+ #fx-trial-shell{inset:0!important;width:100vw!important;max-width:100vw!important;padding:calc(env(safe-area-inset-top,0px) + 4px) 4px calc(env(safe-area-inset-bottom,0px) + 4px)!important;align-items:stretch!important}
+ #fx-trial-box{width:100%!important;max-width:100%!important;height:100%!important;max-height:100%!important;min-height:0!important;border-radius:9px!important}
+ #fx-trial-bar{flex:none!important;max-height:35vh;overflow-y:auto;grid-template-columns:minmax(0,1fr) auto!important}
+ #fx-trial-controls{min-width:0!important;width:100%!important}
+ #fx-trial-controls label{flex:1 1 100%!important;display:flex;flex-direction:column;align-items:stretch!important;gap:4px!important}
+ #fx-trial-card-select{width:100%!important;max-width:100%!important;min-width:0!important}
+ #fx-trial-frame{height:0!important;min-height:0!important;flex:1 1 0!important}
+}
 </style>
 <button type="button" id="fx-trial-launch" aria-haspopup="dialog">加工プレビュー（試験）</button>
 <div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="加工プレビュー（試験）"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">FX v22.2 試験連携｜登録済みカードを選んで加工を保存（従来の外観描画は維持）</div><button type="button" id="fx-trial-close">閉じる</button><div id="fx-trial-controls"><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="FX加工プレビュー v22.2" loading="lazy" data-src="./fx_trial_preview.html"></iframe></div></div>
