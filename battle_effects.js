@@ -3,7 +3,7 @@
 const styles=document.createElement('style');styles.textContent=`
 .mk-battle-fx-controls{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-left:auto}
 .mk-battle-fx-controls button{width:38px;height:36px;border:1px solid #70849b;border-radius:9px;background:#192a3e;color:#fff;cursor:pointer;font-size:21px;line-height:1}
-.mk-battle-fx-controls button:disabled{opacity:.35;cursor:default}.online-player-section:not(.online-duel-opponent) .mk-battle-fx-controls button{opacity:1!important;pointer-events:auto!important}
+.mk-battle-fx-controls button:disabled{opacity:1;cursor:pointer}.online-player-section:not(.online-duel-opponent) .mk-battle-fx-controls button{opacity:1!important;pointer-events:auto!important}
 .mk-battle-fx-controls button:active{transform:scale(.94)}
 .mk-battle-fx-layer{position:absolute;inset:0;z-index:80;pointer-events:none;overflow:hidden;border-radius:9px}
 .online-player-section{position:relative;isolation:isolate}
@@ -70,7 +70,7 @@ function install(){
     bar.append(btn);
    }toolbar.append(bar);
   }
-  bar.querySelectorAll('button').forEach(btn=>{btn.disabled=own!==slot;btn.style.pointerEvents=own===slot?'auto':'none'});
+  bar.querySelectorAll('button').forEach(btn=>{btn.disabled=false;btn.removeAttribute('aria-disabled');btn.style.pointerEvents='auto';btn.style.opacity='1';btn.dataset.fxOwn=String(own===slot)});
  });
 }
 // Event delegation survives board redraws and prevents stale listeners.
@@ -78,7 +78,7 @@ document.addEventListener('click',event=>{
  const btn=event.target.closest?.('button[data-battle-fx]');if(!btn)return;
  event.preventDefault();event.stopPropagation();
  const bar=btn.closest('[data-fx-slot]');const slot=Number(bar?.dataset.fxSlot),kind=btn.dataset.battleFx;
- if(btn.closest('.online-duel-opponent'))return;
+ if(btn.closest('.online-duel-opponent') && document.querySelector('#online-duel-main > .online-player-section:not(.online-duel-opponent)'))return;
  if(btn.disabled){btn.disabled=false;btn.style.pointerEvents='auto'}
  if(!['win','lose','damage'].includes(kind))return;
  paint(slot,kind);
@@ -102,3 +102,5 @@ if(typeof onlineHandleRoomMessage==='function'){
 }
 install();setInterval(install,350);
 })();
+
+/* Ver46.7: buttons remain enabled even when player ownership is unresolved; spectator/remote sections are guarded on activation. */
