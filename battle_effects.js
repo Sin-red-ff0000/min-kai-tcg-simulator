@@ -26,8 +26,8 @@ else{const appear=ease(t/.35),crack=clamp((t-.42)/.32),broken=clamp((t-.85)/1.2)
 // Supabase Realtime: cosmetic events only. Room-scoped topic; no game state is transmitted.
 const remoteFx={client:null,channel:null,key:'',ready:false,loading:null,subscribing:null,seen:new Set(),generation:0};
 function fxRemoteRoom(){
- try{return onlineSessionState?.joinCode&&onlineSessionState?.provider==='remote'
- ?String(onlineSessionState.joinCode).trim().toUpperCase():''}catch(e){console.warn('FX room lookup',e);return ''}
+ try{return window.__mkFxGetState()?.joinCode&&window.__mkFxGetState()?.provider==='remote'
+ ?String(window.__mkFxGetState().joinCode).trim().toUpperCase():''}catch(e){console.warn('FX room lookup',e);return ''}
 }
 function fxStatus(message,error){
  let el=document.getElementById('mk-fx-sync-status');
@@ -56,7 +56,7 @@ async function fxLoadClient(){
 function fxTopic(code){return 'minkai-battle-fx-v2:'+code}
 function fxReceive(payload,code,key){
  if(remoteFx.key!==key||fxRemoteRoom()!==code||!payload||payload.code!==code)return;
- if(payload.from===onlineSessionState?.clientId)return;
+ if(payload.from===window.__mkFxGetState()?.clientId)return;
  if(!['win','lose','damage'].includes(payload.kind)||![1,2].includes(Number(payload.slot)))return;
  if(typeof payload.eventId!=='string'||payload.eventId.length>100||remoteFx.seen.has(payload.eventId))return;
  remoteFx.seen.add(payload.eventId);if(remoteFx.seen.size>200)remoteFx.seen.clear();
@@ -101,7 +101,7 @@ async function fxEnsureChannel(){
 }
 async function fxSendRemote(slot,kind){
  const code=fxRemoteRoom();
- if(!code){fxStatus('Supabaseオンラインルームではありません（provider='+String(onlineSessionState?.provider)+')',true);return false;}
+ if(!code){fxStatus('Supabaseオンラインルームではありません（provider='+String(window.__mkFxGetState()?.provider)+')',true);return false;}
  // Subscribe first: the previous version discarded the first click while connecting.
  const channel=await fxEnsureChannel();
  if(!channel||!remoteFx.ready||fxRemoteRoom()!==code){
@@ -109,10 +109,10 @@ async function fxSendRemote(slot,kind){
   fxStatus('Realtime未接続：演出を送信できません',true);
   return false;
  }
- const eventId=String(onlineSessionState?.clientId||'client')+'-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+ const eventId=String(window.__mkFxGetState()?.clientId||'client')+'-'+Date.now()+'-'+Math.random().toString(36).slice(2);
  try{
   const result=await channel.send({type:'broadcast',event:'presentation-fx',
-   payload:{code,slot,kind,from:onlineSessionState?.clientId,eventId}});
+   payload:{code,slot,kind,from:window.__mkFxGetState()?.clientId,eventId}});
   if(result!=='ok')throw new Error('Broadcast '+result);
   return true;
  }catch(e){
@@ -152,9 +152,9 @@ document.addEventListener('click',event=>{
  if(btn.disabled){btn.disabled=false;btn.style.pointerEvents='auto'}
  if(!['win','lose','damage'].includes(kind))return;
  paint(slot,kind);
- const code=String(onlineSessionState?.joinCode||'').trim();
- if(code && onlineSessionState?.provider!=='remote'){
-   try{onlineBroadcast('battle-presentation-fx',{slot,kind,eventId:Date.now()+'-'+Math.random()});fxStatus('ローカル通信で送信',false)}catch(e){fxStatus('ローカル通信エラー',true)}
+ const code=String(window.__mkFxGetState()?.joinCode||'').trim();
+ if(code && window.__mkFxGetState()?.provider!=='remote'){
+   try{window.__mkFxBroadcast('battle-presentation-fx',{slot,kind,eventId:Date.now()+'-'+Math.random()});fxStatus('ローカル通信で送信',false)}catch(e){fxStatus('ローカル通信エラー',true)}
  }else if(code){
    fxSendRemote(slot,kind).then(ok=>{
      if(!ok)fxStatus('相手への送信に失敗しました',true);
@@ -169,14 +169,11 @@ const observer=new MutationObserver(()=>{
  installing=true;try{install()}finally{installing=false}
 });
 observer.observe(document.querySelector('#online-duel-main')||document.body,{childList:true,subtree:true});
-if(typeof onlineHandleRoomMessage==='function'){
- const original=onlineHandleRoomMessage;
- onlineHandleRoomMessage=function(msg){
-  if(msg?.type==='battle-presentation-fx'&&msg.code===onlineSessionState.joinCode&&msg.from!==onlineSessionState.clientId){
-   const p=msg.payload;if([1,2].includes(Number(p?.slot))&&['win','lose','damage'].includes(p?.kind))paint(Number(p.slot),p.kind);return;
-  }return original.apply(this,arguments)
- }
-}
+window.addEventListener('mk-fx-local-message',event=>{const msg=event.detail;
+ if(msg?.type==='battle-presentation-fx'&&msg.code===window.__mkFxGetState().joinCode&&msg.from!==window.__mkFxGetState().clientId){
+ const p=msg.payload;if([1,2].includes(Number(p?.slot))&&['win','lose','damage'].includes(p?.kind))paint(Number(p.slot),p.kind);
+ }});
+
 install();setInterval(install,350);
 })();
 
