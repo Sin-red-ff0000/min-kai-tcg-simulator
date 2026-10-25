@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v45.3</title>
+<title>みん会TCG Simulator v45.4</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22077,7 +22077,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
 </style>
 <style>
 
-/* Ver45.3: progressive UX layer; original application controls remain intact. */
+/* Ver45.4: progressive UX layer; original application controls remain intact. */
 .v42-nav-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--panel2,#20242d);border:1px solid var(--line,#353b47);color:var(--text,#fff);border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:700}
 .v42-nav-panel{position:fixed;z-index:9995;top:62px;left:12px;width:min(580px,calc(100vw - 24px));max-height:calc(100dvh - 78px);overflow:auto;background:var(--panel,#171a21);color:var(--text,#fff);border:1px solid var(--line,#353b47);border-radius:14px;box-shadow:0 14px 42px #0009;padding:14px}
 .v42-nav-panel[hidden],.v42-quicklinks[hidden]{display:none!important}
@@ -22132,7 +22132,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v45.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v45.4 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -29328,7 +29328,7 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      shell.hidden=false;
      if(!frame.getAttribute('src')){
        frame.addEventListener('load',()=>setTimeout(openSelected,0),{once:true});
-       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=45.3';
+       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=45.4';
      }else openSelected();
      return;
    }
@@ -41978,7 +41978,7 @@ window.minkaiPacksV29={getState:()=>C(db),getPackSnapshot:(id)=>{const p=db.pack
 
 // END V29 INLINE
 })();
-/* Ver45.3: share deck draft state with the separate autosave script without copying stale values. */
+/* Ver45.4: share deck draft state with the separate autosave script without copying stale values. */
 for (const [key, read, write] of [
  ['workingDeck',()=>workingDeck,v=>{workingDeck=v}],
  ['editingDeckId',()=>editingDeckId,v=>{editingDeckId=v}],
@@ -43622,7 +43622,7 @@ window.MinkaiOnlineEventV299={open,sync,version:VERSION,protocol:PROTOCOL};windo
 </style>
 <script>
 
-/* Ver45.3 progressive enhancement: never replaces core navigation or persistence. */
+/* Ver45.4 progressive enhancement: never replaces core navigation or persistence. */
 (()=>{'use strict';
 const ready=()=>{
  const appbar=document.querySelector('header.appbar');if(!appbar||document.getElementById('v42-nav-toggle'))return;
@@ -43673,7 +43673,7 @@ const ready=()=>{
 
 </script>
 
-<!-- Ver45.3 card effects editor launcher -->
+<!-- Ver45.4 card effects editor launcher -->
 <style>
 #fx-trial-launch[hidden]{display:none!important}
 #fx-trial-launch{position:fixed;right:16px;bottom:76px;z-index:2147483000;border:1px solid #88b8ff;border-radius:12px;padding:10px 14px;background:#182a45;color:#fff;box-shadow:0 4px 20px #0009;font-weight:700;cursor:pointer}
@@ -43704,7 +43704,7 @@ const ready=()=>{
 }
 </style>
 <style>
-/* Ver45.3: compact editor header; card chooser expands only on demand. */
+/* Ver45.4: compact editor header; card chooser expands only on demand. */
 #fx-trial-top-actions{display:flex;gap:6px;align-items:center;justify-content:flex-end}
 #fx-trial-card-toggle{background:#283e5e;color:#fff;border:1px solid #7b98c2;padding:9px 11px;border-radius:8px;white-space:nowrap;cursor:pointer}
 #fx-trial-controls[hidden]{display:none!important}
@@ -43713,7 +43713,7 @@ const ready=()=>{
 @media(max-width:640px){#fx-trial-bar{padding:7px 9px!important;gap:5px!important}#fx-trial-heading{font-size:12px!important;line-height:1.3!important}#fx-trial-top-actions{gap:5px}#fx-trial-card-toggle,#fx-trial-close{font-size:12px!important;padding:9px 8px!important;min-height:40px}#fx-trial-controls:not([hidden]){display:flex!important;max-height:35dvh;overflow-y:auto;padding:8px 0}#fx-trial-card-select{font-size:16px!important}}
 </style>
 <button type="button" id="fx-trial-launch" aria-haspopup="dialog">カード加工エディター</button>
-<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定 <span id="fx-trial-current-card">｜カード未選択</span></div><div id="fx-trial-top-actions"><button type="button" id="fx-trial-card-toggle" aria-expanded="false" aria-controls="fx-trial-controls">カードを変更</button><button type="button" id="fx-trial-close">閉じる</button></div><div id="fx-trial-controls" hidden><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver45.3 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html?v=45.3"></iframe></div></div>
+<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定 <span id="fx-trial-current-card">｜カード未選択</span></div><div id="fx-trial-top-actions"><button type="button" id="fx-trial-card-toggle" aria-expanded="false" aria-controls="fx-trial-controls">カードを変更</button><button type="button" id="fx-trial-close">閉じる</button></div><div id="fx-trial-controls" hidden><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver45.4 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html?v=45.4"></iframe></div></div>
 <script>
 (function(){
  const controls=document.getElementById('fx-trial-controls'),toggle=document.getElementById('fx-trial-card-toggle'),select=document.getElementById('fx-trial-card-select'),current=document.getElementById('fx-trial-current-card');
@@ -43794,7 +43794,7 @@ function ensureFrame(){
  if(frame)return;
  frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
- frame.src='./fx_trial_preview.html?v=45.3';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
+ frame.src='./fx_trial_preview.html?v=45.4';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
 }
 function place(el,url){
  if(!el.isConnected)return;
@@ -43964,7 +43964,7 @@ new MutationObserver(attach).observe(document.getElementById('modal')||document.
 #fx-trial-frame{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 auto!important;height:auto!important;min-height:240px!important;width:100%!important}
 @media(max-width:800px){#fx-trial-box{height:100%!important;max-height:100%!important}#fx-trial-bar{flex:0 0 auto!important;max-height:32dvh!important;overflow-y:auto!important}#fx-trial-frame{height:auto!important;min-height:240px!important;flex:1 1 auto!important}}
 </style><script>
-/* Ver45.3: keep installed mobile PWA current after deployment. */
+/* Ver45.4: keep installed mobile PWA current after deployment. */
 (()=>{if(!('serviceWorker' in navigator)||location.protocol==='file:')return;
 let controlled=!!navigator.serviceWorker.controller;
 navigator.serviceWorker.addEventListener('controllerchange',()=>{
