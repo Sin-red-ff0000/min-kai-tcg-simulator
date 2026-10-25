@@ -1,4 +1,4 @@
-const CACHE_NAME='minkai-tcg-v45.5';
+const CACHE_NAME='minkai-tcg-v45.6';
 const APP_SHELL=['./index.html','./manifest.webmanifest'];
 self.addEventListener('install',event=>{event.waitUntil(
   caches.open(CACHE_NAME).then(c=>c.addAll(APP_SHELL.map(u=>new Request(u,{cache:'reload'})))).then(()=>self.skipWaiting())
