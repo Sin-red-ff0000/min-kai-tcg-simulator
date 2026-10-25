@@ -56,9 +56,47 @@ async function fxEnsureChannel(){
 }
 async function fxSendRemote(slot,kind){const channel=await fxEnsureChannel();if(!channel||!remoteFx.ready){console.warn('Battle FX realtime not connected');return}try{const result=await channel.send({type:'broadcast',event:'presentation-fx',payload:{code:fxRemoteRoom(),slot,kind,from:onlineSessionState.clientId,eventId:onlineSessionState.clientId+'-'+Date.now()+'-'+Math.random().toString(36).slice(2)}});if(result!=='ok')console.warn('Battle FX send',result)}catch(e){console.warn('Battle FX send failed',e)}}
 setInterval(()=>{const key=fxRemoteRoom();if(key){if(remoteFx.key!==`minkai-battle-fx-v1:${key}`||!remoteFx.channel)fxEnsureChannel()}else if(remoteFx.channel)fxEnsureChannel()},1200);
-function install(){const host=document.querySelector('#online-duel-main');if(!host||!host.querySelector('.online-player-section'))return;host.querySelectorAll(':scope > .online-player-section').forEach((section,index)=>{const slot=index===0?2:1;if(section.querySelector('.mk-battle-fx-controls'))return;const bar=document.createElement('div');bar.className='mk-battle-fx-controls';for(const [kind,symbol,title] of [['win','✦','勝利エフェクト'],['lose','✹','敗北エフェクト'],['damage','◇','ダメージエフェクト']]){const btn=document.createElement('button');btn.type='button';btn.textContent=symbol;btn.title=title;btn.setAttribute('aria-label',title);const own=typeof onlineOwnSlot==='function'?Number(onlineOwnSlot()):0;btn.disabled=own!==slot;btn.addEventListener('click',()=>{if(btn.disabled)return;paint(slot,kind);if(fxRemoteRoom()){fxSendRemote(slot,kind)}else{try{onlineBroadcast('battle-presentation-fx',{slot,kind,eventId:Date.now()+'-'+Math.random()})}catch(e){console.warn('FX broadcast',e)}}});bar.append(btn)}const toolbar=section.querySelector('.section-head,.board-panel-head,.online-player-action-toolbar')||section;toolbar.append(bar)})}
-const observer=new MutationObserver(()=>{if(document.querySelector('#screen-online-duel.active'))install()});observer.observe(document.body,{childList:true,subtree:true});
-// Reuse existing room BroadcastChannel handler so the event is visible to both participants in local-broadcast rooms.
-if(typeof onlineHandleRoomMessage==='function'){const original=onlineHandleRoomMessage;onlineHandleRoomMessage=function(msg){if(msg?.type==='battle-presentation-fx'&&msg.code===onlineSessionState.joinCode&&msg.from!==onlineSessionState.clientId){const p=msg.payload;if([1,2].includes(Number(p?.slot))&&['win','lose','damage'].includes(p?.kind))paint(Number(p.slot),p.kind);return}return original.apply(this,arguments)}}
-install();
+function install(){
+ const host=document.querySelector('#online-duel-main');if(!host)return;
+ const own=typeof onlineOwnSlot==='function'?Number(onlineOwnSlot()):0;
+ host.querySelectorAll(':scope > .online-player-section').forEach((section,index)=>{
+  const slot=index===0?2:1;
+  const toolbar=section.querySelector('.online-player-toolbar')||section;
+  let bar=section.querySelector('.mk-battle-fx-controls');
+  if(!bar){bar=document.createElement('div');bar.className='mk-battle-fx-controls';bar.setAttribute('data-fx-slot',String(slot));
+   for(const [kind,symbol,title] of [['win','✦','勝利エフェクト'],['lose','✹','敗北エフェクト'],['damage','◇','ダメージエフェクト']]){
+    const btn=document.createElement('button');btn.type='button';btn.textContent=symbol;btn.title=title;btn.setAttribute('aria-label',title);btn.dataset.battleFx=kind;
+    bar.append(btn);
+   }toolbar.append(bar);
+  }
+  bar.querySelectorAll('button').forEach(btn=>{btn.disabled=own!==slot;btn.style.pointerEvents=own===slot?'auto':'none'});
+ });
+}
+// Event delegation survives board redraws and prevents stale listeners.
+document.addEventListener('click',event=>{
+ const btn=event.target.closest?.('button[data-battle-fx]');if(!btn)return;
+ event.preventDefault();event.stopPropagation();
+ const bar=btn.closest('[data-fx-slot]');const slot=Number(bar?.dataset.fxSlot),kind=btn.dataset.battleFx;
+ if(btn.disabled||slot!==Number(typeof onlineOwnSlot==='function'?onlineOwnSlot():0))return;
+ if(!['win','lose','damage'].includes(kind))return;
+ paint(slot,kind);
+ if(fxRemoteRoom())fxSendRemote(slot,kind);
+ else try{onlineBroadcast('battle-presentation-fx',{slot,kind,eventId:Date.now()+'-'+Math.random()})}catch(e){console.warn('FX broadcast',e)}
+},true);
+let installing=false;
+const observer=new MutationObserver(()=>{
+ if(installing)return;
+ if(!document.querySelector('#online-duel-main > .online-player-section'))return;
+ installing=true;try{install()}finally{installing=false}
+});
+observer.observe(document.querySelector('#online-duel-main')||document.body,{childList:true,subtree:true});
+if(typeof onlineHandleRoomMessage==='function'){
+ const original=onlineHandleRoomMessage;
+ onlineHandleRoomMessage=function(msg){
+  if(msg?.type==='battle-presentation-fx'&&msg.code===onlineSessionState.joinCode&&msg.from!==onlineSessionState.clientId){
+   const p=msg.payload;if([1,2].includes(Number(p?.slot))&&['win','lose','damage'].includes(p?.kind))paint(Number(p.slot),p.kind);return;
+  }return original.apply(this,arguments)
+ }
+}
+install();setInterval(install,1500);
 })();
