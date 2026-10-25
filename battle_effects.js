@@ -3,7 +3,7 @@
 const styles=document.createElement('style');styles.textContent=`
 .mk-battle-fx-controls{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-left:auto}
 .mk-battle-fx-controls button{width:38px;height:36px;border:1px solid #70849b;border-radius:9px;background:#192a3e;color:#fff;cursor:pointer;font-size:21px;line-height:1}
-.mk-battle-fx-controls button:disabled{opacity:.35;cursor:default}
+.mk-battle-fx-controls button:disabled{opacity:.35;cursor:default}.online-player-section:not(.online-duel-opponent) .mk-battle-fx-controls button{opacity:1!important;pointer-events:auto!important}
 .mk-battle-fx-controls button:active{transform:scale(.94)}
 .mk-battle-fx-layer{position:absolute;inset:0;z-index:80;pointer-events:none;overflow:hidden;border-radius:9px}
 .online-player-section{position:relative;isolation:isolate}
@@ -58,7 +58,8 @@ async function fxSendRemote(slot,kind){const channel=await fxEnsureChannel();if(
 setInterval(()=>{const key=fxRemoteRoom();if(key){if(remoteFx.key!==`minkai-battle-fx-v1:${key}`||!remoteFx.channel)fxEnsureChannel()}else if(remoteFx.channel)fxEnsureChannel()},1200);
 function install(){
  const host=document.querySelector('#online-duel-main');if(!host)return;
- const own=typeof onlineOwnSlot==='function'?Number(onlineOwnSlot()):0;
+ const ownSection=host.querySelector(':scope > .online-player-section:not(.online-duel-opponent)');
+ const own=ownSection?([...host.querySelectorAll(':scope > .online-player-section')].indexOf(ownSection)===0?2:1):0;
  host.querySelectorAll(':scope > .online-player-section').forEach((section,index)=>{
   const slot=index===0?2:1;
   const toolbar=section.querySelector('.online-player-toolbar')||section;
@@ -77,7 +78,8 @@ document.addEventListener('click',event=>{
  const btn=event.target.closest?.('button[data-battle-fx]');if(!btn)return;
  event.preventDefault();event.stopPropagation();
  const bar=btn.closest('[data-fx-slot]');const slot=Number(bar?.dataset.fxSlot),kind=btn.dataset.battleFx;
- if(btn.disabled||slot!==Number(typeof onlineOwnSlot==='function'?onlineOwnSlot():0))return;
+ if(btn.closest('.online-duel-opponent'))return;
+ if(btn.disabled){btn.disabled=false;btn.style.pointerEvents='auto'}
  if(!['win','lose','damage'].includes(kind))return;
  paint(slot,kind);
  if(fxRemoteRoom())fxSendRemote(slot,kind);
@@ -98,5 +100,5 @@ if(typeof onlineHandleRoomMessage==='function'){
   }return original.apply(this,arguments)
  }
 }
-install();setInterval(install,1500);
+install();setInterval(install,350);
 })();
