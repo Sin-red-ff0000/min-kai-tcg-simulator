@@ -24,38 +24,101 @@ if(type==='win'){const charge=ease(t/.75),release=ease((t-.55)/.85),fade=1-clamp
 else if(type==='lose'){const blast=ease((t-.25)/.75),fade=1-clamp((t-2.35)/1);glow(x,y,Math.max(1,w*.5*blast),`rgba(244,78,21,${.68*fade})`);glow(x,y,Math.max(1,75*blast),`rgba(255,241,160,${.95*fade})`);for(let i=0;i<16;i++){const a=i*Math.PI/8,len=(w*.3+30*Math.sin(i*7))*blast;ctx.save();ctx.translate(x,y);ctx.rotate(a);const g=ctx.createLinearGradient(0,0,Math.max(1,len),0);g.addColorStop(0,'#fff3bd');g.addColorStop(.3,'#ff8d25');g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(0,-9);ctx.lineTo(len,0);ctx.lineTo(0,9);ctx.fill();ctx.restore()}for(let i=0;i<3;i++){const v=clamp((t-.3-i*.16)/.8);ring(x,y,ease(v)*w*.55,(1-v)*fade,'#ffb050')}for(const p of particles){const v=clamp((t-.3-p.delay*.4)/2);if(!v)continue;ctx.globalAlpha=fade*(1-v);ctx.fillStyle=p.v>.5?'#ffe38b':'#f45d22';ctx.fillRect(x+Math.cos(p.a)*p.r*ease(v),y+Math.sin(p.a)*p.r*.65*ease(v)+v*v*65,p.s*1.5,p.s*1.5)}}
 else{const appear=ease(t/.35),crack=clamp((t-.42)/.32),broken=clamp((t-.85)/1.2),fade=1-clamp((t-2.15)/.65);glow(x,y,125*appear*(1-broken*.8),'rgba(76,218,251,.55)');if(t<.96){ctx.save();ctx.translate(x,y);ctx.scale(appear,appear);const g=ctx.createLinearGradient(-48,-65,48,65);g.addColorStop(0,'#d9ffffb9');g.addColorStop(.55,'#49c9ed85');g.addColorStop(1,'#a9f7ffae');ctx.fillStyle=g;ctx.strokeStyle='#e4ffff';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(-46,-64,92,128,5);ctx.fill();ctx.stroke();ctx.globalAlpha=crack;ctx.strokeStyle='#fff';for(let i=0;i<16;i++){const a=i*Math.PI/8;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(a)*25,Math.sin(a)*25);ctx.lineTo(Math.cos(a+.25)*58,Math.sin(a+.25)*60);ctx.stroke()}ctx.restore()}if(t>.8){for(const p of shards){const v=clamp((t-.8)/1.3);ctx.save();ctx.translate(x+p.x+p.vx*v,y+p.y+p.vy*v+v*v*110);ctx.rotate(p.spin*v);ctx.globalAlpha=fade*(1-v*.7);ctx.fillStyle='#9deeffaa';ctx.strokeStyle='#e5ffff';ctx.beginPath();ctx.moveTo(-p.sz,-p.sz);ctx.lineTo(p.sz*.8,-p.sz*.3);ctx.lineTo(p.sz*.2,p.sz);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore()}ring(x,y,ease(clamp((t-.8)/.75))*w*.43,(1-clamp((t-.8)/.75))*fade,'#a5f4ff')}}ctx.restore();state.raf=requestAnimationFrame(frame)}state.raf=requestAnimationFrame(frame)}
 // Supabase Realtime: cosmetic events only. Room-scoped topic; no game state is transmitted.
-const remoteFx={client:null,channel:null,key:'',ready:false,loading:null,seen:new Set()};
-function fxRemoteRoom(){try{return typeof onlineUsingRemoteProvider==='function'&&onlineUsingRemoteProvider()&&onlineSessionState?.connection==='connected'&&onlineSessionState?.joinCode?String(onlineSessionState.joinCode):''}catch(_){return ''}}
+const remoteFx={client:null,channel:null,key:'',ready:false,loading:null,subscribing:null,seen:new Set(),generation:0};
+function fxRemoteRoom(){
+ try{return typeof onlineUsingRemoteProvider==='function'&&onlineUsingRemoteProvider()
+  &&onlineSessionState?.joinCode&&onlineSessionState?.connection!=='offline'
+  ?String(onlineSessionState.joinCode).trim().toUpperCase():''}catch(_){return ''}
+}
 async function fxLoadClient(){
  if(remoteFx.client)return remoteFx.client;
  if(!remoteFx.loading)remoteFx.loading=new Promise((resolve,reject)=>{
   if(window.supabase?.createClient){resolve(window.supabase);return}
-  const el=document.createElement('script');el.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js';el.async=true;
-  el.onload=()=>window.supabase?.createClient?resolve(window.supabase):reject(new Error('Supabase client unavailable'));
-  el.onerror=()=>reject(new Error('Supabase client could not load'));document.head.appendChild(el);
+  const el=document.createElement('script');
+  el.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js';
+  el.async=true;el.onload=()=>window.supabase?.createClient?resolve(window.supabase):reject(new Error('Supabase client unavailable'));
+  el.onerror=()=>reject(new Error('Supabase client could not load'));document.head.appendChild(el)
  }).catch(e=>{remoteFx.loading=null;throw e});
  const lib=await remoteFx.loading;
- remoteFx.client=lib.createClient('https://kxwsrzpaewhnvirfgxpz.supabase.co','sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_',{auth:{persistSession:false,autoRefreshToken:false},realtime:{params:{eventsPerSecond:10}}});
+ if(!remoteFx.client)remoteFx.client=lib.createClient(
+  'https://kxwsrzpaewhnvirfgxpz.supabase.co',
+  'sb_publishable_P7uwfrXzWraD4zdt1V52YA_i8dDvVS_',
+  {auth:{persistSession:false,autoRefreshToken:false},realtime:{params:{eventsPerSecond:10}}});
  return remoteFx.client;
 }
-async function fxEnsureChannel(){
- const code=fxRemoteRoom();const key=code?`minkai-battle-fx-v1:${code}`:'';
- if(remoteFx.key===key&&remoteFx.channel)return remoteFx.channel;
- if(remoteFx.channel){try{await remoteFx.client.removeChannel(remoteFx.channel)}catch(_){}remoteFx.channel=null}
- remoteFx.key=key;remoteFx.ready=false;if(!key)return null;
- try{const client=await fxLoadClient();if(remoteFx.key!==key)return null;
- const channel=client.channel(key,{config:{broadcast:{self:false,ack:true}}});remoteFx.channel=channel;
- channel.on('broadcast',{event:'presentation-fx'},({payload})=>{
-  if(remoteFx.key!==key||!payload||payload.code!==code)return;
-  if(payload.from===onlineSessionState.clientId||!['win','lose','damage'].includes(payload.kind)||![1,2].includes(Number(payload.slot)))return;
-  if(typeof payload.eventId!=='string'||payload.eventId.length>100||remoteFx.seen.has(payload.eventId))return;
-  remoteFx.seen.add(payload.eventId);if(remoteFx.seen.size>120)remoteFx.seen.clear();
-  paint(Number(payload.slot),payload.kind);
- });channel.subscribe(status=>{remoteFx.ready=status==='SUBSCRIBED'});return channel;
- }catch(e){console.warn('Battle FX realtime connection failed',e);return null}
+function fxTopic(code){return 'minkai-battle-fx-v2:'+code}
+function fxReceive(payload,code,key){
+ if(remoteFx.key!==key||fxRemoteRoom()!==code||!payload||payload.code!==code)return;
+ if(payload.from===onlineSessionState?.clientId)return;
+ if(!['win','lose','damage'].includes(payload.kind)||![1,2].includes(Number(payload.slot)))return;
+ if(typeof payload.eventId!=='string'||payload.eventId.length>100||remoteFx.seen.has(payload.eventId))return;
+ remoteFx.seen.add(payload.eventId);if(remoteFx.seen.size>200)remoteFx.seen.clear();
+ paint(Number(payload.slot),payload.kind);
 }
-async function fxSendRemote(slot,kind){const channel=await fxEnsureChannel();if(!channel||!remoteFx.ready){console.warn('Battle FX realtime not connected');return}try{const result=await channel.send({type:'broadcast',event:'presentation-fx',payload:{code:fxRemoteRoom(),slot,kind,from:onlineSessionState.clientId,eventId:onlineSessionState.clientId+'-'+Date.now()+'-'+Math.random().toString(36).slice(2)}});if(result!=='ok')console.warn('Battle FX send',result)}catch(e){console.warn('Battle FX send failed',e)}}
-setInterval(()=>{const key=fxRemoteRoom();if(key){if(remoteFx.key!==`minkai-battle-fx-v1:${key}`||!remoteFx.channel)fxEnsureChannel()}else if(remoteFx.channel)fxEnsureChannel()},1200);
+async function fxEnsureChannel(){
+ const code=fxRemoteRoom(),key=code?fxTopic(code):'';
+ if(remoteFx.key===key&&remoteFx.channel&&remoteFx.ready)return remoteFx.channel;
+ if(remoteFx.key===key&&remoteFx.subscribing)return remoteFx.subscribing;
+ const generation=++remoteFx.generation;
+ const previous=remoteFx.channel;
+ remoteFx.channel=null;remoteFx.key=key;remoteFx.ready=false;remoteFx.subscribing=null;
+ if(previous&&remoteFx.client)remoteFx.client.removeChannel(previous).catch(()=>{});
+ if(!key)return null;
+ const task=(async()=>{
+  const client=await fxLoadClient();
+  if(remoteFx.generation!==generation)return null;
+  const channel=client.channel(key,{config:{broadcast:{self:false,ack:true}}});
+  remoteFx.channel=channel;
+  channel.on('broadcast',{event:'presentation-fx'},({payload})=>fxReceive(payload,code,key));
+  return await new Promise((resolve,reject)=>{
+   let finished=false;
+   const timeout=setTimeout(()=>finish(new Error('Realtime subscription timeout')),10000);
+   function finish(error){
+    if(finished)return;finished=true;clearTimeout(timeout);
+    if(error){remoteFx.ready=false;reject(error)}
+    else{remoteFx.ready=true;resolve(channel)}
+   }
+   channel.subscribe(status=>{
+    if(remoteFx.generation!==generation)return finish(new Error('Room changed'));
+    if(status==='SUBSCRIBED')finish();
+    else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'||status==='CLOSED')finish(new Error('Realtime '+status));
+   });
+  });
+ })();
+ remoteFx.subscribing=task;
+ try{return await task}catch(e){
+  console.warn('Battle FX subscription failed',e);
+  if(remoteFx.generation===generation){remoteFx.ready=false;remoteFx.channel=null}
+  return null;
+ }finally{if(remoteFx.subscribing===task)remoteFx.subscribing=null}
+}
+async function fxSendRemote(slot,kind){
+ const code=fxRemoteRoom();
+ if(!code)return false;
+ // Subscribe first: the previous version discarded the first click while connecting.
+ const channel=await fxEnsureChannel();
+ if(!channel||!remoteFx.ready||fxRemoteRoom()!==code){
+  console.warn('Battle FX not connected: cannot synchronize');
+  if(typeof toast==='function')toast('演出を相手へ送信できませんでした。通信状態を確認してください');
+  return false;
+ }
+ const eventId=String(onlineSessionState?.clientId||'client')+'-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+ try{
+  const result=await channel.send({type:'broadcast',event:'presentation-fx',
+   payload:{code,slot,kind,from:onlineSessionState?.clientId,eventId}});
+  if(result!=='ok')throw new Error('Broadcast '+result);
+  return true;
+ }catch(e){
+  console.warn('Battle FX send failed',e);
+  if(typeof toast==='function')toast('演出の同期に失敗しました');
+  return false;
+ }
+}
+setInterval(()=>{
+ const code=fxRemoteRoom(),key=code?fxTopic(code):'';
+ if(key!==remoteFx.key){fxEnsureChannel();return}
+ if(key&&!remoteFx.ready&&!remoteFx.subscribing)fxEnsureChannel();
+},1200);
 function install(){
  const host=document.querySelector('#online-duel-main');if(!host)return;
  const ownSection=host.querySelector(':scope > .online-player-section:not(.online-duel-opponent)');
@@ -103,4 +166,4 @@ if(typeof onlineHandleRoomMessage==='function'){
 install();setInterval(install,350);
 })();
 
-/* Ver46.7: buttons remain enabled even when player ownership is unresolved; spectator/remote sections are guarded on activation. */
+/* Ver46.8: wait for Realtime subscription before sending and retry failed subscriptions. */
