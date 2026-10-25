@@ -26,9 +26,16 @@ else{const appear=ease(t/.35),crack=clamp((t-.42)/.32),broken=clamp((t-.85)/1.2)
 // Supabase Realtime: cosmetic events only. Room-scoped topic; no game state is transmitted.
 const remoteFx={client:null,channel:null,key:'',ready:false,loading:null,subscribing:null,seen:new Set(),generation:0};
 function fxRemoteRoom(){
- try{return typeof onlineUsingRemoteProvider==='function'&&onlineUsingRemoteProvider()
-  &&onlineSessionState?.joinCode&&onlineSessionState?.connection!=='offline'
-  ?String(onlineSessionState.joinCode).trim().toUpperCase():''}catch(_){return ''}
+ try{return onlineSessionState?.joinCode&&onlineSessionState?.provider==='remote'
+ ?String(onlineSessionState.joinCode).trim().toUpperCase():''}catch(e){console.warn('FX room lookup',e);return ''}
+}
+function fxStatus(message,error){
+ let el=document.getElementById('mk-fx-sync-status');
+ if(!el){el=document.createElement('div');el.id='mk-fx-sync-status';
+ el.style.cssText='position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:2147483000;padding:10px 14px;border-radius:9px;background:#162c40;color:white;font:13px sans-serif;box-shadow:0 5px 20px #0009;max-width:90vw;text-align:center;pointer-events:none';
+ document.body.append(el)}
+ el.textContent=message;el.style.border=error?'1px solid #f97575':'1px solid #79c6e8';
+ clearTimeout(fxStatus.timer);fxStatus.timer=setTimeout(()=>el.remove(),6500);
 }
 async function fxLoadClient(){
  if(remoteFx.client)return remoteFx.client;
@@ -87,19 +94,19 @@ async function fxEnsureChannel(){
  })();
  remoteFx.subscribing=task;
  try{return await task}catch(e){
-  console.warn('Battle FX subscription failed',e);
+  console.warn('Battle FX subscription failed',e);fxStatus('Realtime接続失敗: '+String(e.message||e),true);
   if(remoteFx.generation===generation){remoteFx.ready=false;remoteFx.channel=null}
   return null;
  }finally{if(remoteFx.subscribing===task)remoteFx.subscribing=null}
 }
 async function fxSendRemote(slot,kind){
  const code=fxRemoteRoom();
- if(!code)return false;
+ if(!code){fxStatus('Supabaseオンラインルームではありません（provider='+String(onlineSessionState?.provider)+')',true);return false;}
  // Subscribe first: the previous version discarded the first click while connecting.
  const channel=await fxEnsureChannel();
  if(!channel||!remoteFx.ready||fxRemoteRoom()!==code){
   console.warn('Battle FX not connected: cannot synchronize');
-  if(typeof toast==='function')toast('演出を相手へ送信できませんでした。通信状態を確認してください');
+  fxStatus('Realtime未接続：演出を送信できません',true);
   return false;
  }
  const eventId=String(onlineSessionState?.clientId||'client')+'-'+Date.now()+'-'+Math.random().toString(36).slice(2);
@@ -110,7 +117,7 @@ async function fxSendRemote(slot,kind){
   return true;
  }catch(e){
   console.warn('Battle FX send failed',e);
-  if(typeof toast==='function')toast('演出の同期に失敗しました');
+  fxStatus('演出の送信失敗: '+String(e.message||e),true);
   return false;
  }
 }
@@ -145,8 +152,15 @@ document.addEventListener('click',event=>{
  if(btn.disabled){btn.disabled=false;btn.style.pointerEvents='auto'}
  if(!['win','lose','damage'].includes(kind))return;
  paint(slot,kind);
- if(fxRemoteRoom())fxSendRemote(slot,kind);
- else try{onlineBroadcast('battle-presentation-fx',{slot,kind,eventId:Date.now()+'-'+Math.random()})}catch(e){console.warn('FX broadcast',e)}
+ const code=String(onlineSessionState?.joinCode||'').trim();
+ if(code && onlineSessionState?.provider!=='remote'){
+   try{onlineBroadcast('battle-presentation-fx',{slot,kind,eventId:Date.now()+'-'+Math.random()});fxStatus('ローカル通信で送信',false)}catch(e){fxStatus('ローカル通信エラー',true)}
+ }else if(code){
+   fxSendRemote(slot,kind).then(ok=>{
+     if(!ok)fxStatus('相手への送信に失敗しました',true);
+     else fxStatus('演出を送信しました（相手の受信は未確認）',false);
+   }).catch(e=>{console.error('FX send error',e);fxStatus('同期エラー: '+String(e.message||e),true)});
+ }else fxStatus('オンラインルーム情報がありません',true);
 },true);
 let installing=false;
 const observer=new MutationObserver(()=>{
