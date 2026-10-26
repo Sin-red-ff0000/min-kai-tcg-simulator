@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "version": "48.4",
+  "effects": [
+    {
+      "id": "graphite-scratch-foil",
+      "name": "黒鉛スクラッチ箔",
+      "category": "選考ラボ採用10種",
+      "renderer": "mk477Render"
+    },
+    {
+      "id": "phase-invert-edge",
+      "name": "位相反転エッジ",
+      "category": "選考ラボ採用10種",
+      "renderer": "mk477Render"
+    },
+    {
+      "id": "heatpress-imprint",
+      "name": "熱圧プレス跡",
+      "category": "選考ラボ採用10種",
+      "renderer": "mk477Render"
+    },
+    {
+      "id": "multi-exposure-step",
+      "name": "多層露光ステップ",
+      "category": "選考ラボ採用10種",
+      "renderer": "mk477Render"
+    },
+    {
+      "id": "chromatography-paper",
+      "name": "クロマト分離紙",
+      "category": "選考ラボ採用10種",
+      "renderer": "mk477Render"
+    },
+    {
+      "id": "photochromic-exposure",
+      "name": "フォトクロミック露光",
+      "category": "選考ラボ採用10種",
+      "renderer": "mk477Render"
+    },
+    {
+      "id": "uv-excitation",
+      "name": "紫外励起蛍光",
+      "category": "選考ラボ採用10種",
+      "renderer": "mk477Render"
+    },
+    {
+      "id": "optical-carved-relief",
+      "name": "光学彫刻レリーフ",
+      "category": "選考ラボ採用10種",
+      "renderer": "mk477Render"
+    },
+    {
+      "id": "shadow-carved-silhouette",
+      "name": "影刻シルエット",
+      "category": "選考ラボ採用10種",
+      "renderer": "mk477Render"
+    },
+    {
+      "id": "risograph-misregister",
+      "name": "リソグラフ版ズレ",
+      "category": "選考ラボ採用10種",
+      "renderer": "mk477Render"
+    }
+  ]
+}
