@@ -1,5 +1,5 @@
-const CACHE_NAME='minkai-tcg-v47.6';
-const APP_SHELL=['./index.html','./manifest.webmanifest','./battle_effects.js'];
+const CACHE_NAME='minkai-tcg-v47.7';
+const APP_SHELL=['./index.html','./manifest.webmanifest'];
 self.addEventListener('install',event=>{event.waitUntil(
   caches.open(CACHE_NAME).then(c=>c.addAll(APP_SHELL.map(u=>new Request(u,{cache:'reload'})))).then(()=>self.skipWaiting())
 )});
