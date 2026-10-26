@@ -323,35 +323,61 @@ function renderNew110(id){
 
 let renderStep=1;
 
+
 function mk477Render(id){
- const idx=MK477_APPROVED.findIndex(x=>x[0]===id);
- if(idx<0)return false;
- const name=MK477_APPROVED[idx][1];
- $('category').textContent='採用加工｜'+name;
- $('desc').textContent='Ver47.7追加加工。カードイラストの上に重なる透明な加工層です。';
+ const ix=MK477_APPROVED.findIndex(x=>x[0]===id);if(ix<0)return false;
+ $('category').textContent='選考ラボ採用｜'+MK477_APPROVED[ix][1];
+ $('desc').textContent='選考ラボで採用した描画式を移植。元のカード画像に透明な加工層を重ねます。';
  for(const key of ['strength','density','sharp'])$(key+'v').textContent=$(key).value+'%';
- const st=+$('strength').value/100,den=+$('density').value/100,sharp=+$('sharp').value/100;
- const a=tx,b=ty,phase=a*2.9+b*1.7;
- card.style.transform=`rotateY(${a*(+$('tiltmax').value)}deg) rotateX(${-b*(+$('tiltmax').value)}deg)`;
- c.style.display='block';
- ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.filter='none';ctx.clearRect(0,0,W,H);
- const alpha=Math.min(.9,st*(.35+.65*sharp));
- const line=(x1,y1,x2,y2,w,col)=>{ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke()};
- const ellipse=(x,y,rx,ry,w,col)=>{ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.stroke()};
- const count=Math.max(5,Math.round(9+den*36));
- switch(idx){
- case 0:for(let i=0;i<count*3;i++){let y=(i*131)%H,x=(i*73)%W;line(x,y,x+25+den*65,y-8,0.5+sharp*1.6,`rgba(210,218,232,${alpha*.7})`)}break;
- case 1:for(let i=0;i<count;i++){let y=(i+.5)*H/count;line(0,y,W,y+Math.sin(i+phase)*5,1.5,`rgba(${i%2?255:35},${i%2?244:110},${i%2?230:230},${alpha*.48})`)}break;
- case 2:for(let i=0;i<8+count/2;i++){let x=(i*179)%W,y=(i*241)%H;ellipse(x,y,20+den*35,30+den*24,1.8+sharp*2,`rgba(255,236,200,${alpha*.34})`)}break;
- case 3:for(let i=0;i<Math.max(3,count/5);i++){let x=i*W/(count/5);ctx.fillStyle=`rgba(${i%2?240:55},${i%2?205:100},${i%2?140:180},${alpha*.10})`;ctx.fillRect(x,0,W/(count/5)*.65,H)}break;
- case 4:for(let i=0;i<7;i++){let x=W*(i+1)/8;let grad=ctx.createLinearGradient(x-55,0,x+70,H);grad.addColorStop(0,'rgba(250,80,135,0)');grad.addColorStop(.5,`rgba(${i%2?80:240},${i%2?170:85},${i%2?245:150},${alpha*.19})`);grad.addColorStop(1,'rgba(70,200,240,0)');ctx.fillStyle=grad;ctx.fillRect(x-80,0,160,H)}break;
- case 5:{let grad=ctx.createLinearGradient(phase*60,0,W+phase*60,H);grad.addColorStop(0,'rgba(40,60,150,0)');grad.addColorStop(.5,`rgba(90,40,155,${alpha*.38})`);grad.addColorStop(1,'rgba(50,70,140,0)');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);break}
- case 6:for(let i=0;i<8+count;i++){let x=(i*181)%W,y=(i*239)%H,r=8+(i%5)*7;let grad=ctx.createRadialGradient(x,y,0,x,y,r);grad.addColorStop(0,`rgba(185,90,255,${alpha*.5})`);grad.addColorStop(1,'rgba(185,90,255,0)');ctx.fillStyle=grad;ctx.fillRect(x-r,y-r,r*2,r*2)}break;
- case 7:for(let i=0;i<5+den*11;i++){let x=W/2+Math.sin(i*2.4+phase)*W*.15,y=H/2+Math.cos(i*1.6)*H*.16;ellipse(x,y,70+i*12,95+i*9,1.3+sharp*2,`rgba(255,250,232,${alpha*.29})`)}break;
- case 8:for(let i=0;i<count;i++){let x=i*W/count;line(x,0,x+H*.37,H,1+sharp*2,`rgba(30,35,48,${alpha*.4})`);line(x+2,0,x+H*.37+2,H,1,`rgba(250,240,220,${alpha*.3})`)}break;
- case 9:for(let i=0;i<count*3;i++){let x=(i*157)%W,y=(i*283)%H;ctx.fillStyle=`rgba(255,55,118,${alpha*.35})`;ctx.fillRect(x+phase*3,y,3,3);ctx.fillStyle=`rgba(25,220,244,${alpha*.32})`;ctx.fillRect(x-phase*3-3,y+2,3,3)}break;
+ const aa=tx,bb=ty;
+ card.style.transform=`rotateY(${aa*(+$('tiltmax').value)}deg) rotateX(${-bb*(+$('tiltmax').value)}deg)`;
+ const artCanvas=new110Art();if(!artCanvas){ctx.clearRect(0,0,W,H);return true;}
+ const original=new110Image.data;
+ const out=ctx.createImageData(W,H),pixels=out.data;
+ const strength=+$('strength').value/100,density=+$('density').value/55,sharp=+$('sharp').value/70;
+ const hue=+$('hue').value,sat=+$('saturation').value/100,bright=+$('brightness').value/100;
+ const protect=+$('protect').value/100,dir=+$('direction').value*Math.PI/180,spread=+$('spread').value/100;
+ const angle=(aa*Math.cos(dir)+bb*Math.sin(dir))*1.25;
+ const sample=(x,y,k)=>{let xx=Math.max(0,Math.min(W-1,Math.round(x))),yy=Math.max(0,Math.min(H-1,Math.round(y)));return original[(yy*W+xx)*4+k]};
+ const fx=[1,9,28,25,40,48,43,80,100,120][ix];
+ const step=2;
+ for(let y=0;y<H;y+=step)for(let x=0;x<W;x+=step){
+ let i=(y*W+x)*4,r=original[i],g=original[i+1],bl=original[i+2],lum=(r*.299+g*.587+bl*.114)/255;
+ let u=x/W,v=y/H,t=0,R=r,G=g,B=bl;
+ let du=(u-.5)*Math.cos(dir)-(v-.5)*Math.sin(dir),dv=(u-.5)*Math.sin(dir)+(v-.5)*Math.cos(dir);
+ u=.5+du*density;v=.5+dv*density;
+ let edge=Math.abs(lum-sample(x+2,y,0)/255)*.6+Math.abs(lum-sample(x,y+2,1)/255)*.4;
+ switch(fx){
+case 1:{t=Math.pow(Math.abs(Math.sin(v*190+u*18+angle*22)),12);let met=(t*.8+edge*3)*strength;let silver=40+180*Math.max(0,Math.sin(angle*6+u*8+v*4));R=r*(1-met)+silver*met;G=g*(1-met)+(silver*.97)*met;B=bl*(1-met)+(silver*.86)*met;break}
+case 9:{t=Math.min(1,edge*11)*strength;R=r*(1-t)+(255-r)*t;G=g*(1-t)+(255-g)*t;B=bl*(1-t)+(255-bl)*t;break}
+case 28:{let ridge=Math.min(1,edge*9)*strength,light=Math.sin(angle*6+u*8-v*5);R=r+ridge*light*110;G=g+ridge*light*90;B=bl+ridge*light*65;break}
+case 25:{let levels=Math.floor((lum+angle*.18)*5)/5,st=strength*.8;R=r*(1-st)+Math.min(255,levels*270)*st;G=g*(1-st)+Math.min(255,levels*250)*st;B=bl*(1-st)+Math.min(255,levels*230)*st;break}
+case 40:{let t=Math.sin(v*21+angle*4)*strength*14;R=sample(x+t,y,0);G=sample(x-t*.55,y+4*strength,1);B=sample(x+t*.2,y-t*.7,2);break}
+case 48:{let exp=Math.floor((lum+Math.sin(u*8+angle*4)*.25)*5)/5,m=strength*.85;R=r*(1-m)+Math.max(0,Math.min(255,exp*300))*m;G=g*(1-m)+Math.max(0,Math.min(255,exp*260))*m;B=bl*(1-m)+Math.max(0,Math.min(255,exp*220))*m;break}
+case 43:{let fl=Math.pow(1-lum,2)*strength*(.5+.5*Math.sin(angle*5+u*9));R=r+fl*100;G=g+fl*35;B=bl+fl*160;break}
+case 80:{let relief=Math.min(1,edge*9),groove=Math.sin((lum*18+u*2-v)*Math.PI+angle*6);let shine=Math.pow(Math.max(0,groove),5)*relief;let shadow=Math.pow(Math.max(0,-groove),3)*relief;R=r+shine*125-shadow*60;G=g+shine*119-shadow*55;B=bl+shine*104-shadow*48;break}
+case 100:{let e=Math.min(1,edge*11),bevel=Math.sin(lum*16+angle*4),m=e*strength;R=r+m*(bevel>0?115:-100)*Math.abs(bevel);G=g+m*(bevel>0?104:-95)*Math.abs(bevel);B=bl+m*(bevel>0?88:-83)*Math.abs(bevel);break}
+case 120:{let off=3+Math.abs(angle)*12;let mr=Math.min(1,Math.abs(r-sample(x-off,y,0))/110)*strength*.7;let mb=Math.min(1,Math.abs(bl-sample(x+off,y,2))/110)*strength*.7;R=r*(1-mr)+250*mr;G=g*(1-(mr+mb)*.35)+45*mr+75*mb;B=bl*(1-mb)+220*mb;break}
  }
- ctx.restore();
+ let contrast=Math.max(.15,sharp),range=Math.max(.02,spread);
+ let spatial=Math.min(1,Math.max(0,(1-Math.abs((du*Math.cos(dir)+dv*Math.sin(dir))*2))/range));
+ let mix=Math.min(fx>=120?.9:fx>=100?.82:fx>=80?.78:fx>=60?.58:1,Math.max(0,(1-protect)*strength*contrast*spatial));
+ R=r+(R-r)*mix;G=g+(G-g)*mix;B=bl+(B-bl)*mix;
+ let gray=R*.299+G*.587+B*.114;
+ R=gray+(R-gray)*sat;G=gray+(G-gray)*sat;B=gray+(B-gray)*sat;
+ let cs=Math.cos(hue*Math.PI/180),sn=Math.sin(hue*Math.PI/180);
+ let nr=(.213+.787*cs-.213*sn)*R+(.715-.715*cs-.715*sn)*G+(.072-.072*cs+.928*sn)*B;
+ let ng=(.213-.213*cs+.143*sn)*R+(.715+.285*cs+.140*sn)*G+(.072-.072*cs-.283*sn)*B;
+ let nb=(.213-.213*cs-.787*sn)*R+(.715-.715*cs+.715*sn)*G+(.072+.928*cs+.072*sn)*B;
+ R=Math.max(0,Math.min(255,nr*bright));G=Math.max(0,Math.min(255,ng*bright));B=Math.max(0,Math.min(255,nb*bright));
+ // Preserve the original artwork: encode only the color delta as a transparent overlay.
+ let delta=Math.max(Math.abs(R-r),Math.abs(G-g),Math.abs(B-bl));
+ let opacity=Math.min(235,Math.max(0,delta*2.3));
+ let ratio=opacity?255/opacity:0;
+ let rr=Math.max(0,Math.min(255,r+(R-r)*ratio)),gg=Math.max(0,Math.min(255,g+(G-g)*ratio)),bb2=Math.max(0,Math.min(255,bl+(B-bl)*ratio));
+ for(let oy=0;oy<step;oy++)for(let ox=0;ox<step;ox++)if(x+ox<W&&y+oy<H){let k=((y+oy)*W+x+ox)*4;pixels[k]=rr;pixels[k+1]=gg;pixels[k+2]=bb2;pixels[k+3]=opacity;}
+ }
+ ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.filter='none';ctx.clearRect(0,0,W,H);ctx.putImageData(out,0,0);ctx.restore();
  return true;
 }
 
