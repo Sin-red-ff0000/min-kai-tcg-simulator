@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v49.2</title>
+<title>みん会TCG Simulator v49.3</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20296,7 +20296,7 @@ h3 .minkai-ruby{margin-top:.45em}
 
 /* Ver40.5 usability */
 .public-browse-list-head{gap:10px;align-items:center;flex-wrap:wrap}.public-browse-list-head>.actions{margin-left:auto;align-items:center}.pk-public-search-row{align-items:stretch}.pk-public-search-row input{min-width:min(420px,100%);flex:1}.pk-public-download-list{display:grid;gap:10px}.pk-public-download-card{margin:0}.pk-public-slot-summary{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}@media(max-width:700px){.public-browse-list-head>.actions{width:100%;margin-left:0;justify-content:space-between}.public-browse-list-head #public-cards-refresh{min-height:44px}.pk-public-search-row{display:grid;grid-template-columns:1fr auto}.pk-public-search-row input{grid-column:1/-1;min-width:0}.pk-public-download-card .pk-row .btn{flex:1;min-height:44px}}
-/* Ver49.2: approved laboratory effects, transparent overlay on original artwork */
+/* Ver49.3: approved laboratory effects, transparent overlay on original artwork */
 .card-fx-layer:is(.fx-graphite-scratch-foil,.fx-phase-invert-edge,.fx-heatpress-imprint,.fx-multi-exposure-step,.fx-chromatography-paper,.fx-photochromic-exposure,.fx-uv-excitation,.fx-optical-carved-relief,.fx-shadow-carved-silhouette,.fx-risograph-misregister){background-repeat:repeat;pointer-events:none;mix-blend-mode:screen;opacity:var(--fx-o,.72)}
 .fx-graphite-scratch-foil{background:repeating-linear-gradient(173deg,transparent 0 4px,rgba(190,197,205,.25) 4.5px 5px,rgba(18,24,31,.35) 5.5px 6px,transparent 7px 15px);background-size:calc(190px * var(--fx-density-scale,1)) 100%;mix-blend-mode:soft-light!important}
 .fx-phase-invert-edge{background:repeating-conic-gradient(from 45deg at 50% 50%,rgba(210,225,250,.24) 0deg 3deg,transparent 3deg 12deg,rgba(35,48,85,.15) 12deg 14deg,transparent 14deg 24deg);background-size:calc(170px * var(--fx-density-scale,1)) calc(170px * var(--fx-density-scale,1));mix-blend-mode:difference!important;opacity:calc(var(--fx-o,.72) * .45)!important}
@@ -20414,8 +20414,8 @@ h3 .minkai-ruby{margin-top:.45em}
 .fx-white-pearl::after{content:"";position:absolute;inset:0;background:linear-gradient(145deg,rgba(70,78,82,.035),transparent 35%,rgba(255,255,255,.055) 70%,rgba(60,65,69,.035));mix-blend-mode:overlay;opacity:calc(.70*var(--fx-structure))}
 .fx-animate .fx-white-pearl::before{animation:v1630ReflectBreathe var(--fx-duration,12s) ease-in-out infinite alternate}
 
-.card-fx-layer.fx-layered-mica{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22420%22%20height%3D%22590%22%20viewBox%3D%220%200%20420%20590%22%3E%3Cpolygon%20points%3D%2218%2C47.9%2025.439999999999998%2C38%2071.32%2C40.64%2080%2C52.3%2062.64%2C60%2027.92%2C56.92%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-8%2049.2%2049.2%29%22%2F%3E%3Cpolygon%20points%3D%2295%2C30.1%20100.76%2C22%20136.28%2C24.16%20143%2C33.7%20129.56%2C40%20102.68%2C37.480000000000004%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2812%20119.0%2031.0%29%22%2F%3E%3Cpolygon%20points%3D%22165%2C55.0%20173.4%2C46%20225.2%2C48.8%20235%2C59.0%20215.4%2C66%20176.2%2C63.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-15%20200.0%2056.0%29%22%2F%3E%3Cpolygon%20points%3D%22260%2C31.65%20266.96%2C24%20309.88%2C26.04%20318%2C35.05%20301.76%2C41%20269.28%2C38.62%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20289.0%2032.5%29%22%2F%3E%3Cpolygon%20points%3D%22325%2C69.1%20332.92%2C61%20381.76%2C63.16%20391%2C72.7%20372.52%2C79%20335.56%2C76.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-11%20358.0%2070.0%29%22%2F%3E%3Cpolygon%20points%3D%2235%2C127.45%2043.64%2C118%2096.92%2C120.52%20107%2C131.65%2086.84%2C139%2047.619999999999996%2C136.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2815%2071.0%20128.5%29%22%2F%3E%3Cpolygon%20points%3D%22132%2C109.2%20138.48%2C102%20178.44%2C103.92%20186%2C112.4%20170.88%2C118%20140.64%2C115.76%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-7%20159.0%20110.0%29%22%2F%3E%3Cpolygon%20points%3D%22220%2C147.6%20229.96%2C136%20291.38%2C138.88%20303%2C151.6%20279.76%2C160%20233.28%2C156.64%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%2810%20261.5%20148.0%29%22%2F%3E%3Cpolygon%20points%3D%22310%2C122.2%20316.12%2C115%20353.86%2C116.92%20361%2C125.4%20347.62%2C131%20318.16%2C128.76%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-14%20335.5%20123.0%29%22%2F%3E%3Cpolygon%20points%3D%2216%2C216.1%2022.96%2C208%2065.88%2C210.16%2074%2C219.7%2057.76%2C226%2025.28%2C223.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-12%2045.0%20217.0%29%22%2F%3E%3Cpolygon%20points%3D%2288%2C198.8%2097.36%2C188%20155.07999999999998%2C190.88%20166%2C203.6%20144.16%2C212%20100.48%2C208.64%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.270%22%20transform%3D%22rotate%288%20127.0%20200.0%29%22%2F%3E%3Cpolygon%20points%3D%22196%2C228.65%20203.2%2C221%20247.6%2C223.04%20256%2C232.05%20239.2%2C238%20205.6%2C235.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20226.0%20229.5%29%22%2F%3E%3Cpolygon%20points%3D%22278%2C201.9%20288.32%2C192%20351.96%2C194.64%20364%2C206.3%20339.92%2C214%20291.76%2C210.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%2813%20321.0%20203.0%29%22%2F%3E%3Cpolygon%20points%3D%2245%2C319.9%2054.6%2C310%20113.8%2C312.64%20125%2C324.3%20102.6%2C332%2057.8%2C328.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-6%2085.0%20321.0%29%22%2F%3E%3Cpolygon%20points%3D%22158%2C296.1%20165.8%2C288%20213.9%2C290.16%20223%2C299.7%20204.8%2C306%20168.4%2C303.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2814%20190.5%20297.0%29%22%2F%3E%3Cpolygon%20points%3D%22249%2C341.45%20257.4%2C332%20309.2%2C334.52%20319%2C345.65%20299.4%2C353%20260.2%2C350.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-12%20284.0%20342.5%29%22%2F%3E%3Cpolygon%20points%3D%22332%2C289.65%20338.24%2C282%20376.72%2C284.04%20384%2C293.05%20369.44%2C299%20340.32%2C296.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.180%22%20transform%3D%22rotate%289%20358.0%20290.5%29%22%2F%3E%3Cpolygon%20points%3D%2222%2C424.0%2030.16%2C415%2080.47999999999999%2C417.4%2090%2C428.0%2070.96000000000001%2C435%2032.88%2C432.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2810%2056.0%20425.0%29%22%2F%3E%3Cpolygon%20points%3D%22116%2C407.9%20125.96%2C398%20187.38%2C400.64%20199%2C412.3%20175.76%2C420%20129.28%2C416.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-13%20157.5%20409.0%29%22%2F%3E%3Cpolygon%20points%3D%22228%2C440.1%20234.72%2C432%20276.15999999999997%2C434.16%20284%2C443.7%20268.32%2C450%20236.96%2C447.68%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20256.0%20441.0%29%22%2F%3E%3Cpolygon%20points%3D%22307%2C414.45%20316.49%2C405%20374.94%2C407.52%20386%2C418.65%20363.88%2C426%20319.64%2C423.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-9%20347.6%20415.5%29%22%2F%3E%3Cpolygon%20points%3D%2252%2C526.1%2059.32%2C518%20104.46000000000001%2C520.16%20113%2C529.7%2095.92%2C536%2061.76%2C533.48%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-14%2082.5%20527.0%29%22%2F%3E%3Cpolygon%20points%3D%22167%2C509.9%20176.0%2C500%20231.5%2C502.64%20242%2C514.3%20221.0%2C522%20179.0%2C518.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2811%20204.5%20511.0%29%22%2F%3E%3Cpolygon%20points%3D%22283%2C538.1%20291.4%2C530%20343.2%2C532.16%20353%2C541.7%20333.4%2C548%20294.2%2C546.18%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20318.0%20539.0%29%22%2F%3E%3C%2Fsvg%3E"),linear-gradient(150deg,rgba(132,126,116,.10),rgba(228,222,207,.10),rgba(112,110,116,.08));background-size:100% 100%,100% 100%;background-blend-mode:soft-light;mix-blend-mode:soft-light;filter:saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1)) contrast(calc(.90 + var(--fx-structure)*.14))}
-.fx-layered-mica::before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22420%22%20height%3D%22590%22%20viewBox%3D%220%200%20420%20590%22%3E%3Cpolygon%20points%3D%2218%2C47.9%2025.439999999999998%2C38%2071.32%2C40.64%2080%2C52.3%2062.64%2C60%2027.92%2C56.92%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-8%2049.2%2049.2%29%22%2F%3E%3Cpolygon%20points%3D%2295%2C30.1%20100.76%2C22%20136.28%2C24.16%20143%2C33.7%20129.56%2C40%20102.68%2C37.480000000000004%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2812%20119.0%2031.0%29%22%2F%3E%3Cpolygon%20points%3D%22165%2C55.0%20173.4%2C46%20225.2%2C48.8%20235%2C59.0%20215.4%2C66%20176.2%2C63.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-15%20200.0%2056.0%29%22%2F%3E%3Cpolygon%20points%3D%22260%2C31.65%20266.96%2C24%20309.88%2C26.04%20318%2C35.05%20301.76%2C41%20269.28%2C38.62%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20289.0%2032.5%29%22%2F%3E%3Cpolygon%20points%3D%22325%2C69.1%20332.92%2C61%20381.76%2C63.16%20391%2C72.7%20372.52%2C79%20335.56%2C76.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-11%20358.0%2070.0%29%22%2F%3E%3Cpolygon%20points%3D%2235%2C127.45%2043.64%2C118%2096.92%2C120.52%20107%2C131.65%2086.84%2C139%2047.619999999999996%2C136.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2815%2071.0%20128.5%29%22%2F%3E%3Cpolygon%20points%3D%22132%2C109.2%20138.48%2C102%20178.44%2C103.92%20186%2C112.4%20170.88%2C118%20140.64%2C115.76%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-7%20159.0%20110.0%29%22%2F%3E%3Cpolygon%20points%3D%22220%2C147.6%20229.96%2C136%20291.38%2C138.88%20303%2C151.6%20279.76%2C160%20233.28%2C156.64%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%2810%20261.5%20148.0%29%22%2F%3E%3Cpolygon%20points%3D%22310%2C122.2%20316.12%2C115%20353.86%2C116.92%20361%2C125.4%20347.62%2C131%20318.16%2C128.76%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-14%20335.5%20123.0%29%22%2F%3E%3Cpolygon%20points%3D%2216%2C216.1%2022.96%2C208%2065.88%2C210.16%2074%2C219.7%2057.76%2C226%2025.28%2C223.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-12%2045.0%20217.0%29%22%2F%3E%3Cpolygon%20points%3D%2288%2C198.8%2097.36%2C188%20155.07999999999998%2C190.88%20166%2C203.6%20144.16%2C212%20100.48%2C208.64%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.270%22%20transform%3D%22rotate%288%20127.0%20200.0%29%22%2F%3E%3Cpolygon%20points%3D%22196%2C228.65%20203.2%2C221%20247.6%2C223.04%20256%2C232.05%20239.2%2C238%20205.6%2C235.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20226.0%20229.5%29%22%2F%3E%3Cpolygon%20points%3D%22278%2C201.9%20288.32%2C192%20351.96%2C194.64%20364%2C206.3%20339.92%2C214%20291.76%2C210.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%2813%20321.0%20203.0%29%22%2F%3E%3Cpolygon%20points%3D%2245%2C319.9%2054.6%2C310%20113.8%2C312.64%20125%2C324.3%20102.6%2C332%2057.8%2C328.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-6%2085.0%20321.0%29%22%2F%3E%3Cpolygon%20points%3D%22158%2C296.1%20165.8%2C288%20213.9%2C290.16%20223%2C299.7%20204.8%2C306%20168.4%2C303.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2814%20190.5%20297.0%29%22%2F%3E%3Cpolygon%20points%3D%22249%2C341.45%20257.4%2C332%20309.2%2C334.52%20319%2C345.65%20299.4%2C353%20260.2%2C350.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-12%20284.0%20342.5%29%22%2F%3E%3Cpolygon%20points%3D%22332%2C289.65%20338.24%2C282%20376.72%2C284.04%20384%2C293.05%20369.44%2C299%20340.32%2C296.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.180%22%20transform%3D%22rotate%289%20358.0%20290.5%29%22%2F%3E%3Cpolygon%20points%3D%2222%2C424.0%2030.16%2C415%2080.47999999999999%2C417.4%2090%2C428.0%2070.96000000000001%2C435%2032.88%2C432.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2810%2056.0%20425.0%29%22%2F%3E%3Cpolygon%20points%3D%22116%2C407.9%20125.96%2C398%20187.38%2C400.64%20199%2C412.3%20175.76%2C420%20129.28%2C416.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-13%20157.5%20409.0%29%22%2F%3E%3Cpolygon%20points%3D%22228%2C440.1%20234.72%2C432%20276.15999999999997%2C434.16%20284%2C443.7%20268.32%2C450%20236.96%2C447.68%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20256.0%20441.0%29%22%2F%3E%3Cpolygon%20points%3D%22307%2C414.45%20316.49%2C405%20374.94%2C407.52%20386%2C418.65%20363.88%2C426%20319.64%2C423.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-9%20347.6%20415.5%29%22%2F%3E%3Cpolygon%20points%3D%2252%2C526.1%2059.32%2C518%20104.46000000000001%2C520.16%20113%2C529.7%2095.92%2C536%2061.76%2C533.48%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-14%2082.5%20527.0%29%22%2F%3E%3Cpolygon%20points%3D%22167%2C509.9%20176.0%2C500%20231.5%2C502.64%20242%2C514.3%20221.0%2C522%20179.0%2C518.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2811%20204.5%20511.0%29%22%2F%3E%3Cpolygon%20points%3D%22283%2C538.1%20291.4%2C530%20343.2%2C532.16%20353%2C541.7%20333.4%2C548%20294.2%2C546.18%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20318.0%20539.0%29%22%2F%3E%3C%2Fsvg%3E");background-size:116% 116%;background-position:52% 47%;mix-blend-mode:screen;opacity:calc(.22*var(--fx-structure))}
+.card-fx-layer.fx-layered-mica{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22420%22%20height%3D%22590%22%20viewBox%3D%220%200%20420%20590%22%3E%3Cpolygon%20points%3D%2218%2C47.9%2025.439999999999998%2C38%2071.32%2C40.64%2080%2C52.3%2062.64%2C60%2027.92%2C56.92%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-8%2049.3%2049.3%29%22%2F%3E%3Cpolygon%20points%3D%2295%2C30.1%20100.76%2C22%20136.28%2C24.16%20143%2C33.7%20129.56%2C40%20102.68%2C37.480000000000004%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2812%20119.0%2031.0%29%22%2F%3E%3Cpolygon%20points%3D%22165%2C55.0%20173.4%2C46%20225.2%2C48.8%20235%2C59.0%20215.4%2C66%20176.2%2C63.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-15%20200.0%2056.0%29%22%2F%3E%3Cpolygon%20points%3D%22260%2C31.65%20266.96%2C24%20309.88%2C26.04%20318%2C35.05%20301.76%2C41%20269.28%2C38.62%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20289.0%2032.5%29%22%2F%3E%3Cpolygon%20points%3D%22325%2C69.1%20332.92%2C61%20381.76%2C63.16%20391%2C72.7%20372.52%2C79%20335.56%2C76.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-11%20358.0%2070.0%29%22%2F%3E%3Cpolygon%20points%3D%2235%2C127.45%2043.64%2C118%2096.92%2C120.52%20107%2C131.65%2086.84%2C139%2047.619999999999996%2C136.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2815%2071.0%20128.5%29%22%2F%3E%3Cpolygon%20points%3D%22132%2C109.2%20138.48%2C102%20178.44%2C103.92%20186%2C112.4%20170.88%2C118%20140.64%2C115.76%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-7%20159.0%20110.0%29%22%2F%3E%3Cpolygon%20points%3D%22220%2C147.6%20229.96%2C136%20291.38%2C138.88%20303%2C151.6%20279.76%2C160%20233.28%2C156.64%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%2810%20261.5%20148.0%29%22%2F%3E%3Cpolygon%20points%3D%22310%2C122.2%20316.12%2C115%20353.86%2C116.92%20361%2C125.4%20347.62%2C131%20318.16%2C128.76%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-14%20335.5%20123.0%29%22%2F%3E%3Cpolygon%20points%3D%2216%2C216.1%2022.96%2C208%2065.88%2C210.16%2074%2C219.7%2057.76%2C226%2025.28%2C223.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-12%2045.0%20217.0%29%22%2F%3E%3Cpolygon%20points%3D%2288%2C198.8%2097.36%2C188%20155.07999999999998%2C190.88%20166%2C203.6%20144.16%2C212%20100.48%2C208.64%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.270%22%20transform%3D%22rotate%288%20127.0%20200.0%29%22%2F%3E%3Cpolygon%20points%3D%22196%2C228.65%20203.2%2C221%20247.6%2C223.04%20256%2C232.05%20239.2%2C238%20205.6%2C235.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20226.0%20229.5%29%22%2F%3E%3Cpolygon%20points%3D%22278%2C201.9%20288.32%2C192%20351.96%2C194.64%20364%2C206.3%20339.92%2C214%20291.76%2C210.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%2813%20321.0%20203.0%29%22%2F%3E%3Cpolygon%20points%3D%2245%2C319.9%2054.6%2C310%20113.8%2C312.64%20125%2C324.3%20102.6%2C332%2057.8%2C328.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-6%2085.0%20321.0%29%22%2F%3E%3Cpolygon%20points%3D%22158%2C296.1%20165.8%2C288%20213.9%2C290.16%20223%2C299.7%20204.8%2C306%20168.4%2C303.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2814%20190.5%20297.0%29%22%2F%3E%3Cpolygon%20points%3D%22249%2C341.45%20257.4%2C332%20309.2%2C334.52%20319%2C345.65%20299.4%2C353%20260.2%2C350.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-12%20284.0%20342.5%29%22%2F%3E%3Cpolygon%20points%3D%22332%2C289.65%20338.24%2C282%20376.72%2C284.04%20384%2C293.05%20369.44%2C299%20340.32%2C296.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.180%22%20transform%3D%22rotate%289%20358.0%20290.5%29%22%2F%3E%3Cpolygon%20points%3D%2222%2C424.0%2030.16%2C415%2080.47999999999999%2C417.4%2090%2C428.0%2070.96000000000001%2C435%2032.88%2C432.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2810%2056.0%20425.0%29%22%2F%3E%3Cpolygon%20points%3D%22116%2C407.9%20125.96%2C398%20187.38%2C400.64%20199%2C412.3%20175.76%2C420%20129.28%2C416.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-13%20157.5%20409.0%29%22%2F%3E%3Cpolygon%20points%3D%22228%2C440.1%20234.72%2C432%20276.15999999999997%2C434.16%20284%2C443.7%20268.32%2C450%20236.96%2C447.68%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20256.0%20441.0%29%22%2F%3E%3Cpolygon%20points%3D%22307%2C414.45%20316.49%2C405%20374.94%2C407.52%20386%2C418.65%20363.88%2C426%20319.64%2C423.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-9%20347.6%20415.5%29%22%2F%3E%3Cpolygon%20points%3D%2252%2C526.1%2059.32%2C518%20104.46000000000001%2C520.16%20113%2C529.7%2095.92%2C536%2061.76%2C533.48%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-14%2082.5%20527.0%29%22%2F%3E%3Cpolygon%20points%3D%22167%2C509.9%20176.0%2C500%20231.5%2C502.64%20242%2C514.3%20221.0%2C522%20179.0%2C518.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2811%20204.5%20511.0%29%22%2F%3E%3Cpolygon%20points%3D%22283%2C538.1%20291.4%2C530%20343.2%2C532.16%20353%2C541.7%20333.4%2C548%20294.2%2C546.18%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20318.0%20539.0%29%22%2F%3E%3C%2Fsvg%3E"),linear-gradient(150deg,rgba(132,126,116,.10),rgba(228,222,207,.10),rgba(112,110,116,.08));background-size:100% 100%,100% 100%;background-blend-mode:soft-light;mix-blend-mode:soft-light;filter:saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1)) contrast(calc(.90 + var(--fx-structure)*.14))}
+.fx-layered-mica::before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22420%22%20height%3D%22590%22%20viewBox%3D%220%200%20420%20590%22%3E%3Cpolygon%20points%3D%2218%2C47.9%2025.439999999999998%2C38%2071.32%2C40.64%2080%2C52.3%2062.64%2C60%2027.92%2C56.92%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-8%2049.3%2049.3%29%22%2F%3E%3Cpolygon%20points%3D%2295%2C30.1%20100.76%2C22%20136.28%2C24.16%20143%2C33.7%20129.56%2C40%20102.68%2C37.480000000000004%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2812%20119.0%2031.0%29%22%2F%3E%3Cpolygon%20points%3D%22165%2C55.0%20173.4%2C46%20225.2%2C48.8%20235%2C59.0%20215.4%2C66%20176.2%2C63.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-15%20200.0%2056.0%29%22%2F%3E%3Cpolygon%20points%3D%22260%2C31.65%20266.96%2C24%20309.88%2C26.04%20318%2C35.05%20301.76%2C41%20269.28%2C38.62%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20289.0%2032.5%29%22%2F%3E%3Cpolygon%20points%3D%22325%2C69.1%20332.92%2C61%20381.76%2C63.16%20391%2C72.7%20372.52%2C79%20335.56%2C76.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-11%20358.0%2070.0%29%22%2F%3E%3Cpolygon%20points%3D%2235%2C127.45%2043.64%2C118%2096.92%2C120.52%20107%2C131.65%2086.84%2C139%2047.619999999999996%2C136.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2815%2071.0%20128.5%29%22%2F%3E%3Cpolygon%20points%3D%22132%2C109.2%20138.48%2C102%20178.44%2C103.92%20186%2C112.4%20170.88%2C118%20140.64%2C115.76%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-7%20159.0%20110.0%29%22%2F%3E%3Cpolygon%20points%3D%22220%2C147.6%20229.96%2C136%20291.38%2C138.88%20303%2C151.6%20279.76%2C160%20233.28%2C156.64%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%2810%20261.5%20148.0%29%22%2F%3E%3Cpolygon%20points%3D%22310%2C122.2%20316.12%2C115%20353.86%2C116.92%20361%2C125.4%20347.62%2C131%20318.16%2C128.76%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-14%20335.5%20123.0%29%22%2F%3E%3Cpolygon%20points%3D%2216%2C216.1%2022.96%2C208%2065.88%2C210.16%2074%2C219.7%2057.76%2C226%2025.28%2C223.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-12%2045.0%20217.0%29%22%2F%3E%3Cpolygon%20points%3D%2288%2C198.8%2097.36%2C188%20155.07999999999998%2C190.88%20166%2C203.6%20144.16%2C212%20100.48%2C208.64%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.270%22%20transform%3D%22rotate%288%20127.0%20200.0%29%22%2F%3E%3Cpolygon%20points%3D%22196%2C228.65%20203.2%2C221%20247.6%2C223.04%20256%2C232.05%20239.2%2C238%20205.6%2C235.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20226.0%20229.5%29%22%2F%3E%3Cpolygon%20points%3D%22278%2C201.9%20288.32%2C192%20351.96%2C194.64%20364%2C206.3%20339.92%2C214%20291.76%2C210.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%2813%20321.0%20203.0%29%22%2F%3E%3Cpolygon%20points%3D%2245%2C319.9%2054.6%2C310%20113.8%2C312.64%20125%2C324.3%20102.6%2C332%2057.8%2C328.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-6%2085.0%20321.0%29%22%2F%3E%3Cpolygon%20points%3D%22158%2C296.1%20165.8%2C288%20213.9%2C290.16%20223%2C299.7%20204.8%2C306%20168.4%2C303.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2814%20190.5%20297.0%29%22%2F%3E%3Cpolygon%20points%3D%22249%2C341.45%20257.4%2C332%20309.2%2C334.52%20319%2C345.65%20299.4%2C353%20260.2%2C350.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-12%20284.0%20342.5%29%22%2F%3E%3Cpolygon%20points%3D%22332%2C289.65%20338.24%2C282%20376.72%2C284.04%20384%2C293.05%20369.44%2C299%20340.32%2C296.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.180%22%20transform%3D%22rotate%289%20358.0%20290.5%29%22%2F%3E%3Cpolygon%20points%3D%2222%2C424.0%2030.16%2C415%2080.47999999999999%2C417.4%2090%2C428.0%2070.96000000000001%2C435%2032.88%2C432.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2810%2056.0%20425.0%29%22%2F%3E%3Cpolygon%20points%3D%22116%2C407.9%20125.96%2C398%20187.38%2C400.64%20199%2C412.3%20175.76%2C420%20129.28%2C416.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-13%20157.5%20409.0%29%22%2F%3E%3Cpolygon%20points%3D%22228%2C440.1%20234.72%2C432%20276.15999999999997%2C434.16%20284%2C443.7%20268.32%2C450%20236.96%2C447.68%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20256.0%20441.0%29%22%2F%3E%3Cpolygon%20points%3D%22307%2C414.45%20316.49%2C405%20374.94%2C407.52%20386%2C418.65%20363.88%2C426%20319.64%2C423.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-9%20347.6%20415.5%29%22%2F%3E%3Cpolygon%20points%3D%2252%2C526.1%2059.32%2C518%20104.46000000000001%2C520.16%20113%2C529.7%2095.92%2C536%2061.76%2C533.48%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-14%2082.5%20527.0%29%22%2F%3E%3Cpolygon%20points%3D%22167%2C509.9%20176.0%2C500%20231.5%2C502.64%20242%2C514.3%20221.0%2C522%20179.0%2C518.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2811%20204.5%20511.0%29%22%2F%3E%3Cpolygon%20points%3D%22283%2C538.1%20291.4%2C530%20343.2%2C532.16%20353%2C541.7%20333.4%2C548%20294.2%2C546.18%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20318.0%20539.0%29%22%2F%3E%3C%2Fsvg%3E");background-size:116% 116%;background-position:52% 47%;mix-blend-mode:screen;opacity:calc(.22*var(--fx-structure))}
 .fx-layered-mica::after{content:"";position:absolute;inset:0;background:radial-gradient(28% 15% at 22% 30%,rgba(255,255,255,calc(.16*var(--fx-reflection))),transparent 74%),radial-gradient(24% 14% at 76% 67%,rgba(241,226,189,calc(.12*var(--fx-reflection))),transparent 75%);mix-blend-mode:screen;opacity:calc(.58*var(--fx-reflect-area))}
 .fx-animate .fx-layered-mica::after{animation:v1630ReflectBreathe var(--fx-duration,13s) ease-in-out infinite alternate}
 
@@ -22051,7 +22051,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
 </style>
 <style>
 
-/* Ver49.2: progressive UX layer; original application controls remain intact. */
+/* Ver49.3: progressive UX layer; original application controls remain intact. */
 .v42-nav-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--panel2,#20242d);border:1px solid var(--line,#353b47);color:var(--text,#fff);border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:700}
 .v42-nav-panel{position:fixed;z-index:9995;top:62px;left:12px;width:min(580px,calc(100vw - 24px));max-height:calc(100dvh - 78px);overflow:auto;background:var(--panel,#171a21);color:var(--text,#fff);border:1px solid var(--line,#353b47);border-radius:14px;box-shadow:0 14px 42px #0009;padding:14px}
 .v42-nav-panel[hidden],.v42-quicklinks[hidden]{display:none!important}
@@ -22110,7 +22110,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v49.2 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v49.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23943,7 +23943,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   </div>
 
   <div class="settings-maintenance-card" id="storage-cleanup-v488" style="margin-top:12px">
-    <h4>保存データの整理（Ver49.2）</h4>
+    <h4>保存データの整理（Ver49.3）</h4>
     <p class="muted">期限切れのローカルオンラインルームと、ロボットローグライクの保存データを個別に整理します。カード・デッキ・画像・IndexedDBは対象外です。進行中のオンライン対戦がないときに操作してください。</p>
     <div class="actions"><button class="btn" type="button" id="cleanup-inspect">整理対象を調べる</button><button class="btn small" type="button" id="cleanup-backup" disabled>対象データをバックアップ</button></div>
     <div id="cleanup-summary" role="status" aria-live="polite" class="muted" style="margin:8px 0"></div>
@@ -25592,7 +25592,7 @@ let board=null, detailCtx=null, detailNav=null, inspectSession=null, browseSessi
 const $=(s,root=document)=>(root||document).querySelector(s), $$=(s,root=document)=>[...(root||document).querySelectorAll(s)];
 function uid(p='id'){return p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
 function load(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}}
-// Ver49.2: Storage quota errors must never abort application initialization.
+// Ver49.3: Storage quota errors must never abort application initialization.
 // Preserve existing data; do not clear or overwrite another storage key.
 var __mkStorageWarningShown=false;
 function __mkStorageWarning(k,err){
@@ -25610,7 +25610,7 @@ function __mkStorageWarning(k,err){
  };
  if(document.body)notify();else document.addEventListener('DOMContentLoaded',notify,{once:true});
 }
-// Ver49.2: card catalog is persisted in IndexedDB, not the limited localStorage.
+// Ver49.3: card catalog is persisted in IndexedDB, not the limited localStorage.
 // Legacy localStorage data is kept until a verified IDB migration completes.
 var __mkCardDbPromise=null,__mkCardReady=false,__mkCardWriteChain=Promise.resolve(),__mkCardPending=null;
 function __mkOpenCardDb(){
@@ -26520,7 +26520,7 @@ async function createBackgroundAssetRecord(file){
    };
  }finally{drawable.close()}
 }
-// Ver49.2: exact-source background deduplication; original bytes are hashed before resizing.
+// Ver49.3: exact-source background deduplication; original bytes are hashed before resizing.
 async function backgroundFileHash(file){
  const bytes=await file.arrayBuffer();
  const digest=await crypto.subtle.digest('SHA-256',bytes);
@@ -29484,179 +29484,22 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      shell.hidden=false;
      if(!frame.getAttribute('src')){
        frame.addEventListener('load',()=>setTimeout(openSelected,0),{once:true});
-       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=49.2';
+       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=49.3';
      }else openSelected();
      return;
    }
  }
 
- const card=cards.find(c=>c.id===cardId);if(!card)return;await customFxReadyPromise;
- const existing=normalizeCardVisualEffects(card.visualEffects);
- const rowHtml=slot=>{
-   const x=existing.find(y=>y.slot===slot)||{},dormant=slot>cardFxPrefs.maxLayers;
-   return `<div class="fx-editor-row ${dormant?'dormant':''}" id="fx-editor-layer-${slot}" data-fx-editor-layer="${slot}">
-     <div class="fx-editor-slot"><b>レイヤー${slot}</b>${dormant?'<span class="pill">休止中</span>':''}<span class="pill fx-visual-score" id="fx-visual-score-${slot}">変化量 0</span><span class="fx-layer-quick-actions">${slot>1?`<button class="btn small" type="button" data-fx-move-up="${slot}" ${dormant?'disabled':''}>↑</button>`:''}${slot<4?`<button class="btn small" type="button" data-fx-move-down="${slot}" ${dormant?'disabled':''}>↓</button>`:''}<button class="btn small" type="button" data-fx-duplicate="${slot}" ${dormant?'disabled':''}>複製</button></span></div>
-     <label>種類<select id="fx-edit-type-${slot}" ${dormant?'disabled':''}>${fxTypeOptionsHtml(x.type||'')}</select></label>
-     <label>強さ<select id="fx-edit-intensity-${slot}" ${dormant?'disabled':''}><option value="weak">弱</option><option value="standard">標準</option><option value="strong">強</option></select></label>
-     <label>不透明度 <span id="fx-edit-opacity-label-${slot}">${Number(x.opacity)||70}%</span><input id="fx-edit-opacity-${slot}" type="range" min="20" max="100" step="5" value="${Number(x.opacity)||70}" ${dormant?'disabled':''}></label>
-     <label class="board-follow-row fx-editor-enabled"><input id="fx-edit-enabled-${slot}" type="checkbox" ${x.enabled===false?'':'checked'} ${dormant?'disabled':''}>表示ON</label>
-     <details class="fx-layer-detail" ${dormant?'':'data-fx-detail-active="1"'}>
-       <summary>詳細設定</summary>
-       <div class="fx-layer-detail-grid" data-appearance-advanced>
-         <label>速度 <span id="fx-detail-speed-label-${slot}">${Number(x.speed)||100}%</span><input id="fx-detail-speed-${slot}" type="range" min="25" max="200" step="5" value="${Number(x.speed)||100}" ${dormant?'disabled':''}></label>
-         <label>サイズ <span id="fx-detail-size-label-${slot}">${Number(x.size)||100}%</span><input id="fx-detail-size-${slot}" type="range" min="70" max="160" step="5" value="${Number(x.size)||100}" ${dormant?'disabled':''}></label>
-         <label>移動方向<select id="fx-detail-direction-${slot}" ${dormant?'disabled':''}><option value="default">エフェクト標準</option><option value="forward">順方向</option><option value="reverse">逆方向</option></select></label>
-         <label>回転方向<select id="fx-detail-rotation-${slot}" ${dormant?'disabled':''}><option value="default">エフェクト標準</option><option value="forward">順回転</option><option value="reverse">逆回転</option></select></label>
-         <label>色相 <span id="fx-detail-hue-label-${slot}">${Number(x.hue)||0}°</span><input id="fx-detail-hue-${slot}" type="range" min="-180" max="180" step="5" value="${Number(x.hue)||0}" ${dormant?'disabled':''}></label>
-         <label>彩度 <span id="fx-detail-saturation-label-${slot}">${Number(x.saturation)||100}%</span><input id="fx-detail-saturation-${slot}" type="range" min="30" max="200" step="5" value="${Number(x.saturation)||100}" ${dormant?'disabled':''}></label>
-         <label>明るさ <span id="fx-detail-brightness-label-${slot}">${Number(x.brightness)||100}%</span><input id="fx-detail-brightness-${slot}" type="range" min="40" max="180" step="5" value="${Number(x.brightness)||100}" ${dormant?'disabled':''}></label>
-         <label>粒子密度 <span id="fx-detail-density-label-${slot}">${Number(x.density)||100}%</span><input id="fx-detail-density-${slot}" type="range" min="50" max="180" step="5" value="${Number(x.density)||100}" ${dormant?'disabled':''}></label>
-         <label>動きの強さ <span id="fx-detail-motion-label-${slot}">${Number(x.motion)||100}%</span><input id="fx-detail-motion-${slot}" type="range" min="25" max="180" step="5" value="${Number(x.motion)||100}" ${dormant?'disabled':''}></label>
-         <div class="fx-detail-control-note">素材調整：模様そのものを動かさず、質感・反射・色の効き方を個別に追い込めます。未調整のカードは従来表示のままです。</div>
-         <label>素材構造 <span id="fx-detail-structure-label-${slot}">${Number.isFinite(Number(x.structure))?Number(x.structure):100}%</span><input id="fx-detail-structure-${slot}" type="range" min="0" max="180" step="5" value="${Number.isFinite(Number(x.structure))?Number(x.structure):100}" ${dormant?'disabled':''}></label>
-         <label>反射強度 <span id="fx-detail-reflection-label-${slot}">${Number.isFinite(Number(x.reflection))?Number(x.reflection):100}%</span><input id="fx-detail-reflection-${slot}" type="range" min="0" max="180" step="5" value="${Number.isFinite(Number(x.reflection))?Number(x.reflection):100}" ${dormant?'disabled':''}></label>
-         <label>反射範囲 <span id="fx-detail-reflection-area-label-${slot}">${Number.isFinite(Number(x.reflectionArea))?Number(x.reflectionArea):100}%</span><input id="fx-detail-reflection-area-${slot}" type="range" min="20" max="180" step="5" value="${Number.isFinite(Number(x.reflectionArea))?Number(x.reflectionArea):100}" ${dormant?'disabled':''}></label>
-         <label>色彩影響度 <span id="fx-detail-color-influence-label-${slot}">${Number.isFinite(Number(x.colorInfluence))?Number(x.colorInfluence):100}%</span><input id="fx-detail-color-influence-${slot}" type="range" min="0" max="100" step="5" value="${Number.isFinite(Number(x.colorInfluence))?Number(x.colorInfluence):100}" ${dormant?'disabled':''}></label>
-         <div class="fx-detail-control-note">色彩分離：素材本体・反射・暗部を別々に調整します。基調色は「基調色の強さ」を上げた時だけ元絵へ加わります。</div>
-         <label>基調色 <input id="fx-detail-base-color-${slot}" type="color" value="${x.baseColor||'#ffffff'}" ${dormant?'disabled':''}></label>
-         <label>基調色の強さ <span id="fx-detail-base-tint-label-${slot}">${Number(x.baseTint)||0}%</span><input id="fx-detail-base-tint-${slot}" type="range" min="0" max="100" step="5" value="${Number(x.baseTint)||0}" ${dormant?'disabled':''}></label>
-         <label>反射色 <input id="fx-detail-reflection-color-${slot}" type="color" value="${x.reflectionColor||'#ffffff'}" ${dormant?'disabled':''}></label>
-         <label>暗部色 <input id="fx-detail-shadow-color-${slot}" type="color" value="${x.shadowColor||'#000000'}" ${dormant?'disabled':''}></label>
-         <label>反射角度 <span id="fx-detail-reflection-angle-label-${slot}">${Number.isFinite(Number(x.reflectionAngle))?Number(x.reflectionAngle):125}°</span><input id="fx-detail-reflection-angle-${slot}" type="range" min="0" max="360" step="5" value="${Number.isFinite(Number(x.reflectionAngle))?Number(x.reflectionAngle):125}" ${dormant?'disabled':''}></label>
-         <label>反射の硬さ <span id="fx-detail-reflection-hardness-label-${slot}">${Number.isFinite(Number(x.reflectionHardness))?Number(x.reflectionHardness):55}%</span><input id="fx-detail-reflection-hardness-${slot}" type="range" min="0" max="100" step="5" value="${Number.isFinite(Number(x.reflectionHardness))?Number(x.reflectionHardness):55}" ${dormant?'disabled':''}></label>
-         <label>構造サイズ <span id="fx-detail-structure-scale-label-${slot}">${Number(x.structureScale)||100}%</span><input id="fx-detail-structure-scale-${slot}" type="range" min="40" max="220" step="5" value="${Number(x.structureScale)||100}" ${dormant?'disabled':''}></label>
-         <label>構造コントラスト <span id="fx-detail-structure-contrast-label-${slot}">${Number(x.structureContrast)||100}%</span><input id="fx-detail-structure-contrast-${slot}" type="range" min="40" max="220" step="5" value="${Number(x.structureContrast)||100}" ${dormant?'disabled':''}></label>
-         <div class="fx-detail-control-note">光学グレーディング：既存エフェクトの模様を置き換えず、その上に独立した光・暗部・色温度を重ねます。元絵保護を上げるほどカード画像を残します。</div>
-         <label>反射幅 <span id="fx-detail-highlight-width-label-${slot}">${Number(x.highlightWidth)||48}%</span><input id="fx-detail-highlight-width-${slot}" type="range" min="10" max="90" step="2" value="${Number(x.highlightWidth)||48}" ${dormant?'disabled':''}></label>
-         <label>暗部の深さ <span id="fx-detail-shadow-depth-label-${slot}">${Number.isFinite(Number(x.shadowDepth))?Number(x.shadowDepth):35}%</span><input id="fx-detail-shadow-depth-${slot}" type="range" min="0" max="100" step="5" value="${Number.isFinite(Number(x.shadowDepth))?Number(x.shadowDepth):35}" ${dormant?'disabled':''}></label>
-         <label>元絵保護 <span id="fx-detail-art-protect-label-${slot}">${Number.isFinite(Number(x.artProtect))?Number(x.artProtect):60}%</span><input id="fx-detail-art-protect-${slot}" type="range" min="0" max="100" step="5" value="${Number.isFinite(Number(x.artProtect))?Number(x.artProtect):60}" ${dormant?'disabled':''}></label>
-         <label>色温度 <span id="fx-detail-temperature-label-${slot}">${Number(x.temperature)||0}</span><input id="fx-detail-temperature-${slot}" type="range" min="-100" max="100" step="5" value="${Number(x.temperature)||0}" ${dormant?'disabled':''}></label>
-         <label>差し色 <input id="fx-detail-accent-color-${slot}" type="color" value="${x.accentColor||'#7fdcff'}" ${dormant?'disabled':''}></label>
-         <label>差し色強度 <span id="fx-detail-accent-strength-label-${slot}">${Number(x.accentStrength)||0}%</span><input id="fx-detail-accent-strength-${slot}" type="range" min="0" max="100" step="5" value="${Number(x.accentStrength)||0}" ${dormant?'disabled':''}></label>
-         <label>色彩プリセット<select id="fx-detail-color-preset-${slot}" ${dormant?'disabled':''}><option value="">手動設定</option><option value="silver">銀</option><option value="gold">金</option><option value="copper">赤銅</option><option value="blue-steel">青鋼</option><option value="black-iron">黒鉄</option><option value="pearl">真珠白</option><option value="crimson">深紅</option><option value="azure">蒼</option><option value="violet">紫</option><option value="jade">翡翠</option><option value="iridescent">虹偏光</option></select></label>
-
-         <label>表示範囲<select id="fx-detail-mask-${slot}" ${dormant?'disabled':''}><option value="full">全面</option><option value="center">中央</option><option value="outer">外周</option><option value="corners">四隅</option><option value="top">上部</option><option value="bottom">下部</option></select></label>
-         <div class="appearance-audit-note">0%系の設定は実際に効果が0になるよう再調整済み。色彩・素材・光学を分けて戻せます。</div><div class="actions fx-layer-detail-actions"><button class="btn small" type="button" data-fx-reset-group="color" data-fx-reset-slot="${slot}" ${dormant?'disabled':''}>色彩だけ標準</button><button class="btn small" type="button" data-fx-reset-group="material" data-fx-reset-slot="${slot}" ${dormant?'disabled':''}>素材だけ標準</button><button class="btn small" type="button" data-fx-reset-group="optical" data-fx-reset-slot="${slot}" ${dormant?'disabled':''}>光学だけ標準</button><button class="btn small" type="button" data-fx-detail-reset="${slot}" ${dormant?'disabled':''}>このレイヤーを標準に戻す</button></div>
-       </div>
-     </details>
-   </div>`;
- };
- const primaryRows=[1,2].map(rowHtml).join('');
- const advancedRows=[3,4].map(rowHtml).join('');
- const advancedConfigured=existing.some(x=>x.slot>=3);
- openModal(`<div class="modal-head"><h3>${esc(card.name)} / カードエフェクト</h3><button class="btn" id="fx-editor-close">閉じる</button></div>
- <div class="fx-editor-layout">
-   <div class="appearance-mobile-nav" aria-label="スマホ外観編集ナビ">
-     <button class="btn small" type="button" data-mobile-fx-jump="1">L1</button>
-     <button class="btn small" type="button" data-mobile-fx-jump="2">L2</button>
-     <button class="btn small" type="button" data-mobile-fx-jump="3">L3</button>
-     <button class="btn small" type="button" data-mobile-fx-jump="4">L4</button>
-     <button class="btn small" type="button" id="fx-mobile-preview">小窓</button>
-   </div>
-   <div class="muted">最大 ${cardFxPrefs.maxLayers}レイヤー${cardFxPrefs.maxLayers>2?' / 高負荷設定':''}</div>
-   <div class="fx-editor-list">
-     ${primaryRows}
-     <details class="fx-editor-advanced">
-       <summary>レイヤー3・4（追加レイヤー）${advancedConfigured?'<span class="pill">設定あり</span>':''}${cardFxPrefs.maxLayers<=2?'<span class="pill">現在は休止中</span>':''}</summary>
-       <div class="fx-editor-advanced-body">${advancedRows}</div>
-     </details>
-   </div>
-   ${cardFxPrefs.maxLayers>2?'<div class="fx-setting-warning">3～4レイヤーは端末によって動作が重くなる場合があります。</div>':''}
-   <div class="actions fx-editor-preview-actions"><button class="btn" id="fx-preview-open">プレビューを開く</button><button class="btn" id="fx-custom-manage">自作エフェクト</button></div>
-   <div class="actions fx-editor-desktop-actions" style="margin-top:12px"><button class="btn primary" id="fx-editor-save">保存</button><button class="btn" id="fx-editor-global-settings">全体設定を開く</button></div>
-   <div class="appearance-mobile-actionbar">
-     <button class="btn" type="button" id="fx-mobile-close">戻る</button>
-     <button class="btn" type="button" id="fx-mobile-preview-bottom">小窓</button>
-     <button class="btn primary" type="button" id="fx-mobile-save">保存</button>
-   </div>
- </div>`);
- $('#modal').classList.add('fx-editor-modal');
- for(let slot=1;slot<=4;slot++){
-   const x=existing.find(y=>y.slot===slot);
-   if(x){
-     $(`#fx-edit-intensity-${slot}`).value=x.intensity;
-     $(`#fx-detail-direction-${slot}`).value=x.direction||'default';
-     $(`#fx-detail-rotation-${slot}`).value=x.rotationDirection||'default';
-     $(`#fx-detail-mask-${slot}`).value=x.mask||'full';
-   }
-   [`fx-edit-type-${slot}`,`fx-edit-intensity-${slot}`,`fx-edit-enabled-${slot}`,`fx-detail-direction-${slot}`,`fx-detail-rotation-${slot}`,`fx-detail-mask-${slot}`].forEach(id=>$('#'+id)?.addEventListener('change',()=>renderFxEditorPreview(card)));
-   $(`#fx-edit-type-${slot}`)?.addEventListener('change',e=>{const opacityEl=$(`#fx-edit-opacity-${slot}`),keepOpacity=opacityEl?.value;if(applyFxRecommendedDefaults(slot,e.target.value,{preserveOpacity:true})){if(opacityEl&&keepOpacity!==undefined)opacityEl.value=keepOpacity;fxRefreshLabels?.(slot);fxSyncDirectNumbers?.(slot);renderFxEditorPreview(card)}});
-   $(`#fx-edit-opacity-${slot}`)?.addEventListener('input',e=>{$(`#fx-edit-opacity-label-${slot}`).textContent=e.target.value+'%';renderFxEditorPreview(card)});
-   [['speed','%'],['size','%'],['hue','°'],['saturation','%'],['brightness','%'],['density','%'],['motion','%'],['structure','%'],['reflection','%'],['reflection-area','%'],['color-influence','%'],['base-tint','%'],['reflection-angle','°'],['reflection-hardness','%'],['structure-scale','%'],['structure-contrast','%'],['highlight-width','%'],['shadow-depth','%'],['art-protect','%'],['temperature',''],['accent-strength','%']].forEach(([key,suffix])=>{
-     $(`#fx-detail-${key}-${slot}`)?.addEventListener('input',e=>{$(`#fx-detail-${key}-label-${slot}`).textContent=e.target.value+suffix;renderFxEditorPreview(card)});
-   });
-   ['base-color','reflection-color','shadow-color','accent-color'].forEach(key=>$(`#fx-detail-${key}-${slot}`)?.addEventListener('input',()=>renderFxEditorPreview(card)));
- }
- const FX_RECOMMENDED_DEFAULTS={
-  'heart-emboss':{opacity:72,structure:88,reflection:54,'structure-scale':100,'structure-contrast':115,'reflection-hardness':62,'shadow-depth':44,'art-protect':68,'color-influence':0},
-  'heart-emboss-dense':{opacity:76,structure:92,reflection:48,'structure-scale':100,'structure-contrast':122,'reflection-hardness':68,'shadow-depth':48,'art-protect':66,'color-influence':0},
-  'erotic-black-lace-veil':{opacity:62,structure:78,reflection:24,'color-influence':18,'structure-scale':100,'structure-contrast':115,'shadow-depth':45,'art-protect':70,'reflection-angle':20,'base-color':'#160b13','base-tint':28,'reflection-color':'#c49aaa','shadow-color':'#09050a','accent-color':'#731b3f','accent-strength':12,density:100,motion:35},
-  'erotic-satin-sheen':{opacity:72,structure:88,reflection:72,'color-influence':12,'structure-scale':100,'structure-contrast':118,'highlight-width':32,'shadow-depth':12,'art-protect':78,'reflection-hardness':78,'base-color':'#15111f','base-tint':8,'reflection-color':'#ff45b0','shadow-color':'#050611','accent-color':'#6868ff','accent-strength':65,motion:42},
-  'erotic-rouge-gloss':{opacity:76,structure:92,reflection:66,'color-influence':10,'structure-scale':100,'structure-contrast':122,'highlight-width':24,'shadow-depth':10,'art-protect':82,'reflection-hardness':82,'base-color':'#15111f','base-tint':6,'reflection-color':'#ffffff','shadow-color':'#060713','accent-color':'#ff3f9d','accent-strength':72,motion:36},
-  'erotic-black-velvet':{opacity:62,structure:76,reflection:32,'color-influence':16,'structure-scale':100,'structure-contrast':108,'highlight-width':80,'shadow-depth':65,'art-protect':65,'reflection-angle':135,'reflection-hardness':20,'base-color':'#0d1020','base-tint':26,'reflection-color':'#82709f','shadow-color':'#030307','accent-color':'#432858','accent-strength':14,motion:20},
-  'erotic-perfume-mist':{opacity:64,structure:65,reflection:42,'color-influence':18,size:120,density:115,motion:35,'structure-contrast':112,'art-protect':75,'reflection-hardness':30,'base-color':'#f0dfe6','base-tint':12,'reflection-color':'#fff7fb','shadow-color':'#5c4252','accent-color':'#e6a7c5','accent-strength':18},
-  'erotic-night-neon':{opacity:68,structure:90,reflection:28,'reflection-area':100,'color-influence':6,'highlight-width':18,temperature:-10,'accent-strength':52,'art-protect':76,'reflection-angle':12,'reflection-hardness':90,'base-color':'#10101a','base-tint':6,'reflection-color':'#6d73ff','shadow-color':'#03040a','accent-color':'#d92a90',motion:22},
-  'erotic-sheer':{opacity:55,structure:68,reflection:24,'color-influence':16,'structure-scale':100,'structure-contrast':110,'highlight-width':75,'shadow-depth':20,'art-protect':80,'reflection-hardness':22,'base-color':'#d8becd','base-tint':18,'reflection-color':'#fff3f8','shadow-color':'#493642','accent-color':'#c78bab','accent-strength':12,motion:15},
-  'erotic-sensual-glow':{opacity:74,structure:84,reflection:64,'color-influence':8,temperature:5,'accent-strength':62,'highlight-width':28,'art-protect':82,'reflection-hardness':76,'base-color':'#10111a','base-tint':6,'reflection-color':'#8edcff','shadow-color':'#050611','accent-color':'#ff5f9e',motion:18}
- };
- const applyFxRecommendedDefaults=(slot,type,opt={})=>{
-   const vals=FX_RECOMMENDED_DEFAULTS[String(type||'')];if(!vals)return false;
-   for(const [key,val] of Object.entries(vals)){
-     if(opt.preserveOpacity&&key==='opacity')continue;
-     const el=key==='opacity'?$(`#fx-edit-opacity-${slot}`):$(`#fx-detail-${key}-${slot}`);if(!el)continue;
-     el.value=String(val);el.dispatchEvent(new Event('input',{bubbles:true}));
-   }
-   return true;
- };
- const fxControlKeys=['type','intensity','opacity','enabled','speed','size','direction','rotation','hue','saturation','brightness','density','motion','structure','reflection','reflection-area','color-influence','base-color','base-tint','reflection-color','shadow-color','reflection-angle','reflection-hardness','structure-scale','structure-contrast','highlight-width','shadow-depth','art-protect','temperature','accent-color','accent-strength','mask'];
- const fxCtl=(slot,key)=>key==='type'?$(`#fx-edit-type-${slot}`):key==='intensity'?$(`#fx-edit-intensity-${slot}`):key==='opacity'?$(`#fx-edit-opacity-${slot}`):key==='enabled'?$(`#fx-edit-enabled-${slot}`):$(`#fx-detail-${key}-${slot}`);
- const fxRefreshLabels=slot=>{[['opacity','%'],['speed','%'],['size','%'],['hue','°'],['saturation','%'],['brightness','%'],['density','%'],['motion','%'],['structure','%'],['reflection','%'],['reflection-area','%'],['color-influence','%'],['base-tint','%'],['reflection-angle','°'],['reflection-hardness','%'],['structure-scale','%'],['structure-contrast','%'],['highlight-width','%'],['shadow-depth','%'],['art-protect','%'],['temperature',''],['accent-strength','%']].forEach(([key,suffix])=>{const el=key==='opacity'?fxCtl(slot,'opacity'):fxCtl(slot,key),label=$(`#${key==='opacity'?'fx-edit-opacity':'fx-detail-'+key}-label-${slot}`);if(el&&label)label.textContent=el.value+suffix})};
- const fxSyncDirectNumbers=slot=>{for(const el of $$(`#fx-editor-layer-${slot} input[type=\"range\"]`)){const n=el.nextElementSibling?.querySelector?.('.appearance-range-number');if(n)n.value=el.value}};
- const fxCopySlot=(from,to)=>{for(const key of fxControlKeys){const a=fxCtl(from,key),b=fxCtl(to,key);if(!a||!b)continue;if(a.type==='checkbox')b.checked=a.checked;else b.value=a.value}fxRefreshLabels(to);fxSyncDirectNumbers(to);fxUpdateVisualScore(to)};
- const fxSwapSlots=(a,b)=>{const snap={};for(const key of fxControlKeys){const x=fxCtl(a,key);if(x)snap[key]=x.type==='checkbox'?x.checked:x.value}fxCopySlot(b,a);for(const key of fxControlKeys){const x=fxCtl(b,key);if(!x||!(key in snap))continue;if(x.type==='checkbox')x.checked=snap[key];else x.value=snap[key]}fxRefreshLabels(a);fxRefreshLabels(b);fxSyncDirectNumbers(a);fxSyncDirectNumbers(b);fxUpdateVisualScore(a);fxUpdateVisualScore(b);renderFxEditorPreview(card)};
- const FX_SCORE_DEFAULTS={opacity:70,speed:100,size:100,hue:0,saturation:100,brightness:100,density:100,motion:100,structure:100,reflection:100,'reflection-area':100,'color-influence':100,'base-tint':0,'reflection-angle':125,'reflection-hardness':55,'structure-scale':100,'structure-contrast':100,'highlight-width':48,'shadow-depth':35,'art-protect':60,temperature:0,'accent-strength':0};
- const fxUpdateVisualScore=slot=>{let score=0,parts=0;for(const [key,def] of Object.entries(FX_SCORE_DEFAULTS)){const el=fxCtl(slot,key);if(!el)continue;const min=Number(el.min),max=Number(el.max),span=Number.isFinite(min)&&Number.isFinite(max)&&max>min?max-min:Math.max(100,Math.abs(def)||100),v=Number(el.value);if(Number.isFinite(v)){score+=Math.min(1,Math.abs(v-def)/span)*100;parts++}}for(const key of ['base-color','reflection-color','shadow-color','accent-color']){const el=fxCtl(slot,key);if(el){const def=key==='shadow-color'?'#000000':key==='accent-color'?'#7fdcff':'#ffffff';if(String(el.value).toLowerCase()!==def)score+=18;parts++}}const out=$(`#fx-visual-score-${slot}`);if(out)out.textContent=`変化量 ${Math.min(100,Math.round(score/Math.max(1,parts)*3.2))}`};
- const FX_RESET_GROUPS={color:{hue:0,saturation:100,brightness:100,'color-influence':100,'base-tint':0,temperature:0,'accent-strength':0},material:{size:100,density:100,structure:100,'structure-scale':100,'structure-contrast':100},optical:{speed:100,motion:100,reflection:100,'reflection-area':100,'reflection-angle':125,'reflection-hardness':55,'highlight-width':48,'shadow-depth':35,'art-protect':60}};
- $$('[data-fx-reset-group]').forEach(b=>b.onclick=()=>{const slot=Number(b.dataset.fxResetSlot),group=b.dataset.fxResetGroup,vals=FX_RESET_GROUPS[group]||{};for(const [k,v] of Object.entries(vals)){const el=fxCtl(slot,k);if(el){el.value=String(v);el.dispatchEvent(new Event('input',{bubbles:true}))}}if(group==='color'){const colors={['base-color']:'#ffffff',['reflection-color']:'#ffffff',['shadow-color']:'#000000',['accent-color']:'#7fdcff'};for(const [k,v] of Object.entries(colors)){const el=fxCtl(slot,k);if(el){el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}))}}}fxRefreshLabels(slot);fxSyncDirectNumbers(slot);fxUpdateVisualScore(slot);renderFxEditorPreview(card)});
- for(let slot=1;slot<=4;slot++){const row=$(`#fx-editor-layer-${slot}`);row?.addEventListener('input',()=>fxUpdateVisualScore(slot));row?.addEventListener('change',()=>fxUpdateVisualScore(slot));fxUpdateVisualScore(slot)};
- $$('[data-fx-move-up]').forEach(b=>b.onclick=()=>fxSwapSlots(Number(b.dataset.fxMoveUp),Number(b.dataset.fxMoveUp)-1));
- $$('[data-fx-move-down]').forEach(b=>b.onclick=()=>fxSwapSlots(Number(b.dataset.fxMoveDown),Number(b.dataset.fxMoveDown)+1));
- $$('[data-fx-duplicate]').forEach(b=>b.onclick=()=>{const from=Number(b.dataset.fxDuplicate),targets=[1,2,3,4].filter(n=>n!==from&&n<=cardFxPrefs.maxLayers&&!(fxCtl(n,'type')?.value));const to=targets[0]||([1,2,3,4].find(n=>n>from&&n<=cardFxPrefs.maxLayers));if(!to){toast('複製できる空きレイヤーがありません');return}fxCopySlot(from,to);renderFxEditorPreview(card);toast(`レイヤー${from}をレイヤー${to}へ複製しました`) });
- const FX_COLOR_PRESETS={
-  silver:{baseColor:'#d8e2ea',baseTint:18,reflectionColor:'#ffffff',shadowColor:'#26313a',accentColor:'#a9d8ff',accentStrength:12,saturation:78,brightness:108,temperature:-8},
-  gold:{baseColor:'#d7a62c',baseTint:30,reflectionColor:'#fff1b0',shadowColor:'#573306',accentColor:'#ffcf5a',accentStrength:18,saturation:125,brightness:108,temperature:28},
-  copper:{baseColor:'#b45f36',baseTint:34,reflectionColor:'#ffd0a0',shadowColor:'#4b1e12',accentColor:'#e8845c',accentStrength:15,saturation:132,brightness:99,temperature:35},
-  'blue-steel':{baseColor:'#607d98',baseTint:28,reflectionColor:'#d7f2ff',shadowColor:'#111b29',accentColor:'#78b9e8',accentStrength:20,saturation:92,brightness:96,temperature:-38},
-  'black-iron':{baseColor:'#25292f',baseTint:40,reflectionColor:'#b7c3cb',shadowColor:'#050607',accentColor:'#70818d',accentStrength:8,saturation:55,brightness:78,temperature:-12},
-  pearl:{baseColor:'#f0eceb',baseTint:20,reflectionColor:'#fff9fb',shadowColor:'#8f9aa6',accentColor:'#efbfe9',accentStrength:22,saturation:88,brightness:115,temperature:4},
-  crimson:{baseColor:'#971d35',baseTint:34,reflectionColor:'#ffb1bc',shadowColor:'#31040c',accentColor:'#ff365e',accentStrength:22,saturation:145,brightness:92,temperature:22},
-  azure:{baseColor:'#1f66a7',baseTint:34,reflectionColor:'#b8eaff',shadowColor:'#061a36',accentColor:'#38b7ff',accentStrength:22,saturation:140,brightness:96,temperature:-34},
-  violet:{baseColor:'#6f3aa5',baseTint:34,reflectionColor:'#e5c6ff',shadowColor:'#240a42',accentColor:'#b96cff',accentStrength:22,saturation:138,brightness:96,temperature:-10},
-  jade:{baseColor:'#2d8663',baseTint:32,reflectionColor:'#c8ffe9',shadowColor:'#0a3022',accentColor:'#4fe4a5',accentStrength:20,saturation:124,brightness:98,temperature:-8},
-  iridescent:{baseColor:'#dceeff',baseTint:12,reflectionColor:'#ffffff',shadowColor:'#25304a',accentColor:'#ff82dc',accentStrength:34,saturation:122,brightness:106,temperature:-4}
- };
- $$('[id^="fx-detail-color-preset-"]').forEach(sel=>sel.onchange=()=>{const slot=Number(sel.id.split('-').pop()),p=FX_COLOR_PRESETS[sel.value];if(!p)return;for(const [key,val] of Object.entries(p)){const el=$(`#fx-detail-${key.replace(/[A-Z]/g,m=>'-'+m.toLowerCase())}-${slot}`);if(!el)continue;el.value=String(val);el.dispatchEvent(new Event('input',{bubbles:true}))}renderFxEditorPreview(card)});
- $$('[data-fx-detail-reset]').forEach(b=>b.onclick=()=>{
-   const slot=Number(b.dataset.fxDetailReset),vals={speed:100,size:100,hue:0,saturation:100,brightness:100,density:100,motion:100,structure:100,reflection:100,'reflection-area':100,'color-influence':100,'base-tint':0,'reflection-angle':125,'reflection-hardness':55,'structure-scale':100,'structure-contrast':100,'highlight-width':48,'shadow-depth':35,'art-protect':60,'temperature':0,'accent-strength':0};
-   Object.entries(vals).forEach(([k,v])=>{const el=$(`#fx-detail-${k}-${slot}`);if(el){el.value=String(v);el.dispatchEvent(new Event('input',{bubbles:true}))}});
-   const bc=$(`#fx-detail-base-color-${slot}`),rc=$(`#fx-detail-reflection-color-${slot}`),sc=$(`#fx-detail-shadow-color-${slot}`),ac=$(`#fx-detail-accent-color-${slot}`);if(bc)bc.value='#ffffff';if(rc)rc.value='#ffffff';if(sc)sc.value='#000000';if(ac)ac.value='#7fdcff';
-   const d=$(`#fx-detail-direction-${slot}`),r=$(`#fx-detail-rotation-${slot}`),mk=$(`#fx-detail-mask-${slot}`);if(d)d.value='default';if(r)r.value='default';if(mk)mk.value='full';renderFxEditorPreview(card);
- });
- enhanceAppearanceRangeInputs($('#modal'));addAppearanceDetailToolbar($('#modal'));
- $('#fx-preview-open').onclick=()=>openFxFloatingPreview(card);
- $('#fx-mobile-preview').onclick=()=>openFxFloatingPreview(card);
- $('#fx-mobile-preview-bottom').onclick=()=>openFxFloatingPreview(card);
- $$('[data-mobile-fx-jump]').forEach(b=>b.onclick=()=>$('#fx-editor-layer-'+b.dataset.mobileFxJump)?.scrollIntoView({behavior:'smooth',block:'start'}));
- $('#fx-custom-manage').onclick=()=>openCustomFxManager(cardId,returnTo);
- const back=()=>returnTo==='collection'?openCollectionDetail(cardId):openCardManagerDetail(cardId);
- $('#fx-editor-close').onclick=back;
- $('#fx-mobile-close').onclick=back;
- const saveFxEditor=()=>{
-   card.visualEffects=readFxEditorLayers(card);save(LS_CARDS,cards);renderCollection();if(board)renderBoard();toast('カードエフェクトを保存しました');back();
- };
- $('#fx-editor-save').onclick=saveFxEditor;
- $('#fx-mobile-save').onclick=saveFxEditor;
- $('#fx-editor-global-settings').onclick=()=>{closeModal();nav('settings');setSettingsTab('controls');setTimeout(()=>$('#card-fx-settings-panel')?.scrollIntoView({behavior:'smooth',block:'start'}),80)};
+ // Ver49.3: Legacy editing UI is retired. Keep legacy render/data helpers for saved cards.
+ const shell=document.getElementById('fx-trial-shell');
+ if(shell){shell.hidden=false;}
+ const host=document.getElementById('fx-trial-box')||document.body;
+ let notice=document.getElementById('fx-trial-recovery');
+ if(!notice){notice=document.createElement('div');notice.id='fx-trial-recovery';notice.setAttribute('role','alert');notice.style.cssText='padding:16px;margin:12px;border:1px solid #b98a58;border-radius:10px;background:#29231d;color:#fff;';host.appendChild(notice)}
+ notice.hidden=false;
+ notice.innerHTML='<strong>加工エディターを開けません</strong><p>必要な画面部品が見つかりません。カードデータは変更されていません。</p><button type="button" id="fx-trial-recovery-retry">再読込して復旧</button> <button type="button" id="fx-trial-recovery-close">閉じる</button>';
+ notice.querySelector('#fx-trial-recovery-retry').onclick=()=>location.reload();
+ notice.querySelector('#fx-trial-recovery-close').onclick=()=>{notice.hidden=true;if(shell)shell.hidden=true};
 }
 
 const DECOR_CHEKI_STYLES=[
@@ -42142,7 +41985,7 @@ onlineHandleRoomMessage=function(msg){
  return __mkFxHandleOriginal.apply(this,arguments);
 };
 
-/* Ver49.2: share deck draft state with the separate autosave script without copying stale values. */
+/* Ver49.3: share deck draft state with the separate autosave script without copying stale values. */
 for (const [key, read, write] of [
  ['workingDeck',()=>workingDeck,v=>{workingDeck=v}],
  ['editingDeckId',()=>editingDeckId,v=>{editingDeckId=v}],
@@ -43786,7 +43629,7 @@ window.MinkaiOnlineEventV299={open,sync,version:VERSION,protocol:PROTOCOL};windo
 </style>
 <script>
 
-/* Ver49.2 progressive enhancement: never replaces core navigation or persistence. */
+/* Ver49.3 progressive enhancement: never replaces core navigation or persistence. */
 (()=>{'use strict';
 const ready=()=>{
  const appbar=document.querySelector('header.appbar');if(!appbar||document.getElementById('v42-nav-toggle'))return;
@@ -43835,7 +43678,7 @@ const ready=()=>{
 
 </script>
 
-<!-- Ver49.2 card effects editor launcher -->
+<!-- Ver49.3 card effects editor launcher -->
 <style>
 #fx-trial-launch[hidden]{display:none!important}
 #fx-trial-launch{position:fixed;right:16px;bottom:76px;z-index:2147483000;border:1px solid #88b8ff;border-radius:12px;padding:10px 14px;background:#182a45;color:#fff;box-shadow:0 4px 20px #0009;font-weight:700;cursor:pointer}
@@ -43866,7 +43709,7 @@ const ready=()=>{
 }
 </style>
 <style>
-/* Ver49.2: compact editor header; card chooser expands only on demand. */
+/* Ver49.3: compact editor header; card chooser expands only on demand. */
 #fx-trial-top-actions{display:flex;gap:6px;align-items:center;justify-content:flex-end}
 #fx-trial-card-toggle{background:#283e5e;color:#fff;border:1px solid #7b98c2;padding:9px 11px;border-radius:8px;white-space:nowrap;cursor:pointer}
 #fx-trial-controls[hidden]{display:none!important}
@@ -43875,7 +43718,7 @@ const ready=()=>{
 @media(max-width:640px){#fx-trial-bar{padding:7px 9px!important;gap:5px!important}#fx-trial-heading{font-size:12px!important;line-height:1.3!important}#fx-trial-top-actions{gap:5px}#fx-trial-card-toggle,#fx-trial-close{font-size:12px!important;padding:9px 8px!important;min-height:40px}#fx-trial-controls:not([hidden]){display:flex!important;max-height:35dvh;overflow-y:auto;padding:8px 0}#fx-trial-card-select{font-size:16px!important}}
 </style>
 <button type="button" id="fx-trial-launch" aria-haspopup="dialog">カード加工エディター</button>
-<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定 <span id="fx-trial-current-card">｜カード未選択</span></div><div id="fx-trial-top-actions"><button type="button" id="fx-trial-card-toggle" aria-expanded="false" aria-controls="fx-trial-controls">カードを変更</button><button type="button" id="fx-trial-close">閉じる</button></div><div id="fx-trial-controls" hidden><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver49.2 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html?v=49.2"></iframe></div></div>
+<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定 <span id="fx-trial-current-card">｜カード未選択</span></div><div id="fx-trial-top-actions"><button type="button" id="fx-trial-card-toggle" aria-expanded="false" aria-controls="fx-trial-controls">カードを変更</button><button type="button" id="fx-trial-close">閉じる</button></div><div id="fx-trial-controls" hidden><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver49.3 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html?v=49.3"></iframe></div></div>
 <script>
 (function(){
  const controls=document.getElementById('fx-trial-controls'),toggle=document.getElementById('fx-trial-card-toggle'),select=document.getElementById('fx-trial-card-select'),current=document.getElementById('fx-trial-current-card');
@@ -43892,6 +43735,14 @@ const ready=()=>{
 <script>
 (function(){'use strict';
 const launch=document.getElementById('fx-trial-launch'),shell=document.getElementById('fx-trial-shell'),close=document.getElementById('fx-trial-close'),frame=document.getElementById('fx-trial-frame');
+
+function fxRecovery(message){
+ let n=document.getElementById('fx-trial-load-error');if(!n){n=document.createElement('div');n.id='fx-trial-load-error';n.setAttribute('role','alert');n.style.cssText='padding:12px;background:#352620;color:white;border:1px solid #b98a58;border-radius:8px;margin:8px';shell.querySelector('#fx-trial-box').append(n)}
+ n.hidden=false;n.replaceChildren();const t=document.createElement('span');t.textContent=message+' 保存済みのカードデータは変更されていません。';n.append(t);
+ const retry=document.createElement('button');retry.textContent='エディターを再読込';retry.style.marginLeft='12px';retry.onclick=()=>{n.hidden=true;frame.src='./fx_trial_preview.html?v=49.3&retry='+Date.now()};n.append(retry);
+}
+frame.addEventListener('error',()=>fxRecovery('加工エディターの読込に失敗しました。'));
+frame.addEventListener('load',()=>{try{if(!frame.contentDocument?.getElementById('type'))fxRecovery('加工エディターの内容が不完全です。');else{const n=document.getElementById('fx-trial-load-error');if(n)n.hidden=true}}catch{fxRecovery('加工エディターを確認できません。')}});
 const homeScreen=document.getElementById('screen-home');
 function isHomeActive(){return !!homeScreen && homeScreen.classList.contains('active') && !homeScreen.hidden && getComputedStyle(homeScreen).display!=='none'}
 function syncHomeOnly(){const home=isHomeActive();launch.hidden=!home;if(!home&&!shell.hidden)shell.hidden=true;}
@@ -43956,7 +43807,7 @@ function ensureFrame(){
  if(frame)return;
  frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
- frame.src='./fx_trial_preview.html?v=49.2';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
+ frame.src='./fx_trial_preview.html?v=49.3';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
 }
 function place(el,url){
  if(!el.isConnected)return;
@@ -44126,7 +43977,7 @@ new MutationObserver(attach).observe(document.getElementById('modal')||document.
 #fx-trial-frame{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 auto!important;height:auto!important;min-height:240px!important;width:100%!important}
 @media(max-width:800px){#fx-trial-box{height:100%!important;max-height:100%!important}#fx-trial-bar{flex:0 0 auto!important;max-height:32dvh!important;overflow-y:auto!important}#fx-trial-frame{height:auto!important;min-height:240px!important;flex:1 1 auto!important}}
 </style><script>
-/* Ver49.2: keep installed mobile PWA current after deployment. */
+/* Ver49.3: keep installed mobile PWA current after deployment. */
 (()=>{if(!('serviceWorker' in navigator)||location.protocol==='file:')return;
 let controlled=!!navigator.serviceWorker.controller;
 navigator.serviceWorker.addEventListener('controllerchange',()=>{
@@ -44163,7 +44014,7 @@ window.addEventListener('load',async()=>{
 })();
 </script><script src="./battle_effects.js"></script>
 <script>
-/* Ver49.2: read-only storage usage diagnostics. Never modifies stored records. */
+/* Ver49.3: read-only storage usage diagnostics. Never modifies stored records. */
 (function(){
 'use strict';
 let latest=null;
@@ -44174,16 +44025,16 @@ const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 function enumerate(store){const out=[];try{for(let i=0;i<store.length;i++){const key=store.key(i),value=store.getItem(key);if(key!==null)out.push({key,bytes:bytes(key)+bytes(value||''),characters:(value||'').length});}}catch(e){return {items:out,error:String(e)}}return {items:out.sort((a,b)=>b.bytes-a.bytes)};}
 async function databaseNames(){if(typeof indexedDB.databases!=='function')return {names:[],warning:'このブラウザはデータベース名の一覧取得に非対応です'};try{return {names:(await indexedDB.databases()).filter(x=>x.name).map(x=>x.name)}}catch(e){return {names:[],warning:String(e)}}}
 function idbInfo(name){return new Promise(resolve=>{let done=false,request,timeout;const finish=x=>{if(done)return;done=true;clearTimeout(timeout);try{request?.result?.close()}catch(_){}resolve(x)};try{request=indexedDB.open(name);timeout=setTimeout(()=>finish({name,error:'タイムアウト'}),3500);request.onupgradeneeded=e=>{try{e.target.transaction.abort()}catch(_){}finish({name,error:'未登録DBのため調査を中止'})};request.onerror=()=>finish({name,error:String(request.error||'アクセス不可')});request.onsuccess=()=>{const db=request.result;const stores=Array.from(db.objectStoreNames);if(!stores.length)return finish({name,stores:[]});let result=[],pending=stores.length;for(const st of stores){try{const tx=db.transaction(st,'readonly'),req=tx.objectStore(st).count();req.onsuccess=()=>{result.push({store:st,count:req.result});if(!--pending)finish({name,stores:result})};req.onerror=()=>{result.push({store:st,error:'件数取得不可'});if(!--pending)finish({name,stores:result})}}catch(e){result.push({store:st,error:String(e)});if(!--pending)finish({name,stores:result})}}};}catch(e){finish({name,error:String(e)})}})}
-async function inspect(){const local=enumerate(localStorage),session=enumerate(sessionStorage),dbs=await databaseNames();const estimate=await (async()=>{try{return await navigator.storage?.estimate?.()||null}catch(e){return {error:String(e)}}})();const details=[];for(const db of dbs.names.slice(0,30))details.push(await idbInfo(db));return {diagnosedAt:new Date().toISOString(),appVersion:'49.2',origin:location.origin,localStorage:local,sessionStorage:session,indexedDB:{...dbs,details},storageEstimate:estimate};}
+async function inspect(){const local=enumerate(localStorage),session=enumerate(sessionStorage),dbs=await databaseNames();const estimate=await (async()=>{try{return await navigator.storage?.estimate?.()||null}catch(e){return {error:String(e)}}})();const details=[];for(const db of dbs.names.slice(0,30))details.push(await idbInfo(db));return {diagnosedAt:new Date().toISOString(),appVersion:'49.3',origin:location.origin,localStorage:local,sessionStorage:session,indexedDB:{...dbs,details},storageEstimate:estimate};}
 function render(r){const total=items=>items.reduce((n,x)=>n+x.bytes,0);const rows=r.localStorage.items.map(x=>'<tr><td style="overflow-wrap:anywhere">'+esc(x.key)+'</td><td style="text-align:right;white-space:nowrap">'+fmt(x.bytes)+'</td></tr>').join('');const est=r.storageEstimate||{};const dbRows=r.indexedDB.details.map(x=>'<tr><td>'+esc(x.name)+'</td><td>'+esc(x.error||x.stores.map(s=>s.store+'：'+(s.count??s.error)).join(' / '))+'</td></tr>').join('');$('storage-diagnostic-result').innerHTML='<p><b>localStorage：</b>'+fmt(total(r.localStorage.items))+'（'+r.localStorage.items.length+'項目）　<b>sessionStorage：</b>'+fmt(total(r.sessionStorage.items))+'　<b>オリジン全体：</b>'+(Number.isFinite(est.usage)?fmt(est.usage):'取得不可')+' / <b>推定割当：</b>'+(Number.isFinite(est.quota)?fmt(est.quota):'取得不可')+'</p><p class="muted">localStorageは文字列のUTF-8換算概算です。オリジン全体の使用量にはIndexedDBやキャッシュ等も含まれます。両者を足し合わせないでください。</p><h5>localStorageの大きい項目から順</h5><table style="width:100%;font-size:.9em"><thead><tr><th>保存キー</th><th>概算サイズ</th></tr></thead><tbody>'+rows+'</tbody></table><h5>IndexedDB（件数のみ）</h5><table style="width:100%;font-size:.9em"><thead><tr><th>データベース</th><th>ストアと件数</th></tr></thead><tbody>'+dbRows+'</tbody></table>'+(r.indexedDB.warning?'<p class="muted">'+esc(r.indexedDB.warning)+'</p>':'')+'<p class="muted">IndexedDBのバイト数はブラウザ標準APIではDB別に正確に取得できません。診断結果のJSONには保存キー名が含まれるため、共有前に内容を確認してください。</p>';}
 async function refresh(){const btn=$('storage-diagnostic-refresh'),status=$('storage-diagnostic-status');btn.disabled=true;status.textContent='保存領域を調査中…';try{latest=await inspect();render(latest);$('storage-diagnostic-export').disabled=false;status.textContent='診断完了。データの変更・削除は行っていません。'}catch(e){status.textContent='診断に失敗しました：'+String(e)}finally{btn.disabled=false}}
-function exportReport(){if(!latest)return;const blob=new Blob([JSON.stringify(latest,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='MinKaiTCG_storage_diagnostic_V49_2.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function exportReport(){if(!latest)return;const blob=new Blob([JSON.stringify(latest,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='MinKaiTCG_storage_diagnostic_V49_3.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function init(){const btn=$('storage-diagnostic-refresh');if(!btn)return;btn.addEventListener('click',refresh);$('storage-diagnostic-export').addEventListener('click',exportReport)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
 <script>
-/* Ver49.2 targeted, opt-in localStorage cleanup. Never touches TCG card or deck keys. */
+/* Ver49.3 targeted, opt-in localStorage cleanup. Never touches TCG card or deck keys. */
 (function(){
 'use strict';
 const $=id=>document.getElementById(id),ROOM='minkai-online-rooms-v1',ROBOT=/^robot-roguelike-(?:prototype|manager)-v[\w.\-]+$/;
@@ -44208,7 +44059,7 @@ function show(){try{snapshot=inspect();resetSelection();$('cleanup-options').hid
 function backup(){if(!snapshot)return;try{
  const keys=[ROOM,...snapshot.robots.map(x=>x.key)],records={};for(const key of keys){const v=localStorage.getItem(key);if(v!==null)records[key]=v}
  const payload={format:'minkai-storage-cleanup-backup-v1',createdAt:new Date().toISOString(),origin:location.origin,records};
- const blob=new Blob([JSON.stringify(payload)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='MinKaiTCG_storage_cleanup_backup_V49_2.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+ const blob=new Blob([JSON.stringify(payload)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='MinKaiTCG_storage_cleanup_backup_V49_3.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
  backupDone=true;$('cleanup-execute').disabled=false;status('バックアップのダウンロードを開始しました。ファイルが保存されたことを確認してから削除してください。');
  }catch(e){status('バックアップ失敗：'+String(e))}}
 function execute(){if(!snapshot||!backupDone)return;
@@ -44228,7 +44079,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 <script>
-/* Ver49.2: single shared card back, stored once as a Blob, never on individual cards. */
+/* Ver49.3: single shared card back, stored once as a Blob, never on individual cards. */
 (()=>{'use strict';
 const DB='minkai_tcg_shared_card_back_v490',STORE='assets',KEY='shared-back';
 let activeURL=null;
