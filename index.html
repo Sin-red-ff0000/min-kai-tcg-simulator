@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v51.3</title>
+<title>みん会TCG Simulator v51.4</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20296,7 +20296,7 @@ h3 .minkai-ruby{margin-top:.45em}
 
 /* Ver40.5 usability */
 .public-browse-list-head{gap:10px;align-items:center;flex-wrap:wrap}.public-browse-list-head>.actions{margin-left:auto;align-items:center}.pk-public-search-row{align-items:stretch}.pk-public-search-row input{min-width:min(420px,100%);flex:1}.pk-public-download-list{display:grid;gap:10px}.pk-public-download-card{margin:0}.pk-public-slot-summary{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}@media(max-width:700px){.public-browse-list-head>.actions{width:100%;margin-left:0;justify-content:space-between}.public-browse-list-head #public-cards-refresh{min-height:44px}.pk-public-search-row{display:grid;grid-template-columns:1fr auto}.pk-public-search-row input{grid-column:1/-1;min-width:0}.pk-public-download-card .pk-row .btn{flex:1;min-height:44px}}
-/* Ver51.3: approved laboratory effects, transparent overlay on original artwork */
+/* Ver51.4: approved laboratory effects, transparent overlay on original artwork */
 .card-fx-layer:is(.fx-graphite-scratch-foil,.fx-phase-invert-edge,.fx-heatpress-imprint,.fx-multi-exposure-step,.fx-chromatography-paper,.fx-photochromic-exposure,.fx-uv-excitation,.fx-optical-carved-relief,.fx-shadow-carved-silhouette,.fx-risograph-misregister){background-repeat:repeat;pointer-events:none;mix-blend-mode:screen;opacity:var(--fx-o,.72)}
 .fx-graphite-scratch-foil{background:repeating-linear-gradient(173deg,transparent 0 4px,rgba(190,197,205,.25) 4.5px 5px,rgba(18,24,31,.35) 5.5px 6px,transparent 7px 15px);background-size:calc(190px * var(--fx-density-scale,1)) 100%;mix-blend-mode:soft-light!important}
 .fx-phase-invert-edge{background:repeating-conic-gradient(from 45deg at 50% 50%,rgba(210,225,250,.24) 0deg 3deg,transparent 3deg 12deg,rgba(35,48,85,.15) 12deg 14deg,transparent 14deg 24deg);background-size:calc(170px * var(--fx-density-scale,1)) calc(170px * var(--fx-density-scale,1));mix-blend-mode:difference!important;opacity:calc(var(--fx-o,.72) * .45)!important}
@@ -22051,7 +22051,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
 </style>
 <style>
 
-/* Ver51.3: progressive UX layer; original application controls remain intact. */
+/* Ver51.4: progressive UX layer; original application controls remain intact. */
 .v42-nav-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--panel2,#20242d);border:1px solid var(--line,#353b47);color:var(--text,#fff);border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:700}
 .v42-nav-panel{position:fixed;z-index:9995;top:62px;left:12px;width:min(580px,calc(100vw - 24px));max-height:calc(100dvh - 78px);overflow:auto;background:var(--panel,#171a21);color:var(--text,#fff);border:1px solid var(--line,#353b47);border-radius:14px;box-shadow:0 14px 42px #0009;padding:14px}
 .v42-nav-panel[hidden],.v42-quicklinks[hidden]{display:none!important}
@@ -22110,7 +22110,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v51.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v51.4 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23943,7 +23943,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   </div>
 
   <div class="settings-maintenance-card" id="storage-cleanup-v488" style="margin-top:12px">
-    <h4>保存データの整理（Ver51.3）</h4>
+    <h4>保存データの整理（Ver51.4）</h4>
     <p class="muted">期限切れのローカルオンラインルームと、ロボットローグライクの保存データを個別に整理します。カード・デッキ・画像・IndexedDBは対象外です。進行中のオンライン対戦がないときに操作してください。</p>
     <div class="actions"><button class="btn" type="button" id="cleanup-inspect">整理対象を調べる</button><button class="btn small" type="button" id="cleanup-backup" disabled>対象データをバックアップ</button></div>
     <div id="cleanup-summary" role="status" aria-live="polite" class="muted" style="margin:8px 0"></div>
@@ -24627,7 +24627,7 @@ function reconcileCardLinks(){
  let changed=false;
  for(const c of cards){
    const before=JSON.stringify(c.cardLinks||[]);
-   c.cardLinks=normalizeCardLinks(c.cardLinks,c.id).filter(x=>valid.has(x.targetId));
+   c.cardLinks=normalizeCardLinks(c.cardLinks,c.id); // Keep unresolved IDs until migration finishes
    if(JSON.stringify(c.cardLinks)!==before)changed=true;
  }
  return changed;
@@ -25107,7 +25107,7 @@ __mkCardBootGate.id='mk-card-boot-gate';
 __mkCardBootGate.style.cssText='position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;background:#111827ee;color:white;font:16px sans-serif;text-align:center;padding:20px';
 __mkCardBootGate.textContent='カードデータを安全に読み込んでいます…';
 document.body.appendChild(__mkCardBootGate);
-// Ver51.3: rescue snapshots are stored separately from the live catalog.
+// Ver51.4: rescue snapshots are stored separately from the live catalog.
 // No old localStorage key is deleted or rewritten during this migration.
 async function __mkRescueSnapshotBeforeBoot(){
  const keys=[LS_CARDS,LS_DECKS,LS_COLLECTION,LS_CARD_RECENT,LS_CARD_REGISTER_RECENT];
@@ -25124,7 +25124,7 @@ async function __mkRescueSnapshotBeforeBoot(){
    await new Promise((resolve,reject)=>{const tx=db.transaction('snapshots','readwrite');tx.objectStore('snapshots').put({format:'minkai-legacy-rescue-v513',createdAt:new Date().toISOString(),raw},'first-boot');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('救出用保存失敗'))});
   }
   const verify=await new Promise((resolve,reject)=>{const req=db.transaction('snapshots','readonly').objectStore('snapshots').get('first-boot');req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)});
-  if(!verify||verify.format!=='minkai-legacy-rescue-v513')throw Error('救出用保存の検証に失敗');
+  if(!verify||verify.format!=='minkai-legacy-rescue-v513'||!verify.raw||Object.keys(raw).some(k=>!Object.prototype.hasOwnProperty.call(verify.raw,k)))throw Error('救出用保存の検証に失敗');
   return verify;
  }finally{db.close()}
 }
@@ -25174,10 +25174,11 @@ async function __mkBootCardCatalog(){
   }
   __mkCardReady=true;
   repairPersistentReferences();
+  // Rescue boot is read-only for deck storage; settings are normalized in memory only.
   if(__mkCardPending){console.warn('[みん会TCG] 起動前のカード書き込み要求を破棄（DB保護）');__mkCardPending=null}
   // Free the old quota only after a verified IndexedDB copy exists.
   // Never remove the old data if migration or verification failed.
-  // Ver51.3: legacy catalog is retained as a recovery copy; never erase automatically.
+  // Ver51.4: legacy catalog is retained as a recovery copy; never erase automatically.
   try{renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup(true);if(board)renderBoard()}catch(e){console.warn('カード一覧の再描画:',e)}
  }catch(e){
   console.error('カードDB移行失敗（旧データは保持）',e);
@@ -25637,7 +25638,7 @@ let board=null, detailCtx=null, detailNav=null, inspectSession=null, browseSessi
 const $=(s,root=document)=>(root||document).querySelector(s), $$=(s,root=document)=>[...(root||document).querySelectorAll(s)];
 function uid(p='id'){return p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
 function load(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}}
-// Ver51.3: Storage quota errors must never abort application initialization.
+// Ver51.4: Storage quota errors must never abort application initialization.
 // Preserve existing data; do not clear or overwrite another storage key.
 var __mkStorageWarningShown=false;
 function __mkStorageWarning(k,err){
@@ -25655,7 +25656,7 @@ function __mkStorageWarning(k,err){
  };
  if(document.body)notify();else document.addEventListener('DOMContentLoaded',notify,{once:true});
 }
-// Ver51.3: card catalog is persisted in IndexedDB, not the limited localStorage.
+// Ver51.4: card catalog is persisted in IndexedDB, not the limited localStorage.
 // Legacy localStorage data is kept until a verified IDB migration completes.
 var __mkCardDbPromise=null,__mkCardReady=false,__mkCardWriteChain=Promise.resolve(),__mkCardPending=null;
 function __mkOpenCardDb(){
@@ -25675,7 +25676,7 @@ async function __mkCardDbSet(value){const db=await __mkOpenCardDb();return new P
  const tx=db.transaction('catalog','readwrite');tx.objectStore('catalog').put(value,'cards');
  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('カードDB保存中断'));
 })}
-// Ver51.3: durable, restart-safe journal for JSON restoration critical stores.
+// Ver51.4: durable, restart-safe journal for JSON restoration critical stores.
 // An interrupted restore is rolled back before the card catalog is exposed.
 const __mkRestoreJournalKey='restore_journal_v509';
 async function __mkJournalRead(){const db=await __mkOpenCardDb();return new Promise((resolve,reject)=>{const req=db.transaction('catalog','readonly').objectStore('catalog').get(__mkRestoreJournalKey);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
@@ -26609,7 +26610,7 @@ async function createBackgroundAssetRecord(file){
    };
  }finally{drawable.close()}
 }
-// Ver51.3: exact-source background deduplication; original bytes are hashed before resizing.
+// Ver51.4: exact-source background deduplication; original bytes are hashed before resizing.
 async function backgroundFileHash(file){
  const bytes=await file.arrayBuffer();
  const digest=await crypto.subtle.digest('SHA-256',bytes);
@@ -27243,7 +27244,7 @@ function normalizeDeckSettings(){
  });
  if(changed)save(LS_DECKS,decks);
 }
-normalizeDeckSettings();
+// Ver51.4: normalization is deferred until AFTER the rescue snapshot and card migration.
 function applyExclusiveFavorite(deckId,kind){
  const key=kind==='main'?'mainFavorite':'otherFavorite';
  decks.forEach(d=>{if(d.id!==deckId)d[key]=false});
@@ -27816,7 +27817,7 @@ function parseFullBackupZip(bytes){
  return {manifest,backupVersion,imageRecords,links,backgroundRecords,frameRecords,frameLinks,customFxRecords,theme,settings:normalizeFullBackupSettings(manifest.settings||{})};
 }
 async function restoreFullBackupZip(parsed){
- // Ver51.3: Never mutate a live database before validating all critical references.
+ // Ver51.4: Never mutate a live database before validating all critical references.
  if(!imageSystemAvailable)throw new Error('画像ストレージを利用できないため復元を中止しました。');
  if(!parsed?.manifest?.data)throw new Error('完全バックアップの内容が不正です。');
  const data=parsed.manifest.data;
@@ -27835,7 +27836,7 @@ async function restoreFullBackupZip(parsed){
  for(const link of parsed.links||[])if(!ids.has(String(link.cardId))||!assetIds.has(String(link.imageId)))throw new Error('画像の参照先が不正です。復元は行いません。');
  // Multiple IndexedDB transactions and localStorage cannot be committed atomically.
  // Keep destructive full-ZIP restoration disabled until a durable, restart-safe recovery journal exists.
- throw new Error('Ver51.3: ZIP内の参照検査は完了しましたが、画像・カード・デッキの一括復元は安全な巻き戻し機構が未完成のため停止しています。ZIPファイルを保管してください。');
+ throw new Error('Ver51.4: ZIP内の参照検査は完了しましたが、画像・カード・デッキの一括復元は安全な巻き戻し機構が未完成のため停止しています。ZIPファイルを保管してください。');
 }
 function exportBackupObject(){
  return {
@@ -27892,7 +27893,7 @@ async function restoreBackupObject(data,opt={}){
      cardLinks:backupVersion>=7?normalizeCardLinks(raw.cardLinks,id):[]
    });
  }
- // Ver51.3 safety preflight: never silently strip deck entries during backup restoration.
+ // Ver51.4 safety preflight: never silently strip deck entries during backup restoration.
  const incomingCardIds=new Set(restoredCards.map(c=>c.id));
  const unresolved=[];
  for(const deck of data.decks){
@@ -27902,11 +27903,11 @@ async function restoreBackupObject(data,opt={}){
   }
  }
  if(unresolved.length){
-  console.warn('[Ver51.3] 復元を中止: 参照カードがバックアップにありません',unresolved.slice(0,30));
+  console.warn('[Ver51.4] 復元を中止: 参照カードがバックアップにありません',unresolved.slice(0,30));
   throw new Error('復元を中止しました。バックアップ内に定義のないカード参照が'+unresolved.length+'件あります。既存データは変更していません。');
  }
  if(data.cards.length>0&&restoredCards.length===0)throw new Error('カード定義が正常に読み取れないため復元を中止しました。');
- // Ver51.3: reject malformed and conflicting card definitions before any persistent write.
+ // Ver51.4: reject malformed and conflicting card definitions before any persistent write.
  if(restoredCards.length!==data.cards.length||usedIds.size!==data.cards.length){
   throw new Error('カード定義に欠損・重複・不正な項目があるため復元を中止しました。既存データは変更していません。');
  }
@@ -27935,14 +27936,14 @@ async function restoreBackupObject(data,opt={}){
    restoredDecks.push({id,name:String(raw.name||'名称未設定デッキ'),entries,...deckSettingsFrom(raw)});
  }
  const stagedCollection=backupVersion>=2?normalizeCollectionData(data.collection||{},validIds):normalizeCollectionData({},validIds);
- // Ver51.3: persistent rollback journal must be committed BEFORE the first write.
+ // Ver51.4: persistent rollback journal must be committed BEFORE the first write.
  await __mkBeginRestoreJournal();
  try{
    if(await save(LS_CARDS,restoredCards)===false)throw Error('カード保存失敗');
    if(save(LS_DECKS,restoredDecks)===false)throw Error('デッキ保存失敗');
    if(save(LS_COLLECTION,stagedCollection)===false)throw Error('コレクション保存失敗');
  }catch(err){
-   try{await __mkRecoverInterruptedRestore()}catch(rollbackErr){console.error('[Ver51.3] 復元ロールバック失敗。記録は保持',rollbackErr)}
+   try{await __mkRecoverInterruptedRestore()}catch(rollbackErr){console.error('[Ver51.4] 復元ロールバック失敗。記録は保持',rollbackErr)}
    throw Error('復元中の保存に失敗しました。安全記録を保持しています: '+err.message);
  }
  try{
@@ -27957,13 +27958,13 @@ async function restoreBackupObject(data,opt={}){
  collectionSource='all';collectionPage=0;
  recentCardIds=(Array.isArray(data.recentCardIds)?data.recentCardIds:[]).filter(id=>validIds.has(id)).slice(0,10);
  registeredRecentCardIds=(Array.isArray(data.registeredRecentCardIds)?data.registeredRecentCardIds:restoredCards.slice(-5).reverse().map(c=>c.id)).filter(id=>validIds.has(id)).slice(0,5);
- // Ver51.3: critical stores were committed and verified above; do not write again here.
+ // Ver51.4: critical stores were committed and verified above; do not write again here.
  if(save(LS_CARD_RECENT,recentCardIds)===false||save(LS_CARD_REGISTER_RECENT,registeredRecentCardIds)===false)throw Error("カード履歴の保存失敗");
  editingDeckId=null;workingDeck=blankWorkingDeck();board=null;detailCtx=null;detailNav=null;inspectSession=null;resetBoardHistory();
  normalizeDeckSettings();renderRegisterHistory();renderCards();renderCollection();renderDecks();renderSetup(true);
  // Clear the journal only after the complete restoration path has returned from its writes.
  }catch(err){
-   try{await __mkRecoverInterruptedRestore()}catch(rollbackErr){console.error("[Ver51.3] 復元後半の巻き戻し失敗。復旧記録を保持",rollbackErr)}
+   try{await __mkRecoverInterruptedRestore()}catch(rollbackErr){console.error("[Ver51.4] 復元後半の巻き戻し失敗。復旧記録を保持",rollbackErr)}
    throw Error("復元後半の処理に失敗しました。復旧記録を確認してください: "+err.message);
  }
  try{await __mkJournalClear()}catch(err){throw Error("復元記録の確定処理に失敗しました。再起動前にデータを保全してください: "+err.message)}
@@ -28085,7 +28086,7 @@ $('#full-backup-file-input').onchange=async e=>{
  try{
    const parsed=parseFullBackupZip(new Uint8Array(await f.arrayBuffer()));
    const cardCount=parsed.manifest.data.cards.length,deckCount=parsed.manifest.data.decks.length,imageCount=parsed.imageRecords.length,frameCount=(parsed.frameRecords||[]).length,bgCount=parsed.backgroundRecords.length;
-   // Ver51.3: provide a read-only inspection artifact before any restore operation.
+   // Ver51.4: provide a read-only inspection artifact before any restore operation.
    // This path never writes to localStorage, IndexedDB, or Supabase.
    const inspection={
      format:'minkai-full-zip-inspection',version:'50.7',inspectedAt:new Date().toISOString(),
@@ -29655,13 +29656,13 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      shell.hidden=false;
      if(!frame.getAttribute('src')){
        frame.addEventListener('load',()=>setTimeout(openSelected,0),{once:true});
-       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.0';
+       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.4';
      }else openSelected();
      return;
    }
  }
 
- // Ver51.3: Legacy editing UI is retired. Keep legacy render/data helpers for saved cards.
+ // Ver51.4: Legacy editing UI is retired. Keep legacy render/data helpers for saved cards.
  const shell=document.getElementById('fx-trial-shell');
  if(shell){shell.hidden=false;}
  const host=document.getElementById('fx-trial-box')||document.body;
@@ -42154,7 +42155,7 @@ onlineHandleRoomMessage=function(msg){
  return __mkFxHandleOriginal.apply(this,arguments);
 };
 
-/* Ver51.3: share deck draft state with the separate autosave script without copying stale values. */
+/* Ver51.4: share deck draft state with the separate autosave script without copying stale values. */
 for (const [key, read, write] of [
  ['workingDeck',()=>workingDeck,v=>{workingDeck=v}],
  ['editingDeckId',()=>editingDeckId,v=>{editingDeckId=v}],
@@ -42564,7 +42565,7 @@ async function accountApplyCloudSnapshot(payload,{preserveCollectionWhenMissing=
     if(save(LS_DECKS,nextDecks)===false)throw Error('デッキ保存失敗');
     if(save(LS_COLLECTION,nextCollection)===false)throw Error('コレクション保存失敗');
   }catch(err){
-    try{await save(LS_CARDS,previousCards);save(LS_DECKS,previousDecks);save(LS_COLLECTION,previousCollection)}catch(rollbackErr){console.error('[Ver51.3] クラウド復元の巻き戻し失敗',rollbackErr)}
+    try{await save(LS_CARDS,previousCards);save(LS_DECKS,previousDecks);save(LS_COLLECTION,previousCollection)}catch(rollbackErr){console.error('[Ver51.4] クラウド復元の巻き戻し失敗',rollbackErr)}
     throw Error('クラウド復元の保存に失敗しました。退避データを削除しないでください: '+err.message);
   }
   cards=nextCards;decks=nextDecks;collectionData=nextCollection;
@@ -43807,7 +43808,7 @@ window.MinkaiOnlineEventV299={open,sync,version:VERSION,protocol:PROTOCOL};windo
 </style>
 <script>
 
-/* Ver51.3 progressive enhancement: never replaces core navigation or persistence. */
+/* Ver51.4 progressive enhancement: never replaces core navigation or persistence. */
 (()=>{'use strict';
 const ready=()=>{
  const appbar=document.querySelector('header.appbar');if(!appbar||document.getElementById('v42-nav-toggle'))return;
@@ -43856,7 +43857,7 @@ const ready=()=>{
 
 </script>
 
-<!-- Ver51.3 card effects editor launcher -->
+<!-- Ver51.4 card effects editor launcher -->
 <style>
 #fx-trial-launch[hidden]{display:none!important}
 #fx-trial-launch{position:fixed;right:16px;bottom:76px;z-index:2147483000;border:1px solid #88b8ff;border-radius:12px;padding:10px 14px;background:#182a45;color:#fff;box-shadow:0 4px 20px #0009;font-weight:700;cursor:pointer}
@@ -43887,7 +43888,7 @@ const ready=()=>{
 }
 </style>
 <style>
-/* Ver51.3: compact editor header; card chooser expands only on demand. */
+/* Ver51.4: compact editor header; card chooser expands only on demand. */
 #fx-trial-top-actions{display:flex;gap:6px;align-items:center;justify-content:flex-end}
 #fx-trial-card-toggle{background:#283e5e;color:#fff;border:1px solid #7b98c2;padding:9px 11px;border-radius:8px;white-space:nowrap;cursor:pointer}
 #fx-trial-controls[hidden]{display:none!important}
@@ -43896,7 +43897,7 @@ const ready=()=>{
 @media(max-width:640px){#fx-trial-bar{padding:7px 9px!important;gap:5px!important}#fx-trial-heading{font-size:12px!important;line-height:1.3!important}#fx-trial-top-actions{gap:5px}#fx-trial-card-toggle,#fx-trial-close{font-size:12px!important;padding:9px 8px!important;min-height:40px}#fx-trial-controls:not([hidden]){display:flex!important;max-height:35dvh;overflow-y:auto;padding:8px 0}#fx-trial-card-select{font-size:16px!important}}
 </style>
 <button type="button" id="fx-trial-launch" aria-haspopup="dialog">カード加工エディター</button>
-<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定 <span id="fx-trial-current-card">｜カード未選択</span></div><div id="fx-trial-top-actions"><button type="button" id="fx-trial-card-toggle" aria-expanded="false" aria-controls="fx-trial-controls">カードを変更</button><button type="button" id="fx-trial-close">閉じる</button></div><div id="fx-trial-controls" hidden><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver51.3 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html?v=51.0"></iframe></div></div>
+<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定 <span id="fx-trial-current-card">｜カード未選択</span></div><div id="fx-trial-top-actions"><button type="button" id="fx-trial-card-toggle" aria-expanded="false" aria-controls="fx-trial-controls">カードを変更</button><button type="button" id="fx-trial-close">閉じる</button></div><div id="fx-trial-controls" hidden><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver51.4 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html?v=51.4"></iframe></div></div>
 <script>
 (function(){
  const controls=document.getElementById('fx-trial-controls'),toggle=document.getElementById('fx-trial-card-toggle'),select=document.getElementById('fx-trial-card-select'),current=document.getElementById('fx-trial-current-card');
@@ -43917,7 +43918,7 @@ const launch=document.getElementById('fx-trial-launch'),shell=document.getElemen
 function fxRecovery(message){
  let n=document.getElementById('fx-trial-load-error');if(!n){n=document.createElement('div');n.id='fx-trial-load-error';n.setAttribute('role','alert');n.style.cssText='padding:12px;background:#352620;color:white;border:1px solid #b98a58;border-radius:8px;margin:8px';shell.querySelector('#fx-trial-box').append(n)}
  n.hidden=false;n.replaceChildren();const t=document.createElement('span');t.textContent=message+' 保存済みのカードデータは変更されていません。';n.append(t);
- const retry=document.createElement('button');retry.textContent='エディターを再読込';retry.style.marginLeft='12px';retry.onclick=()=>{n.hidden=true;frame.src='./fx_trial_preview.html?v=51.0&retry='+Date.now()};n.append(retry);
+ const retry=document.createElement('button');retry.textContent='エディターを再読込';retry.style.marginLeft='12px';retry.onclick=()=>{n.hidden=true;frame.src='./fx_trial_preview.html?v=51.4&retry='+Date.now()};n.append(retry);
 }
 frame.addEventListener('error',()=>fxRecovery('加工エディターの読込に失敗しました。'));
 frame.addEventListener('load',()=>{try{if(!frame.contentDocument?.getElementById('type'))fxRecovery('加工エディターの内容が不完全です。');else{const n=document.getElementById('fx-trial-load-error');if(n)n.hidden=true}}catch{fxRecovery('加工エディターを確認できません。')}});
@@ -43985,7 +43986,7 @@ function ensureFrame(){
  if(frame)return;
  frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
- frame.src='./fx_trial_preview.html?v=51.0';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
+ frame.src='./fx_trial_preview.html?v=51.4';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
 }
 function place(el,url){
  if(!el.isConnected)return;
@@ -44155,7 +44156,7 @@ new MutationObserver(attach).observe(document.getElementById('modal')||document.
 #fx-trial-frame{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 auto!important;height:auto!important;min-height:240px!important;width:100%!important}
 @media(max-width:800px){#fx-trial-box{height:100%!important;max-height:100%!important}#fx-trial-bar{flex:0 0 auto!important;max-height:32dvh!important;overflow-y:auto!important}#fx-trial-frame{height:auto!important;min-height:240px!important;flex:1 1 auto!important}}
 </style><script>
-/* Ver51.3: keep installed mobile PWA current after deployment. */
+/* Ver51.4: keep installed mobile PWA current after deployment. */
 (()=>{if(!('serviceWorker' in navigator)||location.protocol==='file:')return;
 let controlled=!!navigator.serviceWorker.controller;
 navigator.serviceWorker.addEventListener('controllerchange',()=>{
@@ -44192,7 +44193,7 @@ window.addEventListener('load',async()=>{
 })();
 </script><script src="./battle_effects.js"></script>
 <script>
-/* Ver51.3: read-only storage usage diagnostics. Never modifies stored records. */
+/* Ver51.4: read-only storage usage diagnostics. Never modifies stored records. */
 (function(){
 'use strict';
 let latest=null;
@@ -44203,7 +44204,7 @@ const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 function enumerate(store){const out=[];try{for(let i=0;i<store.length;i++){const key=store.key(i),value=store.getItem(key);if(key!==null)out.push({key,bytes:bytes(key)+bytes(value||''),characters:(value||'').length});}}catch(e){return {items:out,error:String(e)}}return {items:out.sort((a,b)=>b.bytes-a.bytes)};}
 async function databaseNames(){if(typeof indexedDB.databases!=='function')return {names:[],warning:'このブラウザはデータベース名の一覧取得に非対応です'};try{return {names:(await indexedDB.databases()).filter(x=>x.name).map(x=>x.name)}}catch(e){return {names:[],warning:String(e)}}}
 function idbInfo(name){return new Promise(resolve=>{let done=false,request,timeout;const finish=x=>{if(done)return;done=true;clearTimeout(timeout);try{request?.result?.close()}catch(_){}resolve(x)};try{request=indexedDB.open(name);timeout=setTimeout(()=>finish({name,error:'タイムアウト'}),3500);request.onupgradeneeded=e=>{try{e.target.transaction.abort()}catch(_){}finish({name,error:'未登録DBのため調査を中止'})};request.onerror=()=>finish({name,error:String(request.error||'アクセス不可')});request.onsuccess=()=>{const db=request.result;const stores=Array.from(db.objectStoreNames);if(!stores.length)return finish({name,stores:[]});let result=[],pending=stores.length;for(const st of stores){try{const tx=db.transaction(st,'readonly'),req=tx.objectStore(st).count();req.onsuccess=()=>{result.push({store:st,count:req.result});if(!--pending)finish({name,stores:result})};req.onerror=()=>{result.push({store:st,error:'件数取得不可'});if(!--pending)finish({name,stores:result})}}catch(e){result.push({store:st,error:String(e)});if(!--pending)finish({name,stores:result})}}};}catch(e){finish({name,error:String(e)})}})}
-async function inspect(){const local=enumerate(localStorage),session=enumerate(sessionStorage),dbs=await databaseNames();const estimate=await (async()=>{try{return await navigator.storage?.estimate?.()||null}catch(e){return {error:String(e)}}})();const details=[];for(const db of dbs.names.slice(0,30))details.push(await idbInfo(db));return {diagnosedAt:new Date().toISOString(),appVersion:'49.5',origin:location.origin,localStorage:local,sessionStorage:session,indexedDB:{...dbs,details},storageEstimate:estimate};}
+async function inspect(){const local=enumerate(localStorage),session=enumerate(sessionStorage),dbs=await databaseNames();const estimate=await (async()=>{try{return await navigator.storage?.estimate?.()||null}catch(e){return {error:String(e)}}})();const details=[];for(const db of dbs.names.slice(0,30))details.push(await idbInfo(db));return {diagnosedAt:new Date().toISOString(),appVersion:'51.4',origin:location.origin,localStorage:local,sessionStorage:session,indexedDB:{...dbs,details},storageEstimate:estimate};}
 function render(r){const total=items=>items.reduce((n,x)=>n+x.bytes,0);const rows=r.localStorage.items.map(x=>'<tr><td style="overflow-wrap:anywhere">'+esc(x.key)+'</td><td style="text-align:right;white-space:nowrap">'+fmt(x.bytes)+'</td></tr>').join('');const est=r.storageEstimate||{};const dbRows=r.indexedDB.details.map(x=>'<tr><td>'+esc(x.name)+'</td><td>'+esc(x.error||x.stores.map(s=>s.store+'：'+(s.count??s.error)).join(' / '))+'</td></tr>').join('');$('storage-diagnostic-result').innerHTML='<p><b>localStorage：</b>'+fmt(total(r.localStorage.items))+'（'+r.localStorage.items.length+'項目）　<b>sessionStorage：</b>'+fmt(total(r.sessionStorage.items))+'　<b>オリジン全体：</b>'+(Number.isFinite(est.usage)?fmt(est.usage):'取得不可')+' / <b>推定割当：</b>'+(Number.isFinite(est.quota)?fmt(est.quota):'取得不可')+'</p><p class="muted">localStorageは文字列のUTF-8換算概算です。オリジン全体の使用量にはIndexedDBやキャッシュ等も含まれます。両者を足し合わせないでください。</p><h5>localStorageの大きい項目から順</h5><table style="width:100%;font-size:.9em"><thead><tr><th>保存キー</th><th>概算サイズ</th></tr></thead><tbody>'+rows+'</tbody></table><h5>IndexedDB（件数のみ）</h5><table style="width:100%;font-size:.9em"><thead><tr><th>データベース</th><th>ストアと件数</th></tr></thead><tbody>'+dbRows+'</tbody></table>'+(r.indexedDB.warning?'<p class="muted">'+esc(r.indexedDB.warning)+'</p>':'')+'<p class="muted">IndexedDBのバイト数はブラウザ標準APIではDB別に正確に取得できません。診断結果のJSONには保存キー名が含まれるため、共有前に内容を確認してください。</p>';}
 async function refresh(){const btn=$('storage-diagnostic-refresh'),status=$('storage-diagnostic-status');btn.disabled=true;status.textContent='保存領域を調査中…';try{latest=await inspect();render(latest);$('storage-diagnostic-export').disabled=false;status.textContent='診断完了。データの変更・削除は行っていません。'}catch(e){status.textContent='診断に失敗しました：'+String(e)}finally{btn.disabled=false}}
 function exportReport(){if(!latest)return;const blob=new Blob([JSON.stringify(latest,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='MinKaiTCG_storage_diagnostic_V49_4.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
@@ -44212,7 +44213,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 <script>
-/* Ver51.3 targeted, opt-in localStorage cleanup. Never touches TCG card or deck keys. */
+/* Ver51.4 targeted, opt-in localStorage cleanup. Never touches TCG card or deck keys. */
 (function(){
 'use strict';
 const $=id=>document.getElementById(id),ROOM='minkai-online-rooms-v1',ROBOT=/^robot-roguelike-(?:prototype|manager)-v[\w.\-]+$/;
@@ -44257,7 +44258,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 <script>
-/* Ver51.3: single shared card back, stored once as a Blob, never on individual cards. */
+/* Ver51.4: single shared card back, stored once as a Blob, never on individual cards. */
 (()=>{'use strict';
 const DB='minkai_tcg_shared_card_back_v490',STORE='assets',KEY='shared-back';
 let activeURL=null;
