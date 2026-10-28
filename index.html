@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v49.3</title>
+<title>みん会TCG Simulator v50.1</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -9216,8 +9216,8 @@ main{zoom:1}
 .cyber-panel-mesh{
  position:absolute;z-index:1;inset:0;pointer-events:none;
  background:
-   linear-gradient(135deg,transparent 0 49.7%,rgba(71,220,255,.045) 50%,transparent 50.3%),
-   linear-gradient(45deg,transparent 0 49.7%,rgba(122,93,240,.035) 50%,transparent 50.3%);
+   linear-gradient(135deg,transparent 0 49.8%,rgba(71,220,255,.045) 50%,transparent 50.3%),
+   linear-gradient(45deg,transparent 0 49.8%,rgba(122,93,240,.035) 50%,transparent 50.3%);
  background-size:52px 52px;
 }
 .cyber-data-stream{
@@ -20296,7 +20296,7 @@ h3 .minkai-ruby{margin-top:.45em}
 
 /* Ver40.5 usability */
 .public-browse-list-head{gap:10px;align-items:center;flex-wrap:wrap}.public-browse-list-head>.actions{margin-left:auto;align-items:center}.pk-public-search-row{align-items:stretch}.pk-public-search-row input{min-width:min(420px,100%);flex:1}.pk-public-download-list{display:grid;gap:10px}.pk-public-download-card{margin:0}.pk-public-slot-summary{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}@media(max-width:700px){.public-browse-list-head>.actions{width:100%;margin-left:0;justify-content:space-between}.public-browse-list-head #public-cards-refresh{min-height:44px}.pk-public-search-row{display:grid;grid-template-columns:1fr auto}.pk-public-search-row input{grid-column:1/-1;min-width:0}.pk-public-download-card .pk-row .btn{flex:1;min-height:44px}}
-/* Ver49.3: approved laboratory effects, transparent overlay on original artwork */
+/* Ver51.1: approved laboratory effects, transparent overlay on original artwork */
 .card-fx-layer:is(.fx-graphite-scratch-foil,.fx-phase-invert-edge,.fx-heatpress-imprint,.fx-multi-exposure-step,.fx-chromatography-paper,.fx-photochromic-exposure,.fx-uv-excitation,.fx-optical-carved-relief,.fx-shadow-carved-silhouette,.fx-risograph-misregister){background-repeat:repeat;pointer-events:none;mix-blend-mode:screen;opacity:var(--fx-o,.72)}
 .fx-graphite-scratch-foil{background:repeating-linear-gradient(173deg,transparent 0 4px,rgba(190,197,205,.25) 4.5px 5px,rgba(18,24,31,.35) 5.5px 6px,transparent 7px 15px);background-size:calc(190px * var(--fx-density-scale,1)) 100%;mix-blend-mode:soft-light!important}
 .fx-phase-invert-edge{background:repeating-conic-gradient(from 45deg at 50% 50%,rgba(210,225,250,.24) 0deg 3deg,transparent 3deg 12deg,rgba(35,48,85,.15) 12deg 14deg,transparent 14deg 24deg);background-size:calc(170px * var(--fx-density-scale,1)) calc(170px * var(--fx-density-scale,1));mix-blend-mode:difference!important;opacity:calc(var(--fx-o,.72) * .45)!important}
@@ -20414,8 +20414,8 @@ h3 .minkai-ruby{margin-top:.45em}
 .fx-white-pearl::after{content:"";position:absolute;inset:0;background:linear-gradient(145deg,rgba(70,78,82,.035),transparent 35%,rgba(255,255,255,.055) 70%,rgba(60,65,69,.035));mix-blend-mode:overlay;opacity:calc(.70*var(--fx-structure))}
 .fx-animate .fx-white-pearl::before{animation:v1630ReflectBreathe var(--fx-duration,12s) ease-in-out infinite alternate}
 
-.card-fx-layer.fx-layered-mica{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22420%22%20height%3D%22590%22%20viewBox%3D%220%200%20420%20590%22%3E%3Cpolygon%20points%3D%2218%2C47.9%2025.439999999999998%2C38%2071.32%2C40.64%2080%2C52.3%2062.64%2C60%2027.92%2C56.92%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-8%2049.3%2049.3%29%22%2F%3E%3Cpolygon%20points%3D%2295%2C30.1%20100.76%2C22%20136.28%2C24.16%20143%2C33.7%20129.56%2C40%20102.68%2C37.480000000000004%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2812%20119.0%2031.0%29%22%2F%3E%3Cpolygon%20points%3D%22165%2C55.0%20173.4%2C46%20225.2%2C48.8%20235%2C59.0%20215.4%2C66%20176.2%2C63.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-15%20200.0%2056.0%29%22%2F%3E%3Cpolygon%20points%3D%22260%2C31.65%20266.96%2C24%20309.88%2C26.04%20318%2C35.05%20301.76%2C41%20269.28%2C38.62%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20289.0%2032.5%29%22%2F%3E%3Cpolygon%20points%3D%22325%2C69.1%20332.92%2C61%20381.76%2C63.16%20391%2C72.7%20372.52%2C79%20335.56%2C76.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-11%20358.0%2070.0%29%22%2F%3E%3Cpolygon%20points%3D%2235%2C127.45%2043.64%2C118%2096.92%2C120.52%20107%2C131.65%2086.84%2C139%2047.619999999999996%2C136.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2815%2071.0%20128.5%29%22%2F%3E%3Cpolygon%20points%3D%22132%2C109.2%20138.48%2C102%20178.44%2C103.92%20186%2C112.4%20170.88%2C118%20140.64%2C115.76%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-7%20159.0%20110.0%29%22%2F%3E%3Cpolygon%20points%3D%22220%2C147.6%20229.96%2C136%20291.38%2C138.88%20303%2C151.6%20279.76%2C160%20233.28%2C156.64%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%2810%20261.5%20148.0%29%22%2F%3E%3Cpolygon%20points%3D%22310%2C122.2%20316.12%2C115%20353.86%2C116.92%20361%2C125.4%20347.62%2C131%20318.16%2C128.76%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-14%20335.5%20123.0%29%22%2F%3E%3Cpolygon%20points%3D%2216%2C216.1%2022.96%2C208%2065.88%2C210.16%2074%2C219.7%2057.76%2C226%2025.28%2C223.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-12%2045.0%20217.0%29%22%2F%3E%3Cpolygon%20points%3D%2288%2C198.8%2097.36%2C188%20155.07999999999998%2C190.88%20166%2C203.6%20144.16%2C212%20100.48%2C208.64%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.270%22%20transform%3D%22rotate%288%20127.0%20200.0%29%22%2F%3E%3Cpolygon%20points%3D%22196%2C228.65%20203.2%2C221%20247.6%2C223.04%20256%2C232.05%20239.2%2C238%20205.6%2C235.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20226.0%20229.5%29%22%2F%3E%3Cpolygon%20points%3D%22278%2C201.9%20288.32%2C192%20351.96%2C194.64%20364%2C206.3%20339.92%2C214%20291.76%2C210.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%2813%20321.0%20203.0%29%22%2F%3E%3Cpolygon%20points%3D%2245%2C319.9%2054.6%2C310%20113.8%2C312.64%20125%2C324.3%20102.6%2C332%2057.8%2C328.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-6%2085.0%20321.0%29%22%2F%3E%3Cpolygon%20points%3D%22158%2C296.1%20165.8%2C288%20213.9%2C290.16%20223%2C299.7%20204.8%2C306%20168.4%2C303.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2814%20190.5%20297.0%29%22%2F%3E%3Cpolygon%20points%3D%22249%2C341.45%20257.4%2C332%20309.2%2C334.52%20319%2C345.65%20299.4%2C353%20260.2%2C350.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-12%20284.0%20342.5%29%22%2F%3E%3Cpolygon%20points%3D%22332%2C289.65%20338.24%2C282%20376.72%2C284.04%20384%2C293.05%20369.44%2C299%20340.32%2C296.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.180%22%20transform%3D%22rotate%289%20358.0%20290.5%29%22%2F%3E%3Cpolygon%20points%3D%2222%2C424.0%2030.16%2C415%2080.47999999999999%2C417.4%2090%2C428.0%2070.96000000000001%2C435%2032.88%2C432.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2810%2056.0%20425.0%29%22%2F%3E%3Cpolygon%20points%3D%22116%2C407.9%20125.96%2C398%20187.38%2C400.64%20199%2C412.3%20175.76%2C420%20129.28%2C416.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-13%20157.5%20409.0%29%22%2F%3E%3Cpolygon%20points%3D%22228%2C440.1%20234.72%2C432%20276.15999999999997%2C434.16%20284%2C443.7%20268.32%2C450%20236.96%2C447.68%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20256.0%20441.0%29%22%2F%3E%3Cpolygon%20points%3D%22307%2C414.45%20316.49%2C405%20374.94%2C407.52%20386%2C418.65%20363.88%2C426%20319.64%2C423.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-9%20347.6%20415.5%29%22%2F%3E%3Cpolygon%20points%3D%2252%2C526.1%2059.32%2C518%20104.46000000000001%2C520.16%20113%2C529.7%2095.92%2C536%2061.76%2C533.48%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-14%2082.5%20527.0%29%22%2F%3E%3Cpolygon%20points%3D%22167%2C509.9%20176.0%2C500%20231.5%2C502.64%20242%2C514.3%20221.0%2C522%20179.0%2C518.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2811%20204.5%20511.0%29%22%2F%3E%3Cpolygon%20points%3D%22283%2C538.1%20291.4%2C530%20343.2%2C532.16%20353%2C541.7%20333.4%2C548%20294.2%2C546.18%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20318.0%20539.0%29%22%2F%3E%3C%2Fsvg%3E"),linear-gradient(150deg,rgba(132,126,116,.10),rgba(228,222,207,.10),rgba(112,110,116,.08));background-size:100% 100%,100% 100%;background-blend-mode:soft-light;mix-blend-mode:soft-light;filter:saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1)) contrast(calc(.90 + var(--fx-structure)*.14))}
-.fx-layered-mica::before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22420%22%20height%3D%22590%22%20viewBox%3D%220%200%20420%20590%22%3E%3Cpolygon%20points%3D%2218%2C47.9%2025.439999999999998%2C38%2071.32%2C40.64%2080%2C52.3%2062.64%2C60%2027.92%2C56.92%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-8%2049.3%2049.3%29%22%2F%3E%3Cpolygon%20points%3D%2295%2C30.1%20100.76%2C22%20136.28%2C24.16%20143%2C33.7%20129.56%2C40%20102.68%2C37.480000000000004%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2812%20119.0%2031.0%29%22%2F%3E%3Cpolygon%20points%3D%22165%2C55.0%20173.4%2C46%20225.2%2C48.8%20235%2C59.0%20215.4%2C66%20176.2%2C63.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-15%20200.0%2056.0%29%22%2F%3E%3Cpolygon%20points%3D%22260%2C31.65%20266.96%2C24%20309.88%2C26.04%20318%2C35.05%20301.76%2C41%20269.28%2C38.62%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20289.0%2032.5%29%22%2F%3E%3Cpolygon%20points%3D%22325%2C69.1%20332.92%2C61%20381.76%2C63.16%20391%2C72.7%20372.52%2C79%20335.56%2C76.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-11%20358.0%2070.0%29%22%2F%3E%3Cpolygon%20points%3D%2235%2C127.45%2043.64%2C118%2096.92%2C120.52%20107%2C131.65%2086.84%2C139%2047.619999999999996%2C136.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2815%2071.0%20128.5%29%22%2F%3E%3Cpolygon%20points%3D%22132%2C109.2%20138.48%2C102%20178.44%2C103.92%20186%2C112.4%20170.88%2C118%20140.64%2C115.76%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-7%20159.0%20110.0%29%22%2F%3E%3Cpolygon%20points%3D%22220%2C147.6%20229.96%2C136%20291.38%2C138.88%20303%2C151.6%20279.76%2C160%20233.28%2C156.64%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%2810%20261.5%20148.0%29%22%2F%3E%3Cpolygon%20points%3D%22310%2C122.2%20316.12%2C115%20353.86%2C116.92%20361%2C125.4%20347.62%2C131%20318.16%2C128.76%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-14%20335.5%20123.0%29%22%2F%3E%3Cpolygon%20points%3D%2216%2C216.1%2022.96%2C208%2065.88%2C210.16%2074%2C219.7%2057.76%2C226%2025.28%2C223.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-12%2045.0%20217.0%29%22%2F%3E%3Cpolygon%20points%3D%2288%2C198.8%2097.36%2C188%20155.07999999999998%2C190.88%20166%2C203.6%20144.16%2C212%20100.48%2C208.64%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.270%22%20transform%3D%22rotate%288%20127.0%20200.0%29%22%2F%3E%3Cpolygon%20points%3D%22196%2C228.65%20203.2%2C221%20247.6%2C223.04%20256%2C232.05%20239.2%2C238%20205.6%2C235.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20226.0%20229.5%29%22%2F%3E%3Cpolygon%20points%3D%22278%2C201.9%20288.32%2C192%20351.96%2C194.64%20364%2C206.3%20339.92%2C214%20291.76%2C210.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%2813%20321.0%20203.0%29%22%2F%3E%3Cpolygon%20points%3D%2245%2C319.9%2054.6%2C310%20113.8%2C312.64%20125%2C324.3%20102.6%2C332%2057.8%2C328.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-6%2085.0%20321.0%29%22%2F%3E%3Cpolygon%20points%3D%22158%2C296.1%20165.8%2C288%20213.9%2C290.16%20223%2C299.7%20204.8%2C306%20168.4%2C303.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2814%20190.5%20297.0%29%22%2F%3E%3Cpolygon%20points%3D%22249%2C341.45%20257.4%2C332%20309.2%2C334.52%20319%2C345.65%20299.4%2C353%20260.2%2C350.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-12%20284.0%20342.5%29%22%2F%3E%3Cpolygon%20points%3D%22332%2C289.65%20338.24%2C282%20376.72%2C284.04%20384%2C293.05%20369.44%2C299%20340.32%2C296.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.180%22%20transform%3D%22rotate%289%20358.0%20290.5%29%22%2F%3E%3Cpolygon%20points%3D%2222%2C424.0%2030.16%2C415%2080.47999999999999%2C417.4%2090%2C428.0%2070.96000000000001%2C435%2032.88%2C432.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2810%2056.0%20425.0%29%22%2F%3E%3Cpolygon%20points%3D%22116%2C407.9%20125.96%2C398%20187.38%2C400.64%20199%2C412.3%20175.76%2C420%20129.28%2C416.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-13%20157.5%20409.0%29%22%2F%3E%3Cpolygon%20points%3D%22228%2C440.1%20234.72%2C432%20276.15999999999997%2C434.16%20284%2C443.7%20268.32%2C450%20236.96%2C447.68%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20256.0%20441.0%29%22%2F%3E%3Cpolygon%20points%3D%22307%2C414.45%20316.49%2C405%20374.94%2C407.52%20386%2C418.65%20363.88%2C426%20319.64%2C423.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-9%20347.6%20415.5%29%22%2F%3E%3Cpolygon%20points%3D%2252%2C526.1%2059.32%2C518%20104.46000000000001%2C520.16%20113%2C529.7%2095.92%2C536%2061.76%2C533.48%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-14%2082.5%20527.0%29%22%2F%3E%3Cpolygon%20points%3D%22167%2C509.9%20176.0%2C500%20231.5%2C502.64%20242%2C514.3%20221.0%2C522%20179.0%2C518.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2811%20204.5%20511.0%29%22%2F%3E%3Cpolygon%20points%3D%22283%2C538.1%20291.4%2C530%20343.2%2C532.16%20353%2C541.7%20333.4%2C548%20294.2%2C546.18%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20318.0%20539.0%29%22%2F%3E%3C%2Fsvg%3E");background-size:116% 116%;background-position:52% 47%;mix-blend-mode:screen;opacity:calc(.22*var(--fx-structure))}
+.card-fx-layer.fx-layered-mica{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22420%22%20height%3D%22590%22%20viewBox%3D%220%200%20420%20590%22%3E%3Cpolygon%20points%3D%2218%2C47.9%2025.439999999999998%2C38%2071.32%2C40.64%2080%2C52.3%2062.64%2C60%2027.92%2C56.92%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-8%2049.4%2049.4%29%22%2F%3E%3Cpolygon%20points%3D%2295%2C30.1%20100.76%2C22%20136.28%2C24.16%20143%2C33.7%20129.56%2C40%20102.68%2C37.480000000000004%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2812%20119.0%2031.0%29%22%2F%3E%3Cpolygon%20points%3D%22165%2C55.0%20173.4%2C46%20225.2%2C48.8%20235%2C59.0%20215.4%2C66%20176.2%2C63.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-15%20200.0%2056.0%29%22%2F%3E%3Cpolygon%20points%3D%22260%2C31.65%20266.96%2C24%20309.88%2C26.04%20318%2C35.05%20301.76%2C41%20269.28%2C38.62%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20289.0%2032.5%29%22%2F%3E%3Cpolygon%20points%3D%22325%2C69.1%20332.92%2C61%20381.76%2C63.16%20391%2C72.7%20372.52%2C79%20335.56%2C76.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-11%20358.0%2070.0%29%22%2F%3E%3Cpolygon%20points%3D%2235%2C127.45%2043.64%2C118%2096.92%2C120.52%20107%2C131.65%2086.84%2C139%2047.619999999999996%2C136.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2815%2071.0%20128.5%29%22%2F%3E%3Cpolygon%20points%3D%22132%2C109.2%20138.48%2C102%20178.44%2C103.92%20186%2C112.4%20170.88%2C118%20140.64%2C115.76%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-7%20159.0%20110.0%29%22%2F%3E%3Cpolygon%20points%3D%22220%2C147.6%20229.96%2C136%20291.38%2C138.88%20303%2C151.6%20279.76%2C160%20233.28%2C156.64%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%2810%20261.5%20148.0%29%22%2F%3E%3Cpolygon%20points%3D%22310%2C122.2%20316.12%2C115%20353.86%2C116.92%20361%2C125.4%20347.62%2C131%20318.16%2C128.76%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-14%20335.5%20123.0%29%22%2F%3E%3Cpolygon%20points%3D%2216%2C216.1%2022.96%2C208%2065.88%2C210.16%2074%2C219.7%2057.76%2C226%2025.28%2C223.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-12%2045.0%20217.0%29%22%2F%3E%3Cpolygon%20points%3D%2288%2C198.8%2097.36%2C188%20155.07999999999998%2C190.88%20166%2C203.6%20144.16%2C212%20100.48%2C208.64%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.270%22%20transform%3D%22rotate%288%20127.0%20200.0%29%22%2F%3E%3Cpolygon%20points%3D%22196%2C228.65%20203.2%2C221%20247.6%2C223.04%20256%2C232.05%20239.2%2C238%20205.6%2C235.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20226.0%20229.5%29%22%2F%3E%3Cpolygon%20points%3D%22278%2C201.9%20288.32%2C192%20351.96%2C194.64%20364%2C206.3%20339.92%2C214%20291.76%2C210.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%2813%20321.0%20203.0%29%22%2F%3E%3Cpolygon%20points%3D%2245%2C319.9%2054.6%2C310%20113.8%2C312.64%20125%2C324.3%20102.6%2C332%2057.8%2C328.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-6%2085.0%20321.0%29%22%2F%3E%3Cpolygon%20points%3D%22158%2C296.1%20165.8%2C288%20213.9%2C290.16%20223%2C299.7%20204.8%2C306%20168.4%2C303.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2814%20190.5%20297.0%29%22%2F%3E%3Cpolygon%20points%3D%22249%2C341.45%20257.4%2C332%20309.2%2C334.52%20319%2C345.65%20299.4%2C353%20260.2%2C350.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-12%20284.0%20342.5%29%22%2F%3E%3Cpolygon%20points%3D%22332%2C289.65%20338.24%2C282%20376.72%2C284.04%20384%2C293.05%20369.44%2C299%20340.32%2C296.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.180%22%20transform%3D%22rotate%289%20358.0%20290.5%29%22%2F%3E%3Cpolygon%20points%3D%2222%2C424.0%2030.16%2C415%2080.47999999999999%2C417.4%2090%2C428.0%2070.96000000000001%2C435%2032.88%2C432.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2810%2056.0%20425.0%29%22%2F%3E%3Cpolygon%20points%3D%22116%2C407.9%20125.96%2C398%20187.38%2C400.64%20199%2C412.3%20175.76%2C420%20129.28%2C416.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-13%20157.5%20409.0%29%22%2F%3E%3Cpolygon%20points%3D%22228%2C440.1%20234.72%2C432%20276.15999999999997%2C434.16%20284%2C443.7%20268.32%2C450%20236.96%2C447.68%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20256.0%20441.0%29%22%2F%3E%3Cpolygon%20points%3D%22307%2C414.45%20316.49%2C405%20374.94%2C407.52%20386%2C418.65%20363.88%2C426%20319.64%2C423.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-9%20347.6%20415.5%29%22%2F%3E%3Cpolygon%20points%3D%2252%2C526.1%2059.32%2C518%20104.46000000000001%2C520.16%20113%2C529.7%2095.92%2C536%2061.76%2C533.48%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-14%2082.5%20527.0%29%22%2F%3E%3Cpolygon%20points%3D%22167%2C509.9%20176.0%2C500%20231.5%2C502.64%20242%2C514.3%20221.0%2C522%20179.0%2C518.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2811%20204.5%20511.0%29%22%2F%3E%3Cpolygon%20points%3D%22283%2C538.1%20291.4%2C530%20343.2%2C532.16%20353%2C541.7%20333.4%2C548%20294.2%2C546.18%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20318.0%20539.0%29%22%2F%3E%3C%2Fsvg%3E"),linear-gradient(150deg,rgba(132,126,116,.10),rgba(228,222,207,.10),rgba(112,110,116,.08));background-size:100% 100%,100% 100%;background-blend-mode:soft-light;mix-blend-mode:soft-light;filter:saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1)) contrast(calc(.90 + var(--fx-structure)*.14))}
+.fx-layered-mica::before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22420%22%20height%3D%22590%22%20viewBox%3D%220%200%20420%20590%22%3E%3Cpolygon%20points%3D%2218%2C47.9%2025.439999999999998%2C38%2071.32%2C40.64%2080%2C52.3%2062.64%2C60%2027.92%2C56.92%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-8%2049.4%2049.4%29%22%2F%3E%3Cpolygon%20points%3D%2295%2C30.1%20100.76%2C22%20136.28%2C24.16%20143%2C33.7%20129.56%2C40%20102.68%2C37.480000000000004%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2812%20119.0%2031.0%29%22%2F%3E%3Cpolygon%20points%3D%22165%2C55.0%20173.4%2C46%20225.2%2C48.8%20235%2C59.0%20215.4%2C66%20176.2%2C63.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-15%20200.0%2056.0%29%22%2F%3E%3Cpolygon%20points%3D%22260%2C31.65%20266.96%2C24%20309.88%2C26.04%20318%2C35.05%20301.76%2C41%20269.28%2C38.62%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20289.0%2032.5%29%22%2F%3E%3Cpolygon%20points%3D%22325%2C69.1%20332.92%2C61%20381.76%2C63.16%20391%2C72.7%20372.52%2C79%20335.56%2C76.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-11%20358.0%2070.0%29%22%2F%3E%3Cpolygon%20points%3D%2235%2C127.45%2043.64%2C118%2096.92%2C120.52%20107%2C131.65%2086.84%2C139%2047.619999999999996%2C136.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2815%2071.0%20128.5%29%22%2F%3E%3Cpolygon%20points%3D%22132%2C109.2%20138.48%2C102%20178.44%2C103.92%20186%2C112.4%20170.88%2C118%20140.64%2C115.76%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-7%20159.0%20110.0%29%22%2F%3E%3Cpolygon%20points%3D%22220%2C147.6%20229.96%2C136%20291.38%2C138.88%20303%2C151.6%20279.76%2C160%20233.28%2C156.64%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%2810%20261.5%20148.0%29%22%2F%3E%3Cpolygon%20points%3D%22310%2C122.2%20316.12%2C115%20353.86%2C116.92%20361%2C125.4%20347.62%2C131%20318.16%2C128.76%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-14%20335.5%20123.0%29%22%2F%3E%3Cpolygon%20points%3D%2216%2C216.1%2022.96%2C208%2065.88%2C210.16%2074%2C219.7%2057.76%2C226%2025.28%2C223.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-12%2045.0%20217.0%29%22%2F%3E%3Cpolygon%20points%3D%2288%2C198.8%2097.36%2C188%20155.07999999999998%2C190.88%20166%2C203.6%20144.16%2C212%20100.48%2C208.64%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.270%22%20transform%3D%22rotate%288%20127.0%20200.0%29%22%2F%3E%3Cpolygon%20points%3D%22196%2C228.65%20203.2%2C221%20247.6%2C223.04%20256%2C232.05%20239.2%2C238%20205.6%2C235.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20226.0%20229.5%29%22%2F%3E%3Cpolygon%20points%3D%22278%2C201.9%20288.32%2C192%20351.96%2C194.64%20364%2C206.3%20339.92%2C214%20291.76%2C210.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%2813%20321.0%20203.0%29%22%2F%3E%3Cpolygon%20points%3D%2245%2C319.9%2054.6%2C310%20113.8%2C312.64%20125%2C324.3%20102.6%2C332%2057.8%2C328.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-6%2085.0%20321.0%29%22%2F%3E%3Cpolygon%20points%3D%22158%2C296.1%20165.8%2C288%20213.9%2C290.16%20223%2C299.7%20204.8%2C306%20168.4%2C303.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2814%20190.5%20297.0%29%22%2F%3E%3Cpolygon%20points%3D%22249%2C341.45%20257.4%2C332%20309.2%2C334.52%20319%2C345.65%20299.4%2C353%20260.2%2C350.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-12%20284.0%20342.5%29%22%2F%3E%3Cpolygon%20points%3D%22332%2C289.65%20338.24%2C282%20376.72%2C284.04%20384%2C293.05%20369.44%2C299%20340.32%2C296.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.180%22%20transform%3D%22rotate%289%20358.0%20290.5%29%22%2F%3E%3Cpolygon%20points%3D%2222%2C424.0%2030.16%2C415%2080.47999999999999%2C417.4%2090%2C428.0%2070.96000000000001%2C435%2032.88%2C432.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2810%2056.0%20425.0%29%22%2F%3E%3Cpolygon%20points%3D%22116%2C407.9%20125.96%2C398%20187.38%2C400.64%20199%2C412.3%20175.76%2C420%20129.28%2C416.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-13%20157.5%20409.0%29%22%2F%3E%3Cpolygon%20points%3D%22228%2C440.1%20234.72%2C432%20276.15999999999997%2C434.16%20284%2C443.7%20268.32%2C450%20236.96%2C447.68%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20256.0%20441.0%29%22%2F%3E%3Cpolygon%20points%3D%22307%2C414.45%20316.49%2C405%20374.94%2C407.52%20386%2C418.65%20363.88%2C426%20319.64%2C423.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-9%20347.6%20415.5%29%22%2F%3E%3Cpolygon%20points%3D%2252%2C526.1%2059.32%2C518%20104.46000000000001%2C520.16%20113%2C529.7%2095.92%2C536%2061.76%2C533.48%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-14%2082.5%20527.0%29%22%2F%3E%3Cpolygon%20points%3D%22167%2C509.9%20176.0%2C500%20231.5%2C502.64%20242%2C514.3%20221.0%2C522%20179.0%2C518.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2811%20204.5%20511.0%29%22%2F%3E%3Cpolygon%20points%3D%22283%2C538.1%20291.4%2C530%20343.2%2C532.16%20353%2C541.7%20333.4%2C548%20294.2%2C546.18%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20318.0%20539.0%29%22%2F%3E%3C%2Fsvg%3E");background-size:116% 116%;background-position:52% 47%;mix-blend-mode:screen;opacity:calc(.22*var(--fx-structure))}
 .fx-layered-mica::after{content:"";position:absolute;inset:0;background:radial-gradient(28% 15% at 22% 30%,rgba(255,255,255,calc(.16*var(--fx-reflection))),transparent 74%),radial-gradient(24% 14% at 76% 67%,rgba(241,226,189,calc(.12*var(--fx-reflection))),transparent 75%);mix-blend-mode:screen;opacity:calc(.58*var(--fx-reflect-area))}
 .fx-animate .fx-layered-mica::after{animation:v1630ReflectBreathe var(--fx-duration,13s) ease-in-out infinite alternate}
 
@@ -22051,7 +22051,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
 </style>
 <style>
 
-/* Ver49.3: progressive UX layer; original application controls remain intact. */
+/* Ver51.1: progressive UX layer; original application controls remain intact. */
 .v42-nav-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--panel2,#20242d);border:1px solid var(--line,#353b47);color:var(--text,#fff);border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:700}
 .v42-nav-panel{position:fixed;z-index:9995;top:62px;left:12px;width:min(580px,calc(100vw - 24px));max-height:calc(100dvh - 78px);overflow:auto;background:var(--panel,#171a21);color:var(--text,#fff);border:1px solid var(--line,#353b47);border-radius:14px;box-shadow:0 14px 42px #0009;padding:14px}
 .v42-nav-panel[hidden],.v42-quicklinks[hidden]{display:none!important}
@@ -22110,7 +22110,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v49.3 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v50.1 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23943,7 +23943,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   </div>
 
   <div class="settings-maintenance-card" id="storage-cleanup-v488" style="margin-top:12px">
-    <h4>保存データの整理（Ver49.3）</h4>
+    <h4>保存データの整理（Ver51.1）</h4>
     <p class="muted">期限切れのローカルオンラインルームと、ロボットローグライクの保存データを個別に整理します。カード・デッキ・画像・IndexedDBは対象外です。進行中のオンライン対戦がないときに操作してください。</p>
     <div class="actions"><button class="btn" type="button" id="cleanup-inspect">整理対象を調べる</button><button class="btn small" type="button" id="cleanup-backup" disabled>対象データをバックアップ</button></div>
     <div id="cleanup-summary" role="status" aria-live="polite" class="muted" style="margin:8px 0"></div>
@@ -25109,21 +25109,27 @@ __mkCardBootGate.textContent='カードデータを安全に読み込んでい�
 document.body.appendChild(__mkCardBootGate);
 async function __mkBootCardCatalog(){
  try{
+  await __mkRecoverInterruptedRestore();
   const saved=await __mkCardDbGet();
   if(Array.isArray(saved)){
+   // Never prefer an empty IndexedDB catalog over a nonempty legacy catalog.
+   // Keep both copies intact and block startup for manual recovery.
+   const legacy=load(LS_CARDS,[]);
+   if(saved.length===0&&Array.isArray(legacy)&&legacy.length>0)throw new Error('IndexedDBが空で旧カードデータが残っています。自動上書きを停止しました');
    cards=saved.map(c=>({...c,type:normalizeCardType(c?.type),rarity:String(c?.rarity||''),flavor:String(c?.flavor||''),visualEffects:normalizeCardVisualEffects(c?.visualEffects),fxPreviewV2:normalizeFxPreviewV2(c?.fxPreviewV2),cardLinks:normalizeCardLinks(c?.cardLinks,c?.id)}));
    reconcileCardLinks();
   }else{
    // Import existing localStorage data before touching its original copy.
    await __mkCardDbSet(cards);
    const check=await __mkCardDbGet();
-   if(!Array.isArray(check)||check.length!==cards.length)throw new Error('カードデータ移行の検証に失敗');
+   if(!Array.isArray(check)||JSON.stringify(check)!==JSON.stringify(cards))throw new Error('カードデータ移行の内容検証に失敗');
   }
   __mkCardReady=true;
-  if(__mkCardPending){const pending=__mkCardPending;__mkCardPending=null;__mkSaveCards(pending)}
+  repairPersistentReferences();
+  if(__mkCardPending){console.warn('[みん会TCG] 起動前のカード書き込み要求を破棄（DB保護）');__mkCardPending=null}
   // Free the old quota only after a verified IndexedDB copy exists.
   // Never remove the old data if migration or verification failed.
-  try{if(localStorage.getItem(LS_CARDS)!==null)localStorage.removeItem(LS_CARDS)}catch(e){console.warn('旧カード保存領域の解放失敗',e)}
+  // Ver51.1: legacy catalog is retained as a recovery copy; never erase automatically.
   try{renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup(true);if(board)renderBoard()}catch(e){console.warn('カード一覧の再描画:',e)}
  }catch(e){
   console.error('カードDB移行失敗（旧データは保持）',e);
@@ -25172,15 +25178,15 @@ function initFxTrialCardBridge(){
  select.addEventListener('change',send);reload.addEventListener('click',send);
  frame.addEventListener('load',()=>{populate();if(select.value)send()});
  launch.addEventListener('click',()=>{populate();if(select.value&&frame.contentDocument?.readyState==='complete')send()});
- window.addEventListener('message',event=>{
+ window.addEventListener('message',async event=>{
    if(event.origin!==location.origin||event.source!==frame.contentWindow)return;
    const m=event.data;if(!m||m.channel!=='minkai-fx-trial-v2')return;
    if(m.action==='error'){status.textContent='読込エラー: '+String(m.message||'').slice(0,70);return;}
    if(m.action!=='save')return;
    const c=cards.find(x=>String(x.id)===String(currentId)&&String(x.id)===String(select.value));if(!c){status.textContent='カードを選択してください';return;}
    const validated=normalizeFxPreviewV2(m.preset);if(!validated){status.textContent='保存失敗：設定形式が不正';return;}
-   c.fxPreviewV2=validated;
-   try{save(LS_CARDS,cards);status.textContent='「'+c.name+'」に保存しました';toast('加工設定をカードに保存しました')}catch(err){status.textContent='保存失敗';console.error(err)}
+   const previous=c.fxPreviewV2;c.fxPreviewV2=validated;
+   try{const ok=await save(LS_CARDS,cards);if(ok===false)throw new Error('カード保存失敗');status.textContent='「'+c.name+'」に保存しました';toast('加工設定をカードに保存しました')}catch(err){c.fxPreviewV2=previous;status.textContent='保存失敗';console.error(err);toast('加工設定の保存に失敗しました')}
  });
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initFxTrialCardBridge,{once:true});else initFxTrialCardBridge();
@@ -25492,28 +25498,19 @@ function normalizeCollectionData(raw={},validIds=null){
    albums
  };
 }
-let collectionData=normalizeCollectionData(load(LS_COLLECTION,{}),new Set(cards.map(c=>c.id)));
+let collectionData=normalizeCollectionData(load(LS_COLLECTION,{}));
 let collectionSource='all',collectionPage=0,collectionImageObserver=null,collectionViewerKeyHandler=null;
-save(LS_COLLECTION,collectionData);
-function saveCollectionData(){collectionData=normalizeCollectionData(collectionData,new Set(cards.map(c=>c.id)));save(LS_COLLECTION,collectionData)}
+// Do not write collection data during boot before IndexedDB catalog is ready.
+function saveCollectionData(){collectionData=normalizeCollectionData(collectionData);return save(LS_COLLECTION,collectionData)}
+// Non-destructive integrity diagnostics. Missing card references are retained for recovery.
 function repairPersistentReferences(){
- const validIds=new Set(cards.map(c=>c.id));let deckRefsRemoved=0;
- decks=Array.isArray(decks)?decks.map(d=>{
-   const entries={};
-   for(const [id,n] of Object.entries(d?.entries||{})){
-     const count=Math.max(0,Math.floor(Number(n)||0));
-     if(validIds.has(id)&&count)entries[id]=count;
-     else if(count)deckRefsRemoved+=count;
-   }
-   return {...d,entries};
- }):[];
- const beforeFavorites=Array.isArray(collectionData?.favorites)?collectionData.favorites.length:0;
- collectionData=normalizeCollectionData(collectionData||{},validIds);
- const favoritesRemoved=Math.max(0,beforeFavorites-collectionData.favorites.length);
- save(LS_DECKS,decks);save(LS_COLLECTION,collectionData);
- return {deckRefsRemoved,favoritesRemoved};
+ const validIds=new Set(cards.map(c=>String(c.id)));
+ const missingDeckRefs=(Array.isArray(decks)?decks:[]).reduce((n,d)=>n+Object.keys(d?.entries||{}).filter(id=>!validIds.has(id)).length,0);
+ const missingFavorites=(collectionData?.favorites||[]).filter(id=>!validIds.has(String(id))).length;
+ if(missingDeckRefs||missingFavorites)console.warn('[みん会TCG] 未解決のカード参照を保持しています',{missingDeckRefs,missingFavorites});
+ return {missingDeckRefs,missingFavorites};
 }
-repairPersistentReferences();
+// Only diagnose once the IndexedDB catalog has loaded; never erase references.
 function collectionSourceKind(){
  if(collectionSource==='all'||collectionSource==='favorites'||collectionSource==='albums')return collectionSource;
  return collectionSource.startsWith('album:')?'album':'all';
@@ -25592,7 +25589,7 @@ let board=null, detailCtx=null, detailNav=null, inspectSession=null, browseSessi
 const $=(s,root=document)=>(root||document).querySelector(s), $$=(s,root=document)=>[...(root||document).querySelectorAll(s)];
 function uid(p='id'){return p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
 function load(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}}
-// Ver49.3: Storage quota errors must never abort application initialization.
+// Ver51.1: Storage quota errors must never abort application initialization.
 // Preserve existing data; do not clear or overwrite another storage key.
 var __mkStorageWarningShown=false;
 function __mkStorageWarning(k,err){
@@ -25610,7 +25607,7 @@ function __mkStorageWarning(k,err){
  };
  if(document.body)notify();else document.addEventListener('DOMContentLoaded',notify,{once:true});
 }
-// Ver49.3: card catalog is persisted in IndexedDB, not the limited localStorage.
+// Ver51.1: card catalog is persisted in IndexedDB, not the limited localStorage.
 // Legacy localStorage data is kept until a verified IDB migration completes.
 var __mkCardDbPromise=null,__mkCardReady=false,__mkCardWriteChain=Promise.resolve(),__mkCardPending=null;
 function __mkOpenCardDb(){
@@ -25630,17 +25627,59 @@ async function __mkCardDbSet(value){const db=await __mkOpenCardDb();return new P
  const tx=db.transaction('catalog','readwrite');tx.objectStore('catalog').put(value,'cards');
  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('カードDB保存中断'));
 })}
+// Ver51.1: durable, restart-safe journal for JSON restoration critical stores.
+// An interrupted restore is rolled back before the card catalog is exposed.
+const __mkRestoreJournalKey='restore_journal_v509';
+async function __mkJournalRead(){const db=await __mkOpenCardDb();return new Promise((resolve,reject)=>{const req=db.transaction('catalog','readonly').objectStore('catalog').get(__mkRestoreJournalKey);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
+async function __mkJournalWrite(value){const db=await __mkOpenCardDb();return new Promise((resolve,reject)=>{const tx=db.transaction('catalog','readwrite');tx.objectStore('catalog').put(value,__mkRestoreJournalKey);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('復元記録の書き込み中断'))})}
+async function __mkJournalClear(){const db=await __mkOpenCardDb();return new Promise((resolve,reject)=>{const tx=db.transaction('catalog','readwrite');tx.objectStore('catalog').delete(__mkRestoreJournalKey);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('復元記録の削除中断'))})}
+async function __mkRecoverInterruptedRestore(){
+ const journal=await __mkJournalRead();if(!journal)return false;
+ if(journal.format!=='minkai-restore-journal-v509'||!Array.isArray(journal.cards)||typeof journal.local!=='object')throw Error('復元記録が不正です。自動修復を停止しました');
+ // Keep the journal until ALL rollback writes have committed. A crash retries on next boot.
+ await __mkCardDbSet(journal.cards);
+ for(const [key,raw] of Object.entries(journal.local)){
+  if(raw===null)localStorage.removeItem(key);else localStorage.setItem(key,raw);
+ }
+ await __mkJournalClear();
+ console.warn('[みん会TCG] 中断されたJSON復元を起動前に巻き戻しました');return true;
+}
+async function __mkBeginRestoreJournal(){
+ if(await __mkJournalRead())throw Error('未解決の復元記録があります。再起動して復旧してください');
+ const local={};for(const key of [LS_DECKS,LS_COLLECTION,LS_CARD_FX,LS_APPEARANCE_PRESETS,LS_BOARD_TOOLS,LS_BOARD_SESSION,LS_BOARD_SNAPSHOTS,LS_CARD_RECENT,LS_CARD_REGISTER_RECENT])local[key]=localStorage.getItem(key);
+ const previous=await __mkCardDbGet();if(!Array.isArray(previous))throw Error('カードDBの復元前スナップショットを取得できません');
+ await __mkJournalWrite({format:'minkai-restore-journal-v509',createdAt:new Date().toISOString(),cards:previous,local});
+}
 function __mkSaveCards(value){
  let snapshot;try{snapshot=structuredClone(value)}catch(e){__mkStorageWarning(LS_CARDS,e);return false}
- if(!__mkCardReady){__mkCardPending=snapshot;return true}
- __mkCardWriteChain=__mkCardWriteChain.catch(()=>{}).then(async()=>{
-  await __mkCardDbSet(snapshot);
- }).catch(e=>{__mkStorageWarning(LS_CARDS,e);throw e});
- // Async commit errors are reported; no localStorage quota is consumed.
- return true;
+ if(!__mkCardReady){__mkCardPending=snapshot;__mkStorageWarning(LS_CARDS,new Error('カードDBの初期化前です'));return false}
+ const currentWrite=__mkCardWriteChain.catch(()=>{}).then(()=>__mkCardDbSet(snapshot));
+ __mkCardWriteChain=currentWrite.catch(()=>{});
+ return currentWrite.catch(e=>{__mkStorageWarning(LS_CARDS,e);throw e});
+ // Each caller receives its own transaction result; previous failures do not poison later writes.
 }
 function save(k,v){
  if(k===LS_CARDS)return __mkSaveCards(v);
+ if(k===LS_DECKS&&Array.isArray(v)){
+  try{
+   const prior=JSON.parse(localStorage.getItem(LS_DECKS)||'[]');
+   if(Array.isArray(prior)&&prior.length>=3){
+    const oldById=new Map(prior.map(d=>[String(d.id),d]));
+    let lost=0,matched=0;
+    for(const d of v){const old=oldById.get(String(d.id));if(!old)continue;matched++;
+     const oldSize=Object.values(old.entries||{}).reduce((a,n)=>a+(Number(n)||0),0);
+     const newSize=Object.values(d.entries||{}).reduce((a,n)=>a+(Number(n)||0),0);
+     if(oldSize>0&&newSize===0)lost++;
+    }
+    // Bulk erasure of existing decks is never a routine user action.
+    if(lost>=3&&lost>=Math.ceil(matched*.5)){
+     __mkStorageWarning(k,new Error('複数デッキの一括消失を検出し保存を停止'));
+     return false;
+    }
+   }
+  }catch(e){console.warn('デッキ保護の検査に失敗',e);return false}
+ }
+
  try{localStorage.setItem(k,JSON.stringify(v));return true}
  catch(err){__mkStorageWarning(k,err);return false}
 }
@@ -26260,7 +26299,9 @@ async function saveCustomFxAsset(rec){if(!rec?.id||!rec?.blob)throw new Error('�
 function customFxUsageCount(id){const type=`custom:${id}`;return cards.reduce((n,c)=>n+(normalizeCardVisualEffects(c.visualEffects).some(x=>x.type===type)?1:0),0)}
 async function deleteCustomFxAsset(id){
  const key=String(id||'');if(!key)return;
- cards.forEach(c=>{c.visualEffects=normalizeCardVisualEffects(c.visualEffects).filter(x=>x.type!==`custom:${key}`)});save(LS_CARDS,cards);
+ const previous=cards.map(c=>({id:c.id,visualEffects:c.visualEffects}));
+ cards.forEach(c=>{c.visualEffects=normalizeCardVisualEffects(c.visualEffects).filter(x=>x.type!==`custom:${key}`)});
+ try{const ok=await save(LS_CARDS,cards);if(ok===false)throw new Error('カード保存失敗')}catch(err){for(const old of previous){const card=cards.find(c=>c.id===old.id);if(card)card.visualEffects=old.visualEffects}throw err}
  await imageDbDelete('customFx',key);customFxAssetCache.delete(key);
  if(customFxUrlCache.has(key)){try{URL.revokeObjectURL(customFxUrlCache.get(key))}catch{}customFxUrlCache.delete(key)}
  renderCollection();if(board)renderBoard();
@@ -26520,7 +26561,7 @@ async function createBackgroundAssetRecord(file){
    };
  }finally{drawable.close()}
 }
-// Ver49.3: exact-source background deduplication; original bytes are hashed before resizing.
+// Ver51.1: exact-source background deduplication; original bytes are hashed before resizing.
 async function backgroundFileHash(file){
  const bytes=await file.arrayBuffer();
  const digest=await crypto.subtle.digest('SHA-256',bytes);
@@ -27677,7 +27718,10 @@ function parseFullBackupZip(bytes){
      originalName:String(meta.originalName||''),createdAt:String(meta.createdAt||'')
    });
  }
- const links=(Array.isArray(manifest.imageLinks)?manifest.imageLinks:[]).map(x=>normalizeImageLink(x,x?.cardId)).filter(x=>cardIds.has(x.cardId)&&imageIds.has(x.imageId));
+ const links=(Array.isArray(manifest.imageLinks)?manifest.imageLinks:[]).map(x=>normalizeImageLink(x,x?.cardId));
+ for(const link of links){
+   if(!link||!cardIds.has(String(link.cardId))||!imageIds.has(String(link.imageId)))throw new Error('完全バックアップの画像リンクに参照先不明のデータがあります。');
+ }
  const backgroundRecords=[],backgroundIds=new Set();
  if(backupVersion>=2){
    for(const meta of Array.isArray(manifest.backgrounds)?manifest.backgrounds:[]){
@@ -27715,40 +27759,35 @@ function parseFullBackupZip(bytes){
    }
  }
  const frameLinks=backupVersion>=4?(Array.isArray(manifest.frameLinks)?manifest.frameLinks:[])
-   .map(x=>normalizeFrameLink(x,x?.cardId))
-   .filter(x=>cardIds.has(x.cardId)&&frameIds.has(x.frameId)):[];
+   .map(x=>normalizeFrameLink(x,x?.cardId)):[];
+ for(const link of frameLinks){
+   if(!link||!cardIds.has(String(link.cardId))||!frameIds.has(String(link.frameId)))throw new Error('完全バックアップのフレームリンクに参照先不明のデータがあります。');
+ }
  const customFxRecords=[];
  if(backupVersion>=5){for(const meta of Array.isArray(manifest.customFx)?manifest.customFx:[]){if(!meta||!meta.id||!meta.file?.path)throw new Error('完全バックアップ内の自作エフェクト情報が不正です。');const raw=files.get(meta.file.path);if(!raw)throw new Error(`自作エフェクト画像が不足しています：${meta.id}`);customFxRecords.push({id:String(meta.id),name:String(meta.name||'自作エフェクト'),originalName:String(meta.originalName||''),width:Number(meta.width)||0,height:Number(meta.height)||0,motion:meta.motion==='animated'?'animated':'static',createdAt:String(meta.createdAt||''),blob:new Blob([raw],{type:String(meta.file.mime||'image/png')})})}}
  return {manifest,backupVersion,imageRecords,links,backgroundRecords,frameRecords,frameLinks,customFxRecords,theme,settings:normalizeFullBackupSettings(manifest.settings||{})};
 }
 async function restoreFullBackupZip(parsed){
- if(!imageSystemAvailable)throw new Error('このブラウザでは画像ストレージを利用できません。');
- await Promise.all([imageReadyPromise,backgroundReadyPromise,frameReadyPromise,customFxReadyPromise]);
- const restoresTheme=parsed.backupVersion>=2&&!!parsed.theme;
- await replaceImageDatabase(parsed.imageRecords,parsed.links,restoresTheme?parsed.backgroundRecords:null);
- await replaceFrameDatabase(parsed.frameRecords||[],parsed.frameLinks||[]);
- await replaceCustomFxDatabase(parsed.customFxRecords||[]);
- resetImageRuntimeCache();
- resetFrameRuntimeCache();
- resetCustomFxRuntimeCache();
- if(restoresTheme)resetBackgroundRuntimeCache();
- const r=restoreBackupObject(parsed.manifest.data,{skipImageReconcile:true});
- boardDisplayPrefs=parsed.settings.boardDisplay;handFollowPrefs=parsed.settings.handFollow;mobileBoardToolPrefs=normalizeMobileBoardToolPrefs(parsed.settings.mobileBoardTool||mobileBoardToolPrefs);
- save(LS_BOARD_DISPLAY,boardDisplayPrefs);save(LS_HAND_FOLLOW,handFollowPrefs);saveMobileBoardToolPrefs();
- imageLinkCache.clear();for(const raw of parsed.links){const link=normalizeImageLink(raw,raw.cardId);imageLinkCache.set(link.cardId,link)}
- frameAssetCache.clear();for(const rec of parsed.frameRecords||[]){if(rec?.id)frameAssetCache.set(String(rec.id),rec)}
- frameLinkCache.clear();for(const raw of parsed.frameLinks||[]){const link=normalizeFrameLink(raw,raw.cardId);if(link.cardId&&link.frameId)frameLinkCache.set(link.cardId,link)}
- customFxAssetCache.clear();for(const rec of parsed.customFxRecords||[]){if(rec?.id)customFxAssetCache.set(String(rec.id),rec)}
- if(restoresTheme){
-   parsed.backgroundRecords.forEach(rec=>backgroundAssetCache.set(rec.id,rec));
-   themePrefs=normalizeThemePrefs(parsed.theme);
-   themeDraft=cloneTheme(themePrefs);themeDraftDirty=false;
-   save(LS_THEME,themePrefs);
+ // Ver51.1: Never mutate a live database before validating all critical references.
+ if(!imageSystemAvailable)throw new Error('画像ストレージを利用できないため復元を中止しました。');
+ if(!parsed?.manifest?.data)throw new Error('完全バックアップの内容が不正です。');
+ const data=parsed.manifest.data;
+ const ids=new Set(), names=new Set();
+ for(const card of data.cards||[]){
+  const id=String(card?.id||'').trim();
+  if(!id||!String(card?.name||'').trim()||ids.has(id))throw new Error('カードID・名前の欠損または重複を検出しました。復元は行いません。');
+  ids.add(id);
  }
- renderCards();renderDecks();renderSetup(true);renderCollection();updateImageStorageStatus();applyBoardDisplaySettings();hydrateAllCardFrames();
- await applyThemePrefs(themePrefs);
- if($('#screen-settings')?.classList.contains('active'))renderThemeSettings();
- return {cards:r.cards,decks:r.decks,favorites:r.favorites,albums:collectionData.albums.length,images:parsed.imageRecords.length,linkedCards:parsed.links.length,frames:(parsed.frameRecords||[]).length,framedCards:(parsed.frameLinks||[]).length,customFx:(parsed.customFxRecords||[]).length,backgrounds:restoresTheme?parsed.backgroundRecords.length:null,themeRestored:restoresTheme};
+ for(const deck of data.decks||[]){
+  if(!deck||!deck.entries||typeof deck.entries!=='object'||Array.isArray(deck.entries))throw new Error('デッキ情報が不正です。復元は行いません。');
+  const deckId=String(deck.id||'');if(!deckId||names.has(deckId))throw new Error('デッキIDの欠損・重複を検出しました。');names.add(deckId);
+  for(const [id,n] of Object.entries(deck.entries))if(!ids.has(id)||!Number.isInteger(Number(n))||Number(n)<0)throw new Error('デッキに不正なカード参照または枚数があります。復元は行いません。');
+ }
+ const assetIds=new Set((parsed.imageRecords||[]).map(x=>String(x.id)));
+ for(const link of parsed.links||[])if(!ids.has(String(link.cardId))||!assetIds.has(String(link.imageId)))throw new Error('画像の参照先が不正です。復元は行いません。');
+ // Multiple IndexedDB transactions and localStorage cannot be committed atomically.
+ // Keep destructive full-ZIP restoration disabled until a durable, restart-safe recovery journal exists.
+ throw new Error('Ver51.1: ZIP内の参照検査は完了しましたが、画像・カード・デッキの一括復元は安全な巻き戻し機構が未完成のため停止しています。ZIPファイルを保管してください。');
 }
 function exportBackupObject(){
  return {
@@ -27759,7 +27798,7 @@ function exportBackupObject(){
    decks:decks.map(d=>({id:d.id,name:d.name,entries:{...d.entries},...deckSettingsFrom(d)})),
    recentCardIds:[...recentCardIds],
    registeredRecentCardIds:[...registeredRecentCardIds],
-   collection:normalizeCollectionData(collectionData,new Set(cards.map(c=>c.id))),
+   collection:normalizeCollectionData(collectionData),
    cardFxPrefs:normalizeCardFxPrefs(cardFxPrefs),
    appearancePresets:normalizeAppearancePresetStore(appearancePresetStore),
    boardToolPrefs:normalizeBoardToolPrefs(boardToolPrefs),
@@ -27767,15 +27806,27 @@ function exportBackupObject(){
    boardSnapshots:loadBoardSnapshots()
  };
 }
-function restoreBackupObject(data,opt={}){
+async function restoreBackupObject(data,opt={}){
  const backupVersion=Number(data?.version);
  if(!data||data.format!=='min-kai-tcg-backup'||![1,2,3,4,5,6,7,8,9].includes(backupVersion)||!Array.isArray(data.cards)||!Array.isArray(data.decks))throw new Error('対応しているバックアップ形式ではありません。');
+ // Reject damaged source identifiers rather than inventing replacements during recovery.
+ const rawCardIds=new Set(),rawDeckIds=new Set();
+ for(const raw of data.cards){
+   const id=String(raw?.id||'').trim();
+   if(!id||rawCardIds.has(id)||!String(raw?.name||'').trim())throw new Error('バックアップのカードID・名前に欠損または重複があります。復元は中止しました。');
+   rawCardIds.add(id);
+ }
+ for(const raw of data.decks){
+   const id=String(raw?.id||'').trim();
+   if(!id||rawDeckIds.has(id)||!raw?.entries||typeof raw.entries!=='object'||Array.isArray(raw.entries))throw new Error('バックアップのデッキID・構成に欠損または重複があります。復元は中止しました。');
+   rawDeckIds.add(id);
+ }
  const restoredCards=[];
  const usedIds=new Set();
  for(const raw of data.cards){
    if(!raw||typeof raw!=='object')continue;
-   let id=String(raw.id||'').trim()||uid('card');
-   while(usedIds.has(id))id=uid('card');
+   const id=String(raw.id||'').trim();
+   if(!id||usedIds.has(id))throw new Error('カードIDの欠損または重複があるため復元を中止しました');
    const name=String(raw.name||'').trim();
    if(!name)continue;
    usedIds.add(id);
@@ -27793,37 +27844,82 @@ function restoreBackupObject(data,opt={}){
      cardLinks:backupVersion>=7?normalizeCardLinks(raw.cardLinks,id):[]
    });
  }
+ // Ver51.1 safety preflight: never silently strip deck entries during backup restoration.
+ const incomingCardIds=new Set(restoredCards.map(c=>c.id));
+ const unresolved=[];
+ for(const deck of data.decks){
+  if(!deck||typeof deck!=='object')continue;
+  for(const [cardId,rawCount] of Object.entries(deck.entries&&typeof deck.entries==='object'?deck.entries:{})){
+   if(Number(rawCount)>0&&!incomingCardIds.has(cardId))unresolved.push({deck:String(deck.name||deck.id||''),cardId});
+  }
+ }
+ if(unresolved.length){
+  console.warn('[Ver51.1] 復元を中止: 参照カードがバックアップにありません',unresolved.slice(0,30));
+  throw new Error('復元を中止しました。バックアップ内に定義のないカード参照が'+unresolved.length+'件あります。既存データは変更していません。');
+ }
+ if(data.cards.length>0&&restoredCards.length===0)throw new Error('カード定義が正常に読み取れないため復元を中止しました。');
+ // Ver51.1: reject malformed and conflicting card definitions before any persistent write.
+ if(restoredCards.length!==data.cards.length||usedIds.size!==data.cards.length){
+  throw new Error('カード定義に欠損・重複・不正な項目があるため復元を中止しました。既存データは変更していません。');
+ }
  const validIds=new Set(restoredCards.map(c=>c.id));
- restoredCards.forEach(c=>{c.cardLinks=normalizeCardLinks(c.cardLinks,c.id).filter(x=>validIds.has(x.targetId))});
+ const missingLinks=[];
+ for(const c of restoredCards){
+  for(const link of c.cardLinks||[]){if(!validIds.has(link.targetId))missingLinks.push(c.id+' → '+link.targetId)}
+ }
+ if(missingLinks.length)throw new Error('カード間リンクの参照先がバックアップにありません（'+missingLinks.length+'件）。復元を中止しました。');
+ // Never silently filter imported links or deck entries: reject the entire restore instead.
+
  const restoredDecks=[];
  const usedDeckIds=new Set();
  for(const raw of data.decks){
-   if(!raw||typeof raw!=='object')continue;
-   let id=String(raw.id||'').trim()||uid('deck');
-   while(usedDeckIds.has(id))id=uid('deck');
+   if(!raw||typeof raw!=='object')throw new Error('デッキ情報が不正です。復元を中止しました。');
+   const id=String(raw.id||'').trim();
+   if(!id||usedDeckIds.has(id))throw new Error('デッキIDの欠損または重複を検出しました。復元を中止します。');
    usedDeckIds.add(id);
    const entries={},source=raw.entries&&typeof raw.entries==='object'?raw.entries:{};
    for(const [cardId,countRaw] of Object.entries(source)){
      const count=Math.max(0,Math.floor(Number(countRaw)||0));
-     if(validIds.has(cardId)&&count)entries[cardId]=count;
+     if(!validIds.has(cardId))throw new Error('デッキ内に未定義カードIDがあります。復元を中止しました: '+cardId);
+     if(!Number.isFinite(Number(countRaw))||Number(countRaw)<0||!Number.isInteger(Number(countRaw)))throw new Error('デッキ内の枚数が不正です。復元を中止しました: '+cardId);
+     if(count)entries[cardId]=count;
    }
    restoredDecks.push({id,name:String(raw.name||'名称未設定デッキ'),entries,...deckSettingsFrom(raw)});
  }
+ const stagedCollection=backupVersion>=2?normalizeCollectionData(data.collection||{},validIds):normalizeCollectionData({},validIds);
+ // Ver51.1: persistent rollback journal must be committed BEFORE the first write.
+ await __mkBeginRestoreJournal();
+ try{
+   if(await save(LS_CARDS,restoredCards)===false)throw Error('カード保存失敗');
+   if(save(LS_DECKS,restoredDecks)===false)throw Error('デッキ保存失敗');
+   if(save(LS_COLLECTION,stagedCollection)===false)throw Error('コレクション保存失敗');
+ }catch(err){
+   try{await __mkRecoverInterruptedRestore()}catch(rollbackErr){console.error('[Ver51.1] 復元ロールバック失敗。記録は保持',rollbackErr)}
+   throw Error('復元中の保存に失敗しました。安全記録を保持しています: '+err.message);
+ }
+ try{
  cards=restoredCards;decks=restoredDecks;
- cardFxPrefs=backupVersion>=6?normalizeCardFxPrefs(data.cardFxPrefs||{}):defaultCardFxPrefs();save(LS_CARD_FX,cardFxPrefs);appearancePresetStore=normalizeAppearancePresetStore(data.appearancePresets||defaultAppearancePresetStore());saveAppearancePresetStore();
- boardToolPrefs=backupVersion>=8?normalizeBoardToolPrefs(data.boardToolPrefs||{}):defaultBoardToolPrefs();save(LS_BOARD_TOOLS,boardToolPrefs);
+ cardFxPrefs=backupVersion>=6?normalizeCardFxPrefs(data.cardFxPrefs||{}):defaultCardFxPrefs();if(save(LS_CARD_FX,cardFxPrefs)===false)throw Error("加工設定の保存失敗");appearancePresetStore=normalizeAppearancePresetStore(data.appearancePresets||defaultAppearancePresetStore());appearancePresetStore=normalizeAppearancePresetStore(appearancePresetStore);if(save(LS_APPEARANCE_PRESETS,appearancePresetStore)===false)throw Error("外観プリセットの保存失敗");
+ boardToolPrefs=backupVersion>=8?normalizeBoardToolPrefs(data.boardToolPrefs||{}):defaultBoardToolPrefs();if(save(LS_BOARD_TOOLS,boardToolPrefs)===false)throw Error("盤面ツール設定の保存失敗");
  const restoredBoardSession=backupVersion>=9?normalizeStoredBoardSession(data.boardSession):null;
  const restoredBoardSnapshots=backupVersion>=9&&Array.isArray(data.boardSnapshots)?data.boardSnapshots.map(x=>x&&x.session?{name:String(x.name||''),savedAt:String(x.savedAt||''),session:normalizeStoredBoardSession(x.session)}:null).map(x=>x?.session?x:null):[];
- if(restoredBoardSession)localStorage.setItem(LS_BOARD_SESSION,JSON.stringify(restoredBoardSession));else localStorage.removeItem(LS_BOARD_SESSION);
- saveBoardSnapshots(restoredBoardSnapshots);
+ if(restoredBoardSession){if(save(LS_BOARD_SESSION,restoredBoardSession)===false)throw Error("盤面セッションの保存失敗")}else localStorage.removeItem(LS_BOARD_SESSION);
+ if(save(LS_BOARD_SNAPSHOTS,restoredBoardSnapshots)===false)throw Error("盤面スナップショットの保存失敗");
  collectionData=backupVersion>=2?normalizeCollectionData(data.collection||{},validIds):normalizeCollectionData({},validIds);
  collectionSource='all';collectionPage=0;
  recentCardIds=(Array.isArray(data.recentCardIds)?data.recentCardIds:[]).filter(id=>validIds.has(id)).slice(0,10);
  registeredRecentCardIds=(Array.isArray(data.registeredRecentCardIds)?data.registeredRecentCardIds:restoredCards.slice(-5).reverse().map(c=>c.id)).filter(id=>validIds.has(id)).slice(0,5);
- save(LS_CARDS,cards);save(LS_DECKS,decks);save(LS_COLLECTION,collectionData);save(LS_CARD_RECENT,recentCardIds);save(LS_CARD_REGISTER_RECENT,registeredRecentCardIds);
+ // Ver51.1: critical stores were committed and verified above; do not write again here.
+ if(save(LS_CARD_RECENT,recentCardIds)===false||save(LS_CARD_REGISTER_RECENT,registeredRecentCardIds)===false)throw Error("カード履歴の保存失敗");
  editingDeckId=null;workingDeck=blankWorkingDeck();board=null;detailCtx=null;detailNav=null;inspectSession=null;resetBoardHistory();
  normalizeDeckSettings();renderRegisterHistory();renderCards();renderCollection();renderDecks();renderSetup(true);
- if(!opt.skipImageReconcile)reconcileImageLinksWithCards().catch(err=>console.warn('画像リンク整理に失敗',err));
+ // Clear the journal only after the complete restoration path has returned from its writes.
+ }catch(err){
+   try{await __mkRecoverInterruptedRestore()}catch(rollbackErr){console.error("[Ver51.1] 復元後半の巻き戻し失敗。復旧記録を保持",rollbackErr)}
+   throw Error("復元後半の処理に失敗しました。復旧記録を確認してください: "+err.message);
+ }
+ try{await __mkJournalClear()}catch(err){throw Error("復元記録の確定処理に失敗しました。再起動前にデータを保全してください: "+err.message)}
+ // Automatic image-link reconciliation remains disabled.
  return {cards:cards.length,decks:decks.length,favorites:collectionData.favorites.length};
 }
 function parseImportPayload(data){
@@ -27894,7 +27990,7 @@ function importPayload(data,conflict){
 $$('[data-tool-tab]').forEach(btn=>btn.onclick=()=>{$$('[data-tool-tab]').forEach(b=>b.classList.remove('primary'));btn.classList.add('primary');$$('#screen-cards .tool-pane').forEach(p=>p.classList.remove('active'));$('#tool-pane-'+btn.dataset.toolTab)?.classList.add('active');if(btn.dataset.toolTab==='manual'){renderRegisterHistory();if(floatingPreviewOwner==='screen:cards')closeFloatingPreview()}else if(floatingPreviewOwner==='screen:cards')closeFloatingPreview()});
 $('#parse-text-cards').onclick=()=>{textPreviewCards=parseCardText($('#text-import-source').value);$('#text-import-status').textContent=textPreviewCards.length?`${textPreviewCards.length}枚のカードを検出しました。内容を確認してから登録してください。`:'カードを検出できませんでした。';renderTextPreview()};
 $('#clear-text-import').onclick=()=>{$('#text-import-source').value='';$('#text-import-status').textContent='';textPreviewCards=[];renderTextPreview()};
-$('#register-preview-cards').onclick=()=>{if(!textPreviewCards.length)return;let n=0,addedIds=[];for(const c of textPreviewCards){if(!c.name.trim())continue;const id=uid('card');cards.push({id,name:c.name.trim(),ruby:String(c.ruby||'').trim(),type:normalizeCardType(c.type||'キャラクター'),level:String(c.level||'').trim(),power:String(c.power||'').trim(),race:String(c.race||'').trim(),rarity:String(c.rarity||'').trim(),effect:c.effect||'',flavor:c.flavor||'',visualEffects:[],cardLinks:[]});addedIds.push(id);n++}save(LS_CARDS,cards);touchRecentCards(addedIds);touchRegisteredCards(addedIds);$('#text-import-source').value='';$('#text-import-status').textContent=n?`${n}枚を登録しました。入力欄をクリアしました。`:'';textPreviewCards=[];renderTextPreview();renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();toast(`${n}枚を登録しました`)};
+$('#register-preview-cards').onclick=async()=>{if(!textPreviewCards.length)return;let n=0,addedIds=[];for(const c of textPreviewCards){if(!c.name.trim())continue;const id=uid('card');cards.push({id,name:c.name.trim(),ruby:String(c.ruby||'').trim(),type:normalizeCardType(c.type||'キャラクター'),level:String(c.level||'').trim(),power:String(c.power||'').trim(),race:String(c.race||'').trim(),rarity:String(c.rarity||'').trim(),effect:c.effect||'',flavor:c.flavor||'',visualEffects:[],cardLinks:[]});addedIds.push(id);n++}try{const ok=await save(LS_CARDS,cards);if(ok===false)throw new Error('保存失敗')}catch(err){const added=new Set(addedIds);cards=cards.filter(c=>!added.has(c.id));toast('カード保存に失敗しました。登録を取り消しました');return}touchRecentCards(addedIds);touchRegisteredCards(addedIds);$('#text-import-source').value='';$('#text-import-status').textContent=n?`${n}枚を登録しました。入力欄をクリアしました。`:'';textPreviewCards=[];renderTextPreview();renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();toast(`${n}枚を登録しました`)};
 $('#copy-preview-json').onclick=async()=>{if(!textPreviewCards.length)return;const ok=await copyText(JSON.stringify(portablePreviewData(),null,2));toast(ok?'JSONをコピーしました':'コピーできませんでした')};
 function runJsonImportText(text){try{const data=JSON.parse(text),r=importPayload(data,$('#import-conflict').value);$('#json-import-source').value='';$('#json-import-status').textContent=`カード追加 ${r.added} / 上書き ${r.updated} / スキップ ${r.skipped} / デッキ追加 ${r.deckAdded}。入力欄をクリアしました。`;toast('インポートしました')}catch(e){$('#json-import-status').textContent='読み込みエラー: '+e.message}}
 $('#import-json-text').onclick=()=>runJsonImportText($('#json-import-source').value);
@@ -27912,7 +28008,7 @@ $('#backup-file-input').onchange=async e=>{
  try{
    const text=await f.text(),data=JSON.parse(text);
    if(!confirm('現在の登録カード・保存デッキ・コレクション情報を、このバックアップ内容に置き換えます。復元しますか？')){e.target.value='';return}
-   const r=restoreBackupObject(data);
+   const r=await restoreBackupObject(data);
    $('#backup-status').textContent=`復元しました。カード ${r.cards}枚 / デッキ ${r.decks}個 / お気に入り ${r.favorites}枚 / アルバム ${collectionData.albums.length}冊`;
    toast('バックアップから復元しました');
  }catch(err){
@@ -27941,6 +28037,21 @@ $('#full-backup-file-input').onchange=async e=>{
  try{
    const parsed=parseFullBackupZip(new Uint8Array(await f.arrayBuffer()));
    const cardCount=parsed.manifest.data.cards.length,deckCount=parsed.manifest.data.decks.length,imageCount=parsed.imageRecords.length,frameCount=(parsed.frameRecords||[]).length,bgCount=parsed.backgroundRecords.length;
+   // Ver51.1: provide a read-only inspection artifact before any restore operation.
+   // This path never writes to localStorage, IndexedDB, or Supabase.
+   const inspection={
+     format:'minkai-full-zip-inspection',version:'50.7',inspectedAt:new Date().toISOString(),
+     sourceFile:f.name,backupVersion:parsed.backupVersion,
+     counts:{cards:cardCount,decks:deckCount,images:imageCount,frames:frameCount,backgrounds:bgCount},
+     deckSummary:parsed.manifest.data.decks.map(d=>({id:d.id,name:d.name,cardKinds:Object.keys(d.entries||{}).length,totalCards:Object.values(d.entries||{}).reduce((a,n)=>a+Number(n||0),0)})),
+     data:parsed.manifest.data
+   };
+   const stamp=new Date().toISOString().replace(/[:.]/g,'-');
+   downloadJson(inspection,`minkai_full_zip_inspection_${stamp}.json`);
+   status.textContent='ZIPの読み取り専用検査結果をJSONに保存しました。復元は安全確認まで停止しています。';
+   toast('ZIPの検査結果を保存しました（既存データは変更していません）');
+   e.target.value='';return;
+
    const themeText=parsed.theme?` / 背景 ${bgCount}件 / 外観設定あり`:' / 旧形式（現在の外観・背景は維持）';
    if(!confirm(`現在の登録カード・保存デッキ・カード画像・対象設定を、この完全バックアップ内容に置き換えます。\n\nカード ${cardCount}枚 / デッキ ${deckCount}個 / カード画像 ${imageCount}件 / フレーム ${frameCount}件${themeText}\n\n復元しますか？`)){e.target.value='';status.textContent='復元をキャンセルしました。';return}
    status.textContent='完全バックアップを復元しています…';
@@ -28051,7 +28162,7 @@ $('#card-form').onsubmit=async e=>{
  let rec=null,cardAdded=false,imageLinked=false;
  try{
    if(registerPreviewFile){await imageReadyPromise;rec=await createOptimizedImageRecord(registerPreviewFile);await imageDbPut('images',rec)}
-   cards.push(obj);cardAdded=true;save(LS_CARDS,cards);
+   cards.push(obj);cardAdded=true;await save(LS_CARDS,cards);
    if(rec){await putCardImageLink(defaultImageLink(obj.id,rec.id));imageLinked=true}
    touchRecentCards(obj.id);touchRegisteredCards(obj.id);clearCardForm();renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();await updateImageStorageStatus();toast(rec?'カードと画像を登録しました':'カードを登録しました');
  }catch(err){console.error(err);if(imageLinked){try{await deleteCardImageLink(obj.id)}catch{}}if(cardAdded){const i=cards.findIndex(c=>c.id===obj.id);if(i>=0)cards.splice(i,1);save(LS_CARDS,cards)}if(rec?.id){try{await imageDbDelete('images',rec.id);revokeImageUrls(rec.id)}catch{}}toast(err?.message||'カード登録に失敗しました')}
@@ -28501,11 +28612,11 @@ function openManagerBulkEdit(){
    const rarityOn=$('#manager-bulk-rarity-on').checked,rarity=$('#manager-bulk-rarity').value.trim(),fx=$('#manager-bulk-fx').value,frame=$('#manager-bulk-frame').value,albumOp=$('#manager-bulk-album').value,imageOp=$('#manager-bulk-image').value;
    if(!rarityOn&&fx==='keep'&&frame==='keep'&&albumOp==='keep'&&imageOp==='keep'){toast('変更内容を選択してください');return}
    if(imageOp==='delete'&&!confirm(`選択した${ids.length}枚のカード画像を削除します。よろしいですか？`))return;
-   const set=new Set(ids);for(const c of cards){if(!set.has(String(c.id)))continue;if(rarityOn)c.rarity=rarity;if(fx!=='keep')c.visualEffects=normalizeCardVisualEffects(c.visualEffects).map(x=>({...x,enabled:fx==='on'}))}
+   const cardBackup=JSON.parse(JSON.stringify(cards));const set=new Set(ids);for(const c of cards){if(!set.has(String(c.id)))continue;if(rarityOn)c.rarity=rarity;if(fx!=='keep')c.visualEffects=normalizeCardVisualEffects(c.visualEffects).map(x=>({...x,enabled:fx==='on'}))}
    if(frame==='remove')for(const id of ids)await deleteCardFrameLink(id);
    if(albumOp!=='keep'){const [op,aid]=albumOp.split(':'),album=albumById(aid);if(album)ids.forEach(id=>op==='add'?addCardToAlbum(album,id):removeCardFromAlbum(album,id));saveCollectionData()}
    if(imageOp==='delete')for(const id of ids)await deleteCardImageLink(id);
-   save(LS_CARDS,cards);renderRaritySuggestions();renderCards();renderCollection();renderDecks();if(board)renderBoard();updateImageStorageStatus();closeModal();toast(`${ids.length}枚を一括更新しました`);
+   try{await save(LS_CARDS,cards)}catch(err){cards=cardBackup;console.error(err);toast('カードの一括保存に失敗しました。カード設定を元に戻しました（画像・アルバムの変更は要確認）');return}renderRaritySuggestions();renderCards();renderCollection();renderDecks();if(board)renderBoard();updateImageStorageStatus();closeModal();toast(`${ids.length}枚を一括更新しました`);
  };
  refresh();
 }
@@ -28528,7 +28639,7 @@ function openManagerAppearanceCopy(sourceId){
    let imageCopied=0,imageSkipped=0;
    if(copyImage){const srcLink=await getCardImageLink(sourceId);if(srcLink){for(const id of ids){const dst=await getCardImageLink(id);if(!dst){imageSkipped++;continue}await putCardImageLink(normalizeImageLink({...dst,landscape:srcLink.landscape,portrait:srcLink.portrait},id));imageCopied++}}else imageSkipped=ids.length}
    if(copyFrame){const fl=await getCardFrameLink(sourceId);for(const id of ids){if(fl)await putCardFrameLink(id,{...fl,cardId:id});else await deleteCardFrameLink(id)}}
-   if(copyFx){for(const id of ids){const c=cards.find(x=>String(x.id)===String(id));if(c)c.visualEffects=normalizeCardVisualEffects(source.visualEffects).map(x=>({...x}))}save(LS_CARDS,cards)}
+   if(copyFx){const beforeFx=JSON.parse(JSON.stringify(cards));for(const id of ids){const c=cards.find(x=>String(x.id)===String(id));if(c)c.visualEffects=normalizeCardVisualEffects(source.visualEffects).map(x=>({...x}))}try{await save(LS_CARDS,cards)}catch(err){cards=beforeFx;console.error(err);toast('エフェクトのコピー保存に失敗しました');return}}
    renderCards();renderCollection();if(board)renderBoard();hydrateAllCardFrames();toast(`外観設定を${ids.length}枚へコピーしました${copyImage&&imageSkipped?`（画像位置：${imageCopied}枚、画像なし${imageSkipped}枚）`:''}`);openCardManagerDetail(sourceId,{keepContext:true});
  };
  render();
@@ -29484,13 +29595,13 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      shell.hidden=false;
      if(!frame.getAttribute('src')){
        frame.addEventListener('load',()=>setTimeout(openSelected,0),{once:true});
-       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=49.3';
+       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.0';
      }else openSelected();
      return;
    }
  }
 
- // Ver49.3: Legacy editing UI is retired. Keep legacy render/data helpers for saved cards.
+ // Ver51.1: Legacy editing UI is retired. Keep legacy render/data helpers for saved cards.
  const shell=document.getElementById('fx-trial-shell');
  if(shell){shell.hidden=false;}
  const host=document.getElementById('fx-trial-box')||document.body;
@@ -30127,7 +30238,7 @@ function bindDecorEditor(card,returnTo='manager'){
  // Decoration editor has its own range+number enhancer. Do not run the appearance enhancer here:
  // stacking both produced duplicate numeric inputs and duplicate input events.
  const decorModal=$('#modal');if(decorModal){decorModal.onkeydown=e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName)||e.ctrlKey||e.metaKey)return;const x=decorSelected();if(!x||x.locked||x.type==='cheki')return;const step=e.shiftKey?5:1;let moved=true;if(e.key==='ArrowLeft')x.x=Math.max(-25,x.x-step);else if(e.key==='ArrowRight')x.x=Math.min(125,x.x+step);else if(e.key==='ArrowUp')x.y=Math.max(-25,x.y-step);else if(e.key==='ArrowDown')x.y=Math.min(125,x.y+step);else moved=false;if(moved){e.preventDefault();renderDecorPreview(card);const xi=$('#decor-x'),yi=$('#decor-y');if(xi)xi.value=Math.round(x.x);if(yi)yi.value=Math.round(x.y)}}}
- const saveDecor=()=>{card.decorLayers=decorEditorState.layers.map(normalizeDecorLayer);save(LS_CARDS,cards);renderCollection();if(board)renderBoard();toast('装飾・サインを保存しました');back()};
+ const saveDecor=async()=>{const before=card.decorLayers;card.decorLayers=decorEditorState.layers.map(normalizeDecorLayer);try{await save(LS_CARDS,cards)}catch(err){card.decorLayers=before;toast('装飾・サインの保存に失敗しました');console.error(err);return}renderCollection();if(board)renderBoard();toast('装飾・サインを保存しました');back()};
  $('#decor-close').onclick=back;$('#decor-cancel').onclick=back;$('#decor-save').onclick=saveDecor;const saveTop=$('#decor-save-top');if(saveTop)saveTop.onclick=saveDecor;const previewReload=$('#decor-preview-reload');if(previewReload)previewReload.onclick=()=>hydrateDecorPreview(card,{forceImage:true});
  $('#decor-add-text').onclick=()=>{if(decorEditorState.layers.filter(x=>x.type==='text').length>=8){toast('文字レイヤーは最大8個です');return}const n=normalizeDecorLayer({type:'text',name:`文字${decorEditorState.layers.filter(x=>x.type==='text').length+1}`,text:'サイン'});decorEditorState.layers.push(n);decorEditorState.selectedId=n.id;rer()};
  $('#decor-add-stamp').onclick=()=>{$('#decor-stamp-choices').hidden=!$('#decor-stamp-choices').hidden};
@@ -30258,13 +30369,13 @@ function openCardManagerEdit(id){
  ['manager-edit-name','manager-edit-ruby','manager-edit-race','manager-edit-effect'].forEach(x=>$('#'+x)?.addEventListener('input',refreshEditRuby));
 
  $('#manager-edit-close').onclick=()=>openCardManagerDetail(id,{keepContext:true});$('#manager-edit-cancel').onclick=()=>openCardManagerDetail(id,{keepContext:true});
- $('#manager-edit-form').onsubmit=e=>{
+ $('#manager-edit-form').onsubmit=async e=>{
    e.preventDefault();const i=cards.findIndex(x=>x.id===id);if(i<0)return;
    const name=$('#manager-edit-name').value.trim();if(!name)return;
    let type=$('#manager-edit-type').value;
    if(type==='__custom__'){type=buildCustomCardType($('#manager-edit-custom-left').value,$('#manager-edit-custom-right').value);if(!type){toast('自由種類を入力してください。「:」は入力欄の中では使用できません。');return}}
-   cards[i]={id,name,ruby:$('#manager-edit-ruby').value.trim(),type:normalizeCardType(type),level:$('#manager-edit-level').value.trim(),power:$('#manager-edit-power').value.trim(),race:$('#manager-edit-race').value.trim(),rarity:$('#manager-edit-rarity').value.trim(),effect:$('#manager-edit-effect').value,flavor:$('#manager-edit-flavor').value,visualEffects:normalizeCardVisualEffects(c.visualEffects),appearancePresetMeta:appearancePresetMetaPortable(c.appearancePresetMeta),decorLayers:cardDecorLayers(c),cardLinks:cardLinksFor(c)};
-   save(LS_CARDS,cards);touchRecentCards(id);renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();openCardManagerDetail(id,{keepContext:true});toast('カードを更新しました');
+   const previousCard=cards[i];cards[i]={id,name,ruby:$('#manager-edit-ruby').value.trim(),type:normalizeCardType(type),level:$('#manager-edit-level').value.trim(),power:$('#manager-edit-power').value.trim(),race:$('#manager-edit-race').value.trim(),rarity:$('#manager-edit-rarity').value.trim(),effect:$('#manager-edit-effect').value,flavor:$('#manager-edit-flavor').value,visualEffects:normalizeCardVisualEffects(c.visualEffects),appearancePresetMeta:appearancePresetMetaPortable(c.appearancePresetMeta),decorLayers:cardDecorLayers(c),cardLinks:cardLinksFor(c)};
+   try{await save(LS_CARDS,cards)}catch(err){cards[i]=previousCard;toast('カードの保存に失敗しました');console.error(err);return}touchRecentCards(id);renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();openCardManagerDetail(id,{keepContext:true});toast('カードを更新しました');
  };
 }
 async function createCardFrom(id){
@@ -30296,7 +30407,7 @@ async function createCardFrom(id){
    let type=$('#manager-createfrom-type').value;
    if(type==='__custom__'){type=buildCustomCardType($('#manager-createfrom-custom-left').value,$('#manager-createfrom-custom-right').value);if(!type){toast('自由種類を入力してください。「:」は入力欄の中では使用できません。');return}}
    const newId=uid('card');const made={id:newId,name,ruby:$('#manager-createfrom-ruby').value.trim(),type:normalizeCardType(type),level:$('#manager-createfrom-level').value.trim(),power:$('#manager-createfrom-power').value.trim(),race:$('#manager-createfrom-race').value.trim(),rarity:$('#manager-createfrom-rarity').value.trim(),effect:$('#manager-createfrom-effect').value,flavor:$('#manager-createfrom-flavor').value,visualEffects:normalizeCardVisualEffects(c.visualEffects).map(x=>({...x})),appearancePresetMeta:appearancePresetMetaPortable(c.appearancePresetMeta),decorLayers:cardDecorLayers(c).map(x=>({...x,id:uid('decor')})),cardLinks:[]};
-   cards.push(made);save(LS_CARDS,cards);
+   cards.push(made);try{await save(LS_CARDS,cards)}catch(err){cards=cards.filter(x=>x.id!==newId);toast('カードの保存に失敗しました');console.error(err);return}
    try{await cloneCardImageLink(id,newId)}catch(err){console.warn('画像リンクの引き継ぎに失敗',err)}
    try{await cloneCardFrameLink(id,newId)}catch(err){console.warn('フレームリンクの引き継ぎに失敗',err)}
    touchRecentCards(newId);touchRegisteredCards(newId);renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup();updateImageStorageStatus();
@@ -33123,7 +33234,7 @@ function duplicateCurrentDeck(){
  const src=decks.find(d=>String(d.id)===String(editingDeckId));if(!src)return;
  const baseName=($('#deck-name')?.value||workingDeck.name||src.name||'名称未設定デッキ').trim()||'名称未設定デッキ';
  const copy={...src,...deckSettingsFrom(workingDeck),id:uid('deck'),name:duplicateDeckName(baseName),entries:{...(workingDeck.entries||{})},defaultOshiiCardId:String(workingDeck.defaultOshiiCardId||''),tags:normalizeDeckTags(workingDeck.tags),mainFavorite:false,otherFavorite:false};
- decks.push(copy);save(LS_DECKS,decks);editingDeckId=copy.id;workingDeck=workingDeckFrom(copy);renderDecks();renderSetup(true);toast(`${copy.name}を作成しました`);
+ if(save(LS_DECKS,[...decks,copy])===false){toast('デッキの複製保存に失敗しました');return}decks.push(copy);editingDeckId=copy.id;workingDeck=workingDeckFrom(copy);renderDecks();renderSetup(true);toast(`${copy.name}を作成しました`);
 }
 $('#duplicate-deck').onclick=duplicateCurrentDeck;
 $('#deck-tag-filter').onchange=()=>renderDecks();
@@ -33132,23 +33243,21 @@ $('#deck-review-stats').onclick=openDeckStatistics;
 $('#deck-select').onchange=()=>{const id=$('#deck-select').value;editingDeckId=id||null;deckPoolPage=0;if(id){const d=decks.find(x=>x.id===id);workingDeck=workingDeckFrom(d)}else workingDeck=blankWorkingDeck();renderDecks()};
 $('#new-deck').onclick=()=>{editingDeckId=null;deckPoolPage=0;workingDeck=blankWorkingDeck();renderDecks()};
 function saveWorkingDeck(){
- workingDeck.name=$('#deck-name').value.trim()||'名称未設定デッキ';
+ const name=$('#deck-name').value.trim()||'名称未設定デッキ';
  const settings=deckSettingsFrom(workingDeck);
  if(!settings.mainEnabled)settings.mainFavorite=false;
  if(!settings.otherEnabled)settings.otherFavorite=false;
- let id=editingDeckId;
- if(!id)id=uid('deck');
- if(settings.mainFavorite)applyExclusiveFavorite(id,'main');
- if(settings.otherFavorite)applyExclusiveFavorite(id,'other');
- const obj={id,name:workingDeck.name,entries:{...workingDeck.entries},defaultOshiiCardId:String(workingDeck.defaultOshiiCardId||''),tags:normalizeDeckTags(workingDeck.tags),...settings};
- if(editingDeckId){
-   const i=decks.findIndex(x=>x.id===editingDeckId);
-   if(i>=0)decks[i]=obj;
- }else{
-   editingDeckId=id;decks.push(obj);
- }
- workingDeck=workingDeckFrom(obj);
- normalizeDeckSettings();save(LS_DECKS,decks);deckDraftV271Clear();renderDecks();renderSetup(true);toast('デッキを保存しました');
+ const id=editingDeckId||uid('deck');
+ const obj={id,name,entries:{...workingDeck.entries},defaultOshiiCardId:String(workingDeck.defaultOshiiCardId||''),tags:normalizeDeckTags(workingDeck.tags),...settings};
+ // Build a candidate without changing live memory or persistent state first.
+ const candidate=decks.map(d=>({...d}));
+ const idx=candidate.findIndex(d=>d.id===id);
+ if(idx>=0)candidate[idx]=obj;else candidate.push(obj);
+ if(settings.mainFavorite)for(const d of candidate)if(d.id!==id)d.mainFavorite=false;
+ if(settings.otherFavorite)for(const d of candidate)if(d.id!==id)d.otherFavorite=false;
+ if(save(LS_DECKS,candidate)===false){toast('デッキの保存に失敗しました。元のデータは維持しています');return false}
+ decks=candidate;editingDeckId=id;workingDeck=workingDeckFrom(obj);
+ deckDraftV271Clear();renderDecks();renderSetup(true);toast('デッキを保存しました');return true;
 }
 $('#save-deck').onclick=saveWorkingDeck;
 $('#deck-settings').onclick=()=>{
@@ -41373,7 +41482,7 @@ async function publicBulkDownload(){
       if(r.ok){ok++;added.push(r.incoming.id)}
       else if(!r.cancel&&!r.skip)fail++;
     }
-    save(LS_CARDS,cards);
+    try{await save(LS_CARDS,cards)}catch(err){console.error("public bulk save failed",err);publicSetStatus("public-cards-status","カード保存に失敗しました。再確認してください",true);return}
     try{if(added.length){touchRecentCards(added);touchRegisteredCards(added)}renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup()}catch(_){}
     publicBrowseSelectedIds.clear();publicRenderCards();publicSetStatus('public-cards-status',`${ok}枚をダウンロードしました${fail?` / ${fail}枚失敗`:''}`,!!fail);
   }finally{publicSetBusy(false)}
@@ -41851,12 +41960,12 @@ function download(data,file){downloadBlob(new Blob([JSON.stringify(data,null,2)]
 function readFile(cb){const input=document.createElement('input');input.type='file';input.accept='.json,application/json';input.onchange=safe(async()=>{const f=input.files[0];if(!f)return;if(f.size>20000000)throw Error('20MB以内のファイルを選んでください');cb(JSON.parse(await f.text()));});input.click();}
 function assertPack(p){if(!p.name?.trim())throw Error('パック名を入力してください');E.pack(p,valid());return p;}
 function snapshot(p){const ids=[...new Set(p.slots.flatMap(s=>Object.keys(s.weights)))];return {format:'minkai-pack',version:1,pack:C(p),cards:ids.map(id=>{const c=cards.find(c=>c.id===id);if(!c)throw Error('削除済みカードが含まれています');return {id,card:publicCardForUpload(c)};})};}
-function importPack(data){
+async function importPack(data){
  if(data?.format!=='minkai-pack'||data.version!==1||!Array.isArray(data.cards)||data.cards.length>10000)throw Error('対応するパックファイルではありません');
  const old=cards,added=[],map=new Map();for(const x of data.cards){if(typeof x.id!=='string'||!x.card?.name)throw Error('カード情報が不正です');const clean=publicCardForUpload(x.card);const match=cards.find(c=>JSON.stringify(publicCardForUpload(c))===JSON.stringify(clean));const c=match||{...clean,id:uid('card')};if(!match)added.push(c);map.set(x.id,c.id);}
  const p=ensurePackV2(C(data.pack));p.id=uid('pack');delete p.publicId;if(!Array.isArray(p.slots)||p.slots.length>20)throw Error('封入枠が不正です');
  for(const s of p.slots){const w={};for(const [id,v] of Object.entries(E.counts(s.weights))){if(!map.has(id))throw Error('封入カードの情報がありません');w[map.get(id)]=v;}s.weights=w;}
- cards=cards.concat(added);try{assertPack(p);save(LS_CARDS,cards);tx(d=>d.packs.push(p));}catch(e){cards=old;save(LS_CARDS,old);throw e;}renderDecks();review();toast('パックを取り込みました。同名でも能力が異なるカードは別に登録しました');
+ cards=cards.concat(added);try{assertPack(p);await save(LS_CARDS,cards);tx(d=>d.packs.push(p));}catch(e){cards=old;try{await save(LS_CARDS,old)}catch(rollbackError){console.error("pack rollback failed",rollbackError)}throw e;}renderDecks();review();toast('パックを取り込みました。同名でも能力が異なるカードは別に登録しました');
 }
 const originalMode=setDeckViewMode;
 setDeckViewMode=function(mode){originalMode(mode);const isPack=mode.startsWith('pack-');if(isPack){q('#deck-edit-pane').hidden=true;q('#deck-review-pane').hidden=true;q('#new-deck').hidden=true;}q('#pack-edit-pane').hidden=mode!=='pack-edit';q('#pack-review-pane').hidden=mode!=='pack-review';q('#pack-history-pane').hidden=mode!=='pack-history';for(const [m,id] of [['edit','deck-view-edit'],['review','deck-view-review'],['pack-edit','deck-view-pack-edit'],['pack-review','deck-view-pack-review'],['pack-history','deck-view-pack-history']])q('#'+id).classList.toggle('primary',m===mode);if(mode==='pack-edit')editor();if(mode==='pack-review')review();if(mode==='pack-history')historyView();};
@@ -41943,11 +42052,11 @@ function gameView(){const g=game();setDeckViewMode('pack-history');const root=q(
  if(g.mode==='auction'){stage.innerHTML=`<h4>出品：${h(name(g.queue[0]))}</h4><p>0点は見送り。同額の最高入札は再入札します。</p>${g.players.map((p,i)=>num('bid-'+i,p.name+'（残り'+p.points+'点）',0,0,p.points)).join('')}${button('pg-bid','入札を確定')}`;on('pg-bid',()=>{const bids=g.players.map((p,i)=>n('bid-'+i,0,p.points)),max=Math.max(...bids);if(max&&bids.filter(x=>x===max).length>1)throw Error('最高額が同じです。再入札してください');change(s=>{const id=s.queue.shift();if(max){const i=bids.indexOf(max);s.players[i].points-=max;E.award(s,i,[id]);s.log.push(`${s.players[i].name}が${name(id)}を${max}点で落札`);}else s.log.push(`${name(id)}：全員見送り`);s.done=!s.queue.length;});});}
 }
 function owned(index){const g=game(),p=g.players[index],rule=normalizeDeckRule(g.deckRule||{min:40,max:null});modal(p.name+'の獲得カード',`<p><b>獲得カードプール ${E.total(p.owned)}枚</b> / デッキ条件：${h(deckRuleText(rule))}</p><p>獲得カードすべてをデッキに入れる必要はありません。下から好きなカードを選び、デッキ条件を満たす枚数で保存できます。</p>${quantities(p.owned,'build')}<p id="pg-build-status" class="muted">0枚選択</p><label>デッキ名<input id="pg-deck-name" value="${h(g.name+' / '+p.name)}"></label><div class="pk-row">${button('pg-deck-save','選んだ枚数でデッキ保存','primary')}${button('pg-all-owned','全枚数を選択')}</div><hr><label>開けるパック<select id="pg-more-pack">${opts(db.packs)}</select></label>${num('pg-more-count','パック数',1,1,20)}${button('pg-more','追加開封')}<details><summary>カードを返して交換開封</summary><p>上の枚数欄で返却するカードを選んでください。</p>${num('pg-cost','必要な返却枚数（合計）',5,1,20000)}${button('pg-exchange','選んだカードを返して開封')}</details>`);
- const updateStatus=()=>{const count=E.total(readQty('build')),check=deckRuleCheck(count,rule),el=q('#pg-build-status');if(el)el.textContent=`選択 ${count}枚 / ${deckRuleText(rule)} / ${check.text}`;const btn=q('#pg-deck-save');if(btn)btn.disabled=!check.ok;};qa('[data-group="build"]').forEach(x=>x.oninput=updateStatus);on('pg-all-owned',()=>{qa('[data-group="build"]').forEach(x=>x.value=x.max);updateStatus()});updateStatus();on('pg-deck-save',()=>{const entries=readQty('build'),check=deckRuleCheck(E.total(entries),rule);if(!check.ok)throw Error(`デッキ枚数が条件を満たしていません：${check.text}`);const d={id:uid('deck'),name:q('#pg-deck-name').value.trim()||g.name,entries,mainEnabled:true,otherEnabled:true,tags:[],defaultOshiiCardId:'',deckRule:C(rule)};const next=decks.concat([d]);save(LS_DECKS,next);try{tx(s=>s.links[d.id]={gameId:g.id,player:index});}catch(e){save(LS_DECKS,decks);throw e;}decks=next;renderDecks();renderSetup(true);gameView();toast('デッキを保存しました。デッキ確認・盤面開始から使えます');});
+ const updateStatus=()=>{const count=E.total(readQty('build')),check=deckRuleCheck(count,rule),el=q('#pg-build-status');if(el)el.textContent=`選択 ${count}枚 / ${deckRuleText(rule)} / ${check.text}`;const btn=q('#pg-deck-save');if(btn)btn.disabled=!check.ok;};qa('[data-group="build"]').forEach(x=>x.oninput=updateStatus);on('pg-all-owned',()=>{qa('[data-group="build"]').forEach(x=>x.value=x.max);updateStatus()});updateStatus();on('pg-deck-save',()=>{const entries=readQty('build'),check=deckRuleCheck(E.total(entries),rule);if(!check.ok)throw Error(`デッキ枚数が条件を満たしていません：${check.text}`);const d={id:uid('deck'),name:q('#pg-deck-name').value.trim()||g.name,entries,mainEnabled:true,otherEnabled:true,tags:[],defaultOshiiCardId:'',deckRule:C(rule)};const next=decks.concat([d]);if(!save(LS_DECKS,next))throw Error("デッキの保存に失敗しました");try{tx(s=>s.links[d.id]={gameId:g.id,player:index});}catch(e){save(LS_DECKS,decks);throw e;}decks=next;renderDecks();renderSetup(true);gameView();toast('デッキを保存しました。デッキ確認・盤面開始から使えます');});
  const openMore=(exchange)=>{const pack=db.packs.find(x=>x.id===q('#pg-more-pack').value);if(!pack)throw Error('パックを選んでください');const times=n('pg-more-count',1,20),offer=exchange?readQty('build'):{};if(exchange&&E.total(offer)!==n('pg-cost',1,20000))throw Error('返却する合計枚数を必要枚数に合わせてください');const a=[];for(let i=0;i<times;i++)a.push(...E.pack(pack,valid()));if(!confirm(exchange?`${E.total(offer)}枚を返して${times}パック開けますか？`:`${times}パックを追加しますか？`))return;change(s=>{const owner=s.players[index].owned;for(const [id,n] of Object.entries(offer)){if((owner[id]||0)<n)throw Error('所持枚数が不足しています');owner[id]-=n;}E.award(s,index,a);s.log.push(`${p.name}：${exchange?'交換':'追加'}開封 ${pack.name} ${times}パック / ${cardList(a)}`);});closeModal();owned(index);};on('pg-more',()=>openMore(false));on('pg-exchange',()=>openMore(true));
 }
 function tradeDialog(){const g=game();if(g.players.length<2)throw Error('参加者が2人以上の記録で使えます');modal('トレード',`<div class="pk-grid"><label>参加者A<select id="trade-a">${g.players.map((p,i)=>`<option value="${i}">${h(p.name)}</option>`).join('')}</select></label><label>参加者B<select id="trade-b">${g.players.map((p,i)=>`<option value="${i}" ${i===1?'selected':''}>${h(p.name)}</option>`).join('')}</select></label></div>${button('trade-choose','交換するカードを選ぶ')}<div id="trade-body"></div>`);on('trade-choose',()=>{const a=Number(q('#trade-a').value),b=Number(q('#trade-b').value);if(a===b)throw Error('別の参加者を選んでください');q('#trade-body').innerHTML=`<h4>${h(g.players[a].name)}が渡すカード</h4>${quantities(g.players[a].owned,'offer-a')}<h4>${h(g.players[b].name)}が渡すカード</h4>${quantities(g.players[b].owned,'offer-b')}<label class="pk-check"><input id="trade-ok-a" type="checkbox">${h(g.players[a].name)}が確認</label><label class="pk-check"><input id="trade-ok-b" type="checkbox">${h(g.players[b].name)}が確認</label>${button('trade-commit','交換を確定')}`;qa('#trade-body [data-qty]').forEach(x=>x.oninput=()=>{q('#trade-ok-a').checked=false;q('#trade-ok-b').checked=false;});on('trade-commit',()=>{if(!q('#trade-ok-a').checked||!q('#trade-ok-b').checked)throw Error('双方の確認が必要です');const ab=readQty('offer-a'),ba=readQty('offer-b');if(!E.total(ab)&&!E.total(ba))throw Error('交換するカードを選んでください');change(s=>{s.players=E.trade(s.players,a,b,ab,ba);s.log.push(`${s.players[a].name} ↔ ${s.players[b].name}：${E.total(ab)}枚 / ${E.total(ba)}枚を交換`);});closeModal();});});const reset=()=>q('#trade-body').innerHTML='';q('#trade-a').onchange=reset;q('#trade-b').onchange=reset;}
-function mergeDialog(){modal('合体用デッキを組み合わせる',`<p>基本の完成デッキは40枚です。ルールプラスで必要枚数が変わる場合は「今回の完成デッキ枚数」を変更してください。2つの合体用デッキの合計が、その枚数になる必要があります。</p>${num('mini-target','今回の完成デッキ枚数',40,2,20000)}<div id="mini-required" class="panel"></div><div class="pk-scroll">${decks.map(d=>`<label class="pk-check"><input type="checkbox" data-mini="${h(d.id)}">${h(d.name)} (${E.total(d.entries)}枚)</label>`).join('')}</div>${button('mini-merge','2つを合体してデッキを保存','primary')}`);const show=()=>{const t=n('mini-target',2,20000),a=Math.floor(t/2),b=t-a;q('#mini-required').textContent=`必要な合体用デッキ：${a}枚 + ${b}枚 = ${t}枚`;};q('#mini-target').oninput=show;show();on('mini-merge',()=>{const ids=qa('[data-mini]:checked').map(x=>x.dataset.mini);if(ids.length!==2)throw Error('合体用デッキを2つ選んでください');const pair=ids.map(id=>decks.find(d=>d.id===id)),target=n('mini-target',2,20000),need=[Math.floor(target/2),Math.ceil(target/2)],counts=pair.map(d=>E.total(d.entries)).sort((a,b)=>a-b);if(counts[0]!==need[0]||counts[1]!==need[1])throw Error(`今回は${need[0]}枚と${need[1]}枚の合体用デッキが必要です`);const entries={};pair.forEach(d=>Object.entries(d.entries).forEach(([id,n])=>entries[id]=(entries[id]||0)+n));const d={id:uid('deck'),name:pair.map(d=>d.name).join('＋'),entries,tags:[],mainEnabled:true,otherEnabled:true,deckRule:{min:target,max:target}};save(LS_DECKS,decks.concat([d]));decks.push(d);renderDecks();renderSetup(true);setDeckViewMode('pack-review');closeModal();toast('合体デッキを保存しました：'+d.name);});}
+function mergeDialog(){modal('合体用デッキを組み合わせる',`<p>基本の完成デッキは40枚です。ルールプラスで必要枚数が変わる場合は「今回の完成デッキ枚数」を変更してください。2つの合体用デッキの合計が、その枚数になる必要があります。</p>${num('mini-target','今回の完成デッキ枚数',40,2,20000)}<div id="mini-required" class="panel"></div><div class="pk-scroll">${decks.map(d=>`<label class="pk-check"><input type="checkbox" data-mini="${h(d.id)}">${h(d.name)} (${E.total(d.entries)}枚)</label>`).join('')}</div>${button('mini-merge','2つを合体してデッキを保存','primary')}`);const show=()=>{const t=n('mini-target',2,20000),a=Math.floor(t/2),b=t-a;q('#mini-required').textContent=`必要な合体用デッキ：${a}枚 + ${b}枚 = ${t}枚`;};q('#mini-target').oninput=show;show();on('mini-merge',()=>{const ids=qa('[data-mini]:checked').map(x=>x.dataset.mini);if(ids.length!==2)throw Error('合体用デッキを2つ選んでください');const pair=ids.map(id=>decks.find(d=>d.id===id)),target=n('mini-target',2,20000),need=[Math.floor(target/2),Math.ceil(target/2)],counts=pair.map(d=>E.total(d.entries)).sort((a,b)=>a-b);if(counts[0]!==need[0]||counts[1]!==need[1])throw Error(`今回は${need[0]}枚と${need[1]}枚の合体用デッキが必要です`);const entries={};pair.forEach(d=>Object.entries(d.entries).forEach(([id,n])=>entries[id]=(entries[id]||0)+n));const d={id:uid('deck'),name:pair.map(d=>d.name).join('＋'),entries,tags:[],mainEnabled:true,otherEnabled:true,deckRule:{min:target,max:target}};if(!save(LS_DECKS,decks.concat([d])))throw Error('デッキ保存に失敗しました。保存領域を確認してください');decks.push(d);renderDecks();renderSetup(true);setDeckViewMode('pack-review');closeModal();toast('合体デッキを保存しました：'+d.name);});}
 // Keep collection limits when a generated deck is edited in the existing builder.
 const saveDeck=saveWorkingDeck;saveWorkingDeck=function(){const link=db.links[editingDeckId];if(link){const g=db.games.find(x=>x.id===link.gameId),owner=g?.players[link.player];if(owner){const over=Object.entries(workingDeck.entries).filter(([id,n])=>n>(owner.owned[id]||0));if(over.length){toast('所持枚数を超えています：'+over.map(([id])=>name(id)).join('、'));return;}}}return saveDeck();};q('#save-deck').onclick=saveWorkingDeck;
 function drawDialog(){const source=deckReviewSourceDeck(),original=E.counts(source.entries||{});if(!E.total(original))throw Error('確認するデッキにカードがありません');const entries=C(original);let groupIndex=0,cancel=false,runId=0;
@@ -41955,24 +42064,24 @@ function drawDialog(){const source=deckReviewSourceDeck(),original=E.counts(sour
  function add(){const id=groupIndex++,el=document.createElement('div');el.className='panel';el.dataset.condition=id;el.innerHTML=`<label>条件 ${id+1}：対象カード（複数選択可）</label><div class="pk-scroll">${Object.keys(original).map(cid=>`<label class="pk-check"><input type="checkbox" value="${h(cid)}">${h(name(cid))}</label>`).join('')}</div><label>合計で必要な枚数<input data-min type="number" value="1" min="1" max="20000"></label><button type="button" class="btn small" data-remove>この条件を削除</button>`;el.querySelector('[data-remove]').onclick=()=>el.remove();q('#draw-groups').append(el);}add();on('draw-add-group',add);qa('[data-draw-count]').forEach(x=>x.onchange=safe(()=>{entries[x.dataset.drawCount]=E.int(x.value);q('#draw-total').textContent=`比較用：${E.total(entries)}枚`;}));on('draw-stop',()=>{cancel=true});on('pk-close',()=>{cancel=true;runId++;closeModal()});
  on('draw-run',async()=>{if(busy)throw Error('検証中です');qa('[data-draw-count]').forEach(x=>entries[x.dataset.drawCount]=E.int(x.value));const groups=qa('[data-condition]').map(el=>({ids:[...el.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value),min:E.int(el.querySelector('[data-min]').value,1,20000)}));if(!groups.length||groups.some(g=>!g.ids.length))throw Error('各条件にカードを選んでください');const initial=n('draw-initial',1,20000),max=initial+n('draw-extra',0,20000),trials=n('draw-trials',1,50000),join=q('#draw-join').value;if(max>Math.min(E.total(original),E.total(entries)))throw Error('引く枚数が元または比較用のデッキ枚数を超えています');if(max>300)throw Error('一度に引く枚数は300枚以内にしてください');cancel=false;busy=true;const token=++runId,counts=[Array(max).fill(0),Array(max).fill(0)];let done=0;const result=q('#draw-result');try{for(let t=0;t<trials;t++){if(cancel||!result.isConnected||token!==runId)break;[original,entries].forEach((e,i)=>E.trial(e,max,groups,join).forEach((ok,j)=>{if(ok)counts[i][j]++}));done++;if(t%100===0){result.textContent=`検証中 ${done}/${trials}回`;await new Promise(r=>setTimeout(r,0));}}if(!result.isConnected)return;result.innerHTML=`<p>${cancel?'中止・途中結果':'検証完了'}：各${done}回。抽選による推定値です。</p><div class="pk-table"><table><thead><tr><th>引いた枚数</th><th>元 ${E.total(original)}枚</th><th>比較 ${E.total(entries)}枚</th></tr></thead><tbody>${Array.from({length:max-initial+1},(_,i)=>{const j=initial+i-1;return `<tr><td>${j+1}枚</td>${counts.map(a=>`<td>${done?(a[j]/done*100).toFixed(2):'0'}% (${a[j]}/${done})</td>`).join('')}</tr>`}).join('')}</tbody></table></div>`;}finally{busy=false;}});
 }
-function restore(data){if(data?.format!=='minkai-pack-workspace'||data.version!==1||!Array.isArray(data.cards)||!data.db||data.db.version!==1||!Array.isArray(data.db.packs)||!Array.isArray(data.db.games))throw Error('対応する記録ファイルではありません');if(!confirm('パックと遊びの記録を、このファイルの内容で置き換えますか？通常のデッキは残ります。'))return;const previous=cards,added=[],map=new Map();for(const x of data.cards){if(!x.card?.name||typeof x.id!=='string')throw Error('カード情報が不正です');const c=cards.find(c=>JSON.stringify(publicCardForUpload(c))===JSON.stringify(publicCardForUpload(x.card)))||{...publicCardForUpload(x.card),id:uid('card')};if(!cards.includes(c))added.push(c);map.set(x.id,c.id);}
+async function restore(data){if(data?.format!=='minkai-pack-workspace'||data.version!==1||!Array.isArray(data.cards)||!data.db||data.db.version!==1||!Array.isArray(data.db.packs)||!Array.isArray(data.db.games))throw Error('対応する記録ファイルではありません');if(!confirm('パックと遊びの記録を、このファイルの内容で置き換えますか？通常のデッキは残ります。'))return;const previous=cards,added=[],map=new Map();for(const x of data.cards){if(!x.card?.name||typeof x.id!=='string')throw Error('カード情報が不正です');const c=cards.find(c=>JSON.stringify(publicCardForUpload(c))===JSON.stringify(publicCardForUpload(x.card)))||{...publicCardForUpload(x.card),id:uid('card')};if(!cards.includes(c))added.push(c);map.set(x.id,c.id);}
  function remap(v){if(typeof v==='string')return map.get(v)||v;if(Array.isArray(v))return v.map(remap);if(v&&typeof v==='object'){const out=Object.create(null);for(const [k,x] of Object.entries(v)){if(['__proto__','prototype','constructor'].includes(k))throw Error('不正な記録です');out[map.get(k)||k]=remap(x);}return out;}return v;}
- const next=remap(data.db);next.links={};cards=cards.concat(added);try{next.packs.forEach(assertPack);for(const g of next.games){if(!g.id||!Array.isArray(g.players)||!Array.isArray(g.log))throw Error('遊びの記録が不正です');g.players.forEach(p=>E.counts(p.owned));}save(LS_CARDS,cards);localStorage.setItem(KEY,JSON.stringify(next));db=next;broken=false;}catch(e){cards=previous;save(LS_CARDS,previous);throw e;}review();renderDecks();toast('記録を復元しました。画像は元の端末の画像設定を使用します');}
+ const next=remap(data.db);next.links={};cards=cards.concat(added);try{next.packs.forEach(assertPack);for(const g of next.games){if(!g.id||!Array.isArray(g.players)||!Array.isArray(g.log))throw Error('遊びの記録が不正です');g.players.forEach(p=>E.counts(p.owned));}await save(LS_CARDS,cards);localStorage.setItem(KEY,JSON.stringify(next));db=next;broken=false;}catch(e){cards=previous;try{await save(LS_CARDS,previous)}catch(rollbackError){console.error("pack restore rollback failed",rollbackError)}throw e;}review();renderDecks();toast('記録を復元しました。画像は元の端末の画像設定を使用します');}
 // Public packs use a dedicated RPC and never modify the existing public-card/set endpoints.
 async function api(action,args={}){const res=await fetch(new URL('/rest/v1/rpc/minkai_pack_api',PUBLIC_SETS_URL),{method:'POST',headers:{'Content-Type':'application/json',apikey:PUBLIC_CARDS_KEY,Authorization:`Bearer ${PUBLIC_CARDS_KEY}`},body:JSON.stringify({request:{action,...args}})});const data=await res.json();if(!res.ok)throw Error(res.status===404?'パック公開用のサーバー設定がまだありません。同梱のSQLを適用してください。':(data.message||'公開所へ接続できません'));if(data.error)throw Error(data.error);return data;}
 window.minkaiPacksPublic=function(tab){const publish=tab==='packs-publish',root=q('#public-tab-'+tab);if(publish){root.innerHTML=`<div class="panel"><h3>パック公開</h3><p>カード情報と封入設定を公開します。画像・獲得カード・参加者情報は含みません。</p><label>公開するパック<select id="pk-public-select">${opts(db.packs)}</select></label><label>作者名<input id="pk-author" maxlength="80" value="${h(publicStoredAuthorName())}"></label><div class="pk-row">${button('pk-publish','選択パックを公開・更新','primary')}${button('pk-managed','自分の公開パックを取得')}</div><p id="pk-public-message" aria-live="polite"></p><div id="pk-managed-list"></div></div>`;on('pk-publish',async()=>{const p=db.packs.find(x=>x.id===q('#pk-public-select').value),key=publicStoredManagementKey();if(!p)throw Error('先にパックを保存してください');if(!key)throw Error('管理キーを設定してください');assertPack(p);if(!confirm(`${p.name}を公開しますか？画像は含まれません。`))return;const btn=q('#pk-publish');btn.disabled=true;try{const r=await api('save',{id:p.publicId||null,key,name:p.name,author:q('#pk-author').value,payload:snapshot(p)});tx(d=>d.packs.find(x=>x.id===p.id).publicId=r.id);q('#pk-public-message').textContent='公開しました';}finally{btn.disabled=false;}});on('pk-managed',async()=>{const key=publicStoredManagementKey();if(!key)throw Error('管理キーを設定してください');const r=await api('managed',{key});q('#pk-managed-list').innerHTML=r.rows.map(row=>`<div class="pk-card"><span>${h(row.name)} (${row.is_public?'公開中':'非公開'})</span><button class="btn" data-pub-toggle="${h(row.id)}" data-visible="${row.is_public?'0':'1'}">${row.is_public?'非公開にする':'再公開'}</button></div>`).join('')||'<p>公開したパックはありません。</p>';qa('[data-pub-toggle]').forEach(b=>b.onclick=safe(async()=>{await api('visibility',{id:b.dataset.pubToggle,key,is_public:b.dataset.visible==='1'});q('#pk-managed').click();}));});}
- else{root.innerHTML=`<div class="panel pk-public-download-shell"><div class="section-head"><div><h3 style="margin:0">パックをDL</h3><p class="muted" style="margin:4px 0 0">公開パックを探して、内容を確認してから端末へ取り込めます。</p></div>${button('pk-public-refresh','↻ 更新','primary')}</div><div class="pk-row pk-public-search-row"><input id="pk-public-search" type="search" placeholder="パック名・作者名で検索">${button('pk-public-find','検索','primary')}${button('pk-public-clear','クリア')}</div><div class="section-head"><span id="pk-public-status" class="muted">読み込み前</span><span id="pk-public-page" class="pill">1ページ</span></div><div id="pk-public-list" class="pk-public-download-list"><p class="muted">公開パックを読み込んでいます…</p></div><div class="manager-pagination"><span></span><div class="actions">${button('pk-public-prev','← 前へ')}${button('pk-public-next','次へ →')}</div></div></div>`;let page=0,lastRows=[];const search=async()=>{const list=q('#pk-public-list'),status=q('#pk-public-status');if(status)status.textContent='更新中…';if(list)list.setAttribute('aria-busy','true');try{const r=await api('list',{query:q('#pk-public-search').value.trim(),page});lastRows=Array.isArray(r.rows)?r.rows:[];q('#pk-public-page').textContent=`${page+1}ページ`;if(status)status.textContent=lastRows.length?`${lastRows.length}件表示中`:'該当するパックはありません';q('#pk-public-list').innerHTML=lastRows.map(row=>{const pack=row.payload?.pack||{},slots=Array.isArray(pack.slots)?pack.slots:[],packSize=slots.reduce((n,s)=>n+Number(s.count||0),0),cardKinds=new Set(slots.flatMap(s=>Object.keys(s.weights||{}))).size;return `<article class="panel pk-public-download-card"><div class="section-head"><div><h4 style="margin:0">${h(row.name||pack.name||'名称未設定')}</h4><p class="muted" style="margin:4px 0 0">作者：${h(row.author||'未設定')}</p></div><span class="pill">${packSize}枚 / ${cardKinds}種</span></div><div class="pk-public-slot-summary">${slots.map(s=>`<span class="pill">${h(s.name)} ${Number(s.count||0)}枚</span>`).join('')}</div><div class="pk-row"><button class="btn" data-pub-detail="${h(row.id)}">内容を見る</button><button class="btn primary" data-pub-download="${h(row.id)}">このパックを取り込む</button></div></article>`}).join('')||'<div class="panel"><p>パックが見つかりません。検索条件を変えてみてください。</p></div>';q('#pk-public-prev').disabled=page===0;q('#pk-public-next').disabled=lastRows.length<20;qa('[data-pub-download]').forEach(b=>b.onclick=safe(()=>{const row=lastRows.find(x=>String(x.id)===String(b.dataset.pubDownload));if(!row)return;if(confirm(`「${row.name||row.payload?.pack?.name||'このパック'}」と必要なカード情報を取り込みますか？`)){importPack(row.payload);toast('パックを取り込みました');}}));qa('[data-pub-detail]').forEach(b=>b.onclick=safe(()=>{const row=lastRows.find(x=>String(x.id)===String(b.dataset.pubDetail)),data=row?.payload;if(!data)return;const slots=data.pack?.slots||[];modal(data.pack?.name||row.name,`<p class="muted">作者：${h(row.author||'未設定')}</p>${data.pack?.description?`<p>${h(data.pack.description)}</p>`:''}${slots.map(s=>`<h4>${h(s.name)} <span class="pill">${Number(s.count||0)}枚</span></h4>${Object.entries(s.weights||{}).map(([id,w])=>`<p>${h(data.cards?.find(c=>c.id===id)?.card?.name||'不明なカード')} / 重み ${w}</p>`).join('')}`).join('')}`);}));}finally{if(list)list.removeAttribute('aria-busy')}};on('pk-public-find',()=>{page=0;return search()});on('pk-public-refresh',()=>search());on('pk-public-clear',()=>{q('#pk-public-search').value='';page=0;return search()});q('#pk-public-search').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();page=0;search()}});on('pk-public-prev',()=>{page=Math.max(0,page-1);return search()});on('pk-public-next',()=>{page++;return search()});search();}
+ else{root.innerHTML=`<div class="panel pk-public-download-shell"><div class="section-head"><div><h3 style="margin:0">パックをDL</h3><p class="muted" style="margin:4px 0 0">公開パックを探して、内容を確認してから端末へ取り込めます。</p></div>${button('pk-public-refresh','↻ 更新','primary')}</div><div class="pk-row pk-public-search-row"><input id="pk-public-search" type="search" placeholder="パック名・作者名で検索">${button('pk-public-find','検索','primary')}${button('pk-public-clear','クリア')}</div><div class="section-head"><span id="pk-public-status" class="muted">読み込み前</span><span id="pk-public-page" class="pill">1ページ</span></div><div id="pk-public-list" class="pk-public-download-list"><p class="muted">公開パックを読み込んでいます…</p></div><div class="manager-pagination"><span></span><div class="actions">${button('pk-public-prev','← 前へ')}${button('pk-public-next','次へ →')}</div></div></div>`;let page=0,lastRows=[];const search=async()=>{const list=q('#pk-public-list'),status=q('#pk-public-status');if(status)status.textContent='更新中…';if(list)list.setAttribute('aria-busy','true');try{const r=await api('list',{query:q('#pk-public-search').value.trim(),page});lastRows=Array.isArray(r.rows)?r.rows:[];q('#pk-public-page').textContent=`${page+1}ページ`;if(status)status.textContent=lastRows.length?`${lastRows.length}件表示中`:'該当するパックはありません';q('#pk-public-list').innerHTML=lastRows.map(row=>{const pack=row.payload?.pack||{},slots=Array.isArray(pack.slots)?pack.slots:[],packSize=slots.reduce((n,s)=>n+Number(s.count||0),0),cardKinds=new Set(slots.flatMap(s=>Object.keys(s.weights||{}))).size;return `<article class="panel pk-public-download-card"><div class="section-head"><div><h4 style="margin:0">${h(row.name||pack.name||'名称未設定')}</h4><p class="muted" style="margin:4px 0 0">作者：${h(row.author||'未設定')}</p></div><span class="pill">${packSize}枚 / ${cardKinds}種</span></div><div class="pk-public-slot-summary">${slots.map(s=>`<span class="pill">${h(s.name)} ${Number(s.count||0)}枚</span>`).join('')}</div><div class="pk-row"><button class="btn" data-pub-detail="${h(row.id)}">内容を見る</button><button class="btn primary" data-pub-download="${h(row.id)}">このパックを取り込む</button></div></article>`}).join('')||'<div class="panel"><p>パックが見つかりません。検索条件を変えてみてください。</p></div>';q('#pk-public-prev').disabled=page===0;q('#pk-public-next').disabled=lastRows.length<20;qa('[data-pub-download]').forEach(b=>b.onclick=safe(async()=>{const row=lastRows.find(x=>String(x.id)===String(b.dataset.pubDownload));if(!row)return;if(confirm(`「${row.name||row.payload?.pack?.name||'このパック'}」と必要なカード情報を取り込みますか？`)){await importPack(row.payload);}}));qa('[data-pub-detail]').forEach(b=>b.onclick=safe(()=>{const row=lastRows.find(x=>String(x.id)===String(b.dataset.pubDetail)),data=row?.payload;if(!data)return;const slots=data.pack?.slots||[];modal(data.pack?.name||row.name,`<p class="muted">作者：${h(row.author||'未設定')}</p>${data.pack?.description?`<p>${h(data.pack.description)}</p>`:''}${slots.map(s=>`<h4>${h(s.name)} <span class="pill">${Number(s.count||0)}枚</span></h4>${Object.entries(s.weights||{}).map(([id,w])=>`<p>${h(data.cards?.find(c=>c.id===id)?.card?.name||'不明なカード')} / 重み ${w}</p>`).join('')}`).join('')}`);}));}finally{if(list)list.removeAttribute('aria-busy')}};on('pk-public-find',()=>{page=0;return search()});on('pk-public-refresh',()=>search());on('pk-public-clear',()=>{q('#pk-public-search').value='';page=0;return search()});q('#pk-public-search').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();page=0;search()}});on('pk-public-prev',()=>{page=Math.max(0,page-1);return search()});on('pk-public-next',()=>{page++;return search()});search();}
 };
 const oldExport=exportBackupObject;exportBackupObject=function(){const data=oldExport();data.packWorkspace=C(db);return data;};
-const oldRestore=restoreBackupObject;restoreBackupObject=function(data,opt){
+const oldRestore=restoreBackupObject;restoreBackupObject=async function(data,opt){
  if(data.packWorkspace&&(data.packWorkspace.version!==1||!Array.isArray(data.packWorkspace.packs)||!Array.isArray(data.packWorkspace.games)))throw Error('パックのバックアップ形式が不正です');
- const result=oldRestore(data,opt);
+ const result=await oldRestore(data,opt);
  if(data.packWorkspace){localStorage.setItem(KEY,JSON.stringify(data.packWorkspace));db=C(data.packWorkspace);broken=false;}
  return result;
 };
 function checkOwnedDeck(id){const link=db.links[id],d=decks.find(x=>x.id===id),g=link&&db.games.find(x=>x.id===link.gameId),p=g?.players[link.player];if(!p||!d)return true;const over=Object.entries(d.entries).filter(([id,n])=>n>(p.owned[id]||0));if(over.length){toast(d.name+'：所持枚数を超えています。デッキを修正してください');return false;}return true;}
 q('#start-board').addEventListener('click',e=>{const ids=qa('#screen-setup select').filter(el=>el.id.startsWith('setup-deck-')||el.id.startsWith('setup-other-deck-')).map(el=>el.value);if(!ids.every(checkOwnedDeck)){e.preventDefault();e.stopImmediatePropagation();}},true);
-window.minkaiPacksV29={getState:()=>C(db),getPackSnapshot:(id)=>{const p=db.packs.find(x=>String(x.id)===String(id));if(!p)throw Error('パックが見つかりません');assertPack(p);return snapshot(p)},getPackFinitePoolSnapshot:(id)=>{const p=db.packs.find(x=>String(x.id)===String(id));if(!p)throw Error('パックが見つかりません');assertPack(p);const ids=[...new Set(p.slots.flatMap(x=>Object.keys(x.weights||{})))];const by=new Map(cards.map(c=>[String(c.id),c]));return {name:(p.name||'パック')+' の対象カード',ids,cards:ids.map(id=>{const c=by.get(String(id));if(!c)throw Error('削除済みカードが含まれています');return {id:String(id),card:publicCardForUpload(c)}})}} ,getFinitePoolOptions:()=>decks.map(d=>({id:d.id,name:d.name||'デッキ'})),getFinitePoolSnapshot:(id)=>{const d=decks.find(x=>String(x.id)===String(id));if(!d)throw Error('デッキが見つかりません');const ids=E.expand(d.entries);const by=new Map(cards.map(c=>[String(c.id),c]));return {name:d.name||'デッキ',ids,cards:[...new Set(ids)].map(id=>{const c=by.get(String(id));if(!c)throw Error('削除済みカードが含まれています');return {id:String(id),card:publicCardForUpload(c)}})}},getDeckOptions:()=>decks.map(d=>({id:d.id,name:d.name||'デッキ',count:E.total(d.entries)})),getDeckSnapshot:(id)=>{const d=decks.find(x=>String(x.id)===String(id));if(!d)throw Error('デッキが見つかりません');const by=new Map(cards.map(c=>[String(c.id),c]));return {id:String(d.id),name:d.name||'デッキ',entries:C(d.entries||{}),cards:Object.keys(d.entries||{}).map(id=>{const c=by.get(String(id));if(!c)throw Error('削除済みカードが含まれています');return {id:String(id),card:publicCardForUpload(c)}})}},saveOnlineOwnedDeck:(name,items,rawEntries,rule)=>{const wanted=E.counts(rawEntries||{}),remote=new Map();for(const x of (items||[])){const rid=String(x.cardId||x.id||'');if(rid&&!remote.has(rid))remote.set(rid,x)}const mapped={};let changed=false;for(const [rid,n] of Object.entries(wanted)){let local=cards.find(c=>String(c.id)===rid);if(!local){const x=remote.get(rid);if(!x)throw Error('獲得カードの情報を復元できません');const src=x.card&&typeof x.card==='object'?x.card:x;const clean=publicCardForUpload({name:src.name||rid,type:src.type||'',level:src.level??'',power:src.power??'',race:src.race||'',rarity:src.rarity||'',effect:src.effect||'',flavor:src.flavor||''});local=cards.find(c=>JSON.stringify(publicCardForUpload(c))===JSON.stringify(clean));if(!local){local={...clean,id:uid('card'),visualEffects:[],cardLinks:[]};cards.push(local);changed=true}}mapped[local.id]=(mapped[local.id]||0)+n}if(changed){save(LS_CARDS,cards);renderCards();renderCollection();renderDecks();renderSetup(true)}return window.minkaiPacksV29.saveOnlineDeckEntries(name,mapped,rule)},saveOnlineDeck:(name,items)=>{const entries={};for(const c of (items||[])){const id=String(c.cardId||'');if(id)entries[id]=(entries[id]||0)+1}return window.minkaiPacksV29.saveOnlineDeckEntries(name,entries)},saveOnlineDeckEntries:(name,rawEntries,rule)=>{const entries=E.counts(rawEntries||{});if(!Object.keys(entries).length)throw Error('保存できるカードがありません');const missing=Object.keys(entries).filter(id=>!cards.some(c=>String(c.id)===id));if(missing.length)throw Error('この端末にカード定義がないカードが含まれています。使用したパックを先に取り込んでください');const deckName=String(name||'オンライン獲得デッキ').slice(0,80),same=decks.find(x=>x.name===deckName&&JSON.stringify(x.entries||{})===JSON.stringify(entries));if(same)return same;const d={id:uid('deck'),name:deckName,entries,tags:[],mainEnabled:true,otherEnabled:true,deckRule:rule?C(rule):undefined};save(LS_DECKS,decks.concat([d]));decks.push(d);renderDecks();renderSetup(true);return d},saveMergedDeck:(snap)=>{const entries=C(snap?.entries||{});if(!Object.keys(entries).length)throw Error('合体デッキが空です');const missing=Object.keys(entries).filter(id=>!cards.some(c=>String(c.id)===id));if(missing.length)throw Error('この端末にカード定義がないカードが含まれています');const deckName=String(snap?.name||'オンライン合体デッキ').slice(0,80),same=decks.find(x=>x.name===deckName&&JSON.stringify(x.entries||{})===JSON.stringify(entries));if(same)return same;const d={id:uid('deck'),name:deckName,entries,tags:[],mainEnabled:true,otherEnabled:true};save(LS_DECKS,decks.concat([d]));decks.push(d);renderDecks();renderSetup(true);return d},restore,importPack,review};
+window.minkaiPacksV29={getState:()=>C(db),getPackSnapshot:(id)=>{const p=db.packs.find(x=>String(x.id)===String(id));if(!p)throw Error('パックが見つかりません');assertPack(p);return snapshot(p)},getPackFinitePoolSnapshot:(id)=>{const p=db.packs.find(x=>String(x.id)===String(id));if(!p)throw Error('パックが見つかりません');assertPack(p);const ids=[...new Set(p.slots.flatMap(x=>Object.keys(x.weights||{})))];const by=new Map(cards.map(c=>[String(c.id),c]));return {name:(p.name||'パック')+' の対象カード',ids,cards:ids.map(id=>{const c=by.get(String(id));if(!c)throw Error('削除済みカードが含まれています');return {id:String(id),card:publicCardForUpload(c)}})}} ,getFinitePoolOptions:()=>decks.map(d=>({id:d.id,name:d.name||'デッキ'})),getFinitePoolSnapshot:(id)=>{const d=decks.find(x=>String(x.id)===String(id));if(!d)throw Error('デッキが見つかりません');const ids=E.expand(d.entries);const by=new Map(cards.map(c=>[String(c.id),c]));return {name:d.name||'デッキ',ids,cards:[...new Set(ids)].map(id=>{const c=by.get(String(id));if(!c)throw Error('削除済みカードが含まれています');return {id:String(id),card:publicCardForUpload(c)}})}},getDeckOptions:()=>decks.map(d=>({id:d.id,name:d.name||'デッキ',count:E.total(d.entries)})),getDeckSnapshot:(id)=>{const d=decks.find(x=>String(x.id)===String(id));if(!d)throw Error('デッキが見つかりません');const by=new Map(cards.map(c=>[String(c.id),c]));return {id:String(d.id),name:d.name||'デッキ',entries:C(d.entries||{}),cards:Object.keys(d.entries||{}).map(id=>{const c=by.get(String(id));if(!c)throw Error('削除済みカードが含まれています');return {id:String(id),card:publicCardForUpload(c)}})}},saveOnlineOwnedDeck:async(name,items,rawEntries,rule)=>{const wanted=E.counts(rawEntries||{}),remote=new Map();for(const x of (items||[])){const rid=String(x.cardId||x.id||'');if(rid&&!remote.has(rid))remote.set(rid,x)}const mapped={};let changed=false;const cardsBefore=C(cards);for(const [rid,n] of Object.entries(wanted)){let local=cards.find(c=>String(c.id)===rid);if(!local){const x=remote.get(rid);if(!x)throw Error('獲得カードの情報を復元できません');const src=x.card&&typeof x.card==='object'?x.card:x;const clean=publicCardForUpload({name:src.name||rid,type:src.type||'',level:src.level??'',power:src.power??'',race:src.race||'',rarity:src.rarity||'',effect:src.effect||'',flavor:src.flavor||''});local=cards.find(c=>JSON.stringify(publicCardForUpload(c))===JSON.stringify(clean));if(!local){local={...clean,id:uid('card'),visualEffects:[],cardLinks:[]};cards.push(local);changed=true}}mapped[local.id]=(mapped[local.id]||0)+n}if(changed){try{const ok=await save(LS_CARDS,cards);if(ok===false)throw Error('カード保存に失敗しました')}catch(err){cards=cardsBefore;throw err}renderCards();renderCollection();renderDecks();renderSetup(true)}return await window.minkaiPacksV29.saveOnlineDeckEntries(name,mapped,rule)},saveOnlineDeck:(name,items)=>{const entries={};for(const c of (items||[])){const id=String(c.cardId||'');if(id)entries[id]=(entries[id]||0)+1}return window.minkaiPacksV29.saveOnlineDeckEntries(name,entries)},saveOnlineDeckEntries:async(name,rawEntries,rule)=>{const entries=E.counts(rawEntries||{});if(!Object.keys(entries).length)throw Error('保存できるカードがありません');const missing=Object.keys(entries).filter(id=>!cards.some(c=>String(c.id)===id));if(missing.length)throw Error('この端末にカード定義がないカードが含まれています。使用したパックを先に取り込んでください');const deckName=String(name||'オンライン獲得デッキ').slice(0,80),same=decks.find(x=>x.name===deckName&&JSON.stringify(x.entries||{})===JSON.stringify(entries));if(same)return same;const d={id:uid('deck'),name:deckName,entries,tags:[],mainEnabled:true,otherEnabled:true,deckRule:rule?C(rule):undefined};if((await save(LS_DECKS,decks.concat([d])))===false)throw Error('デッキ保存に失敗しました。保存領域を確認してください');decks.push(d);renderDecks();renderSetup(true);return d},saveMergedDeck:async(snap)=>{const entries=C(snap?.entries||{});if(!Object.keys(entries).length)throw Error('合体デッキが空です');const missing=Object.keys(entries).filter(id=>!cards.some(c=>String(c.id)===id));if(missing.length)throw Error('この端末にカード定義がないカードが含まれています');const deckName=String(snap?.name||'オンライン合体デッキ').slice(0,80),same=decks.find(x=>x.name===deckName&&JSON.stringify(x.entries||{})===JSON.stringify(entries));if(same)return same;const d={id:uid('deck'),name:deckName,entries,tags:[],mainEnabled:true,otherEnabled:true};if((await save(LS_DECKS,decks.concat([d])))===false)throw Error('デッキ保存に失敗しました。保存領域を確認してください');decks.push(d);renderDecks();renderSetup(true);return d},restore,importPack,review};
 })();
 
 // END V29 INLINE
@@ -41985,7 +42094,7 @@ onlineHandleRoomMessage=function(msg){
  return __mkFxHandleOriginal.apply(this,arguments);
 };
 
-/* Ver49.3: share deck draft state with the separate autosave script without copying stale values. */
+/* Ver51.1: share deck draft state with the separate autosave script without copying stale values. */
 for (const [key, read, write] of [
  ['workingDeck',()=>workingDeck,v=>{workingDeck=v}],
  ['editingDeckId',()=>editingDeckId,v=>{editingDeckId=v}],
@@ -42380,16 +42489,25 @@ function accountReadRestoreBackup(){
     return parsed&&parsed.payload?parsed:null;
   }catch(_){return null}
 }
-function accountApplyCloudSnapshot(payload,{preserveCollectionWhenMissing=true}={}){
-  const nextCards=Array.isArray(payload?.cards)?payload.cards:[];
-  const nextDecks=Array.isArray(payload?.decks)?payload.decks:[];
+async function accountApplyCloudSnapshot(payload,{preserveCollectionWhenMissing=true}={}){
+  if(!Array.isArray(payload?.cards)||!Array.isArray(payload?.decks))throw Error('カード・デッキを含む正しいクラウドデータではありません');
+  const nextCards=payload.cards,nextDecks=payload.decks;
   const validIds=new Set(nextCards.map(c=>String(c?.id||'')));
-  let nextCollection;
-  if(payload?.collection&&typeof payload.collection==='object')nextCollection=normalizeCollectionData(payload.collection,validIds);
-  else if(preserveCollectionWhenMissing)nextCollection=normalizeCollectionData(collectionData||{},validIds);
-  else nextCollection=normalizeCollectionData({},validIds);
+  if(validIds.size!==nextCards.length||nextCards.some(c=>!c||!c.id||!c.name))throw Error('カードIDが不正または重複しています');
+  const missing=[];
+  for(const d of nextDecks){if(!d||typeof d!=='object')throw Error('デッキデータが不正です');for(const [id,n] of Object.entries(d.entries||{}))if(Number(n)>0&&!validIds.has(id))missing.push(id)}
+  if(missing.length)throw Error('未登録カードへの参照が'+missing.length+'件あります。クラウド復元を中止しました');
+  const nextCollection=payload.collection&&typeof payload.collection==='object'?normalizeCollectionData(payload.collection,validIds):preserveCollectionWhenMissing?normalizeCollectionData(collectionData||{},validIds):normalizeCollectionData({},validIds);
+  const previousCards=cards,previousDecks=decks,previousCollection=collectionData;
+  try{
+    if(await save(LS_CARDS,nextCards)===false)throw Error('カード保存失敗');
+    if(save(LS_DECKS,nextDecks)===false)throw Error('デッキ保存失敗');
+    if(save(LS_COLLECTION,nextCollection)===false)throw Error('コレクション保存失敗');
+  }catch(err){
+    try{await save(LS_CARDS,previousCards);save(LS_DECKS,previousDecks);save(LS_COLLECTION,previousCollection)}catch(rollbackErr){console.error('[Ver51.1] クラウド復元の巻き戻し失敗',rollbackErr)}
+    throw Error('クラウド復元の保存に失敗しました。退避データを削除しないでください: '+err.message);
+  }
   cards=nextCards;decks=nextDecks;collectionData=nextCollection;
-  save(LS_CARDS,cards);save(LS_DECKS,decks);save(LS_COLLECTION,collectionData);
   return accountCloudSnapshotSummary({cards,decks,collection:collectionData});
 }
 function accountCloudSummaryLine(label,snapshot,row=null){
@@ -42550,7 +42668,7 @@ async function accountCloudSelectedSync(direction){
       if(!accountSaveRestoreBackup(local)){
         accountSetMessage('選択同期前の端末データを安全退避できなかったため、同期を中止しました。端末の空き容量を確認してください。','error');return;
       }
-      const merged=accountCloudMergeSelected(local,'cloud',rows,indexes); accountApplyCloudSnapshot(merged,{preserveCollectionWhenMissing:true});
+      const merged=accountCloudMergeSelected(local,'cloud',rows,indexes); await accountApplyCloudSnapshot(merged,{preserveCollectionWhenMissing:true});
       accountSetMessage(`${indexes.length}項目を端末へ反映しました。`,'ok');
     }
     await accountCloudCompare();
@@ -42663,7 +42781,7 @@ async function accountCloudDownloadCardsDecks(){
     if(!accountSaveRestoreBackup(localSnapshot)){
       accountSetMessage('復元前の端末データを安全退避できなかったため、復元を中止しました。端末の空き容量を確認してください。','error');return;
     }
-    const applied=accountApplyCloudSnapshot(payload,{preserveCollectionWhenMissing:true});
+    const applied=await accountApplyCloudSnapshot(payload,{preserveCollectionWhenMissing:true});
     accountSetCloudState('ready','復元済み',`クラウドからカード ${applied.cardCount}枚・デッキ ${applied.deckCount}件・お気に入り ${applied.favoriteCount}枚・アルバム ${applied.albumCount}冊を端末へ復元しました。カード画像はクラウドから復元されません。`,result.row.updated_at||'');
     accountSetMessage('クラウドデータを端末へ復元しました。画面を更新します。','ok');
     setTimeout(()=>location.reload(),350);
@@ -42676,7 +42794,7 @@ async function accountCloudUndoRestore(){
   if(!confirm(`直前に退避した端末データへ戻します。\n\nカード ${summary.cardCount}枚・デッキ ${summary.deckCount}件・お気に入り ${summary.favoriteCount}枚・アルバム ${summary.albumCount}冊を復元します。続けますか？`))return;
   accountSetBusy(true);
   try{
-    const applied=accountApplyCloudSnapshot(backup.payload,{preserveCollectionWhenMissing:false});
+    const applied=await accountApplyCloudSnapshot(backup.payload,{preserveCollectionWhenMissing:false});
     localStorage.removeItem(LS_ACCOUNT_RESTORE_BACKUP);
     accountSetMessage(`直前の端末データへ戻しました。カード ${applied.cardCount}枚・デッキ ${applied.deckCount}件を復元しました。画面を更新します。`,'ok');
     setTimeout(()=>location.reload(),350);
@@ -43593,9 +43711,9 @@ function onlineExtraOpenUI(){const src=onlineExtraOpenSource();if(!src.length)re
 function extraOpenPlan(){const src=onlineExtraOpenSource(),plan=[];document.querySelectorAll('[data-oe-extra-count]').forEach(x=>{const i=Number(x.dataset.oeExtraCount),count=Math.max(0,Math.min(20000,Number(x.value)||0));if(count&&src[i]?.snapshot)plan.push({snapshot:src[i].snapshot,count})});return plan}
 function updateExtraOpenStatus(){const plan=extraOpenPlan(),packs=plan.reduce((a,e)=>a+e.count,0),cards=packPlanCardCount(plan),el=document.getElementById('oe-extra-status'),btn=document.getElementById('oe-extra-open');if(el)el.textContent=`今回：${packs}パック / 生成予定 ${cards}枚 / 1回2,000枚まで`;if(btn)btn.disabled=cards<1||cards>2000}
 async function extraOpen(){if(busy)return;const plan=extraOpenPlan(),cards=packPlanCardCount(plan);if(!plan.length){setStatus('追加で開けるパックの個数を1以上にしてください');return}if(cards>2000){setStatus(`生成予定が${cards}枚です。1回の追加開封は2,000枚以内にしてください`);return}busy=true;try{const x=await idempotentRpc('minkai_event_extra_open_v302',{p_room_code:session.roomCode,p_player_id:session.playerId,p_resume_token:session.resumeToken,p_pack_plan:plan});if(x?.room){state=normalize(x);lastRevision=Number(state.room.revision||0);drawLobby()}signalLocal()}catch(e){setStatus('追加開封失敗：'+friendly(e))}finally{busy=false}}
-function onlineSelectedEntries(){const out={};document.querySelectorAll('[data-oe-build-id]').forEach(x=>{const n=Math.max(0,Math.min(Number(x.max)||0,Number(x.value)||0));if(n)out[x.dataset.oeBuildId]=n});return out}function updateOnlineBuildStatus(){const el=document.getElementById('oe-build-status');if(!el)return;const r=onlineDeckRule(),n=Object.values(onlineSelectedEntries()).reduce((a,b)=>a+b,0),ok=n>=r.min&&(r.max==null||n<=r.max);el.textContent=`選択 ${n}枚 / ${onlineDeckRuleText(r)} / ${ok?'デッキとして成立':n<r.min?'あと'+(r.min-n)+'枚必要':'上限を'+(n-r.max)+'枚超過'}`;for(const id of ['oe-owned-save','oe-owned-save-match']){const b=document.getElementById(id);if(b)b.disabled=!ok}}function saveOwnedDeck(goMatch=false){try{const entries=onlineSelectedEntries(),r=onlineDeckRule(),n=Object.values(entries).reduce((a,b)=>a+b,0);if(n<r.min||(r.max!=null&&n>r.max))throw Error('デッキ枚数が条件を満たしていません');const name=`オンライン獲得 ${state?.room?.room_code||''}`;const d=globalThis.minkaiPacksV29?.saveOnlineOwnedDeck?.(name,ownedCards(),entries,r)||globalThis.minkaiPacksV29?.saveOnlineDeckEntries?.(name,entries,r);if(!d)throw Error('保存機能を利用できません');toast('デッキを保存しました：'+d.name);if(goMatch){stop();document.getElementById('modal-layer')?.classList.remove('open');setTimeout(()=>globalThis.minkaiOpenOnlineEntry?.(),0)}}catch(e){setStatus('デッキ保存失敗：'+String(e.message||e))}}
+function onlineSelectedEntries(){const out={};document.querySelectorAll('[data-oe-build-id]').forEach(x=>{const n=Math.max(0,Math.min(Number(x.max)||0,Number(x.value)||0));if(n)out[x.dataset.oeBuildId]=n});return out}function updateOnlineBuildStatus(){const el=document.getElementById('oe-build-status');if(!el)return;const r=onlineDeckRule(),n=Object.values(onlineSelectedEntries()).reduce((a,b)=>a+b,0),ok=n>=r.min&&(r.max==null||n<=r.max);el.textContent=`選択 ${n}枚 / ${onlineDeckRuleText(r)} / ${ok?'デッキとして成立':n<r.min?'あと'+(r.min-n)+'枚必要':'上限を'+(n-r.max)+'枚超過'}`;for(const id of ['oe-owned-save','oe-owned-save-match']){const b=document.getElementById(id);if(b)b.disabled=!ok}}async function saveOwnedDeck(goMatch=false){try{const entries=onlineSelectedEntries(),r=onlineDeckRule(),n=Object.values(entries).reduce((a,b)=>a+b,0);if(n<r.min||(r.max!=null&&n>r.max))throw Error('デッキ枚数が条件を満たしていません');const name=`オンライン獲得 ${state?.room?.room_code||''}`;const api=globalThis.minkaiPacksV29;const d=api?.saveOnlineOwnedDeck?await api.saveOnlineOwnedDeck(name,ownedCards(),entries,r):await api?.saveOnlineDeckEntries?.(name,entries,r);if(!d)throw Error('保存機能を利用できません');toast('デッキを保存しました：'+d.name);if(goMatch){stop();document.getElementById('modal-layer')?.classList.remove('open');setTimeout(()=>globalThis.minkaiOpenOnlineEntry?.(),0)}}catch(e){setStatus('デッキ保存失敗：'+String(e.message||e))}}
 async function mergeSubmit(){if(busy)return;const id=document.getElementById('oe-merge-deck')?.value;let snap;try{snap=globalThis.minkaiPacksV29?.getDeckSnapshot?.(id)}catch(e){setStatus('デッキ取得失敗：'+String(e.message||e));return}busy=true;try{const x=await idempotentRpc('minkai_event_merge_submit_v401',{p_room_code:session.roomCode,p_player_id:session.playerId,p_resume_token:session.resumeToken,p_deck:snap});if(x?.room){state=normalize(x);lastRevision=Number(state.room.revision||0);drawLobby()}signalLocal()}catch(e){setStatus('デッキ登録失敗：'+friendly(e))}finally{busy=false}}
-function saveMerged(){try{const snap=state?.publicState?.merge?.result;if(!snap)throw Error('合体結果がありません');const d=globalThis.minkaiPacksV29?.saveMergedDeck?.(snap);if(!d)throw Error('保存機能を利用できません');toast('合体デッキを保存しました：'+d.name)}catch(e){setStatus('合体デッキ保存失敗：'+String(e.message||e))}}
+async function saveMerged(){try{const snap=state?.publicState?.merge?.result;if(!snap)throw Error('合体結果がありません');const d=await globalThis.minkaiPacksV29?.saveMergedDeck?.(snap);if(!d)throw Error('保存機能を利用できません');toast('合体デッキを保存しました：'+d.name)}catch(e){setStatus('合体デッキ保存失敗：'+String(e.message||e))}}
 async function diagnose(){if(!session)return;setStatus('接続診断中…');const started=performance.now();try{const x=await rpc('minkai_event_diagnose_v302',{p_room_code:session.roomCode,p_player_id:session.playerId,p_resume_token:session.resumeToken,p_protocol_version:PROTOCOL});setStatus(`診断OK：${Math.round(performance.now()-started)}ms / revision ${x?.revision??'?'} / ${navigator.onLine?'オンライン':'オフライン'}`)}catch(e){setStatus('診断失敗：'+friendly(e))}}
 window.MinkaiOnlineEventV299={open,sync,version:VERSION,protocol:PROTOCOL};window.MinkaiOnlineEventV298=window.MinkaiOnlineEventV299;addEventListener('pagehide',stop);
 })();
@@ -43629,7 +43747,7 @@ window.MinkaiOnlineEventV299={open,sync,version:VERSION,protocol:PROTOCOL};windo
 </style>
 <script>
 
-/* Ver49.3 progressive enhancement: never replaces core navigation or persistence. */
+/* Ver51.1 progressive enhancement: never replaces core navigation or persistence. */
 (()=>{'use strict';
 const ready=()=>{
  const appbar=document.querySelector('header.appbar');if(!appbar||document.getElementById('v42-nav-toggle'))return;
@@ -43678,7 +43796,7 @@ const ready=()=>{
 
 </script>
 
-<!-- Ver49.3 card effects editor launcher -->
+<!-- Ver51.1 card effects editor launcher -->
 <style>
 #fx-trial-launch[hidden]{display:none!important}
 #fx-trial-launch{position:fixed;right:16px;bottom:76px;z-index:2147483000;border:1px solid #88b8ff;border-radius:12px;padding:10px 14px;background:#182a45;color:#fff;box-shadow:0 4px 20px #0009;font-weight:700;cursor:pointer}
@@ -43709,7 +43827,7 @@ const ready=()=>{
 }
 </style>
 <style>
-/* Ver49.3: compact editor header; card chooser expands only on demand. */
+/* Ver51.1: compact editor header; card chooser expands only on demand. */
 #fx-trial-top-actions{display:flex;gap:6px;align-items:center;justify-content:flex-end}
 #fx-trial-card-toggle{background:#283e5e;color:#fff;border:1px solid #7b98c2;padding:9px 11px;border-radius:8px;white-space:nowrap;cursor:pointer}
 #fx-trial-controls[hidden]{display:none!important}
@@ -43718,7 +43836,7 @@ const ready=()=>{
 @media(max-width:640px){#fx-trial-bar{padding:7px 9px!important;gap:5px!important}#fx-trial-heading{font-size:12px!important;line-height:1.3!important}#fx-trial-top-actions{gap:5px}#fx-trial-card-toggle,#fx-trial-close{font-size:12px!important;padding:9px 8px!important;min-height:40px}#fx-trial-controls:not([hidden]){display:flex!important;max-height:35dvh;overflow-y:auto;padding:8px 0}#fx-trial-card-select{font-size:16px!important}}
 </style>
 <button type="button" id="fx-trial-launch" aria-haspopup="dialog">カード加工エディター</button>
-<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定 <span id="fx-trial-current-card">｜カード未選択</span></div><div id="fx-trial-top-actions"><button type="button" id="fx-trial-card-toggle" aria-expanded="false" aria-controls="fx-trial-controls">カードを変更</button><button type="button" id="fx-trial-close">閉じる</button></div><div id="fx-trial-controls" hidden><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver49.3 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html?v=49.3"></iframe></div></div>
+<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定 <span id="fx-trial-current-card">｜カード未選択</span></div><div id="fx-trial-top-actions"><button type="button" id="fx-trial-card-toggle" aria-expanded="false" aria-controls="fx-trial-controls">カードを変更</button><button type="button" id="fx-trial-close">閉じる</button></div><div id="fx-trial-controls" hidden><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver51.1 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html?v=51.0"></iframe></div></div>
 <script>
 (function(){
  const controls=document.getElementById('fx-trial-controls'),toggle=document.getElementById('fx-trial-card-toggle'),select=document.getElementById('fx-trial-card-select'),current=document.getElementById('fx-trial-current-card');
@@ -43739,7 +43857,7 @@ const launch=document.getElementById('fx-trial-launch'),shell=document.getElemen
 function fxRecovery(message){
  let n=document.getElementById('fx-trial-load-error');if(!n){n=document.createElement('div');n.id='fx-trial-load-error';n.setAttribute('role','alert');n.style.cssText='padding:12px;background:#352620;color:white;border:1px solid #b98a58;border-radius:8px;margin:8px';shell.querySelector('#fx-trial-box').append(n)}
  n.hidden=false;n.replaceChildren();const t=document.createElement('span');t.textContent=message+' 保存済みのカードデータは変更されていません。';n.append(t);
- const retry=document.createElement('button');retry.textContent='エディターを再読込';retry.style.marginLeft='12px';retry.onclick=()=>{n.hidden=true;frame.src='./fx_trial_preview.html?v=49.3&retry='+Date.now()};n.append(retry);
+ const retry=document.createElement('button');retry.textContent='エディターを再読込';retry.style.marginLeft='12px';retry.onclick=()=>{n.hidden=true;frame.src='./fx_trial_preview.html?v=51.0&retry='+Date.now()};n.append(retry);
 }
 frame.addEventListener('error',()=>fxRecovery('加工エディターの読込に失敗しました。'));
 frame.addEventListener('load',()=>{try{if(!frame.contentDocument?.getElementById('type'))fxRecovery('加工エディターの内容が不完全です。');else{const n=document.getElementById('fx-trial-load-error');if(n)n.hidden=true}}catch{fxRecovery('加工エディターを確認できません。')}});
@@ -43807,7 +43925,7 @@ function ensureFrame(){
  if(frame)return;
  frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
- frame.src='./fx_trial_preview.html?v=49.3';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
+ frame.src='./fx_trial_preview.html?v=51.0';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
 }
 function place(el,url){
  if(!el.isConnected)return;
@@ -43977,7 +44095,7 @@ new MutationObserver(attach).observe(document.getElementById('modal')||document.
 #fx-trial-frame{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 auto!important;height:auto!important;min-height:240px!important;width:100%!important}
 @media(max-width:800px){#fx-trial-box{height:100%!important;max-height:100%!important}#fx-trial-bar{flex:0 0 auto!important;max-height:32dvh!important;overflow-y:auto!important}#fx-trial-frame{height:auto!important;min-height:240px!important;flex:1 1 auto!important}}
 </style><script>
-/* Ver49.3: keep installed mobile PWA current after deployment. */
+/* Ver51.1: keep installed mobile PWA current after deployment. */
 (()=>{if(!('serviceWorker' in navigator)||location.protocol==='file:')return;
 let controlled=!!navigator.serviceWorker.controller;
 navigator.serviceWorker.addEventListener('controllerchange',()=>{
@@ -44014,7 +44132,7 @@ window.addEventListener('load',async()=>{
 })();
 </script><script src="./battle_effects.js"></script>
 <script>
-/* Ver49.3: read-only storage usage diagnostics. Never modifies stored records. */
+/* Ver51.1: read-only storage usage diagnostics. Never modifies stored records. */
 (function(){
 'use strict';
 let latest=null;
@@ -44025,16 +44143,16 @@ const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 function enumerate(store){const out=[];try{for(let i=0;i<store.length;i++){const key=store.key(i),value=store.getItem(key);if(key!==null)out.push({key,bytes:bytes(key)+bytes(value||''),characters:(value||'').length});}}catch(e){return {items:out,error:String(e)}}return {items:out.sort((a,b)=>b.bytes-a.bytes)};}
 async function databaseNames(){if(typeof indexedDB.databases!=='function')return {names:[],warning:'このブラウザはデータベース名の一覧取得に非対応です'};try{return {names:(await indexedDB.databases()).filter(x=>x.name).map(x=>x.name)}}catch(e){return {names:[],warning:String(e)}}}
 function idbInfo(name){return new Promise(resolve=>{let done=false,request,timeout;const finish=x=>{if(done)return;done=true;clearTimeout(timeout);try{request?.result?.close()}catch(_){}resolve(x)};try{request=indexedDB.open(name);timeout=setTimeout(()=>finish({name,error:'タイムアウト'}),3500);request.onupgradeneeded=e=>{try{e.target.transaction.abort()}catch(_){}finish({name,error:'未登録DBのため調査を中止'})};request.onerror=()=>finish({name,error:String(request.error||'アクセス不可')});request.onsuccess=()=>{const db=request.result;const stores=Array.from(db.objectStoreNames);if(!stores.length)return finish({name,stores:[]});let result=[],pending=stores.length;for(const st of stores){try{const tx=db.transaction(st,'readonly'),req=tx.objectStore(st).count();req.onsuccess=()=>{result.push({store:st,count:req.result});if(!--pending)finish({name,stores:result})};req.onerror=()=>{result.push({store:st,error:'件数取得不可'});if(!--pending)finish({name,stores:result})}}catch(e){result.push({store:st,error:String(e)});if(!--pending)finish({name,stores:result})}}};}catch(e){finish({name,error:String(e)})}})}
-async function inspect(){const local=enumerate(localStorage),session=enumerate(sessionStorage),dbs=await databaseNames();const estimate=await (async()=>{try{return await navigator.storage?.estimate?.()||null}catch(e){return {error:String(e)}}})();const details=[];for(const db of dbs.names.slice(0,30))details.push(await idbInfo(db));return {diagnosedAt:new Date().toISOString(),appVersion:'49.3',origin:location.origin,localStorage:local,sessionStorage:session,indexedDB:{...dbs,details},storageEstimate:estimate};}
+async function inspect(){const local=enumerate(localStorage),session=enumerate(sessionStorage),dbs=await databaseNames();const estimate=await (async()=>{try{return await navigator.storage?.estimate?.()||null}catch(e){return {error:String(e)}}})();const details=[];for(const db of dbs.names.slice(0,30))details.push(await idbInfo(db));return {diagnosedAt:new Date().toISOString(),appVersion:'49.5',origin:location.origin,localStorage:local,sessionStorage:session,indexedDB:{...dbs,details},storageEstimate:estimate};}
 function render(r){const total=items=>items.reduce((n,x)=>n+x.bytes,0);const rows=r.localStorage.items.map(x=>'<tr><td style="overflow-wrap:anywhere">'+esc(x.key)+'</td><td style="text-align:right;white-space:nowrap">'+fmt(x.bytes)+'</td></tr>').join('');const est=r.storageEstimate||{};const dbRows=r.indexedDB.details.map(x=>'<tr><td>'+esc(x.name)+'</td><td>'+esc(x.error||x.stores.map(s=>s.store+'：'+(s.count??s.error)).join(' / '))+'</td></tr>').join('');$('storage-diagnostic-result').innerHTML='<p><b>localStorage：</b>'+fmt(total(r.localStorage.items))+'（'+r.localStorage.items.length+'項目）　<b>sessionStorage：</b>'+fmt(total(r.sessionStorage.items))+'　<b>オリジン全体：</b>'+(Number.isFinite(est.usage)?fmt(est.usage):'取得不可')+' / <b>推定割当：</b>'+(Number.isFinite(est.quota)?fmt(est.quota):'取得不可')+'</p><p class="muted">localStorageは文字列のUTF-8換算概算です。オリジン全体の使用量にはIndexedDBやキャッシュ等も含まれます。両者を足し合わせないでください。</p><h5>localStorageの大きい項目から順</h5><table style="width:100%;font-size:.9em"><thead><tr><th>保存キー</th><th>概算サイズ</th></tr></thead><tbody>'+rows+'</tbody></table><h5>IndexedDB（件数のみ）</h5><table style="width:100%;font-size:.9em"><thead><tr><th>データベース</th><th>ストアと件数</th></tr></thead><tbody>'+dbRows+'</tbody></table>'+(r.indexedDB.warning?'<p class="muted">'+esc(r.indexedDB.warning)+'</p>':'')+'<p class="muted">IndexedDBのバイト数はブラウザ標準APIではDB別に正確に取得できません。診断結果のJSONには保存キー名が含まれるため、共有前に内容を確認してください。</p>';}
 async function refresh(){const btn=$('storage-diagnostic-refresh'),status=$('storage-diagnostic-status');btn.disabled=true;status.textContent='保存領域を調査中…';try{latest=await inspect();render(latest);$('storage-diagnostic-export').disabled=false;status.textContent='診断完了。データの変更・削除は行っていません。'}catch(e){status.textContent='診断に失敗しました：'+String(e)}finally{btn.disabled=false}}
-function exportReport(){if(!latest)return;const blob=new Blob([JSON.stringify(latest,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='MinKaiTCG_storage_diagnostic_V49_3.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function exportReport(){if(!latest)return;const blob=new Blob([JSON.stringify(latest,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='MinKaiTCG_storage_diagnostic_V49_4.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function init(){const btn=$('storage-diagnostic-refresh');if(!btn)return;btn.addEventListener('click',refresh);$('storage-diagnostic-export').addEventListener('click',exportReport)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
 <script>
-/* Ver49.3 targeted, opt-in localStorage cleanup. Never touches TCG card or deck keys. */
+/* Ver51.1 targeted, opt-in localStorage cleanup. Never touches TCG card or deck keys. */
 (function(){
 'use strict';
 const $=id=>document.getElementById(id),ROOM='minkai-online-rooms-v1',ROBOT=/^robot-roguelike-(?:prototype|manager)-v[\w.\-]+$/;
@@ -44059,7 +44177,7 @@ function show(){try{snapshot=inspect();resetSelection();$('cleanup-options').hid
 function backup(){if(!snapshot)return;try{
  const keys=[ROOM,...snapshot.robots.map(x=>x.key)],records={};for(const key of keys){const v=localStorage.getItem(key);if(v!==null)records[key]=v}
  const payload={format:'minkai-storage-cleanup-backup-v1',createdAt:new Date().toISOString(),origin:location.origin,records};
- const blob=new Blob([JSON.stringify(payload)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='MinKaiTCG_storage_cleanup_backup_V49_3.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+ const blob=new Blob([JSON.stringify(payload)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='MinKaiTCG_storage_cleanup_backup_V49_4.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
  backupDone=true;$('cleanup-execute').disabled=false;status('バックアップのダウンロードを開始しました。ファイルが保存されたことを確認してから削除してください。');
  }catch(e){status('バックアップ失敗：'+String(e))}}
 function execute(){if(!snapshot||!backupDone)return;
@@ -44079,7 +44197,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 <script>
-/* Ver49.3: single shared card back, stored once as a Blob, never on individual cards. */
+/* Ver51.1: single shared card back, stored once as a Blob, never on individual cards. */
 (()=>{'use strict';
 const DB='minkai_tcg_shared_card_back_v490',STORE='assets',KEY='shared-back';
 let activeURL=null;
