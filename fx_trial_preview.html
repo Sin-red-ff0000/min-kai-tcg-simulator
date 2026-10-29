@@ -780,6 +780,9 @@ window.addEventListener('message',async function(e){
   // Let the normal renderer finish and keep the preview's own shader mathematics.
   // Direct render: avoid two animation-frame waits on every request.
   drawLayers();
+  // Force the offscreen renderer to finish after the card art has decoded.
+  if(art.decode)try{await art.decode()}catch(_){}
+  lastGeometryKey='';drawLayers();
   const out=document.createElement('canvas');out.width=m.viewer?256:180;out.height=m.viewer?372:260;
   const oc=out.getContext('2d',{alpha:true});oc.clearRect(0,0,out.width,out.height);
   const blendMap={'normal':'source-over','screen':'screen','lighten':'lighten','overlay':'overlay','multiply':'multiply','color-dodge':'color-dodge'};
@@ -791,6 +794,10 @@ window.addEventListener('message',async function(e){
    oc.drawImage(src,0,0,out.width,out.height);
   }
   oc.globalAlpha=1;oc.globalCompositeOperation='source-over';
+  // A failed transparent export must not be silently reported as a successful effect.
+  const pixels=oc.getImageData(0,0,out.width,out.height).data;
+  let alphaTotal=0;for(let j=3;j<pixels.length;j+=4)alphaTotal+=pixels[j];
+  if(alphaTotal===0 && m.preset?.layers?.length)throw Error('加工レイヤーが透明です。描画元と設定を確認してください');
   e.source.postMessage({channel:'minkai-fx-collection-render',action:'result',token:m.token,cardId:m.cardId,image:out.toDataURL('image/png')},location.protocol==='file:'?'*':e.origin);
  }catch(err){e.source.postMessage({channel:'minkai-fx-collection-render',action:'error',token:m.token,cardId:m.cardId,message:String(err?.stack||err?.message||err)},location.protocol==='file:'?'*':e.origin)}
  finally{exportBusy=false}

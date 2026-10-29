@@ -2,7 +2,7 @@
   "name": "みん会TCG Simulator",
   "short_name": "みん会TCG",
   "description": "みん会TCGのカード登録・デッキ作成・対戦シミュレーター",
-  "start_url": "./?app=v51.18",
+  "start_url": "./?app=v51.19",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0d1218",
