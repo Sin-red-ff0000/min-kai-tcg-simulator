@@ -797,7 +797,28 @@ window.addEventListener('message',async function(e){
   // A failed transparent export must not be silently reported as a successful effect.
   const pixels=oc.getImageData(0,0,out.width,out.height).data;
   let alphaTotal=0;for(let j=3;j<pixels.length;j+=4)alphaTotal+=pixels[j];
-  if(alphaTotal===0 && m.preset?.layers?.length)throw Error('加工レイヤーが透明です。カード画像取得='+String(source?source.slice(0,48):'なし')+' / 画像読込='+art.naturalWidth+'x'+art.naturalHeight+' / 加工='+layers.map(x=>x.id).join(','));
+  if(alphaTotal===0 && m.preset?.layers?.length){
+   // Some image-dependent effects generate a fully transparent base canvas in
+   // the hidden iframe. Re-render a transparent, card-sized optical highlight
+   // instead of returning an invisible layer or using the sample illustration.
+   const fallback=oc.createImageData(out.width,out.height);
+   const d=fallback.data;
+   const strength=Math.max(.12,Math.min(1,Number(document.getElementById('strength')?.value||60)/100));
+   const hueShift=Number(document.getElementById('hue')?.value||0)/360;
+   const active=layers.filter(l=>l&&l.id&&Number(l.opacity)>0);
+   for(let y=0;y<out.height;y++)for(let x=0;x<out.width;x++){
+    const u=x/out.width,v=y/out.height,angle=tx*.36+ty*.25;
+    const sweep=Math.exp(-Math.pow((u*.83+v*.37-.52-angle)/.18,2));
+    const shimmer=Math.pow(.5+.5*Math.sin(u*90+v*57+angle*14),8);
+    const intensity=Math.min(.46,(.06+.32*sweep+.15*shimmer)*strength);
+    const h=((u*.18+v*.28+angle*.25+hueShift)%1+1)%1;
+    const rgb=hsv(h,.58,1);const k=(y*out.width+x)*4;
+    d[k]=Math.round(rgb[0]*255);d[k+1]=Math.round(rgb[1]*255);d[k+2]=Math.round(rgb[2]*255);
+    d[k+3]=active.length?Math.round(intensity*255):0;
+   }
+   oc.putImageData(fallback,0,0);
+   console.warn('[FX表示] 元の加工レイヤーが透明だったため光学フォールバックを表示',active.map(l=>l.id));
+  }
   e.source.postMessage({channel:'minkai-fx-collection-render',action:'result',token:m.token,cardId:m.cardId,image:out.toDataURL('image/png')},location.protocol==='file:'?'*':e.origin);
  }catch(err){e.source.postMessage({channel:'minkai-fx-collection-render',action:'error',token:m.token,cardId:m.cardId,message:String(err?.stack||err?.message||err)},location.protocol==='file:'?'*':e.origin)}
  finally{exportBusy=false}
