@@ -763,7 +763,7 @@ window.addEventListener('message',async function(e){
   // Direct render: avoid two animation-frame waits on every request.
   drawLayers();
   const out=document.createElement('canvas');out.width=m.viewer?256:180;out.height=m.viewer?372:260;
-  const oc=out.getContext('2d',{alpha:true});
+  const oc=out.getContext('2d',{alpha:true});oc.clearRect(0,0,out.width,out.height);
   const blendMap={'normal':'source-over','screen':'screen','lighten':'lighten','overlay':'overlay','multiply':'multiply','color-dodge':'color-dodge'};
   const protection=1-(Number(document.getElementById('protect')?.value||0)/100)*.7;
   for(let i=0;i<layers.length;i++){
