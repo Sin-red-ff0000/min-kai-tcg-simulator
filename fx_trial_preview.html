@@ -786,12 +786,34 @@ window.addEventListener('message',async function(e){
   const out=document.createElement('canvas');out.width=m.viewer?256:180;out.height=m.viewer?372:260;
   const oc=out.getContext('2d',{alpha:true});oc.clearRect(0,0,out.width,out.height);
   const blendMap={'normal':'source-over','screen':'screen','lighten':'lighten','overlay':'overlay','multiply':'multiply','color-dodge':'color-dodge'};
-  const protection=1-(Number(document.getElementById('protect')?.value||0)/100)*.7;
+  // Match the visible editor: CSS filter, mask, per-layer opacity and blending.
+  // The old export copied only raw canvas pixels, ignoring CSS rendering.
+  const settings={hue:Number($('hue').value)||0,sat:Number($('sat').value)||100,bright:Number($('bright').value)||100,mask:$('fxmask').value};
+  const protection=1-(Number($('protect').value||0)/100)*.7;
+  const maskAlpha=(u,v)=>{
+   const dx=(u-.5)/.5,dy=(v-.5)/.5,r=Math.sqrt(dx*dx+dy*dy);
+   switch(settings.mask){
+    case 'center':return Math.max(0,Math.min(1,(1.44-r)/1.20));
+    case 'edge':return Math.max(0,Math.min(1,(r-.70)/1.10));
+    case 'corners':return Math.max(0,Math.min(1,(r-.76)/1.24));
+    case 'topbottom':return Math.max(0,Math.min(1,(Math.abs(v-.5)-.15)/.35));
+    default:return 1;
+   }
+  };
   for(let i=0;i<layers.length;i++){
    const src=i===0?c:layerCanvases[i];if(!src)continue;
-   oc.globalAlpha=protection*(layers[i].opacity/100);
+   const layer=document.createElement('canvas');layer.width=out.width;layer.height=out.height;
+   const lc=layer.getContext('2d',{alpha:true});
+   lc.filter=`hue-rotate(${settings.hue}deg) saturate(${settings.sat}%) brightness(${settings.bright}%)`;
+   lc.drawImage(src,0,0,out.width,out.height);lc.filter='none';
+   if(settings.mask!=='full'){
+    const pixels=lc.getImageData(0,0,out.width,out.height),d=pixels.data;
+    for(let y=0;y<out.height;y++)for(let x=0;x<out.width;x++)d[(y*out.width+x)*4+3]=Math.round(d[(y*out.width+x)*4+3]*maskAlpha((x+.5)/out.width,(y+.5)/out.height));
+    lc.putImageData(pixels,0,0);
+   }
+   oc.globalAlpha=protection*(Number(layers[i].opacity)/100);
    oc.globalCompositeOperation=blendMap[layers[i].blend]||'source-over';
-   oc.drawImage(src,0,0,out.width,out.height);
+   oc.drawImage(layer,0,0);
   }
   oc.globalAlpha=1;oc.globalCompositeOperation='source-over';
   // A failed transparent export must not be silently reported as a successful effect.
@@ -859,7 +881,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 <style id="fx522-fullscreen-style">
-#fx522-open{display:block;width:100%;min-height:48px;margin:20px 0 12px;border:1px solid #73b9f0;border-radius:12px;background:#24537b;color:white;font-weight:700;font-size:16px;cursor:pointer}
+#fx522-open{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);left:12px;right:12px;z-index:1000;display:block;width:calc(100% - 24px);min-height:48px;margin:0;border:1px solid #73b9f0;border-radius:12px;background:#24537b;color:white;font-weight:700;font-size:16px;cursor:pointer}
 #fx522-overlay[hidden]{display:none!important}
 #fx522-overlay{position:fixed;inset:0;z-index:2147483000;background:#070a11;display:flex;flex-direction:column;align-items:center;box-sizing:border-box;padding:calc(env(safe-area-inset-top,0px) + 8px) 8px calc(env(safe-area-inset-bottom,0px) + 8px)}
 #fx522-head{width:100%;display:flex;justify-content:flex-end;flex:0 0 auto}
@@ -889,7 +911,7 @@ function setup(){
   if(overlay.hidden||!card)return;
   const h=stage.clientHeight,w=stage.clientWidth;
   const width=Math.max(1,Math.min(w,h*256/372));
-  card.style.setProperty('width',width+'px','important');
+  card.style.setProperty('max-width','none','important');card.style.setProperty('width',width+'px','important');
   card.style.setProperty('height',(width*372/256)+'px','important');
  }
  function syncAuto(){
@@ -899,16 +921,16 @@ function setup(){
  }
  function close(){
   if(overlay.hidden)return;
-  overlay.hidden=true;document.body.classList.remove('fx522-preview-open');
+  overlay.hidden=true;document.body.classList.remove('fx522-preview-open');window.parent.postMessage({channel:'fx523-fullscreen',open:false},'*');
   if(card&&originalParent){
    if(originalNext&&originalNext.parentNode===originalParent)originalParent.insertBefore(card,originalNext);
    else originalParent.appendChild(card);
-   card.style.removeProperty('width');card.style.removeProperty('height');
+   card.style.removeProperty('width');card.style.removeProperty('height');card.style.removeProperty('max-width');
   }
  }
  open.addEventListener('click',()=>{
   if(!card)return;
-  stage.appendChild(card);overlay.hidden=false;document.body.classList.add('fx522-preview-open');
+  stage.appendChild(card);overlay.hidden=false;document.body.classList.add('fx522-preview-open');window.parent.postMessage({channel:'fx523-fullscreen',open:true},'*');
   resize();syncAuto();
  });
  overlay.querySelector('#fx522-close').addEventListener('click',close);
