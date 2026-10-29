@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v51.24</title>
+<title>みん会TCG Simulator v51.25</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20296,7 +20296,7 @@ h3 .minkai-ruby{margin-top:.45em}
 
 /* Ver40.5 usability */
 .public-browse-list-head{gap:10px;align-items:center;flex-wrap:wrap}.public-browse-list-head>.actions{margin-left:auto;align-items:center}.pk-public-search-row{align-items:stretch}.pk-public-search-row input{min-width:min(420px,100%);flex:1}.pk-public-download-list{display:grid;gap:10px}.pk-public-download-card{margin:0}.pk-public-slot-summary{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}@media(max-width:700px){.public-browse-list-head>.actions{width:100%;margin-left:0;justify-content:space-between}.public-browse-list-head #public-cards-refresh{min-height:44px}.pk-public-search-row{display:grid;grid-template-columns:1fr auto}.pk-public-search-row input{grid-column:1/-1;min-width:0}.pk-public-download-card .pk-row .btn{flex:1;min-height:44px}}
-/* Ver51.24: approved laboratory effects, transparent overlay on original artwork */
+/* Ver51.25: approved laboratory effects, transparent overlay on original artwork */
 .card-fx-layer:is(.fx-graphite-scratch-foil,.fx-phase-invert-edge,.fx-heatpress-imprint,.fx-multi-exposure-step,.fx-chromatography-paper,.fx-photochromic-exposure,.fx-uv-excitation,.fx-optical-carved-relief,.fx-shadow-carved-silhouette,.fx-risograph-misregister){background-repeat:repeat;pointer-events:none;mix-blend-mode:screen;opacity:var(--fx-o,.72)}
 .fx-graphite-scratch-foil{background:repeating-linear-gradient(173deg,transparent 0 4px,rgba(190,197,205,.25) 4.5px 5px,rgba(18,24,31,.35) 5.5px 6px,transparent 7px 15px);background-size:calc(190px * var(--fx-density-scale,1)) 100%;mix-blend-mode:soft-light!important}
 .fx-phase-invert-edge{background:repeating-conic-gradient(from 45deg at 50% 50%,rgba(210,225,250,.24) 0deg 3deg,transparent 3deg 12deg,rgba(35,48,85,.15) 12deg 14deg,transparent 14deg 24deg);background-size:calc(170px * var(--fx-density-scale,1)) calc(170px * var(--fx-density-scale,1));mix-blend-mode:difference!important;opacity:calc(var(--fx-o,.72) * .45)!important}
@@ -20414,8 +20414,8 @@ h3 .minkai-ruby{margin-top:.45em}
 .fx-white-pearl::after{content:"";position:absolute;inset:0;background:linear-gradient(145deg,rgba(70,78,82,.035),transparent 35%,rgba(255,255,255,.055) 70%,rgba(60,65,69,.035));mix-blend-mode:overlay;opacity:calc(.70*var(--fx-structure))}
 .fx-animate .fx-white-pearl::before{animation:v1630ReflectBreathe var(--fx-duration,12s) ease-in-out infinite alternate}
 
-.card-fx-layer.fx-layered-mica{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22420%22%20height%3D%22590%22%20viewBox%3D%220%200%20420%20590%22%3E%3Cpolygon%20points%3D%2218%2C47.9%2025.439999999999998%2C38%2071.32%2C40.64%2080%2C52.3%2062.64%2C60%2027.92%2C56.92%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-8%2049.4%2049.4%29%22%2F%3E%3Cpolygon%20points%3D%2295%2C30.1%20100.76%2C22%20136.28%2C24.16%20143%2C33.7%20129.56%2C40%20102.68%2C37.480000000000004%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2812%20119.0%2031.0%29%22%2F%3E%3Cpolygon%20points%3D%22165%2C55.0%20173.4%2C46%20225.2%2C48.8%20235%2C59.0%20215.4%2C66%20176.2%2C63.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-15%20200.0%2056.0%29%22%2F%3E%3Cpolygon%20points%3D%22260%2C31.65%20266.96%2C24%20309.88%2C26.04%20318%2C35.05%20301.76%2C41%20269.28%2C38.62%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20289.0%2032.5%29%22%2F%3E%3Cpolygon%20points%3D%22325%2C69.1%20332.92%2C61%20381.76%2C63.16%20391%2C72.7%20372.52%2C79%20335.56%2C76.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-11%20358.0%2070.0%29%22%2F%3E%3Cpolygon%20points%3D%2235%2C127.45%2043.64%2C118%2096.92%2C120.52%20107%2C131.65%2086.84%2C139%2047.619999999999996%2C136.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2815%2071.0%20128.5%29%22%2F%3E%3Cpolygon%20points%3D%22132%2C109.2%20138.48%2C102%20178.44%2C103.92%20186%2C112.4%20170.88%2C118%20140.64%2C115.76%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-7%20159.0%20110.0%29%22%2F%3E%3Cpolygon%20points%3D%22220%2C147.6%20229.96%2C136%20291.38%2C138.88%20303%2C151.7%20279.76%2C160%20233.28%2C156.64%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%2810%20261.5%20148.0%29%22%2F%3E%3Cpolygon%20points%3D%22310%2C122.2%20316.12%2C115%20353.86%2C116.92%20361%2C125.4%20347.62%2C131%20318.16%2C128.76%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-14%20335.5%20123.0%29%22%2F%3E%3Cpolygon%20points%3D%2216%2C216.1%2022.96%2C208%2065.88%2C210.16%2074%2C219.7%2057.76%2C226%2025.28%2C223.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-12%2045.0%20217.0%29%22%2F%3E%3Cpolygon%20points%3D%2288%2C198.8%2097.36%2C188%20155.07999999999998%2C190.88%20166%2C203.6%20144.16%2C212%20100.48%2C208.64%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.270%22%20transform%3D%22rotate%288%20127.0%20200.0%29%22%2F%3E%3Cpolygon%20points%3D%22196%2C228.65%20203.2%2C221%20247.6%2C223.04%20256%2C232.05%20239.2%2C238%20205.6%2C235.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20226.0%20229.5%29%22%2F%3E%3Cpolygon%20points%3D%22278%2C201.9%20288.32%2C192%20351.246%2C194.64%20364%2C206.3%20339.92%2C214%20291.76%2C210.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%2813%20321.0%20203.0%29%22%2F%3E%3Cpolygon%20points%3D%2245%2C319.9%2054.6%2C310%20113.8%2C312.64%20125%2C324.3%20102.6%2C332%2057.8%2C328.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-6%2085.0%20321.0%29%22%2F%3E%3Cpolygon%20points%3D%22158%2C296.1%20165.8%2C288%20213.9%2C290.16%20223%2C299.7%20204.8%2C306%20168.4%2C303.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2814%20190.5%20297.0%29%22%2F%3E%3Cpolygon%20points%3D%22249%2C341.45%20257.4%2C332%20309.2%2C334.52%20319%2C345.65%20299.4%2C353%20260.2%2C350.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-12%20284.0%20342.5%29%22%2F%3E%3Cpolygon%20points%3D%22332%2C289.65%20338.24%2C282%20376.72%2C284.04%20384%2C293.05%20369.44%2C299%20340.32%2C296.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.180%22%20transform%3D%22rotate%289%20358.0%20290.5%29%22%2F%3E%3Cpolygon%20points%3D%2222%2C424.0%2030.16%2C415%2080.47999999999999%2C417.4%2090%2C428.0%2070.96000000000001%2C435%2032.88%2C432.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2810%2056.0%20425.0%29%22%2F%3E%3Cpolygon%20points%3D%22116%2C407.9%20125.96%2C398%20187.38%2C400.64%20199%2C412.3%20175.76%2C420%20129.28%2C416.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-13%20157.5%20409.0%29%22%2F%3E%3Cpolygon%20points%3D%22228%2C440.1%20234.72%2C432%20276.15999999999997%2C434.16%20284%2C443.7%20268.32%2C450%20236.96%2C447.68%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20256.0%20441.0%29%22%2F%3E%3Cpolygon%20points%3D%22307%2C414.45%20316.49%2C405%20374.94%2C407.52%20386%2C418.65%20363.88%2C426%20319.64%2C423.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-9%20347.6%20415.5%29%22%2F%3E%3Cpolygon%20points%3D%2252%2C526.1%2059.32%2C518%20104.46000000000001%2C520.16%20113%2C529.7%2095.92%2C536%2061.76%2C533.48%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-14%2082.5%20527.0%29%22%2F%3E%3Cpolygon%20points%3D%22167%2C509.9%20176.0%2C500%20231.5%2C502.64%20242%2C514.3%20221.0%2C522%20179.0%2C518.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2811%20204.5%20511.0%29%22%2F%3E%3Cpolygon%20points%3D%22283%2C538.1%20291.4%2C530%20343.2%2C532.16%20353%2C541.7%20333.4%2C548%20294.2%2C546.18%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20318.0%20539.0%29%22%2F%3E%3C%2Fsvg%3E"),linear-gradient(150deg,rgba(132,126,116,.10),rgba(228,222,207,.10),rgba(112,110,116,.08));background-size:100% 100%,100% 100%;background-blend-mode:soft-light;mix-blend-mode:soft-light;filter:saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1)) contrast(calc(.90 + var(--fx-structure)*.14))}
-.fx-layered-mica::before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22420%22%20height%3D%22590%22%20viewBox%3D%220%200%20420%20590%22%3E%3Cpolygon%20points%3D%2218%2C47.9%2025.439999999999998%2C38%2071.32%2C40.64%2080%2C52.3%2062.64%2C60%2027.92%2C56.92%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-8%2049.4%2049.4%29%22%2F%3E%3Cpolygon%20points%3D%2295%2C30.1%20100.76%2C22%20136.28%2C24.16%20143%2C33.7%20129.56%2C40%20102.68%2C37.480000000000004%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2812%20119.0%2031.0%29%22%2F%3E%3Cpolygon%20points%3D%22165%2C55.0%20173.4%2C46%20225.2%2C48.8%20235%2C59.0%20215.4%2C66%20176.2%2C63.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-15%20200.0%2056.0%29%22%2F%3E%3Cpolygon%20points%3D%22260%2C31.65%20266.96%2C24%20309.88%2C26.04%20318%2C35.05%20301.76%2C41%20269.28%2C38.62%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20289.0%2032.5%29%22%2F%3E%3Cpolygon%20points%3D%22325%2C69.1%20332.92%2C61%20381.76%2C63.16%20391%2C72.7%20372.52%2C79%20335.56%2C76.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-11%20358.0%2070.0%29%22%2F%3E%3Cpolygon%20points%3D%2235%2C127.45%2043.64%2C118%2096.92%2C120.52%20107%2C131.65%2086.84%2C139%2047.619999999999996%2C136.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2815%2071.0%20128.5%29%22%2F%3E%3Cpolygon%20points%3D%22132%2C109.2%20138.48%2C102%20178.44%2C103.92%20186%2C112.4%20170.88%2C118%20140.64%2C115.76%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-7%20159.0%20110.0%29%22%2F%3E%3Cpolygon%20points%3D%22220%2C147.6%20229.96%2C136%20291.38%2C138.88%20303%2C151.7%20279.76%2C160%20233.28%2C156.64%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%2810%20261.5%20148.0%29%22%2F%3E%3Cpolygon%20points%3D%22310%2C122.2%20316.12%2C115%20353.86%2C116.92%20361%2C125.4%20347.62%2C131%20318.16%2C128.76%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-14%20335.5%20123.0%29%22%2F%3E%3Cpolygon%20points%3D%2216%2C216.1%2022.96%2C208%2065.88%2C210.16%2074%2C219.7%2057.76%2C226%2025.28%2C223.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-12%2045.0%20217.0%29%22%2F%3E%3Cpolygon%20points%3D%2288%2C198.8%2097.36%2C188%20155.07999999999998%2C190.88%20166%2C203.6%20144.16%2C212%20100.48%2C208.64%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.270%22%20transform%3D%22rotate%288%20127.0%20200.0%29%22%2F%3E%3Cpolygon%20points%3D%22196%2C228.65%20203.2%2C221%20247.6%2C223.04%20256%2C232.05%20239.2%2C238%20205.6%2C235.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20226.0%20229.5%29%22%2F%3E%3Cpolygon%20points%3D%22278%2C201.9%20288.32%2C192%20351.246%2C194.64%20364%2C206.3%20339.92%2C214%20291.76%2C210.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%2813%20321.0%20203.0%29%22%2F%3E%3Cpolygon%20points%3D%2245%2C319.9%2054.6%2C310%20113.8%2C312.64%20125%2C324.3%20102.6%2C332%2057.8%2C328.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-6%2085.0%20321.0%29%22%2F%3E%3Cpolygon%20points%3D%22158%2C296.1%20165.8%2C288%20213.9%2C290.16%20223%2C299.7%20204.8%2C306%20168.4%2C303.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2814%20190.5%20297.0%29%22%2F%3E%3Cpolygon%20points%3D%22249%2C341.45%20257.4%2C332%20309.2%2C334.52%20319%2C345.65%20299.4%2C353%20260.2%2C350.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-12%20284.0%20342.5%29%22%2F%3E%3Cpolygon%20points%3D%22332%2C289.65%20338.24%2C282%20376.72%2C284.04%20384%2C293.05%20369.44%2C299%20340.32%2C296.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.180%22%20transform%3D%22rotate%289%20358.0%20290.5%29%22%2F%3E%3Cpolygon%20points%3D%2222%2C424.0%2030.16%2C415%2080.47999999999999%2C417.4%2090%2C428.0%2070.96000000000001%2C435%2032.88%2C432.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2810%2056.0%20425.0%29%22%2F%3E%3Cpolygon%20points%3D%22116%2C407.9%20125.96%2C398%20187.38%2C400.64%20199%2C412.3%20175.76%2C420%20129.28%2C416.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-13%20157.5%20409.0%29%22%2F%3E%3Cpolygon%20points%3D%22228%2C440.1%20234.72%2C432%20276.15999999999997%2C434.16%20284%2C443.7%20268.32%2C450%20236.96%2C447.68%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20256.0%20441.0%29%22%2F%3E%3Cpolygon%20points%3D%22307%2C414.45%20316.49%2C405%20374.94%2C407.52%20386%2C418.65%20363.88%2C426%20319.64%2C423.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-9%20347.6%20415.5%29%22%2F%3E%3Cpolygon%20points%3D%2252%2C526.1%2059.32%2C518%20104.46000000000001%2C520.16%20113%2C529.7%2095.92%2C536%2061.76%2C533.48%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-14%2082.5%20527.0%29%22%2F%3E%3Cpolygon%20points%3D%22167%2C509.9%20176.0%2C500%20231.5%2C502.64%20242%2C514.3%20221.0%2C522%20179.0%2C518.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2811%20204.5%20511.0%29%22%2F%3E%3Cpolygon%20points%3D%22283%2C538.1%20291.4%2C530%20343.2%2C532.16%20353%2C541.7%20333.4%2C548%20294.2%2C546.18%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20318.0%20539.0%29%22%2F%3E%3C%2Fsvg%3E");background-size:116% 116%;background-position:52% 47%;mix-blend-mode:screen;opacity:calc(.22*var(--fx-structure))}
+.card-fx-layer.fx-layered-mica{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22420%22%20height%3D%22590%22%20viewBox%3D%220%200%20420%20590%22%3E%3Cpolygon%20points%3D%2218%2C47.9%2025.439999999999998%2C38%2071.32%2C40.64%2080%2C52.3%2062.64%2C60%2027.92%2C56.92%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-8%2049.4%2049.4%29%22%2F%3E%3Cpolygon%20points%3D%2295%2C30.1%20100.76%2C22%20136.28%2C24.16%20143%2C33.7%20129.56%2C40%20102.68%2C37.480000000000004%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2812%20119.0%2031.0%29%22%2F%3E%3Cpolygon%20points%3D%22165%2C55.0%20173.4%2C46%20225.2%2C48.8%20235%2C59.0%20215.4%2C66%20176.2%2C63.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-15%20200.0%2056.0%29%22%2F%3E%3Cpolygon%20points%3D%22260%2C31.65%20266.96%2C24%20309.88%2C26.04%20318%2C35.05%20301.76%2C41%20269.28%2C38.62%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20289.0%2032.5%29%22%2F%3E%3Cpolygon%20points%3D%22325%2C69.1%20332.92%2C61%20381.76%2C63.16%20391%2C72.7%20372.52%2C79%20335.56%2C76.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-11%20358.0%2070.0%29%22%2F%3E%3Cpolygon%20points%3D%2235%2C127.45%2043.64%2C118%2096.92%2C120.52%20107%2C131.65%2086.84%2C139%2047.619999999999996%2C136.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2815%2071.0%20128.5%29%22%2F%3E%3Cpolygon%20points%3D%22132%2C109.2%20138.48%2C102%20178.44%2C103.92%20186%2C112.4%20170.88%2C118%20140.64%2C115.76%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-7%20159.0%20110.0%29%22%2F%3E%3Cpolygon%20points%3D%22220%2C147.6%20229.96%2C136%20291.38%2C138.88%20303%2C151.7%20279.76%2C160%20233.28%2C156.64%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%2810%20261.5%20148.0%29%22%2F%3E%3Cpolygon%20points%3D%22310%2C122.2%20316.12%2C115%20353.86%2C116.92%20361%2C125.4%20347.62%2C131%20318.16%2C128.76%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-14%20335.5%20123.0%29%22%2F%3E%3Cpolygon%20points%3D%2216%2C216.1%2022.96%2C208%2065.88%2C210.16%2074%2C219.7%2057.76%2C226%2025.28%2C223.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-12%2045.0%20217.0%29%22%2F%3E%3Cpolygon%20points%3D%2288%2C198.8%2097.36%2C188%20155.07999999999998%2C190.88%20166%2C203.6%20144.16%2C212%20100.48%2C208.64%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.270%22%20transform%3D%22rotate%288%20127.0%20200.0%29%22%2F%3E%3Cpolygon%20points%3D%22196%2C228.65%20203.2%2C221%20247.6%2C223.04%20256%2C232.05%20239.2%2C238%20205.6%2C235.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20226.0%20229.5%29%22%2F%3E%3Cpolygon%20points%3D%22278%2C201.9%20288.32%2C192%20351.256%2C194.64%20364%2C206.3%20339.92%2C214%20291.76%2C210.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%2813%20321.0%20203.0%29%22%2F%3E%3Cpolygon%20points%3D%2245%2C319.9%2054.6%2C310%20113.8%2C312.64%20125%2C324.3%20102.6%2C332%2057.8%2C328.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-6%2085.0%20321.0%29%22%2F%3E%3Cpolygon%20points%3D%22158%2C296.1%20165.8%2C288%20213.9%2C290.16%20223%2C299.7%20204.8%2C306%20168.4%2C303.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2814%20190.5%20297.0%29%22%2F%3E%3Cpolygon%20points%3D%22249%2C341.45%20257.4%2C332%20309.2%2C334.52%20319%2C345.65%20299.4%2C353%20260.2%2C350.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-12%20284.0%20342.5%29%22%2F%3E%3Cpolygon%20points%3D%22332%2C289.65%20338.24%2C282%20376.72%2C284.04%20384%2C293.05%20369.44%2C299%20340.32%2C296.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.180%22%20transform%3D%22rotate%289%20358.0%20290.5%29%22%2F%3E%3Cpolygon%20points%3D%2222%2C424.0%2030.16%2C415%2080.47999999999999%2C417.4%2090%2C428.0%2070.96000000000001%2C435%2032.88%2C432.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2810%2056.0%20425.0%29%22%2F%3E%3Cpolygon%20points%3D%22116%2C407.9%20125.96%2C398%20187.38%2C400.64%20199%2C412.3%20175.76%2C420%20129.28%2C416.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-13%20157.5%20409.0%29%22%2F%3E%3Cpolygon%20points%3D%22228%2C440.1%20234.72%2C432%20276.15999999999997%2C434.16%20284%2C443.7%20268.32%2C450%20236.96%2C447.68%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20256.0%20441.0%29%22%2F%3E%3Cpolygon%20points%3D%22307%2C414.45%20316.49%2C405%20374.94%2C407.52%20386%2C418.65%20363.88%2C426%20319.64%2C423.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-9%20347.6%20415.5%29%22%2F%3E%3Cpolygon%20points%3D%2252%2C526.1%2059.32%2C518%20104.46000000000001%2C520.16%20113%2C529.7%2095.92%2C536%2061.76%2C533.48%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-14%2082.5%20527.0%29%22%2F%3E%3Cpolygon%20points%3D%22167%2C509.9%20176.0%2C500%20231.5%2C502.64%20242%2C514.3%20221.0%2C522%20179.0%2C518.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2811%20204.5%20511.0%29%22%2F%3E%3Cpolygon%20points%3D%22283%2C538.1%20291.4%2C530%20343.2%2C532.16%20353%2C541.7%20333.4%2C548%20294.2%2C546.18%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20318.0%20539.0%29%22%2F%3E%3C%2Fsvg%3E"),linear-gradient(150deg,rgba(132,126,116,.10),rgba(228,222,207,.10),rgba(112,110,116,.08));background-size:100% 100%,100% 100%;background-blend-mode:soft-light;mix-blend-mode:soft-light;filter:saturate(var(--fx-sat,1)) brightness(var(--fx-bright,1)) contrast(calc(.90 + var(--fx-structure)*.14))}
+.fx-layered-mica::before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22420%22%20height%3D%22590%22%20viewBox%3D%220%200%20420%20590%22%3E%3Cpolygon%20points%3D%2218%2C47.9%2025.439999999999998%2C38%2071.32%2C40.64%2080%2C52.3%2062.64%2C60%2027.92%2C56.92%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-8%2049.4%2049.4%29%22%2F%3E%3Cpolygon%20points%3D%2295%2C30.1%20100.76%2C22%20136.28%2C24.16%20143%2C33.7%20129.56%2C40%20102.68%2C37.480000000000004%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2812%20119.0%2031.0%29%22%2F%3E%3Cpolygon%20points%3D%22165%2C55.0%20173.4%2C46%20225.2%2C48.8%20235%2C59.0%20215.4%2C66%20176.2%2C63.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-15%20200.0%2056.0%29%22%2F%3E%3Cpolygon%20points%3D%22260%2C31.65%20266.96%2C24%20309.88%2C26.04%20318%2C35.05%20301.76%2C41%20269.28%2C38.62%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20289.0%2032.5%29%22%2F%3E%3Cpolygon%20points%3D%22325%2C69.1%20332.92%2C61%20381.76%2C63.16%20391%2C72.7%20372.52%2C79%20335.56%2C76.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-11%20358.0%2070.0%29%22%2F%3E%3Cpolygon%20points%3D%2235%2C127.45%2043.64%2C118%2096.92%2C120.52%20107%2C131.65%2086.84%2C139%2047.619999999999996%2C136.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2815%2071.0%20128.5%29%22%2F%3E%3Cpolygon%20points%3D%22132%2C109.2%20138.48%2C102%20178.44%2C103.92%20186%2C112.4%20170.88%2C118%20140.64%2C115.76%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-7%20159.0%20110.0%29%22%2F%3E%3Cpolygon%20points%3D%22220%2C147.6%20229.96%2C136%20291.38%2C138.88%20303%2C151.7%20279.76%2C160%20233.28%2C156.64%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%2810%20261.5%20148.0%29%22%2F%3E%3Cpolygon%20points%3D%22310%2C122.2%20316.12%2C115%20353.86%2C116.92%20361%2C125.4%20347.62%2C131%20318.16%2C128.76%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-14%20335.5%20123.0%29%22%2F%3E%3Cpolygon%20points%3D%2216%2C216.1%2022.96%2C208%2065.88%2C210.16%2074%2C219.7%2057.76%2C226%2025.28%2C223.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-12%2045.0%20217.0%29%22%2F%3E%3Cpolygon%20points%3D%2288%2C198.8%2097.36%2C188%20155.07999999999998%2C190.88%20166%2C203.6%20144.16%2C212%20100.48%2C208.64%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.270%22%20transform%3D%22rotate%288%20127.0%20200.0%29%22%2F%3E%3Cpolygon%20points%3D%22196%2C228.65%20203.2%2C221%20247.6%2C223.04%20256%2C232.05%20239.2%2C238%20205.6%2C235.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20226.0%20229.5%29%22%2F%3E%3Cpolygon%20points%3D%22278%2C201.9%20288.32%2C192%20351.256%2C194.64%20364%2C206.3%20339.92%2C214%20291.76%2C210.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.180%22%20transform%3D%22rotate%2813%20321.0%20203.0%29%22%2F%3E%3Cpolygon%20points%3D%2245%2C319.9%2054.6%2C310%20113.8%2C312.64%20125%2C324.3%20102.6%2C332%2057.8%2C328.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-6%2085.0%20321.0%29%22%2F%3E%3Cpolygon%20points%3D%22158%2C296.1%20165.8%2C288%20213.9%2C290.16%20223%2C299.7%20204.8%2C306%20168.4%2C303.48%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2814%20190.5%20297.0%29%22%2F%3E%3Cpolygon%20points%3D%22249%2C341.45%20257.4%2C332%20309.2%2C334.52%20319%2C345.65%20299.4%2C353%20260.2%2C350.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-12%20284.0%20342.5%29%22%2F%3E%3Cpolygon%20points%3D%22332%2C289.65%20338.24%2C282%20376.72%2C284.04%20384%2C293.05%20369.44%2C299%20340.32%2C296.62%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.180%22%20transform%3D%22rotate%289%20358.0%20290.5%29%22%2F%3E%3Cpolygon%20points%3D%2222%2C424.0%2030.16%2C415%2080.47999999999999%2C417.4%2090%2C428.0%2070.96000000000001%2C435%2032.88%2C432.2%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.225%22%20transform%3D%22rotate%2810%2056.0%20425.0%29%22%2F%3E%3Cpolygon%20points%3D%22116%2C407.9%20125.96%2C398%20187.38%2C400.64%20199%2C412.3%20175.76%2C420%20129.28%2C416.92%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%28-13%20157.5%20409.0%29%22%2F%3E%3Cpolygon%20points%3D%22228%2C440.1%20234.72%2C432%20276.15999999999997%2C434.16%20284%2C443.7%20268.32%2C450%20236.96%2C447.68%22%20fill%3D%22%23b9afc2%22%20opacity%3D%220.315%22%20transform%3D%22rotate%287%20256.0%20441.0%29%22%2F%3E%3Cpolygon%20points%3D%22307%2C414.45%20316.49%2C405%20374.94%2C407.52%20386%2C418.65%20363.88%2C426%20319.64%2C423.06%22%20fill%3D%22%23e7e2d7%22%20opacity%3D%220.180%22%20transform%3D%22rotate%28-9%20347.6%20415.5%29%22%2F%3E%3Cpolygon%20points%3D%2252%2C526.1%2059.32%2C518%20104.46000000000001%2C520.16%20113%2C529.7%2095.92%2C536%2061.76%2C533.48%22%20fill%3D%22%23b9b5ad%22%20opacity%3D%220.225%22%20transform%3D%22rotate%28-14%2082.5%20527.0%29%22%2F%3E%3Cpolygon%20points%3D%22167%2C509.9%20176.0%2C500%20231.5%2C502.64%20242%2C514.3%20221.0%2C522%20179.0%2C518.92%22%20fill%3D%22%23d8ccb0%22%20opacity%3D%220.270%22%20transform%3D%22rotate%2811%20204.5%20511.0%29%22%2F%3E%3Cpolygon%20points%3D%22283%2C538.1%20291.4%2C530%20343.2%2C532.16%20353%2C541.7%20333.4%2C548%20294.2%2C546.18%22%20fill%3D%22%23c7cbd0%22%20opacity%3D%220.315%22%20transform%3D%22rotate%28-8%20318.0%20539.0%29%22%2F%3E%3C%2Fsvg%3E");background-size:116% 116%;background-position:52% 47%;mix-blend-mode:screen;opacity:calc(.22*var(--fx-structure))}
 .fx-layered-mica::after{content:"";position:absolute;inset:0;background:radial-gradient(28% 15% at 22% 30%,rgba(255,255,255,calc(.16*var(--fx-reflection))),transparent 74%),radial-gradient(24% 14% at 76% 67%,rgba(241,226,189,calc(.12*var(--fx-reflection))),transparent 75%);mix-blend-mode:screen;opacity:calc(.58*var(--fx-reflect-area))}
 .fx-animate .fx-layered-mica::after{animation:v1630ReflectBreathe var(--fx-duration,13s) ease-in-out infinite alternate}
 
@@ -22051,7 +22051,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
 </style>
 <style>
 
-/* Ver51.24: progressive UX layer; original application controls remain intact. */
+/* Ver51.25: progressive UX layer; original application controls remain intact. */
 .v42-nav-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--panel2,#20242d);border:1px solid var(--line,#353b47);color:var(--text,#fff);border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:700}
 .v42-nav-panel{position:fixed;z-index:9995;top:62px;left:12px;width:min(580px,calc(100vw - 24px));max-height:calc(100dvh - 78px);overflow:auto;background:var(--panel,#171a21);color:var(--text,#fff);border:1px solid var(--line,#353b47);border-radius:14px;box-shadow:0 14px 42px #0009;padding:14px}
 .v42-nav-panel[hidden],.v42-quicklinks[hidden]{display:none!important}
@@ -22160,7 +22160,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v51.24 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v51.25 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -24003,7 +24003,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   </div>
 
   <div class="settings-maintenance-card" id="storage-cleanup-v488" style="margin-top:12px">
-    <h4>保存データの整理（Ver51.24）</h4>
+    <h4>保存データの整理（Ver51.25）</h4>
     <p class="muted">期限切れのローカルオンラインルームと、ロボットローグライクの保存データを個別に整理します。カード・デッキ・画像・IndexedDBは対象外です。進行中のオンライン対戦がないときに操作してください。</p>
     <div class="actions"><button class="btn" type="button" id="cleanup-inspect">整理対象を調べる</button><button class="btn small" type="button" id="cleanup-backup" disabled>対象データをバックアップ</button></div>
     <div id="cleanup-summary" role="status" aria-live="polite" class="muted" style="margin:8px 0"></div>
@@ -24684,7 +24684,7 @@ function cardLinksFor(card){
  return normalizeCardLinks(card?.cardLinks,card?.id);
 }
 function reconcileCardLinks(){
- // Ver51.24: unresolved references are data, not garbage. Never prune them on boot.
+ // Ver51.25: unresolved references are data, not garbage. Never prune them on boot.
  let changed=false;
  for(const c of cards){
    const before=JSON.stringify(c.cardLinks||[]);
@@ -25168,7 +25168,7 @@ __mkCardBootGate.id='mk-card-boot-gate';
 __mkCardBootGate.style.cssText='position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;background:#111827ee;color:white;font:16px sans-serif;text-align:center;padding:20px';
 __mkCardBootGate.textContent='カードデータを安全に読み込んでいます…';
 document.body.appendChild(__mkCardBootGate);
-// Ver51.24: rescue snapshots are stored separately from the live catalog.
+// Ver51.25: rescue snapshots are stored separately from the live catalog.
 // No old localStorage key is deleted or rewritten during this migration.
 async function __mkRescueSnapshotBeforeBoot(){
  const keys=[LS_CARDS,LS_DECKS,LS_COLLECTION,LS_CARD_RECENT,LS_CARD_REGISTER_RECENT];
@@ -25255,7 +25255,7 @@ async function __mkBootCardCatalog(){
   if(__mkCardPending){console.warn('[みん会TCG] 起動前のカード書き込み要求を破棄（DB保護）');__mkCardPending=null}
   // Free the old quota only after a verified IndexedDB copy exists.
   // Never remove the old data if migration or verification failed.
-  // Ver51.24: legacy catalog is retained as a recovery copy; never erase automatically.
+  // Ver51.25: legacy catalog is retained as a recovery copy; never erase automatically.
   try{renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup(true);if(board)renderBoard()}catch(e){console.warn('カード一覧の再描画:',e)}
  }catch(e){
   console.error('カードDB移行失敗（旧データは保持）',e);
@@ -25715,7 +25715,7 @@ let board=null, detailCtx=null, detailNav=null, inspectSession=null, browseSessi
 const $=(s,root=document)=>(root||document).querySelector(s), $$=(s,root=document)=>[...(root||document).querySelectorAll(s)];
 function uid(p='id'){return p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
 function load(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}}
-// Ver51.24: Storage quota errors must never abort application initialization.
+// Ver51.25: Storage quota errors must never abort application initialization.
 // Preserve existing data; do not clear or overwrite another storage key.
 var __mkStorageWarningShown=false;
 function __mkStorageWarning(k,err){
@@ -25733,7 +25733,7 @@ function __mkStorageWarning(k,err){
  };
  if(document.body)notify();else document.addEventListener('DOMContentLoaded',notify,{once:true});
 }
-// Ver51.24: card catalog is persisted in IndexedDB, not the limited localStorage.
+// Ver51.25: card catalog is persisted in IndexedDB, not the limited localStorage.
 // Legacy localStorage data is kept until a verified IDB migration completes.
 var __mkCardDbPromise=null,__mkCardReady=false,__mkCardWriteChain=Promise.resolve(),__mkCardPending=null;
 function __mkOpenCardDb(){
@@ -25753,7 +25753,7 @@ async function __mkCardDbSet(value){const db=await __mkOpenCardDb();return new P
  const tx=db.transaction('catalog','readwrite');tx.objectStore('catalog').put(value,'cards');
  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('カードDB保存中断'));
 })}
-// Ver51.24: durable, restart-safe journal for JSON restoration critical stores.
+// Ver51.25: durable, restart-safe journal for JSON restoration critical stores.
 // An interrupted restore is rolled back before the card catalog is exposed.
 const __mkRestoreJournalKey='restore_journal_v509';
 async function __mkJournalRead(){const db=await __mkOpenCardDb();return new Promise((resolve,reject)=>{const req=db.transaction('catalog','readonly').objectStore('catalog').get(__mkRestoreJournalKey);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
@@ -26687,7 +26687,7 @@ async function createBackgroundAssetRecord(file){
    };
  }finally{drawable.close()}
 }
-// Ver51.24: exact-source background deduplication; original bytes are hashed before resizing.
+// Ver51.25: exact-source background deduplication; original bytes are hashed before resizing.
 async function backgroundFileHash(file){
  const bytes=await file.arrayBuffer();
  const digest=await crypto.subtle.digest('SHA-256',bytes);
@@ -27896,7 +27896,7 @@ function parseFullBackupZip(bytes){
  return {manifest,backupVersion,imageRecords,links,backgroundRecords,frameRecords,frameLinks,customFxRecords,theme,settings:normalizeFullBackupSettings(manifest.settings||{})};
 }
 async function restoreFullBackupZip(parsed){
- // Ver51.24: Never mutate a live database before validating all critical references.
+ // Ver51.25: Never mutate a live database before validating all critical references.
  if(!imageSystemAvailable)throw new Error('画像ストレージを利用できないため復元を中止しました。');
  if(!parsed?.manifest?.data)throw new Error('完全バックアップの内容が不正です。');
  const data=parsed.manifest.data;
@@ -27984,7 +27984,7 @@ async function restoreBackupObject(data,opt={}){
      cardLinks:backupVersion>=7?normalizeCardLinks(raw.cardLinks,id):[]
    });
  }
- // Ver51.24 safety preflight: never silently strip deck entries during backup restoration.
+ // Ver51.25 safety preflight: never silently strip deck entries during backup restoration.
  const incomingCardIds=new Set(restoredCards.map(c=>c.id));
  const unresolved=[];
  for(const deck of data.decks){
@@ -27994,11 +27994,11 @@ async function restoreBackupObject(data,opt={}){
   }
  }
  if(unresolved.length){
-  console.warn('[Ver51.24] 復元を中止: 参照カードがバックアップにありません',unresolved.slice(0,30));
+  console.warn('[Ver51.25] 復元を中止: 参照カードがバックアップにありません',unresolved.slice(0,30));
   throw new Error('復元を中止しました。バックアップ内に定義のないカード参照が'+unresolved.length+'件あります。既存データは変更していません。');
  }
  if(data.cards.length>0&&restoredCards.length===0)throw new Error('カード定義が正常に読み取れないため復元を中止しました。');
- // Ver51.24: reject malformed and conflicting card definitions before any persistent write.
+ // Ver51.25: reject malformed and conflicting card definitions before any persistent write.
  if(restoredCards.length!==data.cards.length||usedIds.size!==data.cards.length){
   throw new Error('カード定義に欠損・重複・不正な項目があるため復元を中止しました。既存データは変更していません。');
  }
@@ -28027,14 +28027,14 @@ async function restoreBackupObject(data,opt={}){
    restoredDecks.push({id,name:String(raw.name||'名称未設定デッキ'),entries,...deckSettingsFrom(raw)});
  }
  const stagedCollection=backupVersion>=2?normalizeCollectionData(data.collection||{},validIds):normalizeCollectionData({},validIds);
- // Ver51.24: persistent rollback journal must be committed BEFORE the first write.
+ // Ver51.25: persistent rollback journal must be committed BEFORE the first write.
  await __mkBeginRestoreJournal();
  try{
    if(await save(LS_CARDS,restoredCards)===false)throw Error('カード保存失敗');
    if(save(LS_DECKS,restoredDecks)===false)throw Error('デッキ保存失敗');
    if(save(LS_COLLECTION,stagedCollection)===false)throw Error('コレクション保存失敗');
  }catch(err){
-   try{await __mkRecoverInterruptedRestore()}catch(rollbackErr){console.error('[Ver51.24] 復元ロールバック失敗。記録は保持',rollbackErr)}
+   try{await __mkRecoverInterruptedRestore()}catch(rollbackErr){console.error('[Ver51.25] 復元ロールバック失敗。記録は保持',rollbackErr)}
    throw Error('復元中の保存に失敗しました。安全記録を保持しています: '+err.message);
  }
  try{
@@ -28049,13 +28049,13 @@ async function restoreBackupObject(data,opt={}){
  collectionSource='all';collectionPage=0;
  recentCardIds=(Array.isArray(data.recentCardIds)?data.recentCardIds:[]).filter(id=>validIds.has(id)).slice(0,10);
  registeredRecentCardIds=(Array.isArray(data.registeredRecentCardIds)?data.registeredRecentCardIds:restoredCards.slice(-5).reverse().map(c=>c.id)).filter(id=>validIds.has(id)).slice(0,5);
- // Ver51.24: critical stores were committed and verified above; do not write again here.
+ // Ver51.25: critical stores were committed and verified above; do not write again here.
  if(save(LS_CARD_RECENT,recentCardIds)===false||save(LS_CARD_REGISTER_RECENT,registeredRecentCardIds)===false)throw Error("カード履歴の保存失敗");
  editingDeckId=null;workingDeck=blankWorkingDeck();board=null;detailCtx=null;detailNav=null;inspectSession=null;resetBoardHistory();
  normalizeDeckSettings();renderRegisterHistory();renderCards();renderCollection();renderDecks();renderSetup(true);
  // Clear the journal only after the complete restoration path has returned from its writes.
  }catch(err){
-   try{await __mkRecoverInterruptedRestore()}catch(rollbackErr){console.error("[Ver51.24] 復元後半の巻き戻し失敗。復旧記録を保持",rollbackErr)}
+   try{await __mkRecoverInterruptedRestore()}catch(rollbackErr){console.error("[Ver51.25] 復元後半の巻き戻し失敗。復旧記録を保持",rollbackErr)}
    throw Error("復元後半の処理に失敗しました。復旧記録を確認してください: "+err.message);
  }
  try{await __mkJournalClear()}catch(err){throw Error("復元記録の確定処理に失敗しました。再起動前にデータを保全してください: "+err.message)}
@@ -28177,7 +28177,7 @@ $('#full-backup-file-input').onchange=async e=>{
  try{
    const parsed=parseFullBackupZip(new Uint8Array(await f.arrayBuffer()));
    const cardCount=parsed.manifest.data.cards.length,deckCount=parsed.manifest.data.decks.length,imageCount=parsed.imageRecords.length,frameCount=(parsed.frameRecords||[]).length,bgCount=parsed.backgroundRecords.length;
-   // Ver51.24: provide a read-only inspection artifact before any restore operation.
+   // Ver51.25: provide a read-only inspection artifact before any restore operation.
    // This path never writes to localStorage, IndexedDB, or Supabase.
    const inspection={
      format:'minkai-full-zip-inspection',version:'50.7',inspectedAt:new Date().toISOString(),
@@ -29747,13 +29747,13 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      shell.hidden=false;
      if(!frame.getAttribute('src')){
        frame.addEventListener('load',()=>setTimeout(openSelected,0),{once:true});
-       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.24';
+       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.25';
      }else openSelected();
      return;
    }
  }
 
- // Ver51.24: Legacy editing UI is retired. Keep legacy render/data helpers for saved cards.
+ // Ver51.25: Legacy editing UI is retired. Keep legacy render/data helpers for saved cards.
  const shell=document.getElementById('fx-trial-shell');
  if(shell){shell.hidden=false;}
  const host=document.getElementById('fx-trial-box')||document.body;
@@ -32699,8 +32699,8 @@ function openCollectionViewer(id){
  const shell=$('#collection-viewer-shell'),art=$('#collection-viewer-art');
  art.onclick=e=>{if(e.target.closest('button'))return;shell.classList.toggle('viewer-ui-hidden')};
  let swipe=null;
- art.onpointerdown=e=>{if(e.pointerType==='mouse'&&e.button!==0)return;swipe={id:e.pointerId,x:e.clientX,y:e.clientY};art.setPointerCapture?.(e.pointerId)};
- art.onpointerup=e=>{if(!swipe||swipe.id!==e.pointerId)return;const dx=e.clientX-swipe.x,dy=e.clientY-swipe.y;swipe=null;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){if(dx<0&&idx<ids.length-1)openCollectionViewer(ids[idx+1]);else if(dx>0&&idx>0)openCollectionViewer(ids[idx-1])}};
+ art.onpointerdown=e=>{if(e.pointerType!=='mouse')return;if(e.button!==0)return;swipe={id:e.pointerId,x:e.clientX,y:e.clientY};art.setPointerCapture?.(e.pointerId)};
+ art.onpointerup=e=>{if(e.pointerType!=='mouse'||!swipe||swipe.id!==e.pointerId)return;const dx=e.clientX-swipe.x,dy=e.clientY-swipe.y;swipe=null;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){if(dx<0&&idx<ids.length-1)openCollectionViewer(ids[idx+1]);else if(dx>0&&idx>0)openCollectionViewer(ids[idx-1])}};
  hydrateCollectionViewerArt(id);hydrateAllCardFrames($('#collection-viewer-art'));hydrateAllCustomFx($('#collection-viewer-art'));hydrateAllCardDecor($('#collection-viewer-art'));
 }
 
@@ -42272,7 +42272,7 @@ onlineHandleRoomMessage=function(msg){
  return __mkFxHandleOriginal.apply(this,arguments);
 };
 
-/* Ver51.24: share deck draft state with the separate autosave script without copying stale values. */
+/* Ver51.25: share deck draft state with the separate autosave script without copying stale values. */
 for (const [key, read, write] of [
  ['workingDeck',()=>workingDeck,v=>{workingDeck=v}],
  ['editingDeckId',()=>editingDeckId,v=>{editingDeckId=v}],
@@ -42682,7 +42682,7 @@ async function accountApplyCloudSnapshot(payload,{preserveCollectionWhenMissing=
     if(save(LS_DECKS,nextDecks)===false)throw Error('デッキ保存失敗');
     if(save(LS_COLLECTION,nextCollection)===false)throw Error('コレクション保存失敗');
   }catch(err){
-    try{await save(LS_CARDS,previousCards);save(LS_DECKS,previousDecks);save(LS_COLLECTION,previousCollection)}catch(rollbackErr){console.error('[Ver51.24] クラウド復元の巻き戻し失敗',rollbackErr)}
+    try{await save(LS_CARDS,previousCards);save(LS_DECKS,previousDecks);save(LS_COLLECTION,previousCollection)}catch(rollbackErr){console.error('[Ver51.25] クラウド復元の巻き戻し失敗',rollbackErr)}
     throw Error('クラウド復元の保存に失敗しました。退避データを削除しないでください: '+err.message);
   }
   cards=nextCards;decks=nextDecks;collectionData=nextCollection;
@@ -43926,7 +43926,7 @@ window.MinkaiOnlineEventV299={open,sync,version:VERSION,protocol:PROTOCOL};windo
 </style>
 <script>
 
-/* Ver51.24 progressive enhancement: never replaces core navigation or persistence. */
+/* Ver51.25 progressive enhancement: never replaces core navigation or persistence. */
 (()=>{'use strict';
 const ready=()=>{
  const appbar=document.querySelector('header.appbar');if(!appbar||document.getElementById('v42-nav-toggle'))return;
@@ -43975,7 +43975,7 @@ const ready=()=>{
 
 </script>
 
-<!-- Ver51.24 card effects editor launcher -->
+<!-- Ver51.25 card effects editor launcher -->
 <style>
 #fx-trial-launch[hidden]{display:none!important}
 #fx-trial-launch{width:100%;min-height:48px;font-weight:700;cursor:pointer}
@@ -44007,7 +44007,7 @@ const ready=()=>{
 }
 </style>
 <style>
-/* Ver51.24: compact editor header; card chooser expands only on demand. */
+/* Ver51.25: compact editor header; card chooser expands only on demand. */
 #fx-trial-top-actions{display:flex;gap:6px;align-items:center;justify-content:flex-end}
 #fx-trial-card-toggle{background:#283e5e;color:#fff;border:1px solid #7b98c2;padding:9px 11px;border-radius:8px;white-space:nowrap;cursor:pointer}
 #fx-trial-controls[hidden]{display:none!important}
@@ -44015,7 +44015,7 @@ const ready=()=>{
 #fx-trial-current-card{font-weight:600;color:#dbe9ff;overflow-wrap:anywhere}
 @media(max-width:640px){#fx-trial-bar{padding:7px 9px!important;gap:5px!important}#fx-trial-heading{font-size:12px!important;line-height:1.3!important}#fx-trial-top-actions{gap:5px}#fx-trial-card-toggle,#fx-trial-close{font-size:12px!important;padding:9px 8px!important;min-height:40px}#fx-trial-controls:not([hidden]){display:flex!important;max-height:35dvh;overflow-y:auto;padding:8px 0}#fx-trial-card-select{font-size:16px!important}}
 </style>
-<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定 <span id="fx-trial-current-card">｜カード未選択</span></div><div id="fx-trial-top-actions"><button type="button" id="fx-trial-card-toggle" aria-expanded="false" aria-controls="fx-trial-controls">カードを変更</button><button type="button" id="fx-trial-close">閉じる</button></div><div id="fx-trial-controls" hidden><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver51.24 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html?v=51.24"></iframe></div></div>
+<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定 <span id="fx-trial-current-card">｜カード未選択</span></div><div id="fx-trial-top-actions"><button type="button" id="fx-trial-card-toggle" aria-expanded="false" aria-controls="fx-trial-controls">カードを変更</button><button type="button" id="fx-trial-close">閉じる</button></div><div id="fx-trial-controls" hidden><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver51.25 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html?v=51.25"></iframe></div></div>
 <script>
 (function(){
  const controls=document.getElementById('fx-trial-controls'),toggle=document.getElementById('fx-trial-card-toggle'),select=document.getElementById('fx-trial-card-select'),current=document.getElementById('fx-trial-current-card');
@@ -44036,7 +44036,7 @@ const launch=document.getElementById('fx-trial-launch'),shell=document.getElemen
 function fxRecovery(message){
  let n=document.getElementById('fx-trial-load-error');if(!n){n=document.createElement('div');n.id='fx-trial-load-error';n.setAttribute('role','alert');n.style.cssText='padding:12px;background:#352620;color:white;border:1px solid #b98a58;border-radius:8px;margin:8px';shell.querySelector('#fx-trial-box').append(n)}
  n.hidden=false;n.replaceChildren();const t=document.createElement('span');t.textContent=message+' 保存済みのカードデータは変更されていません。';n.append(t);
- const retry=document.createElement('button');retry.textContent='エディターを再読込';retry.style.marginLeft='12px';retry.onclick=()=>{n.hidden=true;frame.src='./fx_trial_preview.html?v=51.24&retry='+Date.now()};n.append(retry);
+ const retry=document.createElement('button');retry.textContent='エディターを再読込';retry.style.marginLeft='12px';retry.onclick=()=>{n.hidden=true;frame.src='./fx_trial_preview.html?v=51.25&retry='+Date.now()};n.append(retry);
 }
 frame.addEventListener('error',()=>fxRecovery('加工エディターの読込に失敗しました。'));
 frame.addEventListener('load',()=>{try{if(!frame.contentDocument?.getElementById('type'))fxRecovery('加工エディターの内容が不完全です。');else{const n=document.getElementById('fx-trial-load-error');if(n)n.hidden=true}}catch{fxRecovery('加工エディターを確認できません。')}});
@@ -44083,7 +44083,7 @@ if(!collection||!manager||!board)return;
 let frame=null,ready=false,working=null,seq=0,queue=[],scanPending=false;
 const cache=new Map(),queued=new Set();
 function getCard(id){try{return window.__fxCollectionGetCard?.(id)||null}catch{return null}}
-function keyFor(card){return '51.24|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
+function keyFor(card){return '51.25|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
 function angleFor(el){return el.id==='collection-viewer-art'?{x:Number(el.dataset.fx22TiltX)||0,y:Number(el.dataset.fx22TiltY)||0}:{x:0,y:0}}
 function renderKey(card,el){const a=angleFor(el);const img=el.querySelector('img');const bg=getComputedStyle(el).backgroundImage;const imageKey=img?.currentSrc||img?.src||(bg&&bg!=='none'?bg:'');return keyFor(card)+'|img:'+imageKey+(el.id==='collection-viewer-art'?'|viewer|'+a.x.toFixed(2)+'|'+a.y.toFixed(2):'')}
 
@@ -44104,13 +44104,13 @@ function ensureFrame(){
  if(frame)return;
  frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
- frame.src='./fx_trial_preview.html?v=51.24';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
+ frame.src='./fx_trial_preview.html?v=51.25';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
 }
 function place(el,url){
  if(!el.isConnected)return;
  let layer=el.querySelector(':scope > .fx22-surface-layer');
  if(!layer){layer=document.createElement('span');layer.className='fx22-surface-layer';el.append(layer)}
- if(layer.__fx22Url!==url){layer.style.backgroundImage='url("'+url+'")';layer.__fx22Url=url}
+ if(layer.__fx22Url!==url){layer.style.backgroundImage='url("'+url+'")';layer.__fx22Url=url}layer.style.mixBlendMode=layer.dataset.fx22Blend||'screen';layer.style.opacity=layer.dataset.fx22Blend==='normal'?'1':'.8';
 }
 function scan(){
  for(const el of visibleTargets()){
@@ -44118,10 +44118,10 @@ function scan(){
   const old=el.querySelector(':scope > .fx22-surface-layer');
   if(!card?.fxPreviewV2?.layers?.length){if(old)old.remove();delete el.dataset.fx22Key;continue}
   const k=renderKey(card,el);el.dataset.fx22Key=k;
-  if(cache.has(k)){place(el,cache.get(k));continue}
+  if(cache.has(k)){const cached=cache.get(k);let layer=el.querySelector(':scope > .fx22-surface-layer');if(!layer){layer=document.createElement('span');layer.className='fx22-surface-layer';el.append(layer)}layer.dataset.fx22Blend=cached.blend;place(el,cached.image);continue}
   if(!queued.has(k)){if(el.id==='collection-viewer-art'){queue=queue.filter(it=>!it.viewer);for(const key of [...queued])if(key.includes('|viewer|'))queued.delete(key)}const tilt=angleFor(el),viewer=el.id==='collection-viewer-art';const art=el.querySelector('img:not(.fx22-surface-layer img)');
   const bg=getComputedStyle(el).backgroundImage;
-  const bgMatch=bg&&bg!=='none'?bg.match(/^url\((['"]?)(.*?)\1\)$/):null;
+  const bgMatch=bg&&bg!=='none'?bg.match(/url\((['"]?)(.*?)\1\)/):null;
   const image=art?.currentSrc||art?.src||(bgMatch?bgMatch[2]:'');const item={id,k,preset:card.fxPreviewV2,tiltX:tilt.x,tiltY:tilt.y,viewer,image};if(viewer||el.id==='collection-detail-art')queue.unshift(item);else queue.push(item);queued.add(k)}
  }
  if(queue.length)ensureFrame();pump();
@@ -44143,9 +44143,9 @@ window.addEventListener('message',e=>{
  if(e.data.action==='error'){console.error('[FX表示] 加工生成エラー',e.data.message);setFx22Status('加工描画エラー: '+String(e.data.message||'不明').slice(0,100));}
  if(e.data.action==='result'&&typeof e.data.image==='string'){
   if(working.viewer && !visibleTargets().some(el=>el.id==='collection-viewer-art' && el.dataset.fx22Key===working.k)){working=null;pump();return;}
-  cache.set(working.k,e.data.image);
+  cache.set(working.k,{image:e.data.image,blend:e.data.blend||'screen'});
   if(cache.size>100)cache.delete(cache.keys().next().value);
-  for(const el of visibleTargets())if(el.dataset.fx22Key===working.k)place(el,e.data.image);
+  for(const el of visibleTargets())if(el.dataset.fx22Key===working.k){let layer=el.querySelector(':scope > .fx22-surface-layer');if(!layer){layer=document.createElement('span');layer.className='fx22-surface-layer';el.append(layer)}layer.dataset.fx22Blend=e.data.blend||'screen';place(el,e.data.image)}
  }
  working=null;pump();
 });
@@ -44277,7 +44277,7 @@ new MutationObserver(attach).observe(document.getElementById('modal')||document.
 #fx-trial-frame{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 auto!important;height:auto!important;min-height:240px!important;width:100%!important}
 @media(max-width:800px){#fx-trial-box{height:100%!important;max-height:100%!important}#fx-trial-bar{flex:0 0 auto!important;max-height:32dvh!important;overflow-y:auto!important}#fx-trial-frame{height:auto!important;min-height:240px!important;flex:1 1 auto!important}}
 </style><script>
-/* Ver51.24: keep installed mobile PWA current after deployment. */
+/* Ver51.25: keep installed mobile PWA current after deployment. */
 (()=>{if(!('serviceWorker' in navigator)||location.protocol==='file:')return;
 let controlled=!!navigator.serviceWorker.controller;
 navigator.serviceWorker.addEventListener('controllerchange',()=>{
@@ -44314,7 +44314,7 @@ window.addEventListener('load',async()=>{
 })();
 </script><script src="./battle_effects.js"></script>
 <script>
-/* Ver51.24: read-only storage usage diagnostics. Never modifies stored records. */
+/* Ver51.25: read-only storage usage diagnostics. Never modifies stored records. */
 (function(){
 'use strict';
 let latest=null;
@@ -44334,7 +44334,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 <script>
-/* Ver51.24 targeted, opt-in localStorage cleanup. Never touches TCG card or deck keys. */
+/* Ver51.25 targeted, opt-in localStorage cleanup. Never touches TCG card or deck keys. */
 (function(){
 'use strict';
 const $=id=>document.getElementById(id),ROOM='minkai-online-rooms-v1',ROBOT=/^robot-roguelike-(?:prototype|manager)-v[\w.\-]+$/;
@@ -44379,7 +44379,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 <script>
-/* Ver51.24: single shared card back, stored once as a Blob, never on individual cards. */
+/* Ver51.25: single shared card back, stored once as a Blob, never on individual cards. */
 (()=>{'use strict';
 const DB='minkai_tcg_shared_card_back_v490',STORE='assets',KEY='shared-back';
 let activeURL=null;
@@ -44398,7 +44398,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 <script>
-/* v51.24 follower affinity input */
+/* v51.25 follower affinity input */
 (function(){
  const sel=document.getElementById('card-type'),wrap=document.getElementById('card-affinity-wrap');
  if(!sel||!wrap)return;

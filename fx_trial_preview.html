@@ -841,7 +841,7 @@ window.addEventListener('message',async function(e){
    oc.putImageData(fallback,0,0);
    console.warn('[FX表示] 元の加工レイヤーが透明だったため光学フォールバックを表示',active.map(l=>l.id));
   }
-  e.source.postMessage({channel:'minkai-fx-collection-render',action:'result',token:m.token,cardId:m.cardId,image:out.toDataURL('image/png')},location.protocol==='file:'?'*':e.origin);
+  e.source.postMessage({channel:'minkai-fx-collection-render',action:'result',token:m.token,cardId:m.cardId,image:out.toDataURL('image/png'),blend:layers.some(l=>MK477_APPROVED.some(a=>a[0]===l.id))?'normal':'screen'},location.protocol==='file:'?'*':e.origin);
  }catch(err){e.source.postMessage({channel:'minkai-fx-collection-render',action:'error',token:m.token,cardId:m.cardId,message:String(err?.stack||err?.message||err)},location.protocol==='file:'?'*':e.origin)}
  finally{exportBusy=false}
 });
@@ -881,7 +881,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 <style id="fx522-fullscreen-style">
-#fx522-open{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);left:12px;right:12px;z-index:1000;display:block;width:calc(100% - 24px);min-height:48px;margin:0;border:1px solid #73b9f0;border-radius:12px;background:#24537b;color:white;font-weight:700;font-size:16px;cursor:pointer}
+#fx522-open{position:static;z-index:auto;display:block;width:100%;min-height:48px;margin:16px 0 10px;border:1px solid #73b9f0;border-radius:12px;background:#24537b;color:white;font-weight:700;font-size:16px;cursor:pointer}
 #fx522-overlay[hidden]{display:none!important}
 #fx522-overlay{position:fixed;inset:0;z-index:2147483000;background:#070a11;display:flex;flex-direction:column;align-items:center;box-sizing:border-box;padding:calc(env(safe-area-inset-top,0px) + 8px) 8px calc(env(safe-area-inset-bottom,0px) + 8px)}
 #fx522-head{width:100%;display:flex;justify-content:flex-end;flex:0 0 auto}
@@ -891,14 +891,14 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 #fx522-foot{flex:0 0 auto;display:flex;gap:10px;justify-content:center;width:100%;padding-top:8px}
 #fx522-foot button{flex:1 1 0;max-width:150px}
 #fx522-foot button:nth-child(2){max-width:170px}
-body.fx522-preview-open{overflow:hidden!important}
+body.fx522-preview-open{overflow:hidden!important}body.fx522-preview-open #fx522-open{display:none!important}
 </style>
 <script id="fx522-fullscreen-script">
 (()=>{'use strict';
 function setup(){
  if(document.getElementById('fx522-open'))return;
  const open=document.createElement('button');open.id='fx522-open';open.type='button';open.textContent='拡大プレビュー';
- document.body.appendChild(open);
+ (document.querySelector('.panel')||document.body).appendChild(open);
  const overlay=document.createElement('div');overlay.id='fx522-overlay';overlay.hidden=true;
  overlay.innerHTML='<div id="fx522-head"><button type="button" id="fx522-close">閉じる</button></div><div id="fx522-stage"></div><div id="fx522-foot"><button type="button" id="fx522-prev">前</button><button type="button" id="fx522-auto">自動傾斜：OFF</button><button type="button" id="fx522-next">次</button></div>';
  document.body.appendChild(overlay);
