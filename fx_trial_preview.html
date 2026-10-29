@@ -857,4 +857,68 @@ function init44(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init44,{once:true});else init44();
 })();
 </script>
+
+<style id="fx522-fullscreen-style">
+#fx522-open{display:block;width:100%;min-height:48px;margin:20px 0 12px;border:1px solid #73b9f0;border-radius:12px;background:#24537b;color:white;font-weight:700;font-size:16px;cursor:pointer}
+#fx522-overlay[hidden]{display:none!important}
+#fx522-overlay{position:fixed;inset:0;z-index:2147483000;background:#070a11;display:flex;flex-direction:column;align-items:center;box-sizing:border-box;padding:calc(env(safe-area-inset-top,0px) + 8px) 8px calc(env(safe-area-inset-bottom,0px) + 8px)}
+#fx522-head{width:100%;display:flex;justify-content:flex-end;flex:0 0 auto}
+#fx522-overlay button{min-height:44px;min-width:64px;padding:8px 12px;border:1px solid #637eaa;border-radius:10px;background:#233a59;color:white;font-size:14px;touch-action:manipulation}
+#fx522-stage{flex:1 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#fx522-stage #card{margin:0!important;max-width:100%;max-height:100%;width:auto;height:auto;aspect-ratio:256 / 372;transform-origin:center center}
+#fx522-foot{flex:0 0 auto;display:flex;gap:10px;justify-content:center;width:100%;padding-top:8px}
+#fx522-foot button{flex:1 1 0;max-width:150px}
+#fx522-foot button:nth-child(2){max-width:170px}
+body.fx522-preview-open{overflow:hidden!important}
+</style>
+<script id="fx522-fullscreen-script">
+(()=>{'use strict';
+function setup(){
+ if(document.getElementById('fx522-open'))return;
+ const open=document.createElement('button');open.id='fx522-open';open.type='button';open.textContent='拡大プレビュー';
+ document.body.appendChild(open);
+ const overlay=document.createElement('div');overlay.id='fx522-overlay';overlay.hidden=true;
+ overlay.innerHTML='<div id="fx522-head"><button type="button" id="fx522-close">閉じる</button></div><div id="fx522-stage"></div><div id="fx522-foot"><button type="button" id="fx522-prev">前</button><button type="button" id="fx522-auto">自動傾斜：OFF</button><button type="button" id="fx522-next">次</button></div>';
+ document.body.appendChild(overlay);
+ const card=document.getElementById('card');
+ const originalParent=card?.parentNode;
+ const originalNext=card?.nextSibling;
+ const stage=overlay.querySelector('#fx522-stage');
+ let wasAuto=false;
+ function resize(){
+  if(overlay.hidden||!card)return;
+  const h=stage.clientHeight,w=stage.clientWidth;
+  const width=Math.max(1,Math.min(w,h*256/372));
+  card.style.setProperty('width',width+'px','important');
+  card.style.setProperty('height',(width*372/256)+'px','important');
+ }
+ function syncAuto(){
+  const source=document.getElementById('auto');
+  const target=document.getElementById('fx522-auto');
+  target.textContent=source?.textContent||'自動傾斜';
+ }
+ function close(){
+  if(overlay.hidden)return;
+  overlay.hidden=true;document.body.classList.remove('fx522-preview-open');
+  if(card&&originalParent){
+   if(originalNext&&originalNext.parentNode===originalParent)originalParent.insertBefore(card,originalNext);
+   else originalParent.appendChild(card);
+   card.style.removeProperty('width');card.style.removeProperty('height');
+  }
+ }
+ open.addEventListener('click',()=>{
+  if(!card)return;
+  stage.appendChild(card);overlay.hidden=false;document.body.classList.add('fx522-preview-open');
+  resize();syncAuto();
+ });
+ overlay.querySelector('#fx522-close').addEventListener('click',close);
+ overlay.querySelector('#fx522-prev').addEventListener('click',()=>document.getElementById('prevfx')?.click());
+ overlay.querySelector('#fx522-next').addEventListener('click',()=>document.getElementById('nextfx')?.click());
+ overlay.querySelector('#fx522-auto').addEventListener('click',()=>{document.getElementById('auto')?.click();syncAuto()});
+ window.addEventListener('resize',resize);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!overlay.hidden)close()});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
+})();
+</script>
 </body></html>
