@@ -757,6 +757,24 @@ window.addEventListener('message',async function(e){
  exportBusy=true;const m=e.data;
  try{
   applyPreset(m.preset);
+  // Use the actual collection card artwork for image-sensitive shaders.
+  // Never reuse the editor's embedded demo artwork in collection rendering.
+  const source=typeof m.image==='string'?m.image:'';
+  if(source && /^(blob:|data:image\/|https?:)/.test(source)){
+   if(art.src!==source){
+    await new Promise((resolve,reject)=>{
+     const timeout=setTimeout(()=>reject(Error('カード画像の読み込みがタイムアウトしました')),9000);
+     art.onload=()=>{clearTimeout(timeout);art.onload=null;art.onerror=null;resolve()};
+     art.onerror=()=>{clearTimeout(timeout);art.onload=null;art.onerror=null;reject(Error('カード画像の読み込みに失敗しました'))};
+     art.src=source;
+    });
+   }
+  }else{
+   // No artwork: use a transparent image, never the embedded sample.
+   art.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="715" height="1024"/>');
+   await new Promise(resolve=>{if(art.complete)resolve();else art.addEventListener('load',resolve,{once:true})});
+  }
+  lastGeometryKey='';
   if(raf){cancelAnimationFrame(raf);raf=0;}
   tx=Math.max(-1,Math.min(1,Number(m.tiltX)||0));ty=Math.max(-1,Math.min(1,Number(m.tiltY)||0));
   // Let the normal renderer finish and keep the preview's own shader mathematics.
