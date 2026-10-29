@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v51.7</title>
+<title>みん会TCG Simulator v51.8</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20296,7 +20296,7 @@ h3 .minkai-ruby{margin-top:.45em}
 
 /* Ver40.5 usability */
 .public-browse-list-head{gap:10px;align-items:center;flex-wrap:wrap}.public-browse-list-head>.actions{margin-left:auto;align-items:center}.pk-public-search-row{align-items:stretch}.pk-public-search-row input{min-width:min(420px,100%);flex:1}.pk-public-download-list{display:grid;gap:10px}.pk-public-download-card{margin:0}.pk-public-slot-summary{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}@media(max-width:700px){.public-browse-list-head>.actions{width:100%;margin-left:0;justify-content:space-between}.public-browse-list-head #public-cards-refresh{min-height:44px}.pk-public-search-row{display:grid;grid-template-columns:1fr auto}.pk-public-search-row input{grid-column:1/-1;min-width:0}.pk-public-download-card .pk-row .btn{flex:1;min-height:44px}}
-/* Ver51.7: approved laboratory effects, transparent overlay on original artwork */
+/* Ver51.8: approved laboratory effects, transparent overlay on original artwork */
 .card-fx-layer:is(.fx-graphite-scratch-foil,.fx-phase-invert-edge,.fx-heatpress-imprint,.fx-multi-exposure-step,.fx-chromatography-paper,.fx-photochromic-exposure,.fx-uv-excitation,.fx-optical-carved-relief,.fx-shadow-carved-silhouette,.fx-risograph-misregister){background-repeat:repeat;pointer-events:none;mix-blend-mode:screen;opacity:var(--fx-o,.72)}
 .fx-graphite-scratch-foil{background:repeating-linear-gradient(173deg,transparent 0 4px,rgba(190,197,205,.25) 4.5px 5px,rgba(18,24,31,.35) 5.5px 6px,transparent 7px 15px);background-size:calc(190px * var(--fx-density-scale,1)) 100%;mix-blend-mode:soft-light!important}
 .fx-phase-invert-edge{background:repeating-conic-gradient(from 45deg at 50% 50%,rgba(210,225,250,.24) 0deg 3deg,transparent 3deg 12deg,rgba(35,48,85,.15) 12deg 14deg,transparent 14deg 24deg);background-size:calc(170px * var(--fx-density-scale,1)) calc(170px * var(--fx-density-scale,1));mix-blend-mode:difference!important;opacity:calc(var(--fx-o,.72) * .45)!important}
@@ -22051,7 +22051,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
 </style>
 <style>
 
-/* Ver51.7: progressive UX layer; original application controls remain intact. */
+/* Ver51.8: progressive UX layer; original application controls remain intact. */
 .v42-nav-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--panel2,#20242d);border:1px solid var(--line,#353b47);color:var(--text,#fff);border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:700}
 .v42-nav-panel{position:fixed;z-index:9995;top:62px;left:12px;width:min(580px,calc(100vw - 24px));max-height:calc(100dvh - 78px);overflow:auto;background:var(--panel,#171a21);color:var(--text,#fff);border:1px solid var(--line,#353b47);border-radius:14px;box-shadow:0 14px 42px #0009;padding:14px}
 .v42-nav-panel[hidden],.v42-quicklinks[hidden]{display:none!important}
@@ -22110,7 +22110,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v51.7 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v51.8 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -23953,7 +23953,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   </div>
 
   <div class="settings-maintenance-card" id="storage-cleanup-v488" style="margin-top:12px">
-    <h4>保存データの整理（Ver51.7）</h4>
+    <h4>保存データの整理（Ver51.8）</h4>
     <p class="muted">期限切れのローカルオンラインルームと、ロボットローグライクの保存データを個別に整理します。カード・デッキ・画像・IndexedDBは対象外です。進行中のオンライン対戦がないときに操作してください。</p>
     <div class="actions"><button class="btn" type="button" id="cleanup-inspect">整理対象を調べる</button><button class="btn small" type="button" id="cleanup-backup" disabled>対象データをバックアップ</button></div>
     <div id="cleanup-summary" role="status" aria-live="polite" class="muted" style="margin:8px 0"></div>
@@ -24634,7 +24634,7 @@ function cardLinksFor(card){
  return normalizeCardLinks(card?.cardLinks,card?.id);
 }
 function reconcileCardLinks(){
- // Ver51.7: unresolved references are data, not garbage. Never prune them on boot.
+ // Ver51.8: unresolved references are data, not garbage. Never prune them on boot.
  let changed=false;
  for(const c of cards){
    const before=JSON.stringify(c.cardLinks||[]);
@@ -25118,7 +25118,7 @@ __mkCardBootGate.id='mk-card-boot-gate';
 __mkCardBootGate.style.cssText='position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;background:#111827ee;color:white;font:16px sans-serif;text-align:center;padding:20px';
 __mkCardBootGate.textContent='カードデータを安全に読み込んでいます…';
 document.body.appendChild(__mkCardBootGate);
-// Ver51.7: rescue snapshots are stored separately from the live catalog.
+// Ver51.8: rescue snapshots are stored separately from the live catalog.
 // No old localStorage key is deleted or rewritten during this migration.
 async function __mkRescueSnapshotBeforeBoot(){
  const keys=[LS_CARDS,LS_DECKS,LS_COLLECTION,LS_CARD_RECENT,LS_CARD_REGISTER_RECENT];
@@ -25205,7 +25205,7 @@ async function __mkBootCardCatalog(){
   if(__mkCardPending){console.warn('[みん会TCG] 起動前のカード書き込み要求を破棄（DB保護）');__mkCardPending=null}
   // Free the old quota only after a verified IndexedDB copy exists.
   // Never remove the old data if migration or verification failed.
-  // Ver51.7: legacy catalog is retained as a recovery copy; never erase automatically.
+  // Ver51.8: legacy catalog is retained as a recovery copy; never erase automatically.
   try{renderRegisterHistory();renderRaritySuggestions();renderCards();renderCollection();renderDecks();renderSetup(true);if(board)renderBoard()}catch(e){console.warn('カード一覧の再描画:',e)}
  }catch(e){
   console.error('カードDB移行失敗（旧データは保持）',e);
@@ -25665,7 +25665,7 @@ let board=null, detailCtx=null, detailNav=null, inspectSession=null, browseSessi
 const $=(s,root=document)=>(root||document).querySelector(s), $$=(s,root=document)=>[...(root||document).querySelectorAll(s)];
 function uid(p='id'){return p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
 function load(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}}
-// Ver51.7: Storage quota errors must never abort application initialization.
+// Ver51.8: Storage quota errors must never abort application initialization.
 // Preserve existing data; do not clear or overwrite another storage key.
 var __mkStorageWarningShown=false;
 function __mkStorageWarning(k,err){
@@ -25683,7 +25683,7 @@ function __mkStorageWarning(k,err){
  };
  if(document.body)notify();else document.addEventListener('DOMContentLoaded',notify,{once:true});
 }
-// Ver51.7: card catalog is persisted in IndexedDB, not the limited localStorage.
+// Ver51.8: card catalog is persisted in IndexedDB, not the limited localStorage.
 // Legacy localStorage data is kept until a verified IDB migration completes.
 var __mkCardDbPromise=null,__mkCardReady=false,__mkCardWriteChain=Promise.resolve(),__mkCardPending=null;
 function __mkOpenCardDb(){
@@ -25703,7 +25703,7 @@ async function __mkCardDbSet(value){const db=await __mkOpenCardDb();return new P
  const tx=db.transaction('catalog','readwrite');tx.objectStore('catalog').put(value,'cards');
  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('カードDB保存中断'));
 })}
-// Ver51.7: durable, restart-safe journal for JSON restoration critical stores.
+// Ver51.8: durable, restart-safe journal for JSON restoration critical stores.
 // An interrupted restore is rolled back before the card catalog is exposed.
 const __mkRestoreJournalKey='restore_journal_v509';
 async function __mkJournalRead(){const db=await __mkOpenCardDb();return new Promise((resolve,reject)=>{const req=db.transaction('catalog','readonly').objectStore('catalog').get(__mkRestoreJournalKey);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
@@ -26637,7 +26637,7 @@ async function createBackgroundAssetRecord(file){
    };
  }finally{drawable.close()}
 }
-// Ver51.7: exact-source background deduplication; original bytes are hashed before resizing.
+// Ver51.8: exact-source background deduplication; original bytes are hashed before resizing.
 async function backgroundFileHash(file){
  const bytes=await file.arrayBuffer();
  const digest=await crypto.subtle.digest('SHA-256',bytes);
@@ -27846,7 +27846,7 @@ function parseFullBackupZip(bytes){
  return {manifest,backupVersion,imageRecords,links,backgroundRecords,frameRecords,frameLinks,customFxRecords,theme,settings:normalizeFullBackupSettings(manifest.settings||{})};
 }
 async function restoreFullBackupZip(parsed){
- // Ver51.7: Never mutate a live database before validating all critical references.
+ // Ver51.8: Never mutate a live database before validating all critical references.
  if(!imageSystemAvailable)throw new Error('画像ストレージを利用できないため復元を中止しました。');
  if(!parsed?.manifest?.data)throw new Error('完全バックアップの内容が不正です。');
  const data=parsed.manifest.data;
@@ -27865,7 +27865,7 @@ async function restoreFullBackupZip(parsed){
  for(const link of parsed.links||[])if(!ids.has(String(link.cardId))||!assetIds.has(String(link.imageId)))throw new Error('画像の参照先が不正です。復元は行いません。');
  // Multiple IndexedDB transactions and localStorage cannot be committed atomically.
  // Keep destructive full-ZIP restoration disabled until a durable, restart-safe recovery journal exists.
- throw new Error('Ver51.7: ZIP内の参照検査は完了しましたが、画像・カード・デッキの一括復元は安全な巻き戻し機構が未完成のため停止しています。ZIPファイルを保管してください。');
+ throw new Error('Ver51.8: ZIP内の参照検査は完了しましたが、画像・カード・デッキの一括復元は安全な巻き戻し機構が未完成のため停止しています。ZIPファイルを保管してください。');
 }
 function exportBackupObject(){
  return {
@@ -27922,7 +27922,7 @@ async function restoreBackupObject(data,opt={}){
      cardLinks:backupVersion>=7?normalizeCardLinks(raw.cardLinks,id):[]
    });
  }
- // Ver51.7 safety preflight: never silently strip deck entries during backup restoration.
+ // Ver51.8 safety preflight: never silently strip deck entries during backup restoration.
  const incomingCardIds=new Set(restoredCards.map(c=>c.id));
  const unresolved=[];
  for(const deck of data.decks){
@@ -27932,11 +27932,11 @@ async function restoreBackupObject(data,opt={}){
   }
  }
  if(unresolved.length){
-  console.warn('[Ver51.7] 復元を中止: 参照カードがバックアップにありません',unresolved.slice(0,30));
+  console.warn('[Ver51.8] 復元を中止: 参照カードがバックアップにありません',unresolved.slice(0,30));
   throw new Error('復元を中止しました。バックアップ内に定義のないカード参照が'+unresolved.length+'件あります。既存データは変更していません。');
  }
  if(data.cards.length>0&&restoredCards.length===0)throw new Error('カード定義が正常に読み取れないため復元を中止しました。');
- // Ver51.7: reject malformed and conflicting card definitions before any persistent write.
+ // Ver51.8: reject malformed and conflicting card definitions before any persistent write.
  if(restoredCards.length!==data.cards.length||usedIds.size!==data.cards.length){
   throw new Error('カード定義に欠損・重複・不正な項目があるため復元を中止しました。既存データは変更していません。');
  }
@@ -27965,14 +27965,14 @@ async function restoreBackupObject(data,opt={}){
    restoredDecks.push({id,name:String(raw.name||'名称未設定デッキ'),entries,...deckSettingsFrom(raw)});
  }
  const stagedCollection=backupVersion>=2?normalizeCollectionData(data.collection||{},validIds):normalizeCollectionData({},validIds);
- // Ver51.7: persistent rollback journal must be committed BEFORE the first write.
+ // Ver51.8: persistent rollback journal must be committed BEFORE the first write.
  await __mkBeginRestoreJournal();
  try{
    if(await save(LS_CARDS,restoredCards)===false)throw Error('カード保存失敗');
    if(save(LS_DECKS,restoredDecks)===false)throw Error('デッキ保存失敗');
    if(save(LS_COLLECTION,stagedCollection)===false)throw Error('コレクション保存失敗');
  }catch(err){
-   try{await __mkRecoverInterruptedRestore()}catch(rollbackErr){console.error('[Ver51.7] 復元ロールバック失敗。記録は保持',rollbackErr)}
+   try{await __mkRecoverInterruptedRestore()}catch(rollbackErr){console.error('[Ver51.8] 復元ロールバック失敗。記録は保持',rollbackErr)}
    throw Error('復元中の保存に失敗しました。安全記録を保持しています: '+err.message);
  }
  try{
@@ -27987,13 +27987,13 @@ async function restoreBackupObject(data,opt={}){
  collectionSource='all';collectionPage=0;
  recentCardIds=(Array.isArray(data.recentCardIds)?data.recentCardIds:[]).filter(id=>validIds.has(id)).slice(0,10);
  registeredRecentCardIds=(Array.isArray(data.registeredRecentCardIds)?data.registeredRecentCardIds:restoredCards.slice(-5).reverse().map(c=>c.id)).filter(id=>validIds.has(id)).slice(0,5);
- // Ver51.7: critical stores were committed and verified above; do not write again here.
+ // Ver51.8: critical stores were committed and verified above; do not write again here.
  if(save(LS_CARD_RECENT,recentCardIds)===false||save(LS_CARD_REGISTER_RECENT,registeredRecentCardIds)===false)throw Error("カード履歴の保存失敗");
  editingDeckId=null;workingDeck=blankWorkingDeck();board=null;detailCtx=null;detailNav=null;inspectSession=null;resetBoardHistory();
  normalizeDeckSettings();renderRegisterHistory();renderCards();renderCollection();renderDecks();renderSetup(true);
  // Clear the journal only after the complete restoration path has returned from its writes.
  }catch(err){
-   try{await __mkRecoverInterruptedRestore()}catch(rollbackErr){console.error("[Ver51.7] 復元後半の巻き戻し失敗。復旧記録を保持",rollbackErr)}
+   try{await __mkRecoverInterruptedRestore()}catch(rollbackErr){console.error("[Ver51.8] 復元後半の巻き戻し失敗。復旧記録を保持",rollbackErr)}
    throw Error("復元後半の処理に失敗しました。復旧記録を確認してください: "+err.message);
  }
  try{await __mkJournalClear()}catch(err){throw Error("復元記録の確定処理に失敗しました。再起動前にデータを保全してください: "+err.message)}
@@ -28115,7 +28115,7 @@ $('#full-backup-file-input').onchange=async e=>{
  try{
    const parsed=parseFullBackupZip(new Uint8Array(await f.arrayBuffer()));
    const cardCount=parsed.manifest.data.cards.length,deckCount=parsed.manifest.data.decks.length,imageCount=parsed.imageRecords.length,frameCount=(parsed.frameRecords||[]).length,bgCount=parsed.backgroundRecords.length;
-   // Ver51.7: provide a read-only inspection artifact before any restore operation.
+   // Ver51.8: provide a read-only inspection artifact before any restore operation.
    // This path never writes to localStorage, IndexedDB, or Supabase.
    const inspection={
      format:'minkai-full-zip-inspection',version:'50.7',inspectedAt:new Date().toISOString(),
@@ -29685,13 +29685,13 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      shell.hidden=false;
      if(!frame.getAttribute('src')){
        frame.addEventListener('load',()=>setTimeout(openSelected,0),{once:true});
-       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.7';
+       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.8';
      }else openSelected();
      return;
    }
  }
 
- // Ver51.7: Legacy editing UI is retired. Keep legacy render/data helpers for saved cards.
+ // Ver51.8: Legacy editing UI is retired. Keep legacy render/data helpers for saved cards.
  const shell=document.getElementById('fx-trial-shell');
  if(shell){shell.hidden=false;}
  const host=document.getElementById('fx-trial-box')||document.body;
@@ -34497,10 +34497,11 @@ function renderPile(pile,pi,z,index){
  const powerInfo=cardPowerParts(c,pi,z),pow=powerInfo.has?powerInfo.total:null;
  const title=`${c.name}${pile.cards.length>1?'\n重なり: '+pile.cards.map(x=>x.name).join(' → '):''}`;
  const markers=renderCardMarkers(c),sizeClass=boardNameSizeClass(c);
+ const affinityBadge=(c.type==='随行者'||c.affinity!==undefined)?`<span class="pill" style="position:absolute;right:3px;top:3px;z-index:8;font-size:10px;background:#173e57;color:#fff;pointer-events:none">好感度 ${esc(boardAffinityValue(c))}</span>`:'';
  const stackPeek='';
- if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}" data-online-anchor="${esc(String(c.instanceId||c.id||`${pi}|${z}|${index}`))}">${markers}<div class="back-title">裏向きカード</div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}${stackPeek}</div>`;
+ if(c.faceDown)return `<div class="pile face-down ${c.rested?'rested':''}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}" data-online-anchor="${esc(String(c.instanceId||c.id||`${pi}|${z}|${index}`))}">${markers}${affinityBadge}<div class="back-title">裏向きカード</div>${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}${stackPeek}</div>`;
  const imageSource=cardImageSourceId(c),art=imageSource?`<div class="card-art" data-card-art="${esc(imageSource)}"></div>`:'';
- return `<div class="pile ${sizeClass} ${c.rested?'rested':''}" data-fx-card-id="${esc(c.id)}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}" data-online-anchor="${esc(String(c.instanceId||c.id||`${pi}|${z}|${index}`))}">${art}${cardFxHtml(c,'board')}${cardDecorHtml(c,'back')}${cardFrameHtml(c)}${cardDecorHtml(c,'front')}${markers}<div class="name">${(()=>{try{return rubyTextHtml(c.name,cardRubySpec(c))}catch{return esc(c.name||'名称未設定')}})()}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div>${c.token?'<span class="pill" style="position:absolute;left:4px;bottom:4px;font-size:10px">TOKEN</span>':''}${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}${stackPeek}</div>`;
+ return `<div class="pile ${sizeClass} ${c.rested?'rested':''}" data-fx-card-id="${esc(c.id)}" draggable="true" title="${esc(title)}" data-pile="${pi}|${z}|${index}" data-online-anchor="${esc(String(c.instanceId||c.id||`${pi}|${z}|${index}`))}">${art}${cardFxHtml(c,'board')}${cardDecorHtml(c,'back')}${cardFrameHtml(c)}${cardDecorHtml(c,'front')}${markers}${affinityBadge}<div class="name">${(()=>{try{return rubyTextHtml(c.name,cardRubySpec(c))}catch{return esc(c.name||'名称未設定')}})()}</div><div class="stats"><span>Lv ${esc(cardLevelDisplay(c))}</span><span>PW ${pow===null?'-':esc(pow)}</span></div><div class="counter-line">${counters}</div>${c.token?'<span class="pill" style="position:absolute;left:4px;bottom:4px;font-size:10px">TOKEN</span>':''}${c.publicCopy?'<span class="pill" style="position:absolute;right:4px;bottom:4px;font-size:10px">COPY</span>':''}${pile.cards.length>1?`<span class="stack-badge">×${pile.cards.length}</span>`:''}${stackPeek}</div>`;
 }
 
 async function hydrateBoardImages(){
@@ -34740,6 +34741,17 @@ function closeBoardCardContextMenu(){
 function pileContextFromKey(key){const [pi,z,index]=String(key||'').split('|');const pile=getPile(Number(pi),z,Number(index));return pile?{pi:Number(pi),z,index:Number(index),pile,c:topCard(pile)}:null}
 function togglePileRestByKey(key){const x=pileContextFromKey(key);if(!x?.c)return;x.c.rested=!x.c.rested;setBoardHistoryAction(`${x.c.name||'カード'}：${x.c.rested?'レスト':'アクティブ'}`);closeBoardCardContextMenu();renderBoard();toast(x.c.rested?'レストしました':'アクティブに戻しました')}
 function togglePileFaceByKey(key){const x=pileContextFromKey(key);if(!x?.c)return;x.c.faceDown=!x.c.faceDown;setBoardHistoryAction(`${x.c.name||'カード'}：${x.c.faceDown?'裏向き':'表向き'}`);closeBoardCardContextMenu();renderBoard();toast(x.c.faceDown?'裏向きにしました':'表向きにしました')}
+function boardAffinityValue(c){
+ const current=Number(c.affinity);if(c.affinity!==undefined&&c.affinity!==null&&c.affinity!==''&&Number.isFinite(current))return current;
+ const initial=Number(c.initialAffinity);return Number.isFinite(initial)?initial:0;
+}
+function changePileAffinityByKey(key,delta){
+ const x=pileContextFromKey(key);if(!x?.c)return;
+ if(typeof onlineOpponentReadOnly==='function'&&onlineOpponentReadOnly(x.pi)){closeBoardCardContextMenu();return}
+ const c=x.c;c.affinity=boardAffinityValue(c)+delta;
+ setBoardHistoryAction(`${c.name||'カード'}：好感度 ${delta>0?'+1':'-1'}（${c.affinity}）`);
+ closeBoardCardContextMenu();renderBoard();
+}
 function quickMovePileTopByKey(key,dest){const x=pileContextFromKey(key);if(!x?.c)return;const name=x.c.name||'カード',from=boardZoneHistoryLabel(x.z),to=dest==='deckTop'?'デッキ上':dest==='deckBottom'?'デッキ下':boardZoneHistoryLabel(dest);const c=removeCardAt(x.pi,x.z,x.index,0);if(!c)return;if(dest==='deckTop')addAsPile(x.pi,'deck',c,{position:'top'});else if(dest==='deckBottom')addAsPile(x.pi,'deck',c,{position:'bottom'});else addAsPile(x.pi,dest,c);setBoardHistoryAction(`${name}：${from} → ${to}`);closeBoardCardContextMenu();renderBoard();toast(`${name} → ${to}（↶で戻せます）`)}
 function openBoardCardContextMenu(key,x,y){
  closeBoardCardContextMenu();const ctx=pileContextFromKey(key);if(!ctx?.c)return;
@@ -34747,6 +34759,7 @@ function openBoardCardContextMenu(key,x,y){
    <div class="board-card-context-section"><div class="board-card-context-label">カード操作</div><div class="board-card-context-grid">
     <button class="btn small primary" data-ctx-action="detail">詳細</button><button class="btn small" data-ctx-action="rest">${ctx.c.rested?'アクティブ':'レスト'}</button>
     <button class="btn small" data-ctx-action="face">${ctx.c.faceDown?'表向き':'裏向き'}</button><button class="btn small" data-ctx-action="counter">カウンター・メモ</button>
+    <button class="btn small" data-ctx-action="affinityPlus">好感度＋</button><button class="btn small" data-ctx-action="affinityMinus">好感度－</button>
    </div></div>
    <div class="board-card-context-section"><div class="board-card-context-label">すぐ移動</div><div class="board-card-context-grid">
     <button class="btn small" data-ctx-move="hand">手札へ</button><button class="btn small ctx-move-danger" data-ctx-move="grave">墓地へ</button>
@@ -34755,7 +34768,7 @@ function openBoardCardContextMenu(key,x,y){
    </div></div>`;
  document.body.appendChild(el);boardCardContextMenuEl=el;
  const r=el.getBoundingClientRect(),pad=8;el.style.left=`${Math.max(pad,Math.min(innerWidth-r.width-pad,x))}px`;el.style.top=`${Math.max(pad,Math.min(innerHeight-r.height-pad,y))}px`;
- el.querySelectorAll('[data-ctx-action]').forEach(b=>b.onclick=e=>{e.stopPropagation();const a=b.dataset.ctxAction;if(a==='detail'||a==='counter'){closeBoardCardContextMenu();openDetail(ctx.pi,ctx.z,ctx.index,0)}else if(a==='rest')togglePileRestByKey(key);else if(a==='face')togglePileFaceByKey(key)});
+ el.querySelectorAll('[data-ctx-action]').forEach(b=>b.onclick=e=>{e.stopPropagation();const a=b.dataset.ctxAction;if(a==='detail'||a==='counter'){closeBoardCardContextMenu();openDetail(ctx.pi,ctx.z,ctx.index,0)}else if(a==='rest')togglePileRestByKey(key);else if(a==='face')togglePileFaceByKey(key);else if(a==='affinityPlus')changePileAffinityByKey(key,1);else if(a==='affinityMinus')changePileAffinityByKey(key,-1)});
  el.querySelectorAll('[data-ctx-move]').forEach(b=>b.onclick=e=>{e.stopPropagation();quickMovePileTopByKey(key,b.dataset.ctxMove)});
  // メニュー内のpointerdownでは閉じない。外側を触った時だけ閉じる。
  boardCardContextOutsideHandler=e=>{
@@ -42184,7 +42197,7 @@ onlineHandleRoomMessage=function(msg){
  return __mkFxHandleOriginal.apply(this,arguments);
 };
 
-/* Ver51.7: share deck draft state with the separate autosave script without copying stale values. */
+/* Ver51.8: share deck draft state with the separate autosave script without copying stale values. */
 for (const [key, read, write] of [
  ['workingDeck',()=>workingDeck,v=>{workingDeck=v}],
  ['editingDeckId',()=>editingDeckId,v=>{editingDeckId=v}],
@@ -42594,7 +42607,7 @@ async function accountApplyCloudSnapshot(payload,{preserveCollectionWhenMissing=
     if(save(LS_DECKS,nextDecks)===false)throw Error('デッキ保存失敗');
     if(save(LS_COLLECTION,nextCollection)===false)throw Error('コレクション保存失敗');
   }catch(err){
-    try{await save(LS_CARDS,previousCards);save(LS_DECKS,previousDecks);save(LS_COLLECTION,previousCollection)}catch(rollbackErr){console.error('[Ver51.7] クラウド復元の巻き戻し失敗',rollbackErr)}
+    try{await save(LS_CARDS,previousCards);save(LS_DECKS,previousDecks);save(LS_COLLECTION,previousCollection)}catch(rollbackErr){console.error('[Ver51.8] クラウド復元の巻き戻し失敗',rollbackErr)}
     throw Error('クラウド復元の保存に失敗しました。退避データを削除しないでください: '+err.message);
   }
   cards=nextCards;decks=nextDecks;collectionData=nextCollection;
@@ -43838,7 +43851,7 @@ window.MinkaiOnlineEventV299={open,sync,version:VERSION,protocol:PROTOCOL};windo
 </style>
 <script>
 
-/* Ver51.7 progressive enhancement: never replaces core navigation or persistence. */
+/* Ver51.8 progressive enhancement: never replaces core navigation or persistence. */
 (()=>{'use strict';
 const ready=()=>{
  const appbar=document.querySelector('header.appbar');if(!appbar||document.getElementById('v42-nav-toggle'))return;
@@ -43887,7 +43900,7 @@ const ready=()=>{
 
 </script>
 
-<!-- Ver51.7 card effects editor launcher -->
+<!-- Ver51.8 card effects editor launcher -->
 <style>
 #fx-trial-launch[hidden]{display:none!important}
 #fx-trial-launch{width:100%;min-height:48px;font-weight:700;cursor:pointer}
@@ -43919,7 +43932,7 @@ const ready=()=>{
 }
 </style>
 <style>
-/* Ver51.7: compact editor header; card chooser expands only on demand. */
+/* Ver51.8: compact editor header; card chooser expands only on demand. */
 #fx-trial-top-actions{display:flex;gap:6px;align-items:center;justify-content:flex-end}
 #fx-trial-card-toggle{background:#283e5e;color:#fff;border:1px solid #7b98c2;padding:9px 11px;border-radius:8px;white-space:nowrap;cursor:pointer}
 #fx-trial-controls[hidden]{display:none!important}
@@ -43927,7 +43940,7 @@ const ready=()=>{
 #fx-trial-current-card{font-weight:600;color:#dbe9ff;overflow-wrap:anywhere}
 @media(max-width:640px){#fx-trial-bar{padding:7px 9px!important;gap:5px!important}#fx-trial-heading{font-size:12px!important;line-height:1.3!important}#fx-trial-top-actions{gap:5px}#fx-trial-card-toggle,#fx-trial-close{font-size:12px!important;padding:9px 8px!important;min-height:40px}#fx-trial-controls:not([hidden]){display:flex!important;max-height:35dvh;overflow-y:auto;padding:8px 0}#fx-trial-card-select{font-size:16px!important}}
 </style>
-<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定 <span id="fx-trial-current-card">｜カード未選択</span></div><div id="fx-trial-top-actions"><button type="button" id="fx-trial-card-toggle" aria-expanded="false" aria-controls="fx-trial-controls">カードを変更</button><button type="button" id="fx-trial-close">閉じる</button></div><div id="fx-trial-controls" hidden><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver51.7 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html?v=51.7"></iframe></div></div>
+<div id="fx-trial-shell" hidden role="dialog" aria-modal="true" aria-label="カード加工エディター"><div id="fx-trial-box"><div id="fx-trial-bar"><div id="fx-trial-heading">カード加工設定 <span id="fx-trial-current-card">｜カード未選択</span></div><div id="fx-trial-top-actions"><button type="button" id="fx-trial-card-toggle" aria-expanded="false" aria-controls="fx-trial-controls">カードを変更</button><button type="button" id="fx-trial-close">閉じる</button></div><div id="fx-trial-controls" hidden><label for="fx-trial-card-select">カード選択 <select id="fx-trial-card-select" aria-label="加工するカードを選択"></select></label><button type="button" id="fx-trial-reload">再読込</button><span id="fx-trial-status" role="status" aria-live="polite"></span></div></div><iframe id="fx-trial-frame" title="Ver51.8 カード加工エディター" loading="lazy" data-src="./fx_trial_preview.html?v=51.8"></iframe></div></div>
 <script>
 (function(){
  const controls=document.getElementById('fx-trial-controls'),toggle=document.getElementById('fx-trial-card-toggle'),select=document.getElementById('fx-trial-card-select'),current=document.getElementById('fx-trial-current-card');
@@ -43948,7 +43961,7 @@ const launch=document.getElementById('fx-trial-launch'),shell=document.getElemen
 function fxRecovery(message){
  let n=document.getElementById('fx-trial-load-error');if(!n){n=document.createElement('div');n.id='fx-trial-load-error';n.setAttribute('role','alert');n.style.cssText='padding:12px;background:#352620;color:white;border:1px solid #b98a58;border-radius:8px;margin:8px';shell.querySelector('#fx-trial-box').append(n)}
  n.hidden=false;n.replaceChildren();const t=document.createElement('span');t.textContent=message+' 保存済みのカードデータは変更されていません。';n.append(t);
- const retry=document.createElement('button');retry.textContent='エディターを再読込';retry.style.marginLeft='12px';retry.onclick=()=>{n.hidden=true;frame.src='./fx_trial_preview.html?v=51.7&retry='+Date.now()};n.append(retry);
+ const retry=document.createElement('button');retry.textContent='エディターを再読込';retry.style.marginLeft='12px';retry.onclick=()=>{n.hidden=true;frame.src='./fx_trial_preview.html?v=51.8&retry='+Date.now()};n.append(retry);
 }
 frame.addEventListener('error',()=>fxRecovery('加工エディターの読込に失敗しました。'));
 frame.addEventListener('load',()=>{try{if(!frame.contentDocument?.getElementById('type'))fxRecovery('加工エディターの内容が不完全です。');else{const n=document.getElementById('fx-trial-load-error');if(n)n.hidden=true}}catch{fxRecovery('加工エディターを確認できません。')}});
@@ -44016,7 +44029,7 @@ function ensureFrame(){
  if(frame)return;
  frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
- frame.src='./fx_trial_preview.html?v=51.7';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
+ frame.src='./fx_trial_preview.html?v=51.8';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
 }
 function place(el,url){
  if(!el.isConnected)return;
@@ -44186,7 +44199,7 @@ new MutationObserver(attach).observe(document.getElementById('modal')||document.
 #fx-trial-frame{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 auto!important;height:auto!important;min-height:240px!important;width:100%!important}
 @media(max-width:800px){#fx-trial-box{height:100%!important;max-height:100%!important}#fx-trial-bar{flex:0 0 auto!important;max-height:32dvh!important;overflow-y:auto!important}#fx-trial-frame{height:auto!important;min-height:240px!important;flex:1 1 auto!important}}
 </style><script>
-/* Ver51.7: keep installed mobile PWA current after deployment. */
+/* Ver51.8: keep installed mobile PWA current after deployment. */
 (()=>{if(!('serviceWorker' in navigator)||location.protocol==='file:')return;
 let controlled=!!navigator.serviceWorker.controller;
 navigator.serviceWorker.addEventListener('controllerchange',()=>{
@@ -44223,7 +44236,7 @@ window.addEventListener('load',async()=>{
 })();
 </script><script src="./battle_effects.js"></script>
 <script>
-/* Ver51.7: read-only storage usage diagnostics. Never modifies stored records. */
+/* Ver51.8: read-only storage usage diagnostics. Never modifies stored records. */
 (function(){
 'use strict';
 let latest=null;
@@ -44243,7 +44256,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 <script>
-/* Ver51.7 targeted, opt-in localStorage cleanup. Never touches TCG card or deck keys. */
+/* Ver51.8 targeted, opt-in localStorage cleanup. Never touches TCG card or deck keys. */
 (function(){
 'use strict';
 const $=id=>document.getElementById(id),ROOM='minkai-online-rooms-v1',ROBOT=/^robot-roguelike-(?:prototype|manager)-v[\w.\-]+$/;
@@ -44288,7 +44301,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 <script>
-/* Ver51.7: single shared card back, stored once as a Blob, never on individual cards. */
+/* Ver51.8: single shared card back, stored once as a Blob, never on individual cards. */
 (()=>{'use strict';
 const DB='minkai_tcg_shared_card_back_v490',STORE='assets',KEY='shared-back';
 let activeURL=null;
@@ -44307,7 +44320,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 <script>
-/* v51.7 follower affinity input */
+/* v51.8 follower affinity input */
 (function(){
  const sel=document.getElementById('card-type'),wrap=document.getElementById('card-affinity-wrap');
  if(!sel||!wrap)return;
