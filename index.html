@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v51.34</title>
+<title>みん会TCG Simulator v51.35</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22162,7 +22162,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v51.34 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v51.35 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22268,11 +22268,12 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
                 <option value="duelist-still">デュエリスト（静止画）</option>
                 <option value="duelist-video">デュエリスト（動画）</option>
                 <option value="custom">自分の画像</option>
+                <option value="custom-video">自分の動画</option>
               </select>
             </label>
             <div id="tachie-custom-box" hidden>
-              <div class="actions"><label class="btn small" for="tachie-custom-file">画像を選ぶ</label><input id="tachie-custom-file" type="file" accept="image/*" hidden><button class="btn small" id="tachie-custom-clear" type="button">削除</button></div>
-              <div class="muted" style="font-size:12px;margin-top:4px">正方形に切り取って、相手の画面にも送ります（静止画のみ）。</div>
+              <div class="actions"><label class="btn small" id="tachie-custom-pick-label" for="tachie-custom-file">画像を選ぶ</label><input id="tachie-custom-file" type="file" accept="image/*" hidden><button class="btn small" id="tachie-custom-clear" type="button">削除</button></div>
+              <div class="muted" id="tachie-custom-note" style="font-size:12px;margin-top:4px">正方形に切り取って、相手の画面にも送ります（静止画のみ）。</div>
             </div>
             <div class="muted" style="font-size:12px;margin-top:4px">対戦画面にキャラクター小窓を表示します。相手がONにしている場合は、相手の小窓も表示されます。</div>
           </div>
@@ -29771,7 +29772,7 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      shell.hidden=false;
      if(!frame.getAttribute('src')){
        frame.addEventListener('load',()=>setTimeout(openSelected,0),{once:true});
-       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.34';
+       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.35';
      }else openSelected();
      return;
    }
@@ -44120,7 +44121,7 @@ if(!collection||!manager||!board)return;
 let frame=null,ready=false,working=null,seq=0,queue=[],scanPending=false;
 const cache=new Map(),queued=new Set();
 function getCard(id){try{return window.__fxCollectionGetCard?.(id)||null}catch{return null}}
-function keyFor(card){return '51.34|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
+function keyFor(card){return '51.35|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
 function angleFor(el){return el.id==='collection-viewer-art'?{x:Number(el.dataset.fx22TiltX)||0,y:Number(el.dataset.fx22TiltY)||0}:{x:0,y:0}}
 function renderKey(card,el){const a=angleFor(el);const img=el.querySelector('img');const bg=getComputedStyle(el).backgroundImage;const imageKey=img?.currentSrc||img?.src||(bg&&bg!=='none'?bg:'');return keyFor(card)+'|img:'+imageKey+(el.id==='collection-viewer-art'?'|viewer|'+a.x.toFixed(2)+'|'+a.y.toFixed(2):'')}
 
@@ -44141,7 +44142,7 @@ function ensureFrame(){
  if(frame)return;
  frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
- frame.src='./fx_trial_preview.html?v=51.34';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
+ frame.src='./fx_trial_preview.html?v=51.35';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
 }
 const fx22DimsCache=new Map(),fx22DimsPending=new Set();
 function fx22BgUrl(el){
@@ -44488,21 +44489,31 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 <style id="fx523-parent-fullscreen">#fx-trial-shell.fx523-fullscreen{z-index:2147483000!important;inset:0!important;padding:0!important;background:#070a11!important}#fx-trial-shell.fx523-fullscreen #fx-trial-box{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important}#fx-trial-shell.fx523-fullscreen #fx-trial-bar{display:none!important}#fx-trial-shell.fx523-fullscreen #fx-trial-frame{width:100%!important;height:100dvh!important;max-height:none!important;border:0!important}</style><script id="fx523-parent-fullscreen-script">window.addEventListener('message',function(e){const f=document.getElementById('fx-trial-frame');if(!f||e.source!==f.contentWindow||e.data?.channel!=='fx523-fullscreen')return;document.getElementById('fx-trial-shell')?.classList.toggle('fx523-fullscreen',!!e.data.open)});</script>
 <script>
-/* Ver51.34: キャラクターウィンド（第4段階：自分の画像を持ち込み、相手にも送れる） */
+/* Ver51.35: キャラクターウィンド（自分の動画も持ち込み対応。動画は分割送信で相手にも送る） */
 (function(){
  'use strict';
  var LS='minkai_tcg_tachie_v01';
- var state={enabled:false,preset:'duelist-still',customImg:'',customVer:0,wins:{own:{x:null,y:null,w:170,mini:true},opp:{x:null,y:null,w:170,mini:true}}};
+ var state={enabled:false,preset:'duelist-still',customImg:'',customVer:0,customVidVer:0,wins:{own:{x:null,y:null,w:170,mini:true},opp:{x:null,y:null,w:170,mini:true}}};
  try{var s=JSON.parse(localStorage.getItem(LS)||'null');
    if(s&&typeof s==='object'){
      state.enabled=!!s.enabled;
      if(typeof s.customImg==='string')state.customImg=s.customImg;
      state.customVer=Number(s.customVer||0);
+     state.customVidVer=Number(s.customVidVer||0);
      state.preset=(s.preset==='nia-still'?'duelist-still':s.preset==='nia-video'?'duelist-video':s.preset)||'duelist-still';
      var wsrc=s.wins||(s.win?{own:s.win}:null);
      if(wsrc){if(wsrc.own)state.wins.own=Object.assign(state.wins.own,wsrc.own);if(wsrc.opp)state.wins.opp=Object.assign(state.wins.opp,wsrc.opp)}
    }}catch(e){}
  var closed={own:false,opp:false},assetsLoading=false;
+ var customVidUrl='';
+ function idbOpen(){return new Promise(function(res,rej){try{var r=indexedDB.open('minkai-tachie',1);r.onupgradeneeded=function(){r.result.createObjectStore('media')};r.onsuccess=function(){res(r.result)};r.onerror=function(){rej(r.error)}}catch(e){rej(e)}})}
+ function idbSet(k,v){return idbOpen().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('media','readwrite');tx.objectStore('media').put(v,k);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})}
+ function idbGet(k){return idbOpen().then(function(db){return new Promise(function(res,rej){var rq=db.transaction('media').objectStore('media').get(k);rq.onsuccess=function(){res(rq.result)};rq.onerror=function(){rej(rq.error)}})})}
+ function loadCustomVid(){if(!state.customVidVer)return;idbGet('customVideo').then(function(v){if(v&&v.url){customVidUrl=v.url;if(wins.own)setMedia(wins.own,state.preset,mediaDataFor('own'))}}).catch(function(){})}
+ function mediaDataFor(key){
+   if(key==='own')return state.preset==='custom'?state.customImg:state.preset==='custom-video'?customVidUrl:'';
+   return '';
+ }
  var wins={};
  function save(){try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}}
  function ensureAssets(cb){
@@ -44524,6 +44535,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  +'.tachie-win .t-body{position:relative;aspect-ratio:1/1;overflow:hidden;background:#0c1118;cursor:grab}'
  +'.tachie-win .t-bob{position:absolute;inset:0;transform-origin:50% 100%}'
  +'.tachie-win img.t-media{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}'
+ +'.tachie-win video.t-media{width:100%;height:100%;object-fit:cover;object-position:50% 18%;pointer-events:none}'
  +'.tachie-win.mini{width:84px !important}'
  +'.tachie-win.mini .t-chip{display:none}'
  +'@keyframes t-idle{0%,100%{transform:rotate(-1.1deg) translateY(0)}50%{transform:rotate(1.1deg) translateY(-3px)}}'
@@ -44550,10 +44562,10 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    var ws=state.wins[key];
    var el=document.createElement('div');el.className='tachie-win';el.id='tachie-win-'+key;
    el.innerHTML='<div class="t-bar"><span class="t-dot" style="background:'+dotColor+'"></span><span class="t-chip">'+chip+'</span><button class="t-close" type="button">閉じる</button><button class="t-minbtn" type="button" title="縮小／拡大">－</button></div>'
-     +'<div class="t-body"><div class="t-bob t-idle"><img class="t-media" alt=""></div>'
+     +'<div class="t-body"><div class="t-bob t-idle"><img class="t-media" alt=""><video class="t-media" style="display:none" muted loop autoplay playsinline disablepictureinpicture></video></div>'
      +'<span class="t-spark" style="top:4px;left:8px">✦</span><span class="t-spark" style="top:22px;right:6px">✦</span></div>';
    document.body.appendChild(el);
-   var w={el:el,bob:el.querySelector('.t-bob'),media:el.querySelector('.t-media'),preset:null};
+   var w={el:el,bob:el.querySelector('.t-bob'),media:el.querySelector('img.t-media'),vid:el.querySelector('video.t-media'),preset:null};
    wins[key]=w;
    if(ws.w)el.style.width=ws.w+'px';
    if(ws.x!=null){el.style.left=ws.x+'px';el.style.top=ws.y+'px'}
@@ -44583,13 +44595,21 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    if(isNaN(x)||isNaN(y))return;x=Math.max(0,Math.min(x,innerWidth-r.width));y=Math.max(0,Math.min(y,innerHeight-r.height));
    el.style.left=x+'px';el.style.top=y+'px';state.wins[key].x=x;state.wins[key].y=y}
  function setMedia(w,preset,imgData){
-   var key=preset==='custom'?('custom:'+(imgData?imgData.length:0)+':'+String(imgData||'').slice(-12)):preset;
+   var key=(preset==='custom'||preset==='custom-video')?(preset+':'+(imgData?imgData.length:0)+':'+String(imgData||'').slice(-12)):preset;
    if(w.preset===key)return;
-   if(preset==='custom'){
+   if(preset==='custom'||preset==='custom-video'){
      if(!imgData)return;
-     w.preset=key;w.bob.classList.add('t-idle');w.media.src=imgData;return;
+     w.preset=key;
+     if(preset==='custom-video'){
+       w.bob.classList.remove('t-idle');w.media.style.display='none';w.vid.style.display='block';
+       w.vid.src=imgData;var pr=w.vid.play&&w.vid.play();if(pr&&pr.catch)pr.catch(function(){});
+     }else{
+       w.vid.style.display='none';w.media.style.display='block';w.bob.classList.add('t-idle');w.media.src=imgData;
+     }
+     return;
    }
    if(!window.TACHIE_ASSETS)return;w.preset=key;
+   w.vid.style.display='none';w.media.style.display='block';
    if(preset==='duelist-video'){w.bob.classList.remove('t-idle');w.media.src=window.TACHIE_ASSETS.video}
    else{w.media.src=window.TACHIE_ASSETS.still;w.bob.classList.add('t-idle')}
  }
@@ -44618,7 +44638,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  function myPayload(){
    var st=fxState();if(!st)return null;
    return {code:String(st.joinCode||'').trim().toUpperCase(),from:String(st.clientId||''),slot:Number(st.playerSlot||0),
-     enabled:!!state.enabled,preset:state.preset,customVer:state.preset==='custom'?state.customVer:0};
+     enabled:!!state.enabled,preset:state.preset,customVer:state.preset==='custom'?state.customVer:state.preset==='custom-video'?state.customVidVer:0};
  }
  function sendState(){
    var p=myPayload();if(!p||!p.code)return;
@@ -44641,7 +44661,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    if(['jump','spin','flinch','slump','shine'].indexOf(p.act)<0)return;
    actOn('opp',p.act);
  }
- var peersImg={}; // slot -> {ver,img}
+ var peersMedia={}; // slot -> {ver,kind,data}
  var servedTo={}; // clientId -> ver
  function sendImg(){
    var st=fxState();if(!st||!state.customImg)return;
@@ -44662,28 +44682,64 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    var st=fxState();if(!st)return;
    if(String(p.from||'')===String(st.clientId||''))return;
    var slot=Number(p.slot||0);if(slot!==1&&slot!==2)return;
-   peersImg[slot]={ver:Number(p.ver||0),img:String(p.img)};
+   peersMedia[slot]={ver:Number(p.ver||0),kind:'custom',data:String(p.img)};
    sync();
+ }
+ var vidRx={}; // slot -> {ver,total,parts:[]}
+ function sendRaw(event,payload){
+   if(net.ready&&net.channel){try{net.channel.send({type:'broadcast',event:event,payload:payload})}catch(e){}}
+   if(net.bc){try{net.bc.postMessage({kind:event,payload:payload})}catch(e){}}
+ }
+ function sendVid(){
+   var st=fxState();if(!st||!customVidUrl)return;
+   var base={code:String(st.joinCode||'').trim().toUpperCase(),from:String(st.clientId||''),slot:Number(st.playerSlot||0),ver:state.customVidVer};
+   var CH=120000,total=Math.ceil(customVidUrl.length/CH);
+   sendRaw('tachie-vid-meta',Object.assign({},base,{total:total,size:customVidUrl.length}));
+   var i=0;
+   function step(){
+     if(i>=total)return;
+     sendRaw('tachie-vid-chunk',Object.assign({},base,{i:i,data:customVidUrl.slice(i*CH,(i+1)*CH)}));
+     i++;setTimeout(step,40);
+   }
+   setTimeout(step,60);
+ }
+ function receiveVidMeta(p){
+   if(!p)return;var st=fxState();if(!st)return;
+   if(String(p.from||'')===String(st.clientId||''))return;
+   var slot=Number(p.slot||0);if(slot!==1&&slot!==2)return;
+   vidRx[slot]={ver:Number(p.ver||0),total:Number(p.total||0),parts:new Array(Number(p.total||0)),got:0};
+ }
+ function receiveVidChunk(p){
+   if(!p)return;var st=fxState();if(!st)return;
+   if(String(p.from||'')===String(st.clientId||''))return;
+   var slot=Number(p.slot||0);var rx=vidRx[slot];if(!rx||rx.ver!==Number(p.ver||0))return;
+   if(rx.parts[p.i]===undefined){rx.parts[p.i]=String(p.data||'');rx.got++}
+   if(rx.got>=rx.total&&rx.total>0){
+     peersMedia[slot]={ver:rx.ver,kind:'custom-video',data:rx.parts.join('')};
+     delete vidRx[slot];sync();
+   }
  }
  function receiveImgRequest(p){
    if(!p)return;
    var st=fxState();if(!st)return;
    if(String(p.targetFrom||'')!==String(st.clientId||''))return;
    if(state.preset==='custom'&&state.customImg)sendImg();
+   else if(state.preset==='custom-video'&&customVidUrl)sendVid();
  }
  function receiveState(p){
    if(!p)return;
    var st=fxState();if(!st)return;
    if(String(p.from||'')===String(st.clientId||''))return;
    var slot=Number(p.slot||0);if(slot!==1&&slot!==2)return;
-   peers[slot]={enabled:!!p.enabled,preset:(p.preset==='duelist-video'?'duelist-video':p.preset==='custom'?'custom':'duelist-still'),customVer:Number(p.customVer||0),from:String(p.from||''),at:Date.now()};
-   if(peers[slot].preset==='custom'&&peers[slot].enabled){
-     var have=peersImg[slot];
-     if(!have||have.ver!==peers[slot].customVer)sendImgRequest(p.from);
+   peers[slot]={enabled:!!p.enabled,preset:(p.preset==='duelist-video'?'duelist-video':p.preset==='custom'?'custom':p.preset==='custom-video'?'custom-video':'duelist-still'),customVer:Number(p.customVer||0),from:String(p.from||''),at:Date.now()};
+   if((peers[slot].preset==='custom'||peers[slot].preset==='custom-video')&&peers[slot].enabled){
+     var have=peersMedia[slot];
+     if(!have||have.ver!==peers[slot].customVer||have.kind!==peers[slot].preset)sendImgRequest(p.from);
    }
-   if(state.preset==='custom'&&state.customImg&&state.enabled){
+   if(state.enabled&&(state.preset==='custom'&&state.customImg||state.preset==='custom-video'&&customVidUrl)){
      var fid=String(p.from||'');
-     if(servedTo[fid]!==state.customVer){servedTo[fid]=state.customVer;sendImg()}
+     var myVer=state.preset==='custom'?state.customVer:state.customVidVer;
+     if(servedTo[fid]!==myVer){servedTo[fid]=myVer;if(state.preset==='custom')sendImg();else sendVid()}
    }
    sync();
  }
@@ -44705,6 +44761,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
          ch.on('broadcast',{event:'tachie-act'},function(m){receiveAct(m&&m.payload)});
          ch.on('broadcast',{event:'tachie-img'},function(m){receiveImg(m&&m.payload)});
          ch.on('broadcast',{event:'tachie-img-request'},function(m){receiveImgRequest(m&&m.payload)});
+         ch.on('broadcast',{event:'tachie-vid-meta'},function(m){receiveVidMeta(m&&m.payload)});
+         ch.on('broadcast',{event:'tachie-vid-chunk'},function(m){receiveVidChunk(m&&m.payload)});
          ch.subscribe(function(status){if(status==='SUBSCRIBED'){net.ready=true;sendState()}});
        }).catch(function(){if(net.topic===topic)net.topic=''});
      }
@@ -44715,7 +44773,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
      net.bcTopic=wantBc;
      if(wantBc&&window.BroadcastChannel){
        net.bc=new BroadcastChannel(wantBc);
-       net.bc.onmessage=function(ev){if(!ev.data)return;if(ev.data.kind==='tachie-state')receiveState(ev.data.payload);else if(ev.data.kind==='tachie-act')receiveAct(ev.data.payload);else if(ev.data.kind==='tachie-img')receiveImg(ev.data.payload);else if(ev.data.kind==='tachie-img-request')receiveImgRequest(ev.data.payload)};
+       net.bc.onmessage=function(ev){if(!ev.data)return;if(ev.data.kind==='tachie-state')receiveState(ev.data.payload);else if(ev.data.kind==='tachie-act')receiveAct(ev.data.payload);else if(ev.data.kind==='tachie-img')receiveImg(ev.data.payload);else if(ev.data.kind==='tachie-img-request')receiveImgRequest(ev.data.payload);else if(ev.data.kind==='tachie-vid-meta')receiveVidMeta(ev.data.payload);else if(ev.data.kind==='tachie-vid-chunk')receiveVidChunk(ev.data.payload)};
        sendState();
      }
    }
@@ -44733,7 +44791,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    var showBase=dv&&state.enabled;
    // 自分の窓（観戦者は無し）
    if(showBase&&(mySlot===1||mySlot===2)){
-     ensureAssets(function(){var w=makeWin('own','自分','#7ee2a8',{right:'16px',bottom:'16px'});setMedia(w,state.preset,state.customImg);w.el.classList.toggle('show',!closed.own)});
+     ensureAssets(function(){var w=makeWin('own','自分','#7ee2a8',{right:'16px',bottom:'16px'});setMedia(w,state.preset,mediaDataFor('own'));w.el.classList.toggle('show',!closed.own)});
    }else if(wins.own)wins.own.el.classList.remove('show');
    // 相手の窓（プレイヤーは相手、観戦者は両者。ここでは非自分スロット分）
    var now=Date.now();
@@ -44741,7 +44799,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    var peer=oppSlot?peers[oppSlot]:null;
    var peerFresh=peer&&(now-peer.at<20000);
    if(showBase&&peerFresh&&peer.enabled){
-     ensureAssets(function(){var w=makeWin('opp','相手','#ffb066',{left:'12px',top:'64px'});setMedia(w,peer.preset,peer.preset==='custom'?(peersImg[oppSlot]||{}).img:'');w.el.classList.toggle('show',!closed.opp)});
+     ensureAssets(function(){var w=makeWin('opp','相手','#ffb066',{left:'12px',top:'64px'});setMedia(w,peer.preset,(peer.preset==='custom'||peer.preset==='custom-video')?(peersMedia[oppSlot]||{}).data:'');w.el.classList.toggle('show',!closed.opp)});
    }else if(wins.opp)wins.opp.el.classList.remove('show');
  }
  function actOn(key,name){
@@ -44750,7 +44808,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    w.bob.classList.remove('t-idle','t-act-jump','t-act-spin','t-act-flinch','t-act-slump','t-act-shine');
    void w.bob.offsetWidth;w.bob.classList.add('t-act-'+name);
    if(name==='shine')w.el.querySelectorAll('.t-spark').forEach(function(s){s.classList.remove('go');void s.offsetWidth;s.classList.add('go')});
-   setTimeout(function(){w.bob.classList.remove('t-act-'+name);if(preset!=='duelist-video')w.bob.classList.add('t-idle')},name==='slump'?1500:1000);
+   setTimeout(function(){w.bob.classList.remove('t-act-'+name);if(preset!=='duelist-video'&&preset!=='custom-video')w.bob.classList.add('t-idle')},name==='slump'?1500:1000);
  }
  function act(name){actOn('own',name);sendAct(name)}
 
@@ -44827,9 +44885,31 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    off.addEventListener('click',function(){state.enabled=false;save();paint();sendState();sync()});
    if(sel)sel.addEventListener('change',function(){state.preset=sel.value;save();sendState();if(wins.own)setMedia(wins.own,state.preset,state.customImg);paintCustom()});
    var box=document.getElementById('tachie-custom-box'),fileInp=document.getElementById('tachie-custom-file'),clr=document.getElementById('tachie-custom-clear');
-   function paintCustom(){if(box)box.hidden=state.preset!=='custom'}
+   var pickLabel=document.getElementById('tachie-custom-pick-label'),note=document.getElementById('tachie-custom-note');
+   function paintCustom(){
+     if(!box)return;
+     var isVid=state.preset==='custom-video';
+     box.hidden=!(state.preset==='custom'||isVid);
+     if(fileInp)fileInp.accept=isVid?'video/*':'image/*';
+     if(pickLabel)pickLabel.textContent=isVid?'動画を選ぶ':'画像を選ぶ';
+     if(note)note.textContent=isVid?'短い動画（8MBまで）をそのまま相手にも送ります。':'正方形に切り取って、相手の画面にも送ります（静止画のみ）。';
+   }
    if(fileInp)fileInp.addEventListener('change',function(){
      var f=fileInp.files&&fileInp.files[0];if(!f)return;
+     if(f.type.indexOf('video/')===0){
+       if(f.size>8*1024*1024){if(note)note.textContent='動画が大きすぎます（8MBまで）。短く切り取ってください。';fileInp.value='';return}
+       var rd=new FileReader();
+       rd.onload=function(){
+         customVidUrl=String(rd.result||'');
+         state.customVidVer=Date.now();servedTo={};
+         idbSet('customVideo',{url:customVidUrl,ver:state.customVidVer}).catch(function(){});
+         save();sendState();sendVid();
+         if(wins.own)setMedia(wins.own,state.preset,mediaDataFor('own'));
+         fileInp.value='';
+       };
+       rd.readAsDataURL(f);
+       return;
+     }
      var url=URL.createObjectURL(f);var img=new Image();
      img.onload=function(){
        URL.revokeObjectURL(url);
@@ -44849,12 +44929,16 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
      img.onerror=function(){URL.revokeObjectURL(url)};
      img.src=url;
    });
-   if(clr)clr.addEventListener('click',function(){state.customImg='';state.customVer=0;servedTo={};save();sendState()});
+   if(clr)clr.addEventListener('click',function(){
+     if(state.preset==='custom-video'){customVidUrl='';state.customVidVer=0;idbSet('customVideo',{url:'',ver:0}).catch(function(){});if(wins.own)wins.own.preset=null}
+     else{state.customImg='';state.customVer=0;if(wins.own)wins.own.preset=null}
+     servedTo={};save();sendState();sync();
+   });
    paintCustom();
    paint();
  }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){wireSetup();mountAsidePanel();hookOnlineTools();paintPanels();sync()});
- else{wireSetup();mountAsidePanel();hookOnlineTools();paintPanels();sync()}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){wireSetup();mountAsidePanel();hookOnlineTools();paintPanels();loadCustomVid();sync()});
+ else{wireSetup();mountAsidePanel();hookOnlineTools();paintPanels();loadCustomVid();sync()}
  var duelSec=document.getElementById('screen-online-duel');
  if(duelSec)new MutationObserver(sync).observe(duelSec,{attributes:true,attributeFilter:['class','hidden','style']});
  setInterval(sync,1200);
