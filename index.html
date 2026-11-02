@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v51.33</title>
+<title>みん会TCG Simulator v51.34</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22162,7 +22162,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v51.33 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v51.34 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22267,8 +22267,13 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
               <select id="tachie-preset-select">
                 <option value="duelist-still">デュエリスト（静止画）</option>
                 <option value="duelist-video">デュエリスト（動画）</option>
+                <option value="custom">自分の画像</option>
               </select>
             </label>
+            <div id="tachie-custom-box" hidden>
+              <div class="actions"><label class="btn small" for="tachie-custom-file">画像を選ぶ</label><input id="tachie-custom-file" type="file" accept="image/*" hidden><button class="btn small" id="tachie-custom-clear" type="button">削除</button></div>
+              <div class="muted" style="font-size:12px;margin-top:4px">正方形に切り取って、相手の画面にも送ります（静止画のみ）。</div>
+            </div>
             <div class="muted" style="font-size:12px;margin-top:4px">対戦画面にキャラクター小窓を表示します。相手がONにしている場合は、相手の小窓も表示されます。</div>
           </div>
         </div>
@@ -29766,7 +29771,7 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      shell.hidden=false;
      if(!frame.getAttribute('src')){
        frame.addEventListener('load',()=>setTimeout(openSelected,0),{once:true});
-       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.33';
+       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.34';
      }else openSelected();
      return;
    }
@@ -44115,7 +44120,7 @@ if(!collection||!manager||!board)return;
 let frame=null,ready=false,working=null,seq=0,queue=[],scanPending=false;
 const cache=new Map(),queued=new Set();
 function getCard(id){try{return window.__fxCollectionGetCard?.(id)||null}catch{return null}}
-function keyFor(card){return '51.33|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
+function keyFor(card){return '51.34|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
 function angleFor(el){return el.id==='collection-viewer-art'?{x:Number(el.dataset.fx22TiltX)||0,y:Number(el.dataset.fx22TiltY)||0}:{x:0,y:0}}
 function renderKey(card,el){const a=angleFor(el);const img=el.querySelector('img');const bg=getComputedStyle(el).backgroundImage;const imageKey=img?.currentSrc||img?.src||(bg&&bg!=='none'?bg:'');return keyFor(card)+'|img:'+imageKey+(el.id==='collection-viewer-art'?'|viewer|'+a.x.toFixed(2)+'|'+a.y.toFixed(2):'')}
 
@@ -44136,7 +44141,7 @@ function ensureFrame(){
  if(frame)return;
  frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
- frame.src='./fx_trial_preview.html?v=51.33';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
+ frame.src='./fx_trial_preview.html?v=51.34';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
 }
 const fx22DimsCache=new Map(),fx22DimsPending=new Set();
 function fx22BgUrl(el){
@@ -44483,14 +44488,16 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 <style id="fx523-parent-fullscreen">#fx-trial-shell.fx523-fullscreen{z-index:2147483000!important;inset:0!important;padding:0!important;background:#070a11!important}#fx-trial-shell.fx523-fullscreen #fx-trial-box{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important}#fx-trial-shell.fx523-fullscreen #fx-trial-bar{display:none!important}#fx-trial-shell.fx523-fullscreen #fx-trial-frame{width:100%!important;height:100dvh!important;max-height:none!important;border:0!important}</style><script id="fx523-parent-fullscreen-script">window.addEventListener('message',function(e){const f=document.getElementById('fx-trial-frame');if(!f||e.source!==f.contentWindow||e.data?.channel!=='fx523-fullscreen')return;document.getElementById('fx-trial-shell')?.classList.toggle('fx523-fullscreen',!!e.data.open)});</script>
 <script>
-/* Ver51.33: キャラクターウィンド（第3段階：操作ツールに操作パネルを追加し、アクションも相手と同期） */
+/* Ver51.34: キャラクターウィンド（第4段階：自分の画像を持ち込み、相手にも送れる） */
 (function(){
  'use strict';
  var LS='minkai_tcg_tachie_v01';
- var state={enabled:false,preset:'duelist-still',wins:{own:{x:null,y:null,w:170,mini:true},opp:{x:null,y:null,w:170,mini:true}}};
+ var state={enabled:false,preset:'duelist-still',customImg:'',customVer:0,wins:{own:{x:null,y:null,w:170,mini:true},opp:{x:null,y:null,w:170,mini:true}}};
  try{var s=JSON.parse(localStorage.getItem(LS)||'null');
    if(s&&typeof s==='object'){
      state.enabled=!!s.enabled;
+     if(typeof s.customImg==='string')state.customImg=s.customImg;
+     state.customVer=Number(s.customVer||0);
      state.preset=(s.preset==='nia-still'?'duelist-still':s.preset==='nia-video'?'duelist-video':s.preset)||'duelist-still';
      var wsrc=s.wins||(s.win?{own:s.win}:null);
      if(wsrc){if(wsrc.own)state.wins.own=Object.assign(state.wins.own,wsrc.own);if(wsrc.opp)state.wins.opp=Object.assign(state.wins.opp,wsrc.opp)}
@@ -44575,8 +44582,14 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  function clampWin(key){var w=wins[key];if(!w)return;var el=w.el;var r=el.getBoundingClientRect();var x=parseFloat(el.style.left),y=parseFloat(el.style.top);
    if(isNaN(x)||isNaN(y))return;x=Math.max(0,Math.min(x,innerWidth-r.width));y=Math.max(0,Math.min(y,innerHeight-r.height));
    el.style.left=x+'px';el.style.top=y+'px';state.wins[key].x=x;state.wins[key].y=y}
- function setMedia(w,preset){
-   if(!window.TACHIE_ASSETS||w.preset===preset)return;w.preset=preset;
+ function setMedia(w,preset,imgData){
+   var key=preset==='custom'?('custom:'+(imgData?imgData.length:0)+':'+String(imgData||'').slice(-12)):preset;
+   if(w.preset===key)return;
+   if(preset==='custom'){
+     if(!imgData)return;
+     w.preset=key;w.bob.classList.add('t-idle');w.media.src=imgData;return;
+   }
+   if(!window.TACHIE_ASSETS)return;w.preset=key;
    if(preset==='duelist-video'){w.bob.classList.remove('t-idle');w.media.src=window.TACHIE_ASSETS.video}
    else{w.media.src=window.TACHIE_ASSETS.still;w.bob.classList.add('t-idle')}
  }
@@ -44605,7 +44618,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  function myPayload(){
    var st=fxState();if(!st)return null;
    return {code:String(st.joinCode||'').trim().toUpperCase(),from:String(st.clientId||''),slot:Number(st.playerSlot||0),
-     enabled:!!state.enabled,preset:state.preset};
+     enabled:!!state.enabled,preset:state.preset,customVer:state.preset==='custom'?state.customVer:0};
  }
  function sendState(){
    var p=myPayload();if(!p||!p.code)return;
@@ -44628,12 +44641,50 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    if(['jump','spin','flinch','slump','shine'].indexOf(p.act)<0)return;
    actOn('opp',p.act);
  }
+ var peersImg={}; // slot -> {ver,img}
+ var servedTo={}; // clientId -> ver
+ function sendImg(){
+   var st=fxState();if(!st||!state.customImg)return;
+   var p={code:String(st.joinCode||'').trim().toUpperCase(),from:String(st.clientId||''),slot:Number(st.playerSlot||0),ver:state.customVer,img:state.customImg};
+   if(!p.code)return;
+   if(net.ready&&net.channel){try{net.channel.send({type:'broadcast',event:'tachie-img',payload:p})}catch(e){}}
+   if(net.bc){try{net.bc.postMessage({kind:'tachie-img',payload:p})}catch(e){}}
+ }
+ function sendImgRequest(targetFrom){
+   var st=fxState();if(!st)return;
+   var p={code:String(st.joinCode||'').trim().toUpperCase(),from:String(st.clientId||''),slot:Number(st.playerSlot||0),targetFrom:String(targetFrom||'')};
+   if(!p.code)return;
+   if(net.ready&&net.channel){try{net.channel.send({type:'broadcast',event:'tachie-img-request',payload:p})}catch(e){}}
+   if(net.bc){try{net.bc.postMessage({kind:'tachie-img-request',payload:p})}catch(e){}}
+ }
+ function receiveImg(p){
+   if(!p||!p.img)return;
+   var st=fxState();if(!st)return;
+   if(String(p.from||'')===String(st.clientId||''))return;
+   var slot=Number(p.slot||0);if(slot!==1&&slot!==2)return;
+   peersImg[slot]={ver:Number(p.ver||0),img:String(p.img)};
+   sync();
+ }
+ function receiveImgRequest(p){
+   if(!p)return;
+   var st=fxState();if(!st)return;
+   if(String(p.targetFrom||'')!==String(st.clientId||''))return;
+   if(state.preset==='custom'&&state.customImg)sendImg();
+ }
  function receiveState(p){
    if(!p)return;
    var st=fxState();if(!st)return;
    if(String(p.from||'')===String(st.clientId||''))return;
    var slot=Number(p.slot||0);if(slot!==1&&slot!==2)return;
-   peers[slot]={enabled:!!p.enabled,preset:(p.preset==='duelist-video'?'duelist-video':'duelist-still'),at:Date.now()};
+   peers[slot]={enabled:!!p.enabled,preset:(p.preset==='duelist-video'?'duelist-video':p.preset==='custom'?'custom':'duelist-still'),customVer:Number(p.customVer||0),from:String(p.from||''),at:Date.now()};
+   if(peers[slot].preset==='custom'&&peers[slot].enabled){
+     var have=peersImg[slot];
+     if(!have||have.ver!==peers[slot].customVer)sendImgRequest(p.from);
+   }
+   if(state.preset==='custom'&&state.customImg&&state.enabled){
+     var fid=String(p.from||'');
+     if(servedTo[fid]!==state.customVer){servedTo[fid]=state.customVer;sendImg()}
+   }
    sync();
  }
  function manageChannels(){
@@ -44652,6 +44703,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
          net.channel=ch;
          ch.on('broadcast',{event:'tachie-state'},function(m){receiveState(m&&m.payload)});
          ch.on('broadcast',{event:'tachie-act'},function(m){receiveAct(m&&m.payload)});
+         ch.on('broadcast',{event:'tachie-img'},function(m){receiveImg(m&&m.payload)});
+         ch.on('broadcast',{event:'tachie-img-request'},function(m){receiveImgRequest(m&&m.payload)});
          ch.subscribe(function(status){if(status==='SUBSCRIBED'){net.ready=true;sendState()}});
        }).catch(function(){if(net.topic===topic)net.topic=''});
      }
@@ -44662,7 +44715,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
      net.bcTopic=wantBc;
      if(wantBc&&window.BroadcastChannel){
        net.bc=new BroadcastChannel(wantBc);
-       net.bc.onmessage=function(ev){if(!ev.data)return;if(ev.data.kind==='tachie-state')receiveState(ev.data.payload);else if(ev.data.kind==='tachie-act')receiveAct(ev.data.payload)};
+       net.bc.onmessage=function(ev){if(!ev.data)return;if(ev.data.kind==='tachie-state')receiveState(ev.data.payload);else if(ev.data.kind==='tachie-act')receiveAct(ev.data.payload);else if(ev.data.kind==='tachie-img')receiveImg(ev.data.payload);else if(ev.data.kind==='tachie-img-request')receiveImgRequest(ev.data.payload)};
        sendState();
      }
    }
@@ -44680,7 +44733,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    var showBase=dv&&state.enabled;
    // 自分の窓（観戦者は無し）
    if(showBase&&(mySlot===1||mySlot===2)){
-     ensureAssets(function(){var w=makeWin('own','自分','#7ee2a8',{right:'16px',bottom:'16px'});setMedia(w,state.preset);w.el.classList.toggle('show',!closed.own)});
+     ensureAssets(function(){var w=makeWin('own','自分','#7ee2a8',{right:'16px',bottom:'16px'});setMedia(w,state.preset,state.customImg);w.el.classList.toggle('show',!closed.own)});
    }else if(wins.own)wins.own.el.classList.remove('show');
    // 相手の窓（プレイヤーは相手、観戦者は両者。ここでは非自分スロット分）
    var now=Date.now();
@@ -44688,7 +44741,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    var peer=oppSlot?peers[oppSlot]:null;
    var peerFresh=peer&&(now-peer.at<20000);
    if(showBase&&peerFresh&&peer.enabled){
-     ensureAssets(function(){var w=makeWin('opp','相手','#ffb066',{left:'12px',top:'64px'});setMedia(w,peer.preset);w.el.classList.toggle('show',!closed.opp)});
+     ensureAssets(function(){var w=makeWin('opp','相手','#ffb066',{left:'12px',top:'64px'});setMedia(w,peer.preset,peer.preset==='custom'?(peersImg[oppSlot]||{}).img:'');w.el.classList.toggle('show',!closed.opp)});
    }else if(wins.opp)wins.opp.el.classList.remove('show');
  }
  function actOn(key,name){
@@ -44772,7 +44825,32 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    function paint(){on.classList.toggle('primary',state.enabled);off.classList.toggle('primary',!state.enabled);if(det)det.hidden=!state.enabled;if(sel)sel.value=state.preset}
    on.addEventListener('click',function(){state.enabled=true;save();paint();sendState();sync()});
    off.addEventListener('click',function(){state.enabled=false;save();paint();sendState();sync()});
-   if(sel)sel.addEventListener('change',function(){state.preset=sel.value;save();sendState();if(wins.own)setMedia(wins.own,state.preset)});
+   if(sel)sel.addEventListener('change',function(){state.preset=sel.value;save();sendState();if(wins.own)setMedia(wins.own,state.preset,state.customImg);paintCustom()});
+   var box=document.getElementById('tachie-custom-box'),fileInp=document.getElementById('tachie-custom-file'),clr=document.getElementById('tachie-custom-clear');
+   function paintCustom(){if(box)box.hidden=state.preset!=='custom'}
+   if(fileInp)fileInp.addEventListener('change',function(){
+     var f=fileInp.files&&fileInp.files[0];if(!f)return;
+     var url=URL.createObjectURL(f);var img=new Image();
+     img.onload=function(){
+       URL.revokeObjectURL(url);
+       function shot(px,q){
+         var cv=document.createElement('canvas');cv.width=px;cv.height=px;var cx=cv.getContext('2d');
+         var sc=Math.max(px/img.width,px/img.height);var w=img.width*sc,h=img.height*sc;
+         cx.drawImage(img,(px-w)/2,(px-h)/2,w,h);
+         return cv.toDataURL('image/webp',q);
+       }
+       var data=shot(320,0.72);
+       if(data.length>190000||data.indexOf('data:image/webp')!==0){data=shot(256,0.6);if(data.indexOf('data:image/')!==0)data=shot(256,0.6)}
+       state.customImg=data;state.customVer=Date.now();servedTo={};
+       save();sendState();sendImg();
+       if(wins.own)setMedia(wins.own,state.preset,state.customImg);
+       fileInp.value='';
+     };
+     img.onerror=function(){URL.revokeObjectURL(url)};
+     img.src=url;
+   });
+   if(clr)clr.addEventListener('click',function(){state.customImg='';state.customVer=0;servedTo={};save();sendState()});
+   paintCustom();
    paint();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){wireSetup();mountAsidePanel();hookOnlineTools();paintPanels();sync()});
