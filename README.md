@@ -1,4 +1,4 @@
-# みん会TCG Simulator Ver51.25
+# みん会TCG Simulator Ver51.26
 
 スマホ編集の作業復旧、カード登録・デッキ編集の下書き自動保存、
 オフライン起動用Service Workerを追加した完全版です。

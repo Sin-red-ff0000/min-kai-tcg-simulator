@@ -61,6 +61,12 @@
       "name": "リソグラフ版ズレ",
       "category": "選考ラボ採用10種",
       "renderer": "mk477Render"
+    },
+    {
+      "id": "black-gold-line",
+      "name": "黒金ライン化",
+      "category": "追加加工",
+      "renderer": "renderBlackGoldLine"
     }
   ]
 }

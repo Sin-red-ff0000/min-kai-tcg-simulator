@@ -19,7 +19,7 @@ for x in entries:
     if not re.search(r'\bid\s*:\s*["\']'+re.escape(ident)+r'["\']',main):errors.append('missing main ID '+ident)
     if f'["{ident}","{name}"]' not in editor:errors.append('missing editor pair '+ident)
     if x['renderer'] not in editor:errors.append('missing renderer '+ident)
-if len(entries)!=10:errors.append('expected 10 approved effects')
+if len(entries)!=11:errors.append('expected 11 approved effects')
 if errors:
     print('FAIL:\n'+'\n'.join(' - '+x for x in errors))
     sys.exit(1)
