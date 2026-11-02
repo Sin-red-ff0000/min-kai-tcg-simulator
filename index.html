@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v51.35</title>
+<title>みん会TCG Simulator v51.36</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22162,7 +22162,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v51.35 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v51.36 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22265,8 +22265,8 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
           <div id="tachie-setup-detail" hidden>
             <label>キャラクター
               <select id="tachie-preset-select">
-                <option value="duelist-still">デュエリスト（静止画）</option>
-                <option value="duelist-video">デュエリスト（動画）</option>
+                <option value="hood-still">青フード（静止画）</option>
+                <option value="hood-video">赤フード（動画）</option>
                 <option value="custom">自分の画像</option>
                 <option value="custom-video">自分の動画</option>
               </select>
@@ -29772,7 +29772,7 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      shell.hidden=false;
      if(!frame.getAttribute('src')){
        frame.addEventListener('load',()=>setTimeout(openSelected,0),{once:true});
-       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.35';
+       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.36';
      }else openSelected();
      return;
    }
@@ -44121,7 +44121,7 @@ if(!collection||!manager||!board)return;
 let frame=null,ready=false,working=null,seq=0,queue=[],scanPending=false;
 const cache=new Map(),queued=new Set();
 function getCard(id){try{return window.__fxCollectionGetCard?.(id)||null}catch{return null}}
-function keyFor(card){return '51.35|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
+function keyFor(card){return '51.36|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
 function angleFor(el){return el.id==='collection-viewer-art'?{x:Number(el.dataset.fx22TiltX)||0,y:Number(el.dataset.fx22TiltY)||0}:{x:0,y:0}}
 function renderKey(card,el){const a=angleFor(el);const img=el.querySelector('img');const bg=getComputedStyle(el).backgroundImage;const imageKey=img?.currentSrc||img?.src||(bg&&bg!=='none'?bg:'');return keyFor(card)+'|img:'+imageKey+(el.id==='collection-viewer-art'?'|viewer|'+a.x.toFixed(2)+'|'+a.y.toFixed(2):'')}
 
@@ -44142,7 +44142,7 @@ function ensureFrame(){
  if(frame)return;
  frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
- frame.src='./fx_trial_preview.html?v=51.35';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
+ frame.src='./fx_trial_preview.html?v=51.36';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
 }
 const fx22DimsCache=new Map(),fx22DimsPending=new Set();
 function fx22BgUrl(el){
@@ -44489,18 +44489,18 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 <style id="fx523-parent-fullscreen">#fx-trial-shell.fx523-fullscreen{z-index:2147483000!important;inset:0!important;padding:0!important;background:#070a11!important}#fx-trial-shell.fx523-fullscreen #fx-trial-box{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important}#fx-trial-shell.fx523-fullscreen #fx-trial-bar{display:none!important}#fx-trial-shell.fx523-fullscreen #fx-trial-frame{width:100%!important;height:100dvh!important;max-height:none!important;border:0!important}</style><script id="fx523-parent-fullscreen-script">window.addEventListener('message',function(e){const f=document.getElementById('fx-trial-frame');if(!f||e.source!==f.contentWindow||e.data?.channel!=='fx523-fullscreen')return;document.getElementById('fx-trial-shell')?.classList.toggle('fx523-fullscreen',!!e.data.open)});</script>
 <script>
-/* Ver51.35: キャラクターウィンド（自分の動画も持ち込み対応。動画は分割送信で相手にも送る） */
+/* Ver51.36: キャラクターウィンド（デフォルト素材を青フード静止画／赤フード動画に差し替え） */
 (function(){
  'use strict';
  var LS='minkai_tcg_tachie_v01';
- var state={enabled:false,preset:'duelist-still',customImg:'',customVer:0,customVidVer:0,wins:{own:{x:null,y:null,w:170,mini:true},opp:{x:null,y:null,w:170,mini:true}}};
+ var state={enabled:false,preset:'hood-still',customImg:'',customVer:0,customVidVer:0,wins:{own:{x:null,y:null,w:170,mini:true},opp:{x:null,y:null,w:170,mini:true}}};
  try{var s=JSON.parse(localStorage.getItem(LS)||'null');
    if(s&&typeof s==='object'){
      state.enabled=!!s.enabled;
      if(typeof s.customImg==='string')state.customImg=s.customImg;
      state.customVer=Number(s.customVer||0);
      state.customVidVer=Number(s.customVidVer||0);
-     state.preset=(s.preset==='nia-still'?'duelist-still':s.preset==='nia-video'?'duelist-video':s.preset)||'duelist-still';
+     state.preset=(s.preset==='nia-still'||s.preset==='duelist-still'?'hood-still':s.preset==='nia-video'||s.preset==='duelist-video'?'hood-video':s.preset)||'hood-still';
      var wsrc=s.wins||(s.win?{own:s.win}:null);
      if(wsrc){if(wsrc.own)state.wins.own=Object.assign(state.wins.own,wsrc.own);if(wsrc.opp)state.wins.opp=Object.assign(state.wins.opp,wsrc.opp)}
    }}catch(e){}
@@ -44610,7 +44610,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    }
    if(!window.TACHIE_ASSETS)return;w.preset=key;
    w.vid.style.display='none';w.media.style.display='block';
-   if(preset==='duelist-video'){w.bob.classList.remove('t-idle');w.media.src=window.TACHIE_ASSETS.video}
+   if(preset==='hood-video'){w.bob.classList.remove('t-idle');w.media.src=window.TACHIE_ASSETS.video}
    else{w.media.src=window.TACHIE_ASSETS.still;w.bob.classList.add('t-idle')}
  }
  function duelVisible(){
@@ -44731,7 +44731,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    var st=fxState();if(!st)return;
    if(String(p.from||'')===String(st.clientId||''))return;
    var slot=Number(p.slot||0);if(slot!==1&&slot!==2)return;
-   peers[slot]={enabled:!!p.enabled,preset:(p.preset==='duelist-video'?'duelist-video':p.preset==='custom'?'custom':p.preset==='custom-video'?'custom-video':'duelist-still'),customVer:Number(p.customVer||0),from:String(p.from||''),at:Date.now()};
+   peers[slot]={enabled:!!p.enabled,preset:(p.preset==='hood-video'?'hood-video':p.preset==='custom'?'custom':p.preset==='custom-video'?'custom-video':'hood-still'),customVer:Number(p.customVer||0),from:String(p.from||''),at:Date.now()};
    if((peers[slot].preset==='custom'||peers[slot].preset==='custom-video')&&peers[slot].enabled){
      var have=peersMedia[slot];
      if(!have||have.ver!==peers[slot].customVer||have.kind!==peers[slot].preset)sendImgRequest(p.from);
@@ -44804,11 +44804,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  }
  function actOn(key,name){
    var w=wins[key];if(!w||!w.el.classList.contains('show'))return;
-   var preset=key==='own'?state.preset:(w.preset||'duelist-still');
+   var preset=key==='own'?state.preset:(w.preset||'hood-still');
    w.bob.classList.remove('t-idle','t-act-jump','t-act-spin','t-act-flinch','t-act-slump','t-act-shine');
    void w.bob.offsetWidth;w.bob.classList.add('t-act-'+name);
    if(name==='shine')w.el.querySelectorAll('.t-spark').forEach(function(s){s.classList.remove('go');void s.offsetWidth;s.classList.add('go')});
-   setTimeout(function(){w.bob.classList.remove('t-act-'+name);if(preset!=='duelist-video'&&preset!=='custom-video')w.bob.classList.add('t-idle')},name==='slump'?1500:1000);
+   setTimeout(function(){w.bob.classList.remove('t-act-'+name);if(preset!=='hood-video'&&preset!=='custom-video')w.bob.classList.add('t-idle')},name==='slump'?1500:1000);
  }
  function act(name){actOn('own',name);sendAct(name)}
 
