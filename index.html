@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v51.30</title>
+<title>みん会TCG Simulator v51.31</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22162,7 +22162,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v51.30 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v51.31 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22265,8 +22265,8 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
           <div id="tachie-setup-detail" hidden>
             <label>キャラクター
               <select id="tachie-preset-select">
-                <option value="nia-still">ニア（静止画）</option>
-                <option value="nia-video">ニア（動画）</option>
+                <option value="duelist-still">デュエリスト（静止画）</option>
+                <option value="duelist-video">デュエリスト（動画）</option>
               </select>
             </label>
             <div class="muted" style="font-size:12px;margin-top:4px">対戦画面に自分のキャラクター小窓を表示します（相手への表示は今後の更新で対応）。</div>
@@ -29766,7 +29766,7 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      shell.hidden=false;
      if(!frame.getAttribute('src')){
        frame.addEventListener('load',()=>setTimeout(openSelected,0),{once:true});
-       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.30';
+       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.31';
      }else openSelected();
      return;
    }
@@ -44115,7 +44115,7 @@ if(!collection||!manager||!board)return;
 let frame=null,ready=false,working=null,seq=0,queue=[],scanPending=false;
 const cache=new Map(),queued=new Set();
 function getCard(id){try{return window.__fxCollectionGetCard?.(id)||null}catch{return null}}
-function keyFor(card){return '51.30|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
+function keyFor(card){return '51.31|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
 function angleFor(el){return el.id==='collection-viewer-art'?{x:Number(el.dataset.fx22TiltX)||0,y:Number(el.dataset.fx22TiltY)||0}:{x:0,y:0}}
 function renderKey(card,el){const a=angleFor(el);const img=el.querySelector('img');const bg=getComputedStyle(el).backgroundImage;const imageKey=img?.currentSrc||img?.src||(bg&&bg!=='none'?bg:'');return keyFor(card)+'|img:'+imageKey+(el.id==='collection-viewer-art'?'|viewer|'+a.x.toFixed(2)+'|'+a.y.toFixed(2):'')}
 
@@ -44136,7 +44136,7 @@ function ensureFrame(){
  if(frame)return;
  frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
- frame.src='./fx_trial_preview.html?v=51.30';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
+ frame.src='./fx_trial_preview.html?v=51.31';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
 }
 const fx22DimsCache=new Map(),fx22DimsPending=new Set();
 function fx22BgUrl(el){
@@ -44483,12 +44483,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 <style id="fx523-parent-fullscreen">#fx-trial-shell.fx523-fullscreen{z-index:2147483000!important;inset:0!important;padding:0!important;background:#070a11!important}#fx-trial-shell.fx523-fullscreen #fx-trial-box{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important}#fx-trial-shell.fx523-fullscreen #fx-trial-bar{display:none!important}#fx-trial-shell.fx523-fullscreen #fx-trial-frame{width:100%!important;height:100dvh!important;max-height:none!important;border:0!important}</style><script id="fx523-parent-fullscreen-script">window.addEventListener('message',function(e){const f=document.getElementById('fx-trial-frame');if(!f||e.source!==f.contentWindow||e.data?.channel!=='fx523-fullscreen')return;document.getElementById('fx-trial-shell')?.classList.toggle('fx523-fullscreen',!!e.data.open)});</script>
 <script>
-/* Ver51.30: キャラクターウィンド（第1段階：対戦準備で設定し、自分の窓をオンライン盤面に出す。デフォルトOFF） */
+/* Ver51.31: キャラクターウィンド（第1段階：対戦準備で設定し、自分の窓をオンライン盤面に出す。デフォルトOFF） */
 (function(){
  'use strict';
  var LS='minkai_tcg_tachie_v01';
- var state={enabled:false,preset:'nia-still',win:{x:null,y:null,w:170,mini:true}};
- try{var s=JSON.parse(localStorage.getItem(LS)||'null');if(s&&typeof s==='object'){state.enabled=!!s.enabled;state.preset=s.preset||'nia-still';if(s.win)state.win=Object.assign(state.win,s.win)}}catch(e){}
+ var state={enabled:false,preset:'duelist-still',win:{x:null,y:null,w:170,mini:true}};
+ try{var s=JSON.parse(localStorage.getItem(LS)||'null');if(s&&typeof s==='object'){state.enabled=!!s.enabled;state.preset=(s.preset==='nia-still'?'duelist-still':s.preset==='nia-video'?'duelist-video':s.preset)||'duelist-still';if(s.win)state.win=Object.assign(state.win,s.win)}}catch(e){}
  var closed=false,assetsLoading=false,winEl=null,bobEl=null,mediaEl=null;
  function save(){try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}}
  function ensureAssets(cb){
@@ -44561,7 +44561,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    winEl.style.left=x+'px';winEl.style.top=y+'px';state.win.x=x;state.win.y=y}
  function applyMedia(){
    if(!mediaEl||!window.TACHIE_ASSETS)return;
-   if(state.preset==='nia-video'){bobEl.classList.remove('t-idle');mediaEl.src=window.TACHIE_ASSETS.video}
+   if(state.preset==='duelist-video'){bobEl.classList.remove('t-idle');mediaEl.src=window.TACHIE_ASSETS.video}
    else{mediaEl.src=window.TACHIE_ASSETS.still;bobEl.classList.add('t-idle')}
  }
  function duelVisible(){
@@ -44581,7 +44581,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    bobEl.classList.remove('t-idle','t-act-jump','t-act-spin','t-act-flinch','t-act-slump','t-act-shine');
    void bobEl.offsetWidth;bobEl.classList.add('t-act-'+name);
    if(name==='shine'&&winEl)winEl.querySelectorAll('.t-spark').forEach(function(s){s.classList.remove('go');void s.offsetWidth;s.classList.add('go')});
-   setTimeout(function(){bobEl.classList.remove('t-act-'+name);if(state.preset!=='nia-video')bobEl.classList.add('t-idle')},name==='slump'?1500:1000);
+   setTimeout(function(){bobEl.classList.remove('t-act-'+name);if(state.preset!=='duelist-video')bobEl.classList.add('t-idle')},name==='slump'?1500:1000);
  }
  window.MinkaiTachie={act:act,getState:function(){return state}};
  // 対戦準備の設定UI
