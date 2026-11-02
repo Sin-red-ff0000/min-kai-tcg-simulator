@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v51.28</title>
+<title>みん会TCG Simulator v51.29</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22162,7 +22162,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v51.28 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v51.29 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -22180,11 +22180,6 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
 <section id="online-home-panel" class="online-home-panel" hidden>
   <div class="section-head"><h2>オンライン対戦</h2><span class="pill">Ver13.1</span></div>
   <p class="muted">オンライン対戦モード。ルーム作成・参加・観戦へ進めます。</p>
-  <div class="panel online-event-entry-panel">
-    <div class="section-head"><h3 style="margin:0">パック・ドラフトのオンラインプレイ</h3><span class="pill">4モード対応</span></div>
-    <p class="muted">別端末同士で遊ぶオンラインイベントはこちらから開きます。Ver30.2ではオンライン配布後のデッキ保存・追加開封・小型デッキ合体戦にも対応しています。</p>
-    <div class="actions"><button class="btn primary" id="online-open-event-room" type="button">オンラインイベントを開く</button></div>
-  </div>
 <div id="online-bootstrap-status" class="online-bootstrap-status muted">オンラインUI準備中</div>
   <div id="online-reconnect-bar" class="online-reconnect-bar" hidden>
     <span id="online-reconnect-text" class="muted">前回のオンラインセッションがあります。</span>
@@ -22202,6 +22197,13 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
     </div>
   </div>
 
+  <div class="panel online-event-entry-panel">
+    <div class="section-head"><h3 style="margin:0">パック・ドラフトのオンラインプレイ</h3><span style="display:inline-flex;gap:6px;align-items:center"><span class="pill">4モード対応</span><button class="btn small" id="online-event-toggle" type="button" aria-expanded="false">開く</button></span></div>
+    <div id="online-event-body" hidden>
+    <p class="muted">別端末同士で遊ぶオンラインイベントはこちらから開きます。Ver30.2ではオンライン配布後のデッキ保存・追加開封・小型デッキ合体戦にも対応しています。</p>
+    <div class="actions"><button class="btn primary" id="online-open-event-room" type="button">オンラインイベントを開く</button></div>
+    </div>
+  </div>
   <div id="online-room-form" class="online-room-form" hidden>
     <div class="section-head"><h3 id="online-room-form-title">ルームに参加</h3></div>
     <label>参加コード
@@ -29751,7 +29753,7 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      shell.hidden=false;
      if(!frame.getAttribute('src')){
        frame.addEventListener('load',()=>setTimeout(openSelected,0),{once:true});
-       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.28';
+       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.29';
      }else openSelected();
      return;
    }
@@ -36970,6 +36972,19 @@ document.addEventListener('visibilitychange',()=>{
 
 window.minkaiOpenOnlineEntry=onlineOpenEntryScreen;
 
+// Ver51.29: パック・ドラフト入口は普段格納し、必要な時だけ開く
+document.addEventListener('click',e=>{
+  const tgl=e.target?.closest?.('#online-event-toggle');
+  if(!tgl)return;
+  e.preventDefault();
+  const body=document.getElementById('online-event-body');
+  if(!body)return;
+  const open=body.hidden;
+  body.hidden=!open;
+  tgl.textContent=open?'閉じる':'開く';
+  tgl.setAttribute('aria-expanded',String(open));
+});
+
 // Ver30.2: パック系オンラインイベントの入口はオンライン画面へ集約
 document.addEventListener('click',e=>{
   const btn=e.target?.closest?.('#online-open-event-room');
@@ -44087,7 +44102,7 @@ if(!collection||!manager||!board)return;
 let frame=null,ready=false,working=null,seq=0,queue=[],scanPending=false;
 const cache=new Map(),queued=new Set();
 function getCard(id){try{return window.__fxCollectionGetCard?.(id)||null}catch{return null}}
-function keyFor(card){return '51.28|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
+function keyFor(card){return '51.29|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
 function angleFor(el){return el.id==='collection-viewer-art'?{x:Number(el.dataset.fx22TiltX)||0,y:Number(el.dataset.fx22TiltY)||0}:{x:0,y:0}}
 function renderKey(card,el){const a=angleFor(el);const img=el.querySelector('img');const bg=getComputedStyle(el).backgroundImage;const imageKey=img?.currentSrc||img?.src||(bg&&bg!=='none'?bg:'');return keyFor(card)+'|img:'+imageKey+(el.id==='collection-viewer-art'?'|viewer|'+a.x.toFixed(2)+'|'+a.y.toFixed(2):'')}
 
@@ -44108,7 +44123,7 @@ function ensureFrame(){
  if(frame)return;
  frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
- frame.src='./fx_trial_preview.html?v=51.28';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
+ frame.src='./fx_trial_preview.html?v=51.29';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
 }
 const fx22DimsCache=new Map(),fx22DimsPending=new Set();
 function fx22BgUrl(el){
