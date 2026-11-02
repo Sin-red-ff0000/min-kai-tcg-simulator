@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v51.26</title>
+<title>みん会TCG Simulator v51.27</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -20308,7 +20308,7 @@ h3 .minkai-ruby{margin-top:.45em}
 .fx-optical-carved-relief{background:repeating-radial-gradient(ellipse at 54% 45%,transparent 0 9px,rgba(255,255,245,.36) 10px 11px,rgba(18,28,40,.22) 12px 13px,transparent 14px 34px);background-size:calc(330px * var(--fx-density-scale,1)) calc(360px * var(--fx-density-scale,1));mix-blend-mode:soft-light!important}
 .fx-shadow-carved-silhouette{background:repeating-linear-gradient(132deg,transparent 0 17px,rgba(11,14,24,.38) 18px 20px,rgba(250,241,215,.22) 21px 22px,transparent 24px 70px);mix-blend-mode:overlay!important}
 .fx-risograph-misregister{background:repeating-radial-gradient(circle at 18% 31%,rgba(255,47,121,.38) 0 1px,transparent 2px 10px),repeating-radial-gradient(circle at 61% 74%,rgba(28,225,241,.30) 0 1.3px,transparent 2.4px 11px),linear-gradient(105deg,rgba(255,35,91,.16),transparent 47%,rgba(37,202,255,.17));background-size:calc(130px * var(--fx-density-scale,1)) calc(140px * var(--fx-density-scale,1));mix-blend-mode:screen!important}
-/* Ver51.26: black-gold line, legacy CSS approximation (full conversion lives in the fx editor). */
+/* Ver51.27: black-gold line, legacy CSS approximation (full conversion lives in the fx editor). */
 .fx-black-gold-line{background:linear-gradient(128deg,rgba(22,16,6,.66),rgba(52,36,10,.44) 34%,rgba(150,108,30,.42) 50%,rgba(14,10,4,.7) 68%,rgba(40,28,9,.52));mix-blend-mode:multiply!important}
 .card-fx-stack.fx-animate .card-fx-layer:is(.fx-graphite-scratch-foil,.fx-phase-invert-edge,.fx-heatpress-imprint,.fx-multi-exposure-step,.fx-chromatography-paper,.fx-photochromic-exposure,.fx-uv-excitation,.fx-optical-carved-relief,.fx-shadow-carved-silhouette,.fx-risograph-misregister){animation:fx-approved-shift var(--fx-duration,6s) ease-in-out infinite alternate}
 @keyframes fx-approved-shift{0%{background-position:0 0;filter:hue-rotate(0deg) brightness(.9)}100%{background-position:36px -28px;filter:hue-rotate(12deg) brightness(1.22)}}
@@ -22162,7 +22162,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v51.26 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v51.27 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -29751,7 +29751,7 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      shell.hidden=false;
      if(!frame.getAttribute('src')){
        frame.addEventListener('load',()=>setTimeout(openSelected,0),{once:true});
-       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.26';
+       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.27';
      }else openSelected();
      return;
    }
@@ -44087,7 +44087,7 @@ if(!collection||!manager||!board)return;
 let frame=null,ready=false,working=null,seq=0,queue=[],scanPending=false;
 const cache=new Map(),queued=new Set();
 function getCard(id){try{return window.__fxCollectionGetCard?.(id)||null}catch{return null}}
-function keyFor(card){return '51.26|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
+function keyFor(card){return '51.27|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
 function angleFor(el){return el.id==='collection-viewer-art'?{x:Number(el.dataset.fx22TiltX)||0,y:Number(el.dataset.fx22TiltY)||0}:{x:0,y:0}}
 function renderKey(card,el){const a=angleFor(el);const img=el.querySelector('img');const bg=getComputedStyle(el).backgroundImage;const imageKey=img?.currentSrc||img?.src||(bg&&bg!=='none'?bg:'');return keyFor(card)+'|img:'+imageKey+(el.id==='collection-viewer-art'?'|viewer|'+a.x.toFixed(2)+'|'+a.y.toFixed(2):'')}
 
@@ -44108,18 +44108,34 @@ function ensureFrame(){
  if(frame)return;
  frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
- frame.src='./fx_trial_preview.html?v=51.26';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
+ frame.src='./fx_trial_preview.html?v=51.27';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
+}
+function syncFx22Geometry(el,layer){
+ // Ver51.27: 加工レイヤーの表示方法を原画の背景表示（cover/contain＋位置）に同期し、全面伸縮による縮小・ずれ（ゴースト）を防ぐ
+ if(!layer)return;
+ let src=null;
+ if(el.style.backgroundImage&&el.style.backgroundImage.includes('url('))src=el;
+ else{const art=el.querySelector('[data-card-art]');if(art&&art.style.backgroundImage&&art.style.backgroundImage.includes('url('))src=art}
+ if(!src)return;
+ const size=src.style.backgroundSize||'',pos=src.style.backgroundPosition||'';
+ const key=size+'|'+pos;
+ if(layer.dataset.fx22geo===key)return;
+ layer.dataset.fx22geo=key;
+ if(size)layer.style.backgroundSize=size;
+ if(pos)layer.style.backgroundPosition=pos;
 }
 function place(el,url){
  if(!el.isConnected)return;
  let layer=el.querySelector(':scope > .fx22-surface-layer');
  if(!layer){layer=document.createElement('span');layer.className='fx22-surface-layer';el.append(layer)}
  if(layer.__fx22Url!==url){layer.style.backgroundImage='url("'+url+'")';layer.__fx22Url=url}layer.style.mixBlendMode=layer.dataset.fx22Blend||'screen';layer.style.opacity=layer.dataset.fx22Blend==='normal'?'1':'.8';
+ syncFx22Geometry(el,layer);
 }
 function scan(){
  for(const el of visibleTargets()){
   const id=cardIdFor(el),card=getCard(id);
   const old=el.querySelector(':scope > .fx22-surface-layer');
+  if(old)syncFx22Geometry(el,old);
   if(!card?.fxPreviewV2?.layers?.length){if(old)old.remove();delete el.dataset.fx22Key;continue}
   const k=renderKey(card,el);el.dataset.fx22Key=k;
   if(cache.has(k)){const cached=cache.get(k);let layer=el.querySelector(':scope > .fx22-surface-layer');if(!layer){layer=document.createElement('span');layer.className='fx22-surface-layer';el.append(layer)}layer.dataset.fx22Blend=cached.blend;place(el,cached.image);continue}
