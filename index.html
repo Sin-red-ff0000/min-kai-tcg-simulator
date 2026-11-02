@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="みん会TCG" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<title>みん会TCG Simulator v51.32</title>
+<title>みん会TCG Simulator v51.33</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#20242d; --line:#353b47; --text:#f3f5f7;
@@ -22162,7 +22162,7 @@ body.online-selftest-local-running #online-duel-main .online-player-section:not(
   <div id="app-background-overlay"></div>
 </div>
 <header class="appbar">
-  <div class="brand">みん会TCG Simulator v51.32 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
+  <div class="brand">みん会TCG Simulator v51.33 <span id="pwa-mode" class="pill" style="margin-left:4px">Web</span></div>
   <button data-nav="home">ホーム</button>
   <button data-nav="cards">カード登録</button>
   <button data-nav="card-manager">カード管理</button>
@@ -29766,7 +29766,7 @@ async function openCardEffectEditor(cardId,returnTo='manager'){
      shell.hidden=false;
      if(!frame.getAttribute('src')){
        frame.addEventListener('load',()=>setTimeout(openSelected,0),{once:true});
-       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.32';
+       frame.src=frame.dataset.src||'./fx_trial_preview.html?v=51.33';
      }else openSelected();
      return;
    }
@@ -44115,7 +44115,7 @@ if(!collection||!manager||!board)return;
 let frame=null,ready=false,working=null,seq=0,queue=[],scanPending=false;
 const cache=new Map(),queued=new Set();
 function getCard(id){try{return window.__fxCollectionGetCard?.(id)||null}catch{return null}}
-function keyFor(card){return '51.32|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
+function keyFor(card){return '51.33|'+String(card.id)+'|'+JSON.stringify(card.fxPreviewV2)}
 function angleFor(el){return el.id==='collection-viewer-art'?{x:Number(el.dataset.fx22TiltX)||0,y:Number(el.dataset.fx22TiltY)||0}:{x:0,y:0}}
 function renderKey(card,el){const a=angleFor(el);const img=el.querySelector('img');const bg=getComputedStyle(el).backgroundImage;const imageKey=img?.currentSrc||img?.src||(bg&&bg!=='none'?bg:'');return keyFor(card)+'|img:'+imageKey+(el.id==='collection-viewer-art'?'|viewer|'+a.x.toFixed(2)+'|'+a.y.toFixed(2):'')}
 
@@ -44136,7 +44136,7 @@ function ensureFrame(){
  if(frame)return;
  frame=document.createElement('iframe');frame.title='カード加工描画';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
  frame.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
- frame.src='./fx_trial_preview.html?v=51.32';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
+ frame.src='./fx_trial_preview.html?v=51.33';frame.addEventListener('load',()=>{ready=true;pump()});frame.addEventListener('error',()=>setFx22Status('加工描画用ファイルを読み込めません')); document.body.append(frame);
 }
 const fx22DimsCache=new Map(),fx22DimsPending=new Set();
 function fx22BgUrl(el){
@@ -44483,7 +44483,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 <style id="fx523-parent-fullscreen">#fx-trial-shell.fx523-fullscreen{z-index:2147483000!important;inset:0!important;padding:0!important;background:#070a11!important}#fx-trial-shell.fx523-fullscreen #fx-trial-box{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important}#fx-trial-shell.fx523-fullscreen #fx-trial-bar{display:none!important}#fx-trial-shell.fx523-fullscreen #fx-trial-frame{width:100%!important;height:100dvh!important;max-height:none!important;border:0!important}</style><script id="fx523-parent-fullscreen-script">window.addEventListener('message',function(e){const f=document.getElementById('fx-trial-frame');if(!f||e.source!==f.contentWindow||e.data?.channel!=='fx523-fullscreen')return;document.getElementById('fx-trial-shell')?.classList.toggle('fx523-fullscreen',!!e.data.open)});</script>
 <script>
-/* Ver51.32: キャラクターウィンド（第2段階：対戦準備で設定し、Supabase Realtimeで相手と共有。デフォルトOFF） */
+/* Ver51.33: キャラクターウィンド（第3段階：操作ツールに操作パネルを追加し、アクションも相手と同期） */
 (function(){
  'use strict';
  var LS='minkai_tcg_tachie_v01';
@@ -44529,7 +44529,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  +'.t-act-jump{animation:t-jump .85s ease}.t-act-spin{animation:t-spin .8s ease}.t-act-flinch{animation:t-flinch .55s ease}.t-act-slump{animation:t-slump 1.5s ease}.t-act-shine{animation:t-shine 1s ease}'
  +'.tachie-win .t-spark{position:absolute;font-size:18px;color:#ffe98a;opacity:0;pointer-events:none;text-shadow:0 0 8px #ffce4f;z-index:3}'
  +'@keyframes t-sparkpop{0%{opacity:0;transform:scale(.4)}30%{opacity:1;transform:scale(1.25)}100%{opacity:0;transform:scale(.7) translateY(-14px)}}'
- +'.tachie-win .t-spark.go{animation:t-sparkpop .9s ease}';
+ +'.tachie-win .t-spark.go{animation:t-sparkpop .9s ease}'
+ +'.tachie-panel h3{margin:0 0 8px;font-size:13px}'
+ +'.tachie-panel .t-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px}'
+ +'.tachie-panel .t-cap{font-size:11px;color:var(--muted,#9fb2c8);width:100%}'
+ +'.tachie-panel .t-wlabel{font-size:12px;min-width:96px}'
+ +'.tachie-panel input[type=range]{width:120px}'
+ +'.tachie-panel.plain{padding:2px}';
  var cssDone=false;
  function makeWin(key,chip,dotColor,defPos){
    if(wins[key])return wins[key];
@@ -44547,7 +44553,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    else{if(defPos.right)el.style.right=defPos.right;if(defPos.left)el.style.left=defPos.left;if(defPos.top)el.style.top=defPos.top;if(defPos.bottom)el.style.bottom=defPos.bottom}
    var minBtn=el.querySelector('.t-minbtn');
    if(ws.mini){el.classList.add('mini');minBtn.textContent='＋'}
-   el.querySelector('.t-close').addEventListener('click',function(e){e.stopPropagation();closed[key]=true;sync()});
+   el.querySelector('.t-close').addEventListener('click',function(e){e.stopPropagation();closed[key]=true;paintPanels();sync()});
    minBtn.addEventListener('click',function(e){e.stopPropagation();var on=el.classList.toggle('mini');minBtn.textContent=on?'＋':'－';ws.mini=on;clampWin(key);save()});
    el.addEventListener('pointerdown',function(e){
      if(e.target.closest('button'))return;
@@ -44606,6 +44612,22 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    if(net.ready&&net.channel){try{net.channel.send({type:'broadcast',event:'tachie-state',payload:p})}catch(e){}}
    if(net.bc){try{net.bc.postMessage({kind:'tachie-state',payload:p})}catch(e){}}
  }
+ function sendAct(name){
+   var st=fxState();if(!st)return;
+   var p={code:String(st.joinCode||'').trim().toUpperCase(),from:String(st.clientId||''),slot:Number(st.playerSlot||0),act:name};
+   if(!p.code)return;
+   if(net.ready&&net.channel){try{net.channel.send({type:'broadcast',event:'tachie-act',payload:p})}catch(e){}}
+   if(net.bc){try{net.bc.postMessage({kind:'tachie-act',payload:p})}catch(e){}}
+ }
+ function receiveAct(p){
+   if(!p)return;
+   var st=fxState();if(!st)return;
+   if(String(p.from||'')===String(st.clientId||''))return;
+   var mySlot=Number(st.playerSlot||0);if(mySlot!==1&&mySlot!==2)return;
+   if(Number(p.slot||0)!==(mySlot===1?2:1))return;
+   if(['jump','spin','flinch','slump','shine'].indexOf(p.act)<0)return;
+   actOn('opp',p.act);
+ }
  function receiveState(p){
    if(!p)return;
    var st=fxState();if(!st)return;
@@ -44629,6 +44651,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
          var ch=client.channel(topic,{config:{broadcast:{self:false}}});
          net.channel=ch;
          ch.on('broadcast',{event:'tachie-state'},function(m){receiveState(m&&m.payload)});
+         ch.on('broadcast',{event:'tachie-act'},function(m){receiveAct(m&&m.payload)});
          ch.subscribe(function(status){if(status==='SUBSCRIBED'){net.ready=true;sendState()}});
        }).catch(function(){if(net.topic===topic)net.topic=''});
      }
@@ -44639,7 +44662,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
      net.bcTopic=wantBc;
      if(wantBc&&window.BroadcastChannel){
        net.bc=new BroadcastChannel(wantBc);
-       net.bc.onmessage=function(ev){if(ev.data&&ev.data.kind==='tachie-state')receiveState(ev.data.payload)};
+       net.bc.onmessage=function(ev){if(!ev.data)return;if(ev.data.kind==='tachie-state')receiveState(ev.data.payload);else if(ev.data.kind==='tachie-act')receiveAct(ev.data.payload)};
        sendState();
      }
    }
@@ -44668,12 +44691,78 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
      ensureAssets(function(){var w=makeWin('opp','相手','#ffb066',{left:'12px',top:'64px'});setMedia(w,peer.preset);w.el.classList.toggle('show',!closed.opp)});
    }else if(wins.opp)wins.opp.el.classList.remove('show');
  }
- function act(name){
-   var w=wins.own;if(!w)return;
+ function actOn(key,name){
+   var w=wins[key];if(!w||!w.el.classList.contains('show'))return;
+   var preset=key==='own'?state.preset:(w.preset||'duelist-still');
    w.bob.classList.remove('t-idle','t-act-jump','t-act-spin','t-act-flinch','t-act-slump','t-act-shine');
    void w.bob.offsetWidth;w.bob.classList.add('t-act-'+name);
    if(name==='shine')w.el.querySelectorAll('.t-spark').forEach(function(s){s.classList.remove('go');void s.offsetWidth;s.classList.add('go')});
-   setTimeout(function(){w.bob.classList.remove('t-act-'+name);if(state.preset!=='duelist-video')w.bob.classList.add('t-idle')},name==='slump'?1500:1000);
+   setTimeout(function(){w.bob.classList.remove('t-act-'+name);if(preset!=='duelist-video')w.bob.classList.add('t-idle')},name==='slump'?1500:1000);
+ }
+ function act(name){actOn('own',name);sendAct(name)}
+
+ /* ===== 操作ツール内のパネル（PCサイドバー＋P1/P2ツール） ===== */
+ function createPanel(plain){
+   var p=document.createElement('div');p.className='tachie-panel'+(plain?' plain':'');
+   p.innerHTML='<h3>キャラクターウィンド</h3>'
+   +'<div class="t-row"><span class="t-wlabel">キャラクターウィンド</span>'
+   +'<button class="btn small" type="button" data-tmaster="on">使う</button><button class="btn small" type="button" data-tmaster="off">使わない</button></div>'
+   +'<div class="t-row"><span class="t-wlabel">自分のウィンド</span>'
+   +'<button class="btn small" type="button" data-tvis="own" data-tvis-val="show">表示</button><button class="btn small" type="button" data-tvis="own" data-tvis-val="hide">非表示</button></div>'
+   +'<div class="t-row"><span class="t-wlabel">相手のウィンド</span>'
+   +'<button class="btn small" type="button" data-tvis="opp" data-tvis-val="show">表示</button><button class="btn small" type="button" data-tvis="opp" data-tvis-val="hide">非表示</button></div>'
+   +'<div class="t-row"><span class="t-cap">大きさ</span><input type="range" data-tsize min="110" max="260" value="170"></div>'
+   +'<div class="t-row"><span class="t-cap">アクション（自分）</span>'
+   +'<button class="btn small" type="button" data-tact="jump">跳ねる</button><button class="btn small" type="button" data-tact="spin">回転</button><button class="btn small" type="button" data-tact="flinch">ビクッ</button><button class="btn small" type="button" data-tact="slump">がっくり</button><button class="btn small" type="button" data-tact="shine">キラッ</button></div>'
+   +'<div class="t-row"><span class="t-cap">キャラの変更は対戦準備でできます</span></div>';
+   p.querySelectorAll('[data-tmaster]').forEach(function(b){b.addEventListener('click',function(){
+     state.enabled=b.dataset.tmaster==='on';save();sendState();paintPanels();sync();
+     var onB=document.getElementById('tachie-use-on'),offB=document.getElementById('tachie-use-off'),det=document.getElementById('tachie-setup-detail');
+     if(onB)onB.classList.toggle('primary',state.enabled);if(offB)offB.classList.toggle('primary',!state.enabled);if(det)det.hidden=!state.enabled;
+   })});
+   p.querySelectorAll('[data-tvis]').forEach(function(b){b.addEventListener('click',function(){
+     closed[b.dataset.tvis]=b.dataset.tvisVal!=='show';paintPanels();sync();
+   })});
+   p.querySelector('[data-tsize]').addEventListener('input',function(e){
+     ['own','opp'].forEach(function(k){state.wins[k].w=Number(e.target.value);if(wins[k]&&!wins[k].el.classList.contains('mini'))wins[k].el.style.width=e.target.value+'px'});save();
+   });
+   p.querySelectorAll('[data-tact]').forEach(function(b){b.addEventListener('click',function(){act(b.dataset.tact)})});
+   return p;
+ }
+ function paintPanels(){
+   document.querySelectorAll('.tachie-panel').forEach(function(p){
+     p.querySelectorAll('[data-tmaster]').forEach(function(b){b.classList.toggle('primary',(b.dataset.tmaster==='on')===state.enabled)});
+     p.querySelectorAll('[data-tvis]').forEach(function(b){b.classList.toggle('primary',(b.dataset.tvisVal==='show')===!closed[b.dataset.tvis])});
+   });
+ }
+ function mountAsidePanel(){
+   var aside=document.querySelector('#screen-online-duel .online-duel-tools');
+   if(!aside||aside.querySelector('.tachie-panel'))return;
+   var wrap=document.createElement('div');wrap.className='panel';wrap.appendChild(createPanel(false));
+   aside.appendChild(wrap);paintPanels();
+ }
+ function renderTachieSection(slot){
+   var content=document.getElementById('online-board-tool-content-p'+slot);if(!content)return;
+   var title=document.getElementById('online-board-tool-title-p'+slot);if(title)title.textContent='P'+slot+' キャラクターウィンド';
+   var back=document.querySelector('[data-online-tool-back="'+slot+'"]');if(back)back.hidden=false;
+   content.innerHTML='';content.appendChild(createPanel(true));paintPanels();
+ }
+ function hookOnlineTools(){
+   [1,2].forEach(function(slot){
+     var content=document.getElementById('online-board-tool-content-p'+slot);if(!content)return;
+     var add=function(){
+       var menu=content.querySelector('.mobile-board-tool-menu');
+       if(menu&&!menu.querySelector('[data-tachie-menu]')){
+         var b=document.createElement('button');
+         b.className='mobile-board-tool-menu-item';b.type='button';b.setAttribute('data-tachie-menu','');
+         b.innerHTML='<b>キャラクターウィンド</b><small>表示・アクションなど</small><span>›</span>';
+         b.addEventListener('click',function(){renderTachieSection(slot)});
+         menu.appendChild(b);
+       }
+     };
+     new MutationObserver(add).observe(content,{childList:true});
+     add();
+   });
  }
  window.MinkaiTachie={act:act,getState:function(){return state},getPeers:function(){return peers}};
  function wireSetup(){
@@ -44686,8 +44775,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    if(sel)sel.addEventListener('change',function(){state.preset=sel.value;save();sendState();if(wins.own)setMedia(wins.own,state.preset)});
    paint();
  }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){wireSetup();sync()});
- else{wireSetup();sync()}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){wireSetup();mountAsidePanel();hookOnlineTools();paintPanels();sync()});
+ else{wireSetup();mountAsidePanel();hookOnlineTools();paintPanels();sync()}
  var duelSec=document.getElementById('screen-online-duel');
  if(duelSec)new MutationObserver(sync).observe(duelSec,{attributes:true,attributeFilter:['class','hidden','style']});
  setInterval(sync,1200);
